@@ -23,7 +23,6 @@ package reg.gui;
 
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
-import jams.tools.StringTools;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -36,6 +35,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -182,16 +182,16 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    if (timeList.getSelectedValues().length == 1) {
+                    if (timeList.getSelectedValuesList().size() == 1) {
                         timePoint.setEnabled(true);
                         timeMean.setEnabled(false);
-                        if (entityList.getSelectedValues().length > 0) {
+                        if (entityList.getSelectedValuesList().size() > 0) {
                             crossProduct.setEnabled(true);
                         }
-                    } else if (timeList.getSelectedValues().length > 1) {
+                    } else if (timeList.getSelectedValuesList().size() > 1) {
                         timePoint.setEnabled(false);
                         timeMean.setEnabled(true);
-                        if (entityList.getSelectedValues().length > 0) {
+                        if (entityList.getSelectedValuesList().size() > 0) {
                             crossProduct.setEnabled(true);
                         }
                     } else {
@@ -210,16 +210,16 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    if (entityList.getSelectedValues().length == 1) {
+                    if (entityList.getSelectedValuesList().size() == 1) {
                         spacePoint.setEnabled(true);
                         spaceMean.setEnabled(false);
-                        if (timeList.getSelectedValues().length > 0) {
+                        if (timeList.getSelectedValuesList().size() > 0) {
                             crossProduct.setEnabled(true);
                         }
-                    } else if (entityList.getSelectedValues().length > 1) {
+                    } else if (entityList.getSelectedValuesList().size() > 1) {
                         spacePoint.setEnabled(false);
                         spaceMean.setEnabled(true);
-                        if (timeList.getSelectedValues().length > 0) {
+                        if (timeList.getSelectedValuesList().size() > 0) {
                             crossProduct.setEnabled(true);
                         }
                     } else {
@@ -239,7 +239,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    if (monthList.getSelectedValues().length == 1) {
+                    if (monthList.getSelectedValuesList().size() == 1) {
                         monthMean.setEnabled(true);
                     } else {
                         monthMean.setEnabled(false);
@@ -256,7 +256,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    if (yearList.getSelectedValues().length == 1) {
+                    if (yearList.getSelectedValuesList().size() == 1) {
                         yearMean.setEnabled(true);
                     } else {
                         yearMean.setEnabled(false);
@@ -742,7 +742,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
     private void showTimeStep() {
 
-        if ((timeList.getSelectedValues().length == 0) || (timeList.getSelectedValues().length > 1)) {
+        if ((timeList.getSelectedValuesList().isEmpty()) || (timeList.getSelectedValuesList().size() > 1)) {
             return;
         }
 
@@ -795,7 +795,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
     private void showTempMean() {
 
-        if (timeList.getSelectedValues().length == 0) {
+        if (timeList.getSelectedValuesList().isEmpty()) {
             return;
         }
 
@@ -809,7 +809,7 @@ public class TimeSpaceDSPanel extends DSPanel {
             public Object doInBackground() {
                 try {
 
-                    Object[] objects = timeList.getSelectedValues();
+                    List objects = timeList.getSelectedValuesList();
 
                     ArrayList<JAMSCalendar> dateList = new ArrayList<JAMSCalendar>();
                     for (Object o : objects) {
@@ -876,7 +876,7 @@ public class TimeSpaceDSPanel extends DSPanel {
     }
 
     private void showMonthlyMean() {
-        if (monthList.getSelectedValues().length == 0) {
+        if (monthList.getSelectedValuesList().isEmpty()) {
             return;
         }
 
@@ -917,7 +917,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
     private void showYearlyMean() {
 
-        if (yearList.getSelectedValues().length == 0) {
+        if (yearList.getSelectedValuesList().isEmpty()) {
             return;
         }
 
@@ -960,7 +960,7 @@ public class TimeSpaceDSPanel extends DSPanel {
     }
 
     private void showSpatEntity() {
-        if (entityList.getSelectedValues().length == 0) {
+        if (entityList.getSelectedValuesList().isEmpty()) {
             return;
         }
 
@@ -976,7 +976,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                     TimeSpaceProcessor tsproc = getProc();
                     // check if number of selected ids is equal to all ids
                     // if so, we better derive temp avg from monthly means
-                    Object[] objects = entityList.getSelectedValues();
+                    List objects = entityList.getSelectedValuesList();
 
                     // get the position of the weight attribute, if existing
                     if (attribCombo.getSelectedIndex() != 0) {
@@ -992,7 +992,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                         }
                     }
 
-                    long[] ids = new long[objects.length];
+                    long[] ids = new long[objects.size()];
                     int c = 0;
                     for (Object o : objects) {
                         ids[c++] = (Long) o;
@@ -1109,18 +1109,18 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             public Object doInBackground() {
                 try {
-                    Object[] objects2 = timeList.getSelectedValues();
+                    List objects2 = timeList.getSelectedValuesList();
 
-                    String[] ids2 = new String[objects2.length];
+                    String[] ids2 = new String[objects2.size()];
                     for (int c = 0; c < ids2.length; c++) {
-                        ids2[c] = ((JAMSCalendar) objects2[c]).toString();
+                        ids2[c] = ((JAMSCalendar) objects2.get(c)).toString();
                     }
 
-                    Object[] objects3 = entityList.getSelectedValues();
+                    List objects3 = entityList.getSelectedValuesList();
 
-                    long[] ids3 = new long[objects3.length];
+                    long[] ids3 = new long[objects3.size()];
                     for (int c = 0; c < ids3.length; c++) {
-                        ids3[c] = (Long) objects3[c];
+                        ids3[c] = (Long) objects3.get(c);
                     }
                     m = getProc().getCrossProduct(ids3, ids2);
                 } catch (SQLException ex) {

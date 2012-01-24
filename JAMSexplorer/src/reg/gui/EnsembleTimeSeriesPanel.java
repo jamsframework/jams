@@ -34,11 +34,10 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -175,16 +174,16 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    if (modelRunList.getSelectedValues().length == 1) {
+                    if (modelRunList.getSelectedValuesList().size() == 1) {
                         modelRun.setEnabled(true);
                         modelRunMean.setEnabled(false);
-                        if (timeList.getSelectedValues().length > 0) {
+                        if (timeList.getSelectedValuesList().size() > 0) {
                             crossProduct.setEnabled(true);
                         }
-                    } else if (modelRunList.getSelectedValues().length > 1) {
+                    } else if (modelRunList.getSelectedValuesList().size() > 1) {
                         modelRun.setEnabled(false);
                         modelRunMean.setEnabled(true);
-                        if (timeList.getSelectedValues().length > 0) {
+                        if (timeList.getSelectedValuesList().size() > 0) {
                             crossProduct.setEnabled(true);
                         }
                     } else {
@@ -203,16 +202,16 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    if (timeList.getSelectedValues().length == 1) {
+                    if (timeList.getSelectedValuesList().size() == 1) {
                         timePoint.setEnabled(true);
                         timeMean.setEnabled(false);
-                        if (modelRunList.getSelectedValues().length > 0) {
+                        if (modelRunList.getSelectedValuesList().size() > 0) {
                             crossProduct.setEnabled(true);
                         }
-                    } else if (timeList.getSelectedValues().length > 1) {
+                    } else if (timeList.getSelectedValuesList().size() > 1) {
                         timePoint.setEnabled(false);
                         timeMean.setEnabled(true);
-                        if (modelRunList.getSelectedValues().length > 0) {
+                        if (modelRunList.getSelectedValuesList().size() > 0) {
                             crossProduct.setEnabled(true);
                         }
                     } else {
@@ -232,7 +231,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    if (monthList.getSelectedValues().length == 1) {
+                    if (monthList.getSelectedValuesList().size() == 1) {
                         monthMean.setEnabled(true);
                     } else {
                         monthMean.setEnabled(false);
@@ -249,7 +248,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    if (yearList.getSelectedValues().length == 1) {
+                    if (yearList.getSelectedValuesList().size() == 1) {
                         yearMean.setEnabled(true);
                     } else {
                         yearMean.setEnabled(false);
@@ -647,7 +646,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
     private void showTimeStep() {
 
-        if ((timeList.getSelectedValues().length == 0) || (timeList.getSelectedValues().length > 1)) {
+        if ((timeList.getSelectedValuesList().size() == 0) || (timeList.getSelectedValuesList().size() > 1)) {
             return;
         }
 
@@ -683,7 +682,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
     private void showMonthlyMean() {
 
-        if (monthList.getSelectedValues().length == 0) {
+        if (monthList.getSelectedValuesList().size() == 0) {
             return;
         }
 
@@ -725,7 +724,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
     private void showYearlyMean() {
 
-        if (yearList.getSelectedValues().length == 0) {
+        if (yearList.getSelectedValuesList().size() == 0) {
             return;
         }
 
@@ -765,7 +764,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
     private void showTempMean() {
 
-        if (timeList.getSelectedValues().length == 0) {
+        if (timeList.getSelectedValuesList().size() == 0) {
             return;
         }
 
@@ -778,7 +777,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
             public Object doInBackground() {
                 try {
 
-                    Object[] objects = timeList.getSelectedValues();
+                    List objects = timeList.getSelectedValuesList();
 
                     ArrayList<JAMSCalendar> dateList = new ArrayList<JAMSCalendar>();
                     for (Object o : objects) {
@@ -808,7 +807,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
     }
 
     private void showModelRun() {
-        if (modelRunList.getSelectedValues().length == 0) {
+        if (modelRunList.getSelectedValuesList().size() == 0) {
             return;
         }
 
@@ -820,9 +819,9 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
             public Object doInBackground() {
                 try {
-                    Object[] objects = modelRunList.getSelectedValues();
+                    List objects = modelRunList.getSelectedValuesList();
 
-                    long[] ids = new long[objects.length];
+                    long[] ids = new long[objects.size()];
                     int c = 0;
                     for (Object o : objects) {
                         ids[c++] = (Long) o;
@@ -856,18 +855,18 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
             public Object doInBackground() {
                 try {
-                    Object[] objects1 = modelRunList.getSelectedValues();
+                    List objects1 = modelRunList.getSelectedValuesList();
 
-                    long[] ids1 = new long[objects1.length];
+                    long[] ids1 = new long[objects1.size()];
                     for (int c = 0; c < ids1.length; c++) {
-                        ids1[c] = (Long) objects1[c];
+                        ids1[c] = (Long) objects1.get(c);
                     }
 
-                    Object[] objects2 = timeList.getSelectedValues();
+                    List objects2 = timeList.getSelectedValuesList();
 
-                    String[] ids2 = new String[objects2.length];
+                    String[] ids2 = new String[objects2.size()];
                     for (int c = 0; c < ids2.length; c++) {
-                        ids2[c] = ((JAMSCalendar) objects2[c]).toString();
+                        ids2[c] = ((JAMSCalendar) objects2.get(c)).toString();
                     }
 
                     m = proc.getCrossProduct(ids1, ids2);

@@ -63,6 +63,7 @@ public class TimeFilterFactory {
         }
     }
 
+    @SuppressWarnings("deprecation")
     static public class MonthlyTimeFilter extends TimeFilter{
         boolean months[] = new boolean[12];
 
@@ -105,6 +106,7 @@ public class TimeFilterFactory {
         }
     }
 
+    @SuppressWarnings("deprecation")
     static public class YearlyRangeTimeFilter extends TimeFilter{
         int startDay, endDay;
 

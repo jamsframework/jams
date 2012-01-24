@@ -718,7 +718,7 @@ public class OptimizationWizard extends JPanel {
 public HashMap<String, String> createOptimizationIni() {
 HashMap<String, String> iniMap = new HashMap<String, String>();
 //erzeuge property file
-Object[] objects = this.parameterList.getSelectedValues();
+Object[] objects = this.parameterList.getSelectedValuesList();
 String parameterIDString = "";
 String objectiveIDString = "";
 String lowerBoundString = "";
@@ -740,7 +740,7 @@ startValueValid = false;
 }
 }
 
-objects = this.objectiveList.getSelectedValues();
+objects = this.objectiveList.getSelectedValuesList();
 for (Object obj : objects) {
 String objective = (String) obj;
 objectiveIDString += objective + ";";

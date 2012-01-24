@@ -53,7 +53,7 @@ public class Doku {
     static public void createDoc(String directory, String inJar, Class<?> superClass, HashMap<String, String> contentList, Vector<String> componentsList) throws Exception {
         JarFile jfile = new JarFile(inJar);
         File file = new File(inJar);
-        URLClassLoader loader = new URLClassLoader(new URL[]{file.toURL()}, ClassLoader.getSystemClassLoader());
+        URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()}, ClassLoader.getSystemClassLoader());
 
         Enumeration jarentries = jfile.entries();
 

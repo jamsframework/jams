@@ -90,7 +90,7 @@ public class Console
       {  try
          {  ch = System.in.read();
             if (ch < 0 
-               || java.lang.Character.isSpace((char)ch))
+               || java.lang.Character.isWhitespace((char)ch))
                done = true;
             else
                r = r + (char) ch;

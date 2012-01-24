@@ -348,7 +348,7 @@ public class WizardObjectivePanel extends JPanel implements Comparable{
         objectiveList.addListSelectionListener(new ListSelectionListener() {
 
             public void valueChanged(ListSelectionEvent evt) {
-                Object objectives[] = objectiveList.getSelectedValues();
+                Object objectives[] = objectiveList.getSelectedValuesList();
 
                 GridBagConstraints c = new GridBagConstraints();
                 int counter = 0;

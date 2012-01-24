@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -149,10 +150,10 @@ public class SimpleDSPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {                    
-                    if (timeList.getSelectedValues().length == 0) {
+                    if (timeList.getSelectedValuesList().isEmpty()) {
                         mean.setEnabled(false); 
                         showData.setEnabled(false);
-                    }else if (timeList.getSelectedValues().length == 1){
+                    }else if (timeList.getSelectedValuesList().size() == 1){
                         showData.setEnabled(true);
                         mean.setEnabled(false);                        
                     }else {
@@ -171,7 +172,7 @@ public class SimpleDSPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    if (monthList.getSelectedValues().length == 1) {
+                    if (monthList.getSelectedValuesList().size() == 1) {
                         monthMean.setEnabled(true);
                     } else {
                         monthMean.setEnabled(false);
@@ -188,7 +189,7 @@ public class SimpleDSPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    if (yearList.getSelectedValues().length == 1) {
+                    if (yearList.getSelectedValuesList().size() == 1) {
                         yearMean.setEnabled(true);
                     } else {
                         yearMean.setEnabled(false);
@@ -542,7 +543,7 @@ public class SimpleDSPanel extends DSPanel {
     }
     
     private void showData() {               
-        if (timeList.getSelectedValues().length == 0)                
+        if (timeList.getSelectedValuesList().isEmpty())                
             return;
                 
         workerDlg.setInderminate(false);
@@ -556,9 +557,9 @@ public class SimpleDSPanel extends DSPanel {
                     SimpleSerieProcessor proc = getProc();
                     // check if number of selected ids is equal to all ids
                     // if so, we better derive temp avg from monthly means
-                    Object[] objects = timeList.getSelectedValues();
+                    List objects = timeList.getSelectedValuesList();
 
-                    String[] ids = new String[objects.length];
+                    String[] ids = new String[objects.size()];
                     int c = 0;
                     for (Object o : objects) {
                         ids[c++] = o.toString();
@@ -585,7 +586,7 @@ public class SimpleDSPanel extends DSPanel {
     
     private void showMonthlyMean() {
 
-        if (monthList.getSelectedValues().length == 0) {
+        if (monthList.getSelectedValuesList().isEmpty()) {
             return;
         }
 
@@ -627,7 +628,7 @@ public class SimpleDSPanel extends DSPanel {
 
     private void showYearlyMean() {
 
-        if (yearList.getSelectedValues().length == 0) {
+        if (yearList.getSelectedValuesList().isEmpty()) {
             return;
         }
 
@@ -667,7 +668,7 @@ public class SimpleDSPanel extends DSPanel {
     }
 
     private void showMean() {               
-        if (timeList.getSelectedValues().length == 0)                
+        if (timeList.getSelectedValuesList().isEmpty())                
             return;
                 
         workerDlg.setInderminate(false);
@@ -681,9 +682,9 @@ public class SimpleDSPanel extends DSPanel {
                     SimpleSerieProcessor proc = getProc();
                     // check if number of selected ids is equal to all ids
                     // if so, we better derive temp avg from monthly means
-                    Object[] objects = timeList.getSelectedValues();
+                    List objects = timeList.getSelectedValuesList();
 
-                    String[] ids = new String[objects.length];
+                    String[] ids = new String[objects.size()];
                     int c = 0;
                     for (Object o : objects) {
                         ids[c++] = o.toString();
