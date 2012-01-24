@@ -14,6 +14,7 @@ import gw.ui.layerproperies.ShapefileLayerProperties;
 import gw.ui.util.ProxyTableModel;
 import jams.tools.StringTools;
 import java.io.File;
+import java.util.List;
 import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
@@ -129,8 +130,8 @@ public class ExportPanel extends javax.swing.JDialog {
         out_Message.setVisible(false);
 
 
-        Object[] selCols = li_columnList.getSelectedValues();
-        if (selCols == null || selCols.length == 0) {
+        List selCols = li_columnList.getSelectedValuesList();
+        if (selCols == null || selCols.isEmpty()) {
             out_Message.setVisible(true);
             out_Message.setText(java.util.ResourceBundle.getBundle("gw/resources/language").getString("L_SELECT_FIELDS"));
             System.out.println("Bitte Felder für den Export auswählen !");
@@ -155,7 +156,7 @@ public class ExportPanel extends javax.swing.JDialog {
 
 
         // selCols -> vSelCols
-        Vector<String> vSelCols = new Vector<String>(selCols.length);
+        Vector<String> vSelCols = new Vector<String>(selCols.size());
         for (Object selCol : selCols) {
             vSelCols.add((String) selCol);
         }

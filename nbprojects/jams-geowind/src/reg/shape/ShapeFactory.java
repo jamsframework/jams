@@ -4,10 +4,7 @@
  */
 package reg.shape;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.*;
 import gw.ui.util.ProxyTableModel;
 import java.io.File;
 import java.io.Serializable;
@@ -227,6 +224,7 @@ public class ShapeFactory {
      * @param directoryName
      * @return complete file name, if it is successful, otherwise null
      */
+    @SuppressWarnings("deprecation")
     public static String createShapeFromPoint(double lat, double lon, double elevation, String directoryName)
             throws Exception {
         String fileName = directoryName + File.separator + "point.shp";
@@ -324,6 +322,7 @@ public class ShapeFactory {
      * @param nextLat
      * @return polygon
      */
+    @SuppressWarnings("deprecation")
     private static Polygon createPolygon(double workLon, double workLat, double nextLon, double nextLat) {
         Polygon polygon;
         LinearRing linearRing;

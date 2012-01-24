@@ -87,6 +87,6 @@ public class OvalBorder implements Border {
     p.setBorder(new OvalBorder());
 
     f.getContentPane().add(p);
-    f.show();
+    f.setVisible(true);
   }
 }

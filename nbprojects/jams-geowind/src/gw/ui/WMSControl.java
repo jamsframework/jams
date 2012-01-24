@@ -24,7 +24,6 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ListDataListener;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import gw.ui.FancyPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -189,7 +188,7 @@ public class WMSControl extends javax.swing.JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                Object[] o = mapList.getSelectedValues();
+                List o = mapList.getSelectedValuesList();
                 for (Object elem : o) {
                     LayerInfo li = (LayerInfo) elem;
                     Layer l = new WMSTiledImageLayer(li.caps, li.params);
