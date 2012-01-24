@@ -151,10 +151,10 @@ public class ModelTree extends JAMSTree {
 
             @Override
             public void mousePressed(MouseEvent evt) {
-                if (!evt.isControlDown()) {
-                    ModelTree.this.setSelectionPath(null);
-                }                    
                 if (evt.getButton() == MouseEvent.BUTTON3) {
+                    if (!evt.isControlDown() && !evt.isShiftDown()) {
+                        ModelTree.this.setSelectionPath(null);
+                    }
                     showPopup(evt);
                 }
             }
