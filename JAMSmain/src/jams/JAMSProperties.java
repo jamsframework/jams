@@ -23,7 +23,10 @@ package jams;
 
 import jams.tools.JAMSTools;
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Properties;
 
 /**
  *
@@ -33,11 +36,12 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
     private Properties properties = new Properties();
     private String defaultFilename = "";
-    private HashMap<String, JAMSProperty> propertyMap = new HashMap<String, JAMSProperty>();
+    private HashMap<String, JAMSProperty> propertyMap = new HashMap<>();
     private static JAMSProperties theProperties;
 
     /**
      * Creates a new JAMSProperties object
+     *
      * @param properties A java.util.Properties object containing the properties
      */
     public JAMSProperties(Properties properties) {
@@ -48,6 +52,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
     /**
      * Loads properties from a file
+     *
      * @param fileName The name of the file to read properties from
      * @throws java.io.IOException
      */
@@ -55,6 +60,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
         try {
             properties.load(new FileInputStream(fileName));
             defaultFilename = fileName;
+            convertToBoolean();
 
             for (Object key : properties.keySet()) {
                 JAMSProperty property = propertyMap.get(key);
@@ -71,8 +77,27 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
         }
     }
 
+    /*
+     * Maintain compatibility to older property files
+     */
+    private void convertToBoolean() {
+        if ("1".equals(properties.getProperty(ERRORDLG_IDENTIFIER))) {
+            properties.setProperty(ERRORDLG_IDENTIFIER, "true");
+        }
+        if ("1".equals(properties.getProperty(WINDOWENABLE_IDENTIFIER))) {
+            properties.setProperty(WINDOWENABLE_IDENTIFIER, "true");
+        }
+        if ("1".equals(properties.getProperty(GUICONFIG_IDENTIFIER))) {
+            properties.setProperty(GUICONFIG_IDENTIFIER, "true");
+        }
+        if ("1".equals(properties.getProperty(USE_DEFAULT_WS_PATH))) {
+            properties.setProperty(USE_DEFAULT_WS_PATH, "true");
+        }
+    }
+
     /**
      * Saves properties to a file
+     *
      * @param fileName The name of the file to save properties to
      * @throws java.io.IOException
      */
@@ -87,6 +112,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
     /**
      * Gets a property value
+     *
      * @param key The identifier for the property
      * @return The property value
      */
@@ -96,6 +122,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
     /**
      * Gets a property value or default value if property does not exist
+     *
      * @param key The identifier for the property
      * @param defaultValue The default value
      * @return The property value
@@ -110,6 +137,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
     /**
      * Sets a property value
+     *
      * @param key The identifier for the property
      * @param value The value of the property
      */
@@ -132,6 +160,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
     /**
      * Adds an observer for some property
+     *
      * @param key The identifier for the property
      * @param obs The java.util.Observer object
      */
@@ -146,6 +175,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
     /**
      * Creates a string representation of this object
+     *
      * @return A string representation of this object
      */
     @Override
@@ -155,6 +185,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
     /**
      * Creates a new JAMSProperties object
+     *
      * @return The JAMSProperties object
      */
     public static JAMSProperties createProperties() {
@@ -195,6 +226,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
     /**
      * Set the default file name for storing JAMS properties
+     *
      * @param defaultFilename The default file name
      */
     public void setDefaultFilename(String defaultFilename) {
