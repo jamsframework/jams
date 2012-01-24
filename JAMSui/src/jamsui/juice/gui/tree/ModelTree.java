@@ -23,7 +23,6 @@ package jamsui.juice.gui.tree;
 
 import jams.JAMS;
 import jams.JAMSException;
-import java.awt.Component;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +33,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -53,8 +51,6 @@ import jamsui.juice.JUICE;
 import jamsui.juice.gui.ComponentInfoDlg;
 import javax.swing.JFrame;
 import jamsui.juice.gui.ModelView;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
 import org.w3c.dom.Document;
 
 /**
@@ -155,6 +151,9 @@ public class ModelTree extends JAMSTree {
 
             @Override
             public void mousePressed(MouseEvent evt) {
+                if (!evt.isControlDown()) {
+                    ModelTree.this.setSelectionPath(null);
+                }                    
                 if (evt.getButton() == MouseEvent.BUTTON3) {
                     showPopup(evt);
                 }
@@ -182,6 +181,9 @@ public class ModelTree extends JAMSTree {
                         break;
                     case '+':
                         moveDownNode();
+                        break;
+                    case 'E':
+                        toggleEnable();
                         break;
                 }
             }
