@@ -21,6 +21,12 @@
  */
 package jams.io;
 
+import jams.JAMS;
+import jams.data.Attribute;
+import jams.data.JAMSDataFactory;
+import jams.meta.ComponentField;
+import jams.meta.ModelDescriptor;
+import jams.tools.StringTools;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -32,12 +38,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import jams.JAMS;
-import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
-import jams.meta.ComponentField;
-import jams.meta.ModelDescriptor;
-import jams.tools.StringTools;
 
 /**
  *
@@ -235,7 +235,7 @@ public class ParameterProcessor {
      * @return A HashMap object.
      */
     public static HashMap<String, Element> getComponentHash(Document model) {
-        HashMap<String, Element> componentHash = new HashMap<String, Element>();
+        HashMap<String, Element> componentHash = new HashMap<>();
 
         ArrayList<Element> elementList = getElementList(model);
         // process the elements
@@ -255,14 +255,14 @@ public class ParameterProcessor {
      */
     public static HashMap<String, HashMap<String, Element>> getAttributeHash(Document model) {
 
-        HashMap<String, HashMap<String, Element>> componentHash = new HashMap<String, HashMap<String, Element>>();
+        HashMap<String, HashMap<String, Element>> componentHash = new HashMap<>();
 
         ArrayList<Element> elementList = getElementList(model);
 
         // process the elements
         for (Element element : elementList) {
 
-            HashMap<String, Element> attributeHash = new HashMap<String, Element>();
+            HashMap<String, Element> attributeHash = new HashMap<>();
 
             // put the element itself into the map
             attributeHash.put(element.getAttribute("name"), element);
@@ -271,14 +271,17 @@ public class ParameterProcessor {
             NodeList childs = element.getChildNodes();
             for (int j = 0; j < childs.getLength(); j++) {
                 Node child = childs.item(j);
-                if (child.getNodeName().equals("var")) {
-                    Element var = (Element) child;
-                    if (var.hasAttribute("value")) {
-                        attributeHash.put(var.getAttribute("name"), var);
-                    }
-                } else if (child.getNodeName().equals("attribute")) {
-                    Element attribute = (Element) child;
-                    attributeHash.put(attribute.getAttribute("name"), attribute);
+                switch (child.getNodeName()) {
+                    case "var":
+                        Element var = (Element) child;
+                        if (var.hasAttribute("value")) {
+                            attributeHash.put(var.getAttribute("name"), var);
+                        }
+                        break;
+                    case "attribute":
+                        Element attribute = (Element) child;
+                        attributeHash.put(attribute.getAttribute("name"), attribute);
+                        break;
                 }
             }
 
@@ -313,7 +316,7 @@ public class ParameterProcessor {
         Element root = model.getDocumentElement();
 
         // create an ArrayList that holds all interesting elements
-        ArrayList<Element> elementList = new ArrayList<Element>();
+        ArrayList<Element> elementList = new ArrayList<>();
 
         // first add the model itself
         elementList.add(root);

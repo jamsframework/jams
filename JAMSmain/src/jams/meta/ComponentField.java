@@ -56,6 +56,7 @@ public class ComponentField {
     }
 
     public void unlinkFromAttribute() {
+        // we need an array since contextAttributes is modified in unlinkFromAttribute(ca)
         for (ContextAttribute ca : this.contextAttributes.toArray(new ContextAttribute[this.contextAttributes.size()])) {
             unlinkFromAttribute(ca);
         }
@@ -82,17 +83,28 @@ public class ComponentField {
     }
 
     public void linkToAttribute(ContextDescriptor context, String attributeName) throws AttributeLinkException {
+        linkToAttribute(context, attributeName, true);
+    }
+    
+    public void linkToAttribute(ContextDescriptor context, String attributeName, boolean removeOldLink) throws AttributeLinkException {
+        
         Class basicType;
+        
+        if (removeOldLink) {
+            unlinkFromAttribute();
+        }
+        
         // if there is more than one attribute bound to this
         if (attributeName.contains(";")) {
             if (this.type.isArray()) {
+
                 String[] attributeNames = StringTools.toArray(attributeName, ";");
                 for (String s : attributeNames) {
-                    linkToAttribute(context, s);
+                    linkToAttribute(context, s, false);
                 }
                 return;
             } else {
-                throw new AttributeLinkException("Semicolons are not allowed in attribute names!("+attributeName+")", JAMS.i18n("Error"));
+                throw new AttributeLinkException("Semicolons are not allowed in attribute names!(" + attributeName + ")", JAMS.i18n("Error"));
             }
         }
         if (this.type.isArray()) {
@@ -108,10 +120,7 @@ public class ComponentField {
         if ((attribute != null) && (attribute.getType() != basicType)) {
             throw new AttributeLinkException("Attribute " + attributeName + " already exists in context " + context.getInstanceName() + " with different type " + attribute.getType(), JAMS.i18n("Error"));
         }
-        if (!this.type.isArray()) {
-            // unlink from old ContextAttribute
-            unlinkFromAttribute();
-        }
+
         if (attribute == null) {
             attribute = new ContextAttribute(attributeName, basicType, context);
             context.getDynamicAttributes().put(attributeName, attribute);
@@ -119,7 +128,7 @@ public class ComponentField {
         attribute.getFields().add(this);
         this.contextAttributes.add(attribute);
     }
-
+    
     public class AttributeLinkException extends JAMSException {
 
         public AttributeLinkException(String message, String header) {

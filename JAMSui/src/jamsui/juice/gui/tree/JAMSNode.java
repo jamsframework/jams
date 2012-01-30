@@ -131,8 +131,10 @@ public class JAMSNode extends ModelNode {
             ComponentDescriptor cd = ((ComponentDescriptor) this.getUserObject()).cloneNode();
             clone = new JAMSNode(cd, this.getType(), target);
             cd.register(target.getComponentCollection());
+        } catch (ComponentDescriptor.RenameException ex) {
+            Logger.getLogger(JAMSNode.class.getName()).log(Level.INFO, ex.getMessage());
         } catch (JAMSException ex) {
-            Logger.getLogger(JAMSNode.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JAMSNode.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
         return clone;
     }

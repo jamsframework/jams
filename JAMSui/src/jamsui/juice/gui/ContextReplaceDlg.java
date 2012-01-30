@@ -22,6 +22,9 @@
 
 package jamsui.juice.gui;
 
+import jams.JAMS;
+import jams.gui.tools.GUIHelper;
+import jams.meta.ComponentDescriptor;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -32,18 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.WindowConstants;
-import jams.gui.tools.GUIHelper;
-import jams.JAMS;
-import jams.meta.ComponentDescriptor;
+import javax.swing.*;
 
 /**
  *

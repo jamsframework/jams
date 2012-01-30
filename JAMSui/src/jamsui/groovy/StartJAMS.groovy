@@ -69,8 +69,6 @@ runtime = new StandardRuntime(properties)
 modelIO = ModelIO.getStandardModelIO()
 modelDescriptor = modelIO.loadModel(modelDoc, runtime.getClassLoader(), false, new ExHandler())
 
-
-
 // set the workspace explicitly if needed
 modelDescriptor.setWorkspacePath(defaultWorkspacePath)
 

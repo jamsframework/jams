@@ -164,9 +164,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
         ComponentDescriptor cd;
         HashSet<String> contexts = new HashSet<String>();
         HashMap<String, HashSet<ComponentDescriptor>> pendingContexts = new HashMap<String, HashSet<ComponentDescriptor>>();
-
-//        cd = (ComponentDescriptor) rootNode.getUserObject();
-
+        
         Enumeration nodeEnum = rootNode.breadthFirstEnumeration();
 
         while (nodeEnum.hasMoreElements()) {
@@ -185,7 +183,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                 ancestors.add(ancestor.getUserObject().toString());
                 ancestor = (JAMSNode) ancestor.getParent();
             }
-
+            
             for (ComponentField var : cd.getComponentFields().values()) {
                 if (var.getContext() != null) {
                     String contextName = var.getContext().getInstanceName();
@@ -226,6 +224,9 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             ancestors.put(cd.toString(), cd);
             ancestor = (JAMSNode) ancestor.getParent();
         }
+        cd = (ComponentDescriptor) rootNode.getUserObject();
+        ancestorNames.add(cd.toString());
+        ancestors.put(cd.toString(), cd);
 
         String ancestorNameArray[] = ancestorNames.toArray(new String[ancestorNames.size()]);
 
