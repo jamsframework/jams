@@ -432,13 +432,13 @@ public class OutputDSDlg extends JDialog {
         private DSDlg newDSDlg, editDSDlg;
 
         public DSTableInput() {
-            super(new String[]{"enabled", "store"}, new Class[]{Boolean.class, String.class}, new boolean[]{true, false}, false);
+            super(new String[]{JAMS.i18n("Enabled"), "Store [Context]"}, new Class[]{Boolean.class, String.class}, new boolean[]{true, false}, false);
 
             getTable().setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
             int vColIndex = 0;
             TableColumn col = getTable().getColumnModel().getColumn(vColIndex);
-            int width = 50;
+            int width = 20;
             col.setPreferredWidth(width);
 
 
@@ -541,38 +541,44 @@ public class OutputDSDlg extends JDialog {
         protected void editItem() {
             //get the current selection
             int selection = getTable().getSelectedRow();
-            if (selection >= 0) {
-                // edit this item
-                OutputDSDescriptor ods = (OutputDSDescriptor) tableData.getElementAt(selection)[1];
-
-                if (editDSDlg == null) {
-                    editDSDlg = new DSDlg(OutputDSDlg.this, JAMS.i18n("Edit_datastore"), true, true, false);
-                }
-
-                editDSDlg.update(ods);
-                editDSDlg.setVisible(true);
-
-                if (editDSDlg.getResult() == DSDlg.RESULT_OK) {
-
-                    if (StringTools.isEmptyString(editDSDlg.getDsName())) {
-                        GUIHelper.showErrorDlg(this, JAMS.i18n("Datastore_name_must_not_be_empty!"), JAMS.i18n("Error_creating_new_datastore"));
-                        editItem();
-                        return;
-                    }
-
-                    ods.setName(editDSDlg.getDsName());
-                    ods.setEnabled(editDSDlg.isDsEnabled());
-                    scrollPane.revalidate();
-                    scrollPane.repaint();
-                }
-                setValue(md);
+            if (selection < 0) {
+                return;
             }
+            
+            // edit this item
+            OutputDSDescriptor ods = (OutputDSDescriptor) tableData.getElementAt(selection)[1];
+
+            if (editDSDlg == null) {
+                editDSDlg = new DSDlg(OutputDSDlg.this, JAMS.i18n("Edit_datastore"), true, true, false);
+            }
+
+            editDSDlg.update(ods);
+            editDSDlg.setVisible(true);
+
+            if (editDSDlg.getResult() == DSDlg.RESULT_OK) {
+
+                if (StringTools.isEmptyString(editDSDlg.getDsName())) {
+                    GUIHelper.showErrorDlg(this, JAMS.i18n("Datastore_name_must_not_be_empty!"), JAMS.i18n("Error_creating_new_datastore"));
+                    editItem();
+                    return;
+                }
+
+                ods.setName(editDSDlg.getDsName());
+                ods.setEnabled(editDSDlg.isDsEnabled());
+                scrollPane.revalidate();
+                scrollPane.repaint();
+            }
+            setValue(md);
+
         }
 
         @Override
         protected void removeItem() {
             //get the current selection
             int selection = getTable().getSelectedRow();
+            if (selection < 0) {
+                return;
+            }
 
             OutputDSDescriptor value = (OutputDSDescriptor) tableData.getValue().get(selection)[1];
             if (value != null) {
