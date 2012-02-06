@@ -360,6 +360,10 @@ public class ParameterProcessor {
     public static void preProcess(Document modelDoc) {
 
         Element launcherElement = (Element) modelDoc.getDocumentElement().getElementsByTagName("launcher").item(0);
+        if (launcherElement == null) {
+            return;
+        }
+        
         NodeList propertyList = launcherElement.getElementsByTagName("property");
 //        HashMap<String, Element> componentHash = getComponentHash(modelDoc);
         HashMap<String, HashMap<String, Element>> attributeHash = getAttributeHash(modelDoc);
