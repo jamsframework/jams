@@ -21,6 +21,13 @@
  */
 package jams.meta;
 
+import jams.JAMSException;
+import jams.meta.ComponentField.AttributeLinkException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
@@ -48,7 +55,55 @@ public class ModelNode extends DefaultMutableTreeNode {
         this.type = type;
     }
 
+    public ModelNode clone(ModelDescriptor target, boolean deepCopy, Map<ContextDescriptor, ContextDescriptor> contextMap) {
 
+        ModelNode nodeCopy = null;
+        try {
+            //@TODO: proper handling
+            ComponentDescriptor cd = (ComponentDescriptor) this.getUserObject();
+            ComponentDescriptor cdCopy = cd.cloneNode();
+            nodeCopy = new ModelNode(cdCopy);
+            nodeCopy.setType(this.getType());
+
+            try {
+                cdCopy.register(target);
+            } catch (ComponentDescriptor.RenameException ex) {
+                Logger.getLogger(ModelNode.class.getName()).log(Level.INFO, ex.getMessage());
+            }
+
+            if (cd instanceof ContextDescriptor) {
+                contextMap.put((ContextDescriptor) cd, (ContextDescriptor) cdCopy);
+            }
+
+        } catch (JAMSException ex) {
+            Logger.getLogger(ModelNode.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+
+        if (deepCopy && (nodeCopy != null)) {
+            for (Enumeration<ModelNode> e = this.children(); e.hasMoreElements();) {
+
+                ModelNode childNode = e.nextElement().clone(target, true, contextMap);
+                nodeCopy.add(childNode);
+
+                ComponentDescriptor childCd = (ComponentDescriptor) childNode.getUserObject();
+                for (ComponentField field : childCd.getComponentFields().values()) {
+                    ContextDescriptor context = field.getContext();
+                    if ((context != null) && (contextMap.containsKey(context))) {
+                        try {
+                            ContextDescriptor newContext = contextMap.get(context);
+                            field.linkToAttribute(newContext, field.getAttribute());
+                        } catch (AttributeLinkException ex) {
+                            Logger.getLogger(ModelNode.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+        return nodeCopy;
+    }
 //    void add(ModelNode child);
 //
 //    void add(int index, ModelNode child);

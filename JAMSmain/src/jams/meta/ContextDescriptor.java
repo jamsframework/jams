@@ -38,6 +38,7 @@ public class ContextDescriptor extends ComponentDescriptor {
 
     private HashMap<String, ContextAttribute> staticAttributes = new HashMap<String, ContextAttribute>();
     private HashMap<String, ContextAttribute> dynamicAttributes = new HashMap<String, ContextAttribute>();
+    private int concurrency = 1;
 
     public ContextDescriptor(String instanceName, Class clazz) throws NullClassException {
         super(instanceName, clazz);
@@ -85,6 +86,20 @@ public class ContextDescriptor extends ComponentDescriptor {
         ca.setValue(value);
 
         return ca;
+    }
+
+    /**
+     * @return the concurrency
+     */
+    public int getConcurrency() {
+        return concurrency;
+    }
+
+    /**
+     * @param concurrency the concurrency to set
+     */
+    public void setConcurrency(int concurrency) {
+        this.concurrency = concurrency;
     }
 
     public class ContextAttributeException extends JAMSException {

@@ -72,7 +72,10 @@ modelDescriptor = modelIO.loadModel(modelDoc, runtime.getClassLoader(), false, n
 // set the workspace explicitly if needed
 modelDescriptor.setWorkspacePath(defaultWorkspacePath)
 
+modelDescriptor.enableConcurrency(2, runtime.getClassLoader(), new ExHandler());
+System.out.println(XMLTools.getStringFromDocument(modelIO.getModelDocument(modelDescriptor)));
+
 // load the model into the runtime and execute it
-runtime.loadModel(modelDescriptor, defaultWorkspacePath)
-runtime.runModel()
+//runtime.loadModel(modelDescriptor, defaultWorkspacePath)
+//runtime.runModel()
 

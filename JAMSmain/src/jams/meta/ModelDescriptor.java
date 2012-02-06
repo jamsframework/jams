@@ -25,6 +25,7 @@ import jams.JAMS;
 import jams.JAMSException;
 import jams.ExceptionHandler;
 import jams.io.ParameterProcessor;
+import jams.meta.ComponentDescriptor.NullClassException;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelElement;
 import jams.meta.ModelProperties.ModelProperty;
@@ -35,6 +36,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -57,8 +60,8 @@ public class ModelDescriptor extends ComponentCollection {
     }
 
     /*
-     * Create a new name for a component instance.
-     * If possible, use the given name, else add a suffix in order to create a unique one.
+     * Create a new name for a component instance. If possible, use the given
+     * name, else add a suffix in order to create a unique one.
      */
     @Override
     public String createComponentInstanceName(String name) {
@@ -238,9 +241,11 @@ public class ModelDescriptor extends ComponentCollection {
 
         }
         /*
-        if (attributeName.equals("workspace") && (property.component.getClazz() == JAMSModel.class)) {
-        property.var = property.component.createComponentAttribute(attributeName, JAMSDirName.class, ComponentDescriptor.ComponentAttribute.READ_ACCESS);
-        }
+         * if (attributeName.equals("workspace") &&
+         * (property.component.getClazz() == JAMSModel.class)) { property.var =
+         * property.component.createComponentAttribute(attributeName,
+         * JAMSDirName.class,
+         * ComponentDescriptor.ComponentAttribute.READ_ACCESS); }
          */
         //check wether the referred parameter is existing or not
         if ((property.attribute == null) && (property.var == null)
@@ -348,7 +353,7 @@ public class ModelDescriptor extends ComponentCollection {
     public void setRootNode(ModelNode rootNode) {
         this.rootNode = rootNode;
     }
-    
+
     /**
      * @return the modelName
      */
@@ -374,5 +379,75 @@ public class ModelDescriptor extends ComponentCollection {
         }
 
         return fields;
+    }
+
+    private boolean enableConcurrency(ModelNode node, ContextDescriptor concurrencyController, int numThreads, ExceptionHandler exHandler) {
+
+        Object o = node.getUserObject();
+
+        if (o instanceof ContextDescriptor) {
+            ContextDescriptor cd = (ContextDescriptor) o;
+
+            if (!cd.isEnabled()) {
+                return false;
+            }
+
+            System.out.println(cd.getInstanceName());
+
+            if (cd.getConcurrency() > 1) {
+
+                /**
+                 * 1. detach context from parent, replace it by controller 
+                 * 2. create n copies of context and attach them to controller
+                 */
+
+                ModelNode parent = (ModelNode) node.getParent();
+                int index = parent.getIndex(node);                
+                ModelNode ccNode = new ModelNode(concurrencyController);
+                ccNode.setType(ModelNode.CONTEXT_TYPE);
+                parent.insert(ccNode, index);
+                node.removeFromParent();
+                
+                for (int i = 0; i < numThreads; i++) {
+                    ModelNode copy = node.clone(this, true, new HashMap<ContextDescriptor, ContextDescriptor>());
+                    ccNode.add(copy);
+                }
+
+                return true;
+            }
+
+            for (int i = 0; i < node.getChildCount(); i++) {
+                ModelNode child = (ModelNode) node.getChildAt(i);
+                if (enableConcurrency(child, concurrencyController, numThreads, exHandler)) {
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This methods will search the model for contexts that can be executed in
+     * parallel. Using depth first search, the first context found will be 
+     * replaced by a special controller context that contains numThread copies
+     * of the original context. The controller context controls the parallel
+     * execution of the numThreads contexts.
+     * @param numThreads Number of parallel threads
+     * @param loader The class loader to be used to load concurrency controller
+     * @param exHandler An exception handler
+     * @throws JAMSException 
+     */
+    public void enableConcurrency(int numThreads, ClassLoader loader, ExceptionHandler exHandler) throws JAMSException {
+
+        try {
+
+            ContextDescriptor cc = new ContextDescriptor("ConcurrentContext", loader.loadClass("jams.model.JAMSContext"), this, exHandler);
+            enableConcurrency(getRootNode(), cc, numThreads, exHandler);
+
+        } catch (ClassNotFoundException ex) {
+            throw new JAMSException(ex.getMessage(), ex);
+        }
+
+
     }
 }

@@ -33,6 +33,7 @@ import jams.meta.ComponentField.AttributeLinkException;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelProperty;
 import jams.tools.StringTools;
+import jams.tools.XMLTools;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -90,9 +91,10 @@ public class ModelIO {
 
         // do some preprocessing on the XML document to be backward compatible
         ParameterProcessor.preProcess(modelDoc);
-
-        return getModelDescriptor(modelDoc, processEditors, exHandler);
-
+        
+        ModelDescriptor md = getModelDescriptor(modelDoc, processEditors, exHandler);
+        return md;
+        
     }
 
     private ModelDescriptor getModelDescriptor(Document modelDoc, boolean processEditors, ExceptionHandler exHandler) throws NullClassException {
@@ -150,9 +152,7 @@ public class ModelIO {
                 try {
                     rootNode.add(getSubTree(element, md, exHandler));
                 } catch (NoClassDefFoundError ncdfe) {
-                    //TODO exception handling
-                    System.out.println(ncdfe);
-                    ncdfe.printStackTrace();
+                    exHandler.handle(new JAMSException(ncdfe.getMessage(), ncdfe));
                 } catch (ModelLoadException mle) {
                     exHandler.handle(mle);
                 } catch (NullClassException nfe) {
@@ -247,6 +247,10 @@ public class ModelIO {
             rootNode = nodeFactory.createNode(cd);
             rootNode.setType(ModelNode.CONTEXT_TYPE);
 
+            if (rootElement.hasAttribute("concurrency")) {
+                cd.setConcurrency(Integer.parseInt(rootElement.getAttribute("concurrency")));
+            }
+            
             NodeList children = rootElement.getChildNodes();
             for (int index = 0; index < children.getLength(); index++) {
                 Node node = children.item(index);
