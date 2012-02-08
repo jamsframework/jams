@@ -34,7 +34,9 @@ import jams.model.*;
  @JAMSComponentDescription(
         title="Title",
         author="Author",
-        description="Description"
+        description="Description",
+        date = "YYYY-MM-DD",
+        version = "1.0_0"
         )
 public class ${name} extends JAMSComponent {
 
