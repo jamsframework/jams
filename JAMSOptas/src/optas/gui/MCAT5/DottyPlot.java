@@ -82,10 +82,10 @@ public class DottyPlot extends MCAT5Plot {
         plot.setDataset(0, new XYSeriesCollection(dataset));
 
         if (plot.getRangeAxis() != null) {
-            plot.getRangeAxis().setAutoRange(true);
+            plot.getRangeAxis().setRange(p2.getMin(), p2.getMax());
         }
         if (plot.getDomainAxis() != null) {
-            plot.getDomainAxis().setAutoRange(true);
+            plot.getDomainAxis().setRange(p1.getMin(), p1.getMax());
         }
 
     }

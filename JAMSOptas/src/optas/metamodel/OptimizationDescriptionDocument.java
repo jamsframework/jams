@@ -161,14 +161,7 @@ public class OptimizationDescriptionDocument implements Serializable{
 
         return objective;
     }
-
-    /**
-     * @param objectiveDesc the objectiveDesc to set
-     */
-    public void setObjective(SortedMap<Integer, optas.metamodel.Objective> objective) {
-        //this.objective = objective;
-    }
-
+    
     /**
      * @return the optimizationDesc
      */

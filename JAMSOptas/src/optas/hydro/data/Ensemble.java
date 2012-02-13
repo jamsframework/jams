@@ -5,7 +5,9 @@
 
 package optas.hydro.data;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 /**
  *
@@ -53,6 +55,18 @@ public abstract class Ensemble extends DataSet{
     }
     public Integer[] getIds(){
         return this.id;
+    }
+
+    public void retainIds(Integer ids[]){
+        TreeSet<Integer> set1 = new TreeSet<Integer>();
+        set1.addAll(Arrays.asList(ids));
+
+        TreeSet<Integer> set2 = new TreeSet<Integer>();
+        set2.addAll(Arrays.asList(id));
+
+        set2.removeAll(set1);
+        for (Integer i : set2)
+            removeId(i);
     }
 
     public void removeId(Integer id){

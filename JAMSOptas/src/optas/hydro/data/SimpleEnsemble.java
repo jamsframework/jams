@@ -5,6 +5,7 @@
 package optas.hydro.data;
 
 import java.util.Arrays;
+import java.util.TreeSet;
 
 /**
  *
@@ -153,5 +154,20 @@ public class SimpleEnsemble extends Ensemble{
 
         currentIndex--;
         this.value[index] = this.value[size];
+    }
+
+    public void calcPlus(double d){
+        for (int i=0;i<this.size;i++)
+            value[i] += d;
+    }
+
+    public void calcMul(double d){
+        for (int i=0;i<this.size;i++)
+            value[i] *= d;
+    }
+
+    public void calcAbs(){
+        for (int i=0;i<this.size;i++)
+            value[i] = Math.abs(value[i]);
     }
 }

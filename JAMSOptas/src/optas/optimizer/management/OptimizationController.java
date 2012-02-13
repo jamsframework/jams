@@ -7,6 +7,11 @@ package optas.optimizer.management;
 
 import jams.data.Attribute;
 import jams.model.JAMSVarDescription;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
 import optas.metamodel.Optimization;
 import optas.metamodel.Parameter;
 import optas.optimizer.Optimizer;
@@ -30,11 +35,51 @@ public abstract class OptimizationController extends OptimizerWrapper {
     description = "parameter for relaxation control",
     defaultValue = "-1.0")
     public Attribute.Double relaxationParameter;
-    
+
     private static int id = 0;
     int mainObjIndex;
     
-    public class OptimizationConfiguration {
+    File logFile = null;
+    transient BufferedWriter writer = null;
+
+    protected void log(String msg) {
+        if (writer != null) {
+            try {
+                writer.write(msg);
+                this.getModel().getRuntime().println(msg);
+                writer.newLine();
+            } catch (IOException ioe) {
+            }
+        }else{
+            this.getModel().getRuntime().println(msg);
+        }
+    }
+
+    @Override
+    public void init(){
+        super.init();
+
+        if (logFile == null) {
+            log("Warning: output file was not setup! Set to optimization.log");
+            this.logFile = new File(this.getModel().getWorkspacePath()  + "/" + "optimization.log");
+        }
+        try {
+            writer = new BufferedWriter(new FileWriter(logFile));
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+
+    @Override
+    public void cleanup(){
+        try{
+            writer.close();
+        }catch(IOException ioe){
+            ioe.printStackTrace();
+            System.out.println(ioe);
+        }
+    }
+    public class OptimizationConfiguration implements Serializable {
         protected Optimization o;
         protected AbstractFunction evaluate = null;
 
@@ -77,7 +122,8 @@ public abstract class OptimizationController extends OptimizerWrapper {
         }
 
         public void log(String msg) {
-            this.evaluate.logging(msg);
+            if (evaluate != null)
+                this.evaluate.logging(msg);
         }
 
         public double[] evaluate(double[] x) throws ObjectiveAchievedException, SampleLimitException {
@@ -88,7 +134,7 @@ public abstract class OptimizationController extends OptimizerWrapper {
             return this.lowerBound;
         }
 
-        public double[] geUpperBound() {
+        public double[] getUpperBound() {
             return this.upperBound;
         }
 
@@ -141,6 +187,7 @@ public abstract class OptimizationController extends OptimizerWrapper {
         }
 
         public Optimizer loadOptimizer(String className) {
+            log("Load optimizer: Class: "+ o.getOptimizerDescription().getOptimizerClassName());
             if (className == null) {
                 Optimizer optimizer = OptimizerLibrary.loadOptimizer(OptimizationController.this.getModel().getRuntime(),
                         o.getOptimizerDescription().getOptimizerClassName());

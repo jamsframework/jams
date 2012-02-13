@@ -10,6 +10,7 @@ import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.SimpleEnsemble;
 import optas.optimizer.HaltonSequenceSampling;
 import optas.optimizer.Optimizer.AbstractFunction;
+import optas.optimizer.RandomSampler;
 import optas.optimizer.SampleLimitException;
 import optas.optimizer.management.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory.Sample;
@@ -36,7 +37,7 @@ public abstract class SensitivityAnalyzer {
     protected SimpleEnsemble x_raw[];
     protected EfficiencyEnsemble y_raw;
 
-    protected boolean isUsingInterpolation = true;
+    private boolean isUsingInterpolation = true;
     protected int sampleSize = 1000;
     double range[][] = null;
 
@@ -44,7 +45,6 @@ public abstract class SensitivityAnalyzer {
     double sensitivityVariance[];
 
     boolean isVarianceCalulated = false;
-
 
     protected double[] transformFromUnitCube(double x[]){
         double[] y = new double[n];
@@ -72,12 +72,12 @@ public abstract class SensitivityAnalyzer {
     }
 
     public void setInterpolation(boolean isUsingInterpolation){
-        this.isUsingInterpolation = isUsingInterpolation;
+        this.setIsUsingInterpolation(isUsingInterpolation);
         isInit = false;
     }
 
     public boolean getInterpolation(){
-        return this.isUsingInterpolation;
+        return this.isIsUsingInterpolation();
     }
 
     public void setSampleSize(int sampleSize){
@@ -110,7 +110,7 @@ public abstract class SensitivityAnalyzer {
         for (int j=0;j<n;j++){
             x[j] = new SimpleEnsemble(x_raw[j].name + "(*)", size);
         }
-        y = new EfficiencyEnsemble(y_raw.name + "(*)", size, y_raw.isPositiveBest());
+        y = new EfficiencyEnsemble(y_raw.name + "(*)", size, true);
 
         HaltonSequenceSampling sampler = new HaltonSequenceSampling();
         sampler.setFunction(new AbstractFunction() {
@@ -171,12 +171,17 @@ public abstract class SensitivityAnalyzer {
         isInit = false;
     }
 
+    public Interpolation getInterpolationMethod(){
+        return I;
+    }
+
     private void updateData(){
-        if (this.isUsingInterpolation && I != null){
+        if (this.isIsUsingInterpolation() && I != null){
             sampleData(sampleSize);
         }else{
             this.x = x_raw;
             this.y = y_raw;
+            L = y.getSize();
         }
     }
 
@@ -189,13 +194,16 @@ public abstract class SensitivityAnalyzer {
     }
             
     public void init(){
-        if (I == null){
-            setInterpolationMethod(new NeuralNetwork());
-        }
-        I.setData(x_raw, y_raw);
-        I.init();
+        if (this.isUsingInterpolation) {
+            if (I == null) {
+                setInterpolationMethod(new NeuralNetwork());
+            }
 
-        this.CVError = I.estimateCrossValidationError(5, Interpolation.ErrorMethod.E2);
+            I.setData(x_raw, y_raw);
+            I.init();
+
+            this.CVError = I.estimateCrossValidationError(5, Interpolation.ErrorMethod.E2);
+        }
         updateData();
 
         range = this.getParameterRange();
@@ -238,5 +246,19 @@ public abstract class SensitivityAnalyzer {
             isVarianceCalulated = true;
         }
         return Math.sqrt(sensitivityVariance[parameter]);
+    }
+
+    /**
+     * @return the isUsingInterpolation
+     */
+    public boolean isIsUsingInterpolation() {
+        return isUsingInterpolation;
+    }
+
+    /**
+     * @param isUsingInterpolation the isUsingInterpolation to set
+     */
+    public void setIsUsingInterpolation(boolean isUsingInterpolation) {
+        this.isUsingInterpolation = isUsingInterpolation;
     }
 }

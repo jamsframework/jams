@@ -5,18 +5,12 @@
 package optas.hydro;
 
 import java.util.ArrayList;
-import optas.hydro.data.SimpleEnsemble;
-import optas.hydro.data.TimeSerie;
 
 /**
  *
  * @author chris
  */
 public class SimilarityBasedOptimizationScheme extends OptimizationScheme{
-
-    SimilarityBasedOptimizationScheme(double weights[][], SimpleEnsemble parameterIDs[], SimpleEnsemble objective, TimeSerie ts) {
-        super(weights, parameterIDs,objective, ts);
-    }
 
     @Override
     public String toString(){

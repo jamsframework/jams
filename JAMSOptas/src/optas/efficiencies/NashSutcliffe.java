@@ -10,6 +10,16 @@ package optas.efficiencies;
  * @author chris
  */
 public class NashSutcliffe extends EfficiencyCalculator {
+
+    double pow = 2.0;
+    public NashSutcliffe(){
+
+    }
+
+    public NashSutcliffe(double pow){
+        this.pow = pow;
+    }
+
     public double calc(double m[], double s[]){
         double rsme = 0;
         double var  = 0;
@@ -20,8 +30,8 @@ public class NashSutcliffe extends EfficiencyCalculator {
         avg /= m.length;
 
         for (int i=0;i<m.length;i++){
-            rsme += (m[i]-s[i])*(m[i]-s[i]);
-            var  += (m[i]-avg)*(m[i]-avg);
+            rsme += Math.pow(Math.abs(m[i]-s[i]),pow);
+            var  += Math.pow(Math.abs(m[i]-avg),pow);
         }
         return 1.0 - (rsme / var);
     }

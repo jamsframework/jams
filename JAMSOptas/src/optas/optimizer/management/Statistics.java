@@ -5,27 +5,30 @@
 
 package optas.optimizer.management;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.concurrent.Semaphore;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.SimpleEnsemble;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.SampleFactory.SampleComperator;
-import optas.regression.IDW;
 import optas.regression.Interpolation;
+import optas.regression.NeuralNetwork;
 
 
 /**
  *
  * @author chris
  */
-public class Statistics {
+public class Statistics implements Serializable{
     ArrayList<Sample> sampleList;
 
     ArrayList<Sample> bestSampleList=new ArrayList<Sample>();
 
-    ArrayList<Interpolation> I = null;
+    //this transient is more a performance issue
+    transient ArrayList<Interpolation> I = null;
 
     public Statistics(ArrayList<Sample> sampleList) {
         this.sampleList = sampleList;
@@ -211,6 +214,14 @@ public class Statistics {
         else
             return this.sampleList.get(0).getParameter().length;
     }
+
+    public int m(){
+        if (this.sampleList.isEmpty())
+            return 0;
+        else
+            return this.sampleList.get(0).F().length;
+    }
+
     //TODO:implement this function ... 
     public ArrayList<Sample> getSamplesByRank(int rk){
         return null;
@@ -244,19 +255,36 @@ public class Statistics {
     public void optimizeInterpolation(){
         for (Interpolation idw : I){
             idw.init();
-            idw.optimizeWeights();
+            //idw.optimizeWeights();
         }
     }
 
+    public double getMinimalParameter(int index){
+        double min = Double.POSITIVE_INFINITY;
+        for (Sample s : this.sampleList){
+            min = Math.min(min, s.x[index]);
+        }
+        return min;
+    }
+
+    public double getMaximalParameter(int index){
+        double max = Double.NEGATIVE_INFINITY;
+        for (Sample s : this.sampleList){
+            max = Math.max(max, s.x[index]);
+        }
+        return max;
+    }
+    
     public double calcQuality(){
         int L = this.sampleList.size();
+        int Ls = (int)(L*0.9);
         int m = this.sampleList.get(0).fx.length;
         
         if (I == null){
             I = new ArrayList<Interpolation>();
             for (int i = 0; i < m; i++) {            
-                IDW idw = new IDW();
-                I.add(idw);
+                NeuralNetwork nn = new NeuralNetwork();
+                I.add(nn);
             }
         }
         SimpleEnsemble ensemble[] = new SimpleEnsemble[this.n()];
@@ -265,27 +293,37 @@ public class Statistics {
             return 0.0;
         }
 
-        SimpleEnsemble y[] = new SimpleEnsemble[m];
-
-        for (int i = 0; i < n(); i++) {
-            ensemble[i] = new SimpleEnsemble("test", L);
-
-            for (int j = 0; j < L; j++) {
-                ensemble[i].add(j, sampleList.get(j).x[i]);
-            }
-        }
-
         double errorLOO = Double.POSITIVE_INFINITY;
-        
+
         for (int i = 0; i < m; i++) {
+            ArrayList<Double> valueList = new ArrayList<Double>();
+            for (int j = 0; j < L; j++) {
+                valueList.add(j, sampleList.get(j).fx[i]);
+            }
+            Collections.sort(valueList);
+
+            double threshold = valueList.get(Ls);
+
+            SimpleEnsemble y[] = new SimpleEnsemble[m];
             y[i] = new EfficiencyEnsemble("test", L, false, 0, 5); //TODO .. die grenzen sind obj. abhängig ..
 
-            for (int j = 0; j < L; j++) {
-                y[i].add(j, sampleList.get(j).fx[i]);
+            for (int k = 0; k < n(); k++) {
+                ensemble[k] = new SimpleEnsemble("test", L);
             }
-            Interpolation idw = I.get(i);
-            idw.setData(ensemble, y[i]);            
-            errorLOO = Math.min(idw.estimateLOOError(Interpolation.ErrorMethod.E2), errorLOO);
+            int counter = 0;
+            for (int j = 0; j < L; j++) {
+                /*if (sampleList.get(j).fx[i] < threshold )*/{
+                    for (int k = 0; k < n(); k++) {
+                        ensemble[k].add(counter, sampleList.get(j).x[k]);
+                    }
+                    y[i].add(counter, Math.min(sampleList.get(j).fx[i],threshold));
+                }
+                counter++;
+            }
+
+            Interpolation nn = I.get(i);
+            nn.setData(ensemble, y[i]);
+            errorLOO = Math.min(nn.estimateCrossValidationError(5, Interpolation.ErrorMethod.E2), errorLOO);
         }
 
         return errorLOO;

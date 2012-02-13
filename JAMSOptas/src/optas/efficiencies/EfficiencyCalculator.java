@@ -5,11 +5,13 @@
 
 package optas.efficiencies;
 
+import java.io.Serializable;
+
 /**
  *
  * @author chris
  */
-public abstract class EfficiencyCalculator {
+public abstract class EfficiencyCalculator implements Serializable {
 
     static public Class[] availableEfficiencies = {Rsme.class, VolumeError.class, NashSutcliffe.class};
 

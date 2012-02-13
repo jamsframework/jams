@@ -255,6 +255,11 @@ public abstract class OptimizerWrapper extends JAMSContext {
         };
     }
 
+    @Override
+    public String getTraceMark() {
+        return buildMark();
+    }
+
     public Sample getSample(int index){
         return this.factory.getSampleList().get(index);
     }
@@ -298,12 +303,7 @@ public abstract class OptimizerWrapper extends JAMSContext {
         }
         return value;
     }
-
-    @Override
-    public String getTraceMark() {
-        return buildMark();
-    }
-
+    
     protected void setParameters(double x[]) {
         for (int j = 0; j < parameter.length; j++) {
             try {
@@ -314,6 +314,10 @@ public abstract class OptimizerWrapper extends JAMSContext {
         }
     }
 
+    @Override
+    public long getNumberOfIterations(){
+        return this.maxn.getValue();
+    }
     @Override
     public void run() {
         try {

@@ -8,15 +8,15 @@
  */
 package optas.optimizer;
 
-import java.io.BufferedWriter;
 import optas.optimizer.management.StringOptimizerParameter;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.OptimizerParameter;
 import optas.optimizer.management.BooleanOptimizerParameter;
 import optas.optimizer.management.NumericOptimizerParameter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Random;
@@ -30,7 +30,7 @@ import optas.optimizer.management.Statistics;
  *
  * @author Christian Fischer
  */
-public abstract class Optimizer {
+public abstract class Optimizer implements Serializable{
 
     private String parameterNames[];
     protected double[] lowBound;
@@ -48,13 +48,12 @@ public abstract class Optimizer {
     int sampleCount = 0;
     File workspace = null;    
     File outputFile = null;
-    BufferedWriter writer = null;
-
+    
     private ArrayList<Sample> solution=null;
 
-    protected SampleFactory factory = new SampleFactory();
+    transient protected SampleFactory factory = new SampleFactory();
 
-    public static abstract class AbstractFunction {
+    public static abstract class AbstractFunction implements Serializable{
 
         public abstract double[] f(double x[]) throws SampleLimitException, ObjectiveAchievedException;
 
@@ -63,14 +62,11 @@ public abstract class Optimizer {
 
     protected void log(String msg) {
         function.logging(msg);
+    }
 
-        if (writer != null) {
-            try {
-                writer.write(msg);
-                writer.newLine();
-            } catch (IOException ioe) {
-            }
-        }
+    public void injectSamples(ArrayList<Sample> list){
+        for (Sample s : list)
+            this.factory.injectSample(s);
     }
 
     public AbstractFunction getFunction(){
@@ -221,11 +217,7 @@ public abstract class Optimizer {
         if (workspace == null) {
             log("Warning: workspace was not setup! Set to current directory");
             workspace = new File(System.getProperty("user.dir"));
-        }
-        if (outputFile == null) {
-            log("Warning: output file was not setup! Set to optimization.log");
-            this.outputFile = new File(this.workspace.getAbsolutePath() + "/" + "optimization.log");
-        }
+        }        
         return true;
     }
 
@@ -233,13 +225,7 @@ public abstract class Optimizer {
         log("Initialize Optimizer");
         if (!checkConfiguration())
             return false;
-
-        try {
-            writer = new BufferedWriter(new FileWriter(outputFile));
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
+        
         if (!debugMode) {
             generator = new Random(System.nanoTime());
         } else {
@@ -327,15 +313,14 @@ public abstract class Optimizer {
         }
         printSamples();
 
-        if (writer != null) {
-            try {
-                writer.close();
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
         return getSolution();
     }
 
     public abstract OptimizerDescription getDescription();
+
+    private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {
+        objIn.defaultReadObject();
+
+        factory = new SampleFactory();
+    }
 }

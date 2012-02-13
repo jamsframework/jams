@@ -14,6 +14,7 @@ import optas.metamodel.ModificationExecutor.InsertElement;
 import optas.metamodel.ModificationExecutor.Modification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -63,8 +64,8 @@ public class ObjectiveAnalyzer {
         optas.metamodel.Tools.addAttribute(efficiencyComponent, "simulation", o.getSimulation().getChildName(),
                 o.getSimulation().getContextName(), false);
 
-        optas.metamodel.Tools.addAttribute(efficiencyComponent, "method", o.getMethod(),
-                null, true);
+        /*optas.metamodel.Tools.addAttribute(efficiencyComponent, "method", o.getMethod(),
+                null, true);*/
 
         String timeDomain = "";
         for (TimeInterval t : o.getTimeDomain()) {
@@ -74,11 +75,27 @@ public class ObjectiveAnalyzer {
         optas.metamodel.Tools.addAttribute(efficiencyComponent, "timeInterval", timeDomain,
                 null, true);
 
-        optas.metamodel.Tools.addAttribute(efficiencyComponent, "time", "time",
-                o.getSimulation().getContextName(), false);
+        ArrayList<Element> temporalNodes = Tools.getNodeByName(doc, o.getSimulation().getContextName());
+        if (!temporalNodes.isEmpty()){
+            ArrayList<Element> timeNode = Tools.getVariable(temporalNodes.get(0), "current");
+            if (!timeNode.isEmpty()){
+                String context = timeNode.get(0).getAttribute("context");
+                if (context != null){
+                    optas.metamodel.Tools.addAttribute(efficiencyComponent, "time", "time",
+                        context, false);
+                }
+            }
+        }
 
-        optas.metamodel.Tools.addAttribute(efficiencyComponent, "normalizedResult", attributeName ,
-                context, false);
+        if (o.getMethod().contains("Nash"))
+            optas.metamodel.Tools.addAttribute(efficiencyComponent, "e2_normalized", attributeName ,
+                    context, false);
+        if (o.getMethod().contains("RSME"))
+            optas.metamodel.Tools.addAttribute(efficiencyComponent, "e2_normalized", attributeName ,
+                    context, false);
+        if (o.getMethod().contains("Vol"))
+            optas.metamodel.Tools.addAttribute(efficiencyComponent, "ave_normalized", attributeName ,
+                    context, false);
 
         AttributeWrapper a = new AttributeWrapper(null, attributeName, null, context);
         this.objectiveList.add(a);

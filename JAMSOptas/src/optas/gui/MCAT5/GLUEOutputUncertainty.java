@@ -326,13 +326,10 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
     public void refresh() throws NoDataException {
         if (!this.isRequestFulfilled()) {
             return;
-
         }
 
         meanString = "";
         medianString = "";
-
-        String dataInfo = "";
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         ArrayList<DataSet> p[] = getData(new int[]{0, 1, 2});
@@ -348,14 +345,11 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         TimeSeries dataset5 = new TimeSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEDIAN"));
 
         int T = ts.getTimesteps();
-        int n = ts.getSize();
 
         double low_conf[] = new double[T];
         double high_conf[] = new double[T];
         double conf = 1.0 - percentil;
         double max_diff = 0;
-
-        double map[] = new double[n];
 
         Integer sortedIds[] = eff.sort();
         int iter=0;
@@ -372,9 +366,6 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         DecimalFormat df = new DecimalFormat( "0.00" );
         dataRange.setText("<html><body>the data ranges from " + df.format(eff.getValue(sortedIds[sortedIds.length-1])) + " to " +
                 df.format(eff.getValue(sortedIds[0])) + "<br>" + iter + " datasets are taken into account</body></html>");
-        /*for (int i=0;i<n;i++)
-        map[i] = i;
-        double eff_sorted_data[][] = sortbyEff(map,this.eff.set);*/
 
         for (int i = 0; i < T; i++) {
             double mean = 0, median;

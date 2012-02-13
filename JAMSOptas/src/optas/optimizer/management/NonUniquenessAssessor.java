@@ -76,7 +76,7 @@ public class NonUniquenessAssessor {
         double threshold = 0.8;
 
         lowBound = conf.getLowerBound();
-        upBound = conf.geUpperBound();
+        upBound = conf.getUpperBound();
 
         int n = conf.n();
 

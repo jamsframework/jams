@@ -30,16 +30,16 @@ public class RegionalSensitivityAnalysis extends SensitivityAnalyzer{
 
         sensitivityIndex =new double[n];
 
-        //sort data into boxes
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < L; j++) {
-                if (j > L / 2) {
-                    behavourialBox.add(sortedIds[j]);
-                } else {
-                    nonBehavourialBox.add(sortedIds[j]);
-                }
+        for (int j = 0; j < L; j++) {
+            if (j > L / 2) {
+                behavourialBox.add(sortedIds[j]);
+            } else {
+                nonBehavourialBox.add(sortedIds[j]);
             }
+        }
 
+        //sort data into boxes
+        for (int i = 0; i < n; i++) {            
             this.currentIndex = i;
 
             Collections.sort(behavourialBox, new Comparator<Integer>() {
@@ -81,15 +81,32 @@ public class RegionalSensitivityAnalysis extends SensitivityAnalyzer{
             int k2 = 0;
             sensitivityIndex[i] = 0;
 
+            /*System.out.println("Processing: " + RegionalSensitivityAnalysis.this.x[currentIndex].getName());
+            System.out.println("Values in behavourial box:");
+            for (int j=0;j<behavourialBox.size();j++){
+                System.out.println("x:" + x[currentIndex].getValue(behavourialBox.get(j)) + "\ty:" + y.getValue(behavourialBox.get(j)));
+            }
+
+            System.out.println("Values in non-behavourial box:");
+            for (int j=0;j<nonBehavourialBox.size();j++){
+                System.out.println("x:" + x[currentIndex].getValue(nonBehavourialBox.get(j)) + "\ty:" + y.getValue(nonBehavourialBox.get(j)));
+            }*/
+
             for (int k=0;k<behavourialBox.size();k++){
                 double value = x[currentIndex].getValue(behavourialBox.get(k));
                 double value2 = x[currentIndex].getValue(nonBehavourialBox.get(k2));
+
+                //System.out.println("value1:" + value + "\tvalue2:" + value2);
+
                 while(value2<value && k2 < nonBehavourialBox.size()-1){
                     k2++;
                     value2 = x[currentIndex].getValue(nonBehavourialBox.get(k2));
                     nonBehavourialDistribution += step2;
                 }
                 behavourialDistribution += step1;
+
+                //System.out.println("y1:" + behavourialDistribution + "\ty2:" + nonBehavourialDistribution);
+
                 if (Math.abs(behavourialDistribution - nonBehavourialDistribution) > sensitivityIndex[i])
                     sensitivityIndex[i] = Math.abs(behavourialDistribution - nonBehavourialDistribution);
             }

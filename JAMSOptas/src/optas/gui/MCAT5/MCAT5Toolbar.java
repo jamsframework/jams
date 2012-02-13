@@ -293,10 +293,10 @@ public class MCAT5Toolbar extends JToolBar {
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
                 DottyPlot.class));
 
-        /*registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
-                "Simple Global Sensitivity",
+        registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
+                "Temporal Analyzer",
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
-                SimpleGlobalSensitivity.class));*/
+                TemporalAnalysis.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/sensitivity.png")),
                 "Sensitivityanalyzer",

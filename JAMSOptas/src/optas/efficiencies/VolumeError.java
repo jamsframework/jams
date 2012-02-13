@@ -10,10 +10,23 @@ package optas.efficiencies;
  * @author chris
  */
 public class VolumeError extends EfficiencyCalculator {
+    enum VolumeErrorType{Absolute, Relative};
+
+    VolumeErrorType v;
+    VolumeError(VolumeErrorType v){
+        this.v = v;
+    }
      public double calc(double m[], double s[]){
-        int ve = 0;
+        double ve = 0;
         for (int i=0;i<m.length;i++){
             ve += (s[i]-m[i]);
+        }
+        if (v == VolumeErrorType.Relative){
+            double sum = 0;
+            for (int i =0;i<m.length;i++){
+                sum += m[i];
+            }
+            return ve/sum;
         }
         return ve;
     }

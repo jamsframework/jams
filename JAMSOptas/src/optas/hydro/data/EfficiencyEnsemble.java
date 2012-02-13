@@ -39,7 +39,7 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
         this.rangeMax = rangeMax;
     }
 
-    public enum Method{NashSutcliffe, RootMeanSquareError, AbsoluteError, Bias}
+    public enum Method{NashSutcliffe, RootMeanSquareError, AbsoluteError, Bias, logNashSutcliffe}
 
     @Override
     public void add(Integer id, double value){
@@ -59,38 +59,78 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
 
         this.filterMap = new boolean[K];
 
+        int kStar = 0;
         if (filter!=null){
             this.filter = filter;
             for (int i=0;i<K;i++){
-                filterMap[i] = filter.isFiltered(obs.getTime(i));
+                filterMap[i] = filter.isFiltered(obs.getTime(i)) || obs.getValue(i)==-9999;
+                if (!filterMap[i])
+                    kStar++;
+            }
+        }else{
+            kStar = K;
+        }
+
+        double filteredObservation[] = new double[kStar];
+        double filteredSim[][] = new double[sim.size][kStar];
+        int c=0;
+        for (int i=0;i<K;i++){
+            if (!filterMap[i])
+                filteredObservation[c++] = obs.getValue(i);
+            for (int j=0;j<sim.size;j++){
+                int id_i = sim.getId(j);
+                if (!filterMap[i]){
+                    filteredSim[j][c++] = sim.get(i, id_i);
+                }
             }
         }
 
+
         switch(m){
-            case NashSutcliffe:{
+            case logNashSutcliffe:{
                 double aobs = 0;
-                for (int i=0;i<K;i++){
-                    aobs += obs.getValue(i);
+                for (int i=0;i<kStar;i++){
+                    aobs += filteredObservation[i];
                 }
-                aobs /= K;
+                aobs /= filteredObservation.length;
+
                 double denumerator = 0;
-                for (int i=0;i<K;i++){
-                    if (filterMap[i])
-                        continue;
-                    double d = obs.getValue(i)-aobs;
+                for (int i=0;i<kStar;i++){
+                    double d = filteredObservation[i]-aobs;
                     denumerator += d*d;
                 }
 
                 for (int i=0;i<sim.size;i++){
                     int id_i = sim.getId(i);
-
                     double numerator = 0;
+                    for (int j=0;j<kStar;j++){
+                        double d1 = Math.log(Math.abs(filteredSim[i][j] - filteredObservation[j]));
+                        numerator += d1*d1;
+                    }
+                    double e2 = 1.0 - (numerator / denumerator);
+                    this.add(id_i, e2);
+                }
+                this.isPostiveBest = true;
+                break;
+            }
+            case NashSutcliffe:{
+                double aobs = 0;
+                for (int i=0;i<kStar;i++){
+                    aobs += filteredObservation[i];                    
+                }
+                aobs /= filteredObservation.length;
 
+                double denumerator = 0;
+                for (int i=0;i<kStar;i++){
+                    double d = filteredObservation[i]-aobs;
+                    denumerator += d*d;
+                }
 
-                    for (int j=0;j<K;j++){
-                        if (filterMap[j])
-                            continue;
-                        double d1 = (sim.get(j, id_i) - obs.getValue(j));                        
+                for (int i=0;i<sim.size;i++){
+                    int id_i = sim.getId(i);
+                    double numerator = 0;
+                    for (int j=0;j<kStar;j++){
+                        double d1 = filteredSim[i][j] - filteredObservation[j];
                         numerator += d1*d1;
                     }
                     double e2 = 1.0 - (numerator / denumerator);
@@ -105,10 +145,8 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
 
                     double rsme = 0;
 
-                    for (int j=0;j<K;j++){
-                        if (filterMap[j])
-                            continue;
-                        double d1 = (sim.get(j, id_i) - obs.getValue(j));
+                    for (int j=0;j<kStar;j++){
+                         double d1 = filteredSim[i][j] - filteredObservation[j];
                         rsme += d1*d1;
                     }                    
                     this.add(id_i, rsme);
@@ -122,10 +160,8 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
 
                     double abse = 0;
 
-                    for (int j=0;j<K;j++){
-                        if (filterMap[j])
-                            continue;
-                        double d1 = (sim.get(j, id_i) - obs.getValue(j));
+                    for (int j=0;j<kStar;j++){
+                        double d1 = filteredSim[i][j] - filteredObservation[j];
                         abse += Math.abs(d1);
                     }                    
                     this.add(id_i, abse);
@@ -139,10 +175,8 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
 
                     double bias = 0;
 
-                    for (int j=0;j<K;j++){
-                        if (filterMap[j])
-                            continue;
-                        double d1 = (sim.get(j, id_i) - obs.getValue(j));
+                    for (int j=0;j<K;j++){                        
+                        double d1 = filteredSim[i][j] - filteredObservation[j];
                         bias += (d1);
                     }                    
                     this.add(id_i, bias);
@@ -186,25 +220,32 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
         return this.isPostiveBest;
     }
 
-    public EfficiencyEnsemble CalculateLikelihood(){
-        double Lmin = this.getMin();
-        double Lmax = this.getMax();
 
+    public EfficiencyEnsemble CalculateLikelihood(){
         double[] likelihood = Arrays.copyOf(this.value, size);
 
         if (this.isPostiveBest) {
+            double Lmin = this.getMin();
+
             for (int i = 0; i < size; i++) {
-                likelihood[i] -= Lmin;
+                likelihood[i] = likelihood[i] - Lmin;
             }
-        } else {
+
+        }else{
+            double Lmin = 1.0 - this.getMax();
+
             for (int i = 0; i < size; i++) {
-                likelihood[i] = -likelihood[i];
-                likelihood[i] += Lmax;
+                likelihood[i] = (1.0-likelihood[i]) - Lmin;
             }
         }
         double sum = 0;
         for (int i = 0; i < size; i++) {
             sum += likelihood[i];
+        }
+
+        sum = 0;
+        for (int i = 0; i < size; i++) {
+            sum += (likelihood[i]);
         }
         for (int i = 0; i < size; i++) {
             likelihood[i] /= sum;

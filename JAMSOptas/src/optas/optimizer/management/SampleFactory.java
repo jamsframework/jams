@@ -13,7 +13,7 @@ import java.util.Comparator;
  *
  * @author chris
  */
-public class SampleFactory {
+public class SampleFactory implements Serializable {
 
     private ArrayList<Sample> sampleList = new ArrayList<Sample>();
 
@@ -25,6 +25,10 @@ public class SampleFactory {
 
     public Statistics getStatistics(){
         return this.stats;
+    }
+
+    public void injectSample(Sample s){
+        this.sampleList.add(s);
     }
 
     //class for representing samples

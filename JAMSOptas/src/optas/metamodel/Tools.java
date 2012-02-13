@@ -72,6 +72,22 @@ public class Tools {
         return set;
     }
 
+    static public ArrayList<Element> getVariable(Node root, String name) {
+        ArrayList<Element> set = new ArrayList<Element>();
+
+        NodeList childs = root.getChildNodes();
+        for (int i = 0; i < childs.getLength(); i++) {
+            Node node = childs.item(i);
+            if (node.getNodeName().equals("var")) {
+                Element elem = (Element) node;
+                if (elem.getAttribute("name").equals(name)) {
+                    set.add(elem);
+                }
+            }
+        }
+        return set;
+    }
+
     static public ArrayList<Element> getNodeByAttributeContent(Node root, String attribute, String key){
         ArrayList<Element> set = new ArrayList<Element>();
 

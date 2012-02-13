@@ -7,20 +7,29 @@ package optas.hydro.data;
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
 import jams.data.JAMSDataFactory;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.TreeSet;
+import optas.optimizer.management.SampleFactory;
 
 /**
  *
@@ -38,17 +47,17 @@ public class DataCollection extends DataSet implements Serializable{
     boolean isBusy = false;
     transient Set<DatasetChangeListener> listener = new HashSet<DatasetChangeListener>();
     
-    public class DatasetChangeEvent{
-        Object source;
+    public class DatasetChangeEvent implements Serializable{
+        Serializable source;
         DataSet target;
 
-        public DatasetChangeEvent(Object src, DataSet target){
+        public DatasetChangeEvent(Serializable src, DataSet target){
             this.source = src;
             this.target = target;
         }
     }
 
-    public interface DatasetChangeListener{
+    public interface DatasetChangeListener extends Serializable{
         public void datasetChanged(DatasetChangeEvent dc);
     }
     
@@ -65,6 +74,8 @@ public class DataCollection extends DataSet implements Serializable{
 
     public void fireChangeEvent(DatasetChangeEvent dce){
         if (isBusy)
+            return;
+        if (listener == null)
             return;
         for (DatasetChangeListener dcl : listener){
             dcl.datasetChanged(dce);
@@ -86,6 +97,27 @@ public class DataCollection extends DataSet implements Serializable{
         return samplerClass;
     }
 
+    public boolean filter(String e, double relativeThreshold){
+        DataSet ensemble = this.getDataSet(e);
+        EfficiencyEnsemble effEnsemble = null;
+        if (ensemble == null)
+            return false;
+        if (ensemble instanceof EfficiencyEnsemble)
+            effEnsemble = (EfficiencyEnsemble)ensemble;
+        else
+            return false;
+
+        Integer list[] = effEnsemble.sort();
+
+        int limit = (int)((1.0-relativeThreshold) * list.length);
+
+        //DataCollection result = this.clone();
+        for (int i=limit;i<list.length;i++){
+            removeModelRun(list[i]);
+        }
+
+        return true;
+    }
 
     public boolean unifyDataCollections(DataCollection dc){
         isBusy = true;
@@ -285,7 +317,8 @@ public class DataCollection extends DataSet implements Serializable{
         fireChangeEvent(new DatasetChangeEvent(this, this));
     }
     public void removeModelRun(Integer id) {
-        set.put(id, null);
+        set.remove(id);
+        //set.put(id, null);
     }
 
     public int getSimulationCount() {
@@ -299,7 +332,12 @@ public class DataCollection extends DataSet implements Serializable{
     public Set<String> getDatasets(Class clazz){
         TreeSet<String> sets = new TreeSet<String>();
         for (String setname : datasets.keySet()){
-            if (getDatasetClass(setname).equals(clazz))
+            if (clazz.getName().contains("TimeSerie")){  // workaround because we want neg and pos efficiencies to be efficiencies but we wont get a measurement when we want a timeseries ensemble arg
+                                                            // solution would be to ask for timeserieensembles and simpleensemnles ... 
+                if (clazz.equals(getDatasetClass(setname))){
+                    sets.add(setname);
+                }
+            }else if (clazz.isAssignableFrom(getDatasetClass(setname)))
                 sets.add(setname);
         }
         return sets;
@@ -315,8 +353,10 @@ public class DataCollection extends DataSet implements Serializable{
             return this.globalDatasets.get(dataset);
         else{
             SimpleEnsemble e = getSimpleEnsemble(dataset);
-            if (this.getDatasetClass(dataset).equals(Efficiency.class)){
-                return new EfficiencyEnsemble(e, true);
+            if (NegativeEfficiency.class.isAssignableFrom(this.getDatasetClass(dataset))){
+                return new EfficiencyEnsemble(e, false);
+            }else if(PositiveEfficiency.class.isAssignableFrom(this.getDatasetClass(dataset))){
+                return new EfficiencyEnsemble(e, false);
             }else
                 return e;
         }
@@ -403,6 +443,8 @@ public class DataCollection extends DataSet implements Serializable{
         c2.setTimeInMillis(endTime);
         unifiedTimeInterval.setStart(c1);
         unifiedTimeInterval.setEnd(c2);
+        unifiedTimeInterval.setTimeUnit(timeUnit);
+        unifiedTimeInterval.setTimeUnitCount(timeUnitCount);
 
         for (Integer s : this.set.keySet()){
             Modelrun r = this.set.get(s);
@@ -466,6 +508,40 @@ public class DataCollection extends DataSet implements Serializable{
         return t;
     }
 
+    public DataCollection clone(){
+        return createFromByteArray(toByteArrayStream());
+    }
+
+    private static DataCollection createFromByteArray(byte[] array){
+        try{
+            ByteArrayInputStream fis = new ByteArrayInputStream(array);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            DataCollection dc = (DataCollection)ois.readObject();
+            ois.close();
+            return dc;
+        }catch(IOException ioe){
+            System.out.println(ioe.toString());
+        }catch(ClassNotFoundException cnfe){
+            System.out.println(cnfe.toString());
+        }
+        return null;
+    }
+
+    private byte[] toByteArrayStream(){
+        try{
+            ByteArrayOutputStream fos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(this);
+            oos.close();
+            fos.close();
+
+            return fos.toByteArray();
+        }catch(IOException ioe){
+            System.out.println(ioe.toString());
+        }
+        return null;
+    }
+
     public static DataCollection createFromFile(File file){
         try{
             FileInputStream fis = new FileInputStream(file);
@@ -494,6 +570,150 @@ public class DataCollection extends DataSet implements Serializable{
         }
     }
 
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+    private void dumpTSEnsemble(File file, ArrayList<TimeSerieEnsemble> list) throws IOException{
+        if (list.isEmpty())
+            return;
+
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        TimeSerieEnsemble array[] = list.toArray(new TimeSerieEnsemble[list.size()]);
+        int N = array[0].size;
+        int T = array[0].getTimesteps();
+        
+        BufferedWriter write = new BufferedWriter(new FileWriter(file));
+        write.write("@context\n");
+        write.write("jams.model.JAMSTemporalContext\tdump\t"+T+"\n");
+        write.write("@ancestors"+"\n");
+        write.write("dump\tsampler\t"+N+"\n");
+        write.write("@filters"+"\n");
+        write.write("@attributes"+"\n");
+        String attrString = "ID";
+        String types = "JAMSInteger";
+        for (TimeSerieEnsemble s : list){
+            attrString += "\t" + s.getName();
+            types += "\t" + "JAMSDouble";
+        }
+        write.write(attrString+"\n");
+        write.write("@types"+"\n");
+        write.write(types+"\n");
+        write.write("@data"+"\n");
+        for (int i=0;i<N;i++){
+            write.write("sampler\t"+i+"\n");
+            write.write("@start"+"\n");
+            int id = array[0].getId(i);
+            for (int t=0;t<T;t++){
+                Date date = array[0].getDate(t);
+                String entry = sdf.format(date);
+                for (int j=0;j<array.length;j++){
+                    entry += "\t" + array[j].get(t, id);
+                }
+                write.write(entry+"\n");
+            }
+            write.write("@end"+"\n");
+        }
+        write.close();
+    }
+
+    public void constructSample(SampleFactory f){
+        ArrayList<SimpleEnsemble> simpleEnsembles = new ArrayList<SimpleEnsemble>();
+        ArrayList<EfficiencyEnsemble> effEnsembles = new ArrayList<EfficiencyEnsemble>();
+
+        for (String s : this.getDatasets()){
+            DataSet d = this.getDataSet(s);
+            if (d instanceof EfficiencyEnsemble)
+                effEnsembles.add((EfficiencyEnsemble)d);
+            else if (d instanceof SimpleEnsemble){
+                simpleEnsembles.add((SimpleEnsemble)d);
+            }
+        }
+        int n = simpleEnsembles.size();
+        int m = effEnsembles.size();
+
+        if (n == 0 || m == 0)
+            return;
+
+        int N = this.getSimulationCount();
+        for (int i=0;i<N;i++){
+            int id = simpleEnsembles.get(0).getId(0);
+            double x[] = new double[n];
+            double y[] = new double[m];
+
+            for (int j=0;j<n;j++){
+                x[j] = simpleEnsembles.get(j).getValue(id);
+            }
+            for (int j=0;j<m;j++){
+                y[j] = simpleEnsembles.get(j).getValue(id);
+            }
+            f.getSample(x, y);
+        }
+    }
+
+    private void dumpSimpleEnsemble(File file, ArrayList<SimpleEnsemble> list) throws IOException{
+        if (list.isEmpty())
+            return;
+
+        int N = list.get(0).getSize();
+
+        BufferedWriter write = new BufferedWriter(new FileWriter(file));
+        write.write("@context"+"\n");
+        write.write("dumping.context\tdump\t"+N+"\n");
+        write.write("@ancestors"+"\n");
+        write.write("@filters"+"\n");
+        write.write("@attributes"+"\n");
+        String attrString = "ID";
+        String types = "JAMSInteger";
+        for (SimpleEnsemble s : list){
+            attrString += "\t" + s.getName();
+            types += "\t" + "JAMSDouble";
+        }
+        write.write(attrString+"\n");
+        write.write("@types"+"\n");
+        write.write(types+"\n");
+        write.write("@data"+"\n");
+        write.write("@start"+"\n");
+
+        SimpleEnsemble array[] = list.toArray(new SimpleEnsemble[list.size()]);
+        for (int i = 0; i < N; i++) {
+            String entry = "" + i;
+
+            int id = array[0].getId(i);
+            for (int j = 0; j < array.length; j++) {
+                entry += "\t" + array[j].getValue(id);
+            }
+
+            write.write(entry + "\n");
+        }
+        write.write("@end");
+        write.close();
+    }
+
+    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd_HHmmss");
+    public void dump(File directory){
+        ArrayList<SimpleEnsemble> simpleEnsembles = new ArrayList<SimpleEnsemble>();
+        ArrayList<TimeSerieEnsemble> tsEnsembles = new ArrayList<TimeSerieEnsemble>();
+        ArrayList<Measurement> msEnsembles = new ArrayList<Measurement>();
+
+        for (String s : this.getDatasets()){
+            DataSet d = this.getDataSet(s);
+            if (d instanceof SimpleEnsemble)
+                simpleEnsembles.add((SimpleEnsemble)d);
+            else if (d instanceof TimeSerieEnsemble)
+                tsEnsembles.add((TimeSerieEnsemble)d);
+            else if (d instanceof Measurement){
+                msEnsembles.add((Measurement)d);
+            }
+        }
+        try{
+            dumpSimpleEnsemble(new File(directory.getAbsolutePath()+"/scalar_"+sdf2.format(new Date())+".dat"),simpleEnsembles);
+            dumpTSEnsemble(new File(directory.getAbsolutePath()+"/timeseries_"+sdf2.format(new Date())+".dat"),tsEnsembles);
+        }catch(IOException ioe){
+            System.err.println(ioe);
+            ioe.printStackTrace();
+        }
+
+    }
 
     public static void main(String args[]){
         if (args[0].equals("merge")){

@@ -435,6 +435,7 @@ public class OptimizationWizard extends JPanel {
 
                 public void actionPerformed(ActionEvent e) {
                     wizard.modifyModel();
+                    finish();
                 }
             });
 
@@ -447,6 +448,7 @@ public class OptimizationWizard extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     wizard.modifyModel();
                     finish();
+                    OptimizationWizard.this.setVisible(false);
                 }
             });
             toolbar.add(modify);

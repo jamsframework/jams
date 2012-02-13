@@ -269,8 +269,8 @@ public class Direct extends optas.optimizer.Optimizer {
             x1 = reTransform(newc_left[i]);
             x2 = reTransform(newc_right[i]);
 
-            SampleSO s1 = getSampleSO(reTransform(x1));
-            SampleSO s2 = getSampleSO(reTransform(x2));
+            SampleSO s1 = getSampleSO((x1));
+            SampleSO s2 = getSampleSO((x2));
 
             f_left[i] = s1.f();
             f_right[i] = s2.f();
@@ -328,5 +328,43 @@ public class Direct extends optas.optimizer.Optimizer {
             szes[index] += Math.pow(1.0 / 3.0, 2.0 * lengths[index][j]);
         }
         szes[index] = 0.5 * Math.sqrt(szes[index]);
+    }
+
+    private static double gauss2d(double mu[], double sigma[], double x[]) {
+        double exp = ((x[0] - mu[0])*(x[0] - mu[0]) / (2.0*sigma[0])) + ((x[1] - mu[1])*(x[1] - mu[1]) / (2.0*sigma[0]));
+        return Math.exp(-exp);
+    }
+
+    public static void main(String[] args) {
+        Direct o = new Direct();
+        o.setBoundaries(new double[]{-3,-1}, new double[]{3,3});
+        o.setMaxn(5000);
+        o.setInputDimension(2);
+        o.setObjectiveNames(new String[]{"Y"});
+        o.setOutputDimension(1);
+        o.setParameterNames(new String[]{"x1","x2"});
+        
+        o.setFunction(new AbstractFunction() {
+
+            @Override
+            public double[] f(double[] x) throws SampleLimitException, ObjectiveAchievedException {
+                double center1[] = new double[]{0,0};
+                double sigma1[] = new double[]{2,1};
+                double center2[] = new double[]{0.5,0.5};
+                double sigma2[] = new double[]{1,2};
+                double center3[] = new double[]{-1,2};
+                double sigma3[] = new double[]{1,1};
+                double center4[] = new double[]{0,-0.5};
+                double sigma4[] = new double[]{3,3};
+
+                return new double[]{gauss2d(center1, sigma1, x) - 3.0* gauss2d(center2, sigma2, x) - gauss2d(center3, sigma3, x) + 2.0*gauss2d(center4, sigma4, x)};
+            }
+
+            @Override
+            public void logging(String msg) {
+                System.out.println(msg);
+            }
+        });
+        o.optimize();
     }
 }

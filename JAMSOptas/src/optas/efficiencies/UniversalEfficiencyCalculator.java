@@ -10,9 +10,11 @@ import jams.data.Attribute.TimeInterval;
 import jams.data.JAMSDataFactory;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import java.util.StringTokenizer;
+import optas.efficiencies.VolumeError.VolumeErrorType;
 
 /**
  *
@@ -42,20 +44,75 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     description = "file name of optimization process description")
     public Attribute.Double simulation;
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.String method;
+    public Attribute.Double e1;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    update = JAMSVarDescription.UpdateType.RUN,
+    update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double result;
+    public Attribute.Double e2;
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double normalizedResult;
+    public Attribute.Double le1;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double le2;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double ave;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double r2;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double bias;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double e1_normalized;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double e2_normalized;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double le1_normalized;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double le2_normalized;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double ave_normalized;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double r2_normalized;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double bias_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
@@ -70,7 +127,13 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
 
     ArrayList<Double> measurementList, simulationList;
     ArrayList<TimeInterval> timeIntervalList;
-    EfficiencyCalculator calculator;
+    EfficiencyCalculator calcE1 = new NashSutcliffe(1.0),
+                         calcE2 = new NashSutcliffe(2.0),
+                         calcLe1= new LogarithmicNashSutcliffe(1.0),
+                         calcLe2= new LogarithmicNashSutcliffe(2.0),
+                         calcAve= new VolumeError(VolumeErrorType.Absolute),
+                         calcR2 = new CorrelationError(),
+                         calcPBias = new VolumeError(VolumeErrorType.Relative);
 
     @Override
     public void init(){
@@ -85,28 +148,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             t.setValue(interval);
             timeIntervalList.add(t);
         }
-        Class clazz = null;
-        try{
-            clazz = getModel().getRuntime().getClassLoader().loadClass(this.method.getValue());
-        }catch(ClassNotFoundException cnfe){
-            cnfe.printStackTrace();
-            getModel().getRuntime().sendHalt("could not find class " + cnfe);            
-        }
-        Object o = null;
-        try{
-            o = clazz.newInstance();
-        }catch(InstantiationException ie){
-            ie.printStackTrace();
-            getModel().getRuntime().sendHalt("could not instantiate class " + ie);
-        }catch(IllegalAccessException iae){
-            iae.printStackTrace();
-            getModel().getRuntime().sendHalt("could not instantiate class " + iae);
-        }
-        if (o instanceof EfficiencyCalculator){
-            calculator = (EfficiencyCalculator)o;
-        }else{
-            getModel().getRuntime().sendHalt("Efficiency-Class not of type EfficiencyCalculator");
-        }
+        
     }
 
     private void considerData(){
@@ -121,12 +163,22 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
 
         for (TimeInterval t : timeIntervalList){
             Calendar c = time.getValue();
-            if (c.after(t.getStart()) && c.before(t.getEnd())){
-                considerData();
-            }else if(c.equals(t.getStart()) || c.equals(t.getEnd())){
+            if (!c.before(t.getStart()) && !c.after(t.getEnd())){
                 considerData();
             }
         }
+    }
+
+    DecimalFormat format = new DecimalFormat("######0.000");
+    private String round(double r){
+        if (Double.isInfinite(r) && r >0)
+            return "Infinity";
+        else if(Double.isNaN(r))
+            return "NaN";
+        else if (Double.isInfinite(r) && r <0)
+            return "-Infinity";
+        else
+            return format.format(r);
     }
 
     @Override
@@ -137,13 +189,59 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             m[i] = measurementList.get(i);
             s[i] = simulationList.get(i);
         }
+        double value=0;
 
-        this.result.setValue(calculator.calc(m,s));
-        this.normalizedResult.setValue(calculator.calcNormative(m, s));
+        this.e1.setValue(calcE1.calc(m, s));
+        value = calcE1.calcNormative(m, s);
+        if (Double.isNaN(value))
+            this.e1_normalized.setValue(Double.POSITIVE_INFINITY);
+        else
+            this.e1_normalized.setValue(value);
 
+        this.e2.setValue(calcE2.calc(m, s));
+        value = calcE2.calcNormative(m, s);
+        if (Double.isNaN(value))
+            this.e2_normalized.setValue(Double.POSITIVE_INFINITY);
+        else
+            this.e2_normalized.setValue(value);
+
+        this.le1.setValue(calcLe1.calc(m, s));
+        value = calcLe1.calcNormative(m, s);
+        if (Double.isNaN(value))
+            this.le1_normalized.setValue(Double.POSITIVE_INFINITY);
+        else
+            this.le1_normalized.setValue(value);
+
+        this.le2.setValue(calcLe2.calc(m, s));
+        value = calcLe2.calcNormative(m, s);
+        if (Double.isNaN(value))
+            this.le2_normalized.setValue(Double.POSITIVE_INFINITY);
+        else
+            this.le2_normalized.setValue(value);
+
+        this.ave.setValue(calcAve.calc(m, s));
+        value = calcAve.calcNormative(m, s);
+        if (Double.isNaN(value))
+            this.ave_normalized.setValue(Double.POSITIVE_INFINITY);
+        else
+            this.ave_normalized.setValue(value);
+
+        this.r2.setValue(calcR2.calc(m, s));
+        value = calcR2.calcNormative(m, s);
+        if (Double.isNaN(value))
+            this.r2_normalized.setValue(Double.POSITIVE_INFINITY);
+        else
+            this.r2_normalized.setValue(value);
+
+        this.bias.setValue(calcPBias.calc(m, s));
+        value = calcPBias.calcNormative(m, s);
+        if (Double.isNaN(value))
+            this.bias_normalized.setValue(Double.POSITIVE_INFINITY);
+        else
+            this.bias_normalized.setValue(value);
+        
         this.getModel().getRuntime().println("------------------------------------");
-        this.getModel().getRuntime().println("*******UniversalEfficiencyCalculator");
-        this.getModel().getRuntime().println("*******Method     :"+this.method);
+        this.getModel().getRuntime().println("*******UniversalEfficiencyCalculator");        
         this.getModel().getRuntime().println("*******Measurement:"+this.measurementAttributeName);
         this.getModel().getRuntime().println("*******Simulation :"+this.simulationAttributeName);
         this.getModel().getRuntime().println("*******Timesteps  :"+this.timeIntervalList.size());
@@ -153,6 +251,12 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
         if (timeIntervalList.size()>5){
             this.getModel().getRuntime().println("********          :...");
         }
-        this.getModel().getRuntime().println("*******Result     :"+this.result.getValue());
+        this.getModel().getRuntime().println("*******Method     "+"E1    "+round(this.e1.getValue())  + "  ("+ round(this.e1_normalized.getValue()) + ")");
+        this.getModel().getRuntime().println("*******Method     "+"E2    "+round(this.e2.getValue())  + "  ("+round(this.e2_normalized.getValue()) + ")");
+        this.getModel().getRuntime().println("*******Method     "+"le1   "+round(this.le1.getValue()) + "  ("+round(this.le1_normalized.getValue()) + ")");
+        this.getModel().getRuntime().println("*******Method     "+"le2   "+round(this.le2.getValue()) + "  ("+round(this.le2_normalized.getValue()) + ")");
+        this.getModel().getRuntime().println("*******Method     "+"AVE   "+round(this.ave.getValue()) + "  ("+round(this.ave_normalized.getValue()) + ")");
+        this.getModel().getRuntime().println("*******Method     "+"R2    "+round(this.r2.getValue())  + "  ("+round(this.r2_normalized.getValue()) + ")");
+        this.getModel().getRuntime().println("*******Method     "+"Bias  "+round(this.bias.getValue())+ "  ("+round(this.bias_normalized.getValue()) + ")");
     }
 }

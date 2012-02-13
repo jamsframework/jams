@@ -185,7 +185,8 @@ public class ModelModifier {
     private String replaceHRUFileName(Document doc, String newFileName, String entityReaderName) {
 
         Element entityReaderNode = getEntityReader(doc, entityReaderName);
-
+        if (entityReaderNode==null)
+            return null;
         NodeList list = entityReaderNode.getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {
             Element child = null;
@@ -211,6 +212,9 @@ public class ModelModifier {
 
         String hruFileName = replaceHRUFileName(doc, newFileName, null);
 
+        if (hruFileName == null)
+            return null;
+        
         Element spatialRelaxationComponent = doc.createElement("component");
         spatialRelaxationComponent.setAttribute("class", HRUReducer.class.getName());
         spatialRelaxationComponent.setAttribute("name", "SpatialRelaxation");
@@ -271,6 +275,8 @@ public class ModelModifier {
             Element root = doc.createElement("outputdatastore");
             Element trace = doc.createElement("trace");
             root.setAttribute("context", context);
+            root.setAttribute("enabled", "true");
+            root.setAttribute("name", context);
             root.appendChild(trace);
 
             HashSet<String> attr = outputContexts.get(context);
@@ -283,6 +289,10 @@ public class ModelModifier {
             }
             datastoreNode.appendChild(root);
         }
+        
+        NodeList list = doc.getElementsByTagName("datastores");
+        if (list.getLength()>0)
+            actionList.add(new ModificationExecutor.RemoveElement((Element)model, (Element)(list.item(0))));
         actionList.add(new ModificationExecutor.InsertElement((Element)model, datastoreNode));
         return actionList;
     }

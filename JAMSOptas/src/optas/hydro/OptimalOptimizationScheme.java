@@ -43,9 +43,8 @@ public class OptimalOptimizationScheme extends OptimizationScheme{
         }
     }
         
-    public OptimalOptimizationScheme(double weights[][], SimpleEnsemble parameterIDs[], SimpleEnsemble objective, TimeSerie ts) {
-        super(weights, parameterIDs, objective, ts);
-        initObjectPools();
+    public OptimalOptimizationScheme() {
+
     }
 
     private void initObjectPools(){
@@ -183,6 +182,7 @@ public class OptimalOptimizationScheme extends OptimizationScheme{
     }
         
     public void calcOptimizationScheme() {
+        initObjectPools();
         solutionGroups.clear();
         dominatedTimeStepsForGroup.clear();
 

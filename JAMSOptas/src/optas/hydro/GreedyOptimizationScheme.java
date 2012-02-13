@@ -17,89 +17,12 @@ import optas.hydro.data.TimeSerie;
  * @author chris
  */
 public class GreedyOptimizationScheme extends OptimizationScheme{
-
-    public GreedyOptimizationScheme(double weights[][], SimpleEnsemble parameterIDs[], SimpleEnsemble objective, TimeSerie ts) {
-        super(weights, parameterIDs, objective, ts);
-    }
-
+   
     @Override
     public String toString(){
         return "Greedy";
     }
-    /*
-    static public class OptimizationGroup{
-        ArrayList<Integer>parameter = new ArrayList<Integer>();
-        ArrayList<Integer> timeIDs;
-
-        double dominationWeight;
-
-        public void addParameter(int parameter, ArrayList<Integer> timeIDs, double dominationWeight){
-            this.timeIDs = timeIDs;
-            this.dominationWeight = dominationWeight;
-            this.parameter.add(parameter);
-        }
-        public String toString(){
-            String result = "";
-            result += "Parameter: ";
-            for (int i=0;i<parameter.size();i++)
-                result += parameter.get(i) + "  ";
-
-            result += "\nDomination:" + dominationWeight + "\n";
-            return result;
-        }
-
-        public String toString(String parameterIDs[]){
-            String result = "";
-            result += "Parameter: ";
-            for (int i=0;i<parameter.size();i++)
-                result += parameterIDs[parameter.get(i)] + "  ";
-
-            result += "\nDomination:" + dominationWeight + "\n";
-            return result;
-        }
-
-        public String getTimeSteps(TimeSerie ts){
-            String result = "";
-            for (int i=0;i<this.timeIDs.size();i++){
-                result+=ts.getTime(timeIDs.get(i)).getTime()+"\n";
-            }
-            return result;
-        }
-    }
-
-    static public class OptimizationSceme{
-        ArrayList<OptimizationGroup> groups = new ArrayList<OptimizationGroup>();
-        double [][] weights;
-
-        public Domination getDomination(){
-            return new Domination(weights);
-        }
-
-        public void addGroup(OptimizationGroup group){
-            groups.add(group);
-        }
-        public String toString(String parameterIDs[], TimeSerie ts){
-            String result = "";
-            for (int i=0;i<groups.size();i++){
-                result += "+++++GROUP "+i+"++++++++++\n";
-                result += groups.get(i).toString(parameterIDs) + "+++++++++++++++++\n";
-                result += "-------------TIME---------------\n";
-                result += groups.get(i).getTimeSteps(ts);
-            }
-            return result;
-        }
-        @Override
-        public String toString(){
-            String result = "";
-            for (int i=0;i<groups.size();i++){
-                result += "+++++GROUP "+i+"++++++++++\n";
-                result += groups.get(i) + "+++++++++++++++++\n";
-            }
-            return result;
-        }
-    }*/
-
-   
+    
     private double[] accumulateWeightsOverParameters(double[][]weights){        
         double sum[] = new double[T];
         for (int i=0;i<n;i++){

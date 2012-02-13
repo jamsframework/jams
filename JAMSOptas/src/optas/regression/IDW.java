@@ -24,17 +24,6 @@ public class IDW extends Interpolation{
         return R;
     }
 
-    @Override
-    public void setWeighting(double w[]){
-        super.setWeighting(w);
-        if (expWeights==null)
-            expWeights = new double[n];
-
-        for (int i=0;i<n;i++){
-            expWeights[i] = Math.exp(w[i]);
-        }
-    }
-
     private double d(double a[], double b[]){
         double d = 0;
         for (int i=0;i<n;i++){

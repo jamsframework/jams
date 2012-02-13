@@ -174,10 +174,7 @@ public class HRUReachReducer extends JAMSComponent {
 
             double src_flowLength = src.getDouble("flowlength");
             double dst_flowLength = dst.getDouble("flowlength");
-
-            double src_flowAmount = src.getDouble("flowAmount");
-            double dst_flowAmount = dst.getDouble("flowAmount");
-
+            
             double src_weight = src_area / (src_area + dst_area);
             double dst_weight = dst_area / (src_area + dst_area);
 
@@ -186,17 +183,28 @@ public class HRUReachReducer extends JAMSComponent {
 
             double result_slope = src_weight * src_slope + dst_weight * dst_slope;
             double result_flowLength = src_weight * src_flowLength + dst_weight * dst_flowLength;
-            double result_flowAmount = src_flowAmount + dst_flowAmount;
+            
 
             dst.setDouble("area", src_area + dst_area);
             dst.setDouble("x", result_x);
             dst.setDouble("y", result_y);
             dst.setDouble("slope", result_slope);
-            dst.setDouble("flowlength", result_flowLength);
-            dst.setDouble("flowAmount", result_flowAmount);
-
+            dst.setDouble("flowlength", result_flowLength);            
         } catch (NoSuchAttributeException nsae) {
             nsae.printStackTrace();
+        }
+
+        if (method.getValue() == 3) {
+            try {
+                double src_flowAmount = src.getDouble("flowAmount");
+                double dst_flowAmount = dst.getDouble("flowAmount");
+
+                double result_flowAmount = src_flowAmount + dst_flowAmount;
+
+                dst.setDouble("flowAmount", result_flowAmount);
+            } catch (NoSuchAttributeException nsae) {
+                nsae.printStackTrace();
+            }
         }
     }
 

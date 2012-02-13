@@ -5,8 +5,7 @@
 
 package optas.hydro.gui;
 
-import optas.hydro.calculations.SlopeCalculations;
-import optas.hydro.data.DataCollection;
+import java.awt.Color;
 import optas.hydro.data.SimpleEnsemble;
 import optas.hydro.data.TimeSerie;
 import org.jfree.chart.ChartFactory;
@@ -47,8 +46,8 @@ public class WeightChart {
         return this.weightChart.getXYPlot();
     }
 
-    private CategoryTableXYDataset buildCategoryDataset(double weights[][], TimeSerie obs, DataCollection d){
-        SimpleEnsemble p[] = SlopeCalculations.getParameterEnsembles(d);
+    private CategoryTableXYDataset buildCategoryDataset(double weights[][], 
+            SimpleEnsemble p[], TimeSerie obs, boolean enableList[], boolean showList[]){
 
         int T = (int)obs.getTimeDomain().getNumberOfTimesteps();
         int n = weights.length;
@@ -57,10 +56,12 @@ public class WeightChart {
         CategoryTableXYDataset tableDataset = new CategoryTableXYDataset();
         for (int i = 0; i < T; i++) {
             for (int j = 0; j < n; j++) {
-                sum[i] += weights[j][i];
+                if (enableList[j])
+                    sum[i] += weights[j][i];
             }
             for (int j = 0; j < n; j++) {
-                tableDataset.add(obs.getTime(i).getTime(), weights[j][i] / sum[i], p[j].toString(),false);
+                if (showList[j])
+                    tableDataset.add(obs.getTime(i).getTime(), weights[j][i] / sum[i], p[j].toString(),false);
             }
         }
         //to create a notification ..
@@ -68,16 +69,27 @@ public class WeightChart {
         return tableDataset;
     }
 
-    public void update(double[][] weights, TimeSerie obsTS, DataCollection ensemble){
+    public void update(double[][] weights,SimpleEnsemble parameter[], TimeSerie obs, boolean enableList[], boolean showList[], Color[] colorList ){
         int dsCount = weightChart.getXYPlot().getDatasetCount();
 
         for (int i = 0; i < dsCount; i++) {
             weightChart.getXYPlot().setDataset(i, null);
         }
 
-        CategoryTableXYDataset dataset = buildCategoryDataset(weights, obsTS, ensemble);
+        CategoryTableXYDataset dataset = buildCategoryDataset(weights, parameter, obs, enableList, showList);
+
+        Color list[] = new Color[enableList.length];
+        int index = 0;
+        for (int i=0;i<showList.length;i++){
+            if (showList[i])
+                list[index++] = colorList[i];
+        }
 
         weightChart.getXYPlot().setDataset(10, dataset);
         weightChart.getXYPlot().setRenderer(10, weightBarRenderer);
+        for (int i=0;i<colorList.length;i++){
+            weightBarRenderer.setSeriesFillPaint(i,list[i]);
+            weightBarRenderer.setSeriesPaint(i,list[i]);
+        }
     }
 }

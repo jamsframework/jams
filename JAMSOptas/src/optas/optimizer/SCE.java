@@ -144,7 +144,7 @@ public class SCE extends Optimizer {
         }
         if (kstop <= 0) {
             log("warning: kstop_value_not_specified, set to default of 10");
-            peps=(10);
+            kstop=(10);
         }
         return true;
     }

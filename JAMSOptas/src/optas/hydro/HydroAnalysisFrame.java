@@ -138,7 +138,7 @@ public class HydroAnalysisFrame extends JFrame {
 
         if (weights == null) {
             calcWeights();
-        }
+        }/*
         switch (index) {
             case 0: {
                 scheme[index] = new OptimalOptimizationScheme(weights, SlopeCalculations.getParameterEnsembles(ensemble),
@@ -165,7 +165,7 @@ public class HydroAnalysisFrame extends JFrame {
 
                 break;
             }
-        }
+        }*/
         scheme[index].calcOptimizationScheme();
         ((DefaultListModel) parameterGroups.getModel()).clear();
         int counter = 0;
@@ -398,7 +398,7 @@ public class HydroAnalysisFrame extends JFrame {
         dominantParameterChart.getXYPlot().setRangeAxis(symAxis);
         dominantParameterChart.removeLegend();
 
-        this.weightChart.update(weights, obsTS, ensemble);
+        //this.weightChart.update(weights, obsTS, ensemble);
     }
 
     private void init() {

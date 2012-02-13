@@ -41,6 +41,7 @@ public class OptimizerLibrary {
         optimizerPool.add(new optas.optimizer.RandomSampler());
         optimizerPool.add(new optas.optimizer.SCEM_UA());
         optimizerPool.add(new optas.optimizer.HaltonSequenceSampling());
+        optimizerPool.add(new optas.optimizer.ParallelHaltonSequenceSampling());
         return optimizerPool;
     }
     static public Optimizer getDefaultOptimizer(){
@@ -55,6 +56,34 @@ public class OptimizerLibrary {
                 500, 1, 100000));
         
         return defDesc;
+    }
+
+    static public Optimizer loadOptimizer(ClassLoader cl, String name) {
+        Class optimizerClass = null;
+        Object objOptimizer = null;
+        try {
+            optimizerClass = cl.loadClass(name);
+            objOptimizer = optimizerClass.newInstance();
+        } catch (ClassNotFoundException cnfe) {
+            System.out.println("could not find optimizer class, " + name);
+            cnfe.printStackTrace();
+            return null;
+        } catch (InstantiationException ie) {
+            System.out.println("could not instantiate optimizer class, " + name);
+            ie.printStackTrace();
+            return null;
+        } catch (IllegalAccessException ie) {
+            System.out.println("could not instantiate optimizer class, " + name);
+            ie.printStackTrace();
+            return null;
+        }
+
+        if (!(objOptimizer instanceof optas.optimizer.Optimizer)) {
+            System.out.println("class " + name + " is not assignable of optas.Optimizer!");
+            return null;
+        }
+
+        return (optas.optimizer.Optimizer) objOptimizer;
     }
 
     static public Optimizer loadOptimizer(JAMSRuntime rt, String name) {

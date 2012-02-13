@@ -73,7 +73,7 @@ public class Optimization implements Serializable {
     /**
      * @param objective the objective to set
      */
-    public void setObjective(Collection<Objective> objective) {
+    public void setObjective(ArrayList<Objective> objective) {
         this.objective = new ArrayList<Objective>();
         this.objective.addAll(objective);
     }

@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import optas.hydro.data.Calculations;
 import optas.hydro.data.DataSet;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -89,31 +90,23 @@ public class APosterioriPlot extends MCAT5Plot {
         SimpleEnsemble p1 = (SimpleEnsemble) p[0].get(0);
         EfficiencyEnsemble p2 = (EfficiencyEnsemble) p[1].get(0);
 
-        p2 = p2.CalculateLikelihood();
+        double boxes[] = Calculations.calcPostioriDistribution(p1, p2, boxCount);
+
+        double bounds[] = Calculations.calcBounds(p1, p2, boxCount,1.25);
+
+        System.out.println("Recommend parameter range:" + "[" + bounds[0] + "<" + bounds[1] + "]");
 
         plot.setDomainAxis(new NumberAxis(p1.getName()));
         plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN_OF_EFFICIENCY")));
 
         XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN_OF_EFFICIENCY"));
-
-        double boxes[] = new double[boxCount];
-        double boxes_count[] = new double[boxCount];
-
+        
         double min = p1.getMin();
         double max = p1.getMax();
 
-        double sum = 0;
-
-        for (int i = 0; i < p1.getSize(); i++) {
-            int index = (int) (((p1.getValue(p1.getId(i)) - min) / (max - min) * (boxes.length)) - 0.001);
-            boxes[index] += p2.getValue(p2.getId(i));
-            boxes_count[index] += 1.0;
-        }
         for (int i = 0; i < boxes.length; i++) {
-            sum += boxes[i] / boxes_count[i];
-        }
-        for (int i = 0; i < boxes.length; i++) {
-            dataset.add(min + ((max - min) / (boxes.length - 1)) * i, (boxes[i] / boxes_count[i]) / sum);
+            dataset.add(min + ((max - min) / (boxes.length - 1)) * i, boxes[i] );
+            //System.out.println(boxes[i]);
         }
 
         plot.setDataset(0, new XYBarDataset(new XYSeriesCollection(dataset), ((max - min) / (double) boxCount)));

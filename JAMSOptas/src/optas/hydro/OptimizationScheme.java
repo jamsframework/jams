@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
+import java.util.Observable;
 import java.util.TimeZone;
 import optas.hydro.calculations.SlopeCalculations;
 import optas.hydro.data.SimpleEnsemble;
@@ -24,7 +24,7 @@ import optas.metamodel.OptimizationDescriptionDocument;
  *
  * @author chris
  */
-public abstract class OptimizationScheme {
+public abstract class OptimizationScheme extends Observable{
 
     double[][] weights;
     SimpleEnsemble[] parameter;
@@ -37,7 +37,10 @@ public abstract class OptimizationScheme {
     ArrayList<int[]> dominatedTimeStepsForGroup = new ArrayList<int[]>();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public OptimizationScheme(double weights[][], SimpleEnsemble parameterIDs[], SimpleEnsemble objective, TimeSerie ts) {
+    public ArrayList<ParameterGroup> getSolutionGroups(){
+        return solutionGroups;
+    }
+    public void setData(double weights[][], SimpleEnsemble parameterIDs[], SimpleEnsemble objective, TimeSerie ts){
         this.weights = weights;
         this.parameter = parameterIDs;
         this.objective = objective;

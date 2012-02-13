@@ -10,6 +10,7 @@ import jams.io.SerializableBufferedWriter;
 import jams.model.JAMSComponentDescription;
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import optas.optimizer.management.BooleanOptimizerParameter;
 import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.SampleFactory.Sample;
@@ -27,9 +28,17 @@ public class HaltonSequenceSampling extends Optimizer{
 
 
     public double offset = 0;
-    public  boolean analyzeQuality = false;
+    public  boolean analyzeQuality = true;
     public  double targetQuality = 0.8;
+    public double minn = 0;
 
+    public double getMinn(){
+        return minn;
+    }
+    public void setMinn(double minn){
+        this.minn = minn;
+    }
+    
     public double getOffset(){
         return this.offset;
     }
@@ -102,8 +111,8 @@ public class HaltonSequenceSampling extends Optimizer{
         return desc;
     }
 
-    private int iexp(int base, int exp){
-        int result = 1;
+    private long iexp(int base, int exp){
+        long result = 1;
         while(exp>0){
             result*=base;
             exp--;
@@ -111,18 +120,47 @@ public class HaltonSequenceSampling extends Optimizer{
         return result;
     }
 
-    private int[] toRadix(int value, int base) {
+    HashMap<Integer,int[]> database = new HashMap<Integer,int[]>();
+    private int[] generatePermutation(int base){
+        if (database.containsKey(base)){
+            return database.get(base);
+        }
+        int map[] = new int[base];
+        int set[] = new int[base];
+
+        for (int i=0;i<base;i++){
+            set[i] = i;
+        }
+        for (int i=0;i<base;i++){
+            int index = generator.nextInt(base-i);
+            map[i] = set[index];
+            set[index] = set[base-i-1];
+        }
+        database.put(base, map);
+        return map;
+    }
+
+
+    private int[] scramble(int[] p, int base){
+        int map[] = generatePermutation(base);
+        for (int i=0;i<p.length;i++){
+            p[i] = map[p[i]];
+        }
+        return p;
+    }
+
+    private int[] toRadix(long value, int base) {
         int exp = 0;
         while (iexp(base, exp+1) <= value){
             exp++;
         }
 
-        int radix = 0;
+        long radix = 0;
         int result[] = new int[exp+1];
 
         while (exp>=0) {
             radix = iexp(base, exp);
-            result[exp] = value/radix;
+            result[exp] = (int)(value/radix);            
             value -= result[exp] * radix;
             exp--;
         }
@@ -133,15 +171,22 @@ public class HaltonSequenceSampling extends Optimizer{
         double result = 0;
 
         for (int i=0;i<number.length;i++){
-            int radix = iexp(base, i+1);
+            long radix = iexp(base, i+1);
             result += (1.0 / (double)radix) * number[i];
         }
         return result;
     }
-
+    
     @Override
     public void procedure()throws SampleLimitException, ObjectiveAchievedException{
+        long startTime = System.currentTimeMillis();
+
         Sample simplex[] = new Sample[(int)this.getMaxn()];
+
+        double meanTime = 0;
+        double totalExecutionTime = 0;
+        double executionCounter = 0;
+        double remainingTime = 0;
 
         int offset = 0;
 
@@ -150,27 +195,37 @@ public class HaltonSequenceSampling extends Optimizer{
 
         int N = (int)this.getMaxn();
 
+        long start[] = new long[n];
+
+        for (int j=0;j<n;j++){
+            start[j] = Math.abs(this.generator.nextLong())/1000;
+        }
+
         for (int i=0;i<N;i++){
             if (i==0 && x0 != null){
                 simplex[i] = this.getSample(x0);
                 continue;
-            }
-
+            }            
             if (i % 100 == 0 && i > 0 && analyzeQuality){
-                this.log("Estimating Quality of sampling (prior optimization).. ");
+                this.log("Estimating Quality of sampling (prior optimization) with " + this.getStatistics().size() + " samples");
                 double quality = this.factory.getStatistics().calcQuality();
-                this.log("Averaged LOO Quality based on E2 is: " + quality);
-                this.log("Optimizing interpolation");
-                this.factory.getStatistics().optimizeInterpolation();
-                quality = this.factory.getStatistics().calcQuality();
-                this.log("Estimating Quality of sampling (post optimization).. ");
-                this.log("Averaged LOO Quality based on E2 is: " + quality);
+                this.log("Average Quality based on E2 is: " + quality);                
                 this.log("Target quality is " + targetQuality);
-
-                /*if (targetQuality <= quality){
+                this.log("Mean time per execution is " + meanTime);
+                if(remainingTime > 86400){
+                    this.log("Estimated time of finish is in " + remainingTime/86400 + " days");
+                }else if(remainingTime > 3600){
+                    this.log("Estimated time of finish is in " + remainingTime/3600 + " hrs");
+                }else if(remainingTime > 60){
+                    this.log("Estimated time of finish is in " + remainingTime/60.0 + " min");
+                }else{
+                    this.log("Estimated time of finish is in " + remainingTime + " sec");
+                }
+                
+                if (targetQuality <= quality && i >= this.minn ){
                     this.log("Finish sampling");
                     break;
-                }*/
+                }
             }
 
             double x[] = new double[n];
@@ -178,31 +233,38 @@ public class HaltonSequenceSampling extends Optimizer{
             for (int j=0;j<n;j++){
                 int base = primTable[j];
                 //generate radix presentation of i with base prim[j]
-                //e.g 11 -> p=3 -> 11_3 = 102
-                int radix[] = toRadix(i+offset,base);
+                //e.g 11, p=3 -> 11_3 = 102
+                int radix[] = toRadix(409*(i+offset),base);
                 //interpret representation as fractional number
                 //102 -> 0.201_3
                 //convert it to double
                 //0.201_3 = 0.704_10
-                double w = toFractional(radix,base);
+                double w = toFractional(radix/*scramble(radix, base)*/,base);
                 x[j] = this.lowBound[j] + w*(this.upBound[j] - this.lowBound[j]);
             }
 
             simplex[i] = this.getSample(x);
+            long time2 = System.currentTimeMillis();
+
+            totalExecutionTime = (double)(time2 - startTime)/1000.0;
+            executionCounter+=1.0;
+            meanTime = (double)(totalExecutionTime / executionCounter);
+
+            remainingTime = (N-executionCounter)*meanTime;
         }
     }
 
     public static void main(String[] args) {
         HaltonSequenceSampling hss = new HaltonSequenceSampling();
-        hss.maxn = 100;
+        hss.maxn = 5000;
 
-        int n = 10;
+        int n = 20;
         int m = 1;
 
         hss.n = n;
         hss.m = m;
-        hss.lowBound = new double[]{0,0,0,0,0,0,0,0,0,0};
-        hss.upBound = new double[]{1,1,1,1,1,1,1,1,1,1};
+        hss.lowBound = new double[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        hss.upBound = new double[]{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
         hss.objNames = new String[]{"y"};
         hss.offset = 0;
 

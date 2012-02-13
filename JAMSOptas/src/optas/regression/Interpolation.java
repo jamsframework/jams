@@ -5,6 +5,8 @@
 
 package optas.regression;
 
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import optas.hydro.data.SimpleEnsemble;
 
@@ -13,6 +15,34 @@ import optas.hydro.data.SimpleEnsemble;
  * @author chris
  */
 public abstract class Interpolation {
+
+    /**
+     * @return the xNormalizationMethod
+     */
+    public NormalizationMethod getxNormalizationMethod() {
+        return xNormalizationMethod;
+    }
+
+    /**
+     * @param xNormalizationMethod the xNormalizationMethod to set
+     */
+    public void setxNormalizationMethod(NormalizationMethod xNormalizationMethod) {
+        this.xNormalizationMethod = xNormalizationMethod;
+    }
+
+    /**
+     * @return the yNormalizationMethod
+     */
+    public NormalizationMethod getyNormalizationMethod() {
+        return yNormalizationMethod;
+    }
+
+    /**
+     * @param yNormalizationMethod the yNormalizationMethod to set
+     */
+    public void setyNormalizationMethod(NormalizationMethod yNormalizationMethod) {
+        this.yNormalizationMethod = yNormalizationMethod;
+    }
 
     public enum ErrorMethod{ABSE, RMSE,E2};
 
@@ -23,7 +53,21 @@ public abstract class Interpolation {
     protected int L=0;
 
     protected boolean initSuccessful = false;
-    protected double[] weights = null;
+
+    double xRange[];
+    double xMin[];
+
+    double yRange, yMin;
+
+    TreeMap<Double, Double>[] xHistorgramm = null;
+    TreeMap<Double, Double>   yHistorgramm = null;
+
+    TreeMap<Double, Double>[] xInvHistorgramm = null;
+    TreeMap<Double, Double>   yInvHistorgramm = null;
+
+    public enum NormalizationMethod{Linear, Histogramm};
+    private NormalizationMethod xNormalizationMethod = NormalizationMethod.Linear;
+    private NormalizationMethod yNormalizationMethod = NormalizationMethod.Linear;
 
     public void setData(SimpleEnsemble x[], SimpleEnsemble y){
         this.x = x;
@@ -35,31 +79,125 @@ public abstract class Interpolation {
 
         n = x.length;
         L = x[0].getSize();
-
-        if (weights == null || weights.length != n){
-            weights = new double[n];
-            for (int i=0;i<n;i++){
-                if (x[i].getSize()!=L)
-                    return;
-                weights[i] = 0.0;
-            }
-            setWeighting(weights);
-        }        
-        
+                  
         if (y.getSize()!=L)
             return;
+
+        this.xRange = new double[n];
+        this.xMin = new double[n];
+        //normalize between -1 and 1
+        for (int i=0;i<n;i++){
+            double min = x[i].getMin();
+            double max = x[i].getMax();
+
+            xRange[i] = 1.0 / (max-min);
+            xMin[i] = min;
+        }
+        yRange = 1.0 / (y.getMax() - y.getMin());
+        yMin = y.getMin();
+
+        xHistorgramm = new TreeMap[n];
+        yHistorgramm = new TreeMap<Double, Double>();
+
+        xInvHistorgramm = new TreeMap[n];
+        yInvHistorgramm = new TreeMap<Double, Double>();
+
+        for (int i=0;i<n;i++){
+            TreeMap<Double, Double> hist = new TreeMap<Double, Double>();
+            TreeMap<Double, Double> histInv = new TreeMap<Double, Double>();
+            Integer sortedMap[] = x[i].sort(true);
+            double sum = -1.0;
+            double delta = 2.0 / sortedMap.length;
+            for (int j=0;j<sortedMap.length;j++){
+                double v = x[i].getValue(sortedMap[j]);
+                hist.put(v, sum);
+                histInv.put(sum, v);
+                sum += delta;
+            }
+            xHistorgramm[i] = hist;
+        }
+
+        Integer sortedMap[] = y.sort(true);
+        double sum = -1.0;
+        double delta = 2.0 / sortedMap.length;
+        for (int j=0;j<sortedMap.length;j++){
+            double v = y.getValue(sortedMap[j]);
+            yHistorgramm.put(v, sum);
+            yInvHistorgramm.put(sum, v);
+            sum += delta;
+        }
+
         initSuccessful = true;
     }
 
-    public void init() {
-        weights = new double[n];
-        for (int i = 0; i < n; i++) {
-            if (x[i].getSize() != L) {
-                return;
+    private double histogrammNormalization(double u, TreeMap<Double, Double> histogramm){
+        Entry upper = histogramm.ceilingEntry(u);
+        Entry lower = histogramm.floorEntry(u);
+        double normalizedU = 0;
+        if (upper == null) {
+            normalizedU = histogramm.lastEntry().getValue();
+        } else if (lower == null) {
+            normalizedU = histogramm.firstEntry().getValue();
+        } else {
+            double w1 = u - (Double) lower.getKey();
+            double w2 = (Double) upper.getKey() - u;
+            if (w1 + w2 == 0) {
+                w1 = 1.0;
+                w2 = 0.0;
             }
-            weights[i] = 0.0;
+            double r = w1 / (w1 + w2);
+            double s = w2 / (w1 + w2);
+
+            normalizedU = s * (Double) lower.getValue() + r * (Double) upper.getValue();
         }
-        setWeighting(weights);
+        return normalizedU;
+    }
+
+    protected double[] normalizeX(double u[]){
+        double normalizedU[] = new double[u.length];
+        for (int i=0;i<normalizedU.length;i++){
+            if (this.getxNormalizationMethod() == NormalizationMethod.Linear)
+                normalizedU[i] = ((u[i]-this.xMin[i])*xRange[i]*2.0)-1.0;
+            else if (this.getxNormalizationMethod() == NormalizationMethod.Histogramm) {
+                normalizedU[i] = histogrammNormalization(u[i], xHistorgramm[i]);
+            }
+        }
+
+        return normalizedU;
+    }
+
+    protected double normalizeY(double y){
+        if (this.getyNormalizationMethod() == NormalizationMethod.Linear)
+            return ((y-yMin)*yRange*2.0)-1.0;
+        else if (this.getyNormalizationMethod() == NormalizationMethod.Histogramm) {
+            return histogrammNormalization(y, yHistorgramm);
+        }else
+            return 0;
+    }
+
+    protected double[] denormalizeX(double u[]){
+        double denormalizedU[] = new double[u.length];
+        for (int i=0;i<denormalizedU.length;i++){
+            if (this.getxNormalizationMethod() == NormalizationMethod.Linear)
+                denormalizedU[i] = ((u[i]+1.0)/(2.0*xRange[i]))+xMin[i];
+            else if (this.getxNormalizationMethod() == NormalizationMethod.Histogramm) {
+                denormalizedU[i] = histogrammNormalization(u[i], xInvHistorgramm[i]);
+            }
+        }
+        return denormalizedU;
+    }
+
+    protected double denormalizeY(double y){
+        if (this.getyNormalizationMethod() == NormalizationMethod.Linear)
+            return ((y+1.0)/(2.0*yRange))+yMin;
+        else if (this.getyNormalizationMethod() == NormalizationMethod.Histogramm) {
+            return histogrammNormalization(y, yInvHistorgramm);
+        }else
+            return 0;
+
+    }
+
+    public void init() {        
     }
 
     protected double[] getX(int id){
@@ -104,146 +242,24 @@ public abstract class Interpolation {
         }
         return 0.0;
     }
-
-    protected void setWeighting(double []w){
-        this.weights = w;
-    }
-    
-    private double funct(double w[]){
-        setWeighting(w);
+        
+    private double funct(){        
         return estimateLOOError(ErrorMethod.RMSE);
     }
-
-    public void optimizeWeights(){
-        String paramName[] = new String[n];
-        for (int i=0;i<n;i++){
-            paramName[i] = "w_" + i;
-        }
-        gradientDescent(weights, paramName);
-    }
-    private void gradientDescent(double x[],String paramName[]) {
-	double y1,y2,diff;
-	double [] grad = new double[x.length];
-	double [] alpha = new double[x.length];
-	double xp[] = new double[x.length];
-
-	double alpha_min = 0.001;
-	double diff_min = 0.025;
-	double approxError = 0.0001;
-
-	diff  = 1.0;
-
-	y1 = funct(x);
-
-	double y_alt;
-	double y_neu = 1.0;
-	double calpha = 0.1;
-
-	for (int i=0;i<x.length;i++) {
-	    alpha[i] = 0.1;
-	}
-        System.out.println("Performing Gradient Descent Optimization!");
-        System.out.println("starting with function value:" + y1);
-        int iteration = 0;
-	while ( calpha > alpha_min && diff > diff_min ) {
-            iteration++;
-            System.out.println("iteration:" + iteration);
-	    y_alt = y1;
-	    //partial differences quotients
-	    for (int i=0; i < x.length; i++) {
-		if (alpha[i] == 0) {
-		    continue;
-		}
-	        for (int j=0; j < x.length; j++) {
-		    if (j == i) {
-		        xp[j] = x[j]+approxError;
-		    }
-		    else
-		        xp[j] = x[j];
-		}
-
-		y2 = funct(xp);
-		grad[i] = ((y2 - y1) / approxError);
-
-		if (grad[i] < 0) grad[i] = -1.0;
-		else		 grad[i] = 1.0;
-		//use armijo - method to obtain step width
-		//decrease step - width until result is better than the last one
-
-		//try to increase step - width
-		alpha[i] *= 4.0;
-		if (alpha[i] >= 2.0) alpha[i] = 2.0;
-		while (true) {
-		    for (int k=0; k < x.length; k++) {
-			xp[k] = x[k];
-			if (k==i) {
-			     xp[k] = x[i] - alpha[i]*grad[i];
-
-			     if (xp[k] < -10.0)	xp[k] = -10.0;
-			     if (xp[k] >  10.0)	xp[k] =  10.0;
-			}
-		    }
-
-		    y_neu = funct(xp);
-
-		    if (y_neu < y1)
-			break;
-
-		    alpha[i] /= 2.0;
-
-		    if (alpha[i] < alpha_min) {
-			xp[i] = x[i];
-			alpha[i] = 0;
-			y_neu = funct(xp);
-			break;
-		    }
-		}
-		y1 = y_neu;
-                for (int k=0; k < x.length; k++) {
-                    x[k] = xp[k];
-                }
-	    }
-
-            String info = "current parameter - set:\n";
-            for (int k=0; k < x.length; k++) {
-                x[k] = xp[k];
-                info += paramName[k] + ":";
-		info += Math.exp(x[k]) + "\n";
-            }
-
-
-            for (int i=0;i<x.length;i++) {
-		if (alpha[i]>calpha)
-		    calpha = alpha[i];
-	    }
-
-	    diff = Math.abs((y_neu-y_alt)/y_neu);
-
-            y_alt = y_neu;
-            
-            System.out.println(info);
-            System.out.println("function value:\t" + y1 + "\t Alpha: " + calpha + "\t diff:" + diff);
-	}
-        funct(x);
-    }
-
+    
     protected void calculate(){
         
     }
 
-    public double estimateCrossValidationError(int K, ErrorMethod e){
-        double error = 0;
-
+    public double estimateCrossValidationError(int K, ErrorMethod e){       
         double obs[] = new double[L];
         double sim[] = new double[L];
 
         this.calculate();
 
         for (int k=0;k<K;k++){
-
-
             int indexStart = k*(L/K);
-            int indexEnd   = Math.min((k+1)*(L/K)-1,L-1);
+            int indexEnd   = Math.min((k+1)*(L/K),L);
             int size = indexEnd-indexStart;
             if (size == 0)
                 continue;
@@ -260,13 +276,17 @@ public abstract class Interpolation {
             double y_star[] = getValue(validationSet);
 
             for (int j=0;j<size;j++){
-                error += Math.abs(y_star[j] - validation[j]);
-
-                obs[j] = validation[j];
-                sim[j] = y_star[j];
+                //error += Math.abs(y_star[j] - validation[j]);
+                obs[indexStart+j] = validation[j];
+                sim[indexStart+j] = y_star[j];
+                
             }
 
         }
+        /*
+        for (int i=0;i<obs.length;i++){
+            System.out.println(obs[i] + "\t" + sim[i]);
+        }*/
 
         return calcDifference(e, sim, obs);
     }

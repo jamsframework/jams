@@ -2,18 +2,20 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package optas.gui.MCAT5;
 
+import jams.gui.WorkerDlg;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Set;
 import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -21,12 +23,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import optas.SA.UniversalSensitivityAnalyzer;
 import optas.SA.VarianceBasedSensitivityIndex.Measure;
 import optas.hydro.data.DataSet;
 import optas.hydro.data.Efficiency;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.Parameter;
 import optas.hydro.data.SimpleEnsemble;
+import optas.regression.Interpolation;
 import optas.regression.NeuralNetwork;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -42,38 +46,35 @@ import org.jfree.data.general.DatasetUtilities;
  * @author chris
  */
 public class ShowSensitivity extends MCAT5Plot {
-    JPanel panel = null;
 
+    JPanel panel = null;
     JTextField sampleCountField = new JTextField(10);
     JTextField regressionErrorField = new JTextField(10);
     JTextField sampleCountFieldRegression = new JTextField("1000");
     JCheckBox doVarianceEstimation = new JCheckBox("Estimate Uncertainty of Sensitivity");
-
+    JCheckBox useANNRegression = new JCheckBox("Use ANN Regression");
     JComboBox regressionMethod = new JComboBox(new String[]{"Neural Network"});
-
+    JComboBox parameterNormalizationMethod = new JComboBox(Interpolation.NormalizationMethod.values());
+    JComboBox objectiveNormalizationMethod = new JComboBox(Interpolation.NormalizationMethod.values());
     String rsaString = "Regional Sensitivity Analysis",
-           mgeString = "Maximum Gradient Estimation",
-           eemString = "Elementary Effects Method",
-           fosiString = "First Order Sensitivity by FAST",
-           fosiString2 = "First Order Sensitivity by Satelli(2008)(-)",
-           tosiString = "Total Sensitivity Index by Satelli(2008)(-)",
-           linearRegString = "Linear Regression";
-
-
-
-    JComboBox sensitivityMethod = new JComboBox(new String[]{rsaString, mgeString, eemString, fosiString,tosiString,linearRegString});
-
+            mgeString = "Maximum Gradient Estimation",
+            eemString = "Elementary Effects Method",
+            fosiString = "First Order Sensitivity by FAST",
+            fosiString2 = "First Order Sensitivity by Satelli(2008)(-)",
+            tosiString = "Total Sensitivity Index by Satelli(2008)(-)",
+            linearRegString = "Linear Regression";
+    JComboBox sensitivityMethod = new JComboBox(new String[]{rsaString, mgeString, eemString, fosiString, tosiString, linearRegString});
     CategoryDataset dataset1 = null, dataset2 = null;
     JFreeChart chart = null;
 
-    public ShowSensitivity(){
+    public ShowSensitivity() {
         this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"), Parameter.class));
         this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
 
         init();
     }
 
-    private void init(){
+    private void init() {
         panel = new JPanel(new BorderLayout());
 
         JPanel centerPanel = new JPanel();
@@ -83,12 +84,12 @@ public class ShowSensitivity extends MCAT5Plot {
         int rowCounter = 0;
         GridBagConstraints c = new GridBagConstraints();
         c.anchor = c.WEST;
-        c.insets = new Insets(5,5,5,5);
+        c.insets = new Insets(5, 5, 5, 5);
         c.ipadx = 5;
         c.gridx = 0;
         c.gridy = rowCounter++;
         c.fill = c.NONE;
-        southPanel.add(new JLabel("Number of Samples(total)"),c);
+        southPanel.add(new JLabel("Number of Samples(total)"), c);
         c.gridx = 1;
         c.fill = c.HORIZONTAL;
         sampleCountField.setEditable(false);
@@ -99,45 +100,104 @@ public class ShowSensitivity extends MCAT5Plot {
         c.gridx = 0;
         c.gridy = rowCounter++;
         c.fill = c.NONE;
-        southPanel.add(new JLabel("Number of Samples(Regression) "),c);
+        southPanel.add(new JLabel("Number of Samples(Regression) "), c);
         c.gridx = 1;
         c.fill = c.HORIZONTAL;
         sampleCountField.setEditable(false);
         southPanel.add(sampleCountFieldRegression, c);
-        
-        c.gridx = 0;
-        c.gridy = rowCounter++;
-        c.fill = c.NONE;
-        southPanel.add(new JLabel("Method for Regression"),c);
-        c.gridx = 1;
-        c.fill = c.HORIZONTAL;
-        southPanel.add(this.regressionMethod,c);
 
         c.gridx = 0;
         c.gridy = rowCounter++;
         c.fill = c.NONE;
-        southPanel.add(new JLabel("Method for Sensitivity Analysis"),c);
-        c.gridx = 1;
-        c.fill = c.HORIZONTAL;
-        southPanel.add(this.sensitivityMethod,c);
+        c.gridwidth = 2;
+        c.anchor = GridBagConstraints.CENTER;
+        southPanel.add(this.useANNRegression, c);
+        useANNRegression.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                if (useANNRegression.isSelected()) {
+                    sampleCountFieldRegression.setEditable(true);
+                    regressionMethod.setEnabled(true);
+                    doVarianceEstimation.setEnabled(true);
+                    parameterNormalizationMethod.setEnabled(true);
+                    objectiveNormalizationMethod.setEnabled(true);
+                    sensitivityMethod.setModel(new DefaultComboBoxModel(new String[]{rsaString, mgeString, eemString, fosiString, tosiString, linearRegString}));
+                } else {
+                    sampleCountFieldRegression.setEditable(false);
+                    regressionMethod.setEnabled(false);
+                    regressionErrorField.setText("--");
+                    doVarianceEstimation.setEnabled(false);
+                    parameterNormalizationMethod.setEnabled(false);
+                    objectiveNormalizationMethod.setEnabled(false);
+                    sensitivityMethod.setModel(new DefaultComboBoxModel(new String[]{rsaString, linearRegString}));
+                }
+
+                WorkerDlg progress = new WorkerDlg(null, "Updating plot");
+                progress.setInderminate(true);
+                progress.setTask(new Runnable() {
+
+                    public void run() {
+                        try {
+                            ShowSensitivity.this.refresh();
+                        } catch (NoDataException nde) {
+                        }
+                    }
+                });
+                progress.execute();
+            }
+        });
+        c.gridwidth = 1;
+        useANNRegression.setSelected(true);
 
         c.gridx = 0;
         c.gridy = rowCounter++;
         c.fill = c.NONE;
-        southPanel.add(new JLabel("Quality of Regression (E2)"),c);
+        southPanel.add(new JLabel("Method for Regression"), c);
+        c.gridx = 1;
+        c.fill = c.HORIZONTAL;
+        southPanel.add(this.regressionMethod, c);
+
+        c.gridx = 0;
+        c.gridy = rowCounter++;
+        c.fill = c.NONE;
+        southPanel.add(new JLabel("Parameter normalization method"), c);
+        c.gridx = 1;
+        c.fill = c.HORIZONTAL;
+        southPanel.add(this.parameterNormalizationMethod, c);
+
+        c.gridx = 0;
+        c.gridy = rowCounter++;
+        c.fill = c.NONE;
+        southPanel.add(new JLabel("Objective normalization method"), c);
+        c.gridx = 1;
+        c.fill = c.HORIZONTAL;
+        southPanel.add(this.objectiveNormalizationMethod, c);
+
+        c.gridx = 0;
+        c.gridy = rowCounter++;
+        c.fill = c.NONE;
+        southPanel.add(new JLabel("Method for Sensitivity Analysis"), c);
+        c.gridx = 1;
+        c.fill = c.HORIZONTAL;
+        southPanel.add(this.sensitivityMethod, c);
+
+        c.gridx = 0;
+        c.gridwidth = 1;
+        c.gridy = rowCounter++;
+        c.fill = c.NONE;
+        southPanel.add(new JLabel("Quality of Regression (E2)"), c);
         c.gridx = 1;
         c.fill = c.HORIZONTAL;
         regressionErrorField.setEditable(false);
-        southPanel.add(this.regressionErrorField,c);
+        southPanel.add(regressionErrorField, c);
 
         c.gridx = 0;
         c.gridy = rowCounter++;
-        c.fill = c.NONE;
-        southPanel.add(new JLabel("Quality of Regression (E2)"),c);
-        c.gridx = 1;
+        c.gridwidth = 2;
         c.fill = c.HORIZONTAL;
+        c.anchor = GridBagConstraints.CENTER;
         regressionErrorField.setEditable(false);
-        southPanel.add(this.doVarianceEstimation,c);
+        southPanel.add(this.doVarianceEstimation, c);
         doVarianceEstimation.setSelected(false);
 
         c.gridx = 0;
@@ -145,26 +205,33 @@ public class ShowSensitivity extends MCAT5Plot {
         c.gridwidth = 2;
         c.fill = c.NONE;
         c.anchor = c.CENTER;
-        southPanel.add(new JButton(new AbstractAction("Recalculate Regression"){
-            public void actionPerformed(ActionEvent e){
-                try{
-                    refresh();
-                }catch(NoDataException nde){
-                    JOptionPane.showMessageDialog(panel, "Unsufficient data to recalculate regression!");
-                }
+        southPanel.add(new JButton(new AbstractAction("Recalculate Regression") {
+
+            public void actionPerformed(ActionEvent e) {
+                WorkerDlg progress = new WorkerDlg(null, "Updating plot");
+                progress.setInderminate(true);
+                progress.setTask(new Runnable() {
+
+                    public void run() {
+                        try {
+                            ShowSensitivity.this.refresh();
+                        } catch (NoDataException nde) {
+                        }
+                    }
+                });
+                progress.execute();
             }
-        }),c);
-        
+        }), c);
+
         chart = ChartFactory.createStackedBarChart(
-            "Sensitivity of Parameters",         // chart title
-            "Parameter",                 // domain axis label
-            "Sensitivity (%)",                // range axis label
-            dataset1,                    // data
-            PlotOrientation.HORIZONTAL, // orientation
-            false,                       // include legend
-            true,
-            false
-        );
+                "Sensitivity of Parameters", // chart title
+                "Parameter", // domain axis label
+                "Sensitivity (%)", // range axis label
+                dataset1, // data
+                PlotOrientation.HORIZONTAL, // orientation
+                false, // include legend
+                true,
+                false);
 
         // set the background color for the chart...
         chart.setBackgroundPaint(Color.lightGray);
@@ -182,67 +249,67 @@ public class ShowSensitivity extends MCAT5Plot {
         return this.panel;
     }
 
-    public void refresh() throws NoDataException{
+    public void refresh() throws NoDataException {
         if (!this.isRequestFulfilled()) {
             return;
         }
 
         Set<String> xSet = this.getDataSource().getDatasets(Parameter.class);
-        ArrayList<DataSet> p[] = getData(new int[]{0, 1});
-        SimpleEnsemble p1 = (SimpleEnsemble) p[0].get(0);
+        ArrayList<DataSet> p[] = getData(new int[]{0, 1});        
         EfficiencyEnsemble p2 = (EfficiencyEnsemble) p[1].get(0);
 
         SimpleEnsemble xData[] = new SimpleEnsemble[xSet.size()];
         int counter = 0;
-        for (String name : xSet){
+        for (String name : xSet) {
             xData[counter++] = this.getDataSource().getSimpleEnsemble(name);
         }
 
-        optas.SA.SensitivityAnalyzer sa = null;
+        UniversalSensitivityAnalyzer uniSA = new UniversalSensitivityAnalyzer();
 
-        if (sensitivityMethod.getSelectedItem().equals(rsaString)){
-            sa = new optas.SA.RegionalSensitivityAnalysis();
-        }else if (sensitivityMethod.getSelectedItem().equals(mgeString)){
-            sa = new optas.SA.GradientSensitivityAnalysis();
-        }else if (sensitivityMethod.getSelectedItem().equals(eemString)){
-            sa = new optas.SA.ElementaryEffects();
-        }else if (sensitivityMethod.getSelectedItem().equals(fosiString)){
-            sa = new optas.SA.FAST(optas.SA.FAST.Measure.FirstOrder);
-        }else if (sensitivityMethod.getSelectedItem().equals(fosiString2)){
-            sa = new optas.SA.VarianceBasedSensitivityIndex(Measure.FirstOrder);
-        }else if (sensitivityMethod.getSelectedItem().equals(tosiString)){            
-            sa = new optas.SA.VarianceBasedSensitivityIndex(Measure.Total);
-        }else if (sensitivityMethod.getSelectedItem().equals(linearRegString)){
-            sa = new optas.SA.LinearRegression();
+        if (sensitivityMethod.getSelectedItem().equals(rsaString)) {
+            uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.RSA);
+        } else if (sensitivityMethod.getSelectedItem().equals(mgeString)) {
+            uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.MaximumGradient);
+        } else if (sensitivityMethod.getSelectedItem().equals(eemString)) {
+            uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.ElementaryEffects);
+        } else if (sensitivityMethod.getSelectedItem().equals(fosiString)) {
+            uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.FOSI1);
+        } else if (sensitivityMethod.getSelectedItem().equals(fosiString2)) {
+            uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.FOSI2);
+        } else if (sensitivityMethod.getSelectedItem().equals(tosiString)) {
+            uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.TOSI);
+        } else if (sensitivityMethod.getSelectedItem().equals(linearRegString)) {
+            uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.LinearRegression);
         }
+        uniSA.setUseANNRegression(useANNRegression.isSelected());
+        uniSA.setParameterNormalizationMethod((Interpolation.NormalizationMethod) this.parameterNormalizationMethod.getSelectedItem());
+        uniSA.setObjectiveNormalizationMethod((Interpolation.NormalizationMethod) this.objectiveNormalizationMethod.getSelectedItem());
 
         int n = counter;
-        sa.setData(xData, p2);
-
+        
         double sampleSize = 0;
-        try{
+        try {
             sampleSize = Double.parseDouble(this.sampleCountFieldRegression.getText());
-        }catch(NumberFormatException nfe){
+        } catch (NumberFormatException nfe) {
             JOptionPane.showMessageDialog(panel, "Please enter a real valued number for sample size!");
             return;
         }
 
-        sa.setSampleSize((int)sampleSize);
+        uniSA.setSampleCount((int)sampleSize);
 
-        sa.setInterpolationMethod(new NeuralNetwork());
-        sa.init();
-        this.regressionErrorField.setText(Double.toString(sa.getCVError()));
+        uniSA.setup(xData, p2);
+        this.regressionErrorField.setText(Double.toString(uniSA.calculateError()));
         this.sampleCountField.setText(Integer.toString(p2.getSize()));
 
-        double data[][]= new double[2][n];
-
+        double data[][] = new double[2][n];
+        double sensitivity[][] = uniSA.getSensitivity();
         String categoryName[] = new String[n];
-        for (int i=0;i<n;i++){
-            if (doVarianceEstimation.isSelected()){
-                data[0][i] = sa.getSensitivity(i)-sa.getVariance(i);
-                data[1][i] = 2*sa.getVariance(i);
-            }else{
-                data[0][i] = sa.getSensitivity(i);
+        for (int i = 0; i < n; i++) {
+            if (doVarianceEstimation.isSelected()) {
+                data[0][i] = Math.max(sensitivity[i][0], 0);
+                data[1][i] = sensitivity[i][2]-sensitivity[i][0];
+            } else {
+                data[0][i] = sensitivity[i][1];
                 data[1][i] = 0;
             }
 
@@ -250,10 +317,10 @@ public class ShowSensitivity extends MCAT5Plot {
         }
 
         dataset1 = DatasetUtilities.createCategoryDataset(new String[]{"Sensitivity", "Uncertainty"}, categoryName, data);
-        
-        ((CategoryPlot)chart.getPlot()).setDataset(0,dataset1);
 
-        ((CategoryPlot)chart.getPlot()).getRenderer().setSeriesPaint(0, new Color(0, 255, 0));
-        ((CategoryPlot)chart.getPlot()).getRenderer().setSeriesPaint(1, new Color(255, 0, 0));
+        ((CategoryPlot) chart.getPlot()).setDataset(0, dataset1);
+
+        ((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(0, new Color(0, 255, 0));
+        ((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(1, new Color(255, 0, 0));
     }
 }
