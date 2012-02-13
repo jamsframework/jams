@@ -56,6 +56,7 @@ public interface SystemProperties {
     String WORKSPACE_IDENTIFIER = "workspace";
     String PROFILING_IDENTIFIER = "profiling";
     String USE_DEFAULT_WS_PATH = "defaultworkspace";
+    String DOCBOOK_HOME_PATH = "docbook-home";
 
     /**
      * Adds an observer for some property
