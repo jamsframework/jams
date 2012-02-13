@@ -45,7 +45,7 @@ public class PropertyDlg extends JDialog {
     private FileListInput list;
     private BooleanInput verboseCheck,  windowEnable,  windowOnTop,  errorDlg, profiling, defaultWSPath;
     private JSpinner debugSpinner;
-    private FileInput infoFile,  errorFile;
+    private FileInput infoFile,  errorFile, docbookDir;
     private TextInput windowHeight,  windowWidth, helpBaseURL, userName, forceLocale, charset;
     private SystemProperties properties;
     public static final int APPROVE_OPTION = 1;
@@ -177,6 +177,12 @@ public class PropertyDlg extends JDialog {
         helpBaseURL.getComponent().setPreferredSize(new Dimension(300, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, helpBaseURL, 1, y, 1, 1, 1, 1);
 
+        y++;
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Doc_Book_Home:")), 0, y, 1, 1, 0, 0);
+        docbookDir = new FileInput();
+        docbookDir.setPreferredSize(new Dimension(286, JCOMP_HEIGHT));
+        GUIHelper.addGBComponent(contentPanel, gbl, docbookDir, 1, y, 1, 1, 1, 1);
+
         JButton okButton = new JButton(JAMS.i18n("OK"));
         okButton.addActionListener(new ActionListener() {
 
@@ -275,6 +281,8 @@ public class PropertyDlg extends JDialog {
         windowWidth.setValue(properties.getProperty(SystemProperties.WINDOWWIDTH_IDENTIFIER));
         userName.setValue(properties.getProperty(SystemProperties.USERNAME_IDENTIFIER));
         helpBaseURL.setValue(properties.getProperty(SystemProperties.HELPBASEURL_IDENTIFIER));
+
+        docbookDir.setValue(properties.getProperty(SystemProperties.DOCBOOK_HOME_PATH));
     }
 
     public void validateProperties() {
@@ -304,6 +312,7 @@ public class PropertyDlg extends JDialog {
         properties.setProperty(SystemProperties.WINDOWWIDTH_IDENTIFIER, windowWidth.getValue());
         properties.setProperty(SystemProperties.USERNAME_IDENTIFIER, userName.getValue());
         properties.setProperty(SystemProperties.HELPBASEURL_IDENTIFIER, helpBaseURL.getValue());
+        properties.setProperty(SystemProperties.DOCBOOK_HOME_PATH, docbookDir.getValue());
     }
 
     public SystemProperties getProperties() {
