@@ -62,7 +62,7 @@ public class DocumentationGenerator {
 
             if (entry.getName().endsWith(".xml")) {
                 String filename = entry.getName().replaceAll("/", ".");
-                Tools.extractZipEntry(jfile, entry, new File(directory + filename));
+                Tools.extractZipEntry(jfile, entry, new File(directory, filename));
             }else if(entry.getName().endsWith(".png")) {
                 String filename = entry.getName();
                 filename = filename.replaceAll("/", ".");
@@ -87,7 +87,7 @@ public class DocumentationGenerator {
                 
                 jfile.getInputStream(entry);
                 InputStream in = new BufferedInputStream(jfile.getInputStream(entry));
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(directory + filename));
+                OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(directory, filename)));
                 byte[] buffer = new byte[4096];
                 for (;;) {
                     int nBytes = in.read(buffer);
@@ -285,7 +285,7 @@ public class DocumentationGenerator {
                 template = template.replace("%title%", componentTitle);
                 template = template.replace("%value%", value);
 
-                File annotationFile = new File(directory + AnnotationFileName + componentTitle + ".xml");
+                File annotationFile = new File(directory, AnnotationFileName + componentTitle + ".xml");
                 Tools.writeContent(annotationFile, template);
             }
         } catch (Exception E) {
@@ -310,7 +310,7 @@ public class DocumentationGenerator {
         }
         String pathin_vorlage = documentationDir.getAbsolutePath() + "/template.xml";
         
-        createParameterXML(document, new File(documentationDir + "/parameter.xml"));
+        createParameterXML(document, new File(documentationDir,"parameter.xml"));
 
         try{
             createCompleteDocumentation(documentationDir, modelDocument, pathin_vorlage);
