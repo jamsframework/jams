@@ -184,8 +184,7 @@ public class JAMSModel extends JAMSContext implements Model {
             return false;
         }
         // reanimate data tracers
-        setupDataTracer();
-        this.components.size();
+        setupDataTracer();        
         return true;
     }
 

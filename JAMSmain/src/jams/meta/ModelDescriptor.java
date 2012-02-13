@@ -367,7 +367,7 @@ public class ModelDescriptor extends ComponentCollection {
     public void setDataStoresNode(Node dataStoresNode) {
         this.dataStoresNode = dataStoresNode;
     }
-
+@SuppressWarnings("unchecked")
     public ArrayList<ComponentField> getParameterFields() {
 
         ArrayList<ComponentField> fields = new ArrayList<ComponentField>();

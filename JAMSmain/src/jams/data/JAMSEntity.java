@@ -213,7 +213,6 @@ public class JAMSEntity implements Attribute.Entity {
     public void setId(long id) {
         this.id = id;
     }
-
     @SuppressWarnings("unchecked")
     @Override
     public String toString() {

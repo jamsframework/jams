@@ -35,7 +35,7 @@ import jams.data.*;
 
 public class GenericDataReader implements JAMSTableDataStore, Serializable {
     
-    BufferedReader reader;
+    SerializableBufferedReader reader;
     String fileName;
     boolean timeParse;
     String nextString = "";
@@ -72,7 +72,7 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
     
     private void createReader() {
         try {
-            reader = new BufferedReader(new FileReader(fileName));
+            reader = new SerializableBufferedReader(new File(fileName));
         } catch (IOException ioe) {
             JAMSTools.handle(ioe);
         }

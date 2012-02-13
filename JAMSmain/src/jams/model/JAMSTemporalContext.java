@@ -98,7 +98,7 @@ public class JAMSTemporalContext extends JAMSContext {
                     output(dataAccessor.getComponentObject());
                 }
                 nextRow();
-
+                flush();
             }
         };
     }
