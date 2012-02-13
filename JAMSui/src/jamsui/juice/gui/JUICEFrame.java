@@ -6,6 +6,8 @@
  * Copyright (C) 2005 FSU Jena
  *
  * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
  * modify it under the terms of the GNU Lesser General Public License
  * as published by the Free Software Foundation; either version 3
  * of the License, or (at your option) any later version.
@@ -13,8 +15,12 @@
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  * GNU Lesser General Public License for more details.
  *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
@@ -279,23 +285,35 @@ public class JUICEFrame extends JFrame {
         OptimizationWizardGUIAction = new AbstractAction(JAMS.i18n("Optimization_Wizard")) {
 
             @Override
+            public void actionPerformed(ActionEvent e) {
+                /*OptimizationWizard wizard = new OptimizationWizard();
             public void actionPerformed(ActionEvent e) {                                
                 ModelView view = getCurrentView();
+                wizard.runWizard(view.getModelDoc(), JUICE.getJamsProperties(), JUICEFrame.this);*/
+                /*WizardApplet applet = new WizardApplet();
+                applet.init();
+                applet.start();*/
+                ModelView view = getCurrentView();
+                /*optas.gui.OptimizationWizard.createDialog(JUICEFrame.this, view.getModelDoc(),
+                        JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);*/
                 OptimizationWizardFrame frame = optas.gui.OptimizationWizard.createFrame(view.getModelDoc(), JUICE.getJamsProperties(), null);
                 frame.getWizard().setWorkspace(view.getSavePath().getParent());
                 frame.addActionListener(new ActionListener() {
 
+
+
+
                     public void actionPerformed(ActionEvent e) {
                         OptimizationWizard wizard = (OptimizationWizard)e.getSource();
                         Document newModelDoc = wizard.getNewModel();
-                        JUICEFrame.this.newModel();
-                        try{
+                        JUICEFrame.this.newModel(newModelDoc);
+                        /*try{
                             Thread.sleep(500);
                         }catch(Exception e2){
                             
                         }
                         ModelView view = JUICEFrame.this.getCurrentView();
-                        view.setTree(new ModelTree(view,newModelDoc));
+                        view.setTree(new ModelTree(view,newModelDoc));*/
                     }
                 });
                 frame.setVisible(true);
@@ -700,7 +718,7 @@ public class JUICEFrame extends JFrame {
 
         JMenuItem GenerateDocumentationItem = new JMenuItem(GenerateDocumentationGUIAction);
         //GenerateDocumentationGUIAction.setEnabled(false);
-//        modelMenu.add(GenerateDocumentationItem);
+        modelMenu.add(GenerateDocumentationItem);
         /*
          * logs menu
          */
@@ -829,7 +847,6 @@ public class JUICEFrame extends JFrame {
         w.execute();
     }
     //this method is necessary if we like to create a view and set a doc
-
     public void newModel(final Document doc) {
         SwingWorker w = new SwingWorker() {
 

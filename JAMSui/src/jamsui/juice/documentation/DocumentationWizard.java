@@ -5,18 +5,18 @@
 package jamsui.juice.documentation;
 
 import jams.JAMSProperties;
-import jams.gui.WorkerDlg;
+import jams.SystemProperties;
+import jams.gui.ObserverWorkerDlg;
 import jams.tools.XMLTools;
+import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
 import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilePermission;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.Permission;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.Observable;
 import org.w3c.dom.Document;
 import javax.swing.JOptionPane;
 
@@ -24,21 +24,14 @@ import javax.swing.JOptionPane;
  *
  * @author chris
  */
-public class DocumentationWizard {
-
-    JAMSProperties properties;
-    public File libaries[];
-    public File developerDocumentation;
-    public File workspace;
-    public Document modelDoc;
-    public String docBookPath = null;
-
+public class DocumentationWizard extends Observable{
     private static class ExitTrappedException extends SecurityException {
     }
 
     private static void forbidSystemExitCall() {
         final SecurityManager securityManager = new SecurityManager() {
 
+            @Override
             public void checkPermission(Permission permission) {
                 if (permission.getName().contains("exit")) {
                     throw new ExitTrappedException();
@@ -57,43 +50,36 @@ public class DocumentationWizard {
         System.setSecurityManager(null);
     }
 
-    public void runDocuProcess() {
+    boolean debug = true;
 
+    final String xmlCacheFileName = "xmlSavedForDocu.xml";
+    final String DOCUMENTATION_DIRECTORY = "/documentation/";
+        
+    private void log(String msg){
+        if (debug)
+            System.out.println(msg);
+    }
 
-        developerDocumentation = new File(workspace.getAbsolutePath() + "/documentation/");
-        docBookPath = properties.getProperty("docbook-home");
-        if (docBookPath == null) {
-            JOptionPane.showMessageDialog(null, "Doc-Book Framework not provided!");
-            return;
-        } else {
-            System.out.println("Doc-Book Path is:" + docBookPath);
-        }
+    private void stateMessage(String msg){
+        this.setChanged();
+        this.notifyObservers(msg);
+    }
+    
+    private void runXSLTProcessor(String docBookHome, String documentationHome, String outputXML) throws DocumentationException{
+        stateMessage("running xsltproc");
 
+        if ( !(new File(docBookHome + "/docbook/fo/docbook.xsl")).exists() )
+            throw new DocumentationException(DocumentationExceptionCause.docBookXSLNotExisting);
 
-        String xmlFileName = workspace + "/documentation/xmlSavedForDocu.xml";
-        String documentationXML = workspace + "/documentation/" + Bundle.resources.getString("Filename") + ".xml";
-
-
-        try {
-            XMLTools.writeXmlFile(modelDoc, xmlFileName);
-        } catch (IOException e) {
-            System.out.println(e);
-            e.printStackTrace();
-        }
-
-        System.out.println("working in workspace:" + workspace);
-
-        Doku.createDocumentation(new File(workspace + "/documentation"), new File(xmlFileName), new File(workspace + "/documentation/jar/model.jar"), new File[0]);
-
-        String cmd = docBookPath + "/xsltproc.exe" + "--xinclude" + "--output" + developerDocumentation + "/tmp.fo" + docBookPath + "/fo/docbook.xsl" + documentationXML;
-        System.out.println(cmd);
-        ProcessBuilder pb = new ProcessBuilder(docBookPath + "/xsltproc.exe", "--xinclude", "--output", developerDocumentation + "/tmp.fo",
-                docBookPath + "/docbook/fo/docbook.xsl", documentationXML);
+//            log(docBookHome + "/xsltproc.exe" + "--xinclude" + "--output" + documentationHome + "/tmp.fo" + docBookHome + "/docbook/fo/docbook.xsl" + outputXML);
+        ProcessBuilder pb = new ProcessBuilder(docBookHome + "/xsltproc.exe", "--xinclude", "--output", documentationHome + "/tmp.fo",
+                docBookHome + "/docbook/fo/docbook.xsl", outputXML);
 
         pb.redirectErrorStream(true);
         for (String s : pb.command()) {
-            System.out.println("arg:" + s + "\n");
+            log("argument of xsltproc:" + s + "\n");
         }
+
         Process process = null;
         try {
             process = pb.start();
@@ -101,108 +87,165 @@ public class DocumentationWizard {
             try {
                 process.exitValue();
             } catch (Exception e) {
-                System.out.println("waiting for xsltproc");
+                stateMessage("waiting on xsltproc");
                 try {
                     Thread.sleep(300);
                 } catch (Exception e2) {
                     e2.printStackTrace();
+                    throw new DocumentationException(DocumentationExceptionCause.unknownError, e2.toString());                    
                 }
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        InputStream is = process.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is);
+       
+        InputStreamReader isr = new InputStreamReader(process.getInputStream());
         BufferedReader br = new BufferedReader(isr);
         String line;
 
-        System.out.printf("Output of running:");
+        log("xslt-proc messages:");
         try {
             while ((line = br.readLine()) != null) {
-                System.out.println(line);
+                log(line);
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        System.setProperty("fop.optional.lib", this.properties.getProperty("libs"));
+    }
+
+    private void runApacheFOP(String inputFile, String outputFile, String optionalLibaries) throws DocumentationException{
+        stateMessage("running Apache FOP");
+        
+        System.setProperty("fop.optional.lib", optionalLibaries);
         try {
             forbidSystemExitCall();
-            System.out.println(System.getProperty("java.class.path"));
-            org.apache.fop.cli.Main.main(new String[]{System.getProperty("java.class.path"), "-fo", developerDocumentation + "/tmp.fo", "-pdf", developerDocumentation + "/" + Bundle.resources.getString("Filename") + ".pdf"});
+            log(System.getProperty("java.class.path"));
+            org.apache.fop.cli.Main.main(new String[]{System.getProperty("java.class.path"), "-fo", inputFile, "-pdf", outputFile});
         } catch (ExitTrappedException t) {
-            JOptionPane.showMessageDialog(null, Bundle.resources.getString("Your_documentation_was_created_successfully."));
-            openPDF();
-            //normal
+            JOptionPane.showMessageDialog(null, Bundle.resources.getString("Your_documentation_was_created_successfully."));            
+            return; //this means succsess
         } catch (Throwable t) {
             t.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Failed to produce documentation");
+            throw new DocumentationException(DocumentationExceptionCause.ApacheFOPFailed, t.toString());
         } finally {
             enableSystemExitCall();
         }
     }
 
-    private void openPDF() {
-        new Thread(new Runnable() {
+    DocumentationException innerException = null;
+    private void openPDF(final File f) throws DocumentationException {
+        stateMessage("showing pdf");
+        innerException = null;
+        Thread thread = new Thread(new Runnable()  {
 
             @Override
             public void run() {
                 try {
-                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + new File(developerDocumentation, Bundle.resources.getString("Filename") + ".pdf"));
+                    Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + f.getAbsolutePath());
                 } catch (IOException ex) {
+                    innerException = new DocumentationException(DocumentationExceptionCause.ViewPDFError, ex.toString());
+                    return;
                 }
             }
-        }).run();
+        });
+        
+        thread.start();
 
+        try {
+            thread.isAlive();
+
+        } catch (Exception e) {
+            stateMessage("opening pdf");
+            if (innerException != null){
+                throw innerException;
+            }
+            try {
+                Thread.sleep(300);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+                throw new DocumentationException(DocumentationExceptionCause.unknownError, e2.toString());
+            }
+        }
     }
 
-    public void createDocumentation(Frame parent, Document doc, JAMSProperties props, File savePath) {
-        this.properties = props;
-        this.workspace = savePath.getParentFile();
-        ArrayList<String> libArray = new ArrayList<String>();
-        String libs = properties.getProperty("libs");
-        StringTokenizer tok = new StringTokenizer(libs, ";");
-        while (tok.hasMoreTokens()) {
-            String path = tok.nextToken();
-            File f = new File(path);
-            if (!f.exists()) {
-                continue;
-            } else if (f.isDirectory()) {
-                String fileList[] = f.list();
-                for (String subfile : fileList) {
-                    if (subfile.endsWith("jar")) {
-                        libArray.add(subfile);
-                    }
-                }
-            } else {
-                libArray.add(path);
-            }
-        }
-        libaries = new File[libArray.size()];
-        int i = 0;
-        for (String s : libArray) {
-            libaries[i++] = new File(s);
+    public void runDocumentationProcess(File workspace, Document modelDocument, String docBookHome) throws DocumentationException {
+        stateMessage("initializing");
+
+        if (workspace == null)
+            throw new DocumentationException(DocumentationExceptionCause.workspaceNull);
+        
+        String xmlInputFile = workspace + "/" + DOCUMENTATION_DIRECTORY + "/" + xmlCacheFileName;
+        String documentationXMLFileName = DOCUMENTATION_DIRECTORY + Bundle.resources.getString("Filename") + ".xml";
+        String documentationOutputXML = workspace + documentationXMLFileName;
+        File   documentationHome = new File(workspace + DOCUMENTATION_DIRECTORY);
+        
+        log("docbook-home:" + docBookHome);
+
+        if (docBookHome == null) {
+            throw new DocumentationException(DocumentationExceptionCause.docBookPathNull);
         }
 
-        this.modelDoc = doc;
-        /*
-        JFileChooser chooser = GUIHelper.getJFileChooser(false);
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY );
-        
-        chooser.setDialogTitle("Select developer documentation directory");
-        int returnValue = chooser.showOpenDialog(parent);
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-        File file = chooser.getSelectedFile();
-        this.developerDocumentation = file;
+        if (!(new File(docBookHome + "/xsltproc.exe")).exists()){
+            throw new DocumentationException(DocumentationExceptionCause.xsltProcNotExisting);
         }
-         */ WorkerDlg progress = new WorkerDlg(parent, Bundle.resources.getString("Generating_Documentation"));
+
+        if (documentationHome == null || !documentationHome.exists()){
+            throw new DocumentationException(DocumentationExceptionCause.documentationPathNull);
+        }
+
+        if (modelDocument == null)
+            throw new DocumentationException(DocumentationExceptionCause.docBookPathNull);
+
+        stateMessage("caching model document");
+
+        try {
+            XMLTools.writeXmlFile(modelDocument, xmlInputFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new DocumentationException(DocumentationExceptionCause.xmlIOError, e.toString());
+        }
+
+        log("working in workspace:" + workspace);
+
+        stateMessage("creating documentation");
+
+        DocumentationGenerator generator = new DocumentationGenerator();
+        generator.createDocumentation(new File(workspace + "/documentation"), new File(xmlInputFile), modelDocument);
+
+        runXSLTProcessor(docBookHome, documentationHome.getAbsolutePath(), documentationOutputXML);
+
+        runApacheFOP(documentationHome + "/tmp.fo", documentationHome + "/" + Bundle.resources.getString("Filename") + ".pdf", this.properties.getProperty("libs"));
+
+        openPDF(new File(documentationHome, Bundle.resources.getString("Filename") + ".pdf"));
+
+        stateMessage("finished");
+    }
+    
+    private JAMSProperties properties = null;;
+    private File workspace = null;
+    private Document modelDocument = null;
+
+    public void createDocumentation(Frame parent, Document doc, JAMSProperties props, File savePath) {
+        properties = props;
+        // ok hier gibt es mehrere möglichkeiten
+        workspace = savePath.getParentFile();
+        modelDocument = doc;
+
+        ObserverWorkerDlg progress = new ObserverWorkerDlg(parent, Bundle.resources.getString("Generating_Documentation"));
+        this.addObserver(progress);
+        
         progress.setInderminate(true);
         progress.setTask(new Runnable() {
 
+            @Override
             public void run() {
-                runDocuProcess();
+                try{
+                    runDocumentationProcess(workspace, modelDocument, properties.getProperty(SystemProperties.DOCBOOK_HOME_PATH));
+                }catch(Exception e){
+                    System.out.println(e);
+                }
             }
         });
         progress.execute();
-    }
-    //}
+    }    
 }

@@ -5,6 +5,7 @@ import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.tools.StringTools;
 import jamsui.juice.JUICE;
+import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -19,176 +20,51 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.TreeMap;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import javax.swing.JOptionPane;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
  * @author sa63kul
  */
-public class Doku {
+public class DocumentationGenerator {
+    private void createDoc(File directory, File jarFile, Class<?> superClass, HashMap<String, String> contentList, ArrayList<String> componentsList) throws Exception {
+        JarFile jfile = new JarFile(jarFile);
+        String fileName = jarFile.getName();
+        URLClassLoader loader = new URLClassLoader(new URL[]{jarFile.toURL()}, ClassLoader.getSystemClassLoader());
 
-    public static String GetFileName(String path) {
-        String fileName = path;
-        for (int i = path.length() - 1; i >= 0; i--) {
-            if (path.charAt(i) == '\\' || path.charAt(i) == '/') {
-                fileName = path.substring(i + 1, path.length());
-                break;
-            }
-        }
-        return fileName;
-    }
+        Enumeration<JarEntry> jarentries = jfile.entries();
 
-    static public void createDoc(String directory, String inJar, Class<?> superClass, HashMap<String, String> contentList, Vector<String> componentsList) throws Exception {
-        JarFile jfile = new JarFile(inJar);
-        File file = new File(inJar);
-        URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()}, ClassLoader.getSystemClassLoader());
-
-        Enumeration jarentries = jfile.entries();
-
-
-        String compTemplate = "<informaltable>"
-                + "<tgroup cols=\"3\">\n"
-                + "<colspec colname=\"c1\" colnum=\"1\" colwidth=\"1.0*\"/>\n"
-                + "<colspec colname=\"c2\" colnum=\"2\" colwidth=\"5.74*\"/>\n"
-                + "<thead>\n"
-                + "<row>\n"
-                + "<entry namest=\"c1\" nameend=\"c2\">Metainformationen</entry>\n"
-                + "</row>\n"
-                + "</thead>\n"
-                + "<tbody>\n"
-                + "<row>\n"
-                + "<entry>Komponente</entry>\n"
-                + "<entry namest=\"c2\" nameend=\"newCol3\">%class%</entry>\n"
-                + "</row>\n"
-                + "<row>\n"
-                + "<entry>Modellprozess</entry>\n"
-                + "<entry namest=\"c2\" nameend=\"newCol3\">bitte ausfuellen</entry>\n"
-                + "</row>\n"
-                + "<row>\n"
-                + "<entry>Paket</entry>\n"
-                + "<entry namest=\"c2\" nameend=\"newCol3\">%package%</entry>\n"
-                + "</row>\n"
-                + "<row>\n"
-                + "<entry>Autor</entry>\n"
-                + "<entry namest=\"c2\" nameend=\"newCol3\">%author%</entry>\n"
-                + "</row>\n"
-                + "<row>\n"
-                + "<entry>Version</entry>\n"
-                + "<entry namest=\"c2\" nameend=\"newCol3\">%version%</entry>\n"
-                + "</row>\n"
-                + "<row>\n"
-                + "<entry>Modifikationsdatum</entry>\n"
-                + "<entry namest=\"c2\" nameend=\"newCol3\">%date%</entry>\n"
-                + "</row>\n"
-                + "</tbody>\n"
-                + "</tgroup>\n"
-                + "</informaltable>\n"
-                + "<informaltable>\n"
-                + "<tgroup cols=\"7\">\n"
-                + "<colspec colname=\"c1\" colnum=\"1\" colwidth=\"1.0*\"/>\n"
-                + "<colspec colname=\"newCol2\" colnum=\"2\" colwidth=\"2.96*\"/>\n"
-                + "<colspec colname=\"c2\" colnum=\"3\" colwidth=\"1.15*\"/>\n"
-                + "<colspec colname=\"newCol4\" colnum=\"4\" colwidth=\"1.23*\"/>\n"
-                + "<colspec colname=\"newCol5\" colnum=\"5\" colwidth=\"1.1*\"/>\n"
-                + "<colspec colname=\"newCol6\" colnum=\"6\" colwidth=\"1.25*\"/>\n"
-                + "<colspec colname=\"newCol7\" colnum=\"7\" colwidth=\"1.28*\"/>\n"
-                + "<thead>\n"
-                + "<row>\n"
-                + "<entry namest=\"c1\" nameend=\"newCol7\">Variablen</entry>\n"
-                + "</row>\n"
-                + "<row>\n"
-                + "<entry>Variable</entry>\n"
-                + "<entry>Beschreibung</entry>\n"
-                + "<entry>Einheit</entry>\n"
-                + "<entry>Wertebereich</entry>\n"
-                + "<entry>Datentyp</entry>\n"
-                + "<entry>Variablentyp</entry>\n"
-                + "<entry>Defaultwert</entry>\n"
-                + "</row>\n"
-                + "</thead>\n"
-                + "<tbody>\n"
-                + "%componentvars%\n"
-                + " </tbody>\n"
-                + "</tgroup>\n"
-                + "</informaltable>\n";
-
-
-
-
-
-        String varTemplate =
-                "<row>\n"
-                + "<entry>%name%</entry>\n"
-                + "<entry>%description%</entry>\n"
-                + "<entry>%unit%</entry>\n"
-                + "<entry>%lowerBound%...%upperBound%</entry>\n"
-                + "<entry>%type%</entry>\n"
-                + "<entry>%access%</entry>\n"
-                + "<entry>%defaultValue%</entry>\n"
-                + "</row>";
-
-        String packageTemplate = ":[[%name%]] <br />\n";//readContent(ClassLoader.getSystemResourceAsStream("resources/templates/packagetemplate.txt"));
-        String packageListTemplate = "";
+        String compTemplate = Tools.getTemplate(Tools.Template.Component);
+        String varTemplate = Tools.getTemplate(Tools.Template.Variable);
 
         HashMap<Class, String> componentDescriptions = new HashMap<Class, String>();
         ArrayList<Class> components = new ArrayList<Class>();
 
-        String fileName = GetFileName(inJar);
-        //String idCode   = MakeIDCode(fileName);
+
+        String packageTemplate = ":[[%name%]] <br />\n";//readContent(ClassLoader.getSystemResourceAsStream("resources/templates/packagetemplate.txt"));
+        String packageListTemplate = "";
 
         while (jarentries.hasMoreElements()) {
-            String entry = jarentries.nextElement().toString();
-//            Object entry1=jarentries.nextElement(); //neu
-            if (entry.endsWith(".xml")) {
-               
+            ZipEntry entry = jarentries.nextElement();
 
-                ZipEntry zipentry = jfile.getEntry(entry);
-                File efile = new File(zipentry.getName());
-                String filename = zipentry.getName();
-                filename = filename.replaceAll("/", ".");
-
-                jfile.getInputStream(zipentry);
-                InputStream in = new BufferedInputStream(jfile.getInputStream(zipentry));
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(directory + filename));
-                byte[] buffer = new byte[4096];
-                for (;;) {
-                    int nBytes = in.read(buffer);
-                    if (nBytes <= 0) {
-                        break;
-                    }
-                    out.write(buffer, 0, nBytes);
-                }
-
-                /*               while (in.available() > 0)
-                {  // write contents of 'in' to 'out'
-                out.write(in.read());
-                }
-                 */
-                out.flush();
-                out.close();
-                in.close();
-
-
-            }
-            
-            if (entry.endsWith(".png")) {
-               
-
-                ZipEntry zipentry = jfile.getEntry(entry);
-                File efile = new File(zipentry.getName());
-                String filename = zipentry.getName();
+            if (entry.getName().endsWith(".xml")) {
+                String filename = entry.getName().replaceAll("/", ".");
+                Tools.extractZipEntry(jfile, entry, new File(directory + filename));
+            }else if(entry.getName().endsWith(".png")) {
+                String filename = entry.getName();
                 filename = filename.replaceAll("/", ".");
 
                    char[] c = filename.toCharArray();
@@ -209,8 +85,8 @@ public class Doku {
                  
                     filename = filename.substring(start +1, c.length);
                 
-                jfile.getInputStream(zipentry);
-                InputStream in = new BufferedInputStream(jfile.getInputStream(zipentry));
+                jfile.getInputStream(entry);
+                InputStream in = new BufferedInputStream(jfile.getInputStream(entry));
                 OutputStream out = new BufferedOutputStream(new FileOutputStream(directory + filename));
                 byte[] buffer = new byte[4096];
                 for (;;) {
@@ -228,19 +104,19 @@ public class Doku {
 
 
             }
-            if (!entry.endsWith(".class") && !entry.endsWith(".xml") && !entry.endsWith(".png")) {
+            if (!entry.getName().endsWith(".class") && !entry.getName().endsWith(".xml") && !entry.getName().endsWith(".png")) {
                 continue;
             }
-            if (entry.endsWith(".class")) {
-                String classString = entry.substring(0, entry.length() - 6);
+            if (entry.getName().endsWith(".class")) {
+                String classString = entry.getName().substring(0, entry.getName().length() - 6);
                 classString = classString.replace("/", ".");
                 Class<?> clazz = null;
                 try {
                     clazz = loader.loadClass(classString);
                 } catch (java.lang.NoClassDefFoundError e) {
                     // JOptionPane.showMessageDialog(null, "Class: " + classString + " was not found!, because " + e.toString());
-                    System.out.println(e);
-                    e.printStackTrace();
+                    System.out.println("createDoc:" + e);
+                    //e.printStackTrace();
                     continue;
                 }
                 if (clazz == null) {
@@ -365,7 +241,7 @@ public class Doku {
 
         package_list = "";
         contentList.put("package_" + oldPackage, new String(package_desc));
-        String jarName = file.getCanonicalFile().getName();
+        String jarName = jarFile.getCanonicalFile().getName();
         for (Class clazz : components) {
             String compdesc = componentDescriptions.get(clazz);
             String html = compdesc;
@@ -380,51 +256,37 @@ public class Doku {
         //  contentList.put(new String(fileName),new String(mainpage + "Download: [[Bild:"+fileName.replace(".jar",".zip")+"]]\n"+"<span style=\"color:white\">" + idCode + "</span>"));
     }
 
-    public static void AnnotationUpdate(String directory, String model_jar) {
+    
 
-       
-        //legt zu jeder Komponente eine Datei an, in welcher die Bemerkungen aus dem Quellcode enthalten sind
+    private final String AnnotationFileName = "Component_Annotation.";
+     //legt zu jeder Komponente eine Datei an, in welcher die Bemerkungen aus dem Quellcode enthalten sind
+    private void AnnotationUpdate(File directory, File jarFile) {
+        HashMap<String, String> contentMap = new HashMap<String, String>();
+        ArrayList<String> componentList = new ArrayList<String>();
 
-
-
-
-
-        directory = directory + "/";
-        HashMap<String, String> test = new HashMap<String, String>();
-        Vector<String> vector = new Vector<String>();
-        String path = "";
-
+        log("generating annotation documentation");
 
         try {
-            createDoc(directory, model_jar, JAMSComponent.class, test, vector);
-            Iterator<String> iter = test.keySet().iterator();
+            createDoc(directory, jarFile, JAMSComponent.class, contentMap, componentList);
+            Iterator<String> iter = contentMap.keySet().iterator();
             while (iter.hasNext()) {
-                String key = iter.next();
-                String value = test.get(key);
-                path = directory + "Component_Annotation." + key + ".xml"; //pfad fï¿½r neue Komponente
-                String component_title;
-                component_title = key; //ermittelt komponentenname
-                char[] c = component_title.toCharArray();
-                int start = 0;
-                for (int i = c.length - 1; i > 0; i--) {
-                    if (c[i] == '.') {
-                        start = i;
-                        i = 0;
-                    }
+                String componentTitle = iter.next();
+                String value = contentMap.get(componentTitle);
+
+                log("-" + componentTitle);
+                if (value == null){
+                    log("warning: no content for component:" + componentTitle);
                 }
-                component_title = component_title.substring(start + 1, c.length);
+                int start = componentTitle.lastIndexOf(".");
+                if (start != -1)
+                    componentTitle = componentTitle.substring(start + 1);
 
+                String template = Tools.getTemplate(Tools.Template.ComponentAnnotation);
+                template = template.replace("%title%", componentTitle);
+                template = template.replace("%value%", value);
 
-                BufferedWriter out = new BufferedWriter(new FileWriter(path));
-                out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-                out.write("<sect1 xmlns=\"http://docbook.org/ns/docbook\" version=\"5.0\">\n");
-                out.write("<title>" + key + "</title>\n");
-                out.write("<subtitle/>\n");
-                out.write(value);
-               
-                out.write("</sect1>\n");
-                out.close();
-
+                File annotationFile = new File(directory + AnnotationFileName + componentTitle + ".xml");
+                Tools.writeContent(annotationFile, template);
             }
         } catch (Exception E) {
             E.printStackTrace();
@@ -433,298 +295,347 @@ public class Doku {
 
     }
 
-    public static void createDocumentation(File dataPath, File model, File model_jar, File[] environment_jar) {
-        String args[] = new String[environment_jar.length + 4];
-        args[0] = "dummy";
-        args[1] = dataPath.getAbsolutePath();
-        args[2] = model.getAbsolutePath();
-        args[3] = model_jar.getAbsolutePath();
-        for (int i = 0; i < environment_jar.length; i++) {
-            args[i + 4] = environment_jar[i].getAbsolutePath();
+    private boolean debug = true;
+    private void log(String msg){
+        if (debug)
+            System.out.println(msg);
+    }
+
+    public void createDocumentation(File documentationDir, File modelDocument, Document document) throws DocumentationException {
+        String[] libList = StringTools.toArray(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER), ";");
+        ArrayList<File> list = getJarList(libList);
+        for (File f : list) {
+            log("lib : " + f);
+            AnnotationUpdate(documentationDir, f);
         }
-        main(args);
+        String pathin_vorlage = documentationDir.getAbsolutePath() + "/template.xml";
+        
+        createParameterXML(document, new File(documentationDir + "/parameter.xml"));
+
+        try{
+            createCompleteDocumentation(documentationDir, modelDocument, pathin_vorlage);
+        }catch(Throwable t){
+            t.printStackTrace();
+        }
     }
     
-    private static ArrayList<String> getJarList(String[] libsArray) {
+    private static ArrayList<File> getJarList(String[] libsArray) {
         
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<File> result = new ArrayList<File>();
 
         for (int i = 0; i < libsArray.length; i++) {
             File file = new File(libsArray[i]);
 
             if (!file.exists()) {
                 continue;
-            }
-            if (file.isDirectory()) {
+            }else if(file.isDirectory()) {
                 File[] f = file.listFiles();
                 for (int j = 0; j < f.length; j++) {
                     if (f[j].getName().endsWith(".jar")) {
-                        ArrayList<String> subResult = getJarList(new String[]{f[j].toString()});
+                        ArrayList<File> subResult = getJarList(new String[]{f[j].getAbsolutePath()});
                         if (!subResult.isEmpty()) {
                             result.addAll(subResult);
                         }
                     }
                 }
             } else {
-                result.add(file.toString());
+                result.add(file);
             }
         }
         
         return result;
     }    
-    
-    public static void main(String arg[]) {
-        //   Locale loc = Locale.ENGLISH;
-        //   Locale.setDefault(loc);
-         String directory = arg[1];
-        String[] libList = StringTools.toArray(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER), ";");
-        ArrayList<String> list = getJarList(libList);
-        for (String s : list) {
-            System.out.println("lib : " + s);
-             AnnotationUpdate(directory, s);
+
+    private String getParentName(Node node){
+        Element e = (Element)node;
+        if (node.getNodeName().equals("component") || node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("model"))
+            return e.getAttribute("name");
+        else if (node.getNodeName().equals("launcher"))
+            return "launcher";
+        else{
+            Node parent = node.getParentNode();
+            if (parent == null){
+                return null;
+            }else{
+                return getParentName(parent);
+            }
         }
-
-        String model = arg[2]; 
-   
-        String pathin_vorlage = directory + "/template.xml";
-
-
-        ArrayList<ArrayList<String[]>> componentParameter = new ArrayList<ArrayList<String[]>>();
-        componentParameter = Parameter_XML(directory, model, componentParameter);
-        Documentation_Complete(directory, model, pathin_vorlage, componentParameter);
-
-
     }
 
-    public static ArrayList<ArrayList<String[]>> Parameter_XML(String directory, String model, ArrayList<ArrayList<String[]>> component) {
-        directory = directory + "/";
-        // ArrayList<ArrayList<String[]>> component = new ArrayList<ArrayList<String[]>>();
-        ArrayList<String[]> parameterList = new ArrayList<String[]>();
-        ArrayList<String[]> AttributeClassParameterList = new ArrayList<String[]>();
-        String name = "AttributeClassParameterList";
-        String value = "";
-        String[] AttributeClassName = new String[2];
-        AttributeClassName[0] = name;
-        AttributeClassName[1] = value;
-        AttributeClassParameterList.add(AttributeClassName);
-        String pathout_parameter = directory + "parameter.xml";
+    private TreeMap<String, ArrayList<String[]>> findModelParameter(Document model) throws DocumentationException{
+        TreeMap<String, ArrayList<String[]>> parameterMap = new TreeMap<String, ArrayList<String[]>>();
+        NodeList modelList = model.getElementsByTagName("model");
 
-        String parameter[][] = new String[1000][2];
-        int count = 0;
-        name = "";
-        value = "";
-        try {
-            BufferedReader in = new BufferedReader(new FileReader(model));
+        if (modelList.getLength()>1){
+            throw new DocumentationException(DocumentationExceptionCause.invalidXML_SeveralModelTags);
+        }
+        Node modelNode = modelList.item(0);
 
-            String line;
-            line = in.readLine();
-            while (!line.equals("</model>")) {
+        NodeList lists[] = new NodeList[2];
+        lists[0] = ((Element)modelNode).getElementsByTagName("attribute");
+        lists[1] = ((Element)modelNode).getElementsByTagName("var");
 
-
-
-
-
-                line = in.readLine();
-                if (line.contains("<launcher>")) //Informationen bin zum Ende des Launcher
-                {
-                    parameterList = new ArrayList<String[]>();
-                    String[] ParameterAndValue = new String[2];
-                    ParameterAndValue[1] = "";
-                    ParameterAndValue[0] = "LauncherEinstellungen";
-                    parameterList.add(ParameterAndValue);
-
-                }
-
-                if (line.contains("<component")) //Start einer neuen Komponente
-                {
-                    name = "";
-                    value = "";
-                    parameterList = new ArrayList<String[]>();
-                    String[] ParameterAndValue = new String[2];
-                    char[] c = line.toCharArray();
-                    int i = 0;
-                    while (c.length > i + 4 && !(c[i] == ('n') && c[i + 1] == ('a') && c[i + 2] == ('m') && c[i + 3] == ('e') && c[i + 4] == ('='))) {
-                        i++;
+        for (NodeList list : lists) {
+            for (int i = 0; i < list.getLength(); i++) {
+                Node node = list.item(i);
+                String parent = getParentName(node);
+                String name = ((Element) node).getAttribute("name");
+                String value = ((Element) node).getAttribute("value");
+                if (name != null && value != null && !value.equals("")) {
+                    ArrayList<String[]> parameterList = parameterMap.get(parent);
+                    if (parameterList==null){
+                        parameterList = new ArrayList<String[]>();
+                        parameterMap.put(parent, parameterList);
                     }
-                    int zahl = 0;
-                    while (c.length > i + 6 + zahl && c[i + 6 + zahl] != '"') {
-                        //Componentenname eleminieren
-                        name = name + Character.toString(c[i + 6 + zahl]);
-                        zahl++;
-                    }
-                    System.out.println(name);
-                    ParameterAndValue[0] = name;
-                    ParameterAndValue[1] = "Komponentenname";
-                    parameterList.add(ParameterAndValue);
-
-                }
-
-                if (line.contains("<attribute class") && line.contains("value=")) //Parameter fï¿½r die Menge der Modellparameter
-                {
-                    String[] ParameterAndValue = new String[2];
-                    name = "";
-                    value = "";
-                 
-                    char[] c = line.toCharArray();
-                    int i = 0;
-                    while (!(c[i] == ('n') && c[i + 1] == ('a') && c[i + 2] == ('m') && c[i + 3] == ('e') && c[i + 4] == ('='))) {
-                        i++;
-                    }
-                    int zahl = 0;
-                    while (c[i + 6 + zahl] != '"') {
-                        //Parametername eleminieren
-                        name = name + Character.toString(c[i + 6 + zahl]);
-                        zahl++;
-                    }
-                  
-                    c = line.toCharArray();
-                    i = 0;
-                    while (!(c[i] == ('v') && c[i + 1] == ('a') && c[i + 2] == ('l') && c[i + 3] == ('u') && c[i + 4] == ('e') && c[i + 5] == ('='))) {
-                        i++;
-                    }
-                    zahl = 0;
-                    while (c[i + 7 + zahl] != '"') {
-                        //Parameterwert eleminieren 
-                        value = value + Character.toString(c[i + 7 + zahl]);
-                        zahl++;
-                    }
-                   
-                    parameter[count][0] = name;
-                    parameter[count][1] = value;
-                    ParameterAndValue[0] = name;
-                    ParameterAndValue[1] = value;
-                    AttributeClassParameterList.add(ParameterAndValue);
-                    count++;
-
-                }
-                if (line.contains("value=") && !(line.contains("<attribute class"))) {
-                    String[] ParameterAndValue = new String[2];
-                    name = "";
-                    value = "";
-                  
-                    char[] c = line.toCharArray();
-                    int i = 0;
-                    while (c.length > i + 3 && !(c[i] == ('n') && c[i + 1] == ('a') && c[i + 2] == ('m') && c[i + 3] == ('e') && c[i + 4] == ('='))) {
-                        i++;
-                    }
-                    int zahl = 0;
-                    while (c.length > i + 6 + zahl && c[i + 6 + zahl] != '"') {
-                        //Parametername eleminieren
-                        name = name + Character.toString(c[i + 6 + zahl]);
-                        zahl++;
-                    }
-                    
-                    c = line.toCharArray();
-                    i = 0;
-
-                    while (c.length > i + 4 && !(c[i] == ('v') && c[i + 1] == ('a') && c[i + 2] == ('l') && c[i + 3] == ('u') && c[i + 4] == ('e') && c[i + 5] == ('='))) {
-                        i++;
-                    }
-                    zahl = 0;
-                    while (c.length > i + 7 + zahl - 1 && c[i + 7 + zahl] != '"') {
-                        //Parameterwert eleminieren 
-                        value = value + Character.toString(c[i + 7 + zahl]);
-                        zahl++;
-                    }
-                    
-                    parameter[count][0] = name;
-                    parameter[count][1] = value;
-                    ParameterAndValue[0] = name;
-                    ParameterAndValue[1] = value;
-                    parameterList.add(ParameterAndValue);
-                    count++;
-                }
-                if (line.contains("</component") || line.contains("</launcher>")) //Ende einer Komponente bzw Ende des Launchers
-                {
-                    component.add(parameterList);
-
+                    parameterList.add(new String[]{name, value});
                 }
             }
-            component.add(AttributeClassParameterList);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Throwable t) {
-            t.printStackTrace();
         }
-
-        try {
-            BufferedWriter out_parameter = new BufferedWriter(new FileWriter(pathout_parameter));
-
-            //welche komponenten sind im Modell enthalten
-            out_parameter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            out_parameter.write("<sect1 xmlns=\"http://docbook.org/ns/docbook\" version=\"5.0\">\n");
-            out_parameter.write("<title>" + Bundle.resources.getString("titel_parameter") + "</title>\n");
-            out_parameter.write("<para>\n");
-            out_parameter.write(" <informaltable>\n");
-            out_parameter.write("<tgroup cols=\"3\">\n");
-            out_parameter.write("<colspec colname=\"c1\" colnum=\"1\" colwidth=\"1.5*\"/>\n");
-            out_parameter.write("<colspec colname=\"c2\" colnum=\"2\" colwidth=\"1.0*\"/>\n");
-
-            out_parameter.write("<thead>\n");
-            out_parameter.write("<row>\n");
-            out_parameter.write(" <entry namest=\"c1\" nameend=\"c2\">Parameter</entry>\n");
-            out_parameter.write("</row>\n");
-            out_parameter.write("</thead>\n");
-            out_parameter.write("<tbody>\n");
-
-            for (count = 0; count < component.size(); count++) {
-                parameterList = new ArrayList<String[]>();
-
-                parameterList = component.get(count);
-                for (int count1 = 0; count1 < parameterList.size(); count1++) {
-                    String[] ParameterAndValue = new String[2];
-                    ParameterAndValue = parameterList.get(count1);
-                    if (count1 == 0) {
-                        out_parameter.write("<row>\n");
-                        out_parameter.write("<entry><emphasis role=\"bold\">" + ParameterAndValue[0] + "</emphasis></entry>\n");
-                        out_parameter.write(" <entry namest=\"c2\" nameend=\"newCol3\"/>\n");
-                        out_parameter.write("</row>\n");
-                    } else {
-                        out_parameter.write("<row>\n");
-                        out_parameter.write("<entry>" + ParameterAndValue[0] + "</entry>\n");
-                        out_parameter.write(" <entry namest=\"c2\" nameend=\"newCol3\">" + ParameterAndValue[1] + "</entry>\n");
-                        out_parameter.write("</row>\n");
-                    }
-
-                }
-
-            }
-            out_parameter.write("</tbody>\n");
-            out_parameter.write("</tgroup>\n");
-            out_parameter.write("</informaltable>\n");
-            out_parameter.write("</para>\n");
-            out_parameter.write("</sect1>\n");
-            out_parameter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-        return component;
+        return parameterMap;
     }
 
-    public static void Documentation_Complete(String directory, String model, String pathin_vorlage, ArrayList<ArrayList<String[]>> component) {
+    private TreeMap<String, ArrayList<String[]>> createParameterXML(Document model, File dstFile) throws DocumentationException{
+        TreeMap<String, ArrayList<String[]>> map = findModelParameter(model);
+        
+        String parameterTemplate = Tools.getTemplate(Tools.Template.Parameter);
+        String content = "";
+        
+        for (String component : map.keySet()) {
+            ArrayList<String[]> parameterList = map.get(component);
+            String parameterTitle = Tools.getTemplate(Tools.Template.ParameterTitle);
+            content += parameterTitle.replace("%title%", component) + "\n";
+            
+            for (String[] parameterAndValue : parameterList){
+                String parameterEntry = Tools.getTemplate(Tools.Template.ParameterEntry);
+                parameterEntry = parameterEntry.replace("%name%", parameterAndValue[0]);
+                parameterEntry = parameterEntry.replace("%value%", parameterAndValue[1]);
+                content += parameterEntry + "\n";
+            }            
+        }
+        parameterTemplate = parameterTemplate.replace("%title%", Bundle.resources.getString("titel_parameter"));
+        parameterTemplate = parameterTemplate.replace("%content%", content);
 
+        Tools.writeContent(dstFile, parameterTemplate);
 
+        return map;
+    }
+
+    private final String MODEL_COMPONENT_FILE_NAME = "Modellkomponenten";
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+    SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
+/*
+    private void createCompleteDocumentation(File directory, Document model, String pathin_vorlage) throws DocumentationException{
         //erstellt ein Dokument indem die Struktur (Komponenten und Kontextkomponenten) aufgefuehrt werden.
         //erstellt weiterhin ein Dokument, welches die Komplettdokumentation erzeugt
-
-      
         String Modellname = "";
         String Modellautor = "";
         ArrayList<String> ContextComponent = new ArrayList<String>();
-        directory = directory + "/";
-        String pathout_txt = directory + "Modellkomponenten.txt";
-        String pathout_xml = directory + "Modellkomponenten.xml";
-        String pathout_xml_docu_complet = directory + Bundle.resources.getString("Filename");
-        String pathout_biblio = directory + "bibliography_" + Bundle.resources.getString("lang") + ".xml";
+        String pathout_txt = directory + "/" + MODEL_COMPONENT_FILE_NAME + ".txt";
+        String pathout_xml = directory + "/" + MODEL_COMPONENT_FILE_NAME + ".xml";
+
+        String pathout_xml_docu_complet = directory + "/" + Bundle.resources.getString("Filename");
+        String pathout_biblio = directory + "/bibliography_" + Bundle.resources.getString("lang") + ".xml";
+
+        String bibliographyTemplate = Tools.getTemplate(Tools.Template.Bibliography);
+        bibliographyTemplate.replace("%language", Bundle.resources.getString("lang"));
+
+        String modelStructureTemplate = Tools.getTemplate(Tools.Template.Structure);
+        modelStructureTemplate = modelStructureTemplate.replace("%title%",Bundle.resources.getString("titel_modellstruktur"));
+
+        String mainTemplate = Tools.getTemplate(Tools.Template.Main);
+        bibliographyTemplate.replace("%language%", Bundle.resources.getString("lang"));
+
+        NodeList modelNodelist = model.getElementsByTagName("model");
+        if (modelNodelist.getLength()>0){
+            throw new DocumentationException(DocumentationExceptionCause.invalidXML_SeveralModelTags);
+        }
+        Node modelNode = modelNodelist.item(0);
+
+        String modelName = ((Element)modelNode).getAttribute("name");
+        String modelAuthor = ((Element)modelNode).getAttribute("author");
+        String modelDate = ((Element)modelNode).getAttribute("date");
+
+        if (modelName == null){
+            log("warning: model is not named");
+            modelName = "unknown";
+        }
+        if (modelAuthor == null){
+            log("warning: model author is not named");
+            modelAuthor = "unknown";
+        }
+        if (modelDate == null){
+            log("warning: model date is not named");
+            modelDate = "unknown";
+        }
+
+        mainTemplate = mainTemplate.replace("%title%", Bundle.resources.getString("titel_docu") );
+        mainTemplate = mainTemplate.replace("%model:name%", modelName);
+        mainTemplate = mainTemplate.replace("%model:author%", modelAuthor);
+        mainTemplate = mainTemplate.replace("%date%", sdf.format(new Date()));
+        mainTemplate = mainTemplate.replace("%release:date%", modelDate);
+        mainTemplate = mainTemplate.replace("%copyright:year%", sdfYear.format(new Date()) );
+        mainTemplate = mainTemplate.replace("%copyright:holder%", Bundle.resources.getString("uni"));
+
+        ArrayList<Node> componentList = Tools.getComponentList(model);
+
+        Stack<String> stack = new Stack<String>();
+
+        for (Node node : componentList){
+            Element e = (Element)node;
+            if (node.getNodeName().equals("model")){
+                String mainContextTemplate = Tools.getTemplate(Tools.Template.MainContext);
+                mainContextTemplate = mainContextTemplate.replace("%type%", Bundle.resources.getString("model"));
+                mainContextTemplate = mainContextTemplate.replace("%keyword:class%", Bundle.resources.getString("class"));
+                mainContextTemplate = mainContextTemplate.replace("%class%", jams.model.Model.class.getName());
+                mainContextTemplate = mainContextTemplate.replace("%keyword:name%", Bundle.resources.getString("name"));
+                mainContextTemplate = mainContextTemplate.replace("%name%", modelName);
+                if (!stack.isEmpty()){
+                    
+                }
+                
+            }
+            if (node.getNodeName().equals("component")){
+                String mainComponentTemplate = Tools.getTemplate(Tools.Template.MainComponent);
+                mainComponentTemplate = mainComponentTemplate.replace("%type%", Bundle.resources.getString("component"));
+                mainComponentTemplate = mainComponentTemplate.replace("%keyword:class%", e.getAttribute("class"));
+                mainComponentTemplate = mainComponentTemplate.replace("%class%", Bundle.resources.getString("component"));
+                mainComponentTemplate = mainComponentTemplate.replace("%keyword:name%", Bundle.resources.getString("name"));
+                mainComponentTemplate = mainComponentTemplate.replace("%name%", e.getAttribute("name"));
+            }
+            else if(node.getNodeName().equals("contextcomponent")){
+                String mainContextTemplate = Tools.getTemplate(Tools.Template.MainContext);
+                mainContextTemplate = mainContextTemplate.replace("%type%", Bundle.resources.getString("contextcomponent"));
+                mainContextTemplate = mainContextTemplate.replace("%keyword:class%", Bundle.resources.getString("class"));
+                mainContextTemplate = mainContextTemplate.replace("%class%", e.getAttribute("class"));
+                mainContextTemplate = mainContextTemplate.replace("%keyword:name%", Bundle.resources.getString("name"));
+                mainContextTemplate = mainContextTemplate.replace("%name%", e.getAttribute("name"));
+            }
+        }
 
 
         ArrayList<String> ComponentList = new ArrayList<String>();
         ArrayList<String> BiblioEntryList = new ArrayList<String>();
         try {
+            BufferedWriter bibliography = new BufferedWriter(new FileWriter(pathout_biblio));
+            BufferedWriter out_txt = new BufferedWriter(new FileWriter(pathout_txt));
+            BufferedWriter out_xml = new BufferedWriter(new FileWriter(pathout_xml));
+            BufferedWriter out_xml_docu_complet = new BufferedWriter(new FileWriter(pathout_xml_docu_complet));
 
+
+            {
+
+                if (line.contains("<contextcomponent") || line.contains("<component") || line.contains("</contextcomponent")) {
+                    
+                    if (line.contains("<contextcomponent") || line.contains("<component")) {
+                        
+                        Klasse = line3.substring(start + 1, endc);
+                        if (line.contains("<contextcomponent")) {
+                            ContextComponent.add(0, Name);
+                        }
+
+                        out_xml.write(Bundle.resources.getString("class") + "=<emphasis role=\"italic\">" + Klasse + "</emphasis>   " + Bundle.resources.getString("name") + "=<emphasis role=\"italic\">  " + Name + "</emphasis>");
+                        if (line.contains("<component")) {
+                            out_xml.write("</para></listitem></itemizedlist>\n");
+                        }
+                    }
+                    if (line3.contains("end contextcomponent")) {
+                        out_xml.write("end " + Bundle.resources.getString("contextcomponent") + "  <emphasis role=\"italic\">  " + ContextComponent.get(0) + "</emphasis>");
+                        ContextComponent.remove(0);
+                        // out_xml.write("<cmdsynopsis><command/><sbr/></cmdsynopsis>\n");
+                    }
+                    if (line.contains("contextcomponent")) {
+                        out_xml.write("</emphasis></para>");
+                    }
+
+
+                    if (line.contains("<contextcomponent") || line.contains("<component")) //wenn Komponente oder Kontextkomponente
+                    {
+                        //  line1=line3.substring(16);
+                        if (line.contains("<contextcomponent")) {
+                            line1 = line3.replaceFirst("contextcomponent class=\"", "");
+                        } else {
+                            line1 = line3.replaceFirst("component class=\"", "");
+                        }
+                        //String in Zeichen zerlegen um nur den Pfad zu speichern
+                        c = line1.toCharArray();
+                        line4 = "";
+                        i = 0;
+                        while (c[i] != ('"')) {
+
+
+                            //Leerzeichen entfernen!!!
+                            if (c[i] != (' ')) {
+                                line4 = line4 + Character.toString(c[i]);
+                            }
+                            i++;
+                            c = line1.toCharArray();
+
+                        }
+                        //einfï¿½gen der komponenten in eine verwaltungsdatenstruktur
+                        boolean doppelt = false;
+                        for (int j = 0; j < ComponentList.size(); j++)//test, ob componente schon in der sturktur enthalten ist, um dopplungen auszuschlieï¿½en
+                        {
+                            String line5 = ComponentList.get(j);
+                            if (line5.equals(line4)) {
+                                doppelt = true;
+                            }
+
+                        }
+                        if (!doppelt) {
+                            ComponentList.add(line4);
+                            //erstelle verbunddokument
+                            Doku_AnnotitionAndManuell(bibliography, BiblioEntryList, pathin_vorlage, directory + "/" + "Component_Annotation." + line4 + ".xml", directory + "/" + line4 + "_" + Bundle.resources.getString("lang") + ".xml", directory + "/" + line4 + "1.xml", directory + "/" + line4 + ".xml");
+                            out_xml_docu_complet.write("<xi:include href=\"" + line4 + ".xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
+
+                            //out_xml_docu_complet.write("<xi:include href=\""+line4+"_de.xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
+                        }
+                        if (ComponentList.size() == 0) {
+                            ComponentList.add(line4);
+                            out_xml_docu_complet.write("<xi:include href=\"" + line4 + "_" + Bundle.resources.getString("lang") + ".xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
+                        }
+
+                    }
+                }
+            }
+
+            out_xml.write("</sect1>\n");
+            out_xml_docu_complet.write("<xi:include href=\"parameter.xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
+            out_xml_docu_complet.write("<xi:include href=\"bibliography_" + Bundle.resources.getString("lang") + ".xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
+            out_xml_docu_complet.write("</article>");
+            out_txt.close();
+            out_xml.close();
+            out_xml_docu_complet.close();
+
+            bibliography.write("</bibliography>\n");
+            bibliography.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+      /*  System.out.print("Anzahl der Komponenten: ");
+        System.out.println(ComponentList.size());
+        for (int i = 0; i < ComponentList.size(); i++) {
+            System.out.println(ComponentList.get(i));
+        }
+    }
+*/
+    private void createCompleteDocumentation(File directory, File model, String pathin_vorlage) {
+        //erstellt ein Dokument indem die Struktur (Komponenten und Kontextkomponenten) aufgefuehrt werden.
+        //erstellt weiterhin ein Dokument, welches die Komplettdokumentation erzeugt
+        String Modellname = "";
+        String Modellautor = "";
+        ArrayList<String> ContextComponent = new ArrayList<String>();        
+        String pathout_txt = directory.getAbsolutePath() + File.separator + MODEL_COMPONENT_FILE_NAME + ".txt";
+        String pathout_xml = directory.getAbsolutePath() + File.separator + MODEL_COMPONENT_FILE_NAME + ".xml";
+
+        String pathout_xml_docu_complet = directory.getAbsolutePath() + File.separator + Bundle.resources.getString("Filename");
+        String pathout_biblio =directory.getAbsolutePath() + File.separator + "bibliography_" + Bundle.resources.getString("lang") + ".xml";
+
+        ArrayList<String> ComponentList = new ArrayList<String>();
+        ArrayList<String> BiblioEntryList = new ArrayList<String>();
+        try {
             BufferedWriter bibliography = new BufferedWriter(new FileWriter(pathout_biblio));
             BufferedReader in = new BufferedReader(new FileReader(model));
             BufferedWriter out_txt = new BufferedWriter(new FileWriter(pathout_txt));
@@ -922,7 +833,7 @@ public class Doku {
                         if (!doppelt) {
                             ComponentList.add(line4);
                             //erstelle verbunddokument
-                            Doku_AnnotitionAndManuell(bibliography, BiblioEntryList, pathin_vorlage, directory + "Component_Annotation." + line4 + ".xml", directory + line4 + "_" + Bundle.resources.getString("lang") + ".xml", directory + line4 + "1.xml", directory + line4 + ".xml", component);
+                            Doku_AnnotitionAndManuell(bibliography, BiblioEntryList, pathin_vorlage, directory.getAbsolutePath() + File.separator + "Component_Annotation." + line4 + ".xml", directory.getAbsolutePath() + File.separator + line4 + "_" + Bundle.resources.getString("lang") + ".xml", directory.getAbsolutePath() + File.separator + line4 + "1.xml", directory.getAbsolutePath() + File.separator + line4 + ".xml");
                             out_xml_docu_complet.write("<xi:include href=\"" + line4 + ".xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
 
                             //out_xml_docu_complet.write("<xi:include href=\""+line4+"_de.xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n");
@@ -958,7 +869,7 @@ public class Doku {
         }*/
     }
 
-    public static void Doku_AnnotitionAndManuell(BufferedWriter bibliography, ArrayList<String> BiblioEntryList, String pathin_vorlage, String pathin_annotation, String pathin_docu, String pathout, String pathout1, ArrayList<ArrayList<String[]>> component) {
+    public static void Doku_AnnotitionAndManuell(BufferedWriter bibliography, ArrayList<String> BiblioEntryList, String pathin_vorlage, String pathin_annotation, String pathin_docu, String pathout, String pathout1) {
 
 
         //verbindet die automatische Dokumentation aus dem Quellcode mit der manuell erstellten von den Entwicklern und speichert diese in einem enddokument mit dem Namen des Pfades der Komponente
@@ -1651,7 +1562,8 @@ public class Doku {
 
 
         } catch (IOException e) {
-            Doku_AnnotitionAndManuell(bibliography, BiblioEntryList, pathin_vorlage, pathin_annotation, pathin_vorlage, pathout, pathout1, component);
+            //Doku_AnnotitionAndManuell(bibliography, BiblioEntryList, pathin_vorlage, pathin_annotation, pathin_vorlage, pathout, pathout1);
+            e.printStackTrace();
         }
 
     }
