@@ -48,6 +48,7 @@ import optas.metamodel.ModelModifier;
 import optas.metamodel.ModificationExecutor;
 import optas.metamodel.Optimization;
 import optas.metamodel.OptimizationDescriptionDocument;
+import optas.metamodel.Tools;
 
 /**
  *
@@ -67,7 +68,7 @@ public class OptimizationWizard extends JPanel {
     JFrame owner;
 
     public OptimizationWizard(Document modelFile, JAMSProperties propertyFile, OptimizationDescriptionDocument scheme, JFrame owner) {
-        this.doc = modelFile;
+        doc = Tools.preProcessDocument(modelFile);
         this.properties = propertyFile;
         this.scheme = scheme;
         this.owner = owner;
@@ -132,7 +133,7 @@ public class OptimizationWizard extends JPanel {
         if (this.modelFile != null && this.propertyFile != null) {
             try {
                 analyzer = new ModelAnalyzer(propertyFile, modelFile);
-                this.doc = analyzer.getModelDoc();
+                this.doc = Tools.preProcessDocument(analyzer.getModelDoc());
                 this.properties = analyzer.getProperties();
                 this.schemaName = modelFile.getName().replaceAll("\\..*", "") + "_" + System.currentTimeMillis() + ".odd";
             } catch (WizardException e) {
@@ -160,7 +161,7 @@ public class OptimizationWizard extends JPanel {
             setData();
         } else if (analyzer != null) {
             SortedSet<AttributeWrapper> objList = this.analyzer.getObjectives();
-            SortedSet<AttributeWrapper> parameterList = new TreeSet<AttributeWrapper>();
+            SortedSet<AttributeWrapper> parameterList = new TreeSet<>();
             parameterList.addAll(this.analyzer.getParameters());
 
             scheme.repair(this.doc, parameterList, objList);
@@ -289,12 +290,6 @@ public class OptimizationWizard extends JPanel {
         init();
     }
 
-    public void loadModel(Document doc) {
-        this.modelFile = null;
-        this.doc = doc;
-        init();
-    }
-
     public void loadModel(File model) {
         this.modelFile = model;
         this.doc = null;
@@ -381,6 +376,7 @@ public class OptimizationWizard extends JPanel {
             ModificationExecutor executor = modifyModel.modifyModel();
             if (executor == null) {
                 JOptionPane.showMessageDialog(mainPane, "failed to generate optimization model");
+                return;
             }
             String log = executor.getLog();
             String question = "Would you like to continue? Following modification will be made ..";

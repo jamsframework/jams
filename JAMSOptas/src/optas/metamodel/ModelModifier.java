@@ -45,7 +45,7 @@ public class ModelModifier {
     Document loadedModel;
     JAMSProperties properties;
     //HashSet<String> removedComponents = new HashSet<String>();
-    ArrayList<AttributeWrapper> objectiveList = new ArrayList<AttributeWrapper>();
+    ArrayList<AttributeWrapper> objectiveList = new ArrayList<>();
     OptimizationDescriptionDocument odd;
     BufferedWriter stream;
 
@@ -79,7 +79,7 @@ public class ModelModifier {
         }
     }
     final static int kernelMap[] = {2, 3, 5, 6, 7, 8, 12, 13, 15, 16};
-    ArrayList<Modification> modificationList = new ArrayList<Modification>();
+    ArrayList<Modification> modificationList = new ArrayList<>();
     
     public ModelModifier(JAMSProperties properties, Document doc, OutputStream stream) throws WizardException {
         if (stream != null)
@@ -117,14 +117,14 @@ public class ModelModifier {
         loader.modelDoc = JAMSDataFactory.createDocument();
         String errorString = loader.init_withResponse();
         loadedModel = loader.modelDoc.getValue();
+        loadedModel = Tools.preProcessDocument(loadedModel); // do only here!
         if (loadedModel == null) {
             throw new WizardException("error_while_loading_model_file:" + errorString);
-        }
-
+        }        
         init();
     }
 
-    private void init() throws WizardException {
+    private void init() throws WizardException {        
         rt = new StandardRuntime(properties);
         rt.loadModel(loadedModel, null);
         if (rt.getDebugLevel() >= 3) {
@@ -235,7 +235,7 @@ public class ModelModifier {
         Element spatialRelaxationComponent = createSpatialRelaxationComponent(doc, attribute);
         Element entityReaderNode = this.getEntityReader(doc, null);
 
-        ArrayList<Modification> list = new ArrayList<Modification>();
+        ArrayList<Modification> list = new ArrayList<>();
         if (entityReaderNode!=null){
             ModificationExecutor.InsertBefore insertElement = new ModificationExecutor.InsertBefore(spatialRelaxationComponent, entityReaderNode);
             list.add(insertElement);
@@ -247,9 +247,9 @@ public class ModelModifier {
     }
 
     private ArrayList<Modification> configOutput(Document doc, Collection<AttributeWrapper> set) throws WizardException {
-        ArrayList<ModificationExecutor.Modification> actionList = new ArrayList<Modification>();
+        ArrayList<ModificationExecutor.Modification> actionList = new ArrayList<>();
 
-        Map<String, HashSet<String>> outputContexts = new HashMap<String, HashSet<String>>();
+        Map<String, HashSet<String>> outputContexts = new HashMap<>();
        
         for (AttributeWrapper a : set) {
             String attr = a.getAttributeName();
@@ -361,7 +361,7 @@ public class ModelModifier {
     }
 
     private ArrayList<Modification> addParameter(Collection<Parameter> list,Node root, String optimizerContextName){
-        ArrayList<Modification> actionList = new ArrayList<Modification>();
+        ArrayList<Modification> actionList = new ArrayList<>();
         
         for (Parameter p:list){            
             actionList.add(new ModificationExecutor.ReplaceAttribute(p, p.getChildName(), optimizerContextName));
@@ -389,7 +389,7 @@ public class ModelModifier {
             throw new WizardException(JAMS.i18n("unable_to_change_workspace"));
         }
 
-        ArrayList<Objective> effList = new ArrayList<Objective>();
+        ArrayList<Objective> effList = new ArrayList<>();
         effList.addAll(odd.getObjective().values());
 
         log("optimizing model structure");
@@ -418,7 +418,7 @@ public class ModelModifier {
         WrapElement placeOptimizerAction = new WrapElement(optimizer, (Element)XMLProcessor.getFirstComponent(root));
         this.modificationList.add(placeOptimizerAction);
 
-        TreeSet<AttributeWrapper> exportAttributes = new TreeSet<AttributeWrapper>();
+        TreeSet<AttributeWrapper> exportAttributes = new TreeSet<>();
         exportAttributes.add(new AttributeWrapper(null, relaxationAttribute, null, OPTIMIZER_CONTEXT_NAME));
         exportAttributes.addAll(objectiveAnalyser.getObjectiveList());
 
@@ -435,7 +435,7 @@ public class ModelModifier {
 
 
 
-    public static Document modelModifier(JAMSProperties propertyFile, Document modelFile, OptimizationDescriptionDocument odd) throws WizardException {
+    public static Document modelModifier(JAMSProperties propertyFile, Document modelFile, OptimizationDescriptionDocument odd) throws WizardException {        
         ModelModifier modifyModel = new ModelModifier(propertyFile, modelFile, null);
         modifyModel.setOptimizationDescriptionDocument(odd);
 

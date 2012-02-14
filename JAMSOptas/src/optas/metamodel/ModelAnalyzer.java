@@ -74,7 +74,7 @@ public class ModelAnalyzer {
         if (loadedModel == null) {
             throw new WizardException(errorString);
         }        
-        doc = loadedModel;
+        doc = Tools.preProcessDocument(loadedModel);
         init(properties, doc);
     }
 
@@ -85,7 +85,7 @@ public class ModelAnalyzer {
         return properties;
     }
     private static HashMap<String, Range> getDefaultRangeMap(Node launcherNode) {
-        HashMap<String, Range> map = new HashMap<String, Range>();
+        HashMap<String, Range> map = new HashMap<>();
 
         NodeList childs = launcherNode.getChildNodes();
 
@@ -94,7 +94,7 @@ public class ModelAnalyzer {
                 || launcherNode.getNodeName().equals("subgroup")
                 || launcherNode.getNodeName().equals("property")
                 || launcherNode.getNodeName().equals("model"))) {
-            return new HashMap<String, Range>();
+            return new HashMap<>();
         }
         Element parent = (Element) launcherNode;
         if (parent.getNodeName().equals("property")) {

@@ -25,8 +25,8 @@ public class ObjectiveAnalyzer {
     private ArrayList<Objective> objectives;
     private String context;
     private int efficiencyComponentCounter = 0;
-    private ArrayList<AttributeWrapper> objectiveList = new ArrayList<AttributeWrapper>();
-    private ArrayList<Modification> actionList = new ArrayList<Modification>();
+    private ArrayList<AttributeWrapper> objectiveList = new ArrayList<>();
+    private ArrayList<Modification> actionList = new ArrayList<>();
     private String effValueString = "";
 
     public ObjectiveAnalyzer(ArrayList<Objective> objectives, String context){
@@ -43,7 +43,7 @@ public class ObjectiveAnalyzer {
         return actionList;
     }
 
-    private Element createEfficiencyComponent(Document doc, Objective o, String attributeName) throws WizardException {
+    private Element createEfficiencyComponent(Document doc, Objective o, String attributeName) throws WizardException {        
         if (!o.getMeasurement().getContextName().equals(o.getSimulation().getContextName())) {
             throw new WizardException("Error: Mismatch of measurement and simulation context with objective:" + o.toString());
         }
@@ -90,7 +90,7 @@ public class ObjectiveAnalyzer {
         if (o.getMethod().contains("Nash"))
             optas.metamodel.Tools.addAttribute(efficiencyComponent, "e2_normalized", attributeName ,
                     context, false);
-        if (o.getMethod().contains("RSME"))
+        if (o.getMethod().contains("RMSE"))
             optas.metamodel.Tools.addAttribute(efficiencyComponent, "e2_normalized", attributeName ,
                     context, false);
         if (o.getMethod().contains("Vol"))
@@ -107,7 +107,7 @@ public class ObjectiveAnalyzer {
         return effValueString;
     }
 
-    public void analyse(Document doc) throws WizardException{
+    public void analyse(Document doc) throws WizardException{        
         int counter=0;
 
         for (Objective o : objectives){
@@ -131,7 +131,5 @@ public class ObjectiveAnalyzer {
             else
                 effValueString += attributeName + ";";
         }
-
-
     }
 }

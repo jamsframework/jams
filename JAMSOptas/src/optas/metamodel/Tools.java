@@ -5,6 +5,7 @@
 
 package optas.metamodel;
 
+import jams.tools.XMLTools;
 import java.util.ArrayList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,9 +31,54 @@ public class Tools {
             return lowerBound + "\t" + upperBound;
         }
     }
-            
+
+    static private ArrayList<Node> getDisabledNodes(Node root){
+        ArrayList result = new ArrayList<>();
+        if (root == null)
+            return result;
+        if (root.getNodeName().equals("contextcomponent")){
+            Element e = (Element)root;
+            String enabled = e.getAttribute("enabled");
+            if (enabled != null && Boolean.parseBoolean(enabled) == false ){
+                result.add(root);
+                return result;
+            }else{
+                NodeList nodes = root.getChildNodes();
+                for (int i=0;i<nodes.getLength();i++){
+                    result.addAll(getDisabledNodes(nodes.item(i)));
+                }
+                return result;
+            }
+        }else if (root.getNodeName().equals("component")){
+            Element e = (Element)root;
+            String enabled = e.getAttribute("enabled");
+            if (enabled != null && Boolean.parseBoolean(enabled) == false ){
+                result.add(root);
+                return result;
+            }
+        }else{
+            NodeList nodes = root.getChildNodes();
+            for (int i = 0; i < nodes.getLength(); i++) {
+                result.addAll(getDisabledNodes(nodes.item(i)));
+            }
+            return result;
+        }
+        return result;
+    }
+
+    static public Document preProcessDocument(Document root){
+        Document copy = (Document)root.cloneNode(true);
+        ArrayList<Node> removeNode = getDisabledNodes(copy);
+        for (int i=0;i<removeNode.size();i++){
+            Node n = removeNode.get(i);
+            n.getParentNode().removeChild(n);
+        }
+        //System.out.println(XMLTools.getStringFromDocument(copy));
+        return copy;
+    }
+
     static public ArrayList<Element> getNodeByType(Node root, String name){
-        ArrayList<Element> list = new ArrayList<Element>();
+        ArrayList<Element> list = new ArrayList<>();
         if (root.getNodeName().equals(name)){
             list.add((Element)root);
             return list;
@@ -53,7 +99,7 @@ public class Tools {
     }
 
     static public ArrayList<Element> getNodeByAttribute(Node root, String attribute, String key){
-        ArrayList<Element> set = new ArrayList<Element>();
+        ArrayList<Element> set = new ArrayList<>();
 
         if (root.getNodeName().equals("contextcomponent")){
             Element elem = (Element)root;
@@ -73,7 +119,7 @@ public class Tools {
     }
 
     static public ArrayList<Element> getVariable(Node root, String name) {
-        ArrayList<Element> set = new ArrayList<Element>();
+        ArrayList<Element> set = new ArrayList<>();
 
         NodeList childs = root.getChildNodes();
         for (int i = 0; i < childs.getLength(); i++) {
@@ -89,7 +135,7 @@ public class Tools {
     }
 
     static public ArrayList<Element> getNodeByAttributeContent(Node root, String attribute, String key){
-        ArrayList<Element> set = new ArrayList<Element>();
+        ArrayList<Element> set = new ArrayList<>();
 
         if (root.getNodeName().equals("contextcomponent")){
             Element elem = (Element)root;

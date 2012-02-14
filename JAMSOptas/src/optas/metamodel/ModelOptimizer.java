@@ -26,7 +26,7 @@ public class ModelOptimizer {
     ArrayList<Objective> objectives;
     Hashtable<String, HashSet<String>> dependencyGraph;
     Hashtable<String, HashSet<String>> transitiveClosureOfDependencyGraph;
-    ArrayList<Modification> actionList = new ArrayList<Modification>();
+    ArrayList<Modification> actionList = new ArrayList<>();
 
     public ModelOptimizer(Document doc, Model model, ArrayList<Objective> obj) {
         this.doc = doc;
@@ -35,7 +35,7 @@ public class ModelOptimizer {
     }
 
     public void writeGDLFile(String path) {
-        HashSet<String> removedComponents = new HashSet<String>();
+        HashSet<String> removedComponents = new HashSet<>();
         for (Modification m : actionList) {
             if (m instanceof ModificationExecutor.RemoveElement) {
                 ModificationExecutor.RemoveElement e = (ModificationExecutor.RemoveElement) m;
@@ -50,7 +50,7 @@ public class ModelOptimizer {
         dependencyGraph = metaModelOptimizer.getDependencyGraph(this.doc.getDocumentElement(), model);
         transitiveClosureOfDependencyGraph = metaModelOptimizer.TransitiveClosure(dependencyGraph);
 
-        ArrayList<Element> list = new ArrayList<Element>();
+        ArrayList<Element> list = new ArrayList<>();
         if (removeGUI) {
             list.addAll(Tools.getNodeByAttributeContent(doc, "class", "jams.components.gui"));
             list.addAll(Tools.getNodeByName(doc, "group"));
