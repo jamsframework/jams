@@ -717,7 +717,7 @@ public class JUICEFrame extends JFrame {
         modelMenu.add(OptimizationWizardItem);
 
         JMenuItem GenerateDocumentationItem = new JMenuItem(GenerateDocumentationGUIAction);
-        //GenerateDocumentationGUIAction.setEnabled(false);
+        GenerateDocumentationGUIAction.setEnabled(false);
         modelMenu.add(GenerateDocumentationItem);
         /*
          * logs menu

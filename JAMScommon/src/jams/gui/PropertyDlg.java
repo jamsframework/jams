@@ -178,7 +178,7 @@ public class PropertyDlg extends JDialog {
         GUIHelper.addGBComponent(contentPanel, gbl, helpBaseURL, 1, y, 1, 1, 1, 1);
 
         y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Doc_Book_Home:")), 0, y, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Doc_Book_Home")), 0, y, 1, 1, 0, 0);
         docbookDir = new FileInput();
         docbookDir.setPreferredSize(new Dimension(286, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, docbookDir, 1, y, 1, 1, 1, 1);
