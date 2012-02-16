@@ -21,6 +21,7 @@
  */
 package optas.metamodel;
 
+import jams.data.Attribute;
 import jams.tools.JAMSTools;
 import jams.model.Component;
 import jams.model.Context;
@@ -216,26 +217,40 @@ public class metaModelOptimizer {
                         while (tok.hasMoreTokens()) {
                             String singleAttr = tok.nextToken();
 
-                            if (f.getAnnotation(JAMSVarDescription.class).access() == AccessType.READ ||
-                                    f.getAnnotation(JAMSVarDescription.class).access() == AccessType.READWRITE ||
-                                    f.getType().getName().equals("jams.data.JAMSEntity") ||
-                                    f.getType().getName().equals("jams.data.JAMSEntityCollection")) {
+                            if (Attribute.Entity.class.isAssignableFrom(f.getType()) ||
+                                    Attribute.EntityCollection.class.isAssignableFrom(f.getType())){
                                 if (attrRWSet.attrReadingComponents.get(singleAttr) != null) {
                                     attrRWSet.attrReadingComponents.get(singleAttr).add(parent.getInstanceName());
                                 } else {
-                                    HashSet<String> attrSet = new HashSet<String>();
+                                    HashSet<String> attrSet = new HashSet<>();
+                                    attrSet.add(parent.getInstanceName());
+                                    attrRWSet.attrReadingComponents.put(singleAttr, attrSet);
+                                }
+                                if (attrRWSet.attrWritingComponents.get(singleAttr) != null) {
+                                    attrRWSet.attrWritingComponents.get(singleAttr).add(parent.getInstanceName());
+                                } else {
+                                    HashSet<String> attrSet = new HashSet<>();
+                                    attrSet.add(parent.getInstanceName());
+                                    attrRWSet.attrWritingComponents.put(singleAttr, attrSet);
+                                }
+                            }else if(f.getAnnotation(JAMSVarDescription.class).access() == AccessType.READ ||
+                                    f.getAnnotation(JAMSVarDescription.class).access() == AccessType.READWRITE) {
+                                if (attrRWSet.attrReadingComponents.get(singleAttr) != null) {
+                                    attrRWSet.attrReadingComponents.get(singleAttr).add(parent.getInstanceName());
+                                } else {
+                                    HashSet<String> attrSet = new HashSet<>();
                                     attrSet.add(parent.getInstanceName());
                                     attrRWSet.attrReadingComponents.put(singleAttr, attrSet);
                                 }
                             }
                             if (f.getAnnotation(JAMSVarDescription.class).access() == AccessType.WRITE ||
                                     f.getAnnotation(JAMSVarDescription.class).access() == AccessType.READWRITE ||
-                                    f.getType().getName().equals("jams.data.JAMSEntity") ||
-                                    f.getType().getName().equals("jams.data.JAMSEntityCollection")) {
+                                    Attribute.Entity.class.isAssignableFrom(f.getType()) ||
+                                    Attribute.EntityCollection.class.isAssignableFrom(f.getType())) {
                                 if (attrRWSet.attrWritingComponents.get(singleAttr) != null) {
                                     attrRWSet.attrWritingComponents.get(singleAttr).add(parent.getInstanceName());
                                 } else {
-                                    HashSet<String> attrSet = new HashSet<String>();
+                                    HashSet<String> attrSet = new HashSet<>();
                                     attrSet.add(parent.getInstanceName());
                                     attrRWSet.attrWritingComponents.put(singleAttr, attrSet);
                                 }
@@ -443,12 +458,12 @@ public class metaModelOptimizer {
     }
 
     public static ArrayList<String> RemoveGUIComponents(Node root) throws WizardException{
-        ArrayList<String> removedComponents = new ArrayList<String>();
+        ArrayList<String> removedComponents = new ArrayList<>();
 
         NodeList childs = root.getChildNodes();
         Node mainRoot = root.getOwnerDocument();
 
-        ArrayList<Node> childsToRemove = new ArrayList<Node>();
+        ArrayList<Node> childsToRemove = new ArrayList<>();
         for (int index = 0; index < childs.getLength(); index++) {
             Node node = childs.item(index);
             if (node.getNodeName().equals("contextcomponent")) {
@@ -477,8 +492,8 @@ public class metaModelOptimizer {
 
     static public ArrayList<String> RemoveEmptyContextes(Node root) {
         NodeList childs = root.getChildNodes();
-        ArrayList<String> removedNodes = new ArrayList<String>();
-        ArrayList<Node> childsToRemove = new ArrayList<Node>();
+        ArrayList<String> removedNodes = new ArrayList<>();
+        ArrayList<Node> childsToRemove = new ArrayList<>();
 
         //find empty contextes
         for (int index = 0; index < childs.getLength(); index++) {
@@ -542,8 +557,8 @@ public class metaModelOptimizer {
     static public ArrayList<String> RemoveNotListedComponents(Node root, Set<String> list) throws WizardException{
         NodeList childs = root.getChildNodes();
 
-        ArrayList<Node> childsToRemove = new ArrayList<Node>();
-        ArrayList<String> removedNodes = new ArrayList<String>();
+        ArrayList<Node> childsToRemove = new ArrayList<>();
+        ArrayList<String> removedNodes = new ArrayList<>();
 
         Node mainRoot = root.getOwnerDocument();
 
@@ -599,7 +614,7 @@ public class metaModelOptimizer {
         if (launcherNode == null){
             throw new WizardException("model does not contain launcher node!");
         }
-        ArrayList<Node> nodesToRemove = new ArrayList<Node>();
+        ArrayList<Node> nodesToRemove = new ArrayList<>();
 
         Node node;
 

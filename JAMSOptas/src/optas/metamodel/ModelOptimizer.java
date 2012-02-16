@@ -61,7 +61,7 @@ public class ModelOptimizer {
 
         }
         if (removeRedundantComponents) {
-            HashSet<String> effWritingComponents = new HashSet<String>();
+            HashSet<String> effWritingComponents = new HashSet<>();
             for (Objective o : objectives) {
                 effWritingComponents.addAll(
                         metaModelOptimizer.CollectAttributeWritingComponents(

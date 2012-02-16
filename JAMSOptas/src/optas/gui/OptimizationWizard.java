@@ -364,8 +364,9 @@ public class OptimizationWizard extends JPanel {
         }
     }
 
-    public void modifyModel() {
+    public boolean modifyModel() {
         try {
+            modifiedModel = null;
             ModelModifier modifyModel = new ModelModifier(this.properties, this.doc, System.out);
             modifyModel.setSchemaName(schemaName);
             if (scheme.getWorkspace().isEmpty() || scheme.getWorkspace().equals(" ")) {
@@ -376,17 +377,20 @@ public class OptimizationWizard extends JPanel {
             ModificationExecutor executor = modifyModel.modifyModel();
             if (executor == null) {
                 JOptionPane.showMessageDialog(mainPane, "failed to generate optimization model");
-                return;
+                return false;
             }
             String log = executor.getLog();
             String question = "Would you like to continue? Following modification will be made ..";
 
             if (ScrollableMessageDialog.showConfirmDialog(this.owner, "Continue?", question, log) == JOptionPane.YES_OPTION) {
                 modifiedModel = executor.execute();
+                return true;
             }
         } catch (ModelModifier.WizardException we) {
             JOptionPane.showMessageDialog(mainPane, "An error occured during model modification!\n" + we.toString());
+            return false;
         }
+        return false;
     }
 
     private void exportModifiedModel(File path) {
@@ -430,8 +434,8 @@ public class OptimizationWizard extends JPanel {
             modify.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
-                    wizard.modifyModel();
-                    finish();
+                    if (wizard.modifyModel());
+                        finish();
                 }
             });
 
@@ -442,9 +446,10 @@ public class OptimizationWizard extends JPanel {
             launchLocally.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
-                    wizard.modifyModel();
-                    finish();
-                    OptimizationWizard.this.setVisible(false);
+                    if (wizard.modifyModel()){
+                        finish();
+                        OptimizationWizardFrame.this.setVisible(false);
+                    }
                 }
             });
             toolbar.add(modify);
