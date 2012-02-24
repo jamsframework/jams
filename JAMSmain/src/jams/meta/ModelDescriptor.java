@@ -26,6 +26,7 @@ import jams.JAMSException;
 import jams.ExceptionHandler;
 import jams.io.ParameterProcessor;
 import jams.meta.ComponentDescriptor.NullClassException;
+import jams.meta.ComponentField.AttributeLinkException;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelElement;
 import jams.meta.ModelProperties.ModelProperty;
@@ -367,7 +368,8 @@ public class ModelDescriptor extends ComponentCollection {
     public void setDataStoresNode(Node dataStoresNode) {
         this.dataStoresNode = dataStoresNode;
     }
-@SuppressWarnings("unchecked")
+
+    @SuppressWarnings("unchecked")
     public ArrayList<ComponentField> getParameterFields() {
 
         ArrayList<ComponentField> fields = new ArrayList<ComponentField>();
@@ -381,7 +383,7 @@ public class ModelDescriptor extends ComponentCollection {
         return fields;
     }
 
-    private boolean enableConcurrency(ModelNode node, ContextDescriptor concurrencyController, int numThreads, ExceptionHandler exHandler) {
+    private boolean enableConcurrency(ModelNode node, ContextDescriptor concurrencyController, int maxThreads, ExceptionHandler exHandler) throws JAMSException {
 
         Object o = node.getUserObject();
 
@@ -392,22 +394,27 @@ public class ModelDescriptor extends ComponentCollection {
                 return false;
             }
 
-            System.out.println(cd.getInstanceName());
-
             if (cd.getConcurrency() > 1) {
 
-                /**
-                 * 1. detach context from parent, replace it by controller 
-                 * 2. create n copies of context and attach them to controller
+                /*
+                 * use the minimum of overall max threads (hardware dependant)
+                 * and number of threads for this context (model dependant)
                  */
+                int numThreads = Math.min(cd.getConcurrency(), maxThreads);
 
+                /**
+                 * 1. detach context from parent, replace it by controller 2.
+                 * create n copies of context and attach them to controller
+                 */
                 ModelNode parent = (ModelNode) node.getParent();
-                int index = parent.getIndex(node);                
-                ModelNode ccNode = new ModelNode(concurrencyController);
+                int index = parent.getIndex(node);
+
+                ModelNode ccNode = new ModelNode(concurrencyController.cloneNode());
                 ccNode.setType(ModelNode.CONTEXT_TYPE);
+
                 parent.insert(ccNode, index);
                 node.removeFromParent();
-                
+
                 for (int i = 0; i < numThreads; i++) {
                     ModelNode copy = node.clone(this, true, new HashMap<ContextDescriptor, ContextDescriptor>());
                     ccNode.add(copy);
@@ -418,36 +425,140 @@ public class ModelDescriptor extends ComponentCollection {
 
             for (int i = 0; i < node.getChildCount(); i++) {
                 ModelNode child = (ModelNode) node.getChildAt(i);
-                if (enableConcurrency(child, concurrencyController, numThreads, exHandler)) {
+                if (enableConcurrency(child, concurrencyController, maxThreads, exHandler)) {
                     break;
                 }
             }
         }
         return false;
     }
+    
+    private boolean enableSpatialConcurrency(ModelNode node, ContextDescriptor concurrencyController, ComponentDescriptor partitioner, int maxThreads, ExceptionHandler exHandler) throws JAMSException {
+                Class contextClazz = jams.model.JAMSContext.class;
+        Class spatialContextClazz = jams.model.JAMSSpatialContext.class;
+        
+        Object o = node.getUserObject();
+
+        if (o instanceof ContextDescriptor) {
+            ContextDescriptor cd = (ContextDescriptor) o;
+
+            if (!cd.isEnabled()) {
+                return false;
+            }
+
+            if (cd.getConcurrency() > 1) {
+
+                /*
+                 * use the minimum of overall max threads (hardware dependant)
+                 * and number of threads for this context (model dependant)
+                 */
+                int numThreads = Math.min(cd.getConcurrency(), maxThreads);
+
+                /**
+                 * 1. detach context from parent, replace it by controller 2.
+                 * create n copies of context and attach them to controller
+                 */
+                ModelNode parent = (ModelNode) node.getParent();
+                int index = parent.getIndex(node);
+
+                ContextDescriptor ccContainer = new ContextDescriptor(concurrencyController.getInstanceName() + "Container", contextClazz, this, exHandler);
+                ModelNode ccContainerNode = new ModelNode(ccContainer);
+                ccContainerNode.setType(ModelNode.CONTEXT_TYPE);
+
+                ModelNode ccNode = new ModelNode(concurrencyController.cloneNode());
+                ccNode.setType(ModelNode.CONTEXT_TYPE);
+                ccContainerNode.insert(ccNode, 0);
+
+                if (spatialContextClazz.isAssignableFrom(cd.getClazz())) {
+
+                    ComponentDescriptor partitionerClone = partitioner.cloneNode();
+                    ComponentField inEntities = partitionerClone.getComponentFields().get("inEntities");
+                    ComponentField outEntities = partitionerClone.getComponentFields().get("outEntities");
+                    
+                    ComponentField entities = cd.getComponentFields().get("entities");
+                    
+                    String attributeName = entities.getAttribute();
+                    inEntities.linkToAttribute(entities.getContext(), attributeName);
+                    
+                    String newAttributeName = attributeName + "_1";
+                    for (int i = 1; i < numThreads; i++) {
+                        newAttributeName += ";" + attributeName + "_" + (i+1);
+                    }
+                    outEntities.linkToAttribute(ccContainer, newAttributeName);
+
+                    ModelNode partitionerNode = new ModelNode(partitionerClone);
+                    partitionerNode.setType(ModelNode.COMPONENT_TYPE);
+                    ccContainerNode.insert(partitionerNode, 0);
+
+                }
+
+                parent.insert(ccContainerNode, index);
+                node.removeFromParent();
+
+                for (int i = 0; i < numThreads; i++) {
+                    ModelNode copy = node.clone(this, true, new HashMap<ContextDescriptor, ContextDescriptor>());
+                    
+                    ContextDescriptor cdCopy = (ContextDescriptor) copy.getUserObject();
+                    ComponentField entities = cdCopy.getComponentFields().get("entities");
+                    entities.linkToAttribute(ccContainer, entities.getAttribute() + "_" + (i+1));
+                    
+                    ccNode.add(copy);
+                }
+
+                return true;
+            }
+
+            for (int i = 0; i < node.getChildCount(); i++) {
+                ModelNode child = (ModelNode) node.getChildAt(i);
+                if (enableSpatialConcurrency(child, concurrencyController, partitioner, maxThreads, exHandler)) {
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+    
 
     /**
      * This methods will search the model for contexts that can be executed in
-     * parallel. Using depth first search, the first context found will be 
+     * parallel. Using depth first search, the first context found will be
      * replaced by a special controller context that contains numThread copies
      * of the original context. The controller context controls the parallel
      * execution of the numThreads contexts.
+     *
      * @param numThreads Number of parallel threads
-     * @param loader The class loader to be used to load concurrency controller
+     * @param controllerClazz The type to be used as concurrency controller
      * @param exHandler An exception handler
-     * @throws JAMSException 
+     * @throws JAMSException
      */
-    public void enableConcurrency(int numThreads, ClassLoader loader, ExceptionHandler exHandler) throws JAMSException {
+    public void enableConcurrency(int numThreads, Class controllerClazz, ExceptionHandler exHandler) throws JAMSException {
 
-        try {
-
-            ContextDescriptor cc = new ContextDescriptor("ConcurrentContext", loader.loadClass("jams.model.JAMSContext"), this, exHandler);
-            enableConcurrency(getRootNode(), cc, numThreads, exHandler);
-
-        } catch (ClassNotFoundException ex) {
-            throw new JAMSException(ex.getMessage(), ex);
-        }
-
+        ContextDescriptor controller = new ContextDescriptor(controllerClazz, this, exHandler);
+        enableConcurrency(getRootNode(), controller, numThreads, exHandler);
 
     }
+    
+
+    /**
+     * This methods will search the model for contexts that can be executed in
+     * parallel. Using depth first search, the first context found will be
+     * replaced by a special controller context that contains numThread copies
+     * of the original context. The controller context controls the parallel
+     * execution of the numThreads contexts.
+     * Spatial contexts will be modified by adding a partitioner component which
+     * allows to split entity collections for parallel processing
+     *
+     * @param numThreads Number of parallel threads
+     * @param controllerClazz The type to be used as concurrency controller
+     * @param partitionerClazz The type to be used for entity partitioning
+     * @param exHandler An exception handler
+     * @throws JAMSException
+     */
+    public void enableSpatialConcurrency(int numThreads, Class controllerClazz, Class partitionerClazz, ExceptionHandler exHandler) throws JAMSException {
+
+        ContextDescriptor controller = new ContextDescriptor(controllerClazz, this, exHandler);
+        ComponentDescriptor partitioner = new ComponentDescriptor(partitionerClazz, this, exHandler);
+        enableSpatialConcurrency(getRootNode(), controller, partitioner, numThreads, exHandler);
+
+    }    
 }

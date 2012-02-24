@@ -213,15 +213,18 @@ public class JAMSEntity implements Attribute.Entity {
     public void setId(long id) {
         this.id = id;
     }
-    @SuppressWarnings("unchecked")
+    
     @Override
     public String toString() {
-        String result = "";
-        TreeSet orderedSet = new TreeSet<String>(values.keySet());
+        String result = "$ID = " + getId();
+        if (values == null) {
+            return result;
+        }
+        TreeSet<String> orderedSet = new TreeSet<>(values.keySet());
         Iterator<String> iter = orderedSet.iterator();
         while(iter.hasNext()){
             String key = iter.next();
-            result += key + "=" + values.get(key) + "\t";
+            result += "\t" + key + "=" + values.get(key);
         }
         return result;
     }

@@ -55,6 +55,7 @@ public class ModelNode extends DefaultMutableTreeNode {
         this.type = type;
     }
 
+    @SuppressWarnings("unchecked")
     public ModelNode clone(ModelDescriptor target, boolean deepCopy, Map<ContextDescriptor, ContextDescriptor> contextMap) {
 
         ModelNode nodeCopy = null;

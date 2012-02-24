@@ -19,13 +19,11 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package jams.model.concurrent;
+package jams.components.concurrency;
 
-import jams.data.Attribute;
 import jams.model.Component;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
-import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -41,50 +39,31 @@ author = "Sven Kralisch",
 description = "A context that executes its child components concurrently")
 public class ConcurrentContext extends JAMSContext {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "List of spatial entities",
-    defaultValue = "1")
-    public Attribute.Integer numberOfThreads;
     private ExecutorService executor;
     private Runnable[] tasks;
-    private ArrayList<Runnable> runnableList;
     private Future[] futures;
-//    private ArrayList<Callable<Object>> runnableList;
 
-    public static void main(String[] args) {
-        float f = 100/3;
-        int number = Float.floatToRawIntBits(f);        
-        System.out.println(number + " - " + Float.intBitsToFloat(number));
-    }
-    
     /*
-     *  Component run stages
+     * Component run stages
      */
     @Override
     public void run() {
-
-        if (numberOfThreads.getValue() == 0) {
-            super.run();
-            return;
-        }
 
         if (executor == null) {
             if (runEnumerator == null) {
                 runEnumerator = getRunEnumerator();
             }
 
-            runnableList = new ArrayList<Runnable>();
-//            runnableList = new ArrayList<Callable<Object>>();
+            ArrayList<Runnable> runnableList = new ArrayList<>();
 
             runEnumerator.reset();
             while (runEnumerator.hasNext() && doRun) {
                 Component comp = runEnumerator.next();
-//                runnableList.add(Executors.callable(new RunnableComponent(comp)));
                 runnableList.add(new RunnableComponent(comp));
             }
             tasks = runnableList.toArray(new Runnable[runnableList.size()]);
             futures = new Future[tasks.length];
-            executor = Executors.newFixedThreadPool(numberOfThreads.getValue());
+            executor = Executors.newFixedThreadPool(tasks.length);
         }
 
         try {
@@ -97,20 +76,10 @@ public class ConcurrentContext extends JAMSContext {
                 //call future's get method (blocking) in order to wait for task to continue
                 futures[i].get();
             }
-        } catch (ExecutionException ee) {
-            ee.printStackTrace();
-        } catch (InterruptedException ie) {
-            ie.printStackTrace();
-        }
 
-//        for (Runnable r : tasks) {
-//            executor.submit(r);
-//        }
-//        try {
-//            executor.invokeAll(runnableList);
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(ConcurrentContext.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        } catch (ExecutionException | InterruptedException ee) {
+            this.getModel().getRuntime().handle(ee, this.getInstanceName());
+        }
 
         updateEntityData();
 

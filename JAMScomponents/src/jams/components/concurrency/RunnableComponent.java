@@ -19,7 +19,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package jams.model.concurrent;
+package jams.components.concurrency;
 
 import jams.model.Component;
 
