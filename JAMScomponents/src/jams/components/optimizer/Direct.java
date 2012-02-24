@@ -1,12 +1,24 @@
 /*
  * BranchAndBound.java
  *
- * Created on 8. Februar 2008, 10:46
+ * This file is part of JAMS
+ * Copyright (C) 2005 FSU Jena
  *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ *
  */
-
+ 
 package jams.components.optimizer;
 
 //muss noch überarbeitet und integriert werden .. .
@@ -226,8 +238,8 @@ public class Direct extends SOOptimizer{
             x2 = reTransform(newc_right[i]);                        
             f_left[i] = this.funct(x1);
             f_right[i] = this.funct(x2);
-            Q.add(factory.getSampleSO(reTransform(x1),f_left[i]));
-            Q.add(factory.getSampleSO(reTransform(x2),f_right[i]));
+            Q.add(factory.getSampleSO((x1),f_left[i]));
+            Q.add(factory.getSampleSO((x2),f_right[i]));
         }
         double w[][] = new double[ls.size()][3];
         for (int i=0;i<ls.size();i++){
