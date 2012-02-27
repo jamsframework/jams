@@ -363,7 +363,7 @@ public class ParameterProcessor {
         if (launcherElement == null) {
             return;
         }
-        
+
         NodeList propertyList = launcherElement.getElementsByTagName("property");
 //        HashMap<String, Element> componentHash = getComponentHash(modelDoc);
         HashMap<String, HashMap<String, Element>> attributeHash = getAttributeHash(modelDoc);
@@ -406,7 +406,9 @@ public class ParameterProcessor {
 
                 }
 
-                targetElement.setAttribute(elementAttributeName, value);
+                if (targetElement != null) {
+                    targetElement.setAttribute(elementAttributeName, value);
+                }
 
                 // remove property's  value and default attributes
                 propertyElement.removeAttribute("value");
