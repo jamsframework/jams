@@ -67,7 +67,7 @@ public class EntityPartitioner extends JAMSComponent {
         ArrayList<Attribute.Entity>[] listArray = distributeEntities(alList, outEntities.length);
         
         getModel().getRuntime().println("");
-        getModel().getRuntime().println("Partitioning of " + inEntities.getValue().size() + " entities resultet in " + listArray.length + " partitions:");
+        getModel().getRuntime().println("Partitioning of " + inEntities.getValue().size() + " entities resulted in " + listArray.length + " partitions:");
         
         // assign entity partitions to component attribute
         for (int i = 0; i < outEntities.length; i++) {
