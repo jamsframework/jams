@@ -130,8 +130,8 @@ public class ExportPanel extends javax.swing.JDialog {
         out_Message.setVisible(false);
 
 
-        List selCols = li_columnList.getSelectedValuesList();
-        if (selCols == null || selCols.isEmpty()) {
+        Object selCols[] = li_columnList.getSelectedValues();
+        if (selCols == null || selCols.length == 0) {
             out_Message.setVisible(true);
             out_Message.setText(java.util.ResourceBundle.getBundle("gw/resources/language").getString("L_SELECT_FIELDS"));
             System.out.println("Bitte Felder für den Export auswählen !");
@@ -156,7 +156,7 @@ public class ExportPanel extends javax.swing.JDialog {
 
 
         // selCols -> vSelCols
-        Vector<String> vSelCols = new Vector<String>(selCols.size());
+        Vector<String> vSelCols = new Vector<String>(selCols.length);
         for (Object selCol : selCols) {
             vSelCols.add((String) selCol);
         }

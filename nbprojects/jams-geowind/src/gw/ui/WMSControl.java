@@ -188,7 +188,7 @@ public class WMSControl extends javax.swing.JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                List o = mapList.getSelectedValuesList();
+                Object[] o = mapList.getSelectedValues();
                 for (Object elem : o) {
                     LayerInfo li = (LayerInfo) elem;
                     Layer l = new WMSTiledImageLayer(li.caps, li.params);
