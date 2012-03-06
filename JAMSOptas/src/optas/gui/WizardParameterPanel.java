@@ -68,7 +68,7 @@ public class WizardParameterPanel extends JPanel{
 
         parameterList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent evt) {
-                List params = parameterList.getSelectedValuesList();
+                Object params[] = parameterList.getSelectedValues();
 
                 GridBagConstraints c = new GridBagConstraints();
                 int counter = 0;
@@ -117,9 +117,9 @@ public class WizardParameterPanel extends JPanel{
 
                     c.gridx = 3;
                     c.anchor = GridBagConstraints.NORTH;
-                    if (counter == params.size()) {
-                        if (250 > params.size() * 25) {
-                            c.insets = new Insets(0, 0, 250 - params.size() * 25, 0);
+                    if (counter == params.length) {
+                        if (250 > params.length * 25) {
+                            c.insets = new Insets(0, 0, 250 - params.length * 25, 0);
                         }
                     }
 
@@ -170,7 +170,7 @@ public class WizardParameterPanel extends JPanel{
     }
 
     private void sync(){
-        List list = this.parameterList.getSelectedValuesList();
+        Object list[] = this.parameterList.getSelectedValues();
         ArrayList<Parameter> p = this.optimizationScheme.getParameter();
         p.clear();
         for (Object o : list){

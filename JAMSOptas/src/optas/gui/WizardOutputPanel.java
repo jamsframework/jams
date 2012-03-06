@@ -55,7 +55,7 @@ public class WizardOutputPanel extends JPanel{
                     return;
                 JList list = (JList)e.getSource();
                 WizardOutputPanel.this.selectedAttributes.clear();
-                for (Object o : list.getSelectedValuesList()){
+                for (Object o : list.getSelectedValues()){
                     WizardOutputPanel.this.selectedAttributes.add((AttributeWrapper)o);
                 }   
             }

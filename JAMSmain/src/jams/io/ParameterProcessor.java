@@ -50,6 +50,7 @@ public class ParameterProcessor {
     /**
      * This method loads model parameters, i.e. all component attributes that
      * are provided with a value at model start, from a file.
+     *
      * @param model The model document whose parameters are to be loaded.
      * @param paramFile The file that contains the attribute values.
      * @return The resulting model document.
@@ -66,8 +67,9 @@ public class ParameterProcessor {
     /**
      * This method loads model parameters, i.e. all component attributes that
      * are provided with a value at model start, from a Properties object.
+     *
      * @param model The model document whose parameters are to be loaded.
-     * @param params A Properties object that contains parameter identifyers 
+     * @param params A Properties object that contains parameter identifyers
      * (componentname.attributename) and their values.
      * @return The resulting model document.
      */
@@ -96,10 +98,10 @@ public class ParameterProcessor {
     }
 
     /**
-     * set new attribute
-     * e.g.
-     * before <var attribute="dataValue" context="StationLoop" name="dataValue"/>
-     * after  <var attribute="newAttribute" context="StationLoop" name="dataValue"/>
+     * set new attribute e.g. before <var attribute="dataValue"
+     * context="StationLoop" name="dataValue"/> after <var
+     * attribute="newAttribute" context="StationLoop" name="dataValue"/>
+     *
      * @param model
      * @param theAttributeName
      * @param newAttribute
@@ -143,6 +145,7 @@ public class ParameterProcessor {
 
     /**
      * get value of certain attribute
+     *
      * @param model
      * @param theAttributeName (<context>.<attribute>)
      * @return attribute "value" or null
@@ -168,8 +171,9 @@ public class ParameterProcessor {
     }
 
     /**
-     * This method saves all model parameters, i.e. all component attributes that
-     * are provided with a value at model start, to a file.
+     * This method saves all model parameters, i.e. all component attributes
+     * that are provided with a value at model start, to a file.
+     *
      * @param model The model document whose parameters are to be saved.
      * @param paramsFile The file that will contain the saved parameter values.
      * @param userName User name - will be stored in comments
@@ -231,11 +235,12 @@ public class ParameterProcessor {
     /**
      * This method returns a HashMap that contains component names as keys and
      * the belonging XML Element as value.
+     *
      * @param model The model document that the HashMap is created from.
      * @return A HashMap object.
      */
     public static HashMap<String, Element> getComponentHash(Document model) {
-        HashMap<String, Element> componentHash = new HashMap<>();
+        HashMap<String, Element> componentHash = new HashMap<String, Element>();
 
         ArrayList<Element> elementList = getElementList(model);
         // process the elements
@@ -247,22 +252,23 @@ public class ParameterProcessor {
     }
 
     /**
-     * This method returns a HashMap that contains component names as keys
-     * and a HashMap as value. This second HashMap contains component attribute
-     * names as keys and the belonging XML Element as value.
+     * This method returns a HashMap that contains component names as keys and a
+     * HashMap as value. This second HashMap contains component attribute names
+     * as keys and the belonging XML Element as value.
+     *
      * @param model The model document that the HashMap is created from.
      * @return A HashMap object.
      */
     public static HashMap<String, HashMap<String, Element>> getAttributeHash(Document model) {
 
-        HashMap<String, HashMap<String, Element>> componentHash = new HashMap<>();
+        HashMap<String, HashMap<String, Element>> componentHash = new HashMap<String, HashMap<String, Element>>();
 
         ArrayList<Element> elementList = getElementList(model);
 
         // process the elements
         for (Element element : elementList) {
 
-            HashMap<String, Element> attributeHash = new HashMap<>();
+            HashMap<String, Element> attributeHash = new HashMap<String, Element>();
 
             // put the element itself into the map
             attributeHash.put(element.getAttribute("name"), element);
@@ -271,17 +277,14 @@ public class ParameterProcessor {
             NodeList childs = element.getChildNodes();
             for (int j = 0; j < childs.getLength(); j++) {
                 Node child = childs.item(j);
-                switch (child.getNodeName()) {
-                    case "var":
-                        Element var = (Element) child;
-                        if (var.hasAttribute("value")) {
-                            attributeHash.put(var.getAttribute("name"), var);
-                        }
-                        break;
-                    case "attribute":
-                        Element attribute = (Element) child;
-                        attributeHash.put(attribute.getAttribute("name"), attribute);
-                        break;
+                if (child.getNodeName().equals("var")) {
+                    Element var = (Element) child;
+                    if (var.hasAttribute("value")) {
+                        attributeHash.put(var.getAttribute("name"), var);
+                    }
+                } else if (child.getNodeName().equals("attribute")) {
+                    Element attribute = (Element) child;
+                    attributeHash.put(attribute.getAttribute("name"), attribute);
                 }
             }
 
@@ -289,25 +292,20 @@ public class ParameterProcessor {
         }
 
         /*
-        NodeList componentList = root.getElementsByTagName("component");
-        for (int i = 0; i < componentList.getLength(); i++) {
-        Element element = (Element) componentList.item(i);
-        
-        HashMap<String, Element> attributeHash = new HashMap<String, Element>();
-        
-        NodeList childs = element.getChildNodes();
-        for (int j = 0; j < childs.getLength(); j++) {
-        Node child = childs.item(j);
-        if (child.getNodeName().equals("var")) {
-        Element var = (Element) child;
-        if (var.hasAttribute("value")) {
-        attributeHash.put(var.getAttribute("name"), var);
-        }
-        }
-        }
-        
-        componentHash.put(element.getAttribute("name"), attributeHash);
-        }
+         * NodeList componentList = root.getElementsByTagName("component"); for
+         * (int i = 0; i < componentList.getLength(); i++) { Element element =
+         * (Element) componentList.item(i);
+         *
+         * HashMap<String, Element> attributeHash = new HashMap<String,
+         * Element>();
+         *
+         * NodeList childs = element.getChildNodes(); for (int j = 0; j <
+         * childs.getLength(); j++) { Node child = childs.item(j); if
+         * (child.getNodeName().equals("var")) { Element var = (Element) child;
+         * if (var.hasAttribute("value")) {
+         * attributeHash.put(var.getAttribute("name"), var); } } }
+         *
+         * componentHash.put(element.getAttribute("name"), attributeHash); }
          */
         return componentHash;
     }
@@ -316,7 +314,7 @@ public class ParameterProcessor {
         Element root = model.getDocumentElement();
 
         // create an ArrayList that holds all interesting elements
-        ArrayList<Element> elementList = new ArrayList<>();
+        ArrayList<Element> elementList = new ArrayList<Element>();
 
         // first add the model itself
         elementList.add(root);
@@ -337,9 +335,10 @@ public class ParameterProcessor {
     }
 
     /**
-     * This method cleans all property elements of a given model document from 
-     * formerly used attributes that are not needed anymore. This 
-     * includes removal of value and default attributes.
+     * This method cleans all property elements of a given model document from
+     * formerly used attributes that are not needed anymore. This includes
+     * removal of value and default attributes.
+     *
      * @param modelDoc The model document to be processed.
      */
     public static void stripPropertyElements(Document modelDoc) {
@@ -352,9 +351,10 @@ public class ParameterProcessor {
     }
 
     /**
-     * This method searches for property nodes that contain value attributes
-     * If it finds one, the value is written to the referred component 
-     * and the value attribute is removed from the property node
+     * This method searches for property nodes that contain value attributes If
+     * it finds one, the value is written to the referred component and the
+     * value attribute is removed from the property node
+     *
      * @param modelDoc The model document to be processed
      */
     public static void preProcess(Document modelDoc) {

@@ -55,7 +55,7 @@ public class EntityPartitioner extends JAMSComponent {
     description = "Name of the attribute describing the HRU to HRU relation in the input file",
     defaultValue = "to_poly")
     public Attribute.String associationAttribute;
-    private HashMap<Attribute.Entity, List<Attribute.Entity>> linkMap = new HashMap<>();
+    private HashMap<Attribute.Entity, List<Attribute.Entity>> linkMap = new HashMap<Attribute.Entity, List<Attribute.Entity>>();
 
     @Override
     public void init() {
@@ -90,7 +90,7 @@ public class EntityPartitioner extends JAMSComponent {
      */
     protected ArrayList<ArrayList<Attribute.Entity>> createDepthPartitioning(Attribute.EntityCollection col, String asso) {
 
-        ArrayList<ArrayList<Attribute.Entity>> alList = new ArrayList<>();
+        ArrayList<ArrayList<Attribute.Entity>> alList = new ArrayList<ArrayList<Attribute.Entity>>();
 
         // create a reverse link mapping of all entities
         for (Attribute.Entity e : col.getEntities()) {
@@ -98,7 +98,7 @@ public class EntityPartitioner extends JAMSComponent {
                 Attribute.Entity f = (Attribute.Entity) e.getObject(asso);
                 List<Attribute.Entity> linkList = linkMap.get(f);
                 if (linkList == null) {
-                    linkList = new ArrayList<>();
+                    linkList = new ArrayList<Attribute.Entity>();
                     linkMap.put(f, linkList);
                 }
                 linkList.add(e);
@@ -137,7 +137,7 @@ public class EntityPartitioner extends JAMSComponent {
 
         ArrayList<Attribute.Entity> listArray[] = new ArrayList[numberOfLists];
         for (int i = 0; i < listArray.length; i++) {
-            listArray[i] = new ArrayList<>();
+            listArray[i] = new ArrayList<Attribute.Entity>();
         }
 
         while (alList.size() > 0) {
@@ -166,7 +166,7 @@ public class EntityPartitioner extends JAMSComponent {
 
     private ArrayList<Attribute.Entity> listSubTree(Attribute.Entity root) {
 
-        ArrayList<Attribute.Entity> list = new ArrayList<>();
+        ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
 
         // get all direct children of root
         List<Entity> children = linkMap.get(root);
@@ -197,7 +197,7 @@ public class EntityPartitioner extends JAMSComponent {
     protected ArrayList<ArrayList<Attribute.Entity>> createBreadthPartitioning(Attribute.EntityCollection col, String asso) {
 
         Attribute.Entity f;
-        HashMap<Attribute.Entity, Integer> depthMap = new HashMap<>();
+        HashMap<Attribute.Entity, Integer> depthMap = new HashMap<Attribute.Entity, Integer>();
         Integer eDepth, fDepth;
         boolean mapChanged = true;
 
@@ -236,7 +236,7 @@ public class EntityPartitioner extends JAMSComponent {
         }
 
         //create ArrayList of ArrayList objects, each element keeping the entities of one level
-        ArrayList<ArrayList<Attribute.Entity>> alList = new ArrayList<>();
+        ArrayList<ArrayList<Attribute.Entity>> alList = new ArrayList<ArrayList<Attribute.Entity>>();
         for (int i = 0; i <= maxDepth; i++) {
             alList.add(new ArrayList<Attribute.Entity>());
         }

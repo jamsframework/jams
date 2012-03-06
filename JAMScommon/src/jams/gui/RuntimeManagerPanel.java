@@ -89,9 +89,9 @@ public class RuntimeManagerPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                List rtInfoList = runtimeList.getSelectedValuesList();
-                if (rtInfoList != null) {
-                    for (Object o : rtInfoList) {
+                Object rtInfoArray[] = runtimeList.getSelectedValues();
+                if (rtInfoArray != null) {
+                    for (Object o : rtInfoArray) {
                         RuntimeManager.RuntimeInfo rtInfo = (RuntimeManager.RuntimeInfo) o;
                         rtInfo.getRuntime().sendHalt();
                     }

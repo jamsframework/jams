@@ -220,7 +220,7 @@ public class JAMSEntity implements Attribute.Entity {
         if (values == null) {
             return result;
         }
-        TreeSet<String> orderedSet = new TreeSet<>(values.keySet());
+        TreeSet<String> orderedSet = new TreeSet<String>(values.keySet());
         Iterator<String> iter = orderedSet.iterator();
         while(iter.hasNext()){
             String key = iter.next();

@@ -231,13 +231,13 @@ public class OutputDSDlg extends JDialog {
                     return;
                 }
 
-                if (newDSDlg.getValue().size() < 1) {
+                if (newDSDlg.getValue().length < 1) {
                     GUIHelper.showErrorDlg(this, JAMS.i18n("You_must_choose_a_context!"), JAMS.i18n("Error_creating_new_filter"));
                     addItem();
                     return;
                 }
 
-                ContextDescriptor context = (ContextDescriptor) newDSDlg.getValue().get(0);
+                ContextDescriptor context = (ContextDescriptor) newDSDlg.getValue()[0];
 
                 FilterDescriptor f = ods.addFilter(context, newDSDlg.getDsName());
 
@@ -351,7 +351,7 @@ public class OutputDSDlg extends JDialog {
             // Get the text field value
             if (newDSDlg.getResult() == DSDlg.RESULT_OK) {
 
-                List attributes = newDSDlg.getValue();
+                Object[] attributes = newDSDlg.getValue();
 
                 for (Object attribute : attributes) {
 
@@ -373,12 +373,12 @@ public class OutputDSDlg extends JDialog {
         protected void removeItem() {
             //get the current selection
             int selection = getListbox().getSelectedIndex();
-            List values = getListbox().getSelectedValuesList();
+            Object[] values = getListbox().getSelectedValues();
 
-            if (values.size() > 0) {
+            if (values.length > 0) {
 
-                for (int i = 0; i < values.size(); i++) {
-                    ods.getContextAttributes().remove((ContextAttribute) values.get(i));
+                for (int i = 0; i < values.length; i++) {
+                    ods.getContextAttributes().remove((ContextAttribute) values[i]);
                 }
                 setValue(ods);
 
@@ -519,13 +519,13 @@ public class OutputDSDlg extends JDialog {
                     return;
                 }
 
-                if (newDSDlg.getValue().size() < 1) {
+                if (newDSDlg.getValue().length < 1) {
                     GUIHelper.showErrorDlg(this, JAMS.i18n("You_must_choose_a_context!"), JAMS.i18n("Error_creating_new_datastore"));
                     addItem();
                     return;
                 }
 
-                ContextDescriptor context = (ContextDescriptor) newDSDlg.getValue().get(0);
+                ContextDescriptor context = (ContextDescriptor) newDSDlg.getValue()[0];
 
                 OutputDSDescriptor ods = new OutputDSDescriptor(context);
                 ods.setName(newDSDlg.getDsName());
@@ -725,8 +725,8 @@ public class OutputDSDlg extends JDialog {
             return enableBox.isSelected();
         }
 
-        public List getValue() {
-            return objectList.getSelectedValuesList();
+        public Object[] getValue() {
+            return objectList.getSelectedValues();
         }
     }
 }

@@ -48,10 +48,11 @@ defaultWorkspacePath = new File(modelFile).getParent()
 // create some property object
 properties = JAMSProperties.createProperties()
 properties.load(propertyFile)
-//properties.setProperty(JAMSProperties.GUICONFIG_IDENTIFIER, "0")
-//properties.setProperty(JAMSProperties.WINDOWENABLE_IDENTIFIER, "0")
-//properties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "1")
-//properties.setProperty(JAMSProperties.ERRORDLG_IDENTIFIER, "0")
+properties.setProperty(JAMSProperties.GUICONFIG_IDENTIFIER, "false")
+properties.setProperty(JAMSProperties.WINDOWENABLE_IDENTIFIER, "false")
+properties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "true")
+properties.setProperty(JAMSProperties.ERRORDLG_IDENTIFIER, "false")
+properties.setProperty(JAMSProperties.DEBUG_IDENTIFIER, "1")
 
 // tweak localization
 JAMSTools.configureLocaleEncoding(properties)
@@ -77,9 +78,10 @@ partitionerClazz = runtime.getClassLoader().loadClass("jams.components.concurren
 
 //modelDescriptor.enableConcurrency(2, controllerClazz, new ExHandler());
 modelDescriptor.enableSpatialConcurrency(4, controllerClazz, partitionerClazz, new ExHandler());
-//System.out.println(XMLTools.getStringFromDocument(modelIO.getModelDocument(modelDescriptor)));
+System.out.println(XMLTools.getStringFromDocument(modelIO.getModelDocument(modelDescriptor)));
 
 // load the model into the runtime and execute it
 runtime.loadModel(modelDescriptor, defaultWorkspacePath)
 runtime.runModel()
+System.exit(0)
 

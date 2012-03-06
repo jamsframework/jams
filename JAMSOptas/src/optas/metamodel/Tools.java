@@ -33,7 +33,7 @@ public class Tools {
     }
 
     static private ArrayList<Node> getDisabledNodes(Node root){
-        ArrayList result = new ArrayList<>();
+        ArrayList result = new ArrayList<Node>();
         if (root == null)
             return result;
         if (root.getNodeName().equals("contextcomponent")){
@@ -78,7 +78,7 @@ public class Tools {
     }
 
     static public ArrayList<Element> getNodeByType(Node root, String name){
-        ArrayList<Element> list = new ArrayList<>();
+        ArrayList<Element> list = new ArrayList<Element>();
         if (root.getNodeName().equals(name)){
             list.add((Element)root);
             return list;
@@ -99,7 +99,7 @@ public class Tools {
     }
 
     static public ArrayList<Element> getNodeByAttribute(Node root, String attribute, String key){
-        ArrayList<Element> set = new ArrayList<>();
+        ArrayList<Element> set = new ArrayList<Element>();
 
         if (root.getNodeName().equals("contextcomponent")){
             Element elem = (Element)root;
@@ -119,7 +119,7 @@ public class Tools {
     }
 
     static public ArrayList<Element> getVariable(Node root, String name) {
-        ArrayList<Element> set = new ArrayList<>();
+        ArrayList<Element> set = new ArrayList<Element>();
 
         NodeList childs = root.getChildNodes();
         for (int i = 0; i < childs.getLength(); i++) {
@@ -135,7 +135,7 @@ public class Tools {
     }
 
     static public ArrayList<Element> getNodeByAttributeContent(Node root, String attribute, String key){
-        ArrayList<Element> set = new ArrayList<>();
+        ArrayList<Element> set = new ArrayList<Element>();
 
         if (root.getNodeName().equals("contextcomponent")){
             Element elem = (Element)root;

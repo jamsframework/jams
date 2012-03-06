@@ -36,7 +36,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
     private Properties properties = new Properties();
     private String defaultFilename = "";
-    private HashMap<String, JAMSProperty> propertyMap = new HashMap<>();
+    private HashMap<String, JAMSProperty> propertyMap = new HashMap<String, JAMSProperty>();
     private static JAMSProperties theProperties;
 
     /**

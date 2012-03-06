@@ -85,7 +85,7 @@ public class ModelAnalyzer {
         return properties;
     }
     private static HashMap<String, Range> getDefaultRangeMap(Node launcherNode) {
-        HashMap<String, Range> map = new HashMap<>();
+        HashMap<String, Range> map = new HashMap<String, Range>();
 
         NodeList childs = launcherNode.getChildNodes();
 
@@ -94,7 +94,7 @@ public class ModelAnalyzer {
                 || launcherNode.getNodeName().equals("subgroup")
                 || launcherNode.getNodeName().equals("property")
                 || launcherNode.getNodeName().equals("model"))) {
-            return new HashMap<>();
+            return new HashMap<String, Range>();
         }
         Element parent = (Element) launcherNode;
         if (parent.getNodeName().equals("property")) {

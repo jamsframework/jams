@@ -54,7 +54,7 @@ public class ConcurrentContext extends JAMSContext {
                 runEnumerator = getRunEnumerator();
             }
 
-            ArrayList<Runnable> runnableList = new ArrayList<>();
+            ArrayList<Runnable> runnableList = new ArrayList<Runnable>();
 
             runEnumerator.reset();
             while (runEnumerator.hasNext() && doRun) {
@@ -77,8 +77,10 @@ public class ConcurrentContext extends JAMSContext {
                 futures[i].get();
             }
 
-        } catch (ExecutionException | InterruptedException ee) {
+        } catch (ExecutionException ee) {
             this.getModel().getRuntime().handle(ee, this.getInstanceName());
+        } catch (InterruptedException ie) {
+            this.getModel().getRuntime().handle(ie, this.getInstanceName());
         }
 
         updateEntityData();

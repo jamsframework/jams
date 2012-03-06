@@ -161,7 +161,7 @@ public class OptimizationWizard extends JPanel {
             setData();
         } else if (analyzer != null) {
             SortedSet<AttributeWrapper> objList = this.analyzer.getObjectives();
-            SortedSet<AttributeWrapper> parameterList = new TreeSet<>();
+            SortedSet<AttributeWrapper> parameterList = new TreeSet<AttributeWrapper>();
             parameterList.addAll(this.analyzer.getParameters());
 
             scheme.repair(this.doc, parameterList, objList);

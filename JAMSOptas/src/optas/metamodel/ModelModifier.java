@@ -45,7 +45,7 @@ public class ModelModifier {
     Document loadedModel;
     JAMSProperties properties;
     //HashSet<String> removedComponents = new HashSet<String>();
-    ArrayList<AttributeWrapper> objectiveList = new ArrayList<>();
+    ArrayList<AttributeWrapper> objectiveList = new ArrayList<AttributeWrapper>();
     OptimizationDescriptionDocument odd;
     BufferedWriter stream;
 
@@ -79,7 +79,7 @@ public class ModelModifier {
         }
     }
     final static int kernelMap[] = {2, 3, 5, 6, 7, 8, 12, 13, 15, 16};
-    ArrayList<Modification> modificationList = new ArrayList<>();
+    ArrayList<Modification> modificationList = new ArrayList<Modification>();
     
     public ModelModifier(JAMSProperties properties, Document doc, OutputStream stream) throws WizardException {
         if (stream != null)
@@ -235,7 +235,7 @@ public class ModelModifier {
         Element spatialRelaxationComponent = createSpatialRelaxationComponent(doc, attribute);
         Element entityReaderNode = this.getEntityReader(doc, null);
 
-        ArrayList<Modification> list = new ArrayList<>();
+        ArrayList<Modification> list = new ArrayList<Modification>();
         if (entityReaderNode!=null){
             ModificationExecutor.InsertBefore insertElement = new ModificationExecutor.InsertBefore(spatialRelaxationComponent, entityReaderNode);
             list.add(insertElement);
@@ -247,9 +247,9 @@ public class ModelModifier {
     }
 
     private ArrayList<Modification> configOutput(Document doc, Collection<AttributeWrapper> set) throws WizardException {
-        ArrayList<ModificationExecutor.Modification> actionList = new ArrayList<>();
+        ArrayList<ModificationExecutor.Modification> actionList = new ArrayList<ModificationExecutor.Modification>();
 
-        Map<String, HashSet<String>> outputContexts = new HashMap<>();
+        Map<String, HashSet<String>> outputContexts = new HashMap<String, HashSet<String>>();
        
         for (AttributeWrapper a : set) {
             String attr = a.getAttributeName();
@@ -361,7 +361,7 @@ public class ModelModifier {
     }
 
     private ArrayList<Modification> addParameter(Collection<Parameter> list,Node root, String optimizerContextName){
-        ArrayList<Modification> actionList = new ArrayList<>();
+        ArrayList<Modification> actionList = new ArrayList<Modification>();
         
         for (Parameter p:list){            
             actionList.add(new ModificationExecutor.ReplaceAttribute(p, p.getChildName(), optimizerContextName));
@@ -389,7 +389,7 @@ public class ModelModifier {
             throw new WizardException(JAMS.i18n("unable_to_change_workspace"));
         }
 
-        ArrayList<Objective> effList = new ArrayList<>();
+        ArrayList<Objective> effList = new ArrayList<Objective>();
         effList.addAll(odd.getObjective().values());
 
         log("optimizing model structure");
@@ -418,7 +418,7 @@ public class ModelModifier {
         WrapElement placeOptimizerAction = new WrapElement(optimizer, (Element)XMLProcessor.getFirstComponent(root));
         this.modificationList.add(placeOptimizerAction);
 
-        TreeSet<AttributeWrapper> exportAttributes = new TreeSet<>();
+        TreeSet<AttributeWrapper> exportAttributes = new TreeSet<AttributeWrapper>();
         exportAttributes.add(new AttributeWrapper(null, relaxationAttribute, null, OPTIMIZER_CONTEXT_NAME));
         exportAttributes.addAll(objectiveAnalyser.getObjectiveList());
 

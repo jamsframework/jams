@@ -222,14 +222,14 @@ public class metaModelOptimizer {
                                 if (attrRWSet.attrReadingComponents.get(singleAttr) != null) {
                                     attrRWSet.attrReadingComponents.get(singleAttr).add(parent.getInstanceName());
                                 } else {
-                                    HashSet<String> attrSet = new HashSet<>();
+                                    HashSet<String> attrSet = new HashSet<String>();
                                     attrSet.add(parent.getInstanceName());
                                     attrRWSet.attrReadingComponents.put(singleAttr, attrSet);
                                 }
                                 if (attrRWSet.attrWritingComponents.get(singleAttr) != null) {
                                     attrRWSet.attrWritingComponents.get(singleAttr).add(parent.getInstanceName());
                                 } else {
-                                    HashSet<String> attrSet = new HashSet<>();
+                                    HashSet<String> attrSet = new HashSet<String>();
                                     attrSet.add(parent.getInstanceName());
                                     attrRWSet.attrWritingComponents.put(singleAttr, attrSet);
                                 }
@@ -238,7 +238,7 @@ public class metaModelOptimizer {
                                 if (attrRWSet.attrReadingComponents.get(singleAttr) != null) {
                                     attrRWSet.attrReadingComponents.get(singleAttr).add(parent.getInstanceName());
                                 } else {
-                                    HashSet<String> attrSet = new HashSet<>();
+                                    HashSet<String> attrSet = new HashSet<String>();
                                     attrSet.add(parent.getInstanceName());
                                     attrRWSet.attrReadingComponents.put(singleAttr, attrSet);
                                 }
@@ -250,7 +250,7 @@ public class metaModelOptimizer {
                                 if (attrRWSet.attrWritingComponents.get(singleAttr) != null) {
                                     attrRWSet.attrWritingComponents.get(singleAttr).add(parent.getInstanceName());
                                 } else {
-                                    HashSet<String> attrSet = new HashSet<>();
+                                    HashSet<String> attrSet = new HashSet<String>();
                                     attrSet.add(parent.getInstanceName());
                                     attrRWSet.attrWritingComponents.put(singleAttr, attrSet);
                                 }
@@ -458,12 +458,12 @@ public class metaModelOptimizer {
     }
 
     public static ArrayList<String> RemoveGUIComponents(Node root) throws WizardException{
-        ArrayList<String> removedComponents = new ArrayList<>();
+        ArrayList<String> removedComponents = new ArrayList<String>();
 
         NodeList childs = root.getChildNodes();
         Node mainRoot = root.getOwnerDocument();
 
-        ArrayList<Node> childsToRemove = new ArrayList<>();
+        ArrayList<Node> childsToRemove = new ArrayList<Node>();
         for (int index = 0; index < childs.getLength(); index++) {
             Node node = childs.item(index);
             if (node.getNodeName().equals("contextcomponent")) {
@@ -492,8 +492,8 @@ public class metaModelOptimizer {
 
     static public ArrayList<String> RemoveEmptyContextes(Node root) {
         NodeList childs = root.getChildNodes();
-        ArrayList<String> removedNodes = new ArrayList<>();
-        ArrayList<Node> childsToRemove = new ArrayList<>();
+        ArrayList<String> removedNodes = new ArrayList<String>();
+        ArrayList<Node> childsToRemove = new ArrayList<Node>();
 
         //find empty contextes
         for (int index = 0; index < childs.getLength(); index++) {
@@ -557,8 +557,8 @@ public class metaModelOptimizer {
     static public ArrayList<String> RemoveNotListedComponents(Node root, Set<String> list) throws WizardException{
         NodeList childs = root.getChildNodes();
 
-        ArrayList<Node> childsToRemove = new ArrayList<>();
-        ArrayList<String> removedNodes = new ArrayList<>();
+        ArrayList<Node> childsToRemove = new ArrayList<Node>();
+        ArrayList<String> removedNodes = new ArrayList<String>();
 
         Node mainRoot = root.getOwnerDocument();
 
@@ -614,7 +614,7 @@ public class metaModelOptimizer {
         if (launcherNode == null){
             throw new WizardException("model does not contain launcher node!");
         }
-        ArrayList<Node> nodesToRemove = new ArrayList<>();
+        ArrayList<Node> nodesToRemove = new ArrayList<Node>();
 
         Node node;
 

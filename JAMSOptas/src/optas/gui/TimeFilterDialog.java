@@ -133,10 +133,10 @@ public class TimeFilterDialog extends JDialog{
                 addActionListener(new ActionListener() {
 
                     public void actionPerformed(ActionEvent e) {
-                        List oYears = yearList.getSelectedValuesList();
-                        int years[] = new int[oYears.size()];
-                        for (int i = 0; i < oYears.size(); i++) {
-                            years[i] = ((Integer) oYears.get(i)).intValue();
+                        Object oYears[] = yearList.getSelectedValues();
+                        int years[] = new int[oYears.length];
+                        for (int i = 0; i < oYears.length; i++) {
+                            years[i] = ((Integer) oYears[i]).intValue();
                         }
                         TimeFilterDialog.this.filter = TimeFilterFactory.getYearlyFilter(years,
                                 TimeFilterDialog.this.hydrologicYearBox.isSelected());

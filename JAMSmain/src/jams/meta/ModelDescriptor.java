@@ -134,7 +134,6 @@ public class ModelDescriptor extends ComponentCollection {
                 String attributeName = attributeElement.getAttribute("id");
                 ContextAttribute ca = context.getDynamicAttributes().get(attributeName);
                 if (ca == null) {
-//                        Logger.getLogger(ModelDescriptor.class.getInstanceName()).log(Level.INFO,
                     exHandler.handle(new JAMSException(MessageFormat.format(JAMS.i18n("Attribute_does_not_exist_and_is_removed"),
                             attributeName, od.getName()), JAMS.i18n("Error")));
                 } else {
@@ -432,11 +431,13 @@ public class ModelDescriptor extends ComponentCollection {
         }
         return false;
     }
-    
+
+    @SuppressWarnings("unchecked")
     private boolean enableSpatialConcurrency(ModelNode node, ContextDescriptor concurrencyController, ComponentDescriptor partitioner, int maxThreads, ExceptionHandler exHandler) throws JAMSException {
-                Class contextClazz = jams.model.JAMSContext.class;
+
+        Class contextClazz = jams.model.JAMSContext.class;
         Class spatialContextClazz = jams.model.JAMSSpatialContext.class;
-        
+
         Object o = node.getUserObject();
 
         if (o instanceof ContextDescriptor) {
@@ -474,15 +475,16 @@ public class ModelDescriptor extends ComponentCollection {
                     ComponentDescriptor partitionerClone = partitioner.cloneNode();
                     ComponentField inEntities = partitionerClone.getComponentFields().get("inEntities");
                     ComponentField outEntities = partitionerClone.getComponentFields().get("outEntities");
-                    
+
                     ComponentField entities = cd.getComponentFields().get("entities");
-                    
-                    String attributeName = entities.getAttribute();
-                    inEntities.linkToAttribute(entities.getContext(), attributeName);
-                    
-                    String newAttributeName = attributeName + "_1";
+
+                    String entitiesAttributeName = entities.getAttribute();
+                    ContextDescriptor entitiesProvider = entities.getContext();
+                    inEntities.linkToAttribute(entitiesProvider, entitiesAttributeName);
+
+                    String newAttributeName = entitiesAttributeName + "_1";
                     for (int i = 1; i < numThreads; i++) {
-                        newAttributeName += ";" + attributeName + "_" + (i+1);
+                        newAttributeName += ";" + entitiesAttributeName + "_" + (i + 1);
                     }
                     outEntities.linkToAttribute(ccContainer, newAttributeName);
 
@@ -490,6 +492,21 @@ public class ModelDescriptor extends ComponentCollection {
                     partitionerNode.setType(ModelNode.COMPONENT_TYPE);
                     ccContainerNode.insert(partitionerNode, 0);
 
+                    /*
+                     * this.unRegisterComponentDescriptor(cd);
+                     *
+                     * ContextDescriptor dataStoreContext = new
+                     * ContextDescriptor(cd.getInstanceName(),
+                     * spatialContextClazz, this, exHandler); ModelNode
+                     * dataStoreContextNode = new ModelNode(dataStoreContext);
+                     * dataStoreContextNode.setType(ModelNode.CONTEXT_TYPE);
+                     * entities =
+                     * dataStoreContext.getComponentFields().get("entities");
+                     * entities.linkToAttribute(entitiesProvider,
+                     * entitiesAttributeName);
+                     *
+                     * ccContainerNode.add(dataStoreContextNode);
+                     */
                 }
 
                 parent.insert(ccContainerNode, index);
@@ -497,11 +514,11 @@ public class ModelDescriptor extends ComponentCollection {
 
                 for (int i = 0; i < numThreads; i++) {
                     ModelNode copy = node.clone(this, true, new HashMap<ContextDescriptor, ContextDescriptor>());
-                    
+
                     ContextDescriptor cdCopy = (ContextDescriptor) copy.getUserObject();
                     ComponentField entities = cdCopy.getComponentFields().get("entities");
-                    entities.linkToAttribute(ccContainer, entities.getAttribute() + "_" + (i+1));
-                    
+                    entities.linkToAttribute(ccContainer, entities.getAttribute() + "_" + (i + 1));
+
                     ccNode.add(copy);
                 }
 
@@ -517,7 +534,6 @@ public class ModelDescriptor extends ComponentCollection {
         }
         return false;
     }
-    
 
     /**
      * This methods will search the model for contexts that can be executed in
@@ -537,16 +553,15 @@ public class ModelDescriptor extends ComponentCollection {
         enableConcurrency(getRootNode(), controller, numThreads, exHandler);
 
     }
-    
 
     /**
      * This methods will search the model for contexts that can be executed in
      * parallel. Using depth first search, the first context found will be
      * replaced by a special controller context that contains numThread copies
      * of the original context. The controller context controls the parallel
-     * execution of the numThreads contexts.
-     * Spatial contexts will be modified by adding a partitioner component which
-     * allows to split entity collections for parallel processing
+     * execution of the numThreads contexts. Spatial contexts will be modified
+     * by adding a partitioner component which allows to split entity
+     * collections for parallel processing
      *
      * @param numThreads Number of parallel threads
      * @param controllerClazz The type to be used as concurrency controller
@@ -560,5 +575,5 @@ public class ModelDescriptor extends ComponentCollection {
         ComponentDescriptor partitioner = new ComponentDescriptor(partitionerClazz, this, exHandler);
         enableSpatialConcurrency(getRootNode(), controller, partitioner, numThreads, exHandler);
 
-    }    
+    }
 }

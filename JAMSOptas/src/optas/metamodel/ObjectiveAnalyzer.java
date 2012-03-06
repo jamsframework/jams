@@ -25,8 +25,8 @@ public class ObjectiveAnalyzer {
     private ArrayList<Objective> objectives;
     private String context;
     private int efficiencyComponentCounter = 0;
-    private ArrayList<AttributeWrapper> objectiveList = new ArrayList<>();
-    private ArrayList<Modification> actionList = new ArrayList<>();
+    private ArrayList<AttributeWrapper> objectiveList = new ArrayList<AttributeWrapper>();
+    private ArrayList<Modification> actionList = new ArrayList<Modification>();
     private String effValueString = "";
 
     public ObjectiveAnalyzer(ArrayList<Objective> objectives, String context){
