@@ -1,5 +1,5 @@
 /*
- * Context.java
+ * ModelDescriptor.java
  * Created on 23.06.2010, 16:39:22
  *
  * This file is part of JAMS

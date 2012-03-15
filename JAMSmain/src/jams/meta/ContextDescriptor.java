@@ -1,5 +1,5 @@
 /*
- * Context.java
+ * ContextDescriptor.java
  * Created on 20.09.2010, 22:56:27
  *
  * This file is part of JAMS

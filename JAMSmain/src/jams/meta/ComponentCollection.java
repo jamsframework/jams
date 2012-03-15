@@ -1,5 +1,5 @@
 /*
- * Context.java
+ * ComponentCollection.java
  * Created on 25.06.2010, 09:19:58
  *
  * This file is part of JAMS

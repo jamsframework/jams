@@ -1,5 +1,5 @@
 /*
- * Context.java
+ * OutputDSDlg.java
  * Created on 21.03.2010, 20:45:41
  *
  * This file is part of JAMS

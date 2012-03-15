@@ -1,5 +1,5 @@
 /*
- * Context.java
+ * EntityPartitioner.java
  * Created on 30.01.2012, 22:13:18
  *
  * This file is part of JAMS

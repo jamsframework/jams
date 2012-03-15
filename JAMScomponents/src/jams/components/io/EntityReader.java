@@ -35,7 +35,7 @@ import java.util.*;
  *
  * @author S. Kralisch
  */
-public class StandardEntityReader extends JAMSComponent {
+public class EntityReader extends JAMSComponent {
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,

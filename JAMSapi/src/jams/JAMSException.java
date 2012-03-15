@@ -1,5 +1,5 @@
 /*
- * Context.java
+ * JAMSException.java
  * Created on 19.09.2010, 23:24:46
  *
  * This file is part of JAMS

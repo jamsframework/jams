@@ -1,5 +1,5 @@
 /*
- * Context.java
+ * ${name}.java
  * Created on ${date}, ${time}
  *
  * This file is part of JAMS

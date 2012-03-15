@@ -1,5 +1,5 @@
 /*
- * Context.java
+ * IOTest.java
  * Created on 20.09.2010, 12:03:58
  *
  * This file is part of JAMS

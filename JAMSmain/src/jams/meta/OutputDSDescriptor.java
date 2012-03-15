@@ -1,5 +1,5 @@
 /*
- * Context.java
+ * OutputDSDescriptor.java
  * Created on 22.03.2010, 15:21:51
  *
  * This file is part of JAMS
