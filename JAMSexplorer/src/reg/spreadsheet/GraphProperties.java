@@ -303,7 +303,7 @@ public class GraphProperties {
             if(selectedColumn>0){
                 value = (Double) table.getValueAt(i, selectedColumn);
 
-            ts.add(new Second(new Date(time.getTimeInMillis())), value);
+            ts.addOrUpdate(new Second(new Date(time.getTimeInMillis())), value);
 //          }
             }
         }
