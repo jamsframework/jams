@@ -42,6 +42,9 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
     boolean active = false;
     private String[] metadata;
     private JAMSTableDataArray current = null;
+    private String delimiters = "\t"; 
+    private String endString = "#end";
+    private String metadataID = "#";
     
     public GenericDataReader(String fileName, boolean timeParse, int startMeta, int startData) {
         
@@ -78,16 +81,16 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
         }
     }
     
-    private void parseMetadata() {
+    public void parseMetadata() {
         String hold = "";
         
         update();
-        while (nextString.startsWith("#")) {
+        while (nextString.startsWith(metadataID)) {
             active = false;
             hold = nextString;
             update();
         }
-        StringTokenizer st = new StringTokenizer(hold.substring(1), "\t");
+        StringTokenizer st = new StringTokenizer(hold.substring(1), delimiters);
         
         //throw away the time column
         if (timeParse)
@@ -108,7 +111,7 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
             update();
         }
         
-        StringTokenizer st = new StringTokenizer(nextString, "\t");
+        StringTokenizer st = new StringTokenizer(nextString, delimiters);
         
         //throw away the time column
         if (timeParse)
@@ -126,35 +129,6 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
             update();
         }
     }
-    
-    /*
-    private void parseMetadata() {
-     
-        String hold = "";
-     
-        update();
-        active = false;
-        update();
-        while (!nextString.endsWith("=============")) {
-            active = false;
-            hold = nextString;
-            update();
-        }
-     
-        StringTokenizer st = new StringTokenizer(hold);
-     
-        //throw away the time column
-        st.nextToken();
-     
-        int n = st.countTokens();
-        String[] metadata = new String[n];
-        for (int i = 0; i < n; i++) {
-            metadata[i] = st.nextToken();
-        }
-        this.metadata=metadata;
-        active = false;
-    }
-     */
     
     private void update() {
         if (!active) {
@@ -178,7 +152,7 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
         update();
         active = false;
         
-        StringTokenizer st = new StringTokenizer(nextString, "\t");
+        StringTokenizer st = new StringTokenizer(nextString, delimiters);
         
         if (timeParse) {
             String timeString = st.nextToken();
@@ -200,7 +174,7 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
     
     public boolean hasNext() {
         update();
-        if (nextString != null && !nextString.startsWith("#end"))
+        if (nextString != null && !nextString.startsWith(endString))
             return true;
         else
             return false;
@@ -216,5 +190,47 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
         } catch (IOException ioe) {
             JAMSTools.handle(ioe);
         }
+    }
+
+    /**
+     * @return the delimiters
+     */
+    public String getDelimiters() {
+        return delimiters;
+    }
+
+    /**
+     * @param delimiters the delimiters to set
+     */
+    public void setDelimiters(String delimiters) {
+        this.delimiters = delimiters;
+    }
+
+    /**
+     * @return the endString
+     */
+    public String getEndString() {
+        return endString;
+    }
+
+    /**
+     * @param endString the endString to set
+     */
+    public void setEndString(String endString) {
+        this.endString = endString;
+    }
+
+    /**
+     * @return the metadataID
+     */
+    public String getMetadataID() {
+        return metadataID;
+    }
+
+    /**
+     * @param metadataID the metadataID to set
+     */
+    public void setMetadataID(String metadataID) {
+        this.metadataID = metadataID;
     }
 }
