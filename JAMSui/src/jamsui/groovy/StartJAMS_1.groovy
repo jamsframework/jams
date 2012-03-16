@@ -27,18 +27,18 @@ import jams.io.*
 import jams.model.*
 
 // helper class needed later on, could also use null instead..
-class ExHandler implements ExceptionHandler {
-    
-    public void handle(JAMSException ex) {
-        println ex
-    }
-
-    public void handle(ArrayList<JAMSException> exList) {
-        for (JAMSException jex : exList) {
-            println ex
-        }
-    }
-}
+//class ExHandler implements ExceptionHandler {
+//    
+//    public void handle(JAMSException ex) {
+//        println ex
+//    }
+//
+//    public void handle(ArrayList<JAMSException> exList) {
+//        for (JAMSException jex : exList) {
+//            println ex
+//        }
+//    }
+//}
 
 // set some variables first
 propertyFile = "D:/jamsapplication/nsk.jap"
@@ -77,7 +77,7 @@ controllerClazz = runtime.getClassLoader().loadClass("jams.components.concurrenc
 partitionerClazz = runtime.getClassLoader().loadClass("jams.components.concurrency.EntityPartitioner")
 
 //modelDescriptor.enableConcurrency(2, controllerClazz, new ExHandler());
-modelDescriptor.enableSpatialConcurrency(4, controllerClazz, partitionerClazz, new ExHandler());
+modelDescriptor.enableSpatialConcurrency(3, controllerClazz, partitionerClazz, new ExHandler());
 System.out.println(XMLTools.getStringFromDocument(modelIO.getModelDocument(modelDescriptor)));
 
 // load the model into the runtime and execute it
