@@ -49,10 +49,11 @@ import reg.dsproc.SimpleSerieProcessor;
 import reg.dsproc.TimeSpaceProcessor;
 import optas.hydro.data.DataCollection;
 import optas.hydro.data.DataSet.MismatchException;
-import optas.hydro.data.Efficiency;
 import optas.hydro.data.Measurement;
 import optas.hydro.data.Modelrun;
+import optas.hydro.data.NegativeEfficiency;
 import optas.hydro.data.Parameter;
+import optas.hydro.data.PositiveEfficiency;
 import optas.hydro.data.SimpleDataSet;
 import optas.hydro.data.StateVariable;
 import optas.hydro.data.TimeSerie;
@@ -258,6 +259,9 @@ public class ImportMonteCarloDataPanel extends JPanel {
                         ensembleTime = JAMSDataFactory.createTimeInterval();
                         ensembleTime.setStart(timesteps[0]);
                         ensembleTime.setEnd(timesteps[timesteps.length - 1]);
+                        
+                        ensembleTime.setTimeUnit(s.getTimeUnit());
+
                         for (AttributeData ad : s.getDataStoreProcessor().getAttributes())
                             ad.setSelected(false);
                         a.setSelected(true);
@@ -282,8 +286,8 @@ public class ImportMonteCarloDataPanel extends JPanel {
                                     ts = ts2;
                                 else{
                                     for (int i=0;i<ts.getTimeDomain().getNumberOfTimesteps();i++){
-                                        if (ts.getValue(i)!=ts2.getValue(i))
-                                            System.out.println("timeserie ensemble could not be used as measurement");
+                                        if (Math.abs(ts.getValue(i)-ts2.getValue(i))>1E-5)
+                                            throw new MismatchException("timeserie ensemble could not be used as measurement");
                                     }
                                 }
                                 col++;
@@ -559,8 +563,8 @@ public class ImportMonteCarloDataPanel extends JPanel {
     private void init() {
         simpleDatasetClasses.put(parameterString, Parameter.class);
         simpleDatasetClasses.put(measurementString, Measurement.class);
-        simpleDatasetClasses.put(efficiencyStringNeg, Efficiency.class);
-        simpleDatasetClasses.put(efficiencyStringPos, Efficiency.class);
+        simpleDatasetClasses.put(efficiencyStringNeg, NegativeEfficiency.class);
+        simpleDatasetClasses.put(efficiencyStringPos, PositiveEfficiency.class);
         simpleDatasetClasses.put(stateVariableString, StateVariable.class);
 
         timeSerieDatasetClasses.put(timeseriesString, TimeSerie.class);
