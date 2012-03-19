@@ -6,17 +6,18 @@
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 3
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
 package reg.dsproc;
@@ -419,7 +420,11 @@ public class DataStoreProcessor {
         long position = reader.getPosition();
         query += "'" + position + "')";
 
-        while (!(row = reader.readLine()).startsWith("@end")) {
+        try{
+            while (!(row = reader.readLine()).startsWith("@end")) {
+            }
+        }catch(NullPointerException npe){
+            //in case end tag not provided
         }
 
         stmt.execute(query);
@@ -720,9 +725,10 @@ public class DataStoreProcessor {
                     this.idType = "JAMSCalendar";
                 } else if (type.equals("jams.model.JAMSSpatialContext")) {
                     this.idType = "JAMSLong";
-                } else if (type.contains("jams.components.optimizer")) {
+                } else if (type.contains("jams.components.optimizer") || type.contains("optas.optimizer") || type.contains("dump")) {
                     this.idType = "JAMSLong";
-                }
+                } else
+                    this.idType = "JAMSLong";
             }
         }
 

@@ -91,12 +91,9 @@ public class OutputPanelFactory {
             if (DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.EnsembleTimeSeriesDataStore ||
                 DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.SimpleEnsembleDataStore){
                 DataCollectionViewController controller = OutputPanelFactory.constructDataCollection(explorer.getExplorerFrame(), null, file);
-                controller.getView();
-            }
-
-
-
-            return new OutputDSPanel(explorer, file, id);
+                return controller.getView();
+            }else
+                return new OutputDSPanel(explorer, file, id);
         }
 
         if (line.startsWith(SpreadsheetConstants.LOAD_HEADERS)) {

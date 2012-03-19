@@ -6,17 +6,18 @@
  * Copyright (C) FSU Jena
  *
  * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 3
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
 package reg.dsproc;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Observable;
@@ -93,6 +95,31 @@ public class EnsembleTimeSeriesProcessor extends Processor {
 
         ResultSet rs = customSelectQuery(query);
         return rs;
+    }
+
+    public int getTimeUnit() throws SQLException, IOException{
+        Attribute.Calendar timeSteps[] = this.getTimeSteps();
+
+        Attribute.Calendar t0 = timeSteps[0];
+        Attribute.Calendar tn = timeSteps[timeSteps.length-1];
+
+        int n = timeSteps.length;
+
+        long diff = ((tn.getTimeInMillis() - t0.getTimeInMillis())/n)/1000;
+
+        //todo: add time unit count
+        if (0<=diff && diff<30)
+            return Calendar.SECOND;
+        if (30<=diff && diff<1800)
+            return Calendar.MINUTE;
+        if (1800<=diff && diff<43200)
+            return Calendar.HOUR;
+        if (43200<=diff && diff<1296000)
+            return Calendar.DAY_OF_YEAR;
+        if (1296000<=diff && diff<3456000)
+            return Calendar.MONTH;
+        else
+            return Calendar.YEAR;
     }
 
     public synchronized DataMatrix getCrossProduct(long[] modelRunIds, String[] dateIds) throws SQLException, IOException {
