@@ -76,6 +76,7 @@ public class ObserverWorkerDlg extends JDialog implements Observer{
         this.pack();
     }
 
+    @Override
     public void update(Observable observable, Object o){
         progressBar.setString(o.toString());
     }
@@ -134,6 +135,7 @@ public class ObserverWorkerDlg extends JDialog implements Observer{
         // put the task into a worker
         worker = new SwingWorker<Object, Void>() {
 
+            @Override
             public Object doInBackground() {
                 ObserverWorkerDlg.this.task.run();
                 return ObserverWorkerDlg.this.task;
