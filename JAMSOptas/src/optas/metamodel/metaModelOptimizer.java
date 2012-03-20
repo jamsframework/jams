@@ -38,8 +38,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 import optas.metamodel.ModelModifier.WizardException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -222,14 +224,14 @@ public class metaModelOptimizer {
                                 if (attrRWSet.attrReadingComponents.get(singleAttr) != null) {
                                     attrRWSet.attrReadingComponents.get(singleAttr).add(parent.getInstanceName());
                                 } else {
-                                    HashSet<String> attrSet = new HashSet<String>();
+                                    Set<String> attrSet = new TreeSet<String>();
                                     attrSet.add(parent.getInstanceName());
                                     attrRWSet.attrReadingComponents.put(singleAttr, attrSet);
                                 }
                                 if (attrRWSet.attrWritingComponents.get(singleAttr) != null) {
                                     attrRWSet.attrWritingComponents.get(singleAttr).add(parent.getInstanceName());
                                 } else {
-                                    HashSet<String> attrSet = new HashSet<String>();
+                                    Set<String> attrSet = new TreeSet<String>();
                                     attrSet.add(parent.getInstanceName());
                                     attrRWSet.attrWritingComponents.put(singleAttr, attrSet);
                                 }
@@ -238,7 +240,7 @@ public class metaModelOptimizer {
                                 if (attrRWSet.attrReadingComponents.get(singleAttr) != null) {
                                     attrRWSet.attrReadingComponents.get(singleAttr).add(parent.getInstanceName());
                                 } else {
-                                    HashSet<String> attrSet = new HashSet<String>();
+                                    Set<String> attrSet = new TreeSet<String>();
                                     attrSet.add(parent.getInstanceName());
                                     attrRWSet.attrReadingComponents.put(singleAttr, attrSet);
                                 }
@@ -250,7 +252,7 @@ public class metaModelOptimizer {
                                 if (attrRWSet.attrWritingComponents.get(singleAttr) != null) {
                                     attrRWSet.attrWritingComponents.get(singleAttr).add(parent.getInstanceName());
                                 } else {
-                                    HashSet<String> attrSet = new HashSet<String>();
+                                    Set<String> attrSet = new TreeSet<String>();
                                     attrSet.add(parent.getInstanceName());
                                     attrRWSet.attrWritingComponents.put(singleAttr, attrSet);
                                 }
@@ -267,17 +269,17 @@ public class metaModelOptimizer {
         return table;
     }
 
-    static public void ExportGDLFile(Hashtable<String, HashSet<String>> edges, Set<String> removedNodes, String fileName) {
+    static public void ExportGDLFile(Hashtable<String, Set<String>> edges, Set<String> removedNodes, String fileName) {
         if (removedNodes == null) {
-            removedNodes = new HashSet<String>();
+            removedNodes = new TreeSet<String>();
         //collect node
         }
-        HashSet<String> nodes = new HashSet<String>();
+        Set<String> nodes = new TreeSet<String>();
         Iterator<String> keyIter = edges.keySet().iterator();
         while (keyIter.hasNext()) {
             String key = keyIter.next();
             nodes.add(key);
-            HashSet<String> endNodes = edges.get(key);
+            Set<String> endNodes = edges.get(key);
             nodes.addAll(endNodes);
         }
         //add nodes to file
@@ -347,15 +349,15 @@ public class metaModelOptimizer {
         }
     }
 
-    static public Hashtable<String, HashSet<String>> getDependencyGraph(Node root, Model model) {
-        Hashtable<String, HashSet<String>> edges = new Hashtable<String, HashSet<String>>();
+    static public Hashtable<String, Set<String>> getDependencyGraph(Node root, Model model) {
+        Hashtable<String, Set<String>> edges = new Hashtable<String, Set<String>>();
         Hashtable<String, String> contextEntityAttributes = new Hashtable<String, String>();
         //for each independed context, get read/write access components
         //and create an edge from read to write component!               
         Hashtable<String, AttributeReadWriteSet> CAttrRWSet = unifyContexts(getAttributeReadWriteSet(root, model, model.getInstanceName(), contextEntityAttributes), contextEntityAttributes);
 
-        HashMap<String, Set<String>> writeAccessComponents = null;
-        HashMap<String, Set<String>> readAccessComponents = null;
+        Map<String, Set<String>> writeAccessComponents = null;
+        Map<String, Set<String>> readAccessComponents = null;
 
         //process all independent contexts
         Iterator<String> iter = CAttrRWSet.keySet().iterator();
@@ -386,7 +388,7 @@ public class metaModelOptimizer {
                         if (edges.containsKey(readAccessComponent)) {
                             edges.get(readAccessComponent).add(writeAccessComponent);
                         } else {
-                            HashSet<String> list = new HashSet<String>();
+                            Set<String> list = new TreeSet<String>();
                             list.add(writeAccessComponent);
                             edges.put(readAccessComponent, list);
                         }
@@ -399,15 +401,17 @@ public class metaModelOptimizer {
     }
 
     @SuppressWarnings("unchecked")
-    public static Hashtable<String, HashSet<String>> TransitiveClosure(Hashtable<String, HashSet<String>> graph) {
-        Hashtable<String, HashSet<String>> TransitiveClosure = new Hashtable();
+    public static Hashtable<String, Set<String>> TransitiveClosure(Hashtable<String, Set<String>> graph) {
+        Hashtable<String, Set<String>> TransitiveClosure = new Hashtable();
 
         Set<String> keys = graph.keySet();
         Iterator<String> iter = keys.iterator();
         while (iter.hasNext()) {
             String key = iter.next();
-            HashSet<String> value = graph.get(key);
-            TransitiveClosure.put(key, (HashSet<String>) value.clone());
+            Set<String> value = graph.get(key);
+            Set<String> set = new TreeSet<String>();
+            set.addAll(value);
+            TransitiveClosure.put(key, set);
         }
         //find structures like a <-- b <-- c            
         boolean change = true;
@@ -417,15 +421,15 @@ public class metaModelOptimizer {
             Iterator<String> a_iter = keys.iterator();
             while (a_iter.hasNext()) {
                 String a = a_iter.next();
-                HashSet<String> bSet = TransitiveClosure.get(a);
+                Set<String> bSet = TransitiveClosure.get(a);
                 if (bSet == null) {
                     continue;
                 }
                 Iterator<String> b_iter = bSet.iterator();
-                HashSet<String> modification = new HashSet();
+                Set<String> modification = new TreeSet();
                 while (b_iter.hasNext()) {
                     String b = b_iter.next();
-                    HashSet<String> cSet = TransitiveClosure.get(b);
+                    Set<String> cSet = TransitiveClosure.get(b);
                     if (cSet == null) {
                         continue;
                     }
@@ -652,12 +656,12 @@ public class metaModelOptimizer {
     }
     
     @SuppressWarnings("unchecked")
-    public static Set<String> GetRelevantComponentsList(Hashtable<String, HashSet<String>> dependencyGraph, Set<String> EffWritingComponentsList) {
-        HashSet<String> compList = new HashSet();
+    public static Set<String> GetRelevantComponentsList(Hashtable<String, Set<String>> dependencyGraph, Set<String> EffWritingComponentsList) {
+        Set<String> compList = new TreeSet();
         Iterator<String> iter = EffWritingComponentsList.iterator();
         while (iter.hasNext()) {
             String wr_comp = iter.next();
-            HashSet<String> set = dependencyGraph.get(wr_comp);
+            Set<String> set = dependencyGraph.get(wr_comp);
             if (set != null) {
                 compList.addAll(set);
                 compList.add(wr_comp);

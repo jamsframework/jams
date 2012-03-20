@@ -12,6 +12,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -32,6 +33,7 @@ import optas.hydro.data.DataCollection;
 import optas.hydro.data.DataSet;
 import optas.hydro.data.Efficiency;
 import optas.hydro.data.EfficiencyEnsemble;
+import optas.hydro.data.TimeSerieEnsemble;
 
 
 /**
@@ -127,15 +129,19 @@ public final class DataRequestPanel extends JPanel{
             requests.add(rGUI);
         }
         JScrollPane datasetScroll = new JScrollPane(dataPanel);
-        datasetScroll.setSize(defaultDatasetTableDimension);
+        /*datasetScroll.setSize(defaultDatasetTableDimension);
         datasetScroll.setMinimumSize(defaultDatasetTableDimension);
-        datasetScroll.setPreferredSize(defaultDatasetTableDimension);
+        datasetScroll.setPreferredSize(defaultDatasetTableDimension);*/
 
         dataPanel.setLayout(new GridBagLayout());
 
+        JScrollPane contentScroll = new JScrollPane(plot.getPanel());
+        contentScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        contentScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         layouting();
 
-        this.add(plot.getPanel(), BorderLayout.NORTH);
+        this.setLayout(new BorderLayout());
+        this.add(contentScroll, BorderLayout.CENTER);
         this.add(datasetScroll, BorderLayout.SOUTH);
 
         updatePlot();
@@ -229,6 +235,8 @@ public final class DataRequestPanel extends JPanel{
         }
         try{
             this.plot.refresh();
+            this.invalidate();
+            this.updateUI();
         }catch(NoDataException nde){
             JOptionPane.showMessageDialog(dataPanel, "failed to show data. The data is incommensurate!");
         }

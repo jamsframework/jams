@@ -29,9 +29,9 @@ public class TimeSerieEnsemble extends Ensemble {
             s.set(i, this.getId(i));
         }
         s.currentIndex = currentIndex;
-        s.id = id.clone();
         s.parent = parent;
         s.value = value.clone();
+        s.timeMap = (ArrayList<Integer>)timeMap.clone();
         s.filter = (ArrayList<TimeFilter>) filter.clone();
 
         return s;
@@ -75,17 +75,34 @@ public class TimeSerieEnsemble extends Ensemble {
         }
     }
 
+    public SimpleEnsemble sumTS(){
+        SimpleEnsemble e = new SimpleEnsemble("sum of" + name, size);
+        for (int i=0;i<this.size;i++){
+            double v = 0;
+            Integer id = this.getId(i);
+
+            for (int t=0;t<this.getTimesteps();t++){
+                v += this.get(t, id);
+            }
+
+            e.set(i, id , v);
+        }
+        return e;
+    }
+
     /*public void set(int index, String id, double value[]) {
     set(index, id);
     this.id[index] = id;
     this.value[index] = value;
     }*/
-    public void set(Integer id, double value[]) {
-        set(currentIndex, id);
+    public void add(Integer id, double value[]) {
+        super.set(currentIndex, id);
         this.value[currentIndex] = value;
         currentIndex++;
+
     }
 
+    //this is critical, time filter should be applied ??!
     public Date getDate(int time) {
         Attribute.Calendar c1 = this.timeInterval.getStart().clone();
         c1.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount() * time);
@@ -103,8 +120,8 @@ public class TimeSerieEnsemble extends Ensemble {
     public double get(int time, Integer id) {
         if (this.filter.isEmpty()) {
             return value[getIndex(id)][time];
-        } else { //why???
-            return value[getIndex(id)][time];
+        } else {
+            return value[getIndex(id)][timeMap.get(time)];
         }
     }
 
@@ -114,10 +131,15 @@ public class TimeSerieEnsemble extends Ensemble {
 
         for (int i=0;i<size;i++){
             Integer id = this.getId(i);
-            s.add(id, value[i][time]);
+            s.add(id, value[i][timeMap.get(time)]);
         }
         
         return s;
+    }
+
+    public double[] getValue(Integer id){
+        int index = getIndex(id);
+        return this.value[index];
     }
 
     public TimeSerie getMax() {

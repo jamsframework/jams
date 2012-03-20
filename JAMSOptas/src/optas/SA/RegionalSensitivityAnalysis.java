@@ -92,6 +92,8 @@ public class RegionalSensitivityAnalysis extends SensitivityAnalyzer{
                 System.out.println("x:" + x[currentIndex].getValue(nonBehavourialBox.get(j)) + "\ty:" + y.getValue(nonBehavourialBox.get(j)));
             }*/
 
+            System.out.println("Parameter: " + x[currentIndex]);
+
             for (int k=0;k<behavourialBox.size();k++){
                 double value = x[currentIndex].getValue(behavourialBox.get(k));
                 double value2 = x[currentIndex].getValue(nonBehavourialBox.get(k2));
@@ -104,7 +106,7 @@ public class RegionalSensitivityAnalysis extends SensitivityAnalyzer{
                     nonBehavourialDistribution += step2;
                 }
                 behavourialDistribution += step1;
-
+                System.out.println(behavourialDistribution + "\t" + nonBehavourialDistribution);
                 //System.out.println("y1:" + behavourialDistribution + "\ty2:" + nonBehavourialDistribution);
 
                 if (Math.abs(behavourialDistribution - nonBehavourialDistribution) > sensitivityIndex[i])

@@ -102,7 +102,7 @@ public class TimeFilterFactory {
             this.range = range;
         }
         public boolean isFiltered(Date date) {
-            return !date.after(range.getStart().getTime()) && date.before(range.getEnd().getTime());
+            return !(date.after(range.getStart().getTime()) && date.before(range.getEnd().getTime()));
         }
     }
 

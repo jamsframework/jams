@@ -19,8 +19,7 @@ public class SimpleEnsemble extends Ensemble{
         SimpleEnsemble s = new SimpleEnsemble(name, size);
         for (int i=0;i<size;i++)
             s.set(i, this.getId(i));
-        s.currentIndex = currentIndex;
-        s.id = id.clone();
+        s.currentIndex = currentIndex;        
         s.parent = parent;
         s.value = value.clone();
 
@@ -58,9 +57,9 @@ public class SimpleEnsemble extends Ensemble{
     public double getValue(Integer id){
         return this.value[this.getIndex(id)];
     }
-    public void setValue(Integer id, double value){
+    /*public void setValue(Integer id, double value){
         this.value[this.getIndex(id)] = value;
-    }
+    }*/
     /*public void setValue(int index, double value){
         this.value[index] = value;
     }*/
@@ -70,6 +69,11 @@ public class SimpleEnsemble extends Ensemble{
         int index = this.getIndex(id);
         return this.getValue(index);
     }*/
+
+    protected void set(int index, Integer id, double value){
+        super.set(index, id);
+        this.value[index] = value;
+    }
 
     public int findArgMin(){
         double min = Double.POSITIVE_INFINITY;
@@ -82,7 +86,7 @@ public class SimpleEnsemble extends Ensemble{
         }
         if (index==-1 && value.length>0)
             return 0;
-        return id[index];
+        return this.getId(index);
     }
 
     public int findArgMax(){
@@ -96,7 +100,7 @@ public class SimpleEnsemble extends Ensemble{
         }
         if (index==-1 && value.length>0)
             return 0;
-        return id[index];
+        return this.getId(index);
     }
 
     public double getMin(){
@@ -134,7 +138,7 @@ public class SimpleEnsemble extends Ensemble{
     public Integer[] sort(boolean ascending){
         DataIdPair[] list = new DataIdPair[size];
         for (int i=0;i<list.length;i++)
-            list[i] = new DataIdPair(value[i], id[i]);
+            list[i] = new DataIdPair(value[i], this.getId(i));
         Arrays.sort(list);
 
         Integer result[] = new Integer[size];

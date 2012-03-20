@@ -37,6 +37,8 @@ import optas.optimizer.management.SampleFactory;
  */
 public class DataCollection extends DataSet implements Serializable{
     TimeInterval timeDomain;    
+    TimeFilter timeFilter;
+    HashMap<Integer, Boolean> idFilter = new HashMap<Integer, Boolean>();
 
     HashMap<Integer, Modelrun> set = new HashMap<Integer, Modelrun>();
     HashMap<String, DataSet> globalDatasets = new HashMap<String, DataSet>();
@@ -83,11 +85,7 @@ public class DataCollection extends DataSet implements Serializable{
     }
 
     public void setSamplerClass(String typeId) {
-        //try {
-            this.samplerClass = typeId;//ClassLoader.getSystemClassLoader().loadClass(typeId);
-        /*} /*catch (ClassNotFoundException cnfe) {
-            this.samplerClass = null;//jams.components.optimizer.Optimizer.class;
-        }*/
+        this.samplerClass = typeId;
     }
 
     public String getSamplerClass() {
@@ -97,26 +95,86 @@ public class DataCollection extends DataSet implements Serializable{
         return samplerClass;
     }
 
-    public boolean filter(String e, double relativeThreshold){
+    private void filterID(Integer id){
+        this.idFilter.put(id, Boolean.TRUE);
+    }
+
+    public boolean filter(String e, double low, double high){
         DataSet ensemble = this.getDataSet(e);
-        EfficiencyEnsemble effEnsemble = null;
+        SimpleEnsemble effEnsemble = null;
         if (ensemble == null)
             return false;
-        if (ensemble instanceof EfficiencyEnsemble)
-            effEnsemble = (EfficiencyEnsemble)ensemble;
+        if (ensemble instanceof SimpleEnsemble)
+            effEnsemble = (SimpleEnsemble)ensemble;
         else
             return false;
 
-        Integer list[] = effEnsemble.sort();
+        Integer ids[] = effEnsemble.getIds();        
+        for (Integer id : ids){
+            double value = effEnsemble.getValue(id);
+            if (value < low || value > high)
+                filterID(id);
+        }
+        
+        return true;
+    }
 
-        int limit = (int)((1.0-relativeThreshold) * list.length);
+    public boolean filterPercentil(String e, double low, double high){
+        DataSet ensemble = this.getDataSet(e);
+        SimpleEnsemble effEnsemble = null;
+        if (ensemble == null)
+            return false;
+        if (ensemble instanceof SimpleEnsemble)
+            effEnsemble = (SimpleEnsemble)ensemble;
+        else
+            return false;
 
-        //DataCollection result = this.clone();
-        for (int i=limit;i<list.length;i++){
-            removeModelRun(list[i]);
+        Integer ids[] = effEnsemble.sort();
+                
+        for (int i=0;i<ids.length*low;i++){
+            filterID(ids[i]);
+        }
+
+        for (int i=ids.length-1;i>high*ids.length;i--){
+            filterID(ids[i]);
         }
 
         return true;
+    }
+
+    public void commitFilter(){
+        for (Integer id : this.idFilter.keySet())
+            this.removeModelRun(id);
+    }
+
+    public void filterTimeDomain(TimeFilter f){
+        Set<String> set = this.getDatasets(Measurement.class);
+        for (String s : set){
+            if ( Measurement.class.isAssignableFrom(this.getDatasetClass(s)) ){
+                Measurement m = (Measurement)this.getDataSet(s);
+                if (timeFilter!=null){
+                    m.removeTimeFilter(timeFilter);                    
+                }
+                m.addTimeFilter(f);
+            }
+        }
+        this.timeFilter = f;
+    }
+
+    public void clearTimeDomainFilter(){
+        Set<String> set = this.getDatasets(Measurement.class);
+        for (String s : set){
+            if ( Measurement.class.isAssignableFrom(this.getDatasetClass(s)) ){
+                Measurement m = (Measurement)this.getDataSet(s);
+                if (timeFilter!=null){
+                    m.removeTimeFilter(timeFilter);
+                }
+            }
+        }
+        this.timeFilter = null;
+    }
+    public void clearIDFilter(){
+        this.idFilter.clear();
     }
 
     public boolean unifyDataCollections(DataCollection dc){
@@ -219,7 +277,10 @@ public class DataCollection extends DataSet implements Serializable{
     }
 
     public Integer[] getModelrunIds(){
-        return set.keySet().toArray(new Integer[set.keySet().size()]);
+        Set<Integer> filteredSet = new TreeSet<Integer>();
+        filteredSet.addAll(set.keySet());
+        filteredSet.removeAll(idFilter.keySet());
+        return filteredSet.toArray(new Integer[filteredSet.size()]);
     }
 
     private void registerDatasets(Modelrun r) {
@@ -283,18 +344,37 @@ public class DataCollection extends DataSet implements Serializable{
                 me.printStackTrace();
             }
         }
-        if (s instanceof EfficiencyEnsemble)
-            this.datasets.put(s.name, Efficiency.class);
-        else
+        if (s instanceof EfficiencyEnsemble){
+            if (((EfficiencyEnsemble)s).isPostiveBest)
+                this.datasets.put(s.name, PositiveEfficiency.class);
+            else
+                this.datasets.put(s.name, NegativeEfficiency.class);
+        }else
             this.datasets.put(s.name, Parameter.class);
         
         isBusy = false;
         fireChangeEvent(new DatasetChangeEvent(this, this));
     }
+//this is highly inefficient!!
+    private void updateTimeDomain(){
+        this.timeDomain.getStart().set(1000, 1, 1, 1, 1, 1);
+        this.timeDomain.getEnd().set(10000, 1, 1, 1, 1, 1);
+
+        Set<String> set = this.getDatasets(TimeSerie.class);
+        for (String s : set){
+            TimeInterval t = ((TimeSerie)this.getDataSet(s)).getTimeDomain();
+
+            if (this.timeDomain.getStart().after(t.getStart()))
+                this.timeDomain.setStart(t.getStart().clone());
+            if (this.timeDomain.getEnd().before(t.getEnd()))
+                this.timeDomain.setEnd(t.getEnd().clone());
+        }
+    }
 
     public void addTimeSerie(TimeSerie s){
         globalDatasets.put(s.name,s);
         this.datasets.put(s.name, s.getClass());
+
         fireChangeEvent(new DatasetChangeEvent(this, this));
     }
 
@@ -318,14 +398,14 @@ public class DataCollection extends DataSet implements Serializable{
     }
     public void removeModelRun(Integer id) {
         set.remove(id);
-        //set.put(id, null);
     }
 
     public int getSimulationCount() {
-        return this.set.size();
+        return this.getModelrunIds().length;
+        //return this.set.size();
     }
     public Set<String> getDatasets(){
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new TreeSet<String>();
         result.addAll(datasets.keySet());        
         return result;
     }
@@ -349,14 +429,14 @@ public class DataCollection extends DataSet implements Serializable{
     public DataSet getDataSet(String dataset){
         if (this.getDatasetClass(dataset).equals(TimeSerie.class))
             return getTimeserieEnsemble(dataset);
-        else if (this.getDatasetClass(dataset).equals(Measurement.class))
+        else if (this.getDatasetClass(dataset).equals(Measurement.class)){            
             return this.globalDatasets.get(dataset);
-        else{
+        } else {
             SimpleEnsemble e = getSimpleEnsemble(dataset);
             if (NegativeEfficiency.class.isAssignableFrom(this.getDatasetClass(dataset))){
                 return new EfficiencyEnsemble(e, false);
             }else if(PositiveEfficiency.class.isAssignableFrom(this.getDatasetClass(dataset))){
-                return new EfficiencyEnsemble(e, false);
+                return new EfficiencyEnsemble(e, true);
             }else
                 return e;
         }
@@ -384,7 +464,7 @@ public class DataCollection extends DataSet implements Serializable{
         int c=0;
 
         TreeSet<Integer> sortedKeySet = new TreeSet<Integer>();
-        sortedKeySet.addAll(this.set.keySet());
+        sortedKeySet.addAll(Arrays.asList(this.getModelrunIds()));
 
         for (Integer s : sortedKeySet){
             Modelrun r = this.set.get(s);
@@ -398,15 +478,17 @@ public class DataCollection extends DataSet implements Serializable{
         }
         SimpleEnsemble se = new SimpleEnsemble(dataset,c);
         for (int i =0;i<c;i++){
-            //se.set(i, id[i], value[i]);
             se.add(id[i],value[i]);
         }
         return se;
     }
 
     public TimeSerieEnsemble getTimeserieEnsemble(String dataset){
-        double value[][] = new double[this.set.keySet().size()][];
-        Integer id[] = new Integer[this.set.keySet().size()];
+        TreeSet<Integer> sortedKeySet = new TreeSet<Integer>();
+        sortedKeySet.addAll(Arrays.asList(this.getModelrunIds()));
+
+        double value[][] = new double[sortedKeySet.size()][];
+        Integer id[] = new Integer[sortedKeySet.size()];
 
         int c=0;
 
@@ -420,11 +502,11 @@ public class DataCollection extends DataSet implements Serializable{
         int timeUnit = 0;
         int timeUnitCount = 0;
 
-        for (Integer s : this.set.keySet()){
+        for (Integer s : sortedKeySet){
             Modelrun r = this.set.get(s);
             DataSet d = r.getDataset(dataset);
             if (d!=null && d instanceof TimeSerie){
-                TimeSerie sd = (TimeSerie)d;
+                TimeSerie sd = (TimeSerie)d;                
                 //hier sollte mal noch gechekct werden, dass die zeitserien konsistent sind.
                 //ansonsten mismatch exception. .. 
                 if (sd.getTimeDomain().getTimeUnit() != timeUnit ||
@@ -446,11 +528,11 @@ public class DataCollection extends DataSet implements Serializable{
         unifiedTimeInterval.setTimeUnit(timeUnit);
         unifiedTimeInterval.setTimeUnitCount(timeUnitCount);
 
-        for (Integer s : this.set.keySet()){
+        for (Integer s : sortedKeySet){
             Modelrun r = this.set.get(s);
             DataSet d = r.getDataset(dataset);
             if (d!=null && d instanceof TimeSerie){
-                TimeSerie sd = (TimeSerie)d;
+                TimeSerie sd = (TimeSerie)d;                
                 value[c] = new double[(int)unifiedTimeInterval.getNumberOfTimesteps()];
                 Calendar time = unifiedTimeInterval.getStart().clone();
                 long offset = sd.getTimeDomain().getStartOffset(unifiedTimeInterval);
@@ -471,9 +553,10 @@ public class DataCollection extends DataSet implements Serializable{
         }
         TimeSerieEnsemble se = new TimeSerieEnsemble(dataset,c, unifiedTimeInterval);
         for (int i =0;i<c;i++){
-            se.set(id[i], value[i]);
+            se.add(id[i], value[i]);
         }
-
+        if (this.timeFilter!=null)
+            se.addTimeFilter(timeFilter);
         return se;
     }
 
@@ -586,7 +669,7 @@ public class DataCollection extends DataSet implements Serializable{
         write.write("@context\n");
         write.write("jams.model.JAMSTemporalContext\tdump\t"+T+"\n");
         write.write("@ancestors"+"\n");
-        write.write("dump\tsampler\t"+N+"\n");
+        write.write("optas.optimizer.generic\tsampler\t"+N+"\n");
         write.write("@filters"+"\n");
         write.write("@attributes"+"\n");
         String attrString = "ID";
@@ -599,10 +682,13 @@ public class DataCollection extends DataSet implements Serializable{
         write.write("@types"+"\n");
         write.write(types+"\n");
         write.write("@data"+"\n");
+        Integer ids[] = array[0].getIds();
+        Arrays.sort(ids);
+
         for (int i=0;i<N;i++){
             write.write("sampler\t"+i+"\n");
             write.write("@start"+"\n");
-            int id = array[0].getId(i);
+            int id = ids[i];
             for (int t=0;t<T;t++){
                 Date date = array[0].getDate(t);
                 String entry = sdf.format(date);
@@ -675,10 +761,11 @@ public class DataCollection extends DataSet implements Serializable{
         write.write("@start"+"\n");
 
         SimpleEnsemble array[] = list.toArray(new SimpleEnsemble[list.size()]);
-        for (int i = 0; i < N; i++) {
-            String entry = "" + i;
-
-            int id = array[0].getId(i);
+        Integer ids[] = array[0].getIds();
+        Arrays.sort(ids);
+        for (int i = 0; i < N; i++) {            
+            int id = ids[i];
+            String entry = "" + id;
             for (int j = 0; j < array.length; j++) {
                 entry += "\t" + array[j].getValue(id);
             }

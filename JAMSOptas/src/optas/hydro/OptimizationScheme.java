@@ -19,12 +19,13 @@ import optas.hydro.data.TimeSerie;
 import optas.metamodel.Objective;
 import optas.metamodel.Optimization;
 import optas.metamodel.OptimizationDescriptionDocument;
+import optas.tools.ObservableProgress;
 
 /**
  *
  * @author chris
  */
-public abstract class OptimizationScheme extends Observable{
+public abstract class OptimizationScheme extends ObservableProgress{
 
     double[][] weights;
     SimpleEnsemble[] parameter;

@@ -3,29 +3,28 @@
  * and open the template in the editor.
  */
 
-package optas.hydro;
+package optas.SA;
 
 import java.util.Arrays;
-import java.util.Observable;
-import optas.SA.UniversalSensitivityAnalyzer;
+import java.util.TreeSet;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.Measurement;
 import optas.hydro.data.SimpleEnsemble;
 import optas.hydro.data.TimeSerieEnsemble;
 import optas.regression.Interpolation.NormalizationMethod;
+import optas.tools.ObservableProgress;
+
 
 /**
  *
  * @author chris
  */
-public class TemporalSensitivityAnalysis extends Observable{
+public class TemporalSensitivityAnalysis extends ObservableProgress{
     SimpleEnsemble parameter[];
     EfficiencyEnsemble o;
     TimeSerieEnsemble ts;
     Measurement obs;
-
-    double currentProgress = 0;
-    
+        
     double temporalSensitivityIndex[][]=null;
 
     int T = 0;
@@ -41,6 +40,7 @@ public class TemporalSensitivityAnalysis extends Observable{
         isValid = false;
     }
 
+    //calculates weighting for each parameter and timestep
     public double[][] calculate(){
         SimpleEnsemble parameterCut[] = new SimpleEnsemble[parameter.length];
         EfficiencyEnsemble oCut;
@@ -49,6 +49,42 @@ public class TemporalSensitivityAnalysis extends Observable{
         Integer[] ids = o.sort();
 
         Integer[] new_ids = Arrays.copyOfRange(ids, 0, (int)(0.95*ids.length));
+
+        Integer[] idsO = o.getIds(),idsP = parameter[0].getIds(),idsTS=ts.getIds();
+
+        TreeSet<Integer> setO = new TreeSet();
+        setO.addAll(Arrays.asList(idsO));
+
+        TreeSet<Integer> setP = new TreeSet();
+        setP.addAll(Arrays.asList(idsO));
+
+        TreeSet<Integer> setTS = new TreeSet();
+        setTS.addAll(Arrays.asList(idsO));
+
+        if (!setO.containsAll(setP)){
+            setP.removeAll(setO);
+            System.out.println("missing ids in O" + setP.toArray());
+        }
+        if (!setO.containsAll(setTS)){
+            setTS.removeAll(setO);
+            System.out.println("missing ids in O" + setTS.toArray());
+        }
+        if (!setP.containsAll(setO)){
+            setO.removeAll(setP);
+            System.out.println("missing ids in P" + setO.toArray());
+        }
+        if (!setP.containsAll(setTS)){
+            setTS.removeAll(setP);
+            System.out.println("missing ids in P" + setTS.toArray());
+        }
+        if (!setTS.containsAll(setO)){
+            setO.removeAll(setTS);
+            System.out.println("missing ids in TS" + setP.toArray());
+        }
+        if (!setTS.containsAll(setP)){
+            setP.removeAll(setTS);
+            System.out.println("missing ids in TS" + setP.toArray());
+        }
 
         //exclude the worst candidates
         for (int i=0;i<parameter.length;i++){
@@ -65,11 +101,11 @@ public class TemporalSensitivityAnalysis extends Observable{
     }
 
     private double[][] calcTemporalSensitivity(SimpleEnsemble parameter[], EfficiencyEnsemble o, TimeSerieEnsemble ts ){
-        this.notifyObservers("Calculating Temporal Sensitivity Index");
+        log("Calculating Temporal Sensitivity Index");
         if (isValid)
             return temporalSensitivityIndex;
 
-        currentProgress = 0;
+        setProgress(0.0);
         
         UniversalSensitivityAnalyzer SA = new UniversalSensitivityAnalyzer();
         SA.setMethod(UniversalSensitivityAnalyzer.SAMethod.RSA);
@@ -99,8 +135,7 @@ public class TemporalSensitivityAnalysis extends Observable{
             for (int j=0;j<n;j++){
                 sensitivity[j][i] /= sum;
             }
-            currentProgress = (double)i / (double)T;
-            this.notifyObservers();
+            setProgress((double)i / (double)T);
         }
         isValid = true;
         return sensitivity;

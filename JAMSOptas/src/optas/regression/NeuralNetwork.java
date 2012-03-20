@@ -26,35 +26,50 @@ public class NeuralNetwork extends Interpolation {
        
     boolean isTrained = false;
 
-    BasicNetwork network = new BasicNetwork();
-    
+    BasicNetwork network[];
+
     @Override
-    public void setData(SimpleEnsemble x[], SimpleEnsemble y) {
+    public void setData(SimpleEnsemble x[], SimpleEnsemble y[]) {
         super.setData(x, y);
 
+        network = new BasicNetwork[m];
+        for (int i=0;i<m;i++){
+            network[i] = new BasicNetwork();
+        }
         isTrained = false;
     }
 
-    private void trainNetwork() {
-        trainNetwork(new TreeSet<Integer>());
+    //not necessary to call init .. but forces training
+    @Override
+    public void init(){
+        trainNetwork();
     }
-    private void trainNetwork(TreeSet<Integer> leaveOutIndex) {
+    private void trainNetwork() {
         if (isTrained) {
             return;
         }
+/*        for (int i=0;i<m;i++)
+            trainNetwork(i,new TreeSet<Integer>());*/
+        trainNetwork(0,new TreeSet<Integer>());        
+    }
+    private void trainNetwork(int outputIndex, TreeSet<Integer> leaveOutIndex) {
+        log("Train Neural Network");
+        this.setProgress(0.0);
+
         Logging.setConsoleLevel(Level.OFF);
 
-        network = new BasicNetwork();
-        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, x.length));
-        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, (int)((x.length+1)/2 + 1) ));
+        network[outputIndex] = new BasicNetwork();
+        network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, x.length));
+        network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, m+(int)((x.length+1)/2 + 1) ));
+        //network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, (int)((x.length+1)/2 + 1) ));
         //network.addLayer(new BasicLayer(new ActivationSigmoid(), true, (int)((x.length+1)/4 + 1) ));
-        network.addLayer(new BasicLayer(new ActivationLinear(), true, 1));
-        network.setLogic(new FeedforwardLogic());
-        network.getStructure().finalizeStructure();
-        network.reset();
+        network[outputIndex].addLayer(new BasicLayer(new ActivationLinear(), true, m));
+        network[outputIndex].setLogic(new FeedforwardLogic());
+        network[outputIndex].getStructure().finalizeStructure();
+        network[outputIndex].reset();
 
         ArrayList<double[]> xData = new ArrayList<double[]>(),
-                yData = new ArrayList<double[]>();
+                            yData = new ArrayList<double[]>();
 
         for (int i=0;i<this.L;i++){
 
@@ -64,38 +79,49 @@ public class NeuralNetwork extends Interpolation {
                 continue;
 
             double[] sampleX = new double[n];
-            double[] sampleY = new double[1];
+            double[] sampleY = new double[m];
             
             for (int j=0;j<n;j++){                
                 sampleX[j] = x[j].getValue(id_i);
-            }            
+            }
+            for (int j=0;j<m;j++){
+                sampleY[j] = y[j].getValue(id_i);
+            }
             xData.add(normalizeX(sampleX));
-            yData.add(new double[]{normalizeY(y.getValue(id_i))});
+            yData.add(normalizeY(sampleY));
         }
+        /*double yDataArray[][] = new double[yData.size()][1];
+        for (int i=0;i<yData.size();i++){
+            yDataArray[i][0] = yData.get(i)[outputIndex];
+        }*/
         double xDataArray[][] = xData.toArray(new double[xData.size()][]);
         double yDataArray[][] = yData.toArray(new double[yData.size()][]);
         BasicNeuralDataSet basicNDS = new BasicNeuralDataSet(xDataArray,yDataArray);
         basicNDS.setDescription("testdataset");
         
-        Train backpropagation = new ResilientPropagation(network, basicNDS);
+        Train backpropagation = new ResilientPropagation(network[outputIndex], basicNDS);
         
         int epoch = 1;
-
+        int epochMax = 1500;
         do {
             backpropagation.iteration();
-            System.out.println("Epoch #" + epoch + " Error:" + backpropagation.getError());
-            epoch++;            
-        } while (backpropagation.getError() > 0.01 && !backpropagation.isTrainingDone() && epoch < 1500);
+            //System.out.println("Epoch #" + epoch + " Error:" + backpropagation.getError());
+            epoch++;
+            setProgress((double)epoch / (double)epochMax);
+        } while (backpropagation.getError() > 0.01 && !backpropagation.isTrainingDone() && epoch < epochMax);
 
-        System.out.println("After "+epoch+" iterations the error is " + backpropagation.getError());
+        //System.out.println("After "+epoch+" iterations the error is " + backpropagation.getError());
         isTrained = true;
     }
 
-    protected double[] getValue(TreeSet<Integer> validationSet) {
+    @Override
+    protected double[][] getValue(TreeSet<Integer> validationSet) {
         isTrained = false;
-        trainNetwork(validationSet);
+        /*for (int i=0;i<m;i++)
+            trainNetwork(i,validationSet);*/
+        trainNetwork(0,new TreeSet<Integer>());
 
-        double[] values = new double[validationSet.size()];
+        double[][] values = new double[validationSet.size()][];
         int counter = 0;
         for (Integer i : validationSet){
             values[counter++] = getValue(this.getX(i));
@@ -105,12 +131,17 @@ public class NeuralNetwork extends Interpolation {
 
     
 
-    public double getValue(double u[]) {
+    @Override
+    public double[] getValue(double u[]) {
         trainNetwork();
 
-        double output[] = new double[1];
-
-        network.compute(normalizeX(u), output);
-        return denormalizeY(output[0]);
+        double singleOutput[] = new double[1];
+        double wholeOutput[] = new double[m];
+        network[0].compute(normalizeX(u), wholeOutput);
+        /*for (int i=0;i<m;i++){
+            network[i].compute(normalizeX(u), singleOutput);
+            wholeOutput[i] = singleOutput[0];
+        }*/
+        return denormalizeY(wholeOutput);
     }
 }

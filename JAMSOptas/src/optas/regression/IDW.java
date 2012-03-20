@@ -81,9 +81,9 @@ public class IDW extends Interpolation{
 
     }
 
-    protected double[] getValue(TreeSet<Integer> validationSet) {
+    protected double[][] getValue(TreeSet<Integer> validationSet) {
         int counter = 0;
-        double ystar[] = new double[validationSet.size()];
+        double ystar[][] = new double[validationSet.size()][m];
 
         for (Integer id : validationSet) {
             int nearestNeighbours[] = new int[R];
@@ -124,14 +124,16 @@ public class IDW extends Interpolation{
                 sum += 1.0 / distanceToNeighbour[i];
             }
 
-            for (int i = 0; i < R; i++) {
-                if (distanceToNeighbour[i] < 0.0000001) {
-                    ystar[counter] = y.getValue(nearestNeighbours[i]);
-                } else {
-                    ystar[counter] += (1.0 / distanceToNeighbour[i]) / sum * y.getValue(nearestNeighbours[i]);
+            for (int j = 0; j < m; j++) {
+                for (int i = 0; i < R; i++) {
+                    if (distanceToNeighbour[i] < 0.0000001) {
+                        ystar[counter][j] = y[j].getValue(nearestNeighbours[i]);
+                    } else {
+                        ystar[counter][j] += (1.0 / distanceToNeighbour[i]) / sum * y[j].getValue(nearestNeighbours[i]);
+                    }
                 }
+                counter++;
             }
-            counter++;
         }
         return ystar;
 
@@ -156,7 +158,7 @@ public class IDW extends Interpolation{
             return ystar;*/
         }
 
-    public double getValue(double u[]){
+    public double[] getValue(double u[]){
         int      nearestNeighbours[] = new int[R];
         double   distanceToNeighbour[] = new double[R];
 
@@ -189,16 +191,19 @@ public class IDW extends Interpolation{
         double sum = 0;
         for (int i=0;i<R;i++){
             if (nearestNeighbours[i]==-1)
-                return -1.0;
+                return null;
             sum += 1.0 / distanceToNeighbour[i];
         }
-        double ystar=0;
+        double ystar[] = new double[m];
 
-        for (int i=0;i<R;i++){            
-            if (distanceToNeighbour[i] < 0.0000001)
-                return y.getValue(nearestNeighbours[i]);
-            else
-                ystar += (1.0 / distanceToNeighbour[i]) / sum * y.getValue(nearestNeighbours[i]);
+        for (int j = 0; j < m; j++) {
+            for (int i = 0; i < R; i++) {
+                if (distanceToNeighbour[i] < 0.0000001) {
+                    ystar[j] = y[j].getValue(nearestNeighbours[i]);
+                } else {
+                    ystar[j] += (1.0 / distanceToNeighbour[i]) / sum * y[j].getValue(nearestNeighbours[i]);
+                }
+            }
         }
         return ystar;
     }

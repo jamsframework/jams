@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import optas.metamodel.ModificationExecutor.Modification;
 import optas.metamodel.ModificationExecutor.WrapElement;
@@ -247,9 +248,9 @@ public class ModelModifier {
     }
 
     private ArrayList<Modification> configOutput(Document doc, Collection<AttributeWrapper> set) throws WizardException {
-        ArrayList<ModificationExecutor.Modification> actionList = new ArrayList<ModificationExecutor.Modification>();
+        ArrayList<ModificationExecutor.Modification> actionList = new ArrayList<Modification>();
 
-        Map<String, HashSet<String>> outputContexts = new HashMap<String, HashSet<String>>();
+        Map<String, Set<String>> outputContexts = new HashMap<String, Set<String>>();
        
         for (AttributeWrapper a : set) {
             String attr = a.getAttributeName();
@@ -257,7 +258,7 @@ public class ModelModifier {
                 String context = a.getContextName();
                 if (context != null) {
                     if (!outputContexts.containsKey(context)) {
-                        outputContexts.put(context, new HashSet<String>());
+                        outputContexts.put(context, new TreeSet<String>());
                     }
                     outputContexts.get(context).add(attr);
                 }
@@ -279,7 +280,7 @@ public class ModelModifier {
             root.setAttribute("name", context);
             root.appendChild(trace);
 
-            HashSet<String> attr = outputContexts.get(context);
+            Set<String> attr = outputContexts.get(context);
             Iterator<String> attrIter = attr.iterator();
 
             while (attrIter.hasNext()) {

@@ -9,12 +9,13 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import optas.hydro.data.SimpleEnsemble;
+import optas.tools.ObservableProgress;
 
 /**
  *
  * @author chris
  */
-public abstract class Interpolation {
+public abstract class Interpolation extends ObservableProgress{
 
     /**
      * @return the xNormalizationMethod
@@ -47,7 +48,7 @@ public abstract class Interpolation {
     public enum ErrorMethod{ABSE, RMSE,E2};
 
     protected SimpleEnsemble x[];
-    protected SimpleEnsemble y;
+    protected SimpleEnsemble y[];
 
     protected int n,m;
     protected int L=0;
@@ -57,19 +58,22 @@ public abstract class Interpolation {
     double xRange[];
     double xMin[];
 
-    double yRange, yMin;
+    double yRange[], yMin[];
 
     TreeMap<Double, Double>[] xHistorgramm = null;
-    TreeMap<Double, Double>   yHistorgramm = null;
+    TreeMap<Double, Double>[]   yHistorgramm = null;
 
     TreeMap<Double, Double>[] xInvHistorgramm = null;
-    TreeMap<Double, Double>   yInvHistorgramm = null;
+    TreeMap<Double, Double>[] yInvHistorgramm = null;
 
     public enum NormalizationMethod{Linear, Histogramm};
     private NormalizationMethod xNormalizationMethod = NormalizationMethod.Linear;
     private NormalizationMethod yNormalizationMethod = NormalizationMethod.Linear;
 
     public void setData(SimpleEnsemble x[], SimpleEnsemble y){
+        setData(x,new SimpleEnsemble[]{y});
+    }
+    public void setData(SimpleEnsemble x[], SimpleEnsemble y[]){
         this.x = x;
         this.y = y;
         
@@ -78,10 +82,17 @@ public abstract class Interpolation {
         }
 
         n = x.length;
+        m = y.length;
+
         L = x[0].getSize();
-                  
-        if (y.getSize()!=L)
-            return;
+        yRange = new double[m];
+        yMin = new double[m];
+        for (int i=0;i<m;i++){
+            if (y[i].getSize()!=L)
+                return;
+            yRange[i] = 1.0 / (y[i].getMax() - y[i].getMin());
+            yMin[i] = y[i].getMin();
+        }
 
         this.xRange = new double[n];
         this.xMin = new double[n];
@@ -93,14 +104,16 @@ public abstract class Interpolation {
             xRange[i] = 1.0 / (max-min);
             xMin[i] = min;
         }
-        yRange = 1.0 / (y.getMax() - y.getMin());
-        yMin = y.getMin();
+        initSuccessful = true;
+    }
 
+    boolean histogrammValid = false;
+    private void buildHistogramm(){
         xHistorgramm = new TreeMap[n];
-        yHistorgramm = new TreeMap<Double, Double>();
+        yHistorgramm = new TreeMap[m];
 
         xInvHistorgramm = new TreeMap[n];
-        yInvHistorgramm = new TreeMap<Double, Double>();
+        yInvHistorgramm = new TreeMap[m];
 
         for (int i=0;i<n;i++){
             TreeMap<Double, Double> hist = new TreeMap<Double, Double>();
@@ -115,19 +128,26 @@ public abstract class Interpolation {
                 sum += delta;
             }
             xHistorgramm[i] = hist;
+            xInvHistorgramm[i] = histInv;
         }
 
-        Integer sortedMap[] = y.sort(true);
-        double sum = -1.0;
-        double delta = 2.0 / sortedMap.length;
-        for (int j=0;j<sortedMap.length;j++){
-            double v = y.getValue(sortedMap[j]);
-            yHistorgramm.put(v, sum);
-            yInvHistorgramm.put(sum, v);
-            sum += delta;
-        }
+        for (int i = 0; i < m; i++) {
+            TreeMap<Double, Double> hist = new TreeMap<Double, Double>();
+            TreeMap<Double, Double> histInv = new TreeMap<Double, Double>();
 
-        initSuccessful = true;
+            Integer sortedMap[] = y[i].sort(true);
+            double sum = -1.0;
+            double delta = 2.0 / sortedMap.length;
+            for (int j = 0; j < sortedMap.length; j++) {
+                double v = y[i].getValue(sortedMap[j]);
+                hist.put(v, sum);
+                histInv.put(sum, v);
+                sum += delta;
+            }
+            yHistorgramm[i] = hist;
+            yInvHistorgramm[i] = histInv;
+        }
+        histogrammValid = true;
     }
 
     private double histogrammNormalization(double u, TreeMap<Double, Double> histogramm){
@@ -159,6 +179,8 @@ public abstract class Interpolation {
             if (this.getxNormalizationMethod() == NormalizationMethod.Linear)
                 normalizedU[i] = ((u[i]-this.xMin[i])*xRange[i]*2.0)-1.0;
             else if (this.getxNormalizationMethod() == NormalizationMethod.Histogramm) {
+                if (!histogrammValid)
+                    buildHistogramm();
                 normalizedU[i] = histogrammNormalization(u[i], xHistorgramm[i]);
             }
         }
@@ -166,13 +188,21 @@ public abstract class Interpolation {
         return normalizedU;
     }
 
-    protected double normalizeY(double y){
-        if (this.getyNormalizationMethod() == NormalizationMethod.Linear)
-            return ((y-yMin)*yRange*2.0)-1.0;
+    protected double[] normalizeY(double y[]){
+        double normalizedY[] = new double[m];
+        if (this.getyNormalizationMethod() == NormalizationMethod.Linear){
+            for (int i=0;i<m;i++){
+                normalizedY[i] = ((y[i]-yMin[i])*yRange[i]*2.0)-1.0;
+            }
+        }
         else if (this.getyNormalizationMethod() == NormalizationMethod.Histogramm) {
-            return histogrammNormalization(y, yHistorgramm);
-        }else
-            return 0;
+            if (!histogrammValid)
+                buildHistogramm();
+            for (int i=0;i<m;i++){
+                normalizedY[i] = histogrammNormalization(y[i], yHistorgramm[i]);
+            }
+        }
+        return normalizedY;
     }
 
     protected double[] denormalizeX(double u[]){
@@ -181,22 +211,28 @@ public abstract class Interpolation {
             if (this.getxNormalizationMethod() == NormalizationMethod.Linear)
                 denormalizedU[i] = ((u[i]+1.0)/(2.0*xRange[i]))+xMin[i];
             else if (this.getxNormalizationMethod() == NormalizationMethod.Histogramm) {
+                if (!histogrammValid)
+                    buildHistogramm();
                 denormalizedU[i] = histogrammNormalization(u[i], xInvHistorgramm[i]);
             }
         }
         return denormalizedU;
     }
 
-    protected double denormalizeY(double y){
-        if (this.getyNormalizationMethod() == NormalizationMethod.Linear)
-            return ((y+1.0)/(2.0*yRange))+yMin;
-        else if (this.getyNormalizationMethod() == NormalizationMethod.Histogramm) {
-            return histogrammNormalization(y, yInvHistorgramm);
-        }else
-            return 0;
-
+    protected double[] denormalizeY(double y[]){
+        double denormalizedY[] = new double[m];
+        for (int i=0;i<m;i++){
+            if (this.getxNormalizationMethod() == NormalizationMethod.Linear)
+                denormalizedY[i] = ((y[i]+1.0)/(2.0*yRange[i]))+yMin[i];
+            else if (this.getxNormalizationMethod() == NormalizationMethod.Histogramm) {
+                if (!histogrammValid)
+                    buildHistogramm();
+                denormalizedY[i] = histogrammNormalization(y[i], yInvHistorgramm[i]);
+            }
+        }
+        return denormalizedY;
     }
-
+    
     public void init() {        
     }
 
@@ -208,37 +244,48 @@ public abstract class Interpolation {
         return row;
     }
 
-    abstract protected double[] getValue(TreeSet<Integer> leaveOut);
-    public abstract double getValue(double u[]);
+    abstract protected double[][] getValue(TreeSet<Integer> leaveOut);
+    public abstract double[] getValue(double u[]);
 
-    private double calcDifference(ErrorMethod e, double sim[], double obs[]){
-        int K = sim.length;
+    private double calcDifference(ErrorMethod e, double sim[][], double obs[][]){
+        log("Calculating "+e+" Interpolation Error");
+        int K = sim[0].length;
         double error = 0;
         switch (e){
             case ABSE:
-                for (int i=0;i<K;i++){
-                    error += Math.abs(sim[i] - obs[i]);
+                for (int j=0;j<m;j++){
+                    for (int i=0;i<K;i++){
+                        error += Math.abs(sim[j][i] - obs[j][i]);
+                    }
                 }
-                return error / K;
+                return error / (m*K);
             case RMSE:
+                for (int j=0;j<m;j++){
                 for (int i=0;i<K;i++){
-                    error += (sim[i] - obs[i])*(sim[i] - obs[i]);
+                    error += (sim[j][i] - obs[j][i])*(sim[j][i] - obs[j][i]);
                 }
-                return Math.sqrt(error/K);
-            case E2:
-                double aobs = 0;
-                for (int i=0;i<K;i++){
-                    aobs += obs[i];
                 }
-                aobs /= K;
+                return Math.sqrt(error/(m*K));
+            case E2:                
+                double e2 = 0;
+                for (int j=0;j<m;j++){
+                    double aobs = 0;
+                    
+                    for (int i=0;i<K;i++){
+                        aobs += obs[j][i];
+                    }
 
-                double numerator = 0;
-                double denumerator = 0;
-                for (int i=0;i<K;i++){
-                    numerator += (sim[i] - obs[i])*(sim[i] - obs[i]);
-                    denumerator += (obs[i] - aobs)*(obs[i] - aobs);
+                    aobs /= K;
+
+                    double numerator = 0;
+                    double denumerator = 0;
+                    for (int i=0;i<K;i++){
+                        numerator += (sim[j][i] - obs[j][i])*(sim[j][i] - obs[j][i]);
+                        denumerator += (obs[j][i] - aobs)*(obs[j][i] - aobs);
+                    }
+                    e2 += 1.0 - (numerator / denumerator);
                 }
-                return 1.0 - (numerator / denumerator);
+                return e2/(double)m;
         }
         return 0.0;
     }
@@ -251,13 +298,17 @@ public abstract class Interpolation {
         
     }
 
-    public double estimateCrossValidationError(int K, ErrorMethod e){       
-        double obs[] = new double[L];
-        double sim[] = new double[L];
+    public double estimateCrossValidationError(int K, ErrorMethod e){
+        log("Estimating Cross Validation Error");
+        this.setProgress(0);
+        double obs[][] = new double[m][L];
+        double sim[][] = new double[m][L];
 
         this.calculate();
 
         for (int k=0;k<K;k++){
+            log("Cross Validation " + k + " of " + K);
+
             int indexStart = k*(L/K);
             int indexEnd   = Math.min((k+1)*(L/K),L);
             int size = indexEnd-indexStart;
@@ -265,28 +316,26 @@ public abstract class Interpolation {
                 continue;
 
             TreeSet<Integer> validationSet = new TreeSet<Integer>();
-            double validation[] = new double[size];
+            double validation[][] = new double[size][m];
 
             for (int j=indexStart;j<indexEnd;j++){
                 int id_loi = x[0].getId(j);
                 validationSet.add(id_loi);
-                validation[j-indexStart] = y.getValue(id_loi);
+                for (int i=0;i<m;i++)
+                    validation[j-indexStart][i] = y[i].getValue(id_loi);
             }
 
-            double y_star[] = getValue(validationSet);
+            double y_star[][] = getValue(validationSet);
 
             for (int j=0;j<size;j++){
                 //error += Math.abs(y_star[j] - validation[j]);
-                obs[indexStart+j] = validation[j];
-                sim[indexStart+j] = y_star[j];
-                
+                for (int i=0;i<m;i++){
+                    obs[i][indexStart+j] = validation[j][i];
+                    sim[i][indexStart+j] = y_star[j][i];
+                }
             }
 
         }
-        /*
-        for (int i=0;i<obs.length;i++){
-            System.out.println(obs[i] + "\t" + sim[i]);
-        }*/
 
         return calcDifference(e, sim, obs);
     }
@@ -294,8 +343,8 @@ public abstract class Interpolation {
     public double estimateLOOError(ErrorMethod e){
         double error = 0;
 
-        double obs[] = new double[L];
-        double sim[] = new double[L];
+        double obs[][] = new double[m][L];
+        double sim[][] = new double[m][L];
 
         this.calculate();
 
@@ -311,13 +360,14 @@ public abstract class Interpolation {
 
             TreeSet<Integer> indexSet = new TreeSet<Integer>();
             indexSet.add(id_loi);
-            double y_star[] = getValue(indexSet);
+            double y_star[][] = getValue(indexSet);
 
 
-            error += Math.abs(y_star[0] - y.getValue(id_loi));
-
-            obs[leaveOutIndex] = y.getValue(id_loi);
-            sim[leaveOutIndex] = y_star[0];
+            //error += Math.abs(y_star[0] - y.getValue(id_loi));
+            for (int i=0;i<m;i++){
+                obs[i][leaveOutIndex] = y[i].getValue(id_loi);
+                sim[i][leaveOutIndex] = y_star[0][i];
+            }
         }
 
         return calcDifference(e, sim, obs);

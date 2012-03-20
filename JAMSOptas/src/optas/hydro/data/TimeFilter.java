@@ -5,13 +5,14 @@
 
 package optas.hydro.data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  *
  * @author chris
  */
-public abstract class TimeFilter {
+public abstract class TimeFilter implements Serializable{
     String name;
     boolean isAdditive=false;
     boolean isEnabled = true;

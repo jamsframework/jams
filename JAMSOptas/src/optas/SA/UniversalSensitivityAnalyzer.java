@@ -5,6 +5,7 @@
 
 package optas.SA;
 
+import java.util.Set;
 import optas.SA.VarianceBasedSensitivityIndex.Measure;
 
 import optas.gui.MCAT5.MCAT5Plot.NoDataException;
@@ -19,7 +20,7 @@ import optas.regression.NeuralNetwork;
  * @author chris
  */
 public class UniversalSensitivityAnalyzer {
-    public enum SAMethod{RSA, MaximumGradient, ElementaryEffects, FOSI1, FOSI2, TOSI, LinearRegression};
+    public enum SAMethod{RSA, MaximumGradient, ElementaryEffects, ElementaryEffectsNonAbs, ElementaryEffectsVariance, FOSI1, FOSI2, TOSI, Interaction, LinearRegression};
 
     SAMethod method = SAMethod.RSA;
     optas.SA.SensitivityAnalyzer sa = null;
@@ -50,7 +51,6 @@ public class UniversalSensitivityAnalyzer {
         this.sampleCount = sampleCount;
     }
 
-
     public SAMethod getMethod(){
         return method;
     }
@@ -60,9 +60,12 @@ public class UniversalSensitivityAnalyzer {
             case RSA: sa = new optas.SA.RegionalSensitivityAnalysis(); break;
             case MaximumGradient: sa = new optas.SA.GradientSensitivityAnalysis(); break;
             case ElementaryEffects: sa = new optas.SA.ElementaryEffects(); break;
+            case ElementaryEffectsNonAbs: sa = new optas.SA.ElementaryEffects(ElementaryEffects.Measure.NonAbsolute); break;
+            case ElementaryEffectsVariance: sa = new optas.SA.ElementaryEffects(ElementaryEffects.Measure.Variance); break;
             case FOSI1: sa = new optas.SA.FAST(optas.SA.FAST.Measure.FirstOrder); break;
             case FOSI2: sa = new optas.SA.VarianceBasedSensitivityIndex(Measure.FirstOrder); break;
             case TOSI: sa = new optas.SA.VarianceBasedSensitivityIndex(Measure.Total); break;
+            case Interaction: sa = new optas.SA.VarianceBasedSensitivityIndex(Measure.Interaction); break;
             case LinearRegression: sa = new optas.SA.LinearRegression(); break;
         }
     }
@@ -87,14 +90,22 @@ public class UniversalSensitivityAnalyzer {
         sa.init();
     }
 
+    public double[] getInteraction(Set<Integer> indexSet){
+        if (sa instanceof VarianceBasedSensitivityIndex){
+            VarianceBasedSensitivityIndex v = (VarianceBasedSensitivityIndex)sa;
+            return v.calcSensitivity(indexSet);
+        }
+        return null;
+    }
+
     public double[][] getSensitivity(){
         double result[][] = new double[n][3];
         for (int i=0;i<n;i++){
             double s = sa.getSensitivity(i);
-            double v = sa.getVariance(i);
-            result[i][0] = s-v;
+            //double v = sa.getVariance(i);
+            result[i][0] = s;//s-v;
             result[i][1] = s;
-            result[i][2] = s+v;
+            result[i][2] = s;//s+v;
         }
         return result;
     }

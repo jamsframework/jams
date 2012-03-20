@@ -87,7 +87,7 @@ public class WeightChart {
 
         weightChart.getXYPlot().setDataset(10, dataset);
         weightChart.getXYPlot().setRenderer(10, weightBarRenderer);
-        for (int i=0;i<colorList.length;i++){
+        for (int i=0;i<list.length;i++){
             weightBarRenderer.setSeriesFillPaint(i,list[i]);
             weightBarRenderer.setSeriesPaint(i,list[i]);
         }

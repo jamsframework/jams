@@ -725,9 +725,10 @@ public class DataStoreProcessor {
                     this.idType = "JAMSCalendar";
                 } else if (type.equals("jams.model.JAMSSpatialContext")) {
                     this.idType = "JAMSLong";
-                } else if (type.contains("jams.components.optimizer") || type.contains("optas.optimizer") || type.contains("dumping")) {
+                } else if (type.contains("jams.components.optimizer") || type.contains("optas.optimizer") || type.contains("dump")) {
                     this.idType = "JAMSLong";
-                }
+                } else
+                    this.idType = "JAMSLong";
             }
         }
 

@@ -198,7 +198,7 @@ public abstract class Optimizer implements Serializable{
         if (objNames == null || objNames.length != m) {
             objNames = new String[m];
             for (int i = 0; i < m; i++) {
-                parameterNames[i] = "obj_" + i;
+                objNames[i] = "obj_" + i;
             }
         }
         if (lowBound.length != n || upBound.length != n) {

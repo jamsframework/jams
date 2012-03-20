@@ -61,6 +61,8 @@ public class TimeSerie extends DataSet{
         buildTimeMapping();
     }
     public void removeTimeFilter(TimeFilter filter){
+        if (filter==null)
+            this.filter.clear();
         this.filter.remove(filter);
         buildTimeMapping();
     }
@@ -68,7 +70,7 @@ public class TimeSerie extends DataSet{
     private void buildTimeMapping(){
         timeMap.clear();
         for (int i=0;i<set.length;i++){
-            Date d = this.getTime(i);
+            Date d = this.getUnfilteredTime(i);
             boolean isFiltered = false;
             for (TimeFilter f : this.filter){
                 if (f.isFiltered(d)){
@@ -136,16 +138,33 @@ public class TimeSerie extends DataSet{
             return set[this.timeMap.get(time)];
     }
 
-
+    private Date getUnfilteredTime(int time){
+        Calendar c = this.range.getStart().clone();
+        c.add(range.getTimeUnit(), time*range.getTimeUnitCount());
+        return c.getTime();
+    }
 
     public Date getTime(int time){
+        if (!this.filter.isEmpty()){
+            time = this.timeMap.get(time);
+        }
         Calendar c = this.range.getStart().clone();
         c.add(range.getTimeUnit(), time*range.getTimeUnitCount());
         return c.getTime();
     }
 
     public TimeInterval getTimeDomain(){
-        return range;
+        if (this.filter.isEmpty())
+            return range;
+        else{
+            TimeInterval range = JAMSDataFactory.createTimeInterval();
+            range.setTimeUnit(this.range.getTimeUnit());
+            range.setTimeUnitCount(this.range.getTimeUnitCount());
+            range.getStart().setTime(getTime(0));
+            range.getEnd().setTime(getTime(this.getTimesteps()-1));
+            return range;
+        }
+        
     }
     @Override
     public String toString() {

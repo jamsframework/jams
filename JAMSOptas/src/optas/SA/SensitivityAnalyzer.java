@@ -113,10 +113,11 @@ public abstract class SensitivityAnalyzer {
         y = new EfficiencyEnsemble(y_raw.name + "(*)", size, true);
 
         HaltonSequenceSampling sampler = new HaltonSequenceSampling();
+        //RandomSampler sampler = new RandomSampler();
         sampler.setFunction(new AbstractFunction() {
             @Override
             public double[] f(double[] x) throws SampleLimitException, ObjectiveAchievedException {
-                return new double[]{I.getValue(x)};
+                return I.getValue(x);
             }
 
             @Override
@@ -132,7 +133,7 @@ public abstract class SensitivityAnalyzer {
         sampler.setDebugMode(false);
         sampler.setInputDimension(n);
         sampler.setMaxn(size);
-        sampler.setOffset(0);
+        //sampler.setOffset(0);
         sampler.setOutputDimension(1);
         sampler.optimize();
         ArrayList<Sample> result = sampler.getSamples();
@@ -186,11 +187,14 @@ public abstract class SensitivityAnalyzer {
     }
 
     public double getCVError(){
-        return CVError;
+        if (this.isUsingInterpolation)
+            return this.CVError = I.estimateCrossValidationError(5, Interpolation.ErrorMethod.E2);
+        else
+            return 0.0;
     }
 
     protected double getInterpolation(double[] x){
-        return I.getValue(x);
+        return I.getValue(x)[0];
     }
             
     public void init(){
@@ -202,7 +206,7 @@ public abstract class SensitivityAnalyzer {
             I.setData(x_raw, y_raw);
             I.init();
 
-            this.CVError = I.estimateCrossValidationError(5, Interpolation.ErrorMethod.E2);
+            
         }
         updateData();
 

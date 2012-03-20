@@ -166,6 +166,7 @@ public class ParameterSpaceReducer extends OptimizationController {
         return bounds;
     }
 
+    @Override
     public void procedure() {        
         double parameterSpaceVolume;
 
@@ -173,7 +174,8 @@ public class ParameterSpaceReducer extends OptimizationController {
         
         ArrayList<Sample> retainList = new ArrayList<Sample>();
 
-        while (meanImprovedRatio > epsilon1.getValue()) {
+        int maxIterations = 30;
+        while (maxIterations-- > 0 && meanImprovedRatio > epsilon1.getValue()) {
             log("################################################################");
             log("Start new Halton Sequence Sampling with the following boundaries");
             for (int j=0;j<n;j++){
@@ -248,14 +250,14 @@ public class ParameterSpaceReducer extends OptimizationController {
                     retainList.add(s);
             }
 
-            meanImprovedRatio = 0.9*meanImprovedRatio + 0.1*(1.0 - V / parameterSpaceVolume);
+            meanImprovedRatio = 0.8*meanImprovedRatio + 0.2*(parameterSpaceVolume/V - 1.0);
             
             log("Finish Sampling with the following boundaries");
             for (int j=0;j<n;j++){
                 Parameter p = optimization.getParameter().get(j);
                 log( this.names[j] + "["+p.getLowerBound() + "<" + p.getUpperBound() +"]");
             }
-            log("Volume is now:" + V + "(" + (1.0 - meanImprovedRatio) + "% mean improvement of last 10 runs)");
+            log("Volume is now:" + V + "(" + (meanImprovedRatio) + "% mean improvement of last 10 runs)");
             for (int i=0;i<m;i++){
                 log("Best sample is now (" + this.efficiencyNames[i] +  "):" + o.getStatistics().getMin(i));
             }

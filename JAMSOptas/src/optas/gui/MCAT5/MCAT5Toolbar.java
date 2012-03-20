@@ -4,7 +4,6 @@
  */
 package optas.gui.MCAT5;
 
-import optas.hydro.gui.SimpleGlobalSensitivity;
 import optas.gui.DataCollectionPanel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -297,6 +296,11 @@ public class MCAT5Toolbar extends JToolBar {
                 "Temporal Analyzer",
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
                 TemporalAnalysis.class));
+
+        registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
+                "Interaction Analyzer",
+                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
+                ParameterInteractionAnalyser.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/sensitivity.png")),
                 "Sensitivityanalyzer",

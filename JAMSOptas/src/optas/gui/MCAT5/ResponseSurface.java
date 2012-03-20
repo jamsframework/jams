@@ -299,7 +299,7 @@ public class ResponseSurface extends MCAT5Plot {
                 double t2 = (double)j / (double)(this.RESOLUTION - 1);
                 VOI[this.param2] = this.paramMin2 + t2*(this.paramMax2 - this.paramMin2);
 
-                this.map[i][j] = ANN.getValue(VOI);
+                this.map[i][j] = ANN.getValue(VOI)[0];
             }
         }
         //this.g

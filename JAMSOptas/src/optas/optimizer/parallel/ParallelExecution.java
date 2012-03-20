@@ -227,8 +227,9 @@ public class ParallelExecution<X,Y> {
 
         File dstDir = new File(dstDirectory);
         for (File f : dstDir.listFiles()){
-            if (f.isDirectory())
+            if (f.isDirectory()){
                 deleteDir(f);
+            }
         }
 
         return result;

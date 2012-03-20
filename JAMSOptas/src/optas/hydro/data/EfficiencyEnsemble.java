@@ -76,13 +76,14 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
         int c=0;
         for (int i=0;i<K;i++){
             if (!filterMap[i])
-                filteredObservation[c++] = obs.getValue(i);
+                filteredObservation[c] = obs.getValue(i);
             for (int j=0;j<sim.size;j++){
                 int id_i = sim.getId(j);
                 if (!filterMap[i]){
-                    filteredSim[j][c++] = sim.get(i, id_i);
+                    filteredSim[j][c] = sim.get(i, id_i);
                 }
             }
+            c++;
         }
 
 
@@ -193,7 +194,6 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
         for (int i=0;i<size;i++)
             s.set(i, this.getId(i));
         s.currentIndex = currentIndex;
-        s.id = id.clone();
         s.parent = parent;
         s.value = value.clone();
 
@@ -252,7 +252,8 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
         }
 
         EfficiencyEnsemble eff = new EfficiencyEnsemble(this.name,this.size);
-        eff.id = this.id;
+        for (int i=0;i<size;i++)
+            eff.set(i, this.getId(i));
         eff.isPostiveBest = true;
         eff.parent = this.parent;
         eff.value = likelihood;

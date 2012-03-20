@@ -10,14 +10,13 @@ import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.NumericOptimizerParameter;
 import java.util.HashSet;
 import java.util.Set;
-import optas.optimizer.management.BooleanOptimizerParameter;
 
 /**
  *
  * @author chris
  */
 public class OptimizerLibrary {
-    static Set<Optimizer> optimizerPool= new HashSet<Optimizer>();;
+    static Set<Optimizer> optimizerPool= new HashSet<Optimizer>();
 
     public static void register(Optimizer clazz) {
         if (clazz instanceof optas.optimizer.Optimizer) {

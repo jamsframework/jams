@@ -15,7 +15,7 @@ import java.util.TreeSet;
  */
 public abstract class Ensemble extends DataSet{
     protected int size;
-    protected Integer id[];
+    private Integer id[];
     private HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 
     @Override
@@ -54,7 +54,7 @@ public abstract class Ensemble extends DataSet{
         return name;
     }
     public Integer[] getIds(){
-        return this.id;
+        return Arrays.copyOf(id, size);
     }
 
     public void retainIds(Integer ids[]){
@@ -62,7 +62,7 @@ public abstract class Ensemble extends DataSet{
         set1.addAll(Arrays.asList(ids));
 
         TreeSet<Integer> set2 = new TreeSet<Integer>();
-        set2.addAll(Arrays.asList(id));
+        set2.addAll(Arrays.asList(getIds()));
 
         set2.removeAll(set1);
         for (Integer i : set2)
@@ -75,8 +75,10 @@ public abstract class Ensemble extends DataSet{
         this.map.remove(id);
 
         if(size>0){
-            this.id[index] = this.id[size];
-            map.put(this.id[index], index);
+            if (index != size){
+                this.id[index] = this.id[size];
+                map.put(this.id[index], index);
+            }
         }
     }
 }

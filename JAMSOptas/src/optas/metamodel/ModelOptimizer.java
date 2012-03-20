@@ -6,9 +6,9 @@ package optas.metamodel;
 
 import jams.model.Model;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
+import java.util.TreeSet;
 import optas.metamodel.ModificationExecutor.Modification;
 import optas.metamodel.ModificationExecutor.RemoveElement;
 import org.w3c.dom.Document;
@@ -24,8 +24,8 @@ public class ModelOptimizer {
     Document doc;
     Model model;
     ArrayList<Objective> objectives;
-    Hashtable<String, HashSet<String>> dependencyGraph;
-    Hashtable<String, HashSet<String>> transitiveClosureOfDependencyGraph;
+    Hashtable<String, Set<String>> dependencyGraph;
+    Hashtable<String, Set<String>> transitiveClosureOfDependencyGraph;
     ArrayList<Modification> actionList = new ArrayList<Modification>();
 
     public ModelOptimizer(Document doc, Model model, ArrayList<Objective> obj) {
@@ -35,7 +35,7 @@ public class ModelOptimizer {
     }
 
     public void writeGDLFile(String path) {
-        HashSet<String> removedComponents = new HashSet<String>();
+        Set<String> removedComponents = new TreeSet<String>();
         for (Modification m : actionList) {
             if (m instanceof ModificationExecutor.RemoveElement) {
                 ModificationExecutor.RemoveElement e = (ModificationExecutor.RemoveElement) m;
@@ -61,7 +61,7 @@ public class ModelOptimizer {
 
         }
         if (removeRedundantComponents) {
-            HashSet<String> effWritingComponents = new HashSet<String>();
+            Set<String> effWritingComponents = new TreeSet<String>();
             for (Objective o : objectives) {
                 effWritingComponents.addAll(
                         metaModelOptimizer.CollectAttributeWritingComponents(

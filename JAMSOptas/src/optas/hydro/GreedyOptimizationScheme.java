@@ -6,11 +6,8 @@ package optas.hydro;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
-import optas.hydro.calculations.SlopeCalculations.Domination;
-import optas.hydro.data.SimpleEnsemble;
-import optas.hydro.data.TimeSerie;
+import java.util.TreeSet;
 
 /**
  *
@@ -37,7 +34,7 @@ public class GreedyOptimizationScheme extends OptimizationScheme{
         double weight_old[] = new double[T];
         double weight_sum[] = accumulateWeightsOverParameters(weights);
 
-        Set<Integer> usedParameters = new HashSet<Integer>();
+        Set<Integer> usedParameters = new TreeSet<Integer>();
         ParameterGroup allParameters = (new ParameterGroup(this.parameter,n));
 
         while(usedParameters.size()<n){

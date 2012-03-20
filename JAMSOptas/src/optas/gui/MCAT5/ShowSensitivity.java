@@ -59,11 +59,14 @@ public class ShowSensitivity extends MCAT5Plot {
     String rsaString = "Regional Sensitivity Analysis",
             mgeString = "Maximum Gradient Estimation",
             eemString = "Elementary Effects Method",
+            eem2String = "Elementary Effects Method (not absolute)",
+            eem3String = "Elementary Effects Method (Variance)",
             fosiString = "First Order Sensitivity by FAST",
             fosiString2 = "First Order Sensitivity by Satelli(2008)(-)",
             tosiString = "Total Sensitivity Index by Satelli(2008)(-)",
+            interactionString = "Interaction Analysis",
             linearRegString = "Linear Regression";
-    JComboBox sensitivityMethod = new JComboBox(new String[]{rsaString, mgeString, eemString, fosiString, tosiString, linearRegString});
+    JComboBox sensitivityMethod = new JComboBox(new String[]{rsaString, mgeString, eemString, eem2String, eem3String, fosiString, fosiString2, tosiString, interactionString, linearRegString});
     CategoryDataset dataset1 = null, dataset2 = null;
     JFreeChart chart = null;
 
@@ -121,7 +124,7 @@ public class ShowSensitivity extends MCAT5Plot {
                     doVarianceEstimation.setEnabled(true);
                     parameterNormalizationMethod.setEnabled(true);
                     objectiveNormalizationMethod.setEnabled(true);
-                    sensitivityMethod.setModel(new DefaultComboBoxModel(new String[]{rsaString, mgeString, eemString, fosiString, tosiString, linearRegString}));
+                    sensitivityMethod.setModel(new DefaultComboBoxModel(new String[]{rsaString, mgeString, eem2String, eem3String, eemString, fosiString, fosiString2, tosiString, interactionString, linearRegString}));
                 } else {
                     sampleCountFieldRegression.setEditable(false);
                     regressionMethod.setEnabled(false);
@@ -219,7 +222,8 @@ public class ShowSensitivity extends MCAT5Plot {
                         }
                     }
                 });
-                progress.execute();
+                if (!((JButton)e.getSource()).isSelected())
+                    progress.execute();
             }
         }), c);
 
@@ -245,10 +249,12 @@ public class ShowSensitivity extends MCAT5Plot {
         panel.add(southPanel, BorderLayout.SOUTH);
     }
 
+    @Override
     public JPanel getPanel() {
         return this.panel;
     }
 
+    @Override
     public void refresh() throws NoDataException {
         if (!this.isRequestFulfilled()) {
             return;
@@ -272,13 +278,19 @@ public class ShowSensitivity extends MCAT5Plot {
             uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.MaximumGradient);
         } else if (sensitivityMethod.getSelectedItem().equals(eemString)) {
             uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.ElementaryEffects);
+        } else if (sensitivityMethod.getSelectedItem().equals(eem2String)) {
+            uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.ElementaryEffectsNonAbs);
+        } else if (sensitivityMethod.getSelectedItem().equals(eem3String)) {
+            uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.ElementaryEffectsVariance);
         } else if (sensitivityMethod.getSelectedItem().equals(fosiString)) {
             uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.FOSI1);
         } else if (sensitivityMethod.getSelectedItem().equals(fosiString2)) {
             uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.FOSI2);
         } else if (sensitivityMethod.getSelectedItem().equals(tosiString)) {
             uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.TOSI);
-        } else if (sensitivityMethod.getSelectedItem().equals(linearRegString)) {
+        } else if (sensitivityMethod.getSelectedItem().equals(interactionString)) {
+            uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.Interaction);
+        }else if (sensitivityMethod.getSelectedItem().equals(linearRegString)) {
             uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.LinearRegression);
         }
         uniSA.setUseANNRegression(useANNRegression.isSelected());
@@ -297,23 +309,37 @@ public class ShowSensitivity extends MCAT5Plot {
 
         uniSA.setSampleCount((int)sampleSize);
 
-        uniSA.setup(xData, p2);
-        this.regressionErrorField.setText(Double.toString(uniSA.calculateError()));
-        this.sampleCountField.setText(Integer.toString(p2.getSize()));
-
         double data[][] = new double[2][n];
-        double sensitivity[][] = uniSA.getSensitivity();
+        
         String categoryName[] = new String[n];
-        for (int i = 0; i < n; i++) {
-            if (doVarianceEstimation.isSelected()) {
-                data[0][i] = Math.max(sensitivity[i][0], 0);
-                data[1][i] = sensitivity[i][2]-sensitivity[i][0];
-            } else {
-                data[0][i] = sensitivity[i][1];
-                data[1][i] = 0;
-            }
+        int K=1;
+        if (doVarianceEstimation.isSelected()){
+            K = 10;
+        }
 
-            categoryName[i] = xData[i].getName();
+        double sensitivity[][][] = new double[10][][];
+
+        for (int k = 0; k < K; k++) {
+            uniSA.setup(xData, p2);
+            if (k==0){
+                this.regressionErrorField.setText(Double.toString(uniSA.calculateError()));
+                this.sampleCountField.setText(Integer.toString(p2.getSize()));
+            }
+            sensitivity[k] = uniSA.getSensitivity();
+            for (int i = 0; i < n; i++) {
+                data[0][i] += Math.max(sensitivity[k][i][0], 0)/K;
+                //data[1][i] = sensitivity[k][i][2] - sensitivity[k][i][0];
+
+                categoryName[i] = xData[i].getName();
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int k = 0; k < K; k++) {
+                data[1][i] += 1.0/n*Math.pow(sensitivity[k][i][0] - data[0][i],2);
+            }
+            System.out.println("Sensitivity for:\t" + xData[i].getName() + "\t" + data[0][i]);
+            System.out.println("Variance for:\t" + xData[i].getName() + "\t" + data[1][i]);
         }
 
         dataset1 = DatasetUtilities.createCategoryDataset(new String[]{"Sensitivity", "Uncertainty"}, categoryName, data);

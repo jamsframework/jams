@@ -120,7 +120,7 @@ public class ModelAnalyzer {
         NodeList childs = root.getChildNodes();
         Element parent = (Element) root;
         String className = "";
-        HashSet<AttributeWrapper> list = new HashSet<AttributeWrapper>();
+        Set<AttributeWrapper> list = new TreeSet<AttributeWrapper>();
         for (int i = 0; i < childs.getLength(); i++) {
             Node child = childs.item(i);
             if (child.getNodeName().equals("contextcomponent")) {
