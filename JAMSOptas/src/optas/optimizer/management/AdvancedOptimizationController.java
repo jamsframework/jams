@@ -109,6 +109,7 @@ public class AdvancedOptimizationController extends OptimizationController {
             return s;
         }
 
+        @Override
         public double[] f(double[] x) throws ObjectiveAchievedException, SampleLimitException {
             Sample s = getSample(x);
 
@@ -198,6 +199,7 @@ public class AdvancedOptimizationController extends OptimizationController {
         }
     }
     
+    @Override
     public void procedure() {
         for (Optimization o : schedule.getOptimization()) {            
             OptimizationConfiguration conf = new AdvancedOptimizationConfiguration(o);

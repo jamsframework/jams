@@ -39,6 +39,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import optas.efficiencies.EfficiencyCalculator;
+import optas.efficiencies.UniversalEfficiencyCalculator;
 import optas.metamodel.AttributeWrapper;
 
 import optas.metamodel.Objective;
@@ -52,7 +53,7 @@ public class WizardObjectivePanel extends JPanel implements Comparable{
     JList measurementList = new JList();
     JList simulationList = new JList();
 
-    Class methods[] = null;
+    String methods[] = null;
     
     JTextField nameField = new JTextField(30);
     JTextField customNameField = new JTextField(10);
@@ -64,7 +65,7 @@ public class WizardObjectivePanel extends JPanel implements Comparable{
     
     public WizardObjectivePanel(Objective o, SortedSet<AttributeWrapper> objectiveSet ) {
         objective = o;
-        methods = EfficiencyCalculator.availableEfficiencies;
+        methods = UniversalEfficiencyCalculator.availableEfficiencies;
         setData(objectiveSet);
         measurementList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         simulationList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -133,12 +134,11 @@ public class WizardObjectivePanel extends JPanel implements Comparable{
         itemPanel.add(methodBox);
         methodBox.addItemListener(new ItemListener() {
 
-            public void itemStateChanged(ItemEvent e) {
-                Class item = (Class)e.getItem();
-                WizardObjectivePanel.this.objective.setMethod(item.getName());
+            public void itemStateChanged(ItemEvent e) {                
+                WizardObjectivePanel.this.objective.setMethod((String)e.getItem());
             }
         });
-        objective.setMethod(methods[0].getName());
+        objective.setMethod(methods[0]);
         itemPanel.add(addTimeInterval);
 
         JPanel northPanel = new JPanel(new BorderLayout());

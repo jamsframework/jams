@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 public abstract class EfficiencyCalculator implements Serializable {
 
-    static public Class[] availableEfficiencies = {Rsme.class, VolumeError.class, NashSutcliffe.class};
+    
 
     public abstract double calc(double t1[], double t2[]);
     public abstract double calcNormative(double t1[], double t2[]);

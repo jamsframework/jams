@@ -9,7 +9,7 @@ package optas.efficiencies;
  *
  * @author chris
  */
-public class Rsme extends EfficiencyCalculator {
+public class RMSE extends EfficiencyCalculator {
     public double calc(double t1[], double t2[]){
         double rsme = 0;
         for (int i=0;i<t1.length;i++){

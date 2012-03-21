@@ -125,6 +125,10 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     description = "file name of optimization process description")
     public Attribute.Calendar time;
 
+    static public String[] availableEfficiencies = {
+        "Root Mean Square Error", "Nash Sutcliffe (e1)", "Nash Sutcliffe (e2)",
+        "log Nash Sutcliffe (le1)", "log Nash Sutcliffe (le2)", "Average Volume Error", "r2", "relative bias"};
+
     ArrayList<Double> measurementList, simulationList;
     ArrayList<TimeInterval> timeIntervalList;
     EfficiencyCalculator calcE1 = new NashSutcliffe(1.0),
