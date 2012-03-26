@@ -75,7 +75,7 @@ public class ModelIO {
     public ModelDescriptor createModel(ExceptionHandler exHandler) throws JAMSException {
 
         ModelDescriptor md = new ModelDescriptor();
-        ContextDescriptor cd = new ContextDescriptor(JAMS.i18n("New_Model"), modelClazz, md, exHandler);
+        ContextDescriptor cd = new ContextDescriptor(JAMS.i18n("New_Model").replace(" ", "_"), modelClazz, md, exHandler);
         ModelNode rootNode = nodeFactory.createNode(cd);
         rootNode.setType(ModelNode.MODEL_TYPE);
         md.setRootNode(rootNode);

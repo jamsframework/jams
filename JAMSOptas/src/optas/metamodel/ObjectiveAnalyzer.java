@@ -86,39 +86,30 @@ public class ObjectiveAnalyzer {
                 }
             }
         }
-        switch (o.getMethod()){
-            case "Root Mean Square Error":
+        if (o.getMethod().equals("Root Mean Square Error")) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "e2_normalized", attributeName ,
                     context, false);
-                break;
-            case "Nash Sutcliffe (e1)":
+        } else if (o.getMethod().equals("Nash Sutcliffe (e1)")) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "e1_normalized", attributeName ,
                     context, false);
-                break;
-            case "Nash Sutcliffe (e2)":
+        } else if (o.getMethod().equals("Nash Sutcliffe (e2)")) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "e2_normalized", attributeName ,
                     context, false);
-                break;
-            case "log Nash Sutcliffe (le1)":
+        } else if (o.getMethod().equals("log Nash Sutcliffe (le1)")) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "le1_normalized", attributeName ,
                     context, false);
-                break;
-            case "log Nash Sutcliffe (le2)":
+        } else if (o.getMethod().equals("log Nash Sutcliffe (le2)")) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "le2_normalized", attributeName ,
                     context, false);
-                break;
-            case "Average Volume Error":
+        } else if (o.getMethod().equals("Average Volume Error")) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "ave_normalized", attributeName ,
                     context, false);
-                break;
-            case "r2":
+        } else if (o.getMethod().equals("r2")) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "r2_normalized", attributeName ,
                     context, false);
-                break;
-            case "relative bias":
+        } else if (o.getMethod().equals("relative bias")) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "bias_normalized", attributeName ,
                     context, false);
-                break;
         }
         
         AttributeWrapper a = new AttributeWrapper(null, attributeName, null, context);
