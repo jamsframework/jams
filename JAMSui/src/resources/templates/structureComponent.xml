@@ -1,0 +1,7 @@
+<listitem>
+    <para>%type% %keyword:class%=
+        <emphasis role="italic">%class%</emphasis>
+            %keyword:name%=
+        <emphasis role="italic">%name%</emphasis>
+    </para>
+</listitem>

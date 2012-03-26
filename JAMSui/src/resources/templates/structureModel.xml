@@ -1,10 +1,16 @@
+
+
 <para>
     <emphasis role="bold">%type%
-        %keyword:class%=<emphasis role="italic">%class%</emphasis>
-        %keyword:name%=<emphasis role="italic">%name%</emphasis>
+        %keyword:class%=
+        <emphasis role="italic">%class%</emphasis>
+        %keyword:name%=
+        <emphasis role="italic">%name%</emphasis>
     </emphasis>
 </para>
+<itemizedlist>
 %subcomponents%
+</itemizedlist>
 <para>
     <emphasis role="bold">end %type%
         <emphasis role="italic">%name%</emphasis>

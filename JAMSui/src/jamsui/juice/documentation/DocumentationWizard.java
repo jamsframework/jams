@@ -51,8 +51,7 @@ public class DocumentationWizard extends Observable{
     }
 
     boolean debug = true;
-
-    final String xmlCacheFileName = "xmlSavedForDocu.xml";
+    
     final String DOCUMENTATION_DIRECTORY = "/documentation/";
         
     private void log(String msg){
@@ -121,7 +120,7 @@ public class DocumentationWizard extends Observable{
             forbidSystemExitCall();
             log(System.getProperty("java.class.path"));
             org.apache.fop.cli.Main.main(new String[]{System.getProperty("java.class.path"), "-fo", inputFile, "-pdf", outputFile});
-        } catch (ExitTrappedException t) {
+        } catch (ExitTrappedException t) {            
             JOptionPane.showMessageDialog(null, Bundle.resources.getString("Your_documentation_was_created_successfully."));            
             return; //this means succsess
         } catch (Throwable t) {
@@ -173,12 +172,11 @@ public class DocumentationWizard extends Observable{
 
         if (workspace == null)
             throw new DocumentationException(DocumentationExceptionCause.workspaceNull);
-        
-        String xmlInputFile = workspace + "/" + DOCUMENTATION_DIRECTORY + "/" + xmlCacheFileName;
-        String documentationXMLFileName = DOCUMENTATION_DIRECTORY + Bundle.resources.getString("Filename") + ".xml";
-        String documentationOutputXML = workspace + documentationXMLFileName;
+                        
         File   documentationHome = new File(workspace + DOCUMENTATION_DIRECTORY);
-        
+        File   documentationOutput = new File(workspace + DOCUMENTATION_DIRECTORY + "/out/");
+        String documentationOutputXML = documentationOutput + "/" + Bundle.resources.getString("Filename") + ".xml";
+
         log("docbook-home:" + docBookHome);
 
         if (docBookHome == null) {
@@ -195,28 +193,19 @@ public class DocumentationWizard extends Observable{
 
         if (modelDocument == null)
             throw new DocumentationException(DocumentationExceptionCause.docBookPathNull);
-
-        stateMessage("caching model document");
-
-        try {
-            XMLTools.writeXmlFile(modelDocument, xmlInputFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new DocumentationException(DocumentationExceptionCause.xmlIOError, e.toString());
-        }
-
+        
         log("working in workspace:" + workspace);
 
         stateMessage("creating documentation");
 
         DocumentationGenerator generator = new DocumentationGenerator();
-        generator.createDocumentation(new File(workspace + "/documentation"), new File(xmlInputFile), modelDocument);
+        generator.createDocumentation(documentationHome, documentationOutput, modelDocument);
 
-        runXSLTProcessor(docBookHome, documentationHome.getAbsolutePath(), documentationOutputXML);
+        runXSLTProcessor(docBookHome, documentationOutput.getAbsolutePath(), documentationOutputXML);
 
-        runApacheFOP(documentationHome + "/tmp.fo", documentationHome + "/" + Bundle.resources.getString("Filename") + ".pdf", this.properties.getProperty("libs"));
+        runApacheFOP(documentationOutput + "/tmp.fo", documentationOutput + "/" + Bundle.resources.getString("Filename") + ".pdf", this.properties.getProperty("libs"));
 
-        openPDF(new File(documentationHome, Bundle.resources.getString("Filename") + ".pdf"));
+        openPDF(new File(documentationOutput, Bundle.resources.getString("Filename") + ".pdf"));
 
         stateMessage("finished");
     }
@@ -242,6 +231,7 @@ public class DocumentationWizard extends Observable{
                 try{
                     runDocumentationProcess(workspace, modelDocument, properties.getProperty(SystemProperties.DOCBOOK_HOME_PATH));
                 }catch(Exception e){
+                    e.printStackTrace();
                     System.out.println(e);
                 }
             }

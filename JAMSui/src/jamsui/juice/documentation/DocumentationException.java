@@ -15,7 +15,7 @@ public class DocumentationException extends Exception {
         docBookPathNull, modelDocumentNull, workspaceNull, documentationPathNull,
         xsltProcNotExisting, docBookXSLNotExisting, unknownError, xmlIOError,
         ApacheFOPFailed, ViewPDFError, templateNotFound, writeFailed,
-        invalidXML_SeveralModelTags, zipExtractionError
+        invalidXML_SeveralModelTags, zipExtractionError, invalidJarFile
 
     };
     DocumentationExceptionCause cause = null;
@@ -59,6 +59,8 @@ public class DocumentationException extends Exception {
                 return "The model document has several model tags.";
             case zipExtractionError:
                 return "Unable to extract a zip entry. The underlying IOException is: " + details;
+            case invalidJarFile:
+                return "A jar file is not valid. The file in question is:" + details + ".";
             case unknownError:
                 return "An unknown error occured. Details:" + details;
         }

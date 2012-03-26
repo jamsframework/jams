@@ -306,7 +306,8 @@ public class JUICEFrame extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         OptimizationWizard wizard = (OptimizationWizard)e.getSource();
                         Document newModelDoc = wizard.getNewModel();
-                        JUICEFrame.this.newModel(newModelDoc);
+                        if (newModelDoc != null)
+                            JUICEFrame.this.newModel(newModelDoc);
                         /*try{
                             Thread.sleep(500);
                         }catch(Exception e2){
@@ -717,7 +718,7 @@ public class JUICEFrame extends JFrame {
         modelMenu.add(OptimizationWizardItem);
 
         JMenuItem GenerateDocumentationItem = new JMenuItem(GenerateDocumentationGUIAction);
-        GenerateDocumentationGUIAction.setEnabled(false);
+        GenerateDocumentationGUIAction.setEnabled(true);
         modelMenu.add(GenerateDocumentationItem);
         /*
          * logs menu
