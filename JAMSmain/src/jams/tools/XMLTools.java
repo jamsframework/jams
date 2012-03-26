@@ -136,13 +136,20 @@ public class XMLTools {
         }
         return xmlSerializerSun(doc);
     }
+
+    public static String getStringFromNode(Node doc) {
+        if (doc == null) {
+            return "";
+        }
+        return xmlSerializerSun(doc);
+    }
     
-    private static String xmlSerializerSun(Document doc) {
+    private static String xmlSerializerSun(Node doc) {
         
         String returnValue = "";
         
         try {
-            Transformer transformer = getTransformer();
+            Transformer transformer = getTransformer(true);
             
             Source source = new DOMSource(doc);
             StringWriter writer = new StringWriter();
@@ -198,7 +205,7 @@ public class XMLTools {
         if (savePath.canWrite()) {
             
             try {
-                Transformer transformer = getTransformer();
+                Transformer transformer = getTransformer(false);
                 
                 DOMSource source = new DOMSource(doc);
                 FileOutputStream os = new FileOutputStream(savePath);
@@ -218,13 +225,14 @@ public class XMLTools {
         return true;
     }
     
-    private static Transformer getTransformer() throws TransformerConfigurationException {
+    private static Transformer getTransformer(boolean omitXML) throws TransformerConfigurationException {
         
         TransformerFactory factory = TransformerFactory.newInstance();
         factory.setAttribute("indent-number", new Integer(4));
         Transformer transformer = factory.newTransformer();
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 //        transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "4");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, JAMS.getCharset());

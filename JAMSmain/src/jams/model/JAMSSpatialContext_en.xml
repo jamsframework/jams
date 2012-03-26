@@ -46,7 +46,7 @@
       model entities (<emphasis role="italic">entities</emphasis>) it executes all of its child
       components/contexts once for every entity. An example of a spatial context which is nested
       within a temporal context is shown in <xref xmlns:xlink="http://www.w3.org/1999/xlink"
-        linkend="jams.model.JAMSSpatialContext_fig1"/>. While iterating over the list of entities,
+        linkend="jams.model.JAMSSpatialContext_fig1" xrefstyle="select: label"/>. While iterating over the list of entities,
       JAMSSpatialContext allows its child components/contexts to access the current entity's
       attribute values. The method <ns:code>getCurrent()</ns:code> of the attribute <emphasis
         role="italic">entities</emphasis> can be used to access the current model entity during the
@@ -56,7 +56,7 @@
         <title>Spatial context nested inside of a temporal context</title>
         <mediaobject>
           <imageobject>
-            <imagedata fileref="Time_Space_Context.png" scale="50"/>
+            <imagedata align="center"  fileref="Time_Space_Context.png" scale="40"  width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>

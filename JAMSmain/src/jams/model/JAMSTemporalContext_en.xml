@@ -61,12 +61,12 @@
           <citation><xref linkend="kralisch_coupling_2009"/></citation> or.
         <citation>kralisch_coupling_2009</citation>. An example for the implementation of a temporal
       context is shown in <xref xmlns:xlink="http://www.w3.org/1999/xlink"
-        linkend="jams.model.JAMSTemporalContext_fig1"/> .<figure
+        linkend="jams.model.JAMSTemporalContext_fig1" xrefstyle="select: label"/> .<figure
         xml:id="jams.model.JAMSTemporalContext_fig1">
         <title>Temporal context nested inside of a spatial context</title>
         <mediaobject>
           <imageobject>
-            <imagedata fileref="Time_Space_Context.png" scale="50"/>
+            <imagedata align="center" fileref="Time_Space_Context.png" scale="40" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>

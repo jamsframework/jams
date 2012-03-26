@@ -79,12 +79,12 @@
       Kontexte siehe auch <citation><xref linkend="kralisch_coupling_2009"/></citation> bzw.
         <citation>kralisch_coupling_2009</citation>. Ein Beispiel für die Verwendung eines
       zeitlichen Kontextes ist in <xref xmlns:xlink="http://www.w3.org/1999/xlink"
-        linkend="jams.model.JAMSTemporalContext_fig1"/> dargestellt.<figure
+        linkend="jams.model.JAMSTemporalContext_fig1" xrefstyle="select: label"/> dargestellt.<figure
         xml:id="jams.model.JAMSTemporalContext_fig1">
         <title>Zeitlicher Kontext mit eingeschlossenem räumlichen Kontext</title>
         <mediaobject>
           <imageobject>
-            <imagedata fileref="Time_Space_Context.png" scale="50"/>
+            <imagedata align="center" fileref="Time_Space_Context.png" scale="40" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>

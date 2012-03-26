@@ -47,7 +47,7 @@
       es alle seine Kindkomponenten/-kontexte jeweils einmal für jede Einheit aus. Ein Beispiel für
       einen räumlichen Kontext, der in einen zeitlichen Kontext integriert ist, wird dargestellt in
         <xref xmlns:xlink="http://www.w3.org/1999/xlink"
-        linkend="jams.model.JAMSSpatialContext_fig1"/>. Während es über die Liste der Einheiten
+          linkend="jams.model.JAMSSpatialContext_fig1" xrefstyle="select: label"/>. Während es über die Liste der Einheiten
       iteriert, bietet JAMSSpatialContext seinen Kindkomponenten/-kontexten Zugriff auf die
       Attributwerte der aktuellen Einheit. Über die Methode <ns:code>getCurrent()</ns:code> des
       Attributs <emphasis role="italic">entities</emphasis> kann während der räumlichen Iteration
@@ -58,7 +58,7 @@
         <title>Räumlicher Kontext, integriert in einen zeitlichen Kontext </title>
         <mediaobject>
           <imageobject>
-            <imagedata fileref="Time_Space_Context.png" scale="50"/>
+            <imagedata align="center" fileref="Time_Space_Context.png" scale="40" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>
