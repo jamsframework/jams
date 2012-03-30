@@ -7,49 +7,31 @@ package jamsui.juice.documentation;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.gui.ObserverWorkerDlg;
-import jams.tools.XMLTools;
 import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
 import java.awt.Frame;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FilePermission;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.Permission;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.Observable;
 import org.w3c.dom.Document;
-import javax.swing.JOptionPane;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.cli.CommandLineOptions;
 
 /**
  *
  * @author chris
  */
-public class DocumentationWizard extends Observable{
-    private static class ExitTrappedException extends SecurityException {
-    }
-
-    private static void forbidSystemExitCall() {
-        final SecurityManager securityManager = new SecurityManager() {
-
-            @Override
-            public void checkPermission(Permission permission) {
-                if (permission.getName().contains("exit")) {
-                    throw new ExitTrappedException();
-                }else if (permission instanceof FilePermission){
-                    FilePermission fp = (FilePermission)permission;
-                    if (fp.getActions().equals("delete") && fp.getName().contains(Bundle.resources.getString("Filename"))){
-                        throw new ExitTrappedException();
-                    }
-                }
-            }
-        };
-        System.setSecurityManager(securityManager);
-    }
-
-    private static void enableSystemExitCall() {
-        System.setSecurityManager(null);
-    }
-
+public class DocumentationWizard extends Observable{    
     boolean debug = true;
     
     final String DOCUMENTATION_DIRECTORY = "/documentation/";
@@ -112,10 +94,99 @@ public class DocumentationWizard extends Observable{
         }
     }
 
-    private void runApacheFOP(String inputFile, String outputFile, String optionalLibaries) throws DocumentationException{
+    static class MyCommandLineOptions extends CommandLineOptions{
+        public FOUserAgent getFOUserAgent(){
+            return super.getFOUserAgent();
+        }
+        public String getOutputFormat() throws FOPException{
+            return super.getOutputFormat();
+        }
+    }
+
+     public static void startFOP(String[] args) throws DocumentationException {
+        //System.out.println("static CCL: "
+        //    + Thread.currentThread().getContextClassLoader().toString());
+        //System.out.println("static CL: " + Fop.class.getClassLoader().toString());
+        MyCommandLineOptions options = null;
+        FOUserAgent foUserAgent = null;
+        OutputStream out = null;
+
+        try {
+            options = new MyCommandLineOptions();
+            options.parse(args);
+
+            foUserAgent = options.getFOUserAgent();
+            String outputFormat = options.getOutputFormat();
+
+            try {
+                if (options.getOutputFile() != null) {
+                    out = new java.io.BufferedOutputStream(
+                            new java.io.FileOutputStream(options.getOutputFile()));
+                    foUserAgent.setOutputFile(options.getOutputFile());
+                }
+                if (!MimeConstants.MIME_XSL_FO.equals(outputFormat)) {
+                    options.getInputHandler().renderTo(foUserAgent, outputFormat, out);
+                } else {
+                    options.getInputHandler().transformTo(out);
+                }
+            } finally {
+                IOUtils.closeQuietly(out);
+            }
+
+            // System.exit(0) called to close AWT/SVG-created threads, if any.
+            // AWTRenderer closes with window shutdown, so exit() should not
+            // be called here
+            if (!MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputFormat)) {
+                
+            }
+        } catch (Exception e) {
+            if (options != null) {
+                options.getLogger().error("Exception", e);
+            }
+            /*if (options.getOutputFile() != null) {
+                options.getOutputFile().delete();
+            }*/
+            throw new DocumentationException(DocumentationExceptionCause.ApacheFOPFailed, e.toString());
+        }
+    }
+
+    public static void startFOPWithDynamicClasspath(String[] args) throws DocumentationException{
+        try {
+            URL[] urls = org.apache.fop.cli.Main.getJARList();
+            //System.out.println("CCL: "
+            //    + Thread.currentThread().getContextClassLoader().toString());
+            ClassLoader loader = new java.net.URLClassLoader(urls, null);
+            Thread.currentThread().setContextClassLoader(loader);
+            Class clazz = Class.forName("org.apache.fop.cli.Main", true, loader);
+            //System.out.println("CL: " + clazz.getClassLoader().toString());
+            Method mainMethod = clazz.getMethod("startFOP", new Class[]{String[].class});
+            mainMethod.invoke(null, new Object[]{args});
+        } catch (Exception e) {
+            System.err.println("Unable to start FOP:");
+            e.printStackTrace();
+            throw new DocumentationException(DocumentationExceptionCause.ApacheFOPFailed, e.toString());            
+        }
+    }
+
+    private String runApacheFOP(String inputFile, String outputFile, String optionalLibaries) throws DocumentationException{
         stateMessage("running Apache FOP");
-        
         System.setProperty("fop.optional.lib", optionalLibaries);
+        log(System.getProperty("java.class.path"));
+        String args[] = new String[]{System.getProperty("java.class.path"), "-fo", inputFile, "-pdf", outputFile};
+
+        String errorLog = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = System.err;
+        System.setErr(new PrintStream(baos));
+        if (org.apache.fop.cli.Main.checkDependencies()) {
+            startFOP(args);
+        }else{
+            startFOPWithDynamicClasspath(args);
+        }
+        System.out.println(baos.toString());
+        System.setErr(ps);
+        return errorLog;
+        /*System.setProperty("fop.optional.lib", optionalLibaries);
         try {
             forbidSystemExitCall();
             log(System.getProperty("java.class.path"));
@@ -128,7 +199,7 @@ public class DocumentationWizard extends Observable{
             throw new DocumentationException(DocumentationExceptionCause.ApacheFOPFailed, t.toString());
         } finally {
             enableSystemExitCall();
-        }
+        }*/
     }
 
     DocumentationException innerException = null;

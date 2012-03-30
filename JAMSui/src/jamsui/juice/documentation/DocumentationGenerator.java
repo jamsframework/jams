@@ -60,7 +60,8 @@ public class DocumentationGenerator {
         }
 
         String compDesc = Tools.getTemplate(Tools.Template.Component);
-        compDesc = compDesc.replace("%package%", clazz.getPackage().toString());
+
+        //compDesc = compDesc.replace("%package%", clazz.getPackage().toString());
         compDesc = compDesc.replace("%class%", clazz.getSimpleName());
         compDesc = compDesc.replace("%jarFile%", jarFileName);
 
