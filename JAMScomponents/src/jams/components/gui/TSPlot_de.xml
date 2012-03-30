@@ -219,14 +219,14 @@
           </listitem>
         </itemizedlist></para>
       <para>
-        <xref linkend="jams.components.gui.TSplot_fig1"/> zeigt das Beispiel einer TSPlot-Komponente
+        <xref linkend="jams.components.gui.TSplot_fig1" xrefstyle="select: label"/> zeigt das Beispiel einer TSPlot-Komponente
         mit zwei linken und einem rechten Graphen. Der rechte Graph wurde dabei invertiert
           (<emphasis role="italic">rightAxisInverted</emphasis>) dargestellt.</para>
       <figure xml:id="jams.components.gui.TSplot_fig1">
         <title>Beispiel einer TSPlot-Komponente mit zwei linken und einem rechten Graphen</title>
         <mediaobject>
           <imageobject>
-            <imagedata fileref="tsplot.png" scale="40"/>
+            <imagedata align="center" fileref="tsplot.png" scale="45" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>
