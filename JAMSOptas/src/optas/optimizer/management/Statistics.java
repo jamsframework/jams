@@ -305,7 +305,14 @@ public class Statistics implements Serializable{
             double threshold = valueList.get(Ls);
 
             SimpleEnsemble y[] = new SimpleEnsemble[m];
-            y[i] = new EfficiencyEnsemble("test", L, false, 0, 5); //TODO .. die grenzen sind obj. abhängig ..
+
+            double rmin = valueList.get(L-Ls);
+            double rmax = valueList.get(Ls);
+
+            rmin -= (rmax-rmin)*0.2;
+            rmax += (rmax-rmin)*0.2;
+
+            y[i] = new EfficiencyEnsemble("test", L, false, rmin, rmax); //TODO .. die grenzen sind obj. abhängig ..
 
             for (int k = 0; k < n(); k++) {
                 ensemble[k] = new SimpleEnsemble("test", L);

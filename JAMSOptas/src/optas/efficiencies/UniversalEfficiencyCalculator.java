@@ -141,8 +141,8 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
 
     @Override
     public void init(){
-        measurementList = new ArrayList<Double>();
-        simulationList  = new ArrayList<Double>();
+        measurementList = new ArrayList<>();
+        simulationList  = new ArrayList<>();
 
         timeIntervalList = new ArrayList<Attribute.TimeInterval>();
         StringTokenizer tok = new StringTokenizer(timeInterval.getValue(),";");

@@ -9,6 +9,8 @@ import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import optas.hydro.data.Calculations;
 import optas.metamodel.Objective;
 import optas.metamodel.Optimization;
@@ -88,10 +90,10 @@ public class ParameterSpaceReducer extends OptimizationController {
         desc.setMultiObjective(false);
 
         String paramString = "maxn=" + this.maxSamplingPerIteration.getValue() + ";" +
-                             "minn=" + this.minSamplingPerIteration.getValue() +  ";analyzeQuality=true;targetQuality=0.6";
+                             "minn=" + this.minSamplingPerIteration.getValue() +  ";analyzeQuality=true;targetQuality=0.7";
 
         String params[] = paramString.split(";");
-        ArrayList<OptimizerParameter> list = new ArrayList<OptimizerParameter>();
+        ArrayList<OptimizerParameter> list = new ArrayList<>();
 
         for (int i=0;i<params.length;i++){
             String entry[] = params[i].split("=");
@@ -170,12 +172,14 @@ public class ParameterSpaceReducer extends OptimizationController {
     public void procedure() {        
         double parameterSpaceVolume;
 
-        double meanImprovedRatio = 1.0;
+        double meanImprovedRatio = 0.0;
         
-        ArrayList<Sample> retainList = new ArrayList<Sample>();
+        ArrayList<Sample> retainList = new ArrayList<>();
+        Set<Sample> completeList = new HashSet<>();
+
 
         int maxIterations = 30;
-        while (maxIterations-- > 0 && meanImprovedRatio > epsilon1.getValue()) {
+        while (maxIterations-- > 0 && (1.0 - meanImprovedRatio) > epsilon1.getValue()) {
             log("################################################################");
             log("Start new Halton Sequence Sampling with the following boundaries");
             for (int j=0;j<n;j++){
@@ -214,8 +218,7 @@ public class ParameterSpaceReducer extends OptimizationController {
             log("start sampling .. ");
             o.optimize();
 
-            ArrayList<Sample> list = o.getSamples();
-
+            completeList.addAll(o.getSamples()); //duplicates are avoided due to hashCode function
 
             double nextLowerBound[] = new double[n];
             double nextUpperBound[] = new double[n];
@@ -238,7 +241,7 @@ public class ParameterSpaceReducer extends OptimizationController {
             }
             
             retainList.clear();
-            for (Sample s : list) {
+            for (Sample s : completeList) {
                 boolean addSample = true;
                 for (int j=0;j<n;j++){
                     if (s.x[j] < nextLowerBound[j] || s.x[j] > nextUpperBound[j]){
@@ -250,7 +253,7 @@ public class ParameterSpaceReducer extends OptimizationController {
                     retainList.add(s);
             }
 
-            meanImprovedRatio = 0.8*meanImprovedRatio + 0.2*(parameterSpaceVolume/V - 1.0);
+            meanImprovedRatio = 0.8*meanImprovedRatio + 0.2*(V/parameterSpaceVolume);
             
             log("Finish Sampling with the following boundaries");
             for (int j=0;j<n;j++){

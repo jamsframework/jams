@@ -663,9 +663,9 @@ public class metaModelOptimizer {
             String wr_comp = iter.next();
             Set<String> set = dependencyGraph.get(wr_comp);
             if (set != null) {
-                compList.addAll(set);
-                compList.add(wr_comp);
+                compList.addAll(set);                
             }
+            compList.add(wr_comp);
         }
         return compList;
     }

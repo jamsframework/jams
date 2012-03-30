@@ -52,6 +52,9 @@ public class NeuralNetwork extends Interpolation {
             trainNetwork(i,new TreeSet<Integer>());*/
         trainNetwork(0,new TreeSet<Integer>());        
     }
+
+    final int complexityAdjustmentFactor = 1;
+
     private void trainNetwork(int outputIndex, TreeSet<Integer> leaveOutIndex) {
         log("Train Neural Network");
         this.setProgress(0.0);
@@ -60,7 +63,7 @@ public class NeuralNetwork extends Interpolation {
 
         network[outputIndex] = new BasicNetwork();
         network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, x.length));
-        network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, m+(int)((x.length+1)/2 + 1) ));
+        network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, complexityAdjustmentFactor*(m+(int)((x.length+1)/2 + 1) )));
         //network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, (int)((x.length+1)/2 + 1) ));
         //network.addLayer(new BasicLayer(new ActivationSigmoid(), true, (int)((x.length+1)/4 + 1) ));
         network[outputIndex].addLayer(new BasicLayer(new ActivationLinear(), true, m));
@@ -119,7 +122,7 @@ public class NeuralNetwork extends Interpolation {
         isTrained = false;
         /*for (int i=0;i<m;i++)
             trainNetwork(i,validationSet);*/
-        trainNetwork(0,new TreeSet<Integer>());
+        trainNetwork(0,validationSet);
 
         double[][] values = new double[validationSet.size()][];
         int counter = 0;

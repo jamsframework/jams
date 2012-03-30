@@ -275,6 +275,9 @@ public class ParallelHaltonSequenceSampling extends Optimizer{
             ArrayList<ParallelJob> jobs = new ArrayList<ParallelJob>(gridSize);
 
             int iterationsPerJob = (int)Math.ceil((double)taskArgument.sampleCount / (double)gridSize);
+            while(iterationsPerJob*(gridSize-1) >= taskArgument.sampleCount){
+                gridSize--;
+            }
             InputData jobsData[] = new InputData[gridSize];
 
             int start = taskArgument.offset;
@@ -339,10 +342,14 @@ public class ParallelHaltonSequenceSampling extends Optimizer{
         DataCollection collection = null;
         ParallelExecution<InputData, OutputData> executor = new ParallelExecution<InputData, OutputData>(workspace, excludeFiles);
 
-        for (int i = 0; i < Math.ceil(this.maxn / samplesPerIteration); i++) {
+        int initalSampleSize = this.factory.getSize();
 
-            int currentOffset      = (int)offset + (i * samplesPerIteration);
-            int sampleCount        = (int)Math.min( samplesPerIteration, this.maxn - i * samplesPerIteration);
+        int samplesPerIteration2 = threadCount*6;
+
+        for (int i = 0; i < Math.ceil(this.maxn / samplesPerIteration2); i++) {
+
+            int currentOffset      = (int)offset + (i * samplesPerIteration2);
+            int sampleCount        = (int)Math.min( samplesPerIteration2, this.maxn - i * samplesPerIteration2);
             InputData param = new InputData(currentOffset, sampleCount, this);
             
             result = executor.execute(param, new ParallelHaltonSequenceSamplingTask(), threadCount);
@@ -357,7 +364,7 @@ public class ParallelHaltonSequenceSampling extends Optimizer{
             long time2 = System.currentTimeMillis();
 
             totalExecutionTime = (double) (time2 - startTime) / 1000.0;
-            executionCounter = this.factory.getSize();
+            executionCounter = this.factory.getSize() - initalSampleSize;
             meanTime = (double) (totalExecutionTime / executionCounter);
 
             remainingTime = (this.maxn - executionCounter) * meanTime;
@@ -366,7 +373,7 @@ public class ParallelHaltonSequenceSampling extends Optimizer{
                 double quality = this.factory.getStatistics().calcQuality();
                 this.log("Estimating Quality of sampling (prior optimization) with " + this.getStatistics().size() + " samples");                
                 this.log("Average Quality based on E2 is: " + quality);
-                this.log("Target quality is " + targetQuality);
+                this.log("Target quality is " + targetQuality + " minn:" + this.minn);
                 this.log("Mean time per execution is " + meanTime);
                 if (remainingTime > 86400) {
                     this.log("Estimated time of finish is in " + remainingTime / 86400 + " days");
@@ -378,7 +385,7 @@ public class ParallelHaltonSequenceSampling extends Optimizer{
                     this.log("Estimated time of finish is in " + remainingTime + " sec");
                 }
 
-                if (targetQuality <= quality && i >= this.minn) {
+                if (targetQuality <= quality && executionCounter >= this.minn) {
                     this.log("Finish sampling");
                     break;
                 }
