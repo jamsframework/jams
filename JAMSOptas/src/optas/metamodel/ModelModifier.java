@@ -393,9 +393,10 @@ public class ModelModifier {
         ArrayList<Objective> effList = new ArrayList<Objective>();
         effList.addAll(odd.getObjective().values());
 
+        Set<String> removedNodes = new HashSet<String>();
         log("optimizing model structure");
         ModelOptimizer modelOptimizer = new ModelOptimizer(doc, model, effList);
-        modelOptimizer.optimize(odd.isRemoveGUIComponents(), odd.isRemoveRedundantComponents());
+        removedNodes.addAll(modelOptimizer.optimize(odd.isRemoveGUIComponents(), odd.isRemoveRedundantComponents()));
         this.modificationList.addAll(modelOptimizer.getModifications());
 
         log("analysing objectives");
@@ -416,7 +417,17 @@ public class ModelModifier {
         int mainObjectiveIndex = objectiveAnalyser.getObjectiveList().size()-1;
         
         Element optimizer = createOptimizerComponent(doc,objectiveAnalyser.getAttributeList(), parameterString, mainObjectiveIndex, relaxationAttribute);
-        WrapElement placeOptimizerAction = new WrapElement(optimizer, (Element)XMLProcessor.getFirstComponent(root));
+        Node node = XMLProcessor.getFirstComponent(root);//make sure that node was not removed earlier
+        while(
+                (!node.getNodeName().equals("component") && !node.getNodeName().equals("contextcomponent")) ||
+                removedNodes.contains(((Element)node).getAttribute("name"))
+                ){
+            node=node.getNextSibling();
+            if (node==null)
+                log("error");
+        }
+
+        WrapElement placeOptimizerAction = new WrapElement(optimizer, (Element)node);
         this.modificationList.add(placeOptimizerAction);
 
         TreeSet<AttributeWrapper> exportAttributes = new TreeSet<AttributeWrapper>();

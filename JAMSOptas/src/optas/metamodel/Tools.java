@@ -149,7 +149,7 @@ public class Tools {
         }
         NodeList childs = root.getChildNodes();
         for (int i=0;i<childs.getLength();i++){
-            set.addAll(getNodeByAttribute(childs.item(i),attribute, key));
+            set.addAll(getNodeByAttributeContent(childs.item(i),attribute, key));
         }
         return set;
     }

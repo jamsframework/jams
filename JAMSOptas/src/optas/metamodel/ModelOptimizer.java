@@ -6,6 +6,7 @@ package optas.metamodel;
 
 import jams.model.Model;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.TreeSet;
@@ -46,16 +47,19 @@ public class ModelOptimizer {
         metaModelOptimizer.ExportGDLFile(dependencyGraph, removedComponents, path);
     }
 
-    public void optimize(boolean removeGUI, boolean removeRedundantComponents) {
+    public Set<String> optimize(boolean removeGUI, boolean removeRedundantComponents) {
         dependencyGraph = metaModelOptimizer.getDependencyGraph(this.doc.getDocumentElement(), model);
         transitiveClosureOfDependencyGraph = metaModelOptimizer.TransitiveClosure(dependencyGraph);
 
+        Set<String> removedNodes = new HashSet<String>();
+
         ArrayList<Element> list = new ArrayList<Element>();
         if (removeGUI) {
-            list.addAll(Tools.getNodeByAttributeContent(doc, "class", "jams.components.gui"));
-            list.addAll(Tools.getNodeByName(doc, "group"));
+            list.addAll(Tools.getNodeByAttributeContent(doc.getDocumentElement(), "class", "jams.components.gui"));
+            list.addAll(Tools.getNodeByName(doc.getDocumentElement(), "group"));
 
             for (Element e : list) {
+                removedNodes.add(e.getAttribute("name"));
                 actionList.add(new RemoveElement( (Element)e.getParentNode(), e));
             }
 
@@ -80,9 +84,11 @@ public class ModelOptimizer {
             ArrayList<Element> componentList = Tools.getNodeByType(doc, "component");
             for (Element e : componentList) {
                 if (!relevantComponents.contains(e.getAttribute("name")))
+                    removedNodes.add(e.getAttribute("name"));
                     actionList.add(new RemoveElement((Element)e.getParentNode(), e ));
             }
         }
+        return removedNodes;
     }
 
     public ArrayList<Modification> getModifications() {

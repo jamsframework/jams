@@ -52,6 +52,7 @@ public class ShowSensitivity extends MCAT5Plot {
     JTextField regressionErrorField = new JTextField(10);
     JTextField sampleCountFieldRegression = new JTextField("1000");
     JCheckBox doVarianceEstimation = new JCheckBox("Estimate Uncertainty of Sensitivity");
+    JCheckBox doQualityEstimation = new JCheckBox("Estimate Quality");
     JCheckBox useANNRegression = new JCheckBox("Use ANN Regression");
     JComboBox regressionMethod = new JComboBox(new String[]{"Neural Network"});
     JComboBox parameterNormalizationMethod = new JComboBox(Interpolation.NormalizationMethod.values());
@@ -206,6 +207,15 @@ public class ShowSensitivity extends MCAT5Plot {
         c.gridx = 0;
         c.gridy = rowCounter++;
         c.gridwidth = 2;
+        c.fill = c.HORIZONTAL;
+        c.anchor = GridBagConstraints.CENTER;
+        regressionErrorField.setEditable(false);
+        southPanel.add(this.doQualityEstimation, c);
+        doQualityEstimation.setSelected(false);
+
+        c.gridx = 0;
+        c.gridy = rowCounter++;
+        c.gridwidth = 2;
         c.fill = c.NONE;
         c.anchor = c.CENTER;
         southPanel.add(new JButton(new AbstractAction("Recalculate Regression") {
@@ -321,7 +331,7 @@ public class ShowSensitivity extends MCAT5Plot {
 
         for (int k = 0; k < K; k++) {
             uniSA.setup(xData, p2);
-            if (k==0){
+            if (k==0 && doQualityEstimation.isSelected()){
                 this.regressionErrorField.setText(Double.toString(uniSA.calculateError()));
                 this.sampleCountField.setText(Integer.toString(p2.getSize()));
             }
