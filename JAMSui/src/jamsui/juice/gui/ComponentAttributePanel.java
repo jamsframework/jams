@@ -70,7 +70,8 @@ import javax.swing.event.ListSelectionEvent;
  *
  * @author Sven Kralisch
  *
- * This panel provides GUI components for editing a component's attributes connections
+ * This panel provides GUI components for editing a component's attributes
+ * connections
  */
 public class ComponentAttributePanel extends JPanel {
 
@@ -263,12 +264,29 @@ public class ComponentAttributePanel extends JPanel {
             contextCombo.setSelectedItem(field.getContext());
 
             if (type.isArray()) {
-                /*
-                String[] values = JAMSTools.arrayStringAsStringArray(var.getAttribute());
+
+                String[] values = field.getAttribute().split(";");
+                ArrayList<String> valueList = new ArrayList<String>();
                 for (String value : values) {
-                attributeList.setSelectedValue(value, true);
+                    valueList.add(value);
                 }
-                 */
+
+                int indices[] = new int[values.length];
+                int c = 0;
+                
+                for (int i = 0; i < attributeList.getModel().getSize(); i++) {
+                    String value = (String) attributeList.getModel().getElementAt(i);
+                    if (valueList.contains(value)) {
+                        indices[c++] = i;
+                    }
+                }
+                
+                attributeList.setSelectedIndices(indices);
+                
+//                for (String value : values) {
+//                    attributeList.setSelectedValue(value, true);
+//                }
+
                 customAttributeText.setText(field.getAttribute());
             } else {
                 // @todo: should stay empty if attribute not provided by some 
@@ -409,7 +427,7 @@ public class ComponentAttributePanel extends JPanel {
 
         if (type.isArray()) {
             attributeList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            attributeList.setEnabled(false);
+            attributeList.setEnabled(true);
         } else {
             attributeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             attributeList.setEnabled(true);

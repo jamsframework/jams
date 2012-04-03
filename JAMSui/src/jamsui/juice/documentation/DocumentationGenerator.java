@@ -1,7 +1,12 @@
 package jamsui.juice.documentation;
 
+import jams.JAMS;
 import jams.JAMSProperties;
+import jams.JAMSVersion;
+import jams.data.Attribute;
+import jams.data.JAMSDataFactory;
 import jams.model.JAMSComponentDescription;
+import jams.tools.FileTools;
 import jams.tools.StringTools;
 import jams.tools.XMLTools;
 import jamsui.juice.JUICE;
@@ -14,10 +19,12 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -35,19 +42,18 @@ import org.w3c.dom.NodeList;
  */
 public class DocumentationGenerator {
 
+    private static final String DEFAULT_PACKAGE_ID = "<default package>";
     private final String AnnotationFileName = "Component_Annotation.";
-    private final String templateFileName = "template.xml";
+    private final String templateFileName = "template";
     private final String parameterFileName = "parameter.xml";
-
-    private final String MODELSTRUCTURE_FILENAME = "Modellkomponenten.xml";
+    private final String MODELSTRUCTURE_FILENAME = "structure.xml";
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-    SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");        
-    ClassLoader loader = null;    
-    TreeMap<String, String> bibEntrySet = new TreeMap<>();
-    TreeMap<String, String> automaticComponentDescriptions = new TreeMap<>();
-
-
+    SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
+    ClassLoader loader = null;
+    TreeMap<String, String> bibEntrySet = new TreeMap<String, String>();
+    TreeMap<String, String> automaticComponentDescriptions = new TreeMap<String, String>();
     private boolean debug = true;
+
     private void log(String msg) {
         if (debug) {
             System.out.println(msg);
@@ -59,9 +65,13 @@ public class DocumentationGenerator {
             return null;
         }
 
-        String compDesc = Tools.getTemplate(Tools.Template.Component);
-
-        //compDesc = compDesc.replace("%package%", clazz.getPackage().toString());
+        String compDesc = Tools.getTemplate("component.xml");
+        Package classPackage = clazz.getPackage();
+        if (classPackage != null) {
+            compDesc = compDesc.replace("%package%", clazz.getPackage().toString());
+        } else {
+            compDesc = compDesc.replace("%package%", DEFAULT_PACKAGE_ID);
+        }
         compDesc = compDesc.replace("%class%", clazz.getSimpleName());
         compDesc = compDesc.replace("%jarFile%", jarFileName);
 
@@ -69,7 +79,7 @@ public class DocumentationGenerator {
 
         if (jcd != null) {
             compDesc = compDesc.replace("%title%", jcd.title());
-            compDesc = compDesc.replace("%author%", jcd.author().replace("&", " "+Bundle.resources.getString("and")+" " ));
+            compDesc = compDesc.replace("%author%", jcd.author().replace("&", " " + Bundle.resources.getString("and") + " "));
             compDesc = compDesc.replace("%date%", jcd.date());
             compDesc = compDesc.replace("%description%", jcd.description());
             compDesc = compDesc.replace("%version%", jcd.version());
@@ -87,10 +97,10 @@ public class DocumentationGenerator {
         boolean interfaceFound = false;
 
         Field field[] = clazz.getFields();
-        
+
         for (int i = 0; i < field.length; i++) {
             jams.model.JAMSVarDescription jvd = (jams.model.JAMSVarDescription) field[i].getAnnotation(jams.model.JAMSVarDescription.class);
-            String variableTemplate = Tools.getTemplate(Tools.Template.Variable);
+            String variableTemplate = Tools.getTemplate("variable.xml");
             variableTemplate = variableTemplate.replace("%name%", field[i].getName());
             if (jvd != null) {
                 interfaceFound = true;
@@ -155,8 +165,9 @@ public class DocumentationGenerator {
                 try {
                     Class<?> clazz = clazz = loader.loadClass(className);
                     String desc = getAnnotation(clazz, jarFileName);
-                    if (desc != null)
+                    if (desc != null) {
                         automaticComponentDescriptions.put(clazz.getName(), desc);
+                    }
                 } catch (java.lang.NoClassDefFoundError e) {
                     log("Warning: Could not load class " + className + " of jar file " + jarFileName);
                 } catch (ClassNotFoundException cnfe) {
@@ -169,16 +180,16 @@ public class DocumentationGenerator {
     private TreeMap<String, ArrayList<String[]>> createParameterXML(Document model, File dstFile) throws DocumentationException {
         TreeMap<String, ArrayList<String[]>> map = Tools.findModelParameter(model);
 
-        String parameterTemplate = Tools.getTemplate(Tools.Template.Parameter);
+        String parameterTemplate = Tools.getTemplate("parameter.xml");
         String content = "";
 
         for (String component : map.keySet()) {
             ArrayList<String[]> parameterList = map.get(component);
-            String parameterTitle = Tools.getTemplate(Tools.Template.ParameterTitle);
+            String parameterTitle = Tools.getTemplate("parameterTitle.xml");
             content += parameterTitle.replace("%title%", component) + "\n";
 
             for (String[] parameterAndValue : parameterList) {
-                String parameterEntry = Tools.getTemplate(Tools.Template.ParameterEntry);
+                String parameterEntry = Tools.getTemplate("parameterEntry.xml");
                 parameterEntry = parameterEntry.replace("%name%", parameterAndValue[0]);
                 parameterEntry = parameterEntry.replace("%value%", parameterAndValue[1]);
                 content += parameterEntry + "\n";
@@ -192,28 +203,25 @@ public class DocumentationGenerator {
         return map;
     }
 
-    private String processModelStructure(Node node, Set<String> components) throws DocumentationException{
-        if (node.getNodeName().equals("model") || node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")){
-            Element e = (Element)node;
+    private String processModelStructure(Node node, Set<String> components) throws DocumentationException {
+        if (node.getNodeName().equals("model") || node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
+            Element e = (Element) node;
             String clazz = e.getAttribute("class");
-            if (clazz == null)
+            if (clazz == null) {
                 clazz = jams.model.JAMSModel.class.getName();
+            }
 
             components.add(clazz);
             String template = null;
-            switch (node.getNodeName()) {
-                case "model":
-                    template = Tools.getTemplate(Tools.Template.ModelStructure_Model);
-                    template = template.replace("%type%", Bundle.resources.getString("model"));
-                    break;
-                case "contextcomponent":
-                    template = Tools.getTemplate(Tools.Template.ModelStructure_Context);
-                    template = template.replace("%type%", Bundle.resources.getString("contextcomponent"));
-                    break;
-                case "component":
-                    template = Tools.getTemplate(Tools.Template.ModelStructure_Component);
-                    template = template.replace("%type%", Bundle.resources.getString("component"));
-                    break;
+            if (node.getNodeName().equals("model")) {
+                template = Tools.getTemplate("structureModel.xml");
+                template = template.replace("%type%", Bundle.resources.getString("model"));
+            } else if (node.getNodeName().equals("contextcomponent")) {
+                template = Tools.getTemplate("structureContext.xml");
+                template = template.replace("%type%", Bundle.resources.getString("contextcomponent"));
+            } else if (node.getNodeName().equals("component")) {
+                template = Tools.getTemplate("structureComponent.xml");
+                template = template.replace("%type%", Bundle.resources.getString("component"));
             }
 
             template = template.replace("%keyword:class%", Bundle.resources.getString("class"));
@@ -239,12 +247,12 @@ public class DocumentationGenerator {
         }
         return null;
     }
-    
-    private TreeSet<String> createModelStructureXML(File documentationOutputDir, Node modelNode) throws DocumentationException{
+
+    private TreeSet<String> createModelStructureXML(File documentationOutputDir, Node modelNode) throws DocumentationException {
         File modelStructureXML = new File(documentationOutputDir, MODELSTRUCTURE_FILENAME);
 
-        TreeSet<String> componentSet = new TreeSet<>();
-        String modelStructureTemplate = Tools.getTemplate(Tools.Template.Structure);
+        TreeSet<String> componentSet = new TreeSet<String>();
+        String modelStructureTemplate = Tools.getTemplate("structure.xml");
         modelStructureTemplate = modelStructureTemplate.replace("%title%", Bundle.resources.getString("titel_modellstruktur"));
         String modelStructureContent = processModelStructure(modelNode, componentSet);
         modelStructureTemplate = modelStructureTemplate.replace("%content%", modelStructureContent);
@@ -254,10 +262,10 @@ public class DocumentationGenerator {
         return componentSet;
     }
 
-    private void createBibliographyXML(File documentationOutputDir) throws DocumentationException{
+    private void createBibliographyXML(File documentationOutputDir) throws DocumentationException {
         File bibliographyXML = new File(documentationOutputDir, "/bibliography_" + Bundle.resources.getString("lang") + ".xml");
 
-        String bibliographyTemplate = Tools.getTemplate(Tools.Template.Bibliography);
+        String bibliographyTemplate = Tools.getTemplate("bibliography.xml");
         bibliographyTemplate.replace("%language", Bundle.resources.getString("lang"));
         String content = "";
         for (String s : this.bibEntrySet.values()) {
@@ -270,16 +278,40 @@ public class DocumentationGenerator {
         Tools.writeContent(bibliographyXML, bibliographyTemplate);
     }
 
-    private void createMainDocument(File documentationInputDir, File documentationOutputDir, Node modelNode, Set<String> componentSet) throws DocumentationException{
+    private void createMainDocument(File documentationHome, File documentationOutputDir, Node modelNode, Set<String> componentSet) throws DocumentationException {
         //erstellt ein Dokument indem die Struktur (Komponenten und Kontextkomponenten) aufgefuehrt werden.
         //erstellt weiterhin ein Dokument, welches die Komplettdokumentation erzeugt
         File mainXML = new File(documentationOutputDir, Bundle.resources.getString("Filename") + ".xml");
-        File templateXML = new File(documentationInputDir, templateFileName);
 
-        String mainTemplate = Tools.getTemplate(Tools.Template.Main);
+        String mainTemplate;
+        File templateFile = new File(documentationHome, templateFileName + "_" + Bundle.resources.getString("lang") + ".xml");
+        if (templateFile.exists()) {
+            try {
+                mainTemplate = FileTools.fileToString(templateFile.getAbsolutePath());
+            } catch (IOException ex) {
+                mainTemplate = Tools.getTemplate("main.xml");
+                ex.printStackTrace();
+            }
+        } else {
+            mainTemplate = Tools.getTemplate("main.xml");
+            try {
+                FileTools.stringToFile(templateFile.getAbsolutePath(), mainTemplate);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+
         String modelName = ((Element) modelNode).getAttribute("name");
         String modelAuthor = ((Element) modelNode).getAttribute("author");
-        String modelDate = ((Element) modelNode).getAttribute("date");
+        Attribute.Calendar modelDate = JAMSDataFactory.createCalendar();
+        modelDate.setValue(((Element) modelNode).getAttribute("date"));
+
+        
+        String modelDescription = null;
+        Node descriptionNode = ((Element) modelNode).getElementsByTagName("description").item(0);
+        if (descriptionNode != null) {
+            modelDescription = descriptionNode.getTextContent().trim();
+        }
 
         if (modelName == null) {
             log("warning: model is not named");
@@ -289,35 +321,42 @@ public class DocumentationGenerator {
             log("warning: model author is not named");
             modelAuthor = "unknown";
         }
-        if (modelDate == null) {
+        if (modelDescription == null) {
             log("warning: model date is not named");
-            modelDate = "unknown";
         }
 
         mainTemplate = mainTemplate.replace("%title%", Bundle.resources.getString("titel_docu"));
         mainTemplate = mainTemplate.replace("%model:name%", modelName);
         mainTemplate = mainTemplate.replace("%model:author%", modelAuthor);
-        mainTemplate = mainTemplate.replace("%date%", sdf.format(new Date()));
-        mainTemplate = mainTemplate.replace("%release:date%", modelDate);
+        mainTemplate = mainTemplate.replace("%date%", DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault()).format(new Date()));
+        mainTemplate = mainTemplate.replace("%model:date%", modelDate.toString(DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())));
+        mainTemplate = mainTemplate.replace("%releaseinfo%", "JAMS version: " + JAMSVersion.getInstance().getVersionDateString());
+        if (!StringTools.isEmptyString(modelDescription)) {
+            modelDescription = "<abstract><para>" + modelDescription + "</para></abstract>";
+        }
+        mainTemplate = mainTemplate.replace("%model:description%", modelDescription);
         mainTemplate = mainTemplate.replace("%copyright:year%", sdfYear.format(new Date()));
-        mainTemplate = mainTemplate.replace("%copyright:holder%", Bundle.resources.getString("uni"));
+        mainTemplate = mainTemplate.replace("%copyright:holder%", "");
+        mainTemplate = mainTemplate.replace("%model:intro%", Bundle.resources.getString("model_intro"));
+        
 
         String includes = "";
-        TreeMap<String, String> shortNameMapping = new TreeMap<>();
+        TreeMap<String, String> shortNameMapping = new TreeMap<String, String>();
         for (String component : componentSet) {
             int lastIndex = component.lastIndexOf(".");
-            if (lastIndex != -1){
-                shortNameMapping.put(component.substring(lastIndex+1), component);
-            }else{
+            if (lastIndex != -1) {
+                shortNameMapping.put(component.substring(lastIndex + 1), component);
+            } else {
                 shortNameMapping.put(component, component);
             }
         }
 
         for (String component : shortNameMapping.keySet()) {
-            if (component.isEmpty())
+            if (component.isEmpty()) {
                 continue;
+            }
             component = shortNameMapping.get(component);
-            mergeAutomaticAndManuellDocumention(component, templateXML,
+            mergeAutomaticAndManuellDocumention(component,
                     new File(documentationOutputDir, "Component_Annotation." + component + ".xml"),
                     new File(documentationOutputDir, component + "_" + Bundle.resources.getString("lang") + ".xml"),
                     new File(documentationOutputDir, component + ".xml"));
@@ -332,7 +371,7 @@ public class DocumentationGenerator {
         Tools.writeContent(mainXML, mainTemplate);
     }
 
-    public void createDocumentation(File documentationInputDir, File documentationOutputDir, Document document) throws DocumentationException {
+    public void createDocumentation(File documentationHome, File documentationOutputDir, Document document) throws DocumentationException {
         //read annotations from jar files
         String[] libList = StringTools.toArray(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER), ";");
         ArrayList<File> list = Tools.getJarList(libList);
@@ -341,7 +380,7 @@ public class DocumentationGenerator {
             processAnnotations(documentationOutputDir, f);
         }
         //write automatic annotations
-        for (String component : automaticComponentDescriptions.keySet()){
+        for (String component : automaticComponentDescriptions.keySet()) {
             String value = automaticComponentDescriptions.get(component);
 
             log("-" + component);
@@ -349,9 +388,9 @@ public class DocumentationGenerator {
                 log("warning: no annotations for component:" + component);
             }
 
-            String template = Tools.getTemplate(Tools.Template.ComponentAnnotation);
+            String template = Tools.getTemplate("componentAnnotation.xml");
             int lastIndex = component.lastIndexOf(".");
-            template = template.replace("%title%", component.substring(lastIndex+1));
+            template = template.replace("%title%", component.substring(lastIndex + 1));
             template = template.replace("%content%", value);
 
             File annotationFile = new File(documentationOutputDir, AnnotationFileName + component + ".xml");
@@ -368,12 +407,13 @@ public class DocumentationGenerator {
 
         TreeSet<String> componentSet = createModelStructureXML(documentationOutputDir, modelNode);
 
-        createMainDocument(documentationInputDir, documentationOutputDir, modelNode, componentSet);
+        createMainDocument(documentationHome, documentationOutputDir, modelNode, componentSet);
 
         createBibliographyXML(documentationOutputDir);
     }
 
-    private class Component{
+    private class Component {
+
         String author = "";
         String version = "";
         String date = "";
@@ -381,30 +421,30 @@ public class DocumentationGenerator {
         String paket = "";
         String classification = "";
         String subtitle = "";
-
         String descriptionBlock = "";
-        ArrayList<Variable> variablen = new ArrayList<>();
+        ArrayList<Variable> variablen = new ArrayList<Variable>();
     }
 
-    private class Variable{
+    private class Variable {
+
         String variable = "";
         String description = "";
         String unit = "";
         String range = "";
         String datatype = "";
         String variabletype = "";
-        String defaultvalue = "";          
+        String defaultvalue = "";
     }
 
-    private Component getComponentMetadataFromLanguageIndependentDescription(String componentName, 
-            File languageIndependentComponentDescriptionFile){
+    private Component getComponentMetadataFromLanguageIndependentDescription(String componentName,
+            File languageIndependentComponentDescriptionFile) {
 
         Component component = new Component();
         Document languageIndependentComponentDescription = null;
 
-        try{
+        try {
             languageIndependentComponentDescription = XMLTools.getDocument(languageIndependentComponentDescriptionFile.getAbsolutePath());
-        }catch(FileNotFoundException fnfe){
+        } catch (FileNotFoundException fnfe) {
             log("warning: the documentation of " + componentName + " is incomplete");
             return null;
         }
@@ -429,27 +469,17 @@ public class DocumentationGenerator {
                 break;
             }
 
-            switch (entryList.item(i).getTextContent()) {
-                case "Paket": {
-                    component.paket = entryList.item(i + 1).getTextContent();
-                    break;
-                }
-                case "Autor": {
-                    component.author = entryList.item(i + 1).getTextContent();
-                    break;
-                }
-                case "Modellprozess": {
-                    component.classification = entryList.item(i + 1).getTextContent();
-                    break;
-                }
-                case "Version": {
-                    component.version = entryList.item(i + 1).getTextContent();
-                    break;
-                }
-                case "Modifikationsdatum": {
-                    component.date = entryList.item(i + 1).getTextContent();
-                    break;
-                }
+            if (entryList.item(i).getTextContent().equals("Paket")) {
+                component.paket = entryList.item(i + 1).getTextContent();
+                break;
+            } else if (entryList.item(i).getTextContent().equals("Autor")) {
+                component.author = entryList.item(i + 1).getTextContent();
+            } else if (entryList.item(i).getTextContent().equals("Modellprozess")) {
+                component.classification = entryList.item(i + 1).getTextContent();
+            } else if (entryList.item(i).getTextContent().equals("Version")) {
+                component.version = entryList.item(i + 1).getTextContent();
+            } else if (entryList.item(i).getTextContent().equals("Modifikationsdatum")) {
+                component.date = entryList.item(i + 1).getTextContent();
             }
         }
 
@@ -483,12 +513,12 @@ public class DocumentationGenerator {
     }
 
     private void getComponentMetadataFromLanguageDependentDescription(String componentName, Component component,
-            File languageDependentComponentDescriptionFile){
+            File languageDependentComponentDescriptionFile) {
         Document languageDependentComponentDescription = null;
 
-        try{
+        try {
             languageDependentComponentDescription = XMLTools.getDocument(languageDependentComponentDescriptionFile.getAbsolutePath());
-        }catch(FileNotFoundException fnfe){
+        } catch (FileNotFoundException fnfe) {
             log("warning: the documentation of " + componentName + " is incomplete");
             return;
         }
@@ -498,29 +528,31 @@ public class DocumentationGenerator {
         }
 
         NodeList subTitleList = languageDependentComponentDescription.getElementsByTagName("subtitle");
-        if (subTitleList.getLength()!=1){
+        if (subTitleList.getLength() != 1) {
             log("warning: wrong number of subtitles in descriptions of component: " + componentName);
-        }else
+        } else {
             component.subtitle = subTitleList.item(0).getTextContent();
+        }
 
         NodeList classificationList = languageDependentComponentDescription.getElementsByTagName("entry");
-        for (int i=0;i<classificationList.getLength()-1;i++){
-            if (classificationList.item(i).getTextContent().equals("classification"))
-                component.classification = classificationList.item(i+1).getTextContent();
+        for (int i = 0; i < classificationList.getLength() - 1; i++) {
+            if (classificationList.item(i).getTextContent().equals("classification")) {
+                component.classification = classificationList.item(i + 1).getTextContent();
+            }
         }
-            
+
         NodeList sect2List = languageDependentComponentDescription.getElementsByTagName("sect2");
-        if (sect2List.getLength()<2){
+        if (sect2List.getLength() < 2) {
             log("warning: wrong number of sect2 blocks in descriptions of component: " + componentName);
             return;
-        }else{
-            Element variableBlock = (Element)sect2List.item(0);
-            for (Variable var : component.variablen){
+        } else {
+            Element variableBlock = (Element) sect2List.item(0);
+            for (Variable var : component.variablen) {
                 NodeList rowList = variableBlock.getElementsByTagName("row");
-                for (int i=0;i<rowList.getLength();i++){
+                for (int i = 0; i < rowList.getLength(); i++) {
                     Node row = rowList.item(i);
                     NodeList entries = row.getChildNodes();
-                    if (entries.getLength()>0 && entries.item(0).getTextContent().equals(var.variable)){
+                    if (entries.getLength() > 0 && entries.item(0).getTextContent().equals(var.variable)) {
                         //if (entries.getLength()>1)
                         //TODO
                     }
@@ -532,34 +564,37 @@ public class DocumentationGenerator {
         component.descriptionBlock = description.replaceAll("ns3:", "m:");
 
         NodeList bibliographyList = languageDependentComponentDescription.getElementsByTagName("bibliography");
-        if (bibliographyList.getLength()>0){
-            Element bibliographyNode = (Element)bibliographyList.item(0);
+        if (bibliographyList.getLength() > 0) {
+            Element bibliographyNode = (Element) bibliographyList.item(0);
 
             NodeList bibEntries = bibliographyNode.getElementsByTagName("biblioentry");
-            for (int i=0;i<bibEntries.getLength();i++){
-                Element bibEntry = (Element)bibEntries.item(i);
+            for (int i = 0; i < bibEntries.getLength(); i++) {
+                Element bibEntry = (Element) bibEntries.item(i);
 
                 NodeList abbrevList = bibEntry.getElementsByTagName("abbrev");
-                if (abbrevList.getLength()!=1)
+                if (abbrevList.getLength() != 1) {
                     continue;
+                }
                 bibEntrySet.put(abbrevList.item(0).getTextContent(), XMLTools.getStringFromNode(bibEntry));
             }
         }
     }
 
-    private void createDocumentFromComponentDescription(Component component, File outputFile) throws DocumentationException{
+    private void createDocumentFromComponentDescription(Component component, File outputFile) throws DocumentationException {
         //zusammensetzen des end-dokumentes
-        String endDocument = Tools.getTemplate(Tools.Template.EndDocument);
+        String endDocument = Tools.getTemplate("endDocument.xml");
         int index = component.title.lastIndexOf(".");
-        if (index!=-1)
-            component.title = component.title.substring(index+1);
+        if (index != -1) {
+            component.title = component.title.substring(index + 1);
+        }
         endDocument = endDocument.replace("%component_title%", component.title);
 
-        /*if (!languageDependentComponentDescriptionFile.equals(templateXML)) {
-            endDocument = endDocument.replace("%subtitle%", "");
-        } else {
-            endDocument = endDocument.replace("%subtitle%", component.subtitle);
-        }*/
+        /*
+         * if (!languageDependentComponentDescriptionFile.equals(templateXML)) {
+         * endDocument = endDocument.replace("%subtitle%", ""); } else {
+         * endDocument = endDocument.replace("%subtitle%", component.subtitle);
+         * }
+         */
         endDocument = endDocument.replace("%subtitle%", component.subtitle);
         endDocument = endDocument.replace("%metadataString%", Bundle.resources.getString("metadata"));
         endDocument = endDocument.replace("%classificationString%", Bundle.resources.getString("classification"));
@@ -576,11 +611,11 @@ public class DocumentationGenerator {
         endDocument = endDocument.replace("%variableTitle%", Bundle.resources.getString("variables"));
 
         //Eingangsvariablen        
-        String  inputVariableContent   = "";
-        String  stateVariableContent   = "";
-        String  outputVariableContent   = "";
+        String inputVariableContent = "";
+        String stateVariableContent = "";
+        String outputVariableContent = "";
 
-        String variableTemplate = Tools.getTemplate(Tools.Template.VariableDescription);
+        String variableTemplate = Tools.getTemplate("variableDescription.xml");
         variableTemplate = variableTemplate.replace("%variableNameString%", Bundle.resources.getString("variable"));
         variableTemplate = variableTemplate.replace("%descriptionString%", Bundle.resources.getString("description"));
         variableTemplate = variableTemplate.replace("%unitString%", Bundle.resources.getString("unit"));
@@ -594,44 +629,43 @@ public class DocumentationGenerator {
             //preprocessing
             int lastPoint = var.datatype.lastIndexOf(".");
             if (lastPoint != -1) {
-                var.datatype = var.datatype.substring(lastPoint+1);
+                var.datatype = var.datatype.substring(lastPoint + 1);
             }
             if (var.datatype.startsWith("JAMS")) {
                 var.datatype = var.datatype.substring(4);
             }
             var.datatype.replace("EntityCollection", "Entity Collection");
             var.datatype.replace("Double;", "Double Array");
-            
+
             String varContent = "<row>\n"
-                            + "<entry>" + var.variable + "</entry>\n"
-                            + "<entry>" + var.description + "</entry>\n"
-                            + "<entry>" + var.unit + "</entry>\n"
-                            + "<entry>" + var.datatype + "</entry>\n"
-                            + "</row>\n";
+                    + "<entry>" + var.variable + "</entry>\n"
+                    + "<entry>" + var.description + "</entry>\n"
+                    + "<entry>" + var.unit + "</entry>\n"
+                    + "<entry>" + var.datatype + "</entry>\n"
+                    + "</row>\n";
             //classification
-            switch (var.variabletype) {
-                case "READ":                    
-                    inputVariableContent += varContent;
-                    break;
-                case "READWRITE":
-                    stateVariableContent += varContent;
-                    break;
-                case "WRITE":
-                    outputVariableContent += varContent;
-                    break;
+            if (var.variabletype.equals("READ")) {
+                inputVariableContent += varContent;
+            } else if (var.variabletype.equals("READWRITE")) {
+                stateVariableContent += varContent;
+            } else if (var.variabletype.equals("WRITE")) {
+                outputVariableContent += varContent;
             }
         }
 
         String inputVariableBlock = "",
-               stateVariableBlock = "",
-               outputVariableBlock = "";
+                stateVariableBlock = "",
+                outputVariableBlock = "";
 
-        if (!inputVariableContent.isEmpty())
+        if (!inputVariableContent.isEmpty()) {
             inputVariableBlock = inputVariableTemplate.replace("%content%", inputVariableContent);
-        if (!stateVariableContent.isEmpty())
+        }
+        if (!stateVariableContent.isEmpty()) {
             stateVariableBlock = stateVariableTemplate.replace("%content%", stateVariableContent);
-        if (!outputVariableContent.isEmpty())
+        }
+        if (!outputVariableContent.isEmpty()) {
             outputVariableBlock = outputVariableTemplate.replace("%content%", outputVariableContent);
+        }
 
         endDocument = endDocument.replace("%inputvariableBlock%", inputVariableBlock);
         endDocument = endDocument.replace("%statevariableBlock%", stateVariableBlock);
@@ -643,17 +677,18 @@ public class DocumentationGenerator {
         Tools.writeContent(outputFile, endDocument);
     }
     //verbindet die automatische Dokumentation aus dem Quellcode mit der manuell erstellten von den Entwicklern und speichert diese in einem enddokument mit dem Namen des Pfades der Komponente
-    public void mergeAutomaticAndManuellDocumention(String componentName, File templateXML,
-            File languageIndependentComponentDescriptionFile, File languageDependentComponentDescriptionFile,
-            File outputFile) throws DocumentationException{
-        
+
+    public void mergeAutomaticAndManuellDocumention(String componentName, File languageIndependentComponentDescriptionFile,
+            File languageDependentComponentDescriptionFile, File outputFile) throws DocumentationException {
+
         Component component = getComponentMetadataFromLanguageIndependentDescription(componentName, languageIndependentComponentDescriptionFile);
-        if (component==null)
+        if (component == null) {
             component = new Component();
+        }
         getComponentMetadataFromLanguageDependentDescription(componentName, component, languageDependentComponentDescriptionFile);
-        
-        createDocumentFromComponentDescription(component,outputFile);
-        
+
+        createDocumentFromComponentDescription(component, outputFile);
+
     }
 
     private String getVariableDescriptionFromLanguageDependentComponentDescription(String variable, Document languageDependentComponentDescription) {

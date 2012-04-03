@@ -15,8 +15,8 @@ public class Bundle {
     /**
      * Resource bundle containing all string literals for some localization
      */
-    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/i18n/DOKUBundle");
-
+    public static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/doc/i18n/DOKUBundle");
+    
 
 
 

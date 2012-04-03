@@ -26,24 +26,8 @@ public class Tools{
     ParameterEntry, ParameterTitle, Bibliography, Structure, Main, ModelStructure_Component, ModelStructure_Context,
     ModelStructure_Model, EndDocument, VariableDescription}
 
-    public static String getTemplate(Template template) throws DocumentationException{
-        switch(template){
-            case ComponentAnnotation: return readContent("resources/templates/componentAnnotation.xml");
-            case Component: return readContent("resources/templates/component.xml");
-            case Variable: return readContent("resources/templates/variable.xml");
-            case Parameter: return readContent("resources/templates/parameter.xml");
-            case ParameterTitle: return readContent("resources/templates/parameterTitle.xml");
-            case ParameterEntry: return readContent("resources/templates/parameterEntry.xml");
-            case Bibliography: return readContent("resources/templates/bibliography.xml");
-            case Structure: return readContent("resources/templates/structure.xml");
-            case Main: return readContent("resources/templates/complete.xml");
-            case ModelStructure_Component: return readContent("resources/templates/structureComponent.xml");
-            case ModelStructure_Context: return readContent("resources/templates/structureContext.xml");
-            case ModelStructure_Model: return readContent("resources/templates/structureModel.xml");
-            case EndDocument: return readContent("resources/templates/endDocument.xml");
-            case VariableDescription: return readContent("resources/templates/variableDescription.xml");
-        }
-        return null;
+    public static String getTemplate(String template) throws DocumentationException{
+        return readContent("resources/doc/templates/" + template);
     }
 
     public static String readContent(String resourceName) throws DocumentationException {
@@ -98,7 +82,7 @@ public class Tools{
     }
 
     public static ArrayList<File> getJarList(String[] libsArray) {
-        ArrayList<File> result = new ArrayList<>();
+        ArrayList<File> result = new ArrayList<File>();
 
         for (int i = 0; i < libsArray.length; i++) {
             File file = new File(libsArray[i]);
@@ -155,7 +139,7 @@ public class Tools{
 
     public static ArrayList<Node> getComponentList(Node root){
         NodeList list = root.getChildNodes();
-        ArrayList<Node> result = new ArrayList<>();
+        ArrayList<Node> result = new ArrayList<Node>();
 
         for (int i=0;i<list.getLength();i++){
             Node node = list.item(i);
@@ -171,7 +155,7 @@ public class Tools{
     }
 
     public static TreeMap<String, ArrayList<String[]>> findModelParameter(Document model) throws DocumentationException{
-        TreeMap<String, ArrayList<String[]>> parameterMap = new TreeMap<>();
+        TreeMap<String, ArrayList<String[]>> parameterMap = new TreeMap<String, ArrayList<String[]>>();
         NodeList modelList = model.getElementsByTagName("model");
 
         if (modelList.getLength()>1){
@@ -192,7 +176,7 @@ public class Tools{
                 if (name != null && value != null && !value.equals("")) {
                     ArrayList<String[]> parameterList = parameterMap.get(parent);
                     if (parameterList==null){
-                        parameterList = new ArrayList<>();
+                        parameterList = new ArrayList<String[]>();
                         parameterMap.put(parent, parameterList);
                     }
                     parameterList.add(new String[]{name, value});
