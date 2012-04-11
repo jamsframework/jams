@@ -23,7 +23,7 @@
     <sect1>
         <title>%model:intro%</title>
         <para>
-            Please adapt documentation/template_%lang%.xml in your workspace to change this text!
+            %please_adapt_intro%
             <!--Individual model documentation goes here!-->
         </para>
     </sect1>    

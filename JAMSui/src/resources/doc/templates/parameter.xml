@@ -3,14 +3,14 @@
     <title>%title%</title>
     <para>
         <informaltable>
-            <tgroup cols="3">
-                <colspec colname="c1" colnum="1" colwidth="1.5*"/>
-                <colspec colname="c2\" colnum="2\" colwidth="1.0*"/>
-                <thead>
+            <tgroup cols="2">
+                <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+                <colspec colname="c2" colnum="2" colwidth="1.0*"/>
+<!--                <thead>
                     <row>
                         <entry namest="c1" nameend="c2">Parameter</entry>
                     </row>
-                </thead>
+                </thead>-->
                 <tbody>
                     %content%
                 </tbody>

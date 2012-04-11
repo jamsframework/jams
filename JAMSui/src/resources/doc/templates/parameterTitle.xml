@@ -1,6 +1,5 @@
 <row>
-    <entry>
+    <entry namest="c1" nameend="c2">
         <emphasis role="bold">%title%</emphasis>
     </entry>
-    <entry namest="c2" nameend="newCol3"/>
 </row>

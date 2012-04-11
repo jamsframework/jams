@@ -1,3 +1,5 @@
+<sect3>
+<title>%VariableString%</title>
 <informaltable>
     <tgroup cols="4">
         <colspec colname="c1" colnum="1" colwidth="3.73*"/>
@@ -5,9 +7,9 @@
         <colspec colname="c2" colnum="3" colwidth="1.5*"/>
         <colspec colname="newCol5" colnum="4" colwidth="2.0*"/>
         <thead>
-            <row>
+<!--            <row>
                 <entry namest="c1" nameend="newCol5">%VariableString%</entry>
-            </row>
+            </row>-->
             <row>
                 <entry>%variableNameString%</entry>
                 <entry>%descriptionString%</entry>
@@ -20,5 +22,4 @@
         </tbody>
     </tgroup>
 </informaltable>
-
-            
+</sect3>

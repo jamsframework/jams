@@ -68,7 +68,7 @@ public class DocumentationGenerator {
         String compDesc = Tools.getTemplate("component.xml");
         Package classPackage = clazz.getPackage();
         if (classPackage != null) {
-            compDesc = compDesc.replace("%package%", clazz.getPackage().toString());
+            compDesc = compDesc.replace("%package%", classPackage.getName());
         } else {
             compDesc = compDesc.replace("%package%", DEFAULT_PACKAGE_ID);
         }
@@ -77,21 +77,21 @@ public class DocumentationGenerator {
 
         JAMSComponentDescription jcd = (JAMSComponentDescription) clazz.getAnnotation(JAMSComponentDescription.class);
 
+        String title = "", author = "", date = "", description = "", version = "";
+
         if (jcd != null) {
-            compDesc = compDesc.replace("%title%", jcd.title());
-            compDesc = compDesc.replace("%author%", jcd.author().replace("&", " " + Bundle.resources.getString("and") + " "));
-            compDesc = compDesc.replace("%date%", jcd.date());
-            compDesc = compDesc.replace("%description%", jcd.description());
-            compDesc = compDesc.replace("%version%", jcd.version());
-        } else {
-            compDesc = compDesc.replace("%title%", "[none]");
-            compDesc = compDesc.replace("%author%", "[none]");
-            compDesc = compDesc.replace("%date%", "[none]");
-            compDesc = compDesc.replace("%description%", "[none]");
-            compDesc = compDesc.replace("%process%", "[none]");
-            compDesc = compDesc.replace("%version%", "[none]");
-            compDesc = compDesc.replace("%mail%", "[none]");
+            title = jcd.title();
+            author = jcd.author().replace("&", " " + Bundle.resources.getString("and") + " ");
+            date = jcd.date();
+            description = jcd.description();
+            version = jcd.version();
         }
+
+        compDesc = compDesc.replace("%title%", title);
+        compDesc = compDesc.replace("%author%", author);
+        compDesc = compDesc.replace("%date%", date);
+        compDesc = compDesc.replace("%description%", description);
+        compDesc = compDesc.replace("%version%", version);
 
         String variables = "";
         boolean interfaceFound = false;
@@ -105,7 +105,8 @@ public class DocumentationGenerator {
             if (jvd != null) {
                 interfaceFound = true;
                 String tmp = field[i].getType().getName();
-                tmp = tmp.replace('$', ' ');
+                tmp = tmp.replace('$', '.');
+                tmp = tmp.replace(";", "[]");
                 variableTemplate = variableTemplate.replace("%type%", tmp);
                 variableTemplate = variableTemplate.replace("%access%", jvd.access().toString());
                 variableTemplate = variableTemplate.replace("%update%", jvd.update().toString());
@@ -207,7 +208,7 @@ public class DocumentationGenerator {
         if (node.getNodeName().equals("model") || node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
             Element e = (Element) node;
             String clazz = e.getAttribute("class");
-            if (clazz == null) {
+            if (StringTools.isEmptyString(clazz)) {
                 clazz = jams.model.JAMSModel.class.getName();
             }
 
@@ -294,6 +295,11 @@ public class DocumentationGenerator {
             }
         } else {
             mainTemplate = Tools.getTemplate("main.xml");
+
+            mainTemplate = mainTemplate.replace("%title%", Bundle.resources.getString("titel_docu"));
+            mainTemplate = mainTemplate.replace("%please_adapt_intro%", Bundle.resources.getString("please_adapt_intro"));
+            mainTemplate = mainTemplate.replace("%model:intro%", Bundle.resources.getString("model_intro"));
+
             try {
                 FileTools.stringToFile(templateFile.getAbsolutePath(), mainTemplate);
             } catch (IOException ex) {
@@ -306,7 +312,6 @@ public class DocumentationGenerator {
         Attribute.Calendar modelDate = JAMSDataFactory.createCalendar();
         modelDate.setValue(((Element) modelNode).getAttribute("date"));
 
-        
         String modelDescription = null;
         Node descriptionNode = ((Element) modelNode).getElementsByTagName("description").item(0);
         if (descriptionNode != null) {
@@ -325,7 +330,7 @@ public class DocumentationGenerator {
             log("warning: model date is not named");
         }
 
-        mainTemplate = mainTemplate.replace("%title%", Bundle.resources.getString("titel_docu"));
+
         mainTemplate = mainTemplate.replace("%model:name%", modelName);
         mainTemplate = mainTemplate.replace("%model:author%", modelAuthor);
         mainTemplate = mainTemplate.replace("%date%", DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault()).format(new Date()));
@@ -337,8 +342,6 @@ public class DocumentationGenerator {
         mainTemplate = mainTemplate.replace("%model:description%", modelDescription);
         mainTemplate = mainTemplate.replace("%copyright:year%", sdfYear.format(new Date()));
         mainTemplate = mainTemplate.replace("%copyright:holder%", "");
-        mainTemplate = mainTemplate.replace("%model:intro%", Bundle.resources.getString("model_intro"));
-        
 
         String includes = "";
         TreeMap<String, String> shortNameMapping = new TreeMap<String, String>();
@@ -356,8 +359,8 @@ public class DocumentationGenerator {
                 continue;
             }
             component = shortNameMapping.get(component);
-            mergeAutomaticAndManuellDocumention(component,
-                    new File(documentationOutputDir, "Component_Annotation." + component + ".xml"),
+            mergeDocumentation(component,
+                    new File(documentationOutputDir, AnnotationFileName + component + ".xml"),
                     new File(documentationOutputDir, component + "_" + Bundle.resources.getString("lang") + ".xml"),
                     new File(documentationOutputDir, component + ".xml"));
             includes += "<xi:include href=\"" + component + ".xml\" xmlns:xi=\"http://www.w3.org/2001/XInclude\"/>\n";
@@ -452,7 +455,7 @@ public class DocumentationGenerator {
         //read lag indepent description (based on annotations)
         NodeList tableList = languageIndependentComponentDescription.getElementsByTagName("informaltable");
         if (tableList.getLength() != 2) {
-            log("Error Annotation Document must have exaclty two tables found(" + tableList.getLength() + ")");
+            log("Error Annotation Document must have exaclty two tables, found " + tableList.getLength() + "!");
             return null;
         }
 
@@ -471,7 +474,6 @@ public class DocumentationGenerator {
 
             if (entryList.item(i).getTextContent().equals("Paket")) {
                 component.paket = entryList.item(i + 1).getTextContent();
-                break;
             } else if (entryList.item(i).getTextContent().equals("Autor")) {
                 component.author = entryList.item(i + 1).getTextContent();
             } else if (entryList.item(i).getTextContent().equals("Modellprozess")) {
@@ -582,7 +584,7 @@ public class DocumentationGenerator {
 
     private void createDocumentFromComponentDescription(Component component, File outputFile) throws DocumentationException {
         //zusammensetzen des end-dokumentes
-        String endDocument = Tools.getTemplate("endDocument.xml");
+        String endDocument = Tools.getTemplate("componentDocument.xml");
         int index = component.title.lastIndexOf(".");
         if (index != -1) {
             component.title = component.title.substring(index + 1);
@@ -678,7 +680,7 @@ public class DocumentationGenerator {
     }
     //verbindet die automatische Dokumentation aus dem Quellcode mit der manuell erstellten von den Entwicklern und speichert diese in einem enddokument mit dem Namen des Pfades der Komponente
 
-    public void mergeAutomaticAndManuellDocumention(String componentName, File languageIndependentComponentDescriptionFile,
+    private void mergeDocumentation(String componentName, File languageIndependentComponentDescriptionFile,
             File languageDependentComponentDescriptionFile, File outputFile) throws DocumentationException {
 
         Component component = getComponentMetadataFromLanguageIndependentDescription(componentName, languageIndependentComponentDescriptionFile);

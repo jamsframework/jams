@@ -1,4 +1,4 @@
 <row>
-<entry>%name%</entry>
-<entry namest="c2" nameend="newCol3">%value%</entry>
+    <entry>%name%</entry>
+    <entry namest="c2" nameend="c2">%value%</entry>
 </row>
