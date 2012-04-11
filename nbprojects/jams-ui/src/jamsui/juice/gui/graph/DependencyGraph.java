@@ -1,5 +1,5 @@
 /*
- * Context.java
+ * DependencyGraph.java
  * Created on 22.06.2010, 21:30:39
  *
  * This file is part of JAMS
