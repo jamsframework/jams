@@ -221,7 +221,7 @@
           <title>Example of a TSPlot component with two left and one right graph</title>
           <mediaobject>
             <imageobject>
-              <imagedata align="center" fileref="tsplot.png" scale="45" width="100%"/>
+              <imagedata align="center" fileref="tsplot.png" scale="45"/>
             </imageobject>
           </mediaobject>
         </figure>
