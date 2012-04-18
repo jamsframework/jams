@@ -15,7 +15,7 @@ public class DocumentationException extends Exception {
         docBookPathNull, modelDocumentNull, workspaceNull, documentationPathNull,
         xsltProcNotExisting, docBookXSLNotExisting, unknownError, xmlIOError,
         ApacheFOPFailed, ViewPDFError, templateNotFound, writeFailed,
-        invalidXML_SeveralModelTags, zipExtractionError, invalidJarFile
+        invalidXML_SeveralModelTags, zipExtractionError, invalidJarFile, FOPDependenciesIncomplete
 
     };
     DocumentationExceptionCause cause = null;
@@ -63,6 +63,8 @@ public class DocumentationException extends Exception {
                 return "A jar file is not valid. The file in question is:" + details + ".";
             case unknownError:
                 return "An unknown error occured. Details:" + details;
+            case FOPDependenciesIncomplete:
+                return "Apache FOP Dependencies are not valid. (check Batik.jar, Avalon.jar, commons.logging, fop.jar)";
         }
         return "exception";
     }

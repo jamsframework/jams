@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.jar.JarFile;
@@ -30,6 +31,15 @@ public class Tools{
         return readContent("resources/doc/templates/" + template);
     }
 
+    public static String changeEncoding(String s, String srcEncoding, String dstEncoding){
+        try{
+            return new String(s.getBytes(srcEncoding),dstEncoding);
+        }catch(UnsupportedEncodingException uee){
+            return s;
+        }
+
+    }
+
     public static String readContent(String resourceName) throws DocumentationException {
         InputStream stream = ClassLoader.getSystemResourceAsStream(resourceName);
         if (stream == null) {
@@ -37,7 +47,7 @@ public class Tools{
         }
         String content = "";
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream,"UTF-8"));
             String line = null;
             while ((line = reader.readLine()) != null) {
                 content += line;
@@ -66,6 +76,7 @@ public class Tools{
         try {
             InputStream in = new BufferedInputStream(jfile.getInputStream(entry));
             OutputStream out = new BufferedOutputStream(new FileOutputStream(outFile));
+
             byte[] buffer = new byte[4096];
             for (;;) {
                 int nBytes = in.read(buffer);
@@ -73,6 +84,7 @@ public class Tools{
                     break;
                 }
                 out.write(buffer, 0, nBytes);
+
             }
 
             out.flush();

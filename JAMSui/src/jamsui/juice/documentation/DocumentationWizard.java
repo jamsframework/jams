@@ -144,6 +144,7 @@ public class DocumentationWizard extends Observable {
         } catch (Exception e) {
             if (options != null) {
                 options.getLogger().error("Exception", e);
+                System.out.println(e.toString());
             }
             /*if (options.getOutputFile() != null) {
                 options.getOutputFile().delete();
@@ -174,19 +175,22 @@ public class DocumentationWizard extends Observable {
         stateMessage("running Apache FOP");
         System.setProperty("fop.optional.lib", optionalLibaries);
         log(System.getProperty("java.class.path"));
+        
         String args[] = new String[]{System.getProperty("java.class.path"), "-fo", inputFile, "-pdf", outputFile};
 
         String errorLog = null;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = System.err;
-        System.setErr(new PrintStream(baos));
+        //System.setErr(new PrintStream(baos));
         if (org.apache.fop.cli.Main.checkDependencies()) {
+            System.out.println("startFOP");
             startFOP(args);
         }else{
-            startFOPWithDynamicClasspath(args);
+            throw new DocumentationException(DocumentationExceptionCause.FOPDependenciesIncomplete);
+            //startFOPWithDynamicClasspath(args);
         }
         System.out.println(baos.toString());
-        System.setErr(ps);
+        //System.setErr(ps);
         return errorLog;
         /*System.setProperty("fop.optional.lib", optionalLibaries);
         try {
@@ -284,7 +288,7 @@ public class DocumentationWizard extends Observable {
             runApacheFOP(documentationOutputDir + "/tmp.fo", documentationHome + "/" + Bundle.resources.getString("Filename") + ".pdf", this.properties.getProperty("libs"));
 
         } catch (Throwable t) {
-//            t.printStackTrace();
+            t.printStackTrace();
         } finally {
 
             // cleanup
@@ -296,7 +300,7 @@ public class DocumentationWizard extends Observable {
 
         }
 
-        openPDF(new File(documentationOutputDir, Bundle.resources.getString("Filename") + ".pdf"));
+        openPDF(new File(documentationHome, Bundle.resources.getString("Filename") + ".pdf"));
 
         stateMessage("finished");
     }

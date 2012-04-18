@@ -1,6 +1,5 @@
 package jamsui.juice.documentation;
 
-import jams.JAMS;
 import jams.JAMSProperties;
 import jams.JAMSVersion;
 import jams.data.Attribute;
@@ -31,6 +30,7 @@ import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -111,8 +111,9 @@ public class DocumentationGenerator {
                 variableTemplate = variableTemplate.replace("%access%", jvd.access().toString());
                 variableTemplate = variableTemplate.replace("%update%", jvd.update().toString());
                 String desc = jvd.description();
-                variableTemplate = variableTemplate.replace("%description%", desc);
-                variableTemplate = variableTemplate.replace("%unit%", jvd.unit());
+                variableTemplate = variableTemplate.replace("%description%", Tools.changeEncoding(desc,"ISO-8859-1","UTF-8"));
+
+                variableTemplate = variableTemplate.replace("%unit%", Tools.changeEncoding(jvd.unit(),"ISO-8859-1","UTF-8"));//jvd ist in utf-8 wird aber als iso-8859-1 interpretiert!!
                 variableTemplate = variableTemplate.replace("%upperBound%", Double.toString(jvd.upperBound()));
                 variableTemplate = variableTemplate.replace("%lowerBound%", Double.toString(jvd.lowerBound()));
                 variableTemplate = variableTemplate.replace("%defaultValue%", jvd.defaultValue().toString());
@@ -288,7 +289,7 @@ public class DocumentationGenerator {
         File templateFile = new File(documentationHome, templateFileName + "_" + Bundle.resources.getString("lang") + ".xml");
         if (templateFile.exists()) {
             try {
-                mainTemplate = FileTools.fileToString(templateFile.getAbsolutePath());
+                mainTemplate = FileTools.fileToString(templateFile.getAbsolutePath(),"UTF-8");
             } catch (IOException ex) {
                 mainTemplate = Tools.getTemplate("main.xml");
                 ex.printStackTrace();
@@ -301,8 +302,8 @@ public class DocumentationGenerator {
             mainTemplate = mainTemplate.replace("%model:intro%", Bundle.resources.getString("model_intro"));
 
             try {
-                FileTools.stringToFile(templateFile.getAbsolutePath(), mainTemplate);
-            } catch (IOException ex) {
+                Tools.writeContent(templateFile.getAbsoluteFile(), mainTemplate);
+            } catch (DocumentationException ex) {
                 ex.printStackTrace();
             }
         }
@@ -315,7 +316,7 @@ public class DocumentationGenerator {
         String modelDescription = null;
         Node descriptionNode = ((Element) modelNode).getElementsByTagName("description").item(0);
         if (descriptionNode != null) {
-            modelDescription = descriptionNode.getTextContent().trim();
+            modelDescription = StringEscapeUtils.escapeXml(descriptionNode.getTextContent().trim());
         }
 
         if (modelName == null) {
@@ -463,7 +464,7 @@ public class DocumentationGenerator {
 
         NodeList titleList = languageIndependentComponentDescription.getElementsByTagName("title");
         if (titleList.getLength() > 0) {
-            component.title = titleList.item(0).getTextContent();
+            component.title = StringEscapeUtils.escapeXml(titleList.item(0).getTextContent());
         }
 
         NodeList entryList = headerTable.getElementsByTagName("entry");
@@ -473,15 +474,15 @@ public class DocumentationGenerator {
             }
 
             if (entryList.item(i).getTextContent().equals("Paket")) {
-                component.paket = entryList.item(i + 1).getTextContent();
+                component.paket = StringEscapeUtils.escapeXml(entryList.item(i + 1).getTextContent());
             } else if (entryList.item(i).getTextContent().equals("Autor")) {
-                component.author = entryList.item(i + 1).getTextContent();
+                component.author = StringEscapeUtils.escapeXml(entryList.item(i + 1).getTextContent());
             } else if (entryList.item(i).getTextContent().equals("Modellprozess")) {
-                component.classification = entryList.item(i + 1).getTextContent();
+                component.classification = StringEscapeUtils.escapeXml(entryList.item(i + 1).getTextContent());
             } else if (entryList.item(i).getTextContent().equals("Version")) {
-                component.version = entryList.item(i + 1).getTextContent();
+                component.version = StringEscapeUtils.escapeXml(entryList.item(i + 1).getTextContent());
             } else if (entryList.item(i).getTextContent().equals("Modifikationsdatum")) {
-                component.date = entryList.item(i + 1).getTextContent();
+                component.date = StringEscapeUtils.escapeXml(entryList.item(i + 1).getTextContent());
             }
         }
 
@@ -499,13 +500,13 @@ public class DocumentationGenerator {
                 log("Invalid Annotation");
             } else {
                 Variable v = new Variable();
-                v.variable = entries.item(0).getTextContent();
-                v.description = entries.item(1).getTextContent();
-                v.unit = entries.item(2).getTextContent();
-                v.range = entries.item(3).getTextContent();
-                v.datatype = entries.item(4).getTextContent();
-                v.variabletype = entries.item(5).getTextContent();
-                v.defaultvalue = entries.item(6).getTextContent();
+                v.variable = StringEscapeUtils.escapeXml(entries.item(0).getTextContent());
+                v.description = StringEscapeUtils.escapeXml(entries.item(1).getTextContent());
+                v.unit = StringEscapeUtils.escapeXml(entries.item(2).getTextContent());
+                v.range = StringEscapeUtils.escapeXml(entries.item(3).getTextContent());
+                v.datatype = StringEscapeUtils.escapeXml(entries.item(4).getTextContent());
+                v.variabletype =StringEscapeUtils.escapeXml(entries.item(5).getTextContent());
+                v.defaultvalue = StringEscapeUtils.escapeXml(entries.item(6).getTextContent());
 
                 component.variablen.add(v);
             }
@@ -533,13 +534,13 @@ public class DocumentationGenerator {
         if (subTitleList.getLength() != 1) {
             log("warning: wrong number of subtitles in descriptions of component: " + componentName);
         } else {
-            component.subtitle = subTitleList.item(0).getTextContent();
+            component.subtitle = StringEscapeUtils.escapeXml(subTitleList.item(0).getTextContent());
         }
 
         NodeList classificationList = languageDependentComponentDescription.getElementsByTagName("entry");
         for (int i = 0; i < classificationList.getLength() - 1; i++) {
             if (classificationList.item(i).getTextContent().equals("classification")) {
-                component.classification = classificationList.item(i + 1).getTextContent();
+                component.classification = StringEscapeUtils.escapeXml(classificationList.item(i + 1).getTextContent());
             }
         }
 
@@ -698,7 +699,7 @@ public class DocumentationGenerator {
         for (int i = 0; i < entryList.getLength() - 1; i++) {
             Node node = entryList.item(i);
             if (node.getTextContent().equals(variable)) {
-                return entryList.item(i + 1).getTextContent();
+                return StringEscapeUtils.escapeXml(entryList.item(i + 1).getTextContent());
             }
         }
         return null;
