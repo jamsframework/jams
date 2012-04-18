@@ -7,11 +7,11 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.jar.JarFile;
@@ -52,7 +52,9 @@ public class Tools{
 
     public static void writeContent(File dst, String content) throws DocumentationException{
         try{
-            BufferedWriter out = new BufferedWriter(new FileWriter(dst));
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dst),"UTF-8"));
+
+
             out.write(content);
             out.close();
         }catch(IOException ioe){
