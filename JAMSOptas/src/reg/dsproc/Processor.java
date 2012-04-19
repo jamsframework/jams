@@ -35,6 +35,8 @@ public abstract class Processor {
     }
 
     public void close() throws SQLException {
+        processingProgressObservable = null;
+        conn.close();
         dsdb.close();
     }
 

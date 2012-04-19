@@ -20,7 +20,7 @@ public class ElementaryEffects extends SensitivityAnalyzer{
 
     final double p = 30;
     final double R = 2.5*p;
-    final double delta = p / (2*(p-1));
+    final double delta = 0.1;//p / (2*(p-1));
 
     double distributions[][] = null;
 
@@ -87,7 +87,7 @@ public class ElementaryEffects extends SensitivityAnalyzer{
                         x0[j]-=2*delta;
                 }else{
                     x0[j] -= delta;
-                    if (x0[j]>1.0)
+                    if (x0[j]<0.0)
                         x0[j]+=2*delta;
                 }
             }

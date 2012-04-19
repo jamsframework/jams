@@ -90,7 +90,7 @@ public class ParameterSpaceReducer extends OptimizationController {
         desc.setMultiObjective(false);
 
         String paramString = "maxn=" + this.maxSamplingPerIteration.getValue() + ";" +
-                             "minn=" + this.minSamplingPerIteration.getValue() +  ";analyzeQuality=true;targetQuality=0.7";
+                             "minn=" + this.minSamplingPerIteration.getValue() +  ";analyzeQuality=true;targetQuality=0.6";
 
         String params[] = paramString.split(";");
         ArrayList<OptimizerParameter> list = new ArrayList<>();

@@ -69,14 +69,21 @@ public class VarianceBasedSensitivityIndex extends SensitivityAnalyzer {
         deltaY_AB = (deltaY_AB / Lh);// - EY_AB*EY_AB; //verschiebungssatz
         EyA /= Lh;
 
-        for (int i = 0; i < Lh; i++) {
+        /*for (int i = 0; i < Lh; i++) {
             VyA += (yA[i]-EyA)*(yA[i]-EyA);
         }
-        VyA /= Lh;
+        VyA /= Lh;*/
+
+
+
+        for (int i = 0; i < Lh; i++) {
+            VyA += yA[i]*yA[i];
+        }
+        VyA = (VyA/ Lh) - EyA*EyA;
 
         calcSensitivity();
     }
-
+/*
     private void calcSensitivity2() {
         double Mi[][] = new double[Lh][n];
         double MTi[][] = new double[Lh][n];
@@ -153,7 +160,7 @@ public class VarianceBasedSensitivityIndex extends SensitivityAnalyzer {
             //sensitivityIndex[k] /= sum;
         }
     }
-
+*/
     private void calcSensitivity() {
         for (int k = 0; k < n; k++) {
             Set<Integer> set = new TreeSet<Integer>();
@@ -177,7 +184,7 @@ public class VarianceBasedSensitivityIndex extends SensitivityAnalyzer {
             //sensitivityIndex[k] /= sum;
         }
     }
-
+/*
     public double[] calcSensitivityFine(Set<Integer> indexSet) {
         double sensitivityIndex[] = new double[3];
         
@@ -219,6 +226,20 @@ public class VarianceBasedSensitivityIndex extends SensitivityAnalyzer {
         sensitivityIndex[1] = STi;
 
         return sensitivityIndex;
+    }*/
+
+    public void calcAll() {
+        int twoPowN = 1 << n;
+        TreeSet<Integer> indexSet = new TreeSet<Integer>();
+        for (int i = 1; i < twoPowN; i++) {
+            indexSet.clear();
+            for (int j = 0; j < n; j++) {
+                if ((i & (1 << j)) != 0) {
+                    indexSet.add(j);
+                }
+            }
+            calcSensitivity(indexSet);
+        }
     }
 
     public double[] calcSensitivity(Set<Integer> indexSet) {
@@ -248,12 +269,14 @@ public class VarianceBasedSensitivityIndex extends SensitivityAnalyzer {
         double ti1 = 0, ti2 = 0;
         double tc1 = 0, tc2 = 0;
         for (int i = 0; i < Lh; i++) {
-            ti1 += yA[i]*yC[i] / Lh;
+            ti1 += yA[i]*yC[i];
             tc1 += 0.25*(yD[i]+yA[i])*(yD[i]+yA[i]);
 
-            ti2 += yA[i]*yD[i] / Lh;
+            ti2 += yA[i]*yD[i];
             tc2 += (yD[i]+yA[i]);
         }
+        ti1/=Lh;
+        ti2/=Lh;
 
         double VyAC = ti1 - EyA*EyA;
         double VyBC = ti2 - EyA*EyA;
@@ -265,7 +288,10 @@ public class VarianceBasedSensitivityIndex extends SensitivityAnalyzer {
         sensitivityIndex[1] = Math.max(STi,0);
         sensitivityIndex[2] = STi - Si;
         
-        
+        System.out.println("Total Variance:" + VyA);
+        System.out.println("S_" + indexSet.toString() + ":" + Si);
+        System.out.println("ST_" + indexSet.toString() + ":" + STi);
+
         return sensitivityIndex;
     }
 }

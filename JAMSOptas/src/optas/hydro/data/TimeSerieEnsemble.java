@@ -98,6 +98,8 @@ public class TimeSerieEnsemble extends Ensemble {
     public void add(Integer id, double value[]) {
         super.set(currentIndex, id);
         this.value[currentIndex] = value;
+        if (this.timeMap.isEmpty())
+            buildTimeMapping();
         currentIndex++;
 
     }

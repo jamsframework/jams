@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import reg.dsproc.DataStoreProcessor.AttributeData;
 import reg.dsproc.DataStoreProcessor.ContextData;
@@ -52,7 +53,7 @@ public class ImportMonteCarloData implements Serializable{
     boolean isImportCollection = false;
     DataCollection importedCollection = null;
     
-    final HashMap<String, String> defaultAttributeTypes = new HashMap<String, String>();
+    final TreeMap<String, String> defaultAttributeTypes = new TreeMap<String, String>();
         
     public ImportMonteCarloData(File file) {        
         init();
@@ -270,7 +271,7 @@ DataCollection newCollection = null;
         
     private void addFile(File file) {
         loadDataStore(file);
-        updateDataTable();
+        updateDataTable();              
     }
             
     TreeSet<String> ensembleIDs = new TreeSet<String>();
@@ -370,6 +371,7 @@ DataCollection newCollection = null;
             + "rmse=Efficiency(Negative);"
             + "pbias=Efficiency(Negative);"
             + "dsgrad=Efficiency(Negative);"
+            + "r2=Efficiency(Positive);"
             + "rsq=Efficiency(Postive);"
             + "catchmentSimRunoff_qm=Timeserie - Ensemble;"
             + "catchmentObsRunoff=Measurement;"
@@ -386,10 +388,10 @@ DataCollection newCollection = null;
         simpleDatasetClasses.put(efficiencyStringNeg, NegativeEfficiency.class);
         simpleDatasetClasses.put(efficiencyStringPos, PositiveEfficiency.class);
         simpleDatasetClasses.put(stateVariableString, StateVariable.class);
-        simpleDatasetClasses.put(unknownString, Parameter.class);
+        //simpleDatasetClasses.put(unknownString, Parameter.class);
 
         timeSerieDatasetClasses.put(timeseriesString, TimeSerie.class);
-        timeSerieDatasetClasses.put(unknownString, TimeSerie.class);
+        //timeSerieDatasetClasses.put(unknownString, TimeSerie.class);
         timeSerieDatasetClasses.put(measurementString, Measurement.class);
 
         /*Properties prop = new Properties();
@@ -400,7 +402,8 @@ DataCollection newCollection = null;
             ioe.printStackTrace();
         }*/
         StringTokenizer tok = new StringTokenizer(typeMap,";");
-        for (int i=0;i<tok.countTokens();i++){
+        int n = tok.countTokens();
+        for (int i=0;i<n;i++){
             String token = tok.nextToken();
             String keyValuePair[] = token.split("=");
             this.defaultAttributeTypes.put(keyValuePair[0], keyValuePair[1]);
@@ -410,5 +413,19 @@ DataCollection newCollection = null;
         for (Object key : keys){
             this.defaultAttributeTypes.put(key.toString(), prop.getProperty(key.toString()));
         } */
+    }
+
+    public void finish(){
+        try{
+        for (Processor p : fileProcessors)
+            p.close();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        this.fileProcessors = null;
+        this.attributeComboBoxMap = null;
+        this.ensemble = null;
+        this.ensembleIDs = null;
+        this.importedCollection = null;
     }
 }

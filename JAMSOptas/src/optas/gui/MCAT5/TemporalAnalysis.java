@@ -391,9 +391,8 @@ public class TemporalAnalysis extends MCAT5Plot {
         }
 
         ChartPanel weightChartPanel = new ChartPanel(weightChart.getChart(), true);
-
-        ChartPanel chartPanel = new ChartPanel(chart.getChart(), true);
-        chartPanel.addChartMouseListener(new ChartMouseListener() {
+        
+        weightChartPanel.addChartMouseListener(new ChartMouseListener() {
 
             @Override
             public void chartMouseClicked(ChartMouseEvent event) {
@@ -407,7 +406,7 @@ public class TemporalAnalysis extends MCAT5Plot {
                     System.out.println("data:" + data);
 
                     DataCollection dc = new DataCollection();
-                    dc.addEnsemble(ts.get(data));
+                    dc.addEnsemble(new EfficiencyEnsemble(ts.get(data),false));
                     for (int i = 0; i < p.length; i++) {
                         dc.addEnsemble(p[i]);
                     }

@@ -90,7 +90,10 @@ public abstract class Interpolation extends ObservableProgress{
         for (int i=0;i<m;i++){
             if (y[i].getSize()!=L)
                 return;
-            yRange[i] = 1.0 / (y[i].getMax() - y[i].getMin());
+            if ((y[i].getMax() - y[i].getMin()) != 0)
+                yRange[i] = 1.0 / (y[i].getMax() - y[i].getMin());
+            else
+                yRange[i] = 0.0;
             yMin[i] = y[i].getMin();
         }
 
@@ -223,7 +226,10 @@ public abstract class Interpolation extends ObservableProgress{
         double denormalizedY[] = new double[m];
         for (int i=0;i<m;i++){
             if (this.getxNormalizationMethod() == NormalizationMethod.Linear)
-                denormalizedY[i] = ((y[i]+1.0)/(2.0*yRange[i]))+yMin[i];
+                if (yRange[i]!=0)
+                    denormalizedY[i] = ((y[i]+1.0)/(2.0*yRange[i]))+yMin[i];
+                else
+                    denormalizedY[i] = yMin[i];
             else if (this.getxNormalizationMethod() == NormalizationMethod.Histogramm) {
                 if (!histogrammValid)
                     buildHistogramm();
@@ -283,7 +289,8 @@ public abstract class Interpolation extends ObservableProgress{
                         numerator += (sim[j][i] - obs[j][i])*(sim[j][i] - obs[j][i]);
                         denumerator += (obs[j][i] - aobs)*(obs[j][i] - aobs);
                     }
-                    e2 += 1.0 - (numerator / denumerator);
+                    if (numerator != Double.NaN && denumerator != 0 && denumerator != Double.NaN)
+                        e2 += 1.0 - (numerator / denumerator);
                 }
                 return e2/(double)m;
         }

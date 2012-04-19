@@ -90,9 +90,17 @@ public class UniversalSensitivityAnalyzer {
         sa.init();
     }
 
+    public SimpleEnsemble[] getXDataSet(){
+        return this.sa.x;
+    }
+    public EfficiencyEnsemble getYDataSet(){
+        return this.sa.y;
+    }
+    
     public double[] getInteraction(Set<Integer> indexSet){
         if (sa instanceof VarianceBasedSensitivityIndex){
             VarianceBasedSensitivityIndex v = (VarianceBasedSensitivityIndex)sa;
+            v.calcAll();
             return v.calcSensitivity(indexSet);
         }
         return null;

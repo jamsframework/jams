@@ -21,6 +21,8 @@ public class Modelrun extends DataSet{
 
     TimeInterval timeDomain;
 
+    static final long serialVersionUID = -9046263815810640999L;
+
     public Modelrun(Integer id, TimeInterval timeDomain){
         this.timeDomain = timeDomain;       
         datasets        = new ArrayList<DataSet>();
@@ -64,6 +66,19 @@ public class Modelrun extends DataSet{
         this.map.get(set.getClass()).add(set);
     }
 
+    public void removeDataset(String name) {
+        for (DataSet d : this.datasets) {
+            if (d.name.equals(name)) {
+                this.datasets.remove(d);
+                for (ArrayList<DataSet> list : this.map.values()) {
+                    if (list.contains(d)){
+                        list.remove(d);
+                    }
+                }
+                break;
+            }
+        }
+    }
     private void addTimeSerie(TimeSerie timeserie) throws MismatchException{
         if (this.timeDomain==null){
             this.timeDomain = timeserie.getTimeDomain();

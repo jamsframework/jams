@@ -99,7 +99,15 @@ public class DataCollection extends DataSet implements Serializable{
         this.idFilter.put(id, Boolean.TRUE);
     }
 
-    public boolean filter(String e, double low, double high){
+    public void removeDataset(String name){
+        this.datasets.remove(name);
+        this.globalDatasets.remove(name);
+        for (Integer i : this.set.keySet()){
+            set.get(i).removeDataset(name);
+        }
+    }
+
+    public boolean filter(String e, double low, double high, boolean inverse){
         DataSet ensemble = this.getDataSet(e);
         SimpleEnsemble effEnsemble = null;
         if (ensemble == null)
@@ -112,14 +120,19 @@ public class DataCollection extends DataSet implements Serializable{
         Integer ids[] = effEnsemble.getIds();        
         for (Integer id : ids){
             double value = effEnsemble.getValue(id);
-            if (value < low || value > high)
-                filterID(id);
+            if (!inverse){
+                if (value < low || value > high)
+                    filterID(id);
+            }else{
+                if (value >= low && value <= high)
+                    filterID(id);
+            }
         }
         
         return true;
     }
 
-    public boolean filterPercentil(String e, double low, double high){
+    public boolean filterPercentil(String e, double low, double high, boolean inverse){
         DataSet ensemble = this.getDataSet(e);
         SimpleEnsemble effEnsemble = null;
         if (ensemble == null)
@@ -130,13 +143,19 @@ public class DataCollection extends DataSet implements Serializable{
             return false;
 
         Integer ids[] = effEnsemble.sort();
-                
-        for (int i=0;i<ids.length*low;i++){
-            filterID(ids[i]);
-        }
 
-        for (int i=ids.length-1;i>high*ids.length;i--){
-            filterID(ids[i]);
+        if (!inverse){
+            for (int i=0;i<ids.length*low;i++){
+                filterID(ids[i]);
+            }
+
+            for (int i=ids.length-1;i>high*ids.length;i--){
+                filterID(ids[i]);
+            }
+        }else{
+            for (int i=(int)(ids.length*low);i<(int)(high*ids.length);i++){
+                filterID(ids[i]);
+            }
         }
 
         return true;
@@ -145,6 +164,7 @@ public class DataCollection extends DataSet implements Serializable{
     public void commitFilter(){
         for (Integer id : this.idFilter.keySet())
             this.removeModelRun(id);
+        idFilter.clear();
     }
 
     public void filterTimeDomain(TimeFilter f){
@@ -427,6 +447,8 @@ public class DataCollection extends DataSet implements Serializable{
     }
 
     public DataSet getDataSet(String dataset){
+        if (this.getDatasetClass(dataset)==null)
+            return null;
         if (this.getDatasetClass(dataset).equals(TimeSerie.class))
             return getTimeserieEnsemble(dataset);
         else if (this.getDatasetClass(dataset).equals(Measurement.class)){            
@@ -801,6 +823,8 @@ public class DataCollection extends DataSet implements Serializable{
         }
 
     }
+
+    static final long serialVersionUID = 3078644694169015704L;
 
     public static void main(String args[]){
         if (args[0].equals("merge")){

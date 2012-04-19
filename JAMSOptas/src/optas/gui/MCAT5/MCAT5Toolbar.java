@@ -362,6 +362,11 @@ public class MCAT5Toolbar extends JToolBar {
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS_II"),
                 RegionalSensitivityAnalyser2.class));
 
+        registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
+                "testxx",
+                "testxx",
+                optas.SA.APosterioriPlot.class));
+
         for (PlotDesc pd : registeredPlots) {
             JButton button = new JButton(pd.icon);
             button.setToolTipText(pd.tooltip);

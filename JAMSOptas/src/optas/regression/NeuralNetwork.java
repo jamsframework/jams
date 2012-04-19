@@ -53,7 +53,7 @@ public class NeuralNetwork extends Interpolation {
         trainNetwork(0,new TreeSet<Integer>());        
     }
 
-    final int complexityAdjustmentFactor = 1;
+    final int complexityAdjustmentFactor = 3;
 
     private void trainNetwork(int outputIndex, TreeSet<Integer> leaveOutIndex) {
         log("Train Neural Network");
@@ -64,6 +64,7 @@ public class NeuralNetwork extends Interpolation {
         network[outputIndex] = new BasicNetwork();
         network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, x.length));
         network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, complexityAdjustmentFactor*(m+(int)((x.length+1)/2 + 1) )));
+        network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, 1*(m+(int)((x.length+1)/2 + 1) )));
         //network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, (int)((x.length+1)/2 + 1) ));
         //network.addLayer(new BasicLayer(new ActivationSigmoid(), true, (int)((x.length+1)/4 + 1) ));
         network[outputIndex].addLayer(new BasicLayer(new ActivationLinear(), true, m));
@@ -103,15 +104,15 @@ public class NeuralNetwork extends Interpolation {
         basicNDS.setDescription("testdataset");
         
         Train backpropagation = new ResilientPropagation(network[outputIndex], basicNDS);
-        
+        backpropagation.setError(1);
         int epoch = 1;
         int epochMax = 1500;
         do {
             backpropagation.iteration();
-            //System.out.println("Epoch #" + epoch + " Error:" + backpropagation.getError());
+            System.out.println("Epoch #" + epoch + " Error:" + backpropagation.getError());
             epoch++;
             setProgress((double)epoch / (double)epochMax);
-        } while (backpropagation.getError() > 0.01 && !backpropagation.isTrainingDone() && epoch < epochMax);
+        } while (backpropagation.getError() > 0.005 && !backpropagation.isTrainingDone() && epoch < epochMax);
 
         //System.out.println("After "+epoch+" iterations the error is " + backpropagation.getError());
         isTrained = true;

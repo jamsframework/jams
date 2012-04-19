@@ -16,6 +16,7 @@ import optas.hydro.data.TimeSerieEnsemble;
 import optas.optimizer.HaltonSequenceSampling;
 import optas.optimizer.Optimizer.AbstractFunction;
 import optas.optimizer.SampleLimitException;
+import optas.optimizer.SobolsSequenceSampling;
 import optas.optimizer.management.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.regression.Interpolation;
@@ -45,8 +46,8 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
     double yA[][] = null;
     double yB[][] = null;
 
-    double deltaY_AB[] = null;
-
+    double EyA[] = null;
+    double VyA[] = null;
     Interpolation I;
 
     double range[][] = null;
@@ -138,7 +139,7 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
         }
         ts = new TimeSerieEnsemble(ts_raw.name,size,ts_raw.getTimeInterval());
 
-        HaltonSequenceSampling sampler = new HaltonSequenceSampling();        
+        SobolsSequenceSampling sampler = new SobolsSequenceSampling();
         sampler.setFunction(new AbstractFunction() {
             @Override
             public double[] f(double[] x) throws SampleLimitException, ObjectiveAchievedException {
@@ -178,7 +179,7 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
         log("Generate Data");
         this.setProgress(0.0);
 
-        sampleData(2000);
+        sampleData(5000);
 
         log("Resample Data");
         this.setProgress(0.0);
@@ -191,7 +192,8 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
         yB = new double[Lh][];
         x0A = new double[n];
         x0B = new double[n];
-        deltaY_AB = new double[T];
+        EyA = new double[T];
+        VyA = new double[T];
 
         for (int i = 0; i < Lh; i++) {
             setProgress((double)i/(double)Lh);
@@ -208,11 +210,13 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
             yB[i] = this.ts.getValue(id_iB);
 
             for (int t=0;t<T;t++){
-                deltaY_AB[t] += Math.abs(yA[i][t] - yB[i][t]);
+                EyA[t] += yA[i][t];
+                VyA[t] += yA[i][t]*yA[i][t];
             }
         }
         for (int t=0;t<T;t++){
-            deltaY_AB[t] /= Lh;
+            EyA[t] /= Lh;
+            VyA[t] = (VyA[t]/ Lh) - EyA[t]*EyA[t];
         }
     }
 
@@ -234,7 +238,7 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
             I.addObserver(o);
         I.setData(x_raw, s);
         I.init();
-        
+        //System.out.println("Error:" + I.estimateCrossValidationError(3, Interpolation.ErrorMethod.E2));
         range = this.getParameterRange();
         updateData();        
         
@@ -299,22 +303,25 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
 
             setProgress((double)i/(double)Lh);
         }
+        
+        for (int t = 0; t < T; t++) {
+            double ti1=0;
+            double ti2=0;
+            for (int i=0;i<Lh;i++){
+                ti1 += yA[i][t]*yC[i][t];
+                ti2 += yA[i][t]*yD[i][t];
 
-        double deltaY_AC[] = new double[T],
-               deltaY_AD[] = new double[T];
-
-        for (int i = 0; i < Lh; i++) {
-            for (int t=0;t<T;t++){
-                deltaY_AC[t] += Math.abs(yA[i][t] - yC[i][t]);
-                deltaY_AD[t] += Math.abs(yA[i][t] - yD[i][t]);
+                /*deltaY_AC[t] += Math.abs(yA[i][t] - yC[i][t]);
+                deltaY_AD[t] += Math.abs(yA[i][t] - yD[i][t]);*/
             }
-        }
-        for (int t=0;t<T;t++){
-            deltaY_AC[t] = deltaY_AC[t] / Lh;// - EY_AC*EY_AC;
-            deltaY_AD[t] = deltaY_AD[t] / Lh;// - EY_BC*EY_BC;
-            
-            sensitivityIndex[t][0] = (deltaY_AD[t] / deltaY_AB[t]);
-            sensitivityIndex[t][1] = 1.0 - (deltaY_AC[t] / deltaY_AB[t]);
+            ti1/=Lh;
+            ti2/=Lh;
+
+            double VyAC = ti1 - EyA[t]*EyA[t];
+            double VyBC = ti2 - EyA[t]*EyA[t];
+
+            sensitivityIndex[t][0] = Math.max((VyAC / VyA[t]),0);
+            sensitivityIndex[t][1] = Math.max(1.0 - (VyBC / VyA[t]),0);
         }
 
         return sensitivityIndex;

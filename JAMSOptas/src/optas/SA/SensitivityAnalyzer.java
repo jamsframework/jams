@@ -8,10 +8,9 @@ package optas.SA;
 import java.util.ArrayList;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.SimpleEnsemble;
-import optas.optimizer.HaltonSequenceSampling;
 import optas.optimizer.Optimizer.AbstractFunction;
-import optas.optimizer.RandomSampler;
 import optas.optimizer.SampleLimitException;
+import optas.optimizer.SobolsSequenceSampling;
 import optas.optimizer.management.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.regression.Interpolation;
@@ -110,9 +109,10 @@ public abstract class SensitivityAnalyzer {
         for (int j=0;j<n;j++){
             x[j] = new SimpleEnsemble(x_raw[j].name + "(*)", size);
         }
-        y = new EfficiencyEnsemble(y_raw.name + "(*)", size, true);
 
-        HaltonSequenceSampling sampler = new HaltonSequenceSampling();
+        y = new EfficiencyEnsemble(y_raw.name + "(*)", size, y_raw.isPositiveBest());
+
+        SobolsSequenceSampling sampler = new SobolsSequenceSampling();
         //RandomSampler sampler = new RandomSampler();
         sampler.setFunction(new AbstractFunction() {
             @Override
@@ -133,7 +133,7 @@ public abstract class SensitivityAnalyzer {
         sampler.setDebugMode(false);
         sampler.setInputDimension(n);
         sampler.setMaxn(size);
-        //sampler.setOffset(0);
+        sampler.setOffset(0);
         sampler.setOutputDimension(1);
         sampler.optimize();
         ArrayList<Sample> result = sampler.getSamples();

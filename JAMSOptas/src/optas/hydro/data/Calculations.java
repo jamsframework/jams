@@ -112,7 +112,8 @@ public class Calculations {
        
         Integer ids[] = e.sort();
 
-        double elitismThreshold = e.getValue(ids[(int)(ids.length/10.0)]);
+        double elitismThreshold = e.getValue(ids[(int)(ids.length*0.1)]);
+        //double elitismThreshold = e.getValue(ids[(int)(ids.length*0.05)]);
 
         for (int i=0;i<ids.length*0.95;i++){
             double fx = e.getValue(ids[i]);

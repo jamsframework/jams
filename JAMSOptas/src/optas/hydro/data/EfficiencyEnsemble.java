@@ -39,7 +39,7 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
         this.rangeMax = rangeMax;
     }
 
-    public enum Method{NashSutcliffe, RootMeanSquareError, AbsoluteError, Bias, logNashSutcliffe}
+    public enum Method{NashSutcliffe, NashSutcliffe1, RootMeanSquareError, AbsoluteError, Bias, logNashSutcliffe, logNashSutcliffe1}
 
     @Override
     public void add(Integer id, double value){
@@ -83,7 +83,8 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
                     filteredSim[j][c] = sim.get(i, id_i);
                 }
             }
-            c++;
+            if (!filterMap[i])
+                c++;
         }
 
 
@@ -114,6 +115,32 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
                 this.isPostiveBest = true;
                 break;
             }
+            case logNashSutcliffe1:{
+                double aobs = 0;
+                for (int i=0;i<kStar;i++){
+                    aobs += filteredObservation[i];
+                }
+                aobs /= filteredObservation.length;
+
+                double denumerator = 0;
+                for (int i=0;i<kStar;i++){
+                    double d = filteredObservation[i]-aobs;
+                    denumerator += Math.abs(d);
+                }
+
+                for (int i=0;i<sim.size;i++){
+                    int id_i = sim.getId(i);
+                    double numerator = 0;
+                    for (int j=0;j<kStar;j++){
+                        double d1 = Math.log(Math.abs(filteredSim[i][j] - filteredObservation[j]));
+                        numerator += Math.abs(d1);
+                    }
+                    double e2 = 1.0 - (numerator / denumerator);
+                    this.add(id_i, e2);
+                }
+                this.isPostiveBest = true;
+                break;
+            }
             case NashSutcliffe:{
                 double aobs = 0;
                 for (int i=0;i<kStar;i++){
@@ -136,6 +163,32 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
                     }
                     double e2 = 1.0 - (numerator / denumerator);
                     this.add(id_i, e2);
+                }
+                this.isPostiveBest = true;
+                break;
+            }
+            case NashSutcliffe1:{
+                double aobs = 0;
+                for (int i=0;i<kStar;i++){
+                    aobs += filteredObservation[i];
+                }
+                aobs /= filteredObservation.length;
+
+                double denumerator = 0;
+                for (int i=0;i<kStar;i++){
+                    double d = filteredObservation[i]-aobs;
+                    denumerator += Math.abs(d);
+                }
+
+                for (int i=0;i<sim.size;i++){
+                    int id_i = sim.getId(i);
+                    double numerator = 0;
+                    for (int j=0;j<kStar;j++){
+                        double d1 = filteredSim[i][j] - filteredObservation[j];
+                        numerator += Math.abs(d1);
+                    }
+                    double e1 = 1.0 - (numerator / denumerator);
+                    this.add(id_i, e1);
                 }
                 this.isPostiveBest = true;
                 break;

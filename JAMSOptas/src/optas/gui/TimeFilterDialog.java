@@ -106,7 +106,7 @@ public class TimeFilterDialog extends JDialog{
         int endYear = calendar.get(Calendar.YEAR);
 
         DefaultListModel model = new DefaultListModel();
-        for (int i = 0; i < endYear - startYear; i++) {
+        for (int i = 0; i <= endYear - startYear; i++) {
             model.add(i, new Integer(i + startYear));
         }
 
