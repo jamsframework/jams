@@ -8,7 +8,7 @@
  */
 package optas.optimizer;
 
-//muss noch überarbeitet und integriert werden .. .
+//muss noch Ã¼berarbeitet und integriert werden .. .
 import optas.optimizer.management.OptimizerDescription;
 import java.util.ArrayList;
 import jams.JAMS;

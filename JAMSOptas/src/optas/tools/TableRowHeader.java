@@ -85,7 +85,7 @@ public class TableRowHeader extends JViewport implements AdjustmentListener{
         }
     }
 
-    // Nur eine leere Hülle, damit eine "Simulation" aufgebaut werden kann.
+    // Nur eine leere HÃ¼lle, damit eine "Simulation" aufgebaut werden kann.
     private static class Dummy extends JComponent{
         public void paint( Graphics g ){
             // do nothing
@@ -96,7 +96,7 @@ public class TableRowHeader extends JViewport implements AdjustmentListener{
         }
     }
 
-    // Stellt den Knopf für eine Reihe dar.
+    // Stellt den Knopf fÃ¼r eine Reihe dar.
     private class Cell extends JLabel {
         public void set( int row ) {
             setHorizontalAlignment( CENTER );

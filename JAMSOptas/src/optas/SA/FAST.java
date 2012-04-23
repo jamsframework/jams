@@ -19,7 +19,7 @@ public class FAST extends SensitivityAnalyzer{
     Random rnd = new Random();
     Measure measure = Measure.FirstOrder;
 
-    // ok die frequenzen müssen wohl in Fm linear unabhängig sein. da m irgendwie von der parameterzahl abhängt sollten wir auf der sicheren seite
+    // ok die frequenzen mï¿½ssen wohl in Fm linear unabhÃ¤ngig sein. da m irgendwie von der parameterzahl abhÃ¤ngt sollten wir auf der sicheren seite
     //sein, wenn wir mit 191 beginnen
     int omega[] = new int[]{/*2,     3,     5,     7,    11,    13,    17,    19,    23,    29,    31,    37,    41,    43,
    47,    53,    59,    61,    67,    71,    73,    79,    83,    89,    97,   101,   103,   107,

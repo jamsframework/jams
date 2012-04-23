@@ -115,7 +115,7 @@ public class SpatialRelaxation {
                 currentSpace[1][i] = currentSpace[1][i] + 0.1 * r;
             }
 
-            //öhm das müsste man mal testen ob das im allgemeinen auch so funktioniert, normalerweise interessiert für die parameter außerhalb
+            //Ã¶hm das mÃ¼sste man mal testen ob das im allgemeinen auch so funktioniert, normalerweise interessiert fÃ¼r die parameter auÃŸerhalb
             //des subspaces die obere und untere grenze nicht
             conf.log("#new lower range:" + Arrays.toString((currentSpace[0])));
             conf.log("#new upper range:" + Arrays.toString((currentSpace[1])));

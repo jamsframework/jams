@@ -312,7 +312,7 @@ public class Statistics implements Serializable{
             rmin -= (rmax-rmin)*0.2;
             rmax += (rmax-rmin)*0.2;
 
-            y[i] = new EfficiencyEnsemble("test", L, false, rmin, rmax); //TODO .. die grenzen sind obj. abh‰ngig ..
+            y[i] = new EfficiencyEnsemble("test", L, false, rmin, rmax); //TODO .. die grenzen sind obj. abh√§ngig ..
 
             for (int k = 0; k < n(); k++) {
                 ensemble[k] = new SimpleEnsemble("test", L);

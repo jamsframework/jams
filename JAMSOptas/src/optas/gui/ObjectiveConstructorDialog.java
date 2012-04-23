@@ -264,7 +264,7 @@ public class ObjectiveConstructorDialog extends JDialog{
         this.getContentPane().add(mainPanel);
         this.pack();
 
-        // Größe des Bildschirms ermitteln
+        // GrÃ¶ÃŸe des Bildschirms ermitteln
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         // Position des JFrames errechnen

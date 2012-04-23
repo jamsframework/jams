@@ -25,13 +25,16 @@ public class LogarithmicNashSutcliffe extends EfficiencyCalculator {
         double var  = 0;
         double avg  = 0;
         for (int i=0;i<m.length;i++){
-            avg += Math.log(m[i]);
+            if (m[i]>0)
+                avg += Math.log(m[i]);
         }
         avg /= m.length;
 
         for (int i=0;i<m.length;i++){
-            rsme += Math.pow(Math.abs(Math.log(m[i])-Math.log(s[i])),pow);
-            var  += Math.pow(Math.abs(Math.log(m[i])-avg),pow);
+            if (m[i]>0 & s[i]>0){
+                rsme += Math.pow(Math.abs(Math.log(m[i])-Math.log(s[i])),pow);
+                var  += Math.pow(Math.abs(Math.log(m[i])-avg),pow);
+            }
         }
         return 1.0 - (rsme / var);
     }

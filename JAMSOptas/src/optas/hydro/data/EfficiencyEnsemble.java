@@ -92,22 +92,28 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
             case logNashSutcliffe:{
                 double aobs = 0;
                 for (int i=0;i<kStar;i++){
-                    aobs += filteredObservation[i];
+                    if (filteredObservation[i]>0){
+                        aobs += Math.log(filteredObservation[i]);
+                    }
                 }
                 aobs /= filteredObservation.length;
 
                 double denumerator = 0;
                 for (int i=0;i<kStar;i++){
-                    double d = filteredObservation[i]-aobs;
-                    denumerator += d*d;
+                    if (filteredObservation[i]>0){
+                        double d = Math.log(filteredObservation[i])-aobs;
+                        denumerator += d*d;
+                    }
                 }
 
                 for (int i=0;i<sim.size;i++){
                     int id_i = sim.getId(i);
                     double numerator = 0;
                     for (int j=0;j<kStar;j++){
-                        double d1 = Math.log(Math.abs(filteredSim[i][j] - filteredObservation[j]));
-                        numerator += d1*d1;
+                        if (filteredObservation[j]>0 && filteredSim[i][j]>0){
+                            double d1 = (Math.abs(Math.log(filteredSim[i][j]) - Math.log(filteredObservation[j])));
+                            numerator += d1*d1;
+                        }
                     }
                     double e2 = 1.0 - (numerator / denumerator);
                     this.add(id_i, e2);
@@ -118,22 +124,28 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
             case logNashSutcliffe1:{
                 double aobs = 0;
                 for (int i=0;i<kStar;i++){
-                    aobs += filteredObservation[i];
+                    if (filteredObservation[i]>0){
+                        aobs += Math.log(filteredObservation[i]);
+                    }
                 }
                 aobs /= filteredObservation.length;
 
                 double denumerator = 0;
                 for (int i=0;i<kStar;i++){
-                    double d = filteredObservation[i]-aobs;
-                    denumerator += Math.abs(d);
+                    if (filteredObservation[i]>0){
+                        double d = Math.log(filteredObservation[i])-aobs;
+                        denumerator += Math.abs(d);
+                    }
                 }
 
                 for (int i=0;i<sim.size;i++){
                     int id_i = sim.getId(i);
                     double numerator = 0;
                     for (int j=0;j<kStar;j++){
-                        double d1 = Math.log(Math.abs(filteredSim[i][j] - filteredObservation[j]));
-                        numerator += Math.abs(d1);
+                        if (filteredObservation[j]>0 && filteredSim[i][j]>0){
+                            double d1 = Math.abs(Math.log(filteredSim[i][j]) - Math.log(filteredObservation[j]));
+                            numerator += Math.abs(d1);
+                        }
                     }
                     double e2 = 1.0 - (numerator / denumerator);
                     this.add(id_i, e2);
@@ -229,7 +241,7 @@ public class EfficiencyEnsemble extends SimpleEnsemble{
 
                     double bias = 0;
 
-                    for (int j=0;j<K;j++){                        
+                    for (int j=0;j<kStar;j++){
                         double d1 = filteredSim[i][j] - filteredObservation[j];
                         bias += (d1);
                     }                    

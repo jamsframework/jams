@@ -16,7 +16,7 @@ import javax.swing.SortOrder;
 import javax.swing.UIManager;
 
 /**
- * A renderer for a JTableHeader with text rotated 90° counterclockwise.
+ * A renderer for a JTableHeader with text rotated 90Â° counterclockwise.
  * <P>
  * Extends {@link DefaultTableHeaderCellRenderer}.
  *
@@ -62,7 +62,7 @@ public class VerticalTableHeaderCellRenderer extends DefaultTableHeaderCellRende
   }
 
   /**
-   * An icon implementation to paint the contained icon rotated 90° clockwise.
+   * An icon implementation to paint the contained icon rotated 90Â° clockwise.
    * <P>
    * This implementation assumes that the L&F provides ascending and
    * descending sort icons of identical size.
@@ -79,7 +79,7 @@ public class VerticalTableHeaderCellRenderer extends DefaultTableHeaderCellRende
 
     /**
      * Paints an icon suitable for the header of a sorted table column,
-     * rotated by 90° clockwise.  This rotation is applied to compensate
+     * rotated by 90Â° clockwise.  This rotation is applied to compensate
      * the rotation already applied to the passed in Graphics reference
      * by the VerticalLabelUI.
      * <P>
