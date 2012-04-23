@@ -13,10 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 import javax.swing.AbstractAction;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -46,9 +44,9 @@ import optas.hydro.data.SimpleEnsemble;
 import optas.hydro.data.TimeSerieEnsemble;
 import optas.hydro.data.DataCollection;
 import optas.hydro.data.DataSet;
-import optas.hydro.data.Efficiency;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.Measurement;
+import optas.hydro.data.TimeFilter;
 import optas.hydro.data.TimeFilterFactory;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -142,9 +140,11 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
     private TitledBorder enabledPercentilFilterPanelBorder = null;
     private TitledBorder disabledPercentilFilterPanelBorder = null;
     private JButton filterButton = null;
+    private JButton inverseFilterButton = null;
     private JButton clearTimeFilterButton = null;
     private JButton clearValueFilterButton = null;
     private JButton deleteFilteredValuesButton = null;
+    private JButton deleteAttribute = null;
     private JXDatePicker extractDatePicker = null;
     private JButton extractButton;
     private JTable table = null;
@@ -276,12 +276,14 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
             filterFromValueField.setEnabled(true);
             filterSimPanel.setBorder(enabledValueFilterPanelBorder);
             filterButton.setEnabled(true);
+            inverseFilterButton.setEnabled(true);
         } else {
             filterSimPanel.setBorder(disabledValueFilterPanelBorder);
             filterFromValueField.setEnabled(false);
             filterToValueField.setEnabled(false);
             filterFromValueField.setText("");
             filterToValueField.setText("");
+            inverseFilterButton.setEnabled(false);
         }
     }
     private void switchPercentilFilterComponentState(boolean enabled, Object item) {
@@ -299,12 +301,14 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
             filterToPercentilField.setEnabled(true);
             filterFromPercentilField.setEnabled(true);            
             filterButton.setEnabled(true);
+            inverseFilterButton.setEnabled(true);
         } else {
             filterPercentilPanel.setBorder(disabledPercentilFilterPanelBorder);
             filterFromPercentilField.setEnabled(false);
             filterToPercentilField.setEnabled(false);
             filterFromPercentilField.setText("");
             filterToPercentilField.setText("");
+            inverseFilterButton.setEnabled(false);
         }
     }
     private void switchTimeFilterComponentState(boolean enabled, Object item) {
@@ -409,7 +413,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 filterButton.setEnabled(false);
-
+                inverseFilterButton.setEnabled(false);
                 if (dataSetList.getSelectedRow() == -1) {
                     switchTimeFilterComponentState(false, null);
                     switchValueFilterComponentState(false, null);
@@ -419,6 +423,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
 
                     displayDataButton.setEnabled(false);
                     filterButton.setEnabled(false);
+                    inverseFilterButton.setEnabled(false);
                     return;
                 }
 
@@ -429,6 +434,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
 
                 filterButton.setEnabled(false);
+                inverseFilterButton.setEnabled(false);
 
                 if (delegate.hasTimeInterval(item)) {
                     switchTimeFilterComponentState(true, item);
@@ -517,6 +523,14 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                     }
                 }
             }
+        });
+
+        deleteAttribute = new JButton("Delete Attribute");
+        deleteAttribute.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent e){
+               Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
+               delegate.getDataCollection().removeDataset(item.toString());
+           }
         });
 
         ActionListener datePickerActionListener = new ActionListener() {
@@ -783,7 +797,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                         Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
                         Object obj = delegate.getItemForIdentifier(item);
                         if (obj instanceof SimpleEnsemble) {
-                            delegate.filter(item, minValue, maxValue);
+                            delegate.filter(item, minValue, maxValue, false);
                         }
                     } catch (NumberFormatException nfe) {
                         JOptionPane.showMessageDialog(ensembleList, "Unrecongnized value " + nfe.getLocalizedMessage());
@@ -797,7 +811,55 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                         Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
                         Object obj = delegate.getItemForIdentifier(item);
                         if (obj instanceof SimpleEnsemble) {
-                            delegate.filterPercentil(item, minValue, maxValue);
+                            delegate.filterPercentil(item, minValue, maxValue, false);
+                        }
+                    } catch (NumberFormatException nfe) {
+                        JOptionPane.showMessageDialog(ensembleList, "Unrecongnized value " + nfe.getLocalizedMessage());
+                    }
+                }
+            }
+        });
+
+        inverseFilterButton = new JButton("Inverse Filter");
+        inverseFilterButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (filterStartDatePicker.isEnabled() && filterFinalDatePicker.isEnabled()) {
+                    Date startDate = filterStartDatePicker.getDate();
+                    Date endDate = filterFinalDatePicker.getDate();
+
+                    TimeInterval interval = JAMSDataFactory.createTimeInterval();
+                    interval.getStart().setTime(startDate);
+                    interval.getEnd().setTime(endDate);
+
+                    TimeFilter f = TimeFilterFactory.getRangeFilter(interval);
+                    f.setInverted(true);
+                    getDataCollection().filterTimeDomain(f);
+                }
+                if (filterFromValueField.isEnabled() && filterToValueField.isEnabled()) {
+                    try {
+                        double minValue = Double.parseDouble(filterFromValueField.getText());
+                        double maxValue = Double.parseDouble(filterToValueField.getText());
+
+                        Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
+                        Object obj = delegate.getItemForIdentifier(item);
+                        if (obj instanceof SimpleEnsemble) {
+                            delegate.filter(item, minValue, maxValue, true);
+                        }
+                    } catch (NumberFormatException nfe) {
+                        JOptionPane.showMessageDialog(ensembleList, "Unrecongnized value " + nfe.getLocalizedMessage());
+                    }
+                }
+                if (filterFromPercentilField.isEnabled() && filterToPercentilLabel.isEnabled()) {
+                    try {
+                        double minValue = Double.parseDouble(filterFromPercentilField.getText());
+                        double maxValue = Double.parseDouble(filterToPercentilField.getText());
+
+                        Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
+                        Object obj = delegate.getItemForIdentifier(item);
+                        if (obj instanceof SimpleEnsemble) {
+                            delegate.filterPercentil(item, minValue, maxValue, true);
                         }
                     } catch (NumberFormatException nfe) {
                         JOptionPane.showMessageDialog(ensembleList, "Unrecongnized value " + nfe.getLocalizedMessage());
@@ -834,7 +896,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 }
             }
         });
-        
+
         mcat5Toolbar = new MCAT5Toolbar(this);
     }
 
@@ -875,6 +937,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                     .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(closeButton)
                         .addComponent(sumTSData)
+                        .addComponent(deleteAttribute)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(displayPanel)
                             .addComponent(filterPanel)
@@ -893,6 +956,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(closeButton)
                         .addComponent(sumTSData)
+                        .addComponent(deleteAttribute)
                         .addGroup(layout.createParallelGroup()
                             .addComponent(displayPanel)
                             .addComponent(filterPanel)
@@ -971,6 +1035,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 .addComponent(filterPercentilPanel)
                 .addGroup(layout.createSequentialGroup()
                     .addComponent(filterButton)
+                    .addComponent(inverseFilterButton)
                     .addComponent(deleteFilteredValuesButton)
                 )
                 .addGroup(layout.createSequentialGroup()
@@ -985,6 +1050,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 .addComponent(filterPercentilPanel)
                 .addGroup(layout.createParallelGroup()
                     .addComponent(filterButton)
+                    .addComponent(inverseFilterButton)
                     .addComponent(deleteFilteredValuesButton)
                 )
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)

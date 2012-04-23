@@ -99,17 +99,17 @@ public class DataCollectionViewController implements DataCollectionViewDelegate 
     public void itemIsBeingDisplayed(Object item) {
     }
 
-    public void filter(Object item, double low, double high){
+    public void filter(Object item, double low, double high, boolean inverse){
         Object o = getItemForIdentifier(item);
         if (o instanceof SimpleEnsemble){
-            collection.filter(item.toString(), low, high);
+            collection.filter(item.toString(), low, high, inverse);
         }
     }
 
-    public void filterPercentil(Object item, double low, double high){
+    public void filterPercentil(Object item, double low, double high, boolean inverse){
         Object o = getItemForIdentifier(item);
         if (o instanceof SimpleEnsemble){
-            collection.filterPercentil(item.toString(), low, high);
+            collection.filterPercentil(item.toString(), low, high, inverse);
         }
     }
 
