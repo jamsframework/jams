@@ -30,7 +30,9 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -167,6 +169,32 @@ public class FileTools {
         writer.close();
     }
 
+    public static void stringToUTF8File(String fileName, String string) throws IOException {
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileName)),"UTF-8"));
+        out.write(string);
+        out.close();
+            /*
+        String newString = new String(string.getBytes(JAMS.getCharset()));
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+        writer.write(string);
+        writer.close();*/
+    }
+
+    /**
+     * Reads a file and returns its content as string
+     * @param fileName The name of the file
+     * @return The file content
+     */
+    public static String fileToString(String fileName, String encoding) throws IOException {
+
+        String result = "";
+
+        FileInputStream in = new FileInputStream(fileName);
+        result = streamToString(in, encoding);
+        in.close();
+        return result;
+    }
     /**
      * Reads a file and returns its content as string
      * @param fileName The name of the file
@@ -188,12 +216,20 @@ public class FileTools {
      * @return The stream content
      */
     public static String streamToString(InputStream in) throws IOException {
+        return streamToString(in, JAMS.getCharset());
+    }
+    /**
+     * Reads from a stream and returns its content as string
+     * @param in The stream
+     * @return The stream content
+     */
+    public static String streamToString(InputStream in, String encoding) throws IOException {
         String content = "";
 
         byte[] buffer = new byte[in.available()];
         in.read(buffer);
 
-        content = new String(buffer, JAMS.getCharset());
+        content = new String(buffer, encoding);
 
         return content;
     }
