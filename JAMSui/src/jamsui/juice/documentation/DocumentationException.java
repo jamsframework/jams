@@ -64,7 +64,7 @@ public class DocumentationException extends Exception {
             case unknownError:
                 return "An unknown error occured. Details:" + details;
             case FOPDependenciesIncomplete:
-                return "Apache FOP Dependencies are not valid. (check Batik.jar, Avalon.jar, commons.logging, fop.jar)";
+                return "Apache FOP Dependencies are not valid. (check Batik.jar, Avalon.jar, commons.logging, fop.jar, xmlgraphics.jar)";
         }
         return "exception";
     }
