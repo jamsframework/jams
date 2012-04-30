@@ -93,7 +93,7 @@ public class ParameterSpaceReducer extends OptimizationController {
                              "minn=" + this.minSamplingPerIteration.getValue() +  ";analyzeQuality=true;targetQuality=0.6";
 
         String params[] = paramString.split(";");
-        ArrayList<OptimizerParameter> list = new ArrayList<>();
+        ArrayList<OptimizerParameter> list = new ArrayList<OptimizerParameter>();
 
         for (int i=0;i<params.length;i++){
             String entry[] = params[i].split("=");
@@ -174,8 +174,8 @@ public class ParameterSpaceReducer extends OptimizationController {
 
         double meanImprovedRatio = 0.0;
         
-        ArrayList<Sample> retainList = new ArrayList<>();
-        Set<Sample> completeList = new HashSet<>();
+        ArrayList<Sample> retainList = new ArrayList<Sample>();
+        Set<Sample> completeList = new HashSet<Sample>();
 
 
         int maxIterations = 30;

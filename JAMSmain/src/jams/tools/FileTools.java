@@ -22,14 +22,7 @@
 package jams.tools;
 
 import jams.JAMS;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -63,6 +56,7 @@ public class FileTools {
 
     /**
      * delete all given files
+     *
      * @param theFiles
      */
     public static void deleteFiles(File[] theFiles) {
@@ -183,6 +177,7 @@ public class FileTools {
 
     /**
      * Reads a file and returns its content as string
+     *
      * @param fileName The name of the file
      * @return The file content
      */
@@ -212,6 +207,7 @@ public class FileTools {
 
     /**
      * Reads from a stream and returns its content as string
+     *
      * @param in The stream
      * @return The stream content
      */
@@ -235,7 +231,9 @@ public class FileTools {
     }
 
     /**
-     * Creates an abolute path from dir and file name. If dir name is null, user.dir is used instead.
+     * Creates an abolute path from dir and file name. If dir name is null,
+     * user.dir is used instead.
+     *
      * @param dirName The dir name
      * @param fileName The file name
      * @return A fully qualified name of the file.
@@ -260,6 +258,7 @@ public class FileTools {
 
     /**
      * replace string in file
+     *
      * @param fileName
      * @param findString
      * @param replaceString

@@ -4,9 +4,11 @@
  */
 package jamsui.juice.documentation;
 
+import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.gui.ObserverWorkerDlg;
+import jamsui.juice.JUICE;
 import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
 import java.awt.Frame;
 import java.io.BufferedReader;
@@ -33,11 +35,14 @@ import org.apache.fop.cli.CommandLineOptions;
  */
 public class DocumentationWizard extends Observable {
 
-    boolean debug = true;
     final String DOCUMENTATION_DIRECTORY = "/documentation/";
 
-    private void log(String msg) {
-        if (debug) {
+    static void log(String msg) {
+
+        int debug = Integer.parseInt(JUICE.getJamsProperties().getProperty(JAMSProperties.DEBUG_IDENTIFIER, "1"));
+
+        if (debug >= JAMS.VVERBOSE) {
+            JUICE.getJuiceFrame().getInfoDlg().appendText(msg);
             System.out.println(msg);
         }
     }
@@ -183,7 +188,7 @@ public class DocumentationWizard extends Observable {
         PrintStream ps = System.err;
         //System.setErr(new PrintStream(baos));
         if (org.apache.fop.cli.Main.checkDependencies()) {
-            System.out.println("startFOP");
+            log("startFOP");
             startFOP(args);
         }else{
             throw new DocumentationException(DocumentationExceptionCause.FOPDependenciesIncomplete);

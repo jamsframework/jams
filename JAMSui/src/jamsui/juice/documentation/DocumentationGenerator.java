@@ -1,5 +1,6 @@
 package jamsui.juice.documentation;
 
+import jams.JAMS;
 import jams.JAMSProperties;
 import jams.JAMSVersion;
 import jams.data.Attribute;
@@ -10,10 +11,7 @@ import jams.tools.StringTools;
 import jams.tools.XMLTools;
 import jamsui.juice.JUICE;
 import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,13 +50,6 @@ public class DocumentationGenerator {
     ClassLoader loader = null;
     TreeMap<String, String> bibEntrySet = new TreeMap<String, String>();
     TreeMap<String, String> automaticComponentDescriptions = new TreeMap<String, String>();
-    private boolean debug = true;
-
-    private void log(String msg) {
-        if (debug) {
-            System.out.println(msg);
-        }
-    }
 
     private static String getAnnotation(Class<?> clazz, String jarFileName) throws ClassNotFoundException, DocumentationException, NoClassDefFoundError {
         if (!jams.model.Component.class.isAssignableFrom(clazz)) {
@@ -111,9 +102,9 @@ public class DocumentationGenerator {
                 variableTemplate = variableTemplate.replace("%access%", jvd.access().toString());
                 variableTemplate = variableTemplate.replace("%update%", jvd.update().toString());
                 String desc = jvd.description();
-                variableTemplate = variableTemplate.replace("%description%", Tools.changeEncoding(desc,"ISO-8859-1","UTF-8"));
+                variableTemplate = variableTemplate.replace("%description%", Tools.changeEncoding(desc, "ISO-8859-1", "UTF-8"));
 
-                variableTemplate = variableTemplate.replace("%unit%", Tools.changeEncoding(jvd.unit(),"ISO-8859-1","UTF-8"));//jvd ist in utf-8 wird aber als iso-8859-1 interpretiert!!
+                variableTemplate = variableTemplate.replace("%unit%", Tools.changeEncoding(jvd.unit(), "ISO-8859-1", "UTF-8"));//jvd ist in utf-8 wird aber als iso-8859-1 interpretiert!!
                 variableTemplate = variableTemplate.replace("%upperBound%", Double.toString(jvd.upperBound()));
                 variableTemplate = variableTemplate.replace("%lowerBound%", Double.toString(jvd.lowerBound()));
                 variableTemplate = variableTemplate.replace("%defaultValue%", jvd.defaultValue().toString());
@@ -129,7 +120,7 @@ public class DocumentationGenerator {
     }
 
     private void processAnnotations(File documentationOutputDir, File jarFile) throws DocumentationException {
-        log("generating annotation documentation");
+        DocumentationWizard.log("generating annotation documentation");
 
         JarFile jFile = null;
         String jarFileName = jarFile.getName();
@@ -171,9 +162,9 @@ public class DocumentationGenerator {
                         automaticComponentDescriptions.put(clazz.getName(), desc);
                     }
                 } catch (java.lang.NoClassDefFoundError e) {
-                    log("Warning: Could not load class " + className + " of jar file " + jarFileName);
+                    DocumentationWizard.log("Warning: Could not load class " + className + " of jar file " + jarFileName);
                 } catch (ClassNotFoundException cnfe) {
-                    log("Warning: Class not found for entry: " + entry.getName() + " in jar file " + jarFileName);
+                    DocumentationWizard.log("Warning: Class not found for entry: " + entry.getName() + " in jar file " + jarFileName);
                 }
             }
         }
@@ -289,7 +280,7 @@ public class DocumentationGenerator {
         File templateFile = new File(documentationHome, templateFileName + "_" + Bundle.resources.getString("lang") + ".xml");
         if (templateFile.exists()) {
             try {
-                mainTemplate = FileTools.fileToString(templateFile.getAbsolutePath(),"UTF-8");
+                mainTemplate = FileTools.fileToString(templateFile.getAbsolutePath(), "UTF-8");
             } catch (IOException ex) {
                 mainTemplate = Tools.getTemplate("main.xml");
                 ex.printStackTrace();
@@ -320,15 +311,15 @@ public class DocumentationGenerator {
         }
 
         if (modelName == null) {
-            log("warning: model is not named");
+            DocumentationWizard.log("warning: model is not named");
             modelName = "unknown";
         }
         if (modelAuthor == null) {
-            log("warning: model author is not named");
+            DocumentationWizard.log("warning: model author is not named");
             modelAuthor = "unknown";
         }
         if (modelDescription == null) {
-            log("warning: model date is not named");
+            DocumentationWizard.log("warning: model date is not named");
         }
 
 
@@ -380,16 +371,16 @@ public class DocumentationGenerator {
         String[] libList = StringTools.toArray(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER), ";");
         ArrayList<File> list = Tools.getJarList(libList);
         for (File f : list) {
-            log("lib : " + f);
+            DocumentationWizard.log("lib : " + f);
             processAnnotations(documentationOutputDir, f);
         }
         //write automatic annotations
         for (String component : automaticComponentDescriptions.keySet()) {
             String value = automaticComponentDescriptions.get(component);
 
-            log("-" + component);
+            DocumentationWizard.log("-" + component);
             if (value == null) {
-                log("warning: no annotations for component:" + component);
+                DocumentationWizard.log("warning: no annotations for component:" + component);
             }
 
             String template = Tools.getTemplate("componentAnnotation.xml");
@@ -449,14 +440,14 @@ public class DocumentationGenerator {
         try {
             languageIndependentComponentDescription = XMLTools.getDocument(languageIndependentComponentDescriptionFile.getAbsolutePath());
         } catch (FileNotFoundException fnfe) {
-            log("warning: the documentation of " + componentName + " is incomplete");
+            DocumentationWizard.log("warning: the documentation of " + componentName + " is incomplete");
             return null;
         }
 
         //read lag indepent description (based on annotations)
         NodeList tableList = languageIndependentComponentDescription.getElementsByTagName("informaltable");
         if (tableList.getLength() != 2) {
-            log("Error Annotation Document must have exaclty two tables, found " + tableList.getLength() + "!");
+            DocumentationWizard.log("Error Annotation Document must have exaclty two tables, found " + tableList.getLength() + "!");
             return null;
         }
 
@@ -497,7 +488,7 @@ public class DocumentationGenerator {
             Element row = (Element) rows.item(i);
             NodeList entries = row.getElementsByTagName("entry");
             if (entries.getLength() != 7) {
-                log("Invalid Annotation");
+                DocumentationWizard.log("Invalid Annotation");
             } else {
                 Variable v = new Variable();
                 v.variable = StringEscapeUtils.escapeXml(entries.item(0).getTextContent());
@@ -505,7 +496,7 @@ public class DocumentationGenerator {
                 v.unit = StringEscapeUtils.escapeXml(entries.item(2).getTextContent());
                 v.range = StringEscapeUtils.escapeXml(entries.item(3).getTextContent());
                 v.datatype = StringEscapeUtils.escapeXml(entries.item(4).getTextContent());
-                v.variabletype =StringEscapeUtils.escapeXml(entries.item(5).getTextContent());
+                v.variabletype = StringEscapeUtils.escapeXml(entries.item(5).getTextContent());
                 v.defaultvalue = StringEscapeUtils.escapeXml(entries.item(6).getTextContent());
 
                 component.variablen.add(v);
@@ -522,7 +513,7 @@ public class DocumentationGenerator {
         try {
             languageDependentComponentDescription = XMLTools.getDocument(languageDependentComponentDescriptionFile.getAbsolutePath());
         } catch (FileNotFoundException fnfe) {
-            log("warning: the documentation of " + componentName + " is incomplete");
+            DocumentationWizard.log("warning: the documentation of " + componentName + " is incomplete");
             return;
         }
 
@@ -532,7 +523,7 @@ public class DocumentationGenerator {
 
         NodeList subTitleList = languageDependentComponentDescription.getElementsByTagName("subtitle");
         if (subTitleList.getLength() != 1) {
-            log("warning: wrong number of subtitles in descriptions of component: " + componentName);
+            DocumentationWizard.log("warning: wrong number of subtitles in descriptions of component: " + componentName);
         } else {
             component.subtitle = StringEscapeUtils.escapeXml(subTitleList.item(0).getTextContent());
         }
@@ -546,7 +537,7 @@ public class DocumentationGenerator {
 
         NodeList sect2List = languageDependentComponentDescription.getElementsByTagName("sect2");
         if (sect2List.getLength() < 2) {
-            log("warning: wrong number of sect2 blocks in descriptions of component: " + componentName);
+            DocumentationWizard.log("warning: wrong number of sect2 blocks in descriptions of component: " + componentName);
             return;
         } else {
             Element variableBlock = (Element) sect2List.item(0);
@@ -639,6 +630,13 @@ public class DocumentationGenerator {
             }
             var.datatype.replace("EntityCollection", "Entity Collection");
             var.datatype.replace("Double;", "Double Array");
+
+            String unitString = "";
+            try {
+                unitString = new String(var.unit.getBytes(), "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                ex.printStackTrace();
+            }
 
             String varContent = "<row>\n"
                     + "<entry>" + var.variable + "</entry>\n"
