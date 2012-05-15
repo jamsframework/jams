@@ -1,7 +1,7 @@
 main.majorversion=2
-main.minorversion=17
-main.revision=05
+main.minorversion=18
+main.revision=00
 api.majorversion=1
 api.minorversion=0
-date=20120411
+date=20120511
 contact=nsk@uni-jena.de

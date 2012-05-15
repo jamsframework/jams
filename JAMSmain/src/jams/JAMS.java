@@ -55,7 +55,7 @@ public class JAMS {
     /**
      * Default character encoding
      */
-    private static String charset = "ISO-8859-1";
+    private static String charset = "UTF-8";
     /**
      * The standard font
      */

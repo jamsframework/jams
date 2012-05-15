@@ -25,8 +25,6 @@ import jams.JAMS;
 import jams.JAMSException;
 import jams.ExceptionHandler;
 import jams.io.ParameterProcessor;
-import jams.meta.ComponentDescriptor.NullClassException;
-import jams.meta.ComponentField.AttributeLinkException;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelElement;
 import jams.meta.ModelProperties.ModelProperty;
@@ -37,8 +35,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -575,5 +571,9 @@ public class ModelDescriptor extends ComponentCollection {
         ComponentDescriptor partitioner = new ComponentDescriptor(partitionerClazz, this, exHandler);
         enableSpatialConcurrency(getRootNode(), controller, partitioner, numThreads, exHandler);
 
+    }
+    
+    public void metaProcess() {
+        
     }
 }
