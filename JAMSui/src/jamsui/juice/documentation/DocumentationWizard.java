@@ -8,6 +8,7 @@ import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.gui.ObserverWorkerDlg;
+import jams.gui.tools.GUIHelper;
 import jamsui.juice.JUICE;
 import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
 import java.awt.Frame;
@@ -330,9 +331,8 @@ public class DocumentationWizard extends Observable {
             public void run() {
                 try {
                     runDocumentationProcess(workspace, modelDocument, properties.getProperty(SystemProperties.DOCBOOK_HOME_PATH));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println(e);
+                } catch (DocumentationException e) {
+                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), e.toString(), JAMS.i18n("Error"));
                 }
             }
         });

@@ -78,11 +78,11 @@ partitionerClazz = runtime.getClassLoader().loadClass("jams.components.concurren
 
 //modelDescriptor.enableConcurrency(2, controllerClazz, new ExHandler());
 modelDescriptor.metaProcess();
-modelDescriptor.enableSpatialConcurrency(10, controllerClazz, partitionerClazz, new ExHandler());
+modelDescriptor.enableSpatialConcurrency(100, controllerClazz, partitionerClazz, new ExHandler());
 //System.out.println(XMLTools.getStringFromDocument(modelIO.getModelDocument(modelDescriptor)));
 
 // load the model into the runtime and execute it
-//runtime.loadModel(modelDescriptor, defaultWorkspacePath)
-//runtime.runModel()
+runtime.loadModel(modelDescriptor, defaultWorkspacePath)
+runtime.runModel()
 System.exit(0)
 

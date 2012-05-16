@@ -102,9 +102,9 @@ public class DocumentationGenerator {
                 variableTemplate = variableTemplate.replace("%access%", jvd.access().toString());
                 variableTemplate = variableTemplate.replace("%update%", jvd.update().toString());
                 String desc = jvd.description();
-                variableTemplate = variableTemplate.replace("%description%", Tools.changeEncoding(desc, "ISO-8859-1", "UTF-8"));
+                variableTemplate = variableTemplate.replace("%description%", desc);
 
-                variableTemplate = variableTemplate.replace("%unit%", Tools.changeEncoding(jvd.unit(), "ISO-8859-1", "UTF-8"));//jvd ist in utf-8 wird aber als iso-8859-1 interpretiert!!
+                variableTemplate = variableTemplate.replace("%unit%", jvd.unit());
                 variableTemplate = variableTemplate.replace("%upperBound%", Double.toString(jvd.upperBound()));
                 variableTemplate = variableTemplate.replace("%lowerBound%", Double.toString(jvd.lowerBound()));
                 variableTemplate = variableTemplate.replace("%defaultValue%", jvd.defaultValue().toString());
@@ -366,6 +366,24 @@ public class DocumentationGenerator {
         Tools.writeContent(mainXML, mainTemplate);
     }
 
+    private void dumpTempFiles(File documentationOutputDir) {
+
+        if (!documentationOutputDir.isDirectory()) {
+            return;
+        }
+
+        FilenameFilter filter = new FilenameFilter() {
+
+            public boolean accept(File dir, String name) {
+                return name.startsWith("Component_Annotation");
+            }
+        };
+        
+        for (String fileName : documentationOutputDir.list(filter)) {
+            new File(documentationOutputDir, fileName).delete();
+        }
+    }
+
     public void createDocumentation(File documentationHome, File documentationOutputDir, Document document) throws DocumentationException {
         //read annotations from jar files
         String[] libList = StringTools.toArray(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER), ";");
@@ -405,6 +423,8 @@ public class DocumentationGenerator {
         createMainDocument(documentationHome, documentationOutputDir, modelNode, componentSet);
 
         createBibliographyXML(documentationOutputDir);
+
+        dumpTempFiles(documentationOutputDir);
     }
 
     private class Component {
