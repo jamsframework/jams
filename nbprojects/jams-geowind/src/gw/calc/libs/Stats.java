@@ -351,7 +351,7 @@ public class Stats {
      * Calcs coefficients of linear regression between x, y data
      * @param xData the independent data array (x)
      * @param yData the dependent data array (y)
-     * @return (intercept, gradient, r�)
+     * @return (intercept, gradient, r²)
      */
     private static double[] calcLinReg(double[] xData, double[] yData){
         double sumX = 0;
