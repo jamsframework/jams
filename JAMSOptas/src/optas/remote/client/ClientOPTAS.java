@@ -230,7 +230,7 @@ public class ClientOPTAS {
                     addFilesToZip(out, subPath + f.getName(), f.listFiles());
                 } else if (f.isFile()) {
                     System.out.println(f);
-                    // Eintrag f�r neue Datei anlegen
+                    // Eintrag für neue Datei anlegen
                     if (!subPath.isEmpty() && !subPath.endsWith("/")) {
                         subPath += "/";
                     }
@@ -258,7 +258,7 @@ public class ClientOPTAS {
                     new ZipOutputStream(new FileOutputStream(dstZip));
             // Archivierungs-Modus setzen
             out.setMethod(ZipOutputStream.DEFLATED);
-            // Hinzuf�gen der einzelnen Einträge
+            // Hinzufügen der einzelnen Einträge
             for (File f : srcFiles) {
                 //we do not want to locate srcFiles in subDir .. thats why this explicit enumeration
                 if (f.isDirectory()) {
@@ -284,7 +284,7 @@ public class ClientOPTAS {
             // Zip-Archiv mit Stream verbinden
             ZipInputStream in =
                     new ZipInputStream(new FileInputStream(srcZip));
-            // Hinzuf�gen der einzelnen Einträge
+            // Hinzufügen der einzelnen Einträge
             ZipEntry e = null;
             while ((e = in.getNextEntry()) != null) {
                 if (e.isDirectory()) {

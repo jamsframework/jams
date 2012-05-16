@@ -245,7 +245,7 @@ public class ParallelExecution<X,Y> {
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
                 if (files[i].isDirectory()) {
-                    deleteDir(files[i]); // Verzeichnis leeren und anschließend l�schen
+                    deleteDir(files[i]); // Verzeichnis leeren und anschließend löschen
                 } else {
                     files[i].delete(); // Datei löschen
                 }
