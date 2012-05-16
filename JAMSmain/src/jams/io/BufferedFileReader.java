@@ -121,7 +121,7 @@ public class BufferedFileReader extends Reader implements Serializable{
      * Creates a buffering character-input stream that uses a default-sized
      * input buffer.
      *
-     * @param  is   A FileInputStream with default encoding "ISO-8859-1"
+     * @param  is   A FileInputStream with proper encoding
      */
     public BufferedFileReader(FileInputStream is) {
         this(is, defaultCharBufferSize, JAMS.getCharset());

@@ -403,8 +403,6 @@ public class ModelIO {
             rootElement.setAttribute("helpbaseurl", md.getHelpBaseUrl());
             rootElement.setAttribute("version", JAMSVersion.getInstance().getVersionString());
 
-            rootElement.appendChild(document.createTextNode("\n"));
-
             document.appendChild(rootElement);
 
             element = (Element) document.createElement("description");
@@ -415,8 +413,6 @@ public class ModelIO {
             element.setAttribute("name", "workspaceDirectory");
             element.setAttribute("value", md.getWorkspacePath());
             rootElement.appendChild(element);
-
-            rootElement.appendChild(document.createTextNode("\n"));
 
             element = (Element) document.createElement("launcher");
             for (String group : md.getModelProperties().getGroupNames()) {
@@ -433,7 +429,6 @@ public class ModelIO {
                             ModelProperty property = (ModelProperty) modelProperty;
                             Element propertyElement = createPropertyElement(document, property);
                             groupElement.appendChild(propertyElement);
-                            groupElement.appendChild(document.createTextNode("\n"));
                         }
                         if (modelProperty instanceof Group) {
                             Group subgroup = (Group) modelProperty;
@@ -443,7 +438,6 @@ public class ModelIO {
                             if (!helpComponent.isEmpty()) {
                                 Element helpElement = helpComponent.createDOMElement(document);
                                 subgroupElement.appendChild(helpElement);
-                                subgroupElement.appendChild(document.createTextNode("\n"));
                             }
 
                             ArrayList subgroupProperties = subgroup.getProperties();
@@ -454,29 +448,23 @@ public class ModelIO {
                                     ModelProperty property = (ModelProperty) subgroupProperty;
                                     Element propertyElement = createPropertyElement(document, property);
                                     subgroupElement.appendChild(propertyElement);
-                                    subgroupElement.appendChild(document.createTextNode("\n"));
                                 }
                             }
                             groupElement.appendChild(subgroupElement);
-                            groupElement.appendChild(document.createTextNode("\n"));
                         }
                     }
                 }
                 element.appendChild(groupElement);
-                element.appendChild(document.createTextNode("\n"));
             }
             rootElement.appendChild(element);
-            rootElement.appendChild(document.createTextNode("\n"));
 
             //create output datastore elements
             element = (Element) document.createElement("datastores");
             for (OutputDSDescriptor ds : md.getDatastores().values()) {
                 Document outputDSDoc = ds.createDocument();
                 element.appendChild(document.importNode(outputDSDoc.getDocumentElement(), true));
-                element.appendChild(document.createTextNode("\n"));
             }
             rootElement.appendChild(element);
-            rootElement.appendChild(document.createTextNode("\n"));
 
             if (cd instanceof ContextDescriptor) {
                 ContextDescriptor context = (ContextDescriptor) cd;
@@ -488,7 +476,6 @@ public class ModelIO {
                     element.setAttribute("value", attribute.getValue());
 
                     rootElement.appendChild(element);
-                    rootElement.appendChild(document.createTextNode("\n"));
                 }
             }
 
@@ -496,7 +483,6 @@ public class ModelIO {
             for (int i = 0; i < childCount; i++) {
 
                 rootElement.appendChild(getSubDoc((ModelNode) rootNode.getChildAt(i), document));
-                rootElement.appendChild(document.createTextNode("\n"));
 
             }
 
@@ -536,7 +522,6 @@ public class ModelIO {
         if (!helpComponent.isEmpty()) {
             Element helpElement = helpComponent.createDOMElement(document);
             propertyElement.appendChild(helpElement);
-            propertyElement.appendChild(document.createTextNode("\n"));
         }
 
         return propertyElement;
@@ -564,7 +549,6 @@ public class ModelIO {
         rootElement.setAttribute("name", cd.getInstanceName());
         rootElement.setAttribute("class", cd.getClazz().getName());
         rootElement.setAttribute("enabled", Boolean.toString(cd.isEnabled()));
-        rootElement.appendChild(document.createTextNode("\n"));
 
         Element element;
 
@@ -572,8 +556,6 @@ public class ModelIO {
             ContextDescriptor context = (ContextDescriptor) cd;
 
             for (ContextAttribute attribute : context.getStaticAttributes().values()) {
-
-                rootElement.appendChild(document.createTextNode("\n"));
 
                 element = (Element) document.createElement("attribute");
                 element.setAttribute("name", attribute.getName());
@@ -599,8 +581,6 @@ public class ModelIO {
                 }
 
                 rootElement.appendChild(element);
-                rootElement.appendChild(document.createTextNode("\n"));
-
             }
         }
 
@@ -608,7 +588,6 @@ public class ModelIO {
             int childCount = rootNode.getChildCount();
             for (int i = 0; i < childCount; i++) {
                 rootElement.appendChild(getSubDoc((ModelNode) rootNode.getChildAt(i), document));
-                rootElement.appendChild(document.createTextNode("\n"));
             }
         }
 

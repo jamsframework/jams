@@ -228,11 +228,11 @@ public class XMLTools {
     private static Transformer getTransformer(boolean omitXML) throws TransformerConfigurationException {
         
         TransformerFactory factory = TransformerFactory.newInstance();
-        factory.setAttribute("indent-number", new Integer(4));
+
         Transformer transformer = factory.newTransformer();
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-//        transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "4");
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, omitXML?"yes":"no");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, JAMS.getCharset());

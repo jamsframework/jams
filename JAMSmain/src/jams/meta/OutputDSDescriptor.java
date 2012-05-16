@@ -54,7 +54,6 @@ public class OutputDSDescriptor {
         dsElement.setAttribute("context", this.context.getInstanceName());
         dsElement.setAttribute("name", this.getName());
         dsElement.setAttribute("enabled", Boolean.toString(this.enabled));
-        dsElement.appendChild(document.createTextNode("\n"));
 
         for (FilterDescriptor f : filters) {
             Element filterElement = (Element) document.createElement("filter");
@@ -64,7 +63,6 @@ public class OutputDSDescriptor {
         }
 
         Element traceElement = (Element) document.createElement("trace");
-        traceElement.appendChild(document.createTextNode("\n"));
         dsElement.appendChild(traceElement);
 
         for (ContextAttribute ca : contextAttributes) {

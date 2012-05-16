@@ -156,24 +156,23 @@ public class FileTools {
 
     public static void stringToFile(String fileName, String string) throws IOException {
 
-        String newString = new String(string.getBytes(JAMS.getCharset()));
-
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+        //BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileName)), JAMS.getCharset()));
         writer.write(string);
         writer.close();
     }
 
-    public static void stringToUTF8File(String fileName, String string) throws IOException {
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileName)),"UTF-8"));
-        out.write(string);
-        out.close();
-            /*
-        String newString = new String(string.getBytes(JAMS.getCharset()));
-
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-        writer.write(string);
-        writer.close();*/
-    }
+//    public static void stringToUTF8File(String fileName, String string) throws IOException {
+//        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(fileName)),"UTF-8"));
+//        out.write(string);
+//        out.close();
+//            /*
+//        String newString = new String(string.getBytes(JAMS.getCharset()));
+//
+//        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+//        writer.write(string);
+//        writer.close();*/
+//    }
 
     /**
      * Reads a file and returns its content as string
