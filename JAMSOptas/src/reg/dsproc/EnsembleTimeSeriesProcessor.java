@@ -127,7 +127,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         int idMap[] = null;
 
         for (int i = 0; i < modelRunIds.length; i++) {
-            DataMatrix col = getTimeSeriesData(i);
+            DataMatrix col = getTimeSeriesData(this.getModelRuns()[i]);
             if (idMap == null) {
                 idMap = new int[dateIds.length];
                 //bad quadratic time!!
@@ -615,7 +615,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
      * @throws java.sql.SQLException
      */
     public synchronized int[] getYears() throws SQLException, IOException {
-        DataMatrix block0 = getTimeSeriesData(0);
+        DataMatrix block0 = getTimeSeriesData(this.getModelRuns()[0]);
 
         Attribute.Calendar minDate = JAMSDataFactory.createCalendar();
         minDate.setValue((String) block0.getIds()[0]);
@@ -641,7 +641,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
      */
     public synchronized Attribute.Calendar[] getTimeSteps() throws SQLException, IOException {
 
-        DataMatrix block0 = getTimeSeriesData(0);
+        DataMatrix block0 = getTimeSeriesData(this.getModelRuns()[0]);
         Object[] ids = block0.getIds();
         Attribute.Calendar steps[] = new Attribute.Calendar[ids.length];
 
