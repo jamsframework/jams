@@ -294,7 +294,11 @@ public class DataStoreProcessor {
 
         for (int i = 0; i < attributes.size(); i++) {
             AttributeData attribute = attributes.get(i);
-            q += attribute.getName() + " " + TYPE_MAP.get(attribute.getType()) + ",";
+            String dataType = TYPE_MAP.get(attribute.getType());
+            if (dataType == null){
+                throw new SQLException("unsupported attribute type:" + attribute.getType());
+            }
+            q += attribute.getName() + " " + dataType + ",";
         }
         q = q.substring(0, q.length() - 1);
 
