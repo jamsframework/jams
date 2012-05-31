@@ -28,6 +28,7 @@ import jams.workspace.DataSet;
 import jams.workspace.DataValue;
 import java.sql.SQLException;
 import jams.workspace.DefaultDataSet;
+import jams.workspace.Workspace;
 import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
@@ -384,7 +385,9 @@ public class JdbcSQL implements DataReader {
 
         return 0;
     }
-    
+    public void setWorkspace(Workspace ws){
+
+    }
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         if (isClosed) {

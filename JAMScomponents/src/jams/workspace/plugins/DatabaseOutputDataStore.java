@@ -29,6 +29,7 @@ import jams.workspace.JAMSWorkspace;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import jams.model.Context;
+import jams.workspace.Workspace;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.SQLException;
@@ -204,6 +205,10 @@ public class DatabaseOutputDataStore implements OutputDataStore {
 
     public DefaultFilter[] getFilters() {
         return filters;
+    }
+
+    public void setWorkspace(Workspace ws){
+
     }
 //todo
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{

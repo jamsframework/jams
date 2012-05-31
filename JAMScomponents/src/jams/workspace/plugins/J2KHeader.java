@@ -17,7 +17,11 @@ import java.util.TimeZone;
  */
 public class J2KHeader {
 
-    SimpleDateFormat j2kSdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+    public static SimpleDateFormat j2kSdf = new SimpleDateFormat("dd.MM.yyyy HH:mm"){
+        {
+            setTimeZone(TimeZone.getTimeZone("GMT"));
+        }
+    };
 
     public enum TimePeriod {
 
@@ -182,7 +186,7 @@ public class J2KHeader {
         return timestep;
     }
 
-    public void setTimeStep(int timestep) {
+    private void setTimeStep(int timestep) {
         this.timestep = timestep;
     }
     private String spatialReferenceID;
@@ -239,7 +243,7 @@ public class J2KHeader {
         this.unitDescription = unitDescription;
     }
 
-    public Date addTimePeriod(Date date, TimePeriod period, int count) {
+    private Date addTimePeriod(Date date, TimePeriod period, int count) {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(date);
 

@@ -61,7 +61,7 @@ public class DoubleConditionalContext extends JAMSContext {
         return 1;
     }
 
-    class RunEnumerator implements ComponentEnumerator {
+    public class RunEnumerator implements ComponentEnumerator {
 
         final DummyComponent dummy = new DummyComponent();
         Component[] compArray = getCompArray();

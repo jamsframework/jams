@@ -621,7 +621,7 @@ public class MOCOM extends MOOptimizer {
                 }                
                 break;
             }
-            if (Rmax <= 1) {
+            if (Rmax <= 1) { try{
                 System.out.println("********************************************");
                 System.out.println("---------->OPTIMIZATION STOP<---------------");
                 sayThis(JAMS.i18n("SUCCESSFUL"));                
@@ -673,6 +673,9 @@ public class MOCOM extends MOOptimizer {
                     c++;
                     sayThis(out);
                 }                
+                }catch(Throwable t){
+                    t.printStackTrace();
+                }
             }
         }
 

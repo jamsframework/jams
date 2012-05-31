@@ -305,7 +305,7 @@ public class SimpleSCE extends SOOptimizer {
         return SearchMethod.step(this, simplex, A, b, lowBound, upBound);    
     }
 
-    void EvolveSubPopulation(int nspl, int nps, int npg, int nopt, SampleSO c[], double[] bu, double[] bl) {
+    boolean EvolveSubPopulation(int nspl, int nps, int npg, int nopt, SampleSO c[], double[] bu, double[] bl) {
         //Evolve sub-population igs for nspl steps:
         for (int loop = 0; loop < nspl; loop++) {
             // Select simplex by sampling the complex according to a linear
@@ -336,7 +336,7 @@ public class SimpleSCE extends SOOptimizer {
             try{
                 s[nps - 1] = cceua(s, bl, bu);
             }catch(Exception e){
-                return;
+                return true;
             }
 
             //Replace the simplex into the complex;            
@@ -348,6 +348,7 @@ public class SimpleSCE extends SOOptimizer {
             Arrays.sort(c, new SampleSOComperator(false));
         // End of Inner Loop for Competitive Evolution of Simplexes
         }
+        return false;
     }
        
     public SampleSO sceua(double[] x0, double[] bl, double[] bu, int maxn, int kstop, double pcento, double peps, int ngs, int iseed){
@@ -403,6 +404,7 @@ public class SimpleSCE extends SOOptimizer {
         double criter[] = new double[kstop];
         double criter_change = 100000;
 
+        boolean finish = false;
         while (criter_change > pcento) {
             nloop++;
             // Loop on complexes (sub-populations);
@@ -420,8 +422,7 @@ public class SimpleSCE extends SOOptimizer {
                 for ( i = 0; i < npg; i++) {
                     c[k1[i]] = x[k2[i]].clone();
                 }
-                EvolveSubPopulation(nspl, nps, npg, nopt, c, bu, bl);
-
+                finish |= EvolveSubPopulation(nspl, nps, npg, nopt, c, bu, bl);
                 // Replace the complex back into the population;
                 for ( i = 0; i < npg; i++) {                    
                     x[k2[i]] = c[k1[i]];
@@ -429,7 +430,8 @@ public class SimpleSCE extends SOOptimizer {
             // End of Loop on Complex Evolution;
             }            
             Arrays.sort(x, new SampleSOComperator(false));
-                  
+            if (finish)
+                return x[0];
             //Compute the standard deviation for each parameter            
             gnrng = NormalizedgeometricRange(x, bound);
 

@@ -24,6 +24,7 @@ package jams.workspace.plugins;
 import jams.io.BufferedFileReader;
 import jams.workspace.DataReader;
 import jams.workspace.DefaultDataSet;
+import jams.workspace.Workspace;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -103,7 +104,17 @@ import java.io.ObjectOutputStream;
     public void setDataFileName(String dataFileName) {
         this.dataFileName = dataFileName;
     }
-       
+
+    public void setWorkspace(Workspace ws) throws IOException{
+        File file = new File(dataFileName);
+        File file2 = new File(ws.getInputDirectory(),file.getName());
+        long p = this.reader.getPosition();
+        dataFileName = file2.getAbsolutePath();
+        this.init();
+        this.reader.setPosition(p);
+
+    }
+
     private void writeObject(ObjectOutputStream out) throws IOException{
         out.defaultWriteObject();
         out.writeLong(this.reader.getPosition());
