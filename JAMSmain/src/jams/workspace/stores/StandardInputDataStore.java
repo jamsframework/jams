@@ -44,7 +44,7 @@ public abstract class StandardInputDataStore implements InputDataStore, Serializ
 
     protected HashMap<String, DataReader> dataIO = new HashMap<String, DataReader>();
 
-    transient protected JAMSWorkspace ws;
+    transient protected Workspace ws;
 
     protected DataSetDefinition dsd;
 

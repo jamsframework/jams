@@ -183,6 +183,15 @@ public class TableDataStore extends StandardInputDataStore {
             io.cleanup();
         }
     }
+
+    public void setWorkspace(Workspace ws) throws IOException{
+        super.ws = ws;
+
+        for (DataReader io : dataIOSet) {
+            io.setWorkspace(ws);
+        }
+    }
+
     private void writeObject(ObjectOutputStream out) throws IOException, ClassNotFoundException{
         out.defaultWriteObject();
     }

@@ -331,7 +331,7 @@ public class ModelLoader {
             } catch (NoSuchFieldException nsfe) {
                 throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_") + varName + JAMS.i18n("_not_found!"));
             } catch (ClassNotFoundException cnfe) {
-                throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_class_") + varClassName + JAMS.i18n("_not_found!"));
+                throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_class_") + varClassName + JAMS.i18n("_not_found!") + "\n" + JAMS.i18n("This_could_happen_if_you_try_to_initialize_an_array_per_value"));
             } catch (IllegalArgumentException iae) {
                 throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_") + varName + JAMS.i18n(":_wrong_type!"));
             } catch (InstantiationException ie) {

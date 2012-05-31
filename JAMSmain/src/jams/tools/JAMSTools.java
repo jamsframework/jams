@@ -23,6 +23,7 @@ package jams.tools;
 
 import jams.JAMS;
 import jams.SystemProperties;
+import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.model.Component;
 import java.lang.reflect.Field;
@@ -169,6 +170,30 @@ public class JAMSTools {
         if (!StringTools.isEmptyString(charset)) {
             JAMS.setCharset(charset);
         }
+    }
+
+    static public int[] convertJAMSArrayToArray(Attribute.Integer[] in){
+        int out[] = new int[in.length];
+        for (int i=0;i<in.length;i++){
+            out[i] = in[i].getValue();
+        }
+        return out;
+    }
+
+    static public String[] convertJAMSArrayToArray(Attribute.String[] in){
+        String out[] = new String[in.length];
+        for (int i=0;i<in.length;i++){
+            out[i] = in[i].getValue();
+        }
+        return out;
+    }
+
+    static public double[] convertJAMSArrayToArray(Attribute.Double[] in){
+        double out[] = new double[in.length];
+        for (int i=0;i<in.length;i++){
+            out[i] = in[i].getValue();
+        }
+        return out;
     }
 
     static public boolean cloneInto(Object dst, Object src, Class clazz){

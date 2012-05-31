@@ -173,18 +173,20 @@ public class JAMSModel extends JAMSContext implements Model {
     }
 
     public boolean moveWorkspaceDirectory(String workspaceDirectory) {
-        setWorkspacePath(workspaceDirectory);
+        //setWorkspacePath(workspaceDirectory); // das geht nicht, weil dann die current stores weg sind ..
+        
+        this.workspaceDirectory.setValue(workspaceDirectory);
+        
         // create output dir
         try {
-            this.workspace.init();
-            this.workspace.checkValidity(false);
+            this.workspace.setDirectory(new File(workspaceDirectory));
         } catch (InvalidWorkspaceException e) {
             getRuntime().sendHalt("Error during model setup: \""
                     + this.workspace.getDirectory().getAbsolutePath() + "\" is not a valid datastore, because: " + e.toString());
             return false;
         }
         // reanimate data tracers
-        setupDataTracer();        
+        setupDataTracer();
         return true;
     }
 

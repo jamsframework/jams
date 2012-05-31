@@ -31,6 +31,7 @@ import jams.workspace.DataSetDefinition;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.DefaultDataSetDefinition;
 import jams.workspace.JAMSWorkspace;
+import jams.workspace.Workspace;
 import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DoubleValue;
 import java.io.File;
@@ -65,6 +66,7 @@ public class J2KTSDataStore extends TSDataStore {
     //private RandomAccessFile j2kTSFileReader;
     transient private BufferedFileReader j2kTSFileReader;
     private File sourceFile;
+    private String relativPath = null;
     private boolean parseDate = false;
     private String charsetName;
 
@@ -116,6 +118,7 @@ public class J2KTSDataStore extends TSDataStore {
         }
 
         //this.j2kTSFileReader = new RandomAccessFile(sourceFile,"r");
+        this.relativPath = new File(this.ws.getDirectory().getAbsolutePath()).toURI().relativize(new File(sourceFile.getAbsolutePath()).toURI()).getPath();
         this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(sourceFile), charsetName);
         readJ2KFile();
 
@@ -363,7 +366,20 @@ public class J2KTSDataStore extends TSDataStore {
         }
     }
 
-    
+    @Override
+    public void setWorkspace(Workspace ws) throws IOException{        
+        this.ws = ws;
+        long position = j2kTSFileReader.getPosition();
+        if (j2kTSFileReader != null) {
+            try {
+                j2kTSFileReader.close();
+            } catch (Exception e) {
+            }
+        }
+
+        this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(new File(ws.getDirectory(),this.relativPath)));
+        j2kTSFileReader.setPosition(position);
+    }
 
     private void readObject(ObjectInputStream in) throws IOException,ClassNotFoundException{
         in.defaultReadObject();

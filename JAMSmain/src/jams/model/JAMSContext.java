@@ -906,7 +906,8 @@ public class JAMSContext extends JAMSComponent implements Context {
         while (initCleanupEnumerator.hasNext() && doRun) {
             Component comp = initCleanupEnumerator.next();
             try {
-                comp.cleanup();
+                if (comp!=null) // i dont know why this can happen?!
+                    comp.cleanup();
             } catch (Exception e) {
                 getModel().getRuntime().handle(e, comp.getInstanceName());
             }

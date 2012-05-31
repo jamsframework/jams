@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 import jams.model.Context;
+import jams.workspace.Workspace;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -49,7 +50,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
     private String[] attributes;
     private DefaultFilter[] filters;
     transient private BufferedFileWriter writer;
-    transient private JAMSWorkspace ws;
+    transient private Workspace ws;
     private int columnsPerLine;
     private int columnCounter;
     private boolean firstRow;
@@ -92,6 +93,20 @@ public class DefaultOutputDataStore implements OutputDataStore {
 
     public String getID() {
         return id;
+    }
+
+    public void setWorkspace(Workspace ws) throws IOException{
+        boolean wasOpen = this.writer == null ? false : true;
+        this.close();
+
+        this.ws = ws;
+        File outputDirectory = ws.getOutputDataDirectory();
+        outputDirectory.mkdirs();
+        outputFile = new File(outputDirectory.getPath() + File.separator + id + JAMSWorkspace.OUTPUT_FILE_ENDING);
+
+        if (wasOpen){
+            open(true);
+        }
     }
 
     public String[] getAttributes() {
@@ -138,6 +153,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
     public void close() throws IOException {
         if (writer != null) {
             writer.close();
+            writer = null;
         }
     }
 

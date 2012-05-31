@@ -469,5 +469,16 @@ public class TSDataStore extends TableDataStore {
     public Set<DataReader> getDataIOs() {
         return this.dataIOSet;
     }
+
+    @Override
+    public void close() {
+        if (this.dumpFileReader!=null){
+            try{
+                this.dumpFileReader.close();
+            }catch(IOException ioe){
+                ioe.printStackTrace();
+            }
+        }
+    }
 }
 

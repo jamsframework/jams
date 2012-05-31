@@ -35,7 +35,6 @@ import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.model.SmallModelState;
-import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import jams.tools.FileTools;
@@ -58,6 +57,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observable;
@@ -99,9 +99,34 @@ public class JAMSWorkspace implements Workspace {
     }
 
     public void init() throws InvalidWorkspaceException {
+        this.contextStores.clear();
+        this.inputDataStores.clear();
+        this.outputDataStores.clear();
+        this.registeredInputDataStores.clear();
+        this.registeredOutputDataStores.clear();
+        
         this.loadConfig();
         this.checkValidity(readonly);
         this.updateDataStores();
+
+        Set<DataStore> rmCandidates = new HashSet<DataStore>();
+        for (DataStore d: this.currentStores){
+            try{
+                if (d instanceof OutputDataStore){
+                    d.close();
+                    rmCandidates.add(d);
+                } else
+                    d.setWorkspace(this);
+            }catch(IOException ioe){
+                throw new InvalidWorkspaceException(ioe.toString());
+            }
+        }
+        currentStores.removeAll(rmCandidates);
+    }
+
+    public void setDirectory(File directory) throws InvalidWorkspaceException {
+        this.directory = directory;
+        init();
     }
 
     /**

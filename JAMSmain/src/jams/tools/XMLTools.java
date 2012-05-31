@@ -63,10 +63,14 @@ public class XMLTools {
         }
         
         try {
-            
+            /*byte[] buffer = new byte[(int)file.length()];
+            BufferedInputStream f = new BufferedInputStream(new FileInputStream(file));
+            f.read(buffer);*/
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(file);
+
             
+                        
         } catch (SAXException sxe) {
             // Error generated during parsing
             JAMSTools.handle(sxe);
@@ -237,6 +241,12 @@ public class XMLTools {
         transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, JAMS.getCharset());
         
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+        if (omitXML){
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+        }
+        transformer.setOutputProperty(OutputKeys.ENCODING, JAMS.getCharset());        
         return transformer;
     }
     

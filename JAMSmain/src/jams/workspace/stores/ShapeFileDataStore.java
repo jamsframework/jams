@@ -25,6 +25,7 @@ import jams.tools.StringTools;
 import jams.tools.XMLTools;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.JAMSWorkspace;
+import jams.workspace.Workspace;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -191,5 +192,10 @@ public class ShapeFileDataStore extends GeoDataStore {
 
     public String getKeyColumn() {
         return keyColumn;
-    }       
+    }
+
+    public void setWorkspace(Workspace ws)throws IOException {
+        close();
+        //todo
+    }
 }
