@@ -22,6 +22,7 @@
 
 package jams.workspace.stores;
 
+import jams.workspace.Workspace;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -33,4 +34,5 @@ public interface DataStore extends Serializable {
 
     public String getID();
     public void close() throws IOException;
+    public void setWorkspace(Workspace ws) throws IOException;
 }

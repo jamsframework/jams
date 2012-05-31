@@ -21,6 +21,7 @@
  */
 package jams.workspace;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -44,5 +45,7 @@ public interface DataReader extends Serializable{
 
     public ReaderType getReaderType();
 
-    public int numberOfColumns();            
+    public int numberOfColumns();
+
+    public void setWorkspace(Workspace ws) throws IOException;
 }
