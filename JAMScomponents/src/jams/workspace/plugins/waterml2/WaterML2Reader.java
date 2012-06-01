@@ -25,6 +25,7 @@ import jams.data.Attribute;
 import jams.data.JAMSDataFactory;
 import jams.workspace.DataReader;
 import jams.workspace.DefaultDataSet;
+import jams.workspace.Workspace;
 import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
@@ -81,6 +82,10 @@ public class WaterML2Reader implements DataReader {
 
         //System.out.println(page);
         return page;
+    }
+
+    public void setWorkspace(Workspace ws){
+
     }
 
     private static String sendGetRequest(DefaultHttpClient client, HttpGet httpget) throws Exception {

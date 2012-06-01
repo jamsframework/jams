@@ -30,6 +30,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import jams.workspace.DefaultDataSet;
+import jams.workspace.Workspace;
 import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
@@ -514,7 +515,9 @@ public class PollingSQL implements DataReader {
 
         return 0;
     }
+    public void setWorkspace(Workspace ws){
 
+    }
     private void writeObject(ObjectOutputStream out) throws IOException{
         out.defaultWriteObject();
     }

@@ -28,6 +28,7 @@ import jams.workspace.DataValue;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import jams.workspace.DefaultDataSet;
+import jams.workspace.Workspace;
 import jams.workspace.datatypes.CalendarValue;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
@@ -549,7 +550,9 @@ public class OpenSQL implements DataReader {
 
         return data.toArray(new DefaultDataSet[data.size()]);
     }
+    public void setWorkspace(Workspace ws){
 
+    }
     public void writeObject(ObjectOutputStream out) throws IOException{
         out.defaultWriteObject();
     }
