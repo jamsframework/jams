@@ -80,7 +80,7 @@ public class JAMSTools {
     }
 
     /**
-     * Decides on either the a component's attribute is accessible or not and 
+     * Decides whether the a component's attribute is accessible or not and 
      * sets the value of that attribute either directly or by calling a setter
      * @param component The component
      * @param field The field representing the attributes

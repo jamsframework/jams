@@ -277,13 +277,10 @@ public class JAMSContext extends JAMSComponent implements Context {
                 }
                 if (clazz.isArray()) {
 
-                    String className = clazz.getName();
-                    className = className.substring(2, className.length() - 1);
-
                     StringTokenizer tok = new StringTokenizer(accessSpec.getAttributeName(), ";");
                     int count = tok.countTokens();
 
-                    Class componentClass = Class.forName(className);
+                    Class componentClass = clazz.getComponentType();
                     JAMSData[] array = (JAMSData[]) Array.newInstance(componentClass, count);
 
                     for (int i = 0; i < count; i++) {

@@ -44,7 +44,7 @@ public class JAMSDataFactory {
         if (clazz.isInterface()) {
             clazz = getImplementingClass(clazz);
         }
-
+        
         if (!JAMSData.class.isAssignableFrom(clazz)) {
             return null;
         }

@@ -68,6 +68,7 @@ public class ModelLoader {
 
     /**
      * Loads and returns a new model
+     *
      * @param modelDoc The XML document describing the model
      * @return The loaded model
      */
@@ -76,7 +77,7 @@ public class ModelLoader {
         ModelNode rootNode, node;
 //        Node node;
         Component topComponent;
-        
+
         rootNode = md.getRootNode();
 
         ContextDescriptor modelContext = (ContextDescriptor) rootNode.getUserObject();
@@ -86,8 +87,11 @@ public class ModelLoader {
 
         componentRepository.put(jamsModel.getName(), jamsModel);
 
-        /*Element workspaceElement = (Element) root.getElementsByTagName("workspace").item(0);
-        jamsModel.setWorkspaceDirectory(workspaceElement.getAttribute("value"));*/
+        /*
+         * Element workspaceElement = (Element)
+         * root.getElementsByTagName("workspace").item(0);
+         * jamsModel.setWorkspaceDirectory(workspaceElement.getAttribute("value"));
+         */
 
         // handle context attributes of the model
         for (ContextAttribute attribute : modelContext.getStaticAttributes().values()) {
@@ -158,13 +162,13 @@ public class ModelLoader {
     }
 
     /**
-     * Recursively create all components used in the model and add them to the component repository for easy access
+     * Recursively create all components used in the model and add them to the
+     * component repository for easy access
      */
     public Component loadComponent(ModelNode rootNode) throws ModelSpecificationException {
 
         String componentName, componentClassName, varName, varClassName = "", varValue;
         Component component, childComponent;
-        JAMSData variable;
         Class<?> componentClazz = null, varClazz = null;
         ArrayList<Component> childComponentList = new ArrayList<Component>();
 
@@ -186,7 +190,9 @@ public class ModelLoader {
                     + JAMS.i18n(")._Please_make_sure_component_names_are_unique!_Stopping_model_loading!"));
         }
 
-        jamsModel.getRuntime().println(/*JAMS.i18n("Adding:_") + */
+        jamsModel.getRuntime().println(/*
+                 * JAMS.i18n("Adding:_") +
+                 */
                 componentName + " [classID=" + String.format("%03d", getID(componentClassName))
                 + ", className=" + componentClassName + "]", JAMS.STANDARD);
 
@@ -254,17 +260,37 @@ public class ModelLoader {
                     if (varValue != null) {
 
                         // create the var object
-                        varClazz = loader.loadClass(varClassName);
+                        varClazz = Class.forName(varClassName);
+                        Object variable;
 
-                        variable = JAMSDataFactory.createInstance(varClazz);
-                        // variable = createInstance(varClazz);
+                        if (varClazz.isArray() && JAMSData.class.isAssignableFrom(varClazz.getComponentType())) {
+                            String[] varValues = varValue.split(";");
+                            Class varComponentClazz = varClazz.getComponentType();
+                            JAMSData[] array = (JAMSData[]) Array.newInstance(varComponentClazz, varValues.length);
 
-                        variable.setValue(varValue);
+                            for (int i = 0; i < varValues.length; i++) {
+                                array[i] = JAMSDataFactory.createInstance(varComponentClazz);
+                                array[i].setValue(varValues[i]);
+                            }
+
+                            variable = array;
+
+                        } else if (JAMSData.class.isAssignableFrom(varClazz)) {
+
+                            JAMSData jamsVar = JAMSDataFactory.createInstance(varClazz);
+                            jamsVar.setValue(varValue);
+                            variable = jamsVar;
+
+                        } else {
+                            
+                            throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_") + varName + JAMS.i18n(":_wrong_type!"));
+                            
+                        }
 
                         // try to attach the variable to the component's field..
-                        JAMSData data;
+                        Object data;
                         try {
-                            data = (JAMSData) JAMSTools.setField(component, field, variable);
+                            data = JAMSTools.setField(component, field, variable);
                         } catch (NoSuchMethodException nsme) {
                             throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_") + varName + JAMS.i18n(":_Access_exception!"));
                         }
@@ -272,8 +298,10 @@ public class ModelLoader {
                         // this field can be removed from the null field list
                         nullFields.get(component).remove(field);
 
-                        String id = componentName + "." + varName;
-                        jamsModel.getRuntime().getDataHandles().put(id, data);
+                        if (data instanceof JAMSData) {
+                            String id = componentName + "." + varName;
+                            jamsModel.getRuntime().getDataHandles().put(id, (JAMSData) data);
+                        }
 
                         connType = "value";
 
@@ -318,11 +346,10 @@ public class ModelLoader {
                     jamsModel.getRuntime().println(JAMS.i18n("_var_declaration:_") + varName + " [class=" + varClassName + ", access=" + jvd.access() + ", connection=" + connType + "]", JAMS.VERBOSE);
 
                     /*
-                    if (jvd.trace() == JAMSVarDescription.UpdateType.INIT) {
-                    JAMSData data = (JAMSData) field.get(component);
-                    String id = componentName + "." + varName;
-                    jamsModel.getRuntime().getDataHandles().put(id, data);
-                    }
+                     * if (jvd.trace() == JAMSVarDescription.UpdateType.INIT) {
+                     * JAMSData data = (JAMSData) field.get(component); String
+                     * id = componentName + "." + varName;
+                     * jamsModel.getRuntime().getDataHandles().put(id, data); }
                      */
                 } else {
                     throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_") + varName + JAMS.i18n("_can_not_be_accessed_(missing_annotation)!"));
@@ -331,7 +358,7 @@ public class ModelLoader {
             } catch (NoSuchFieldException nsfe) {
                 throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_") + varName + JAMS.i18n("_not_found!"));
             } catch (ClassNotFoundException cnfe) {
-                throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_class_") + varClassName + JAMS.i18n("_not_found!") + "\n" + JAMS.i18n("This_could_happen_if_you_try_to_initialize_an_array_per_value"));
+                throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_class_") + varClassName + JAMS.i18n("_not_found!"));
             } catch (IllegalArgumentException iae) {
                 throw new ModelSpecificationException(JAMS.i18n("Component_") + componentName + JAMS.i18n(":_variable_") + varName + JAMS.i18n(":_wrong_type!"));
             } catch (InstantiationException ie) {

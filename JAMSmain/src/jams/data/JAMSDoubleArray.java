@@ -44,7 +44,7 @@ public class JAMSDoubleArray implements Attribute.DoubleArray {
         } else {
             s += value[0];
             for (int i = 1; i < value.length; i++) {
-                s += "," + value[i];
+                s += ";" + value[i];
             }
         }
         return s;
@@ -59,7 +59,7 @@ public class JAMSDoubleArray implements Attribute.DoubleArray {
     }
 
     public void setValue(String value) {
-        StringTokenizer st = new StringTokenizer(value, ",");
+        StringTokenizer st = new StringTokenizer(value, ";");
         double[] values = new double[st.countTokens()];
         for (int i = 0; i < values.length; i++) {
             values[i] = Double.parseDouble(st.nextToken().trim());

@@ -41,7 +41,8 @@ public interface DataReader extends Serializable{
     public int fetchValues(int count);
     
     public DataSet[] getData();
-    public DataSet   getMetadata(int row);
+    
+    public DataSet getMetadata(int row);
 
     public ReaderType getReaderType();
 
