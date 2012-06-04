@@ -472,7 +472,7 @@ public class JAMSFrame extends JAMSLauncher {
         getMainMenu().add(fileMenu);
 
         // extras menu
-        JMenu editMenu = new JMenu(JAMS.i18n("Extras"));
+        JMenu editMenu = new JMenu(JAMS.i18n("Edit"));
 
         JMenuItem editOptionsItem = new JMenuItem(editPrefsAction);
         editOptionsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
@@ -484,8 +484,6 @@ public class JAMSFrame extends JAMSLauncher {
         JMenuItem saveOptionsItem = new JMenuItem(savePrefsAction);
         editMenu.add(saveOptionsItem);
 
-        JMenuItem loadModelExecutionStateItem = new JMenuItem(loadModelExecutionStateAction);
-        editMenu.add(loadModelExecutionStateItem);
         getMainMenu().add(editMenu);
 
         // model menu
@@ -523,6 +521,9 @@ public class JAMSFrame extends JAMSLauncher {
 
         JMenuItem rtManagerItem = new JMenuItem(rtManagerAction);
         modelMenu.add(rtManagerItem);
+        
+        JMenuItem loadModelExecutionStateItem = new JMenuItem(loadModelExecutionStateAction);
+        modelMenu.add(loadModelExecutionStateItem);
 
         // logs menu
         logsMenu = new JMenu(JAMS.i18n("Logs"));
