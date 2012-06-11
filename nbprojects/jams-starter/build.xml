@@ -11,7 +11,34 @@
     <description>Builds, tests, and runs the project jams-starter.</description>
     <import file="../../build/build-common.xml"/>
     <import file="nbproject/build-impl.xml"/>
-
+    
+    <target name="-pre-jar">
+        <ant antfile="../jams-api/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../jams-main/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../jams-common/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../jams-components/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../jams-democomponents/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../jams-geowind/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../jams-optas/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../jams-explorer/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../jams-ui/build.xml" inheritall="false" target="jar"/>
+    </target>    
+    
+    <target name="-post-clean">
+        <ant antfile="../jams-api/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="../jams-main/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="../jams-common/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="../jams-components/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="../jams-democomponents/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="../jams-geowind/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="../jams-optas/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="../jams-explorer/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="../jams-ui/build.xml" inheritall="false" target="clean"/>
+        <delete>
+            <fileset dir="../../lib" includes="**/*"/>
+            <fileset dir="../../lib/lib" includes="**/*"/>
+        </delete>
+    </target>     
 
     <!--
 
