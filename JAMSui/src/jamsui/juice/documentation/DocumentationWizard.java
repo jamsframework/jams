@@ -269,7 +269,7 @@ public class DocumentationWizard extends Observable {
             throw new DocumentationException(DocumentationExceptionCause.docBookPathNull);
         }
 
-        if (!(new File(docBookHome + "/xsltproc.exe")).exists()) {
+        if (!(new File(docBookHome + "/xsltproc.exe")).exists() && !(new File(docBookHome + "/xsltproc")).exists()) {
             throw new DocumentationException(DocumentationExceptionCause.xsltProcNotExisting);
         }
 

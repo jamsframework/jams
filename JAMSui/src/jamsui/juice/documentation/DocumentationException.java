@@ -42,7 +42,7 @@ public class DocumentationException extends Exception {
             case workspaceNull:
                 return "The workspace path is not setup correctly";
             case xsltProcNotExisting:
-                return "The programm xsltproc.exe was not found in the docbook-home directory";
+                return "The programm xsltproc was not found in the docbook-home directory";
             case docBookXSLNotExisting:
                 return "The docbook.xsl Style is not existing in the docbook-home directory";
             case templateNotFound:
