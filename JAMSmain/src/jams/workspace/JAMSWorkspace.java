@@ -102,8 +102,6 @@ public class JAMSWorkspace implements Workspace {
         this.contextStores.clear();
         this.inputDataStores.clear();
         this.outputDataStores.clear();
-        this.registeredInputDataStores.clear();
-        this.registeredOutputDataStores.clear();
         
         this.loadConfig();
         this.checkValidity(readonly);
