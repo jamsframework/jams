@@ -237,37 +237,61 @@ public class FancyPanel extends JPanel implements GeoWindView {
      */
     private Vector<Double> getResortedValues(Map<Integer, Double> idData, double[] inputIds, double[] inputValues) {
 
-        // create reversed map of idData
-        Map<Double, Integer> idPosition = new HashMap<Double, Integer>();
-        Iterator<Entry<Integer, Double>> iter = idData.entrySet().iterator();
-        while (iter.hasNext()) {
-            Entry<Integer, Double> e = iter.next();
-            idPosition.put(e.getValue(), e.getKey());
+        double[] values = new double[idData.size()];
+        Map<Double, Double> idValueMap = new HashMap<Double, Double>();
+        
+        for (int i = 0; i < inputIds.length; i++) {
+            idValueMap.put(inputIds[i], inputValues[i]);
+        }
+       
+        for (Integer idx : idData.keySet()) {
+            
+            Double id = idData.get(idx);
+            Double value = idValueMap.get(id);
+            values[idx] = value;
+            
         }
         
-
-        double[] sortedValues = new double[inputIds.length];
-        int success = 0;
-        int failure = 0;
-
-        for (int i = 0; i < inputIds.length; i++) {
-
-            if (!idPosition.containsKey(inputIds[i])) {
-                failure++;
-                continue;
-            }
-
-            success++;
-            int index = idPosition.get(inputIds[i]);
-            sortedValues[index] = inputValues[i];
-        }
-
         Vector<Double> result = new Vector<Double>();
-        for (double d : sortedValues) {
+        for (double d : values) {
             result.add(d);
         }
         return result;
     }
+    
+//    private Vector<Double> getResortedValues(Map<Integer, Double> idData, double[] inputIds, double[] inputValues) {
+//
+//        // create reversed map of idData
+//        Map<Double, Integer> idPosition = new HashMap<Double, Integer>();
+//        Iterator<Entry<Integer, Double>> iter = idData.entrySet().iterator();
+//        while (iter.hasNext()) {
+//            Entry<Integer, Double> e = iter.next();
+//            idPosition.put(e.getValue(), e.getKey());
+//        }
+//        
+//
+//        double[] sortedValues = new double[inputIds.length];
+//        int success = 0;
+//        int failure = 0;
+//
+//        for (int i = 0; i < inputIds.length; i++) {
+//
+//            if (!idPosition.containsKey(inputIds[i])) {
+//                failure++;
+//                continue;
+//            }
+//
+//            success++;
+//            int index = idPosition.get(inputIds[i]);
+//            sortedValues[index] = inputValues[i];
+//        }
+//
+//        Vector<Double> result = new Vector<Double>();
+//        for (double d : sortedValues) {
+//            result.add(d);
+//        }
+//        return result;
+//    }    
 
     private Component getTop(JPanel c) {
         int ncomponents = c.getComponentCount();
