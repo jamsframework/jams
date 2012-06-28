@@ -76,15 +76,15 @@ public class NelderMead extends Optimizer{
     @Override
     public void procedure() throws SampleLimitException, ObjectiveAchievedException{
         boolean stop = false;
-    
+    this.generator.setSeed(0);
         //first draw n+1 random points        
         SampleSO simplex[] = new SampleSO[n+1];
         if (initialSimplex != null){
             simplex = initialSimplex;
         }else{
             for (int i=0;i<n+1;i++){
-                if (i==0&&x0!=null)
-                    simplex[i] = this.getSampleSO(x0);
+                if (x0!=null&&i<x0.length)
+                    simplex[i] = this.getSampleSO(x0[i]);
                 else
                     simplex[i] = this.getSampleSO(this.randomSampler());
             }   
@@ -93,8 +93,7 @@ public class NelderMead extends Optimizer{
         
         double alpha = 1.0,gamma = 2.0,rho = 0.5,sigma = 0.5;
         
-        int restart_counter = 0;
-        int iterationcounter = 0;
+        int restart_counter = 0;        
         while(!stop){        
             if (this.factory.getSize() > getMaxn()){
                 this.log("*********************************************************");
@@ -175,6 +174,9 @@ public class NelderMead extends Optimizer{
                     continue;
                 }
             }
+
+
+
             //shrink
             for (int i=1;i<m;i++){
                 double shrink[] = new double[n];

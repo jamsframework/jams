@@ -366,7 +366,7 @@ public class GPSearch extends optas.optimizer.Optimizer {
             function.method = method;
 
             SCE optimizer = new SCE();
-            optimizer.x0 = startpoint;
+            optimizer.setStartValue(startpoint);
             optimizer.setInputDimension(n);
             optimizer.setOutputDimension(1);
             optimizer.setWorkspace(workspace);
@@ -459,7 +459,7 @@ public class GPSearch extends optas.optimizer.Optimizer {
         for (int i=0;i<n*initalSampleSize;i++){
             double nextSample[] = this.randomSampler();
             if (i==0 && x0 != null){                
-                nextSample = Arrays.copyOf(x0, n);
+                nextSample = Arrays.copyOf(x0[0], n);
             }
             for (int j=0;j<n;j++){                                    
                 nextSample[j] = (nextSample[j] - lowBound[j])/(upBound[j]-lowBound[j]);

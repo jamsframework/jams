@@ -17,6 +17,7 @@ import jams.gui.tools.GUIHelper;
 import jams.tools.XMLTools;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import optas.metamodel.ModelAnalyzer;
 import optas.metamodel.ModelModifier.WizardException;
 import java.awt.event.ActionEvent;
@@ -158,6 +159,7 @@ public class OptimizationWizard extends JPanel {
             WizardOptimizerPanel optimizerWizardPanel = new WizardOptimizerPanel(this.owner, o);
             optimizerWizard.add(optimizerWizardPanel);
             mainPane.addTab(optimizerWizardPanel.getDescription().getName(), optimizerWizardPanel);
+
             setData();
         } else if (analyzer != null) {
             SortedSet<AttributeWrapper> objList = this.analyzer.getObjectives();
@@ -235,6 +237,8 @@ public class OptimizationWizard extends JPanel {
     boolean schemeLoadingSuccessful = true;
 
     public void loadScheme(File xmlFile) {
+        String workspace = getWorkspace();
+        
         schemeLoadingSuccessful = true;
         try {
             XMLDecoder encoder = new XMLDecoder(
@@ -252,6 +256,9 @@ public class OptimizationWizard extends JPanel {
             JOptionPane.showMessageDialog(mainPane, "Loading of Optimization Description Document failed." + ioe.toString());
             return;
         }
+        if (scheme.getWorkspace().isEmpty())
+            scheme.setWorkspace(workspace);
+
         if (!schemeLoadingSuccessful) {
             JOptionPane.showMessageDialog(mainPane, "Loading of Optimization Description Document failed."
                     + "You used probably a wrong version\n"
@@ -309,8 +316,15 @@ public class OptimizationWizard extends JPanel {
     }
 
     //menu actions
+    JFileChooser openModelChooser = null;
+    JFileChooser openPropertyChooser = null;
+    JFileChooser openSchemeChooser = null;
     public void openModel() {
-        JFileChooser openModelChooser = jams.gui.tools.GUIHelper.getJFileChooser(jams.JAMSFileFilter.getModelFilter());
+        if (openModelChooser==null){
+            openModelChooser = jams.gui.tools.GUIHelper.getJFileChooser(jams.JAMSFileFilter.getModelFilter());
+            openModelChooser.setCurrentDirectory(new File(getWorkspace()));
+                
+        }
         int result = openModelChooser.showOpenDialog((Component) OptimizationWizard.this.owner);
         if (result == JFileChooser.APPROVE_OPTION) {
             OptimizationWizard.this.loadModel(openModelChooser.getSelectedFile());
@@ -318,7 +332,11 @@ public class OptimizationWizard extends JPanel {
     }
 
     public void openPropertyFile() {
-        JFileChooser openPropertyChooser = jams.gui.tools.GUIHelper.getJFileChooser(jams.JAMSFileFilter.getPropertyFilter());
+        if (openPropertyChooser==null){
+            openPropertyChooser = jams.gui.tools.GUIHelper.getJFileChooser(jams.JAMSFileFilter.getPropertyFilter());
+            openPropertyChooser.setCurrentDirectory(new File(getWorkspace()));
+                
+        }
         int result = openPropertyChooser.showOpenDialog(OptimizationWizard.this.owner);
         if (result == JFileChooser.APPROVE_OPTION) {
             OptimizationWizard.this.loadPropertiesFile(openPropertyChooser.getSelectedFile());
@@ -326,7 +344,12 @@ public class OptimizationWizard extends JPanel {
     }
 
     public void openOptimizationScheme() {
-        JFileChooser openSchemeChooser = jams.gui.tools.GUIHelper.getJFileChooser(jams.JAMSFileFilter.getOddFilter());
+        if (openSchemeChooser==null){
+            openSchemeChooser = jams.gui.tools.GUIHelper.getJFileChooser(jams.JAMSFileFilter.getOddFilter());
+            openSchemeChooser.setCurrentDirectory(new File(getWorkspace()));
+                
+        }
+
         int result = openSchemeChooser.showOpenDialog(OptimizationWizard.this.owner);
         if (result == JFileChooser.APPROVE_OPTION) {
             OptimizationWizard.this.loadScheme(openSchemeChooser.getSelectedFile());
@@ -354,6 +377,15 @@ public class OptimizationWizard extends JPanel {
         setData();
 
         mainPane.addTab(JAMS.i18n("Optimizer_Configuration"), optimizerWizardPanel);
+    }
+
+    public void removeSubOptimization(){
+        int index = mainPane.getModel().getSelectedIndex();
+        this.optimizerWizard.remove(index);
+        for (int i=index;i<this.optimizerWizard.size()-1;i++){
+            this.optimizerWizard.set(i, this.optimizerWizard.get(i+1));
+        }
+        mainPane.remove(index);
     }
 
     public void exportToXml() {
@@ -395,9 +427,8 @@ public class OptimizationWizard extends JPanel {
 
     private void exportModifiedModel(File path) {
         try {
-            XMLTools.writeXmlFile(modifiedModel, path);
-            String fileName = path.getParent() + "/" + this.schemaName;
-            OptimizationWizard.this.exportScheme(new File(fileName));
+            XMLTools.writeXmlFile(modifiedModel, path);            
+            OptimizationWizard.this.exportScheme(new File(path.getParent(), this.schemaName));
         } catch (IOException ioe) {
             JOptionPane.showMessageDialog(mainPane, "An error occured during saving the new model\n" + ioe.toString());
         }
@@ -429,7 +460,10 @@ public class OptimizationWizard extends JPanel {
 
             getContentPane().add(wizard);
 
-            JToolBar toolbar = new JToolBar("main toolbar");
+            JPanel toolbar = new JPanel();
+            toolbar.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+            toolbar.setAlignmentX(0.5f);
             JButton modify = new JButton("Create Optimization Model");
             modify.addActionListener(new ActionListener() {
 
@@ -440,7 +474,6 @@ public class OptimizationWizard extends JPanel {
             });
 
             toolbar.add(modify);
-            toolbar.setBorderPainted(true);
 
             JButton launchLocally = new JButton(("Finish & Return to JUICE"));
             launchLocally.addActionListener(new ActionListener() {
@@ -454,10 +487,9 @@ public class OptimizationWizard extends JPanel {
             });
             toolbar.add(modify);
             toolbar.add(launchLocally);
-            toolbar.setFloatable(false);
 
             getContentPane().setLayout(new BorderLayout());
-            getContentPane().add(toolbar, BorderLayout.NORTH);
+            getContentPane().add(toolbar, BorderLayout.SOUTH);
 
             //toolBar.add(modify);
 
@@ -500,6 +532,14 @@ public class OptimizationWizard extends JPanel {
                 }
             });
 
+            JMenuItem removeSubOptimization = new JMenuItem("Remove sub optimization");
+            removeSubOptimization.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    wizard.removeSubOptimization();
+                }
+            });
+
 
             JMenuItem exitMenu = new JMenuItem("Exit");
             exitMenu.addActionListener(new ActionListener() {
@@ -522,6 +562,7 @@ public class OptimizationWizard extends JPanel {
             adjustModellingTimeIntervalMenu.setState(wizard.scheme.isAdjustModellTimeInterval());
             adjustModellingTimeIntervalMenu.addActionListener(new ActionListener() {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     boolean isOn = ((JCheckBoxMenuItem) e.getSource()).getState();
                     wizard.scheme.setAdjustModellTimeInterval(isOn);
@@ -532,6 +573,7 @@ public class OptimizationWizard extends JPanel {
             removeRedundandComponentsMenu.setState(wizard.isRemoveRedundantComponents());
             removeRedundandComponentsMenu.addActionListener(new ActionListener() {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     boolean isOn = ((JCheckBoxMenuItem) e.getSource()).getState();
                     wizard.scheme.setRemoveRedundantComponents(isOn);
@@ -542,6 +584,7 @@ public class OptimizationWizard extends JPanel {
             removeGUIComponentsMenu.setState(wizard.isRemoveGUIComponents());
             removeGUIComponentsMenu.addActionListener(new ActionListener() {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     boolean isOn = ((JCheckBoxMenuItem) e.getSource()).getState();
                     wizard.scheme.setRemoveGUIComponents(isOn);
@@ -551,6 +594,7 @@ public class OptimizationWizard extends JPanel {
             JMenuItem changeWorkspace = new JMenuItem("Change Workspace");
             changeWorkspace.addActionListener(new ActionListener() {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     JFileChooser chooser = GUIHelper.getJFileChooser();
                     chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -564,14 +608,28 @@ public class OptimizationWizard extends JPanel {
             JMenuItem setOutputMenu = new JMenuItem("Set Output Attributes");
             setOutputMenu.addActionListener(new ActionListener() {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     wizard.showOutputAttributeConfigurator();
+                }
+            });
+
+            JCheckBoxMenuItem doMultiModalSearchMenu = new JCheckBoxMenuItem("Do Multi-Modal Search", false);
+
+            doMultiModalSearchMenu.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if ( e.getSource() instanceof JCheckBoxMenuItem){
+                        wizard.scheme.setMultiModeSearch(((JCheckBoxMenuItem)e.getSource()).getState());
+                    }
+
                 }
             });
 
             optionsMenu.add(setOutputMenu);
 
             optionsMenu.add(adjustModellingTimeIntervalMenu);
+            optionsMenu.add(doMultiModalSearchMenu);
             optionsMenu.add(removeRedundandComponentsMenu);
             optionsMenu.add(removeGUIComponentsMenu);
             optionsMenu.add(changeWorkspace);
@@ -607,6 +665,7 @@ public class OptimizationWizard extends JPanel {
 
             JMenu editMenu = new JMenu("Edit");
             editMenu.add(subOptimization);
+            editMenu.add(removeSubOptimization);
 
             mainMenu.add(fileMenu);
             mainMenu.add(editMenu);

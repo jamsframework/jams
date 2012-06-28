@@ -31,9 +31,10 @@ public class SimpleOptimizationController extends OptimizationController {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
     update = JAMSVarDescription.UpdateType.RUN,
-    description = "parameterization of optimization method")
+    description = "parameterization of optimization method",
+    defaultValue="")
     public Attribute.String parameterization;
-
+    
     Optimization optimization = null;
         
     @Override
@@ -52,60 +53,35 @@ public class SimpleOptimizationController extends OptimizationController {
             p.setUpperBound(this.upBound[i]);
             p.setAttributeName("param_" + i);
             p.setId(i);
-            p.setStartValueValid(false);
+            double x0i[] = new double[x0.length];
+            for (int j=0;j<x0.length;j++)
+                x0i[j] = x0[j][i];
+            p.setStartValue(x0i);
             o.addParameter(p);
         }
         o.setName("opt1");
-        OptimizerDescription desc = new OptimizerDescription();
-        desc.setDoSpatialRelaxation(new BooleanOptimizerParameter("doSpatialRelaxation", "blubb", false));
-        desc.setShortName("opt1");
-        desc.setId(1);
-        desc.setAssessNonUniqueness(new BooleanOptimizerParameter("AssessNonUniqueness", "blubb", false));
-        desc.setOptimizerClassName(optimizationClassName.getValue());
-        desc.setMultiObjective(false);
-
-        String paramString = parameterization.getValue();
-        String params[] = paramString.split(";");
-        ArrayList<OptimizerParameter> list = new ArrayList<OptimizerParameter>();
-
-        for (int i=0;i<params.length;i++){
-            String entry[] = params[i].split("=");
-            if (entry.length!=2){
-                this.getModel().getRuntime().sendErrorMsg("Invalid parameterization of SimpleOptimizationController. The Parameter in question is" + params[i]);
-            }else{
-                if (entry[1].equals("true") || entry[1].equals("false")){
-                    list.add(new BooleanOptimizerParameter(entry[0],"unknown", Boolean.getBoolean(entry[1])));
-                }else{
-                    try{
-                        double value = Double.parseDouble(entry[1]);
-                        list.add(new NumericOptimizerParameter(entry[0], "unknown", value, Double.MIN_VALUE, Double.MAX_VALUE));
-                    }catch(NumberFormatException nfe){
-                        list.add(new StringOptimizerParameter(entry[0], "unknown", entry[1]));
-                    }
-                }
-            }
+        try{
+            OptimizerDescription desc = Tools.getStandardOptimizerDesc(parameterization.getValue());
+            desc.setOptimizerClassName(this.optimizationClassName.getValue());
+            o.setOptimizerDescription(desc);
+        }catch(Exception e){
+            e.printStackTrace();            
+            System.out.println(e.toString());
+            getModel().getRuntime().sendHalt(e.toString());
         }
-        desc.setPropertyMap(list);
-
-        o.setOptimizerDescription(desc);
-
         optimization = o;
     }
     
+    @Override
     public void procedure() {
 
         OptimizationConfiguration conf = new OptimizationConfiguration(optimization);
 
         if (optimization.getOptimizerDescription().getDoSpatialRelaxation().isValue()) {
             //relaxationProcedure(o);
-            SpatialRelaxation relaxation = new SpatialRelaxation();
-            relaxation.setMainObjectiveIndex(mainObjIndex);
+            SpatialRelaxation relaxation = new SpatialRelaxation();            
             relaxation.setRelaxationParameter(relaxationParameter);
             relaxation.applyProcedure(conf);
-        } else if (optimization.getOptimizerDescription().getAssessNonUniqueness().isValue()) {
-            NonUniquenessAssessor assessNonUniqueness = new NonUniquenessAssessor();
-            assessNonUniqueness.applyProcedure(conf);
-
         } else {
             conf.loadOptimizer(null).optimize();
         }

@@ -13,6 +13,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -22,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Set;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -35,6 +38,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -48,12 +52,10 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import optas.gui.HydrographChart;
 import optas.hydro.OptimizationScheme;
-import optas.SA.TemporalSensitivityAnalysis;
 import optas.SA.VarianceBasedTemporalSensitivityAnalysis;
 import optas.hydro.GreedyOptimizationScheme;
-import optas.hydro.GreedyOptimizationScheme1;
-import optas.hydro.OptimalOptimizationScheme;
 import optas.hydro.SimilarityBasedOptimizationScheme;
+import optas.hydro.VarianceBasedGreedyOptimizationScheme;
 import optas.hydro.data.DataCollection;
 import optas.hydro.data.DataSet;
 import optas.hydro.data.Efficiency;
@@ -61,6 +63,8 @@ import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.Measurement;
 import optas.hydro.data.Parameter;
 import optas.hydro.data.SimpleEnsemble;
+import optas.hydro.data.TimeFilter;
+import optas.hydro.data.TimeFilterFactory;
 import optas.hydro.data.TimeSerie;
 import optas.hydro.data.TimeSerieEnsemble;
 import optas.hydro.gui.WeightChart;
@@ -79,7 +83,7 @@ import org.jfree.data.time.TimeSeriesCollection;
  *
  * @author chris
  */
-public class TemporalAnalysis extends MCAT5Plot {
+public class TemporalAnalysisGUI extends MCAT5Plot {
 
     int MAX_WEIGHTS = 40;
 
@@ -92,50 +96,81 @@ public class TemporalAnalysis extends MCAT5Plot {
         return cols;
     }
     Color standardColorList[] = getDifferentColors(MAX_WEIGHTS);
-    HydrographChart chart;
+    HydrographChart hydrographChart;
     WeightChart weightChart;
-    JComboBox SAMethods = new JComboBox();
-    JComboBox optimizationSchemes = new JComboBox();    
-    JComboBox parameterGroups = new JComboBox();
+            
     String parameterIDs[] = null;
     XYLineAndShapeRenderer weightRenderer[] = new XYLineAndShapeRenderer[MAX_WEIGHTS];
-    JButton calcSA = new JButton("Calculate Temporal Sensitivity");
-    JButton calcScheme = new JButton("Calculate Optimization Scheme");
-    JButton exportScheme = new JButton("Export Scheme");
+    JLabel step1Label = new JLabel("Step 1: Data Setup");
+    JLabel step2Label = new JLabel("Step 2: Calculate Optimization Scheme");
+    JLabel step3Label = new JLabel("Step 3: Export");
+    
+    JButton trainNetworkBn = new JButton("Train KN - Network");
+    JButton loadNetworkBn = new JButton("Load KN - Network");
+    JButton saveNetworkBn = new JButton("Save KN - Network");
+
+    JButton calcGreedy1SchemeBn = new JButton("Greedy (VB)");
+    JButton calcGreedy2SchemeBn = new JButton("Greedy (Weights only)");
+    JButton calcSimilartySchemeBn = new JButton("Similarity");
+
+    //JButton calcSimilartySchemeBn = new JButton("Similarity");
+    JButton calcOptimalSchemeBn = new JButton("Optimal");
+
+    JButton exportSchemeBn = new JButton("Export Scheme");
     JTable parameterTable = new JTable(new Object[][]{{Boolean.TRUE, Boolean.TRUE, "test", Color.black}}, new String[]{"x", "y", "z", "a"});
     JLabel infoLabel = new JLabel("Dominance:?");
+    
     SimpleEnsemble p[] = null;
     EfficiencyEnsemble e = null;
     TimeSerieEnsemble ts = null;
     Measurement obs = null;    
     JPanel mainPanel = null;
 
-    public TemporalAnalysis() {
+    VarianceBasedTemporalSensitivityAnalysis tsa = null;
+
+    VarianceBasedGreedyOptimizationScheme varianceGreedyScheme = new VarianceBasedGreedyOptimizationScheme();
+    GreedyOptimizationScheme greedyScheme = new GreedyOptimizationScheme();
+    SimilarityBasedOptimizationScheme simBasedScheme = new SimilarityBasedOptimizationScheme();
+
+    OptimizationScheme currentScheme = null;
+
+    JFileChooser jfc = new JFileChooser();
+
+    JPanel progressPanel = new JPanel();
+
+    final GroupConfigurator groupConfigurator = new GroupConfigurator();
+
+    public TemporalAnalysisGUI() {
         this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"), TimeSerie.class));
         this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED_TIMESERIE"), Measurement.class));
         this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
-
-        optimizationSchemes.setModel(new DefaultComboBoxModel(new Object[]{
-                    new GreedyOptimizationScheme1(),
-                    new GreedyOptimizationScheme(),
-                    new OptimalOptimizationScheme(),
-                    new SimilarityBasedOptimizationScheme()
-                }));
-
-        calcScheme.addActionListener(new ActionListener() {
-
+        
+        calcGreedy1SchemeBn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                calcOptimizationScheme((OptimizationScheme) optimizationSchemes.getSelectedItem());
+                calcOptimizationScheme(currentScheme = varianceGreedyScheme);
+                setButtonEnableState(AnalysisState.Grouped);
+            }
+        });
+        calcGreedy2SchemeBn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calcOptimizationScheme(currentScheme = greedyScheme);
+                setButtonEnableState(AnalysisState.Grouped);
+            }
+        });
+        calcSimilartySchemeBn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calcOptimizationScheme(currentScheme = simBasedScheme);
+                setButtonEnableState(AnalysisState.Grouped);
             }
         });
 
-        calcSA.addActionListener(new ActionListener() {
+        trainNetworkBn.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                final TemporalSensitivityAnalysis tsa = (TemporalSensitivityAnalysis) SAMethods.getSelectedItem();
-
+            public void actionPerformed(ActionEvent e) {                
                 ObserverWorkerDlg progress = new ObserverWorkerDlg(null, "Calculating Sensitivity Indicies");
                 tsa.deleteObservers();
                 tsa.addObserver(progress);
@@ -147,7 +182,10 @@ public class TemporalAnalysis extends MCAT5Plot {
                     public void run() {
                         try {
                             tsa.calculate();
-                            weightChart.update(tsa.calculate(), p, obs, getEnableList(), getShowList(), standardColorList);
+                            //double quality[] = tsa.getCVError(4);
+                            //weightChart.update(tsa.calculate(), quality, p, obs, getEnableList(), getShowList(), standardColorList);
+                            weightChart.update(tsa.calculate(), null, p, obs, getEnableList(), getShowList(), standardColorList);
+                            setButtonEnableState(AnalysisState.Trained);
                         } catch (Exception e) {
                             e.printStackTrace();
                             System.out.println(e);
@@ -158,14 +196,120 @@ public class TemporalAnalysis extends MCAT5Plot {
             }
         });
 
-        exportScheme.addActionListener(new ActionListener() {
+        loadNetworkBn.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                exportOptimizationScheme(((OptimizationScheme) optimizationSchemes.getSelectedItem()));
+                if (jfc.showOpenDialog(TemporalAnalysisGUI.this.mainPanel) == jfc.APPROVE_OPTION){
+                    File f = jfc.getSelectedFile();
+                    tsa.loadNetworkState(f);
+                    for (ActionListener l : trainNetworkBn.getListeners(ActionListener.class)){
+                        l.actionPerformed(null);
+                    }
+                }
             }
         });
+
+        saveNetworkBn.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (jfc.showSaveDialog(TemporalAnalysisGUI.this.mainPanel) == jfc.APPROVE_OPTION){
+                    File f = jfc.getSelectedFile();
+                    tsa.saveNetworkState(f);
+                }
+            }
+        });
+
+        exportSchemeBn.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exportOptimizationScheme(currentScheme);
+            }
+        });
+
+        groupConfigurator.addUpdateListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GroupConfigurator conf = (GroupConfigurator)e.getSource();
+                if (e.getActionCommand().equals("update")){
+                    currentScheme.setSolutionGroups(conf.getGroupConfiguration());
+                    int Tdom = currentScheme.getDominatedTimeSteps(conf.getSelectedGroup()).length;
+                    int Ttotal = TemporalAnalysisGUI.this.ts.getTimesteps();
+                    groupConfigurator.setDominanceInfo((double)Tdom/(double)Ttotal);
+                }else{
+                    int k = conf.getGroupConfiguration().size();
+                    TemporalAnalysisGUI.this.hydrographChart.clearFilter();
+                    //int index = conf.getSelectedGroup();
+                    for (int j = 0; j < k; j++) {
+                        int[] dominatedTimeSteps = currentScheme.dominatedTimeStepsForGroup.get(j);
+                        Date dates[] = new Date[dominatedTimeSteps.length];
+
+                        for (int i = 0; i < dominatedTimeSteps.length; i++) {
+                            dates[i] = TemporalAnalysisGUI.this.obs.getTime(dominatedTimeSteps[i]);
+                        }
+
+                        TimeFilter f = TimeFilterFactory.getSelectiveTimeFilter(dates);
+                        TemporalAnalysisGUI.this.hydrographChart.addFilter(f);
+                    }
+                    int Tdom = currentScheme.getDominatedTimeSteps(conf.getSelectedGroup()).length;
+                    int Ttotal = TemporalAnalysisGUI.this.ts.getTimesteps();
+                    groupConfigurator.setDominanceInfo((double)Tdom/(double)Ttotal);
+                }
+            }
+        });
+        
+
         init();
+        setButtonEnableState(AnalysisState.Start);
+    }
+
+    enum AnalysisState{Start, Trained, Grouped, Finish};
+    private void setButtonEnableState(AnalysisState state){
+        switch(state){
+            case Start:
+                trainNetworkBn.setEnabled(true);
+                calcGreedy1SchemeBn.setEnabled(false);
+                calcGreedy2SchemeBn.setEnabled(false);
+                calcOptimalSchemeBn.setEnabled(false);
+                calcSimilartySchemeBn.setEnabled(false);
+                saveNetworkBn.setEnabled(false);
+                loadNetworkBn.setEnabled(true);
+                exportSchemeBn.setEnabled(false);
+                break;
+            case Trained:
+                trainNetworkBn.setEnabled(true);
+                calcGreedy1SchemeBn.setEnabled(true);
+                calcGreedy2SchemeBn.setEnabled(true);
+                calcOptimalSchemeBn.setEnabled(false);
+                calcSimilartySchemeBn.setEnabled(true);
+                saveNetworkBn.setEnabled(true);
+                loadNetworkBn.setEnabled(true);
+                exportSchemeBn.setEnabled(false);
+                break;
+            case Grouped:
+                trainNetworkBn.setEnabled(true);
+                calcGreedy1SchemeBn.setEnabled(true);
+                calcGreedy2SchemeBn.setEnabled(true);
+                calcOptimalSchemeBn.setEnabled(false);
+                calcSimilartySchemeBn.setEnabled(true);
+                saveNetworkBn.setEnabled(true);
+                loadNetworkBn.setEnabled(true);
+                exportSchemeBn.setEnabled(true);
+                break;
+            case Finish:
+                trainNetworkBn.setEnabled(true);
+                calcGreedy1SchemeBn.setEnabled(true);
+                calcGreedy2SchemeBn.setEnabled(true);
+                calcOptimalSchemeBn.setEnabled(false);
+                calcSimilartySchemeBn.setEnabled(true);
+                saveNetworkBn.setEnabled(true);
+                loadNetworkBn.setEnabled(true);
+                exportSchemeBn.setEnabled(true);
+                break;
+        }
     }
 
     public class ColorRenderer extends JLabel
@@ -303,7 +447,7 @@ public class TemporalAnalysis extends MCAT5Plot {
         @Override
         public Object getValueAt(int row, int col) {
             if (col == 3) {
-                return TemporalAnalysis.this.standardColorList[row];
+                return TemporalAnalysisGUI.this.standardColorList[row];
             } else {
                 return data[row][col];
             }
@@ -352,7 +496,7 @@ public class TemporalAnalysis extends MCAT5Plot {
                 setValueAt(Boolean.TRUE, row, 2);
             }
             if (col == 3) {
-                TemporalAnalysis.this.standardColorList[row] = (Color) value;
+                TemporalAnalysisGUI.this.standardColorList[row] = (Color) value;
             } else {
                 data[row][col] = value;
             }
@@ -362,13 +506,13 @@ public class TemporalAnalysis extends MCAT5Plot {
 
     private void init() {
         weightChart = new WeightChart();
-        chart = new HydrographChart();
+        hydrographChart = new HydrographChart();
 
-        chart.getXYPlot().getDomainAxis().addChangeListener(new AxisChangeListener() {
+        hydrographChart.getXYPlot().getDomainAxis().addChangeListener(new AxisChangeListener() {
 
             @Override
             public void axisChanged(AxisChangeEvent e) {
-                weightChart.getXYPlot().setDomainAxis(chart.getXYPlot().getDomainAxis());
+                weightChart.getXYPlot().setDomainAxis(hydrographChart.getXYPlot().getDomainAxis());
             }
         });
 
@@ -376,7 +520,7 @@ public class TemporalAnalysis extends MCAT5Plot {
 
             @Override
             public void axisChanged(AxisChangeEvent e) {
-                chart.getXYPlot().setDomainAxis(weightChart.getXYPlot().getDomainAxis());
+                hydrographChart.getXYPlot().setDomainAxis(weightChart.getXYPlot().getDomainAxis());
             }
         });
 
@@ -419,7 +563,7 @@ public class TemporalAnalysis extends MCAT5Plot {
                         System.out.println(nde.toString());
                     }
 
-                    TimeSeriesCollection collection = (TimeSeriesCollection) chart.getXYPlot().getDataset(index);
+                    TimeSeriesCollection collection = (TimeSeriesCollection) hydrographChart.getXYPlot().getDataset(index);
                     System.out.println(collection.getSeries(0).getDataItem(data).getPeriod());
                     System.out.println(collection.getSeries(0).getDataItem(data).getValue());
                 }
@@ -430,11 +574,10 @@ public class TemporalAnalysis extends MCAT5Plot {
             }
         });
 
-        ChartPanel hydrographChartPanel = new ChartPanel(chart.getChart(), true);
+        ChartPanel hydrographChartPanel = new ChartPanel(hydrographChart.getChart(), true);
 
         JScrollPane parameterTablePane = new JScrollPane(parameterTable);
-
-
+        
         JPanel sideBar = new JPanel();
         GroupLayout sideLayout = new GroupLayout(sideBar);
         sideLayout.setAutoCreateGaps(true);
@@ -444,26 +587,56 @@ public class TemporalAnalysis extends MCAT5Plot {
                 sideLayout.createParallelGroup()
                 .addComponent(parameterTablePane)
                 .addComponent(infoLabel)
-                .addGroup(sideLayout.createSequentialGroup()
-                    .addComponent(calcSA)
-                    .addComponent(calcScheme)
+                .addGroup(sideLayout.createParallelGroup()
+                    .addGroup(sideLayout.createSequentialGroup()
+                        .addComponent(step1Label)
+                        .addComponent(trainNetworkBn)
+                        .addComponent(loadNetworkBn)
+                        .addComponent(saveNetworkBn)
+                    )
+                    .addGroup(sideLayout.createSequentialGroup()
+                        .addComponent(step2Label)
+                        .addComponent(calcGreedy1SchemeBn)
+                        .addComponent(calcGreedy2SchemeBn)
+                        .addComponent(calcOptimalSchemeBn)
+                        .addComponent(calcSimilartySchemeBn)
+                    )
+                    .addGroup(sideLayout.createSequentialGroup()
+                        .addComponent(step3Label)
+                        .addComponent(exportSchemeBn)                        
+                    )
+                    .addComponent(groupConfigurator.getPanel())
                 )
-                .addComponent(SAMethods)
-                .addComponent(optimizationSchemes)
-                .addComponent(parameterGroups)
-                .addComponent(exportScheme));
+
+                .addGap(0, 10, Short.MAX_VALUE)
+                );
+
         sideLayout.setVerticalGroup(
                 sideLayout.createSequentialGroup()
                 .addComponent(parameterTablePane)
                 .addComponent(infoLabel)
-                .addGroup(sideLayout.createParallelGroup()
-                    .addComponent(calcSA)
-                    .addComponent(calcScheme)
+                .addGroup(sideLayout.createSequentialGroup()
+                    .addGroup(sideLayout.createParallelGroup()
+                        .addComponent(step1Label)
+                        .addComponent(trainNetworkBn)
+                        .addComponent(loadNetworkBn)
+                        .addComponent(saveNetworkBn)
+                    )
+                    .addGroup(sideLayout.createParallelGroup()
+                        .addComponent(step2Label)
+                        .addComponent(calcGreedy1SchemeBn)
+                        .addComponent(calcGreedy2SchemeBn)
+                        .addComponent(calcOptimalSchemeBn)
+                        .addComponent(calcSimilartySchemeBn)
+                    )
+                    .addGroup(sideLayout.createParallelGroup()
+                        .addComponent(step3Label)
+                        .addComponent(exportSchemeBn)                        
+                    )
+                    .addComponent(groupConfigurator.getPanel())
                 )
-                .addComponent(SAMethods)
-                .addComponent(optimizationSchemes)
-                .addComponent(parameterGroups)
-                .addComponent(exportScheme));
+                .addGap(0, 10, Short.MAX_VALUE)
+                );
 
         mainPanel = new JPanel();
         GroupLayout mainLayout = new GroupLayout(mainPanel);
@@ -474,6 +647,23 @@ public class TemporalAnalysis extends MCAT5Plot {
         mainLayout.setHorizontalGroup(
                 mainLayout.createSequentialGroup().addGroup(mainLayout.createParallelGroup().addComponent(weightChartPanel).addComponent(hydrographChartPanel)).addComponent(sideBar));
         mainLayout.setVerticalGroup(mainLayout.createParallelGroup().addGroup(mainLayout.createSequentialGroup().addComponent(weightChartPanel).addComponent(hydrographChartPanel)).addComponent(sideBar));
+
+        jfc.setFileFilter(new FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory())
+                    return true;
+                if (f.getName().endsWith("enc"))
+                    return true;
+                return false;
+            }
+
+            @Override
+            public String getDescription() {
+                return "Encog Serialized Artificial Neural Network";
+            }
+        });
     }
 
     public JPanel getPanel() {
@@ -515,12 +705,9 @@ public class TemporalAnalysis extends MCAT5Plot {
                 progress.execute();*/
             }
         });
-        this.SAMethods.setModel(new DefaultComboBoxModel(new Object[]{
-                    new VarianceBasedTemporalSensitivityAnalysis(p, e, ts, obs),
-                    new TemporalSensitivityAnalysis(p, e, ts, obs)
-                }));
-
-        this.chart.setHydrograph(obs);
+        tsa = new VarianceBasedTemporalSensitivityAnalysis(p, e, ts, obs);
+        groupConfigurator.setData(p, p.length);
+        this.hydrographChart.setHydrograph(obs);
 
     }
 
@@ -553,12 +740,11 @@ public class TemporalAnalysis extends MCAT5Plot {
     }
 
     private void calcOptimizationScheme(final OptimizationScheme scheme) {
-        //scheme.setData(temporalAnalysis.calculate(), p, e, obs);
-        if (scheme instanceof GreedyOptimizationScheme1)
-            ((GreedyOptimizationScheme1) scheme).setData((VarianceBasedTemporalSensitivityAnalysis)this.SAMethods.getSelectedItem(), p, e, obs);
+        if (scheme instanceof VarianceBasedGreedyOptimizationScheme)
+            ((VarianceBasedGreedyOptimizationScheme)scheme).setData(tsa, p, e, obs);
         else
-            scheme.setData(((TemporalSensitivityAnalysis)this.SAMethods.getSelectedItem()).calculate(), p, e, obs);
-        
+            scheme.setData(tsa.calculate(), p, e, obs);
+                        
         ObserverWorkerDlg progress = new ObserverWorkerDlg(null, "Calculating Optimization Scheme");
         scheme.addObserver(progress);
 
@@ -568,10 +754,9 @@ public class TemporalAnalysis extends MCAT5Plot {
             @Override
             public void run() {
                 try {
-                    scheme.calcOptimizationScheme();
-                    ComboBoxModel model = new DefaultComboBoxModel(scheme.getSolutionGroups().toArray());
-                    synchronized (parameterGroups) {
-                        parameterGroups.setModel(model);
+                    scheme.calcOptimizationScheme();                    
+                    synchronized (groupConfigurator) {
+                        groupConfigurator.setSolutionGroup(scheme.getSolutionGroups());
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

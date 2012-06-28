@@ -33,8 +33,8 @@ import optas.hydro.data.Efficiency;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.Parameter;
 import optas.hydro.data.SimpleEnsemble;
-import optas.regression.Interpolation;
-import optas.regression.NeuralNetwork;
+import optas.regression.SimpleInterpolation;
+import optas.regression.SimpleNeuralNetwork;
 import org.jfree.chart.plot.XYPlot;
 
 /**
@@ -69,7 +69,7 @@ public class ResponseSurface extends MCAT5Plot {
     double point[];
 
     DataCollection dc = null;
-    NeuralNetwork ANN = null;
+    SimpleNeuralNetwork ANN = null;
     
     public ResponseSurface() {
         this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"),Efficiency.class));
@@ -275,13 +275,13 @@ public class ResponseSurface extends MCAT5Plot {
             mainPanel.add(panel, BorderLayout.CENTER);
             mainPanel.add(createAdjustmentPanel(x, y), BorderLayout.EAST);
 
-            ANN = (new NeuralNetwork());
-            ANN.setxNormalizationMethod(Interpolation.NormalizationMethod.Linear );
-            ANN.setyNormalizationMethod(Interpolation.NormalizationMethod.Linear);
+            ANN = (new SimpleNeuralNetwork());
+            ANN.setxNormalizationMethod(SimpleInterpolation.NormalizationMethod.Linear );
+            ANN.setyNormalizationMethod(SimpleInterpolation.NormalizationMethod.Linear);
 
             int n = counter;
             ANN.setData(x, y);
-            System.out.println("expected error is: " + ANN.estimateCrossValidationError(5, Interpolation.ErrorMethod.E2));
+            System.out.println("expected error is: " + ANN.estimateCrossValidationError(5, SimpleInterpolation.ErrorMethod.E2));
         }
 
         int n = x.length;
@@ -299,7 +299,7 @@ public class ResponseSurface extends MCAT5Plot {
                 double t2 = (double)j / (double)(this.RESOLUTION - 1);
                 VOI[this.param2] = this.paramMin2 + t2*(this.paramMax2 - this.paramMin2);
 
-                this.map[i][j] = ANN.getValue(VOI)[0];
+                this.map[i][j] = ANN.getInterpolatedValue(VOI)[0];
             }
         }
         //this.g

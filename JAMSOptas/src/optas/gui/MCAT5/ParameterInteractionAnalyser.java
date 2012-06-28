@@ -36,7 +36,7 @@ import optas.hydro.data.Efficiency;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.Parameter;
 import optas.hydro.data.SimpleEnsemble;
-import optas.regression.Interpolation;
+import optas.regression.SimpleInterpolation;
 
 /**
  *
@@ -389,8 +389,8 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
         uniSA = new UniversalSensitivityAnalyzer();
         uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.FOSI2);
         uniSA.setUseANNRegression(true);
-        uniSA.setParameterNormalizationMethod(Interpolation.NormalizationMethod.Linear);
-        uniSA.setObjectiveNormalizationMethod(Interpolation.NormalizationMethod.Linear);
+        uniSA.setParameterNormalizationMethod(SimpleInterpolation.NormalizationMethod.Linear);
+        uniSA.setObjectiveNormalizationMethod(SimpleInterpolation.NormalizationMethod.Linear);
 
         int n = counter;
         

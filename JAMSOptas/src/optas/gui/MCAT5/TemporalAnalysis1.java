@@ -441,14 +441,14 @@ public class TemporalAnalysis1 extends MCAT5Plot {
         parameterTable.getModel().addTableModelListener(new TableModelListener() {
 
             public void tableChanged(TableModelEvent e) {
-                weightChart.update(temporalAnalysis.calculate(), p, obs, getEnableList(), getShowList(), standardColorList);
+                weightChart.update(temporalAnalysis.calculate(), null, p, obs, getEnableList(), getShowList(), standardColorList);
             }
         });
         this.temporalAnalysis = new TemporalSensitivityAnalysis(p, e, ts, obs);
         this.temporalAnalysis.calculate();
 
         this.chart.setHydrograph(obs);
-        this.weightChart.update(temporalAnalysis.calculate(), p, obs, getEnableList(), getShowList(), standardColorList);
+        this.weightChart.update(temporalAnalysis.calculate(), null, p, obs, getEnableList(), getShowList(), standardColorList);
     }
 
     private boolean[] getEnableList() {

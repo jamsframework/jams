@@ -30,11 +30,12 @@ public class RandomSampler extends Optimizer{
     @Override
     public void procedure()throws SampleLimitException, ObjectiveAchievedException{        
         Sample simplex[] = new Sample[(int)this.getMaxn()];
-        int i=0;
-        if (x0!=null)
-            simplex[i++] = this.getSample(x0);
-        while(true){
-            simplex[i++] = this.getSample(this.randomSampler());
-        }                
+        
+        for (int i=0;i<simplex.length;i++){
+             if (x0 != null && i<x0.length){
+                 simplex[i] = this.getSample(x0[i]);
+             }
+             simplex[i] = this.getSample(this.randomSampler());
+        }
     }        
 }

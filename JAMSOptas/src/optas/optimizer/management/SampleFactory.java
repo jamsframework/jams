@@ -151,13 +151,7 @@ public class SampleFactory implements Serializable {
         }
 
         public int compare(Object d1, Object d2) {
-            if (((SampleSO) d1).f() < ((SampleSO) d2).f()) {
-                return -1 * order;
-            } else if (((SampleSO) d1).fx == ((SampleSO) d2).fx) {
-                return 0 * order;
-            } else {
-                return 1 * order;
-            }
+            return Double.compare(((SampleSO) d1).f(), ((SampleSO) d2).f())*order;
         }
     }
     /*    SampleMO getFromSampleList(int i){
@@ -194,7 +188,7 @@ public class SampleFactory implements Serializable {
     }
     //compare samples
 
-    static public class SampleComperator implements Comparator {
+    static public class SampleComperator implements Comparator, Serializable {
 
         private int order = 1;
 

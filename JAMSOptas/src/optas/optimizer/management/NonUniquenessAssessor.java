@@ -2,14 +2,24 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package optas.optimizer.management;
 
-
+import jams.data.Attribute;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
 import java.util.Arrays;
-import optas.optimizer.Optimizer.AbstractFunction;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeMap;
+import optas.metamodel.Objective;
+import optas.metamodel.Optimization;
+import optas.metamodel.Parameter;
+import optas.optimizer.Optimizer;
+import optas.optimizer.ParallelPostSampling2;
 import optas.optimizer.SampleLimitException;
+
+
 import optas.optimizer.management.OptimizationController.OptimizationConfiguration;
 import optas.optimizer.management.SampleFactory.Sample;
 
@@ -17,158 +27,73 @@ import optas.optimizer.management.SampleFactory.Sample;
  *
  * @author chris
  */
-public class NonUniquenessAssessor {
+@JAMSComponentDescription(title = "OptimizationScheduler",
+author = "Christian Fischer",
+description = "Performs a chain of optimizations")
+public class NonUniquenessAssessor extends OptimizationController {
 
-    public class NoGoZone{
-        double[] midPoint;
-        double[] mainAxis;
-        double[] value;
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
+    update = JAMSVarDescription.UpdateType.RUN,
+    description = "parameterization of optimization method",
+    defaultValue = "")
+    public Attribute.String parameterization;
+    
+    Optimization optimization = null;
+    Tools.Rectangle regions[] = null;
+    
+    @Override
+    public void init() {
+        super.init();
 
-        public NoGoZone(double[] midPoint, double[] mainAxis, double[] value){
-            this.midPoint = midPoint;
-            this.mainAxis = mainAxis;
-            this.value = value;
+        Optimization o = new Optimization();
+        for (int i = 0; i < this.m; i++) {
+            Objective obj = new Objective();
+            obj.setCustomName(this.efficiencyNames[i]);
+            o.addObjective(obj);
         }
+        for (int i = 0; i < this.n; i++) {
+            Parameter p = new Parameter();
+            p.setLowerBound(this.lowBound[i]);
+            p.setUpperBound(this.upBound[i]);
+            p.setAttributeName("param_" + i);
+            p.setId(i);
+            double x0i[] = new double[x0.length];
+            for (int j = 0; j < x0.length; j++) {
+                x0i[j] = x0[j][i];
+            }
+            p.setStartValue(x0i);
+            o.addParameter(p);
+        }
+        o.setName("opt1");
+        try {
+            OptimizerDescription desc = Tools.getStandardOptimizerDesc(parameterization.getValue());
+            desc.setOptimizerClassName(ParallelPostSampling2.class.getName());
+            o.setOptimizerDescription(desc);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println(e.toString());
+            getModel().getRuntime().sendHalt(e.toString());
+        }
+        optimization = o;
     }
-    private ArrayList<NoGoZone> forbiddenArea = new ArrayList<NoGoZone>();
-
-    double lowBound[], upBound[];
-
-    private class EvaluateNGZs extends AbstractFunction  {
-        OptimizationConfiguration conf;
-
-        public EvaluateNGZs(OptimizationConfiguration conf) {
-            this.conf = conf;
-        }
-
-        public void logging(String msg){
-            conf.log(msg);
-        }
         
-        public double[] f(double[] x) throws ObjectiveAchievedException, SampleLimitException {
-            double s[] = conf.evaluate(x);
+    @Override
+    public void procedure() {
 
-            //bestrafen
-            double penalty = 0;
-            double PENALTY_VALUE = 10000.0;
-            for (NoGoZone ngz : forbiddenArea){
-                //double dist = d(ngz.midPoint, xSuper);
+        OptimizationConfiguration conf = new OptimizationConfiguration(optimization);
+        ParallelPostSampling2 sampler = (ParallelPostSampling2) conf.loadOptimizer(null);
+        sampler.excludeFiles = "(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log";
+        sampler.analyzeQuality = false;
 
-                for (int i=0;i<ngz.mainAxis.length;i++){
-                    double dist = Math.abs((ngz.midPoint[i]-x[i])/(upBound[i]-lowBound[i]));
-                    if (dist < ngz.mainAxis[i]){
-                        penalty += ((ngz.mainAxis[i]/dist)-1.0)*PENALTY_VALUE;
-                    }
-                }
-            }
+        ArrayList<Sample> postSamplerResult = sampler.optimize();
+        double l[][] = sampler.getFinalRange();
 
-            for (int i=0;i<s.length;i++)
-                s[i]+=penalty;
-
-            return s;
-        }
-    }
-
-    public void applyProcedure(OptimizationConfiguration conf){
-
-        double minimum = Double.POSITIVE_INFINITY;
-        double currentMinimum = Double.NEGATIVE_INFINITY;
-        double threshold = 0.8;
-
-        lowBound = conf.getLowerBound();
-        upBound = conf.getUpperBound();
-
-        int n = conf.n();
-
-        int maxAllowedFailures = 3;
-        int failureCount = 0;
-        while ( currentMinimum*threshold < minimum || failureCount < maxAllowedFailures){
-            if (currentMinimum*threshold > minimum){
-                failureCount++;
-            }else{
-                failureCount = 0;
-            }
-
-            optas.optimizer.Optimizer optimizer = conf.loadOptimizer(null);
-            optimizer.setFunction(new EvaluateNGZs(conf));
-            optimizer.optimize();
-
-            ArrayList<Sample> optimizerSampleList = (ArrayList<Sample>)optimizer.getSamples().clone();
-            Sample minSample = optimizer.getSolution().get(0);
-
-            currentMinimum = minSample.fx[0];
-            if (currentMinimum < minimum)
-                minimum = currentMinimum;
-
-            double limit = minimum/threshold;
-            ArrayList<Sample> completeSampleList = new ArrayList<Sample>();
-            //do only monte carlo sampling if minimum is good enough
-            if (currentMinimum <= limit) {
-                optas.optimizer.Optimizer mcSampler = conf.loadOptimizer(optas.optimizer.RandomSampler.class.getName());
-
-                mcSampler.setMaxn(50.0 * n);
-
-                double smallLowBound[] = new double[n];
-                double smallUpBound[] = new double[n];
-
-                for (int i = 0; i < n; i++) {
-                    smallLowBound[i] = Math.max(minSample.x[i] - 0.1 * (upBound[i] - lowBound[i]), lowBound[i]);
-                    smallUpBound[i] = Math.min(minSample.x[i] + 0.1 * (upBound[i] - lowBound[i]), upBound[i]);
-                    if (smallLowBound[i] > smallUpBound[i]) {
-                        smallLowBound[i] = smallUpBound[i];
-                    }
-                }
-
-                mcSampler.setBoundaries(smallLowBound, smallUpBound);
-
-                conf.log("#new lower range:" + Arrays.toString(smallLowBound));
-                conf.log("#new upper range:" + Arrays.toString(smallUpBound));
-
-                conf.log("#Minimum:"
-                        + Arrays.toString(minSample.x)
-                        + "Objective:" + Arrays.toString(minSample.F()));
-
-                mcSampler.optimize();
-
-                ArrayList<Sample> mcSampleList = (ArrayList<Sample>) mcSampler.getSamples().clone();
-
-
-                completeSampleList.addAll(mcSampleList);
-            }
-            completeSampleList.addAll(optimizerSampleList);
-
-            double mainAxis[] = new double[minSample.x.length];
-            
-            int counter=0;
-            for (Sample x : completeSampleList){
-                if (x.fx[0]>limit)
-                    continue;
-
-                for (int i=0;i<x.x.length;i++){
-                    mainAxis[i] += Math.abs( (x.x[i] - minSample.x[i]) / (upBound[i]-lowBound[i]) );
-                }
-                counter++;
-            }
-
-            for (int i=0;i<mainAxis.length;i++){
-                if (counter>0)
-                    mainAxis[i] /= (double)counter;
-                else
-                    mainAxis[i]=0;
-            }
-
-            NoGoZone ngz = new NoGoZone(minSample.x, mainAxis, minSample.fx);
-            forbiddenArea.add(ngz);
-
-            System.out.println("Finished optimization run");
-            System.out.println("Current Results:");
-            for (NoGoZone ngz2 : forbiddenArea){
-                System.out.println("Point:" + Arrays.toString(ngz2.midPoint));
-                System.out.println("Radius:" + Arrays.toString(ngz2.mainAxis));
-                System.out.println("Value:" + Arrays.toString(ngz2.value));
-                System.out.println("");
-            }
-
-        }
+        Sample initialPoint = postSamplerResult.get(0);
+        
+        this.log("Region of optimality is:\nnames:" + Arrays.toString(this.names)
+                + "\nx0:" + Arrays.toString(initialPoint.x) + "y:" + Arrays.toString(initialPoint.fx)
+                + "\nrectangle_min:" + Arrays.toString(l[0])
+                + "\nrectangle_max:" + Arrays.toString(l[1]));
+        
     }
 }

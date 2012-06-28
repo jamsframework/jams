@@ -17,9 +17,8 @@ import org.w3c.dom.Node;
 public class Parameter extends AttributeWrapper implements Serializable {
 
     private double lowerBound;
-    private double upperBound;
-    private boolean startValueValid;
-    private double startValue;
+    private double upperBound;    
+    private double startValue[];
     private int id;
 
     static int staticID = 0;
@@ -29,7 +28,7 @@ public class Parameter extends AttributeWrapper implements Serializable {
     public Parameter(AttributeWrapper attr) {
         id = staticID++;
 
-        startValueValid = false;
+        startValue=null;
         setAttributeName(attr.getAttributeName());
         setComponentName(attr.getComponentName());
         setContextName(attr.getContextName());
@@ -40,7 +39,7 @@ public class Parameter extends AttributeWrapper implements Serializable {
     public Parameter(AttributeWrapper attr, Range range) {
         id = staticID++;
         
-        startValueValid = false;
+        startValue=null;
         setAttributeName(attr.getAttributeName());
         setComponentName(attr.getComponentName());
         setContextName(attr.getContextName());
@@ -80,32 +79,18 @@ public class Parameter extends AttributeWrapper implements Serializable {
     public void setUpperBound(double upperBound) {
         this.upperBound = upperBound;
     }
-
-    /**
-     * @return the startValueValid
-     */
-    public boolean isStartValueValid() {
-        return startValueValid;
-    }
-
-    /**
-     * @param startValueValid the startValueValid to set
-     */
-    public void setStartValueValid(boolean startValueValid) {
-        this.startValueValid = startValueValid;
-    }
-
+    
     /**
      * @return the startValue
      */
-    public double getStartValue() {
+    public double[] getStartValue() {
         return startValue;
     }
 
     /**
      * @param startValue the startValue to set
      */
-    public void setStartValue(double startValue) {
+    public void setStartValue(double startValue[]) {
         this.startValue = startValue;
     }
 

@@ -61,7 +61,7 @@ public class MOCOM extends Optimizer {
         this.populationSize = populationSize;
     }
                                             
-    public int populationSize;
+    public int populationSize = 250;
     int currentCount;
                     
     int s; //population size        
@@ -626,7 +626,7 @@ public class MOCOM extends Optimizer {
                     out+=(this.effNames[i] + "\t");
                 }
                 log(out);
-
+                try{
                 while (c < s) {
                     out=("" + currentResult[c][n + m] + "\t");
                     for (int i = 0; i < n; i++) {
@@ -664,7 +664,9 @@ public class MOCOM extends Optimizer {
                     c++;
                     log(out);
                 }                
-            }
+            }catch(Throwable t){
+                t.printStackTrace();
+            }}
         }
 
         return new Object[]{D, F, R, new Integer(Rmax)};

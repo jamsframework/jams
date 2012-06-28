@@ -390,8 +390,8 @@ public class GutmannMethod extends Optimizer {
 
         for (int i = 0; i < n * initalSampleSize; i++) {
             SampleSO s = null;
-            if (i == 0 && x0 != null) {
-                s = this.getSampleSO(x0);
+            if (x0 != null && i < x0.length) {
+                s = this.getSampleSO(this.x0[i]);
             } else {
                 s = this.getSampleSO(this.randomSampler());
             }

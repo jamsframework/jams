@@ -11,14 +11,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Observable;
+import java.util.Iterator;
 import java.util.TimeZone;
-import optas.hydro.calculations.SlopeCalculations;
+import java.util.TreeSet;
+import optas.efficiencies.UniversalEfficiencyCalculator;
 import optas.hydro.data.SimpleEnsemble;
 import optas.hydro.data.TimeSerie;
 import optas.metamodel.Objective;
 import optas.metamodel.Optimization;
 import optas.metamodel.OptimizationDescriptionDocument;
+import optas.optimizer.management.BooleanOptimizerParameter;
+import optas.optimizer.management.NumericOptimizerParameter;
+import optas.optimizer.management.OptimizerParameter;
 import optas.tools.ObservableProgress;
 
 /**
@@ -35,11 +39,20 @@ public abstract class OptimizationScheme extends ObservableProgress{
     protected int n;
     protected int T;
     ArrayList<ParameterGroup> solutionGroups = new ArrayList<ParameterGroup>();
-    ArrayList<int[]> dominatedTimeStepsForGroup = new ArrayList<int[]>();
+
+    public ArrayList<int[]> dominatedTimeStepsForGroup = new ArrayList<int[]>();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public ArrayList<ParameterGroup> getSolutionGroups(){
         return solutionGroups;
+    }
+    public void setSolutionGroups(ArrayList<ParameterGroup> groups){
+        this.solutionGroups = groups;
+        update();
+    }
+
+    public void update(){
+        
     }
     public void setData(double weights[][], SimpleEnsemble parameterIDs[], SimpleEnsemble objective, TimeSerie ts){
         this.weights = weights;
@@ -117,7 +130,10 @@ public abstract class OptimizationScheme extends ObservableProgress{
         return result;
     }
 
-    protected int[] calcDominatedTimeSteps(ParameterGroup p, ParameterGroup all) {
+    public int[] getDominatedTimeSteps(int groupIndex){
+        return this.dominatedTimeStepsForGroup.get(groupIndex);
+    }
+    /*protected int[] calcDominatedTimeSteps(ParameterGroup p, ParameterGroup all) {
         boolean dominatedTime[] = new boolean[T];
         int counter = 0;
         for (int t = 0; t < T; t++) {
@@ -142,7 +158,7 @@ public abstract class OptimizationScheme extends ObservableProgress{
             }
         }
         return timeSteps;
-    }
+    }*/
 
     @Override
     public String toString() {
@@ -164,6 +180,7 @@ public abstract class OptimizationScheme extends ObservableProgress{
 
         for (int i = 0; i < this.solutionGroups.size(); i++) {
             doc.addOptimization(getGroupOptimization(i));
+
         }
         return doc;
     }
@@ -172,29 +189,46 @@ public abstract class OptimizationScheme extends ObservableProgress{
         Optimization o = new Optimization();
 
         optas.metamodel.Parameter[] parameterDesc = getParameters();
-        ParameterGroup p = this.solutionGroups.get(groupIndex);
 
-        for (int i = 0; i < p.size; i++) {
-            int p_i = p.get(i);
-            o.addParameter(parameterDesc[p_i]);
+        for (int j=0;j<=groupIndex;j++){
+            ParameterGroup p = this.solutionGroups.get(j);
+            for (int i = 0; i < p.size; i++) {
+                int p_i = p.get(i);
+                o.addParameter(parameterDesc[p_i]);
+            }
         }
+        int nTotal = o.getParameter().size();
+        int nGroup = this.solutionGroups.get(groupIndex).size;
 
         Objective c = new Objective();
-
-        int[] tSteps = dominatedTimeStepsForGroup.get(groupIndex);
-        int t = 0;
-        while (t < tSteps.length) {
-            int start = tSteps[t];
+        c.setCustomName("obj. group #" + (groupIndex+1));
+        c.setMethod(UniversalEfficiencyCalculator.availableEfficiencies[UniversalEfficiencyCalculator.NSE2]);
+        o.setOptimizerDescription(new optas.optimizer.SCE().getDescription());
+        for (OptimizerParameter op : o.getOptimizerDescription().getPropertyMap()){
+            if (op instanceof  NumericOptimizerParameter && op.getName().equals("maxn"))
+                ((NumericOptimizerParameter)op).setValue(nTotal*10+nGroup*100);
+        }
+        TreeSet<Integer> tSteps = new TreeSet<Integer>();
+        for (int i=0;i<=groupIndex;i++){
+            int steps[] = dominatedTimeStepsForGroup.get(groupIndex);
+            for (int step : steps)
+                tSteps.add(step);
+        }
+        Iterator<Integer> iter = tSteps.iterator();
+        while (iter.hasNext()) {
+            int start = iter.next();
+            int current = start;
             int end = start;
-            while (++t < tSteps.length) {
-                if (tSteps[t] - tSteps[t - 1] > 1) {
+            while (iter.hasNext()) {
+                int next = iter.next();
+
+                if (next - current > 1) {
                     break;
                 }
-                end = tSteps[t];
+                end = current+1;
+                current = next;
             }
-            String startString = sdf.format(ts.getTime(start));
-            String endString = sdf.format(ts.getTime(end));
-
+            
             TimeInterval interval = JAMSDataFactory.createTimeInterval();
 
             Calendar startCal = JAMSDataFactory.createCalendar();
@@ -210,6 +244,8 @@ public abstract class OptimizationScheme extends ObservableProgress{
         }
         o.addObjective(c);
         o.setName("Optimize Group " + groupIndex);
+        if (groupIndex == this.solutionGroups.size()-1)
+            o.getOptimizerDescription().getAssessNonUniqueness().setValue(true);
         return o;
     }
 
@@ -221,16 +257,18 @@ public abstract class OptimizationScheme extends ObservableProgress{
         optas.metamodel.Parameter[] parameterDesc = new optas.metamodel.Parameter[n];
         int c = 0;
 
-        double bounds[][] = SlopeCalculations.calculateBehavourialRange(parameter, objective, 0.33);
+        //double bounds[][] = this.SlopeCalculations.calculateBehavourialRange(parameter, objective, 0.33);
 
         for (int i = 0; i < parameter.length; i++) {
             //for (int i=0;i<p.size;i++){
             parameterDesc[c] = new optas.metamodel.Parameter();
             //this name must be resolved with the model
             parameterDesc[c].setAttributeName(this.parameter[i].getName());
-            parameterDesc[c].setLowerBound(bounds[i][0]);
-            parameterDesc[c].setUpperBound(bounds[i][1]);
-            parameterDesc[c].setStartValueValid(false);
+            double minRange = parameter[i].getMin();
+            double maxRange = parameter[i].getMax();
+            parameterDesc[c].setLowerBound(minRange);
+            parameterDesc[c].setUpperBound(maxRange);
+            parameterDesc[c].setStartValue(new double[0]);
             parameterDesc[c].setId(c);
             c++;
             //}
@@ -238,5 +276,7 @@ public abstract class OptimizationScheme extends ObservableProgress{
         return parameterDesc;
     }
 
-    abstract public void calcOptimizationScheme();
+    public void calcOptimizationScheme(){
+        solutionGroups.clear();
+    }
 }

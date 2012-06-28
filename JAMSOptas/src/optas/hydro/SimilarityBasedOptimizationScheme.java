@@ -4,7 +4,7 @@
  */
 package optas.hydro;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -29,6 +29,16 @@ public class SimilarityBasedOptimizationScheme extends OptimizationScheme{
         }
     }
 
+    private double[] accumulateWeightsOverParameters(double[][]weights){
+        double sum[] = new double[T];
+        for (int i=0;i<n;i++){
+            for (int j=0;j<T;j++){
+                sum[j] += weights[i][j];
+            }
+        }
+        return sum;
+    }
+
     public double calcR2(double[]t1, double[]t2){
         double mean = 0;
         for (int t=0;t<T;t++){
@@ -43,7 +53,40 @@ public class SimilarityBasedOptimizationScheme extends OptimizationScheme{
             denumerator += ((t1[t]-mean)*(t1[t]-mean));
 
         }
+        if (denumerator == 0)
+            return 0;
         return 1.0 - numerator/denumerator;
+    }
+
+    public double calcr2(double[]t1, double[]t2){
+        double mean_t1 = 0;
+        double mean_t2 = 0;
+        for (int t=0;t<T;t++){
+            mean_t1 += t1[t];
+            mean_t2 += t2[t];
+        }
+        mean_t1 /= (double)T;
+        mean_t2 /= (double)T;
+
+
+        double numerator=0;
+        double denumerator1=0;
+        double denumerator2=0;
+
+        for (int t=0;t<T;t++){
+            numerator += (t1[t]-mean_t1)*(t2[t]-mean_t2);
+            denumerator1 += (t1[t]-mean_t1)*(t1[t]-mean_t1);
+            denumerator2 += (t2[t]-mean_t2)*(t2[t]-mean_t2);
+
+        }
+        numerator = 1.0/T * numerator;
+        denumerator1 = 1.0/T * denumerator1;
+        denumerator2 = 1.0/T * denumerator2;
+
+        if (denumerator1 == 0 || denumerator2 == 0)
+            return 0.0;
+        
+        return numerator / (Math.sqrt(denumerator1)*Math.sqrt(denumerator2));
     }
 
     public double calcSimilarty(ParameterGroup p1, ParameterGroup p2){
@@ -62,96 +105,54 @@ public class SimilarityBasedOptimizationScheme extends OptimizationScheme{
             ts2[t] = p2.calcNorm();
         }
 
-        return calcR2(ts1,ts2);
+        return calcr2(ts1,ts2);
     }
 
-    public void calcOptimizationScheme() {
-        ArrayList<ParameterGroup> availableGroups = new ArrayList<ParameterGroup>();
-        
 
+
+    public void calcOptimizationScheme(){
+        int currentGroupCount = n;
+        double w_sum[] = accumulateWeightsOverParameters(weights);
+        ParameterGroup groups[] =  new ParameterGroup[n];
         for (int i=0;i<n;i++){
-            ParameterGroup p = new ParameterGroup(this.parameter,n);
-            p = p.createEmptyGroup();
-            p.add(i);
-
-            availableGroups.add(p);
+            groups[i] = (new ParameterGroup(this.parameter,n)).createEmptyGroup();
+            groups[i].add(i);
         }
 
-
-        double similarity = 1.0;
-        while (similarity > 0.0){
-            double maxSimilarity = Double.NEGATIVE_INFINITY;
-
-            ParameterGroup bestGroup1=null, bestGroup2=null;
-
-            for (int i=0;i<availableGroups.size();i++){
-                for (int j=i+1;j<availableGroups.size();j++){
-                    double testSimilarity = 0;
-
-                    for (int k=0;k<availableGroups.get(i).size;k++){
-                        ParameterGroup pk = new ParameterGroup(this.parameter,n);
-                        pk = pk.createEmptyGroup();
-                        pk.add(availableGroups.get(i).get(k));
-
-                        for (int l=0;l<availableGroups.get(j).size;l++){
-                            ParameterGroup pl = new ParameterGroup(this.parameter,n);
-                            pl = pl.createEmptyGroup();
-                            pl.add(availableGroups.get(j).get(l));
-
-                            testSimilarity += calcSimilarty(pk, pl);
-                        }
-                    }
-                    testSimilarity /= (double)(availableGroups.get(i).size * availableGroups.get(j).size);
-
-                    if (testSimilarity > maxSimilarity){
-                        maxSimilarity = testSimilarity;
-                        bestGroup1 = availableGroups.get(i);
-                        bestGroup2 = availableGroups.get(j);
-                    }
+        while(true){
+            double similarity = Double.NEGATIVE_INFINITY;
+            int bestP1=0, bestP2=0;
+            for (int i=0;i<n;i++){
+                for (int j=i+1;j<n;j++){
+                     double s = calcSimilarty(groups[i],groups[j]);
+                     if (s > similarity){
+                         bestP1 = i;
+                         bestP2 = j;
+                         similarity = s;
+                     }
                 }
             }
-            similarity = maxSimilarity;
-            availableGroups.remove(bestGroup2);
-            bestGroup1.add(bestGroup2);
+            if (similarity<=0.0 || currentGroupCount < 2)
+                break;
+
+            System.out.println("Similarity is:" + similarity);
+            System.out.println("Group " + groups[bestP1].toString() + " together with " + groups[bestP2].toString());
+            groups[bestP1].add(groups[bestP2]);
+            groups[bestP2] = groups[--currentGroupCount];
         }
 
-        double domination[] = new double[availableGroups.size()];
-        double w[] = new double[n];
-        int j=0;
-        for (ParameterGroup p : availableGroups){
+        for (int i=0;i<currentGroupCount;i++){
+            this.solutionGroups.add(groups[i]);
+            System.out.println("weights group " + i + groups[i]);
+            double weight_cur[] = new double[T];
             for (int t=0;t<T;t++){
-                for (int i=0;i<n;i++){
-                    w[i] = this.weights[i][t];
-                }
-                p.w = w;
-                domination[j] += p.calcNorm();
-            }
-            j++;
-        }
-
-        boolean changes = true;
-        while(changes){
-            changes = false;
-            for (int i=0;i<domination.length-1;i++){
-                if (domination[i]<domination[i+1]){
-                    //flip
-                    double tmp = domination[i];
-                    ParameterGroup tmp2 = availableGroups.get(i);
-
-                    domination[i] = domination[i+1];
-                    availableGroups.set(i, availableGroups.get(i+1));
-
-                    domination[i+1] = tmp;
-                    availableGroups.set(i+1, tmp2);
-                    changes = true;
+                for (int j=0;j<groups[i].getSize();j++){
+                    weight_cur[t] += weights[groups[i].get(j)][t] / w_sum[t];
                 }
             }
+            System.out.println(Arrays.toString(weight_cur));
         }
-        this.solutionGroups = availableGroups;
-        ParameterGroup allParameters = new ParameterGroup(this.parameter,n);
-        for (ParameterGroup p : solutionGroups){
-            this.dominatedTimeStepsForGroup.add(this.calcDominatedTimeSteps(p, allParameters));
-            allParameters.sub(p);
-        }
-    }    
+
+        update();
+    }
 }

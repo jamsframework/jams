@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -301,10 +302,7 @@ public class ModelModifier {
     private String getStartValueString() {
         String startValues = "";
         for (Parameter p : odd.getParameter().values()) {
-            if (!p.isStartValueValid()) {
-                return null;
-            }
-            startValues += p.getStartValue() + ";";
+            startValues += Arrays.toString(p.getStartValue()) + ";";
         }
         return startValues;
     }

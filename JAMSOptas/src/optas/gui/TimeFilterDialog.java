@@ -216,7 +216,7 @@ public class TimeFilterDialog extends JDialog{
             JOptionPane.showMessageDialog(rootPane, "Please enter a valid window value");
         }
 
-        this.hydrographHydroEvent.setGroundwaterWindowSize(windowSize);
+        //this.hydrographHydroEvent.setGroundwaterWindowSize(windowSize);
 
         EventFilter filter = null;
         if (hydroEventTypeBox.getSelectedItem().equals(raisingEdgeString)){
@@ -229,7 +229,9 @@ public class TimeFilterDialog extends JDialog{
 
         if (filter==null)
             return null;
-        
+
+        filter.setQualityThreshold(qualitySlider.getValue()/100.0);
+
         this.qualitySlider.setMinimum((int)(filter.getMinQuality()*100.0));
         this.qualitySlider.setMaximum((int)(filter.getMaxQuality()*100.0));
 
@@ -238,7 +240,8 @@ public class TimeFilterDialog extends JDialog{
 
     ActionListener updateHydroEventListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            hydrographHydroEvent.setFilter(constructHydroEventFilter());
+            hydrographHydroEvent.clearFilter();
+            hydrographHydroEvent.addFilter(constructHydroEventFilter());
         }
     };
 
@@ -309,8 +312,9 @@ public class TimeFilterDialog extends JDialog{
             public void stateChanged(ChangeEvent e) {
 
                 if (TimeFilterDialog.this.hydrographHydroEvent.filter!=null){
-                    ((EventFilter)TimeFilterDialog.this.hydrographHydroEvent.filter).setQualityThreshold(qualitySlider.getValue()/100.0);
-                    hydrographHydroEvent.setFilter(TimeFilterDialog.this.hydrographHydroEvent.filter);
+                    ((EventFilter)TimeFilterDialog.this.hydrographHydroEvent.filter.get(0)).setQualityThreshold(qualitySlider.getValue()/100.0);
+                    /*hydrographHydroEvent.clearFilter();
+                    hydrographHydroEvent.addFilter(TimeFilterDialog.this.hydrographHydroEvent.filter.get(0));*/
 
                 }
             }
@@ -335,7 +339,8 @@ public class TimeFilterDialog extends JDialog{
 
     ActionListener updateBaseFlowListener = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-            hydrographBaseFlow.setFilter(constructBaseFlowFilter());
+            hydrographBaseFlow.clearFilter();
+            hydrographBaseFlow.addFilter(constructBaseFlowFilter());
         }
     };
 

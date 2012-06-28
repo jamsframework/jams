@@ -99,7 +99,8 @@ public class EnsembleTimeSeriesProcessor extends Processor {
 
     public int getTimeUnit() throws SQLException, IOException{
         Attribute.Calendar timeSteps[] = this.getTimeSteps();
-
+        if (timeSteps == null)
+            return -1;
         Attribute.Calendar t0 = timeSteps[0];
         Attribute.Calendar tn = timeSteps[timeSteps.length-1];
 
@@ -642,6 +643,8 @@ public class EnsembleTimeSeriesProcessor extends Processor {
     public synchronized Attribute.Calendar[] getTimeSteps() throws SQLException, IOException {
 
         DataMatrix block0 = getTimeSeriesData(this.getModelRuns()[0]);
+        if (block0 == null) //could happen if datastore is empty
+            return null;
         Object[] ids = block0.getIds();
         Attribute.Calendar steps[] = new Attribute.Calendar[ids.length];
 

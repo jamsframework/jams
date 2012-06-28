@@ -33,8 +33,7 @@ class NumericFocusListener implements FocusListener {
                     p.setUpperBound(Double.parseDouble(src.getText()));
                     break;
                 case MODE_STARTVALUE:
-                    p.setStartValue(Double.parseDouble(src.getText()));
-                    p.setStartValueValid(true);
+                    p.setStartValue(new double[]{Double.parseDouble(src.getText())});
                     break;
                 case MODE_PARAMETERVALUE:
                     NumericOptimizerParameter p2 = (NumericOptimizerParameter) src.getClientProperty("property");
@@ -54,8 +53,8 @@ class NumericFocusListener implements FocusListener {
                     src.setText(Double.toString(p.getUpperBound()));
                     break;
                 case MODE_STARTVALUE:
-                    if (p.isStartValueValid()) {
-                        src.setText(Double.toString(p.getStartValue()));
+                    if (p.getStartValue().length>0) {
+                        src.setText(Double.toString(p.getStartValue()[0]));
                     } else {
                         src.setText("");
                     }

@@ -73,13 +73,13 @@ public class ParallelHaltonSequenceSampling extends Optimizer{
     public String excludeFiles = "";
     public int samplesPerIteration = 192;
     public Model model = null;
-    public int threadCount = 12;
+    public double threadCount = 12;
 
-    public void setThreadCount(int threadCount){
-        this.threadCount = threadCount;
+    public void setThreadCount(double threadCount){
+        this.threadCount = (int)threadCount;
     }
 
-    public int getThreadCount(){
+    public double getThreadCount(){
         return this.threadCount;
     }
 
@@ -296,10 +296,12 @@ public class ParallelHaltonSequenceSampling extends Optimizer{
 
                 jobs.add(new ParallelJob<InputData, OutputData>(jobsData[i]) {
 
+                    @Override
                     public void moveWorkspace(File newWorkspace) {
                         ((JAMSModel) arg.context.getModel()).moveWorkspaceDirectory(newWorkspace.getAbsolutePath());
                     }
 
+                    @Override
                     public OutputData execute() {
                         OutputData result = ParallelHaltonSequenceSampling.parallelExecute(arg);
 
@@ -312,6 +314,7 @@ public class ParallelHaltonSequenceSampling extends Optimizer{
             return jobs;
         }
 
+        @Override
         public OutputData reduce(ArrayList<OutputData> results) {
             System.out.println("reduce_function_started_");
             
@@ -344,15 +347,16 @@ public class ParallelHaltonSequenceSampling extends Optimizer{
 
         int initalSampleSize = this.factory.getSize();
 
-        int samplesPerIteration2 = threadCount*6;
+        int samplesPerIteration2 = (int)(threadCount*6);
 
         for (int i = 0; i < Math.ceil(this.maxn / samplesPerIteration2); i++) {
 
             int currentOffset      = (int)offset + (i * samplesPerIteration2);
             int sampleCount        = (int)Math.min( samplesPerIteration2, this.maxn - i * samplesPerIteration2);
+
             InputData param = new InputData(currentOffset, sampleCount, this);
             
-            result = executor.execute(param, new ParallelHaltonSequenceSamplingTask(), threadCount);
+            result = executor.execute(param, new ParallelHaltonSequenceSamplingTask(), (int)threadCount);
             this.injectSamples(result.list);
 
             if (collection == null) {
@@ -412,8 +416,8 @@ public class ParallelHaltonSequenceSampling extends Optimizer{
         }
 
         for (int i=0;i<N;i++){
-            if (i==0 && x0 != null && offset == 0){
-                simplex[i] = this.getSample(x0);
+            if (x0 != null && i<x0.length && offset == 0){
+                simplex[i] = this.getSample(x0[i]);
                 continue;
             }            
             

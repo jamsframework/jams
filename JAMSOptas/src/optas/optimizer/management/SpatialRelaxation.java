@@ -8,6 +8,7 @@ package optas.optimizer.management;
 import jams.data.Attribute;
 import java.util.Arrays;
 import optas.optimizer.NelderMead;
+import optas.optimizer.ParallelNelderMead;
 import optas.optimizer.SampleLimitException;
 import optas.optimizer.management.OptimizationController.OptimizationConfiguration;
 import optas.optimizer.management.SampleFactory.Sample;
@@ -17,8 +18,8 @@ import optas.optimizer.management.SampleFactory.Sample;
  * @author chris
  */
 public class SpatialRelaxation {
-    Attribute.Double relaxationParameter = null;
-    int mainObjectiveIndex;
+    Attribute.Double relaxationParameter = null;    
+    Statistics lastStat = null;
 
     public void setRelaxationParameter(Attribute.Double relaxationParameter){
         this.relaxationParameter = relaxationParameter;
@@ -26,13 +27,7 @@ public class SpatialRelaxation {
     public Attribute.Double getRelaxationParameter(){
         return relaxationParameter;
     }
-
-    public void setMainObjectiveIndex(int mainObjectiveIndex){
-        this.mainObjectiveIndex = mainObjectiveIndex;
-    }
-    public int getMainObjectiveIndex(){
-        return mainObjectiveIndex;
-    }
+    
     //s1: find min
     //s2: find min - threshold
 
@@ -43,7 +38,7 @@ public class SpatialRelaxation {
     //s6: construct reg. tree
     //s7: if there are open borders of the tree extend area goto s4
     //s8: mark optimal area as NOGO goto s1
-    public void applyProcedure(OptimizationConfiguration conf) {
+    public Statistics applyProcedure(OptimizationConfiguration conf) {
         double relaxationValue = 1.0;
 
         Sample last = null;
@@ -71,9 +66,10 @@ public class SpatialRelaxation {
 
             optas.optimizer.Optimizer optimizer = null;
             if (relaxationValue < 0.8 && conf.getLocalSearchDuringRelaxation()) {
-                optimizer = conf.loadOptimizer(NelderMead.class.getName());
+                optimizer = conf.loadOptimizer(ParallelNelderMead.class.getName());
 
-                NelderMead nmOptimizer = (NelderMead) optimizer;
+                ParallelNelderMead nmOptimizer = (ParallelNelderMead) optimizer;
+                nmOptimizer.setExcludeFiles("(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|(.*output.*\\.db)|.*\\.cdat|.*\\.log");
                 nmOptimizer.setMax_restart_count(1.0);
                 nmOptimizer.setEpsilon(0.01);
             } else {
@@ -86,7 +82,7 @@ public class SpatialRelaxation {
                 (e.projectParametersetToSubSpace(currentSpace[0])),
                 (e.projectParametersetToSubSpace(currentSpace[1])));*/ //changed for test
             }
-            if (currentBest != null) {
+            if (currentBest != null) {                
                 optimizer.setStartValue(currentBest.getParameter());
             }
 
@@ -99,14 +95,28 @@ public class SpatialRelaxation {
             int lastIterations = conf.getIterationCount() - count;
 
 
-            Statistics stat = optimizer.getStatistics();
+            lastStat = optimizer.getStatistics();
+
 
             //Sample min = stat.getMinimumInRange(count, stat.size(), 0);
-            Sample min = stat.getMin(0);
+            Sample min = lastStat.getMin(0); //das ist korrekt, da stat zum optimizer gehört und dieser in jeder iteration neu erzeugt wird
             currentBest = min;
 
-            //currentSpace = stat.getParameterSpace(count, stat.size(), this.mainObjectiveIndex, 0.7);
-            currentSpace = stat.getParameterSpace(0, stat.size(), this.mainObjectiveIndex, 0.7);
+            //currentSpace = lastStat.getParameterSpace(count, lastStat.size(), this.mainObjectiveIndex, 0.7);
+            currentSpace = new double[2][n];
+            for (int i=0;i<n;i++){
+                currentSpace[0][i] = this.lastStat.getMaximalParameter(i);
+                currentSpace[1][i] = this.lastStat.getMinimalParameter(i);
+            }
+            for (int i=0;i<lastStat.m();i++){
+                double space[][] = lastStat.getParameterSpace(0, lastStat.size(), i, 0.7);
+                if (currentSpace!=null){
+                    for (int j=0;j<n;j++){
+                        currentSpace[0][j] = Math.min(currentSpace[0][j], space[0][j]);
+                        currentSpace[1][j] = Math.max(currentSpace[1][j], space[1][j]);
+                    }
+                }
+            }
 
             //extend space a little bit
             for (int i = 0; i < n; i++) {
@@ -121,7 +131,7 @@ public class SpatialRelaxation {
             conf.log("#new upper range:" + Arrays.toString((currentSpace[1])));
 
             conf.log("#Minimum:" + Arrays.toString((min.x)) + "Objective:" + Arrays.toString(min.F()));
-            conf.log("#Geometric range:" + stat.calcGeometricRange(lastIterations));
+            conf.log("#Geometric range:" + lastStat.calcGeometricRange(lastIterations));
 
             if (count != 0) {
                 double dist = 0;
@@ -132,7 +142,7 @@ public class SpatialRelaxation {
 
 
                 conf.log("#Distance to last minimum:" + dist);
-                conf.log("#Improvement:" + stat.calcImprovement(lastIterations, 0));
+                conf.log("#Improvement:" + lastStat.calcImprovement(lastIterations, 0));
 
                 //this is a very good question
                 //optimizer.maxn =
@@ -159,8 +169,9 @@ public class SpatialRelaxation {
                         this.relaxationParameter.setValue(relaxationValue + step);
                         try {//ich denke das ist falsch hier .. currentBest ist bereits im superspace ..
                             double result[] = conf.evaluate((currentBest.getParameter()));
+                            for (int j=0;j<result.length;j++)
+                                adaption_cur = Math.min(adaption_cur, Math.abs(1.0 - (result[j] / currentBest.F()[j])));
 
-                            adaption_cur = Math.abs(1.0 - (result[mainObjectiveIndex] / currentBest.F()[mainObjectiveIndex]));
                             if (adaption_cur > adaption_best) {
                                 step = step + stepLength;
                             } else {
@@ -168,9 +179,9 @@ public class SpatialRelaxation {
                             }
                             stepLength /= 2.0;
                         } catch (SampleLimitException sle) {
-                            return;
+                            return this.lastStat;
                         } catch (ObjectiveAchievedException oae) {
-                            return;
+                            return this.lastStat;
                         }
                     }
                     conf.log("Relexation was adapted to " + relaxationValue + " adapted rate was " + adaption_cur);
@@ -180,7 +191,8 @@ public class SpatialRelaxation {
             }
 
             relaxationValue = relaxationValue + step;
-            count = stat.size();
+            count = lastStat.size();
         }
+        return this.lastStat;
     }
 }

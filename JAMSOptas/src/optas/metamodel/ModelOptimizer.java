@@ -83,9 +83,10 @@ public class ModelOptimizer {
 
             ArrayList<Element> componentList = Tools.getNodeByType(doc, "component");
             for (Element e : componentList) {
-                if (!relevantComponents.contains(e.getAttribute("name")))
+                if (!relevantComponents.contains(e.getAttribute("name"))){
                     removedNodes.add(e.getAttribute("name"));
                     actionList.add(new RemoveElement((Element)e.getParentNode(), e ));
+                }
             }
         }
         return removedNodes;

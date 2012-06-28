@@ -56,8 +56,8 @@ public class ParticleSwarm extends Optimizer {
         for (int i=0;i<numberOfParticles;i++){
             SampleSO rndSample = null;
             
-            if (i==0 && x0 != null){
-                rndSample = this.getSampleSO(x0);
+            if (x0 != null && i<x0.length){
+                rndSample = this.getSampleSO(x0[i]);
             }else
                 rndSample = this.getSampleSO(this.randomSampler());
             

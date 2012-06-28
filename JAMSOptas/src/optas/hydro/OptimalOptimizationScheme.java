@@ -181,6 +181,7 @@ public class OptimalOptimizationScheme extends OptimizationScheme{
         }
     }
         
+    @Override
     public void calcOptimizationScheme() {
         initObjectPools();
         solutionGroups.clear();
@@ -190,7 +191,7 @@ public class OptimalOptimizationScheme extends OptimizationScheme{
         while (allParameters.size > 0) {
             ParameterGroup p = calculateOptimalGroup(allParameters, weights);            
             solutionGroups.add(p);
-            this.dominatedTimeStepsForGroup.add(this.calcDominatedTimeSteps(p, allParameters));
+            this.update();
             allParameters.sub(p);
         }
     }   

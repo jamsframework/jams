@@ -5,6 +5,7 @@
 
 package optas.SA;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Observer;
 import java.util.Set;
@@ -13,14 +14,13 @@ import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.Measurement;
 import optas.hydro.data.SimpleEnsemble;
 import optas.hydro.data.TimeSerieEnsemble;
-import optas.optimizer.HaltonSequenceSampling;
 import optas.optimizer.Optimizer.AbstractFunction;
 import optas.optimizer.SampleLimitException;
 import optas.optimizer.SobolsSequenceSampling;
 import optas.optimizer.management.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory.Sample;
-import optas.regression.Interpolation;
-import optas.regression.NeuralNetwork;
+import optas.regression.Interpolation.ErrorMethod;
+import optas.regression.TimeSerieNeuralNetwork;
 
 /**
  *
@@ -28,14 +28,12 @@ import optas.regression.NeuralNetwork;
  */
 public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivityAnalysis{
     SimpleEnsemble x[];
-    
-    protected SimpleEnsemble x_raw[];
-    protected TimeSerieEnsemble ts_raw;
+            
+    protected int L;
+    protected int sampleSize = 2000;
 
-    protected int n;
-    protected int L_raw=0,L;
-    protected int sampleSize = 1000;
-    protected boolean isInit = false;
+    int MAIN_EFFECT = 0;
+    int TOTAL_EFFECT = 1;
 
     double A[][] = null;
     double B[][] = null;
@@ -48,57 +46,23 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
 
     double EyA[] = null;
     double VyA[] = null;
-    Interpolation I;
-
-    double range[][] = null;
+    TimeSerieNeuralNetwork I;
+    TimeSerieEnsemble tsStar;
 
     double sensitivityIndex[][][];
+    
+    double samplesCurrent;
+    double samplesTotal;
 
     public VarianceBasedTemporalSensitivityAnalysis(SimpleEnsemble parameter[], EfficiencyEnsemble o, TimeSerieEnsemble ts, Measurement obs ){
         super(parameter, o, ts, obs);
-
-        this.x_raw = parameter;
-        this.ts_raw = ts;
-                
-        n = x_raw.length;
-        if (n==0){
-            return;
-        }
-        L_raw = x_raw[0].getSize();
-
-        for (int i=0;i<n;i++){
-            if (parameter[i].getSize()!=L_raw)
-                return;
-        }
-        if (ts_raw.getSize()!=L_raw)
-            return;
-
-        isInit = false;
     }
 
-    protected double[] transformFromUnitCube(double x[]){
-        double[] y = new double[n];
-        for (int i=0;i<n;i++){
-            y[i] = range[i][0] + x[i]*(range[i][1]-range[i][0]);
-        }
-        return y;
+    public void loadNetworkState(File networkStateFile){
+        this.init(networkStateFile);
     }
-    protected double[] transformToUnitCube(double x[]){
-        double[] y = new double[n];
-        for (int i=0;i<n;i++){
-            y[i] = (x[i]-range[i][0])/(range[i][1]-range[i][0]);
-        }
-        return y;
-    }
-
-    protected double[][] getParameterRange() {
-        double range[][] = new double[n][2];
-
-        for (int j = 0; j < n; j++) {
-            range[j][0] = x_raw[j].getMin();
-            range[j][1] = x_raw[j].getMax();
-        }
-        return range;
+    public void saveNetworkState(File networkStateFile){
+        this.I.save(networkStateFile);
     }
 
     public void setSampleSize(int sampleSize){
@@ -109,25 +73,7 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
     public int getSampleSize(){
         return sampleSize;
     }
-
-    private double[] getLowBound(){
-        double lb[] = new double[n];
-        for (int j = 0; j < n; j++) {
-            lb[j] = x_raw[j].getMin();
-        }
-        return lb;
-    }
-
-    private double[] getUpBound(){
-        double ub[] = new double[n];
-        for (int j = 0; j < n; j++) {
-            ub[j] = x_raw[j].getMax();
-        }
-        return ub;
-    }
-
-    double samplesCurrent;
-    double samplesTotal;
+        
     protected void sampleData(int size){
         log("Sample data");
         samplesCurrent = 0;
@@ -135,16 +81,16 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
 
         x = new SimpleEnsemble[n];
         for (int j=0;j<n;j++){
-            x[j] = new SimpleEnsemble(x_raw[j].name + "(*)", size);
+            x[j] = new SimpleEnsemble(parameter[j].name + "(*)", size);
         }
-        ts = new TimeSerieEnsemble(ts_raw.name,size,ts_raw.getTimeInterval());
+        tsStar = new TimeSerieEnsemble(ts.name,size,ts.getTimeInterval());
 
         SobolsSequenceSampling sampler = new SobolsSequenceSampling();
         sampler.setFunction(new AbstractFunction() {
             @Override
             public double[] f(double[] x) throws SampleLimitException, ObjectiveAchievedException {
                 VarianceBasedTemporalSensitivityAnalysis.this.setProgress(samplesCurrent/samplesTotal);
-                return I.getValue(x);
+                return I.getInterpolatedValue(x);
             }
 
             @Override
@@ -169,7 +115,7 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
             Sample s = result.get(i);
             for (int j=0;j<n;j++)
                 x[j].add(i, s.x[j]);
-            ts.add(i, s.F());
+            tsStar.add(i, s.F());
         }
 
         L = result.size();
@@ -205,9 +151,9 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
                 x0B[j] = x[j].getValue(id_iB);
             }
             A[i] = transformToUnitCube(x0A);
-            yA[i] = this.ts.getValue(id_iA);
+            yA[i] = this.tsStar.getValue(id_iA);
             B[i] = transformToUnitCube(x0B);
-            yB[i] = this.ts.getValue(id_iB);
+            yB[i] = this.tsStar.getValue(id_iB);
 
             for (int t=0;t<T;t++){
                 EyA[t] += yA[i][t];
@@ -221,25 +167,25 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
     }
 
     protected double[] getInterpolation(double[] x){
-        return I.getValue(x);
+        return I.getInterpolatedValue(x);
     }
 
-    private void init(){
+    private void init(File f){
         log("Initialize Temporal Sensitivity Analysis");
         setProgress(0.0);
 
-        I = new NeuralNetwork();
-        SimpleEnsemble s[] = new SimpleEnsemble[T];
-        for(int t=0;t<T;t++){
-            s[t]= ts_raw.get(t);
-        }
+        I = new TimeSerieNeuralNetwork();
+                
         log("Setup Interpolation method");
         for (Observer o : this.getObservers())
             I.addObserver(o);
-        I.setData(x_raw, s);
+        I.setData(parameter, ts);
+        if (f!=null)
+            I.load(f);
+
         I.init();
-        //System.out.println("Error:" + I.estimateCrossValidationError(3, Interpolation.ErrorMethod.E2));
-        range = this.getParameterRange();
+        
+        
         updateData();        
         
         isInit = true;
@@ -251,20 +197,41 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
     public double[][] calculate(){
         log("Calculating Sensitivity Indicies");
         if (!isInit){
-            init();
+            init(null);
         }
         double sensitivity[][] = new double[n][T];
 
         for (int i=0;i<n;i++){
             for (int t=0;t<T;t++)
-                sensitivity[i][t] = this.sensitivityIndex[i][t][0];
+                sensitivity[i][t] = this.sensitivityIndex[i][t][TOTAL_EFFECT]; //using total sensitivity indices
         }
+
+        //normalize
+        for (int t = 0; t < T; t++) {
+            double sum = 0;
+            for (int i=0;i<n;i++){
+                sum += sensitivity[i][t];
+            }
+            for (int i=0;i<n;i++){
+                if (sensitivity[i][t] < 0.025*sum){
+                    sensitivity[i][t] = 0;
+                }
+            }
+            sum = 0;
+            for (int i=0;i<n;i++){
+                sum += sensitivity[i][t];
+            }
+            for (int i=0;i<n;i++){
+                sensitivity[i][t] /= sum;
+            }
+        }
+
         return sensitivity;
     }
     
     private void calcSensitivity(){
         if (!isInit){
-            init();
+            init(null);
         }
         sensitivityIndex = new double[n][][];
 
@@ -278,9 +245,9 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
 
     public double[][] calcSensitivity(Set<Integer> indexSet) {
         if (!isInit){
-            init();
+            init(null);
         }
-        double sensitivityIndex[][] = new double[T][3];
+        double sensitivityIndex[][] = new double[T][2];
         int Lh = L / 2;
         
         double C[][] = new double[Lh][n];
@@ -320,10 +287,14 @@ public class VarianceBasedTemporalSensitivityAnalysis extends TemporalSensitivit
             double VyAC = ti1 - EyA[t]*EyA[t];
             double VyBC = ti2 - EyA[t]*EyA[t];
 
-            sensitivityIndex[t][0] = Math.max((VyAC / VyA[t]),0);
-            sensitivityIndex[t][1] = Math.max(1.0 - (VyBC / VyA[t]),0);
+            sensitivityIndex[t][MAIN_EFFECT] = Math.max((VyAC / VyA[t]),0);
+            sensitivityIndex[t][TOTAL_EFFECT] = Math.max(1.0 - (VyBC / VyA[t]),0);
         }
 
         return sensitivityIndex;
+    }
+
+    public double[] getCVError(int K){
+        return this.I.estimateCrossValidationError(K, ErrorMethod.E2);
     }
 }

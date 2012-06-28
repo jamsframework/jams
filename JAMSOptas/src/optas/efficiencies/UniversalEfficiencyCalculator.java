@@ -12,6 +12,7 @@ import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import java.util.StringTokenizer;
 import optas.efficiencies.VolumeError.VolumeErrorType;
@@ -125,6 +126,8 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     description = "file name of optimization process description")
     public Attribute.Calendar time;
 
+    static final public int RMSE = 0, NSE1=1,NSE2=2,LNSE1=3,LNSE2=4,AVE=5,R2=6,RBIAS=7;
+
     static public String[] availableEfficiencies = {
         "Root Mean Square Error", "Nash Sutcliffe (e1)", "Nash Sutcliffe (e2)",
         "log Nash Sutcliffe (le1)", "log Nash Sutcliffe (le2)", "Average Volume Error", "r2", "relative bias"};
@@ -138,6 +141,9 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
                          calcAve= new VolumeError(VolumeErrorType.Absolute),
                          calcR2 = new CorrelationError(),
                          calcPBias = new VolumeError(VolumeErrorType.Relative);
+
+    boolean firstIteration = true;
+    HashSet<Long> timeStepCache = new HashSet<Long>();
 
     @Override
     public void init(){
@@ -164,10 +170,16 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
         if (time==null || timeInterval.getValue().equals("")){
             considerData();
         }
-
-        for (TimeInterval t : timeIntervalList){
-            Calendar c = time.getValue();
-            if (!c.before(t.getStart()) && !c.after(t.getEnd())){
+        if (firstIteration) {
+            for (TimeInterval t : timeIntervalList) {
+                Calendar c = time.getValue();
+                if (!c.before(t.getStart()) && !c.after(t.getEnd())) {
+                    considerData();
+                    timeStepCache.add(time.getTimeInMillis());
+                }
+            }
+        }else{
+            if (timeStepCache.contains(time.getTimeInMillis())){
                 considerData();
             }
         }
@@ -187,6 +199,8 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
 
     @Override
     public void cleanup(){
+        firstIteration = false;
+
         double m[] = new double[measurementList.size()],
                s[] = new double[simulationList.size()];
         for (int i=0;i<measurementList.size();i++){

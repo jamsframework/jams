@@ -124,8 +124,8 @@ public class WizardParameterPanel extends JPanel{
                     }
 
                     JTextField startValue = new JTextField(5);
-                    if (p.isStartValueValid()) {
-                        startValue.setText(Double.toString(p.getStartValue()));
+                    if (p.getStartValue() != null && p.getStartValue().length>0) {
+                        startValue.setText(Double.toString(p.getStartValue()[0]));
                     }
                     startValue.addKeyListener(stdNumericKeyListener);
                     startValue.addFocusListener(stdFocusListener);
@@ -160,7 +160,6 @@ public class WizardParameterPanel extends JPanel{
                 pDst.setLowerBound(pSrc.getLowerBound());
                 pDst.setUpperBound(pSrc.getUpperBound());
                 pDst.setStartValue(pSrc.getStartValue());
-                pDst.setStartValueValid(pSrc.isStartValueValid());
             }
         }
         parameterList.setSelectedIndices(selIndexList);

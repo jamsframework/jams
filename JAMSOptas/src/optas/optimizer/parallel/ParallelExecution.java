@@ -116,6 +116,7 @@ public class ParallelExecution<X,Y> {
                 bos.close();
             }
         }
+        zipFile.close();
     }
 
     public ParallelExecution(File workspace, String excludeFiles){
@@ -174,14 +175,16 @@ public class ParallelExecution<X,Y> {
         }
     }
 
+    static long instanceTime = System.nanoTime();
+    
     public Y execute(X arg, ParallelTask<X,Y> task, int gridSize){
 
         ArrayList<ParallelJob> jobs = task.split(arg, gridSize);
         ArrayList<Y> results = new ArrayList<Y>();
 
         threadPool = new ThreadPoolExecutor(gridSize, gridSize, 30, TimeUnit.SECONDS, workQueue);
-
-        String dstDirectory = System.getProperty("java.io.tmpdir") + "/ram/";
+        
+        String dstDirectory = System.getProperty("java.io.tmpdir") + "/ram/" + instanceTime + "/"; //hope this avoids conflicts
 
         for (int i=0;i<jobs.size();i++){
             ParallelJob clonedJob = (ParallelJob)clone(jobs.get(i));
@@ -207,12 +210,13 @@ public class ParallelExecution<X,Y> {
                 public void run() {
                     Y result = (Y)this.job.execute();
                     synchronized(sharedResultList){
-                        sharedResultList.add(result);
+                        if (result!=null)
+                            sharedResultList.add(result);
                     }
                 }
             };
             threadPool.execute(r);
-            log("Starting new task! -- There are " + workQueue.size() + " tasks in workQueue!");           
+            //log("Starting new task! -- There are " + workQueue.size() + " tasks in workQueue!");
         }
         threadPool.shutdown();
         

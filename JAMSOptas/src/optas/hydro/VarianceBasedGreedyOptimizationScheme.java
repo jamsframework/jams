@@ -20,18 +20,19 @@ import optas.tools.ObservableProgress;
  *
  * @author chris
  */
-public class GreedyOptimizationScheme1 extends OptimizationScheme{
+public class VarianceBasedGreedyOptimizationScheme extends OptimizationScheme{
 
     VarianceBasedTemporalSensitivityAnalysis VBTSA;
-    
-    double tau = 0.8;
-    
+
+    double tau = 0.7;
+    double minDominatedTimesteps = 0.2;
+
     @Override
     public String toString(){
         return "Greedy";
     }
 
-    public GreedyOptimizationScheme1(){
+    public VarianceBasedGreedyOptimizationScheme(){
 
     }
 
@@ -42,7 +43,43 @@ public class GreedyOptimizationScheme1 extends OptimizationScheme{
         this.parameter = p;
         this.ts = ts;
     }
-    
+
+    public void update(){
+        dominatedTimeStepsForGroup.clear();
+
+        double varianceExplainedCurrent[] = new double[T];
+
+        for (int i=0;i<this.solutionGroups.size();i++){
+            ParameterGroup p = solutionGroups.get(i);
+            ArrayList<Integer> timeStepsTmp = new ArrayList<Integer>();
+            Set<Integer> groupSet = new TreeSet<Integer>();
+            for (int j=0;j<p.getSize();j++)
+                groupSet.add(p.get(j));
+
+
+            double varianceExplainedUpdate[][] = VBTSA.calcSensitivity(groupSet);
+
+            for (int t = 0; t < T; t++) {
+                double vt = varianceExplainedUpdate[t][1];
+
+                double critValue = tau + (1.0 - tau) * varianceExplainedCurrent[t];
+                if (vt > critValue) {
+                    timeStepsTmp.add(t);
+                }
+            }
+
+            int timeSteps[] = new int[timeStepsTmp.size()];
+            for (int k=0;k<timeStepsTmp.size();k++){
+                timeSteps[k] = timeStepsTmp.get(k);
+            }
+            this.dominatedTimeStepsForGroup.add(timeSteps);
+
+            for (int t=0;t<T;t++)
+                varianceExplainedCurrent[t] = varianceExplainedUpdate[t][1];
+        }
+
+    }
+
     //ok always take the best set
     public void calcOptimizationScheme(){        
         Set<Integer> parametersInUse = new TreeSet<Integer>();
@@ -99,7 +136,7 @@ public class GreedyOptimizationScheme1 extends OptimizationScheme{
                 group.add(bestParameter);
                 parametersInUse.add(bestParameter);                
 
-                if ((double) bestTimeList.size() / (double) T > 0.1 || parametersInUse.size()>=n ) {
+                if ( ((double) bestTimeList.size() / (double) T) > minDominatedTimesteps || parametersInUse.size()>=n ) {
                     addMore = false;
                     for (int i=0;i<bestTimeList.size();i++)
                         dominationOfGroup[i] = bestTimeList.get(i);

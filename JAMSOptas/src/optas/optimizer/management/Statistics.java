@@ -14,8 +14,8 @@ import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.SimpleEnsemble;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.SampleFactory.SampleComperator;
-import optas.regression.Interpolation;
-import optas.regression.NeuralNetwork;
+import optas.regression.SimpleInterpolation;
+import optas.regression.SimpleNeuralNetwork;
 
 
 /**
@@ -28,7 +28,7 @@ public class Statistics implements Serializable{
     ArrayList<Sample> bestSampleList=new ArrayList<Sample>();
 
     //this transient is more a performance issue
-    transient ArrayList<Interpolation> I = null;
+    transient ArrayList<SimpleInterpolation> I = null;
 
     public Statistics(ArrayList<Sample> sampleList) {
         this.sampleList = sampleList;
@@ -227,9 +227,24 @@ public class Statistics implements Serializable{
         return null;
     }
 
-    public ArrayList<Sample> getParetoFront(){
-        if (!bestSampleList.isEmpty())
+    public ArrayList<Sample> getParetoFront(){        
+        /*if (!bestSampleList.isEmpty())
+            return bestSampleList;*/
+        bestSampleList.clear();
+        if (this.m()==1){
+            SampleComperator comparer = new SampleComperator(true);
+            Sample best = null;
+            Iterator<Sample> iter = sampleList.iterator();
+            while(iter.hasNext()){
+                Sample rivale = iter.next();
+                if(best==null)
+                    best=rivale;
+                else if (comparer.compare(best,rivale)<0)
+                    best = rivale;
+            }
+            bestSampleList.add(best);
             return bestSampleList;
+        }
 
         SampleComperator comparer = new SampleComperator(true);
         Iterator<Sample> iter = sampleList.iterator();
@@ -253,7 +268,7 @@ public class Statistics implements Serializable{
     }
 
     public void optimizeInterpolation(){
-        for (Interpolation idw : I){
+        for (SimpleInterpolation idw : I){
             idw.init();
             //idw.optimizeWeights();
         }
@@ -281,9 +296,9 @@ public class Statistics implements Serializable{
         int m = this.sampleList.get(0).fx.length;
         
         if (I == null){
-            I = new ArrayList<Interpolation>();
+            I = new ArrayList<SimpleInterpolation>();
             for (int i = 0; i < m; i++) {            
-                NeuralNetwork nn = new NeuralNetwork();
+                SimpleNeuralNetwork nn = new SimpleNeuralNetwork();
                 I.add(nn);
             }
         }
@@ -328,9 +343,11 @@ public class Statistics implements Serializable{
                 counter++;
             }
 
-            Interpolation nn = I.get(i);
+            SimpleInterpolation nn = I.get(i);
             nn.setData(ensemble, y[i]);
-            errorLOO = Math.min(nn.estimateCrossValidationError(5, Interpolation.ErrorMethod.E2), errorLOO);
+            double error[] = nn.estimateCrossValidationError(5, SimpleInterpolation.ErrorMethod.E2);
+            for (int j=0;j<error.length;j++)
+                errorLOO = Math.min(error[j], errorLOO);
         }
 
         return errorLOO;

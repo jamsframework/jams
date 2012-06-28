@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.TreeMap;
 import optas.hydro.calculations.BaseFlow;
 import optas.hydro.calculations.HydrographEvent;
@@ -103,6 +104,19 @@ public class TimeFilterFactory {
         }
         public boolean isFiltered(Date date) {
             return !(date.after(range.getStart().getTime()) && date.before(range.getEnd().getTime()));
+        }
+    }
+
+    static public class SelectiveTimeFilter extends TimeFilter{
+        HashSet<Long> set = new HashSet<Long>();
+
+        private SelectiveTimeFilter(Date nonFilteredDates[]){
+            for (Date d : nonFilteredDates){
+                set.add(d.getTime());
+            }
+        }
+        public boolean isFiltered(Date date) {
+            return !set.contains(date.getTime());
         }
     }
 
@@ -317,4 +331,7 @@ public class TimeFilterFactory {
         return new CombinedTimeFilter(filter);
     }
 
+    public static TimeFilter getSelectiveTimeFilter(Date[] dates){
+        return new SelectiveTimeFilter(dates);
+    }
 }

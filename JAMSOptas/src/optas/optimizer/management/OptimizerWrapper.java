@@ -18,6 +18,7 @@ import jams.model.JAMSVarDescription;
 import jams.JAMS;
 import jams.workspace.stores.Filter;
 import jams.workspace.stores.OutputDataStore;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 import java.util.regex.Matcher;
@@ -101,7 +102,7 @@ public abstract class OptimizerWrapper extends JAMSContext {
     protected double[] upBound;
     //number of parameters!!
     public int n,m;
-    protected double x0[] = null;
+    protected double x0[][] = null;
 
     private SampleFactory factory = new SampleFactory();
 
@@ -168,24 +169,35 @@ public abstract class OptimizerWrapper extends JAMSContext {
             }
         }
         if (this.startValue != null) {
-            x0 = new double[n];
-            StringTokenizer tokStartValue = new StringTokenizer(startValue.getValue(), ";");
+
             int counter = 0;
+            StringTokenizer tokStartValue = new StringTokenizer(startValue.getValue(), ";");
+            ArrayList<double[]> x0List = new ArrayList<double[]>();
             while (tokStartValue.hasMoreTokens()) {
                 String param = tokStartValue.nextToken();
-                try {
-                    if (counter >= n) {
-                        counter = n + 1;
-                        break;
-                    }
-                    x0[counter] = Double.valueOf(param).doubleValue();
-                    counter++;
-                } catch (NumberFormatException e) {
-                    this.getModel().getRuntime().sendHalt(JAMS.i18n("Component") + " " + this.getInstanceName() + ": " + JAMS.i18n("unparseable_number") + param);
+                param = param.replace("[", "");
+                param = param.replace("]", "");
+                StringTokenizer subTokenizer = new StringTokenizer(param, ",");
+                double x0i[] = new double[subTokenizer.countTokens()];
+                int subCounter = 0;
+                if (x0i.length != n) {
+                    this.getModel().getRuntime().sendHalt(JAMS.i18n("Component") + " " + JAMS.i18n("startvalue_too_many_parameter"));
                 }
+                while (subTokenizer.hasMoreTokens()) {
+                    try {
+                        x0i[subCounter] = Double.valueOf(subTokenizer.nextToken()).doubleValue();
+                        subCounter++;
+                    } catch (NumberFormatException e) {
+                        this.getModel().getRuntime().sendHalt(JAMS.i18n("Component") + " " + this.getInstanceName() + ": " + JAMS.i18n("unparseable_number") + param);
+                    }
+                }
+                x0List.add(x0i);
+                counter++;
             }
-            if (counter != n) {
-                this.getModel().getRuntime().sendHalt(JAMS.i18n("Component") + " " + JAMS.i18n("startvalue_too_many_parameter"));
+            
+            x0 = new double[x0List.size()][n];
+            for (int j=0;j<x0List.size();j++){
+                x0[j] = x0List.get(j);                
             }
         }
         if (this.effMethodName == null) {
@@ -309,7 +321,8 @@ public abstract class OptimizerWrapper extends JAMSContext {
             try {
                 parameter[j].setValue(x[j]);
             } catch (Exception e) {
-                this.getModel().getRuntime().sendHalt(JAMS.i18n("Error_Parameter_No") + " " + j + JAMS.i18n("wasnt_found") + " " + e.toString());
+                e.printStackTrace();
+                this.getModel().getRuntime().sendHalt(JAMS.i18n("Error_Parameter_No") + " " + j + " " + JAMS.i18n("wasnt_found") + " " + e.toString());
             }
         }
     }

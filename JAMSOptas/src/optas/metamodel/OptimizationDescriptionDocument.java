@@ -32,6 +32,7 @@ public class OptimizationDescriptionDocument implements Serializable{
     private boolean removeRedundantComponents=true;
     private boolean removeGUIComponents=true;
     private boolean adjustModellTimeInterval=false;
+    private boolean multimodeSearch=false;
 
     private String version;
 
@@ -123,7 +124,7 @@ public class OptimizationDescriptionDocument implements Serializable{
                 addObjective(obj);
             }                 
         }
-        this.setWorkspace(Tools.getWorkspace((Node)model));
+//        this.setWorkspace(Tools.getWorkspace((Node)model));
         return true;
     }
 
@@ -258,5 +259,13 @@ public class OptimizationDescriptionDocument implements Serializable{
      */
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public void setMultiModeSearch(boolean multimodeSearch){
+        this.multimodeSearch = multimodeSearch;
+    }
+
+    public boolean getMultiModeSearch(){
+        return this.multimodeSearch;
     }
 }

@@ -8,6 +8,7 @@
  */
 package optas.optimizer;
 
+import jams.model.Model;
 import optas.optimizer.management.StringOptimizerParameter;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.OptimizerParameter;
@@ -19,6 +20,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Random;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.SampleFactory.SampleSO;
@@ -35,7 +37,7 @@ public abstract class Optimizer implements Serializable{
     private String parameterNames[];
     protected double[] lowBound;
     protected double[] upBound;
-    protected double x0[];  //start value
+    protected double x0[][];  //start value
     protected String objNames[];
     protected int n; //number of parameters
     protected int m; //number of obejectives
@@ -45,11 +47,13 @@ public abstract class Optimizer implements Serializable{
     private AbstractFunction function;
     //maximum number of function evalutations allowed    
     public double maxn;
+    public boolean verbose = true;
     int sampleCount = 0;
     File workspace = null;    
     File outputFile = null;
     
     private ArrayList<Sample> solution=null;
+    protected Model model = null;
 
     transient protected SampleFactory factory = new SampleFactory();
 
@@ -61,12 +65,22 @@ public abstract class Optimizer implements Serializable{
     }
 
     protected void log(String msg) {
-        function.logging(msg);
+        if (verbose)
+            function.logging(msg);
     }
 
-    public void injectSamples(ArrayList<Sample> list){
-        for (Sample s : list)
+    public void injectSamples(Collection<? extends Sample> list) throws SampleLimitException, ObjectiveAchievedException{
+        for (Sample s : list){
+            if (isObjectiveAchieved(s))
+                throw new ObjectiveAchievedException(s.x,s.F()); //to do!!
             this.factory.injectSample(s);
+        }
+        if (factory.getSampleList().size()>this.maxn)
+            throw new SampleLimitException();
+    }
+
+    protected boolean isObjectiveAchieved(Sample s){
+        return false;
     }
 
     public AbstractFunction getFunction(){
@@ -75,6 +89,14 @@ public abstract class Optimizer implements Serializable{
 
     public Statistics getStatistics(){
         return factory.getStatistics();
+    }
+
+    public Model getModel(){
+        return model;
+    }
+
+    public void setModel(Model model){
+        this.model = model;
     }
 
     public ArrayList<Sample> getSamples(){
@@ -109,8 +131,25 @@ public abstract class Optimizer implements Serializable{
         this.function = function;
     }
 
-    public void setStartValue(double startValue[]) {
+
+    public void setVerbose(boolean verbose){
+        this.verbose = verbose;
+    }
+
+    public boolean getVerbose(){
+        return this.verbose;
+    }
+
+    //{x00,x01,..x0n}
+    //{x10,x11,..x1n}
+    //...
+
+    public void setStartValue(double startValue[][]) {
         x0 = startValue;
+    }
+
+    public void setStartValue(double startValue[]){
+        x0 = new double[][]{startValue};
     }
 
     public void setInputDimension(int n) {

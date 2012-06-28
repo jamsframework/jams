@@ -6,7 +6,6 @@
 package optas.gui;
 
 import jams.gui.input.TableInput;
-import jams.meta.OutputDSDescriptor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,6 +17,7 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -85,7 +85,8 @@ public class ObjectiveConstructorDialog extends JDialog{
                             ((TimeFilter) row[3]).setAdditive((Boolean) row[2]);
                         }
                     }
-                    ObjectiveConstructorDialog.this.chart.setFilter(constructCombinedTimeFilter());
+                    ObjectiveConstructorDialog.this.chart.clearFilter();
+                    ObjectiveConstructorDialog.this.chart.addFilter(constructCombinedTimeFilter());
                 }
             });
 
@@ -123,7 +124,8 @@ public class ObjectiveConstructorDialog extends JDialog{
                     scrollPane.revalidate();
                     scrollPane.repaint();
                 }
-                ObjectiveConstructorDialog.this.chart.setFilter(constructCombinedTimeFilter());
+                ObjectiveConstructorDialog.this.chart.clearFilter();
+                ObjectiveConstructorDialog.this.chart.addFilter(constructCombinedTimeFilter());
             }
         }
     }
@@ -239,10 +241,30 @@ public class ObjectiveConstructorDialog extends JDialog{
         mainPanel.add(filterList,c);
 
         c.gridx = 0;
-        c.gridy = yCounter++;
-        c.gridwidth = 2;
+        c.gridy = yCounter;
+        c.gridwidth = 1;
         c.gridheight = 1;
 
+        JButton exportTimeFilterButton = new JButton("Export Time-Filter");
+
+        exportTimeFilterButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    JFileChooser jfc = new JFileChooser();
+                    int approved = jfc.showSaveDialog(ObjectiveConstructorDialog.this);
+                    if (approved == jfc.APPROVE_OPTION) {
+                        result = new EfficiencyEnsemble("blubb",
+                        (Measurement)dc.getDataSet((String)msDataBox.getSelectedItem()),
+                        (TimeSerieEnsemble)dc.getDataSet((String)simDataBox.getSelectedItem()),
+                        (Method)methodList.getSelectedItem(), ObjectiveConstructorDialog.this.constructCombinedTimeFilter());
+                        result.exportTimeFilter(jfc.getSelectedFile(), ObjectiveConstructorDialog.this.chart.hydrograph.getTimeDomain());
+                    }
+            }
+        });
+                
+        mainPanel.add(exportTimeFilterButton, c);
+        
         JButton button = new JButton("Ok");
         button.addActionListener(new ActionListener() {
 
@@ -260,6 +282,11 @@ public class ObjectiveConstructorDialog extends JDialog{
                 ObjectiveConstructorDialog.this.setVisible(false);
                 }
         });
+        c.gridx = 1;
+        c.gridy = yCounter++;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        
         mainPanel.add(button, c);
         this.getContentPane().add(mainPanel);
         this.pack();

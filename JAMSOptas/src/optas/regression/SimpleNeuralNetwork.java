@@ -4,6 +4,8 @@
  */
 package optas.regression;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -16,27 +18,49 @@ import org.encog.neural.networks.layers.BasicLayer;
 import org.encog.neural.networks.logic.FeedforwardLogic;
 import org.encog.neural.networks.training.Train;
 import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
+
 import org.encog.util.logging.Logging;
+import org.encog.util.obj.SerializeObject;
 
 /**
  *
  * @author chris
  */
-public class NeuralNetwork extends Interpolation {
+public class SimpleNeuralNetwork extends SimpleInterpolation {
        
     boolean isTrained = false;
 
-    BasicNetwork network[];
+    BasicNetwork network;
 
     @Override
     public void setData(SimpleEnsemble x[], SimpleEnsemble y[]) {
         super.setData(x, y);
 
-        network = new BasicNetwork[m];
-        for (int i=0;i<m;i++){
-            network[i] = new BasicNetwork();
-        }
+        network = new BasicNetwork();
         isTrained = false;
+    }
+
+    public boolean save(File f){
+        try{
+            SerializeObject.save(f.getAbsolutePath(), network);
+        }catch(IOException ioe){
+            ioe.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean load(File f){
+        try{
+            network = (BasicNetwork)SerializeObject.load(f.getAbsolutePath());
+        }catch(IOException ioe){
+            ioe.printStackTrace();
+            return false;
+        }catch(ClassNotFoundException nfe){
+            nfe.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     //not necessary to call init .. but forces training
@@ -48,29 +72,34 @@ public class NeuralNetwork extends Interpolation {
         if (isTrained) {
             return;
         }
-/*        for (int i=0;i<m;i++)
-            trainNetwork(i,new TreeSet<Integer>());*/
-        trainNetwork(0,new TreeSet<Integer>());        
+        trainNetwork(new TreeSet<Integer>());        
     }
 
-    final int complexityAdjustmentFactor = 3;
+    int complexityAdjustmentFactor = 3;
 
-    private void trainNetwork(int outputIndex, TreeSet<Integer> leaveOutIndex) {
+    public void setComplexityAdjustmentFactor(int complexityAdjustmentFactor){
+        this.complexityAdjustmentFactor = complexityAdjustmentFactor;
+    }
+    public int getComplexityAdjustmentFactor(){
+        return this.complexityAdjustmentFactor;
+    }
+
+    private void trainNetwork(TreeSet<Integer> leaveOutIndex) {
         log("Train Neural Network");
         this.setProgress(0.0);
 
         Logging.setConsoleLevel(Level.OFF);
 
-        network[outputIndex] = new BasicNetwork();
-        network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, x.length));
-        network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, complexityAdjustmentFactor*(m+(int)((x.length+1)/2 + 1) )));
-        network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, 1*(m+(int)((x.length+1)/2 + 1) )));
+        network = new BasicNetwork();
+        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, x.length));
+        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, complexityAdjustmentFactor*(m+(int)((x.length+1)/2 + 1) )));
+        network.addLayer(new BasicLayer(new ActivationSigmoid(), true, 1*(m+(int)((x.length+1)/2 + 1) )));
         //network[outputIndex].addLayer(new BasicLayer(new ActivationSigmoid(), true, (int)((x.length+1)/2 + 1) ));
         //network.addLayer(new BasicLayer(new ActivationSigmoid(), true, (int)((x.length+1)/4 + 1) ));
-        network[outputIndex].addLayer(new BasicLayer(new ActivationLinear(), true, m));
-        network[outputIndex].setLogic(new FeedforwardLogic());
-        network[outputIndex].getStructure().finalizeStructure();
-        network[outputIndex].reset();
+        network.addLayer(new BasicLayer(new ActivationLinear(), true, m));
+        network.setLogic(new FeedforwardLogic());
+        network.getStructure().finalizeStructure();
+        network.reset();
 
         ArrayList<double[]> xData = new ArrayList<double[]>(),
                             yData = new ArrayList<double[]>();
@@ -103,13 +132,14 @@ public class NeuralNetwork extends Interpolation {
         BasicNeuralDataSet basicNDS = new BasicNeuralDataSet(xDataArray,yDataArray);
         basicNDS.setDescription("testdataset");
         
-        Train backpropagation = new ResilientPropagation(network[outputIndex], basicNDS);
+        Train backpropagation = new ResilientPropagation(network, basicNDS);
         backpropagation.setError(1);
         int epoch = 1;
         int epochMax = 1500;
         do {
             backpropagation.iteration();
-            System.out.println("Epoch #" + epoch + " Error:" + backpropagation.getError());
+            if (epoch % 100 == 0)
+                System.out.println("Epoch #" + epoch + " Error:" + backpropagation.getError());
             epoch++;
             setProgress((double)epoch / (double)epochMax);
         } while (backpropagation.getError() > 0.005 && !backpropagation.isTrainingDone() && epoch < epochMax);
@@ -119,16 +149,15 @@ public class NeuralNetwork extends Interpolation {
     }
 
     @Override
-    protected double[][] getValue(TreeSet<Integer> validationSet) {
+    protected double[][] getInterpolatedValue(TreeSet<Integer> validationSet) {
         isTrained = false;
-        /*for (int i=0;i<m;i++)
-            trainNetwork(i,validationSet);*/
-        trainNetwork(0,validationSet);
+
+        trainNetwork(validationSet);
 
         double[][] values = new double[validationSet.size()][];
         int counter = 0;
         for (Integer i : validationSet){
-            values[counter++] = getValue(this.getX(i));
+            values[counter++] = getInterpolatedValue(this.getX(i));
         }
         return values;
     }
@@ -136,16 +165,12 @@ public class NeuralNetwork extends Interpolation {
     
 
     @Override
-    public double[] getValue(double u[]) {
+    public double[] getInterpolatedValue(double u[]) {
         trainNetwork();
 
-        double singleOutput[] = new double[1];
         double wholeOutput[] = new double[m];
-        network[0].compute(normalizeX(u), wholeOutput);
-        /*for (int i=0;i<m;i++){
-            network[i].compute(normalizeX(u), singleOutput);
-            wholeOutput[i] = singleOutput[0];
-        }*/
+        network.compute(normalizeX(u), wholeOutput);
+        
         return denormalizeY(wholeOutput);
     }
 }

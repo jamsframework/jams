@@ -30,8 +30,8 @@ import optas.hydro.data.Efficiency;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.Parameter;
 import optas.hydro.data.SimpleEnsemble;
-import optas.regression.Interpolation;
-import optas.regression.NeuralNetwork;
+import optas.regression.SimpleInterpolation;
+import optas.regression.SimpleNeuralNetwork;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -55,8 +55,8 @@ public class ShowSensitivity extends MCAT5Plot {
     JCheckBox doQualityEstimation = new JCheckBox("Estimate Quality");
     JCheckBox useANNRegression = new JCheckBox("Use ANN Regression");
     JComboBox regressionMethod = new JComboBox(new String[]{"Neural Network"});
-    JComboBox parameterNormalizationMethod = new JComboBox(Interpolation.NormalizationMethod.values());
-    JComboBox objectiveNormalizationMethod = new JComboBox(Interpolation.NormalizationMethod.values());
+    JComboBox parameterNormalizationMethod = new JComboBox(SimpleInterpolation.NormalizationMethod.values());
+    JComboBox objectiveNormalizationMethod = new JComboBox(SimpleInterpolation.NormalizationMethod.values());
     String rsaString = "Regional Sensitivity Analysis",
             mgeString = "Maximum Gradient Estimation",
             eemString = "Elementary Effects Method",
@@ -304,8 +304,8 @@ public class ShowSensitivity extends MCAT5Plot {
             uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.LinearRegression);
         }
         uniSA.setUseANNRegression(useANNRegression.isSelected());
-        uniSA.setParameterNormalizationMethod((Interpolation.NormalizationMethod) this.parameterNormalizationMethod.getSelectedItem());
-        uniSA.setObjectiveNormalizationMethod((Interpolation.NormalizationMethod) this.objectiveNormalizationMethod.getSelectedItem());
+        uniSA.setParameterNormalizationMethod((SimpleInterpolation.NormalizationMethod) this.parameterNormalizationMethod.getSelectedItem());
+        uniSA.setObjectiveNormalizationMethod((SimpleInterpolation.NormalizationMethod) this.objectiveNormalizationMethod.getSelectedItem());
 
         int n = counter;
         

@@ -189,10 +189,7 @@ public class HaltonSequenceSampling extends Optimizer{
         double remainingTime = 0;
 
         int offset = 0;
-
-        if (x0!=null)
-            simplex[0] = this.getSample(x0);
-
+        
         int N = (int)this.getMaxn();
 
         long start[] = new long[n];
@@ -202,8 +199,8 @@ public class HaltonSequenceSampling extends Optimizer{
         }
 
         for (int i=0;i<N;i++){
-            if (i==0 && x0 != null){
-                simplex[i] = this.getSample(x0);
+            if (x0 != null && i<x0.length){
+                simplex[i] = this.getSample(x0[i]);
                 continue;
             }            
             if (i % 100 == 0 && i > 0 && analyzeQuality){

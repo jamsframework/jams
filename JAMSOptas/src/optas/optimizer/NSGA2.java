@@ -5,31 +5,38 @@
 package optas.optimizer;
 
 import jams.JAMS;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import optas.hydro.data.DataCollection;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.SampleFactory.SampleComperator;
 import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.ObjectiveAchievedException;
 import optas.optimizer.management.OptimizerDescription;
+import optas.optimizer.parallel.ParallelSequence;
 
 /**
  *
  * @author Christian Fischer
  */
 public class NSGA2 extends Optimizer {
-    public int populationSize;
-    public double crossoverProbability;
-    public double mutationProbability;
-    public double crossoverDistributionIndex;
-    public double mutationDistributionIndex;
-    public int maxGeneration;
+    public double populationSize = 30;
+    public double crossoverProbability = 0.9;
+    public double mutationProbability = 1.0;
+    public double crossoverDistributionIndex = 20;
+    public double mutationDistributionIndex = 20;
+    public int maxGeneration = 1000;
+    public double parallelExecution = 0.0;
+    public String excludeFiles = "(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log";
 
     int crossoverCount = 0;
     int mutationCount = 0;
 
+    ParallelSequence pseq = null;
     SampleComperator moComparer = new SampleComperator(false);
     CustomRand generator = null;
+    transient DataCollection collection = null;
 
     public OptimizerDescription getDescription(){
         OptimizerDescription desc = OptimizerLibrary.getDefaultOptimizerDescription(NSGA2.class.getSimpleName(), NSGA2.class.getName(), 500, false);
@@ -55,7 +62,7 @@ public class NSGA2 extends Optimizer {
      * @param populationSize the populationSize to set
      */
     public void setPopulationSize(double populationSize) {
-        this.populationSize = (int)populationSize;
+        this.populationSize = populationSize;
     }
 
     /**
@@ -128,7 +135,35 @@ public class NSGA2 extends Optimizer {
         this.maxGeneration = (int)maxGeneration;
     }
 
-    static private class Individual {
+    /**
+     * @return the parallelExecution
+     */
+    public double getParallelExecution() {
+        return parallelExecution;
+    }
+
+    /**
+     * @param parallelExecution the parallelExecution to set
+     */
+    public void setParallelExecution(double parallelExecution) {
+        this.parallelExecution = parallelExecution;
+    }
+
+    /**
+     * @return the excludeFiles
+     */
+    public String getExcludeFiles() {
+        return excludeFiles;
+    }
+
+    /**
+     * @param excludeFiles the excludeFiles to set
+     */
+    public void setExcludeFiles(String excludeFiles) {
+        this.excludeFiles = excludeFiles;
+    }
+
+    static private class Individual implements Serializable {
         Sample sample;
         int rank;/*Rank of the individual*/
         double cub_len;/*crowding distance of the individual*/
@@ -139,7 +174,7 @@ public class NSGA2 extends Optimizer {
             this.cub_len = 0.0;
         }
     }
-    private class Population {
+    private class Population implements Serializable {
         int maxrank;        /*Maximum rank present in the population*/
         int rankar[][];     /*record of array of individual numbers at a particular rank */
         int rankno[];       /*Individual at different ranks*/
@@ -154,7 +189,7 @@ public class NSGA2 extends Optimizer {
         }
     }
 
-    public static class CustomRand {
+    public static class CustomRand implements Serializable{
         double oldrand[] = new double[55];
         int jrand = 0;
 
@@ -296,6 +331,10 @@ public class NSGA2 extends Optimizer {
         if (this.mutationProbability> 1.0 / n)
             this.mutationProbability=(1.0 / n);
 
+        if (this.parallelExecution!=0){
+            pseq = new ParallelSequence(this);
+            pseq.setExcludeFiles(excludeFiles);
+        }
         return true;
     }
 
@@ -682,76 +721,109 @@ public class NSGA2 extends Optimizer {
 
     @Override
     public void procedure() throws SampleLimitException, ObjectiveAchievedException {
-        if (this.getPopulationSize() < 1){
-            log(JAMS.i18n("size_of_population_not_specified_or_out_of_bounds"));
-            return;
-        }
-        if (this.getCrossoverDistributionIndex() < 0.5 ||
-            this.getCrossoverDistributionIndex() > 100.0){
-            log(JAMS.i18n("crossoverDistributionIndex_not_specified_or_out_of_bounds"));
-            return;
-        }
-        if (this.getMutationDistributionIndex() < 0.5 ||
-            this.getMutationDistributionIndex() > 500.0){
-            log(JAMS.i18n("mutationDistributionIndex_not_specified_or_out_of_bounds"));
-            return;
-        }
-        if (this.getCrossoverProbability() < 0.0 ||
-            this.getCrossoverProbability() > 1.0){
-            log(JAMS.i18n("crossoverProbability_not_specified_or_out_of_bounds"));
-            return;
-        }
-        if (this.getMutationProbability() < 0.0 ||
-            this.getMutationProbability() > 1.0){
-            log(JAMS.i18n("mutationProbability_not_specified_or_out_of_bounds"));
-            return;
-        }
-        setMutationProbability((1.0 / (double)this.n));
-        if (this.getMaxGeneration() < 0.0){
-            log(JAMS.i18n("maxGeneration_not_specified_or_out_of_bounds"));
-            return;
-        }
-
-        this.generator = new CustomRand(0.5);
-        Population oldPopulation = new Population((int)getPopulationSize());
-        Population matePopulation = new Population((int)getPopulationSize());
-        Population newPopulation = new Population((int)getPopulationSize());
-
-        for (int i = 0; i < this.getPopulationSize(); i++) {
-            oldPopulation.ind[i] = new Individual(this.getSample(randomSampler()));
-        }
-        ranking(oldPopulation);
-        /********************************************************************/
-        /*----------------------GENERATION STARTS HERE----------------------*/        
-        for (int i = 0; i < this.getMaxGeneration(); i++) {
-            matePopulation = new Population((int)getPopulationSize());
-            newPopulation = new Population((int)getPopulationSize());
-            /*--------SELECT----------------*/
-            nselect(oldPopulation, matePopulation);
-            /*CROSSOVER----------------------------*/
-            double newParameter[][] = realcross(matePopulation);
-            /*------MUTATION-------------------*/
-            real_mutate(newParameter);
-            /*----------FUNCTION EVALUATION-----------*/
-            for (int j = 0; j < newParameter.length; j++) {
-                newPopulation.ind[j] = new Individual(this.getSample(newParameter[j]));                
+        try {
+            if (this.getPopulationSize() < 1) {
+                log(JAMS.i18n("size_of_population_not_specified_or_out_of_bounds"));
+                return;
             }
-            ranking(newPopulation);
-            /*-------------------SELECTION KEEPING FRONTS ALIVE--------------*/
-            /*Elitism And Sharing Implemented*/
-            keepalive(oldPopulation, newPopulation, matePopulation, i + 1);
-            /*------------------REPORT PRINTING--------------------------------*/
-            //skip report .. 
-            //report(i, oldPopulation, matePopulation);
+            if (this.getCrossoverDistributionIndex() < 0.5
+                    || this.getCrossoverDistributionIndex() > 100.0) {
+                log(JAMS.i18n("crossoverDistributionIndex_not_specified_or_out_of_bounds"));
+                return;
+            }
+            if (this.getMutationDistributionIndex() < 0.5
+                    || this.getMutationDistributionIndex() > 500.0) {
+                log(JAMS.i18n("mutationDistributionIndex_not_specified_or_out_of_bounds"));
+                return;
+            }
+            if (this.getCrossoverProbability() < 0.0
+                    || this.getCrossoverProbability() > 1.0) {
+                log(JAMS.i18n("crossoverProbability_not_specified_or_out_of_bounds"));
+                return;
+            }
+            if (this.getMutationProbability() < 0.0
+                    || this.getMutationProbability() > 1.0) {
+                log(JAMS.i18n("mutationProbability_not_specified_or_out_of_bounds"));
+                return;
+            }
+            setMutationProbability((1.0 / (double) this.n));
+            if (this.getMaxGeneration() < 0.0) {
+                log(JAMS.i18n("maxGeneration_not_specified_or_out_of_bounds"));
+                return;
+            }
+
+            this.generator = new CustomRand(0.5);
+            Population oldPopulation = new Population((int) getPopulationSize());
+            Population matePopulation = new Population((int) getPopulationSize());
+            Population newPopulation = new Population((int) getPopulationSize());
+
+            for (int i = 0; i < this.getPopulationSize(); i++) {
+                if (this.x0!=null && this.x0.length>i)
+                    oldPopulation.ind[i] = new Individual(this.getSample(this.x0[i]));
+                else
+                    oldPopulation.ind[i] = new Individual(this.getSample(randomSampler()));
+            }
+            ranking(oldPopulation);
+            /********************************************************************/
+            /*----------------------GENERATION STARTS HERE----------------------*/
+            for (int i = 0; i < this.getMaxGeneration(); i++) {
+                matePopulation = new Population((int) getPopulationSize());
+                newPopulation = new Population((int) getPopulationSize());
+                /*--------SELECT----------------*/
+                nselect(oldPopulation, matePopulation);
+                /*CROSSOVER----------------------------*/
+                double newParameter[][] = realcross(matePopulation);
+                /*------MUTATION-------------------*/
+                real_mutate(newParameter);
+                /*----------FUNCTION EVALUATION-----------*/
+                if (this.parallelExecution==0) {
+                    for (int j = 0; j < newParameter.length; j++) {
+                        newPopulation.ind[j] = new Individual(this.getSample(newParameter[j]));
+                    }
+                } else {
+                    ParallelSequence.OutputData result = pseq.procedure(newParameter);                    
+                    for (int j = 0; j < newParameter.length; j++) {
+                        try{
+                            newPopulation.ind[j] = new Individual(result.list.get(j));
+                        }catch(ArrayIndexOutOfBoundsException aioobe){
+                            System.out.println("For an unknown reason parallel sampling did not succeed completly .. switching to sequential execution");
+                            for (int k = j; k < newParameter.length; k++) {
+                                newPopulation.ind[k] = new Individual(this.getSample(newParameter[k]));
+                            }
+                            j=newParameter.length;
+                            break;
+                        }
+                    }
+                    if (collection == null) {
+                        collection = result.dc;
+                    } else {
+                        synchronized (collection) {
+                            collection.mergeDataCollections(result.dc);
+                        }
+                    }
+                    this.injectSamples(result.list);
+                }
+                ranking(newPopulation);
+                /*-------------------SELECTION KEEPING FRONTS ALIVE--------------*/
+                /*Elitism And Sharing Implemented*/
+                keepalive(oldPopulation, newPopulation, matePopulation, i + 1);
+                /*------------------REPORT PRINTING--------------------------------*/
+                //skip report ..
+                //report(i, oldPopulation, matePopulation);
             /*==================================================================*/
-            newPopulation = matePopulation;
-            oldPopulation = newPopulation;                     
+                newPopulation = matePopulation;
+                oldPopulation = newPopulation;
+            }
+            /*                   Generation Loop Ends                                */
+            /************************************************************************/
+            log(JAMS.i18n("NO_OF_MUTATION") + this.crossoverCount);
+            log(JAMS.i18n("NO_OF_CROSSOVER") + this.mutationCount);
+            log("-----------------------------------------------------------------------------------");
+        } finally { //ensure writing the data
+            if (collection != null) {
+                collection.dump(getModel().getWorkspace().getOutputDataDirectory());
+            }
         }
-        /*                   Generation Loop Ends                                */
-        /************************************************************************/
-        log(JAMS.i18n("NO_OF_MUTATION") + this.crossoverCount);
-        log(JAMS.i18n("NO_OF_CROSSOVER") + this.mutationCount);
-        log("-----------------------------------------------------------------------------------");
     }
 
     public static void main(String arg[]){

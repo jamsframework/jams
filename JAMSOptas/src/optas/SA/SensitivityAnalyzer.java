@@ -13,8 +13,8 @@ import optas.optimizer.SampleLimitException;
 import optas.optimizer.SobolsSequenceSampling;
 import optas.optimizer.management.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory.Sample;
-import optas.regression.Interpolation;
-import optas.regression.NeuralNetwork;
+import optas.regression.SimpleInterpolation;
+import optas.regression.SimpleNeuralNetwork;
 
 /**
  *
@@ -29,7 +29,7 @@ public abstract class SensitivityAnalyzer {
 
     protected boolean isInit = false;
 
-    Interpolation I;
+    SimpleInterpolation I;
 
     private double CVError = 0;
 
@@ -117,7 +117,7 @@ public abstract class SensitivityAnalyzer {
         sampler.setFunction(new AbstractFunction() {
             @Override
             public double[] f(double[] x) throws SampleLimitException, ObjectiveAchievedException {
-                return I.getValue(x);
+                return I.getInterpolatedValue(x);
             }
 
             @Override
@@ -167,12 +167,12 @@ public abstract class SensitivityAnalyzer {
         isInit = false;
     }
 
-    public void setInterpolationMethod(Interpolation I){
+    public void setInterpolationMethod(SimpleInterpolation I){
         this.I = I;
         isInit = false;
     }
 
-    public Interpolation getInterpolationMethod(){
+    public SimpleInterpolation getInterpolationMethod(){
         return I;
     }
 
@@ -187,20 +187,26 @@ public abstract class SensitivityAnalyzer {
     }
 
     public double getCVError(){
-        if (this.isUsingInterpolation)
-            return this.CVError = I.estimateCrossValidationError(5, Interpolation.ErrorMethod.E2);
-        else
+        if (this.isUsingInterpolation){
+            double error[] = I.estimateCrossValidationError(5, SimpleInterpolation.ErrorMethod.E2);
+            CVError = 0;
+            for (int i=0;i<error.length;i++)
+                CVError += error[i];
+            CVError /= error.length;
+
+            return this.CVError;
+        } else
             return 0.0;
     }
 
     protected double getInterpolation(double[] x){
-        return I.getValue(x)[0];
+        return I.getInterpolatedValue(x)[0];
     }
             
     public void init(){
         if (this.isUsingInterpolation) {
             if (I == null) {
-                setInterpolationMethod(new NeuralNetwork());
+                setInterpolationMethod(new SimpleNeuralNetwork());
             }
 
             I.setData(x_raw, y_raw);

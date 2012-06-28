@@ -127,7 +127,7 @@ public class SCE extends Optimizer {
         }
 
         if (x0 == null){
-            x0 = randomSampler();
+            x0 = new double[][]{randomSampler()};
         }
 
         if (complexesCount <= 0) {
@@ -312,6 +312,7 @@ public class SCE extends Optimizer {
             try{
                 s[nps - 1] = cceua(s, bl, bu);
             }catch(Exception e){
+                e.printStackTrace();
                 return;
             }
 
@@ -326,7 +327,7 @@ public class SCE extends Optimizer {
         }
     }
        
-    public SampleSO sceua(double[] x0, double[] bl, double[] bu, int maxn, int kstop, double pcento, double peps, int ngs, int iseed){
+    public SampleSO sceua(double[][] x0, double[] bl, double[] bu, int maxn, int kstop, double pcento, double peps, int ngs, int iseed){
         int method = 1;
                 
         SearchMethod = null;
@@ -337,7 +338,7 @@ public class SCE extends Optimizer {
         } else if (method == 3) {
             SearchMethod = new MDS();
         }
-        int nopt = x0.length;
+        int nopt = bl.length;
         int npg = 2 * nopt + 1;
         int nps = nopt + 1;
         int nspl = npg;
@@ -349,11 +350,14 @@ public class SCE extends Optimizer {
         }
         int i=0;
         SampleSO x[] = new SampleSO[npt];
-        try{
-            x[0] = getSampleSO(x0);
+        try{            
             for (i = 0; i < npt; i++) {
-                double value[] = randomSampler();
-                x[i] = getSampleSO(value);
+                if (x0!=null && i<x0.length)
+                    x[i] = getSampleSO(x0[i]);
+                else{
+                    double value[] = randomSampler();
+                    x[i] = getSampleSO(value);
+                }
             }
         }catch(SampleLimitException e){
             System.out.println(e);

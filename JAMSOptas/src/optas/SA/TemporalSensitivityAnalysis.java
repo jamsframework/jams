@@ -11,7 +11,7 @@ import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.Measurement;
 import optas.hydro.data.SimpleEnsemble;
 import optas.hydro.data.TimeSerieEnsemble;
-import optas.regression.Interpolation.NormalizationMethod;
+import optas.regression.SimpleInterpolation.NormalizationMethod;
 import optas.tools.ObservableProgress;
 
 
@@ -28,8 +28,13 @@ public class TemporalSensitivityAnalysis extends ObservableProgress{
     double temporalSensitivityIndex[][]=null;
 
     int T = 0;
+    int size = 0;
+    int n = 0;
 
-    boolean isValid = false;
+    double range[][] = null;
+
+    boolean isInit = false;
+    boolean isCalculated = false;
 
     public TemporalSensitivityAnalysis(SimpleEnsemble parameter[], EfficiencyEnsemble o, TimeSerieEnsemble ts, Measurement obs ){
         this.parameter = parameter;
@@ -37,9 +42,69 @@ public class TemporalSensitivityAnalysis extends ObservableProgress{
         this.ts = ts;
         this.obs = obs;
         T = obs.getTimesteps();
-        isValid = false;
+
+        n = parameter.length;
+        if (n==0){
+            return;
+        }
+
+        size = parameter[0].getSize();
+
+        for (int i=0;i<n;i++){
+            if (parameter[i].getSize()!=size)
+                return;
+        }
+        if (ts.getSize()!=size)
+            return;
+
+        range = this.getParameterRange();
+        isInit = false;
+        isCalculated = false;
     }
 
+    protected double[] getLowBound(){
+        double lb[] = new double[n];
+        for (int j = 0; j < n; j++) {
+            lb[j] = parameter[j].getMin();
+        }
+        return lb;
+    }
+
+    protected double[] getUpBound(){
+        double ub[] = new double[n];
+        for (int j = 0; j < n; j++) {
+            ub[j] = parameter[j].getMax();
+        }
+        return ub;
+    }
+
+    protected double[] transformFromUnitCube(double x[]){
+        double[] y = new double[n];
+        for (int i=0;i<n;i++){
+            y[i] = range[i][0] + x[i]*(range[i][1]-range[i][0]);
+        }
+        return y;
+    }
+    protected double[] transformToUnitCube(double x[]){
+        double[] y = new double[n];
+        for (int i=0;i<n;i++){
+            y[i] = (x[i]-range[i][0])/(range[i][1]-range[i][0]);
+        }
+        return y;
+    }
+
+    final protected double[][] getParameterRange() {
+        if (range == null){
+            range = new double[n][2];
+
+            for (int j = 0; j < n; j++) {
+                range[j][0] = parameter[j].getMin();
+                range[j][1] = parameter[j].getMax();
+            }
+        }
+        return range;
+    }
+    
     //calculates weighting for each parameter and timestep
     public double[][] calculate(){
         SimpleEnsemble parameterCut[] = new SimpleEnsemble[parameter.length];
@@ -102,7 +167,7 @@ public class TemporalSensitivityAnalysis extends ObservableProgress{
 
     private double[][] calcTemporalSensitivity(SimpleEnsemble parameter[], EfficiencyEnsemble o, TimeSerieEnsemble ts ){
         log("Calculating Temporal Sensitivity Index");
-        if (isValid)
+        if (isCalculated)
             return temporalSensitivityIndex;
 
         setProgress(0.0);
@@ -113,8 +178,7 @@ public class TemporalSensitivityAnalysis extends ObservableProgress{
         SA.setParameterNormalizationMethod(NormalizationMethod.Linear);
         SA.setSampleCount(2000);
         SA.setUseANNRegression(false);
-
-        int n = parameter.length;
+        
         double sensitivity[][] = new double[n][T];
 
         for (int i=0;i<T;i++){
@@ -137,7 +201,7 @@ public class TemporalSensitivityAnalysis extends ObservableProgress{
             }
             setProgress((double)i / (double)T);
         }
-        isValid = true;
+        isCalculated = true;
         return sensitivity;
     }
 }

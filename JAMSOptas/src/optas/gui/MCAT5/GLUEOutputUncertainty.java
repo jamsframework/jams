@@ -370,7 +370,7 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         for (int i = 0; i < T; i++) {
             double mean = 0, median;
             int counter = 0;
-            int index_low = 0, index_high = 0;
+            int index_low = 0, index_high =limit ;
 
             double reducedOutputSet[] = new double[limit];
             for (int j = 0; j < limit; j++) {

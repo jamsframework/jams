@@ -25,11 +25,6 @@ import optas.optimizer.management.SampleFactory.Sample;
  * @author chris
  */
 public abstract class OptimizationController extends OptimizerWrapper {
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    update = JAMSVarDescription.UpdateType.RUN,
-    description = "representative objective")
-    public Attribute.Integer mainObjective;
-
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.RUN,
     description = "parameter for relaxation control",
@@ -37,8 +32,7 @@ public abstract class OptimizationController extends OptimizerWrapper {
     public Attribute.Double relaxationParameter;
 
     private static int id = 0;
-    int mainObjIndex;
-    
+        
     File logFile = null;
     transient BufferedWriter writer = null;
 
@@ -73,7 +67,10 @@ public abstract class OptimizationController extends OptimizerWrapper {
     @Override
     public void cleanup(){
         try{
-            writer.close();
+            if (writer!=null){
+                writer.close();
+                writer = null;
+            }
         }catch(IOException ioe){
             ioe.printStackTrace();
             System.out.println(ioe);
@@ -84,7 +81,7 @@ public abstract class OptimizationController extends OptimizerWrapper {
         protected AbstractFunction evaluate = null;
 
         protected double lowerBound[], upperBound[];
-        protected double startValue[];
+        protected double startValue_transposed[][];
                 
         private String parameterNames[],objectiveNames[];
         private int n,m;
@@ -95,7 +92,7 @@ public abstract class OptimizationController extends OptimizerWrapper {
             n = o.getParameter().size();
             m = o.getObjective().size();
 
-            startValue = new double[o.getParameter().size()];
+            startValue_transposed = new double[o.getParameter().size()][];
             parameterNames = new String[n];
 
             this.lowerBound = new double[n];
@@ -104,12 +101,8 @@ public abstract class OptimizationController extends OptimizerWrapper {
             for (int i = 0; i < o.getParameter().size(); i++) {
                 Parameter p = o.getParameter().get(i);
                 lowerBound[i] = p.getLowerBound();
-                upperBound[i] = p.getUpperBound();
-                if (p.isStartValueValid()) {
-                    startValue[i] = p.getStartValue();
-                } else {
-                    startValue[i] = (p.getLowerBound() + p.getUpperBound()) / 2.0;
-                }
+                upperBound[i] = p.getUpperBound();                
+                startValue_transposed[i] = p.getStartValue();
                 parameterNames[i] = o.getParameter().get(i).getChildName();
             }
 
@@ -146,7 +139,10 @@ public abstract class OptimizationController extends OptimizerWrapper {
             return this.o.getOptimizerDescription().getAdaptiveRelaxation().isValue();
         }
         public int n() {
-            return lowerBound.length;
+            return n;
+        }
+        public int m() {
+            return m;
         }
 
         protected void setOptimizerParameter(Optimizer optimizer, Optimization o) {
@@ -165,7 +161,15 @@ public abstract class OptimizationController extends OptimizerWrapper {
                 c /= 10;
             }
             optimizer.setOutputFile("optimization_" + counter);
-            optimizer.setStartValue(startValue);
+            
+            if (startValue_transposed.length>0){
+                double startValue[][] = new double[startValue_transposed[0].length][startValue_transposed.length];
+                for (int i=0;i<startValue.length;i++){
+                    for (int j=0;j<startValue[i].length;j++)
+                        startValue[i][j] = startValue_transposed[j][i];
+                }
+                optimizer.setStartValue(startValue);
+            }
 
             optimizer.setDebugMode(OptimizationController.this.debugMode.getValue());
             for (OptimizerParameter key : o.getOptimizerDescription().getPropertyMap()) {
@@ -192,11 +196,13 @@ public abstract class OptimizationController extends OptimizerWrapper {
                 Optimizer optimizer = OptimizerLibrary.loadOptimizer(OptimizationController.this.getModel().getRuntime(),
                         o.getOptimizerDescription().getOptimizerClassName());
                 setOptimizerParameter(optimizer, o);
+                optimizer.setModel(OptimizationController.this.getModel());
                 return optimizer;
             } else {
                 Optimizer optimizer = OptimizerLibrary.loadOptimizer(OptimizationController.this.getModel().getRuntime(),
                         className);
                 setOptimizerParameter(optimizer, o);
+                optimizer.setModel(OptimizationController.this.getModel());
                 return optimizer;
             }
         }

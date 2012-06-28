@@ -86,30 +86,32 @@ public class ObjectiveAnalyzer {
                 }
             }
         }
-        if (o.getMethod().equals("Root Mean Square Error")) {
+        if (o.getMethod().equals(UniversalEfficiencyCalculator.availableEfficiencies[UniversalEfficiencyCalculator.RMSE])) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "e2_normalized", attributeName ,
                     context, false);
-        } else if (o.getMethod().equals("Nash Sutcliffe (e1)")) {
+        } else if (o.getMethod().equals(UniversalEfficiencyCalculator.availableEfficiencies[UniversalEfficiencyCalculator.NSE1])) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "e1_normalized", attributeName ,
                     context, false);
-        } else if (o.getMethod().equals("Nash Sutcliffe (e2)")) {
+        } else if (o.getMethod().equals(UniversalEfficiencyCalculator.availableEfficiencies[UniversalEfficiencyCalculator.NSE2])) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "e2_normalized", attributeName ,
                     context, false);
-        } else if (o.getMethod().equals("log Nash Sutcliffe (le1)")) {
+        } else if (o.getMethod().equals(UniversalEfficiencyCalculator.availableEfficiencies[UniversalEfficiencyCalculator.LNSE1])) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "le1_normalized", attributeName ,
                     context, false);
-        } else if (o.getMethod().equals("log Nash Sutcliffe (le2)")) {
+        } else if (o.getMethod().equals(UniversalEfficiencyCalculator.availableEfficiencies[UniversalEfficiencyCalculator.LNSE2])) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "le2_normalized", attributeName ,
                     context, false);
-        } else if (o.getMethod().equals("Average Volume Error")) {
+        } else if (o.getMethod().equals(UniversalEfficiencyCalculator.availableEfficiencies[UniversalEfficiencyCalculator.AVE])) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "ave_normalized", attributeName ,
                     context, false);
-        } else if (o.getMethod().equals("r2")) {
+        } else if (o.getMethod().equals(UniversalEfficiencyCalculator.availableEfficiencies[UniversalEfficiencyCalculator.R2])) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "r2_normalized", attributeName ,
                     context, false);
-        } else if (o.getMethod().equals("relative bias")) {
+        } else if (o.getMethod().equals(UniversalEfficiencyCalculator.availableEfficiencies[UniversalEfficiencyCalculator.RBIAS])) {
                 optas.metamodel.Tools.addAttribute(efficiencyComponent, "bias_normalized", attributeName ,
                     context, false);
+        } else{
+            throw new WizardException("Error unknown objective method: " + o.getMethod());
         }
         
         AttributeWrapper a = new AttributeWrapper(null, attributeName, null, context);

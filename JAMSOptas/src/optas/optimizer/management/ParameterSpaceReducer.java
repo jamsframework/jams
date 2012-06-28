@@ -17,6 +17,7 @@ import optas.metamodel.Optimization;
 import optas.metamodel.Parameter;
 import optas.optimizer.Optimizer;
 import optas.optimizer.ParallelHaltonSequenceSampling;
+import optas.optimizer.SampleLimitException;
 
 
 import optas.optimizer.management.OptimizationController.OptimizationConfiguration;
@@ -76,7 +77,7 @@ public class ParameterSpaceReducer extends OptimizationController {
             p.setUpperBound(this.upBound[i]);
             p.setAttributeName("param_" + i);
             p.setId(i);
-            p.setStartValueValid(false);
+            p.setStartValue(new double[0]);
             o.addParameter(p);
         }
         o.setName("opt1");
@@ -169,7 +170,7 @@ public class ParameterSpaceReducer extends OptimizationController {
     }
 
     @Override
-    public void procedure() {        
+    public void procedure() {
         double parameterSpaceVolume;
 
         double meanImprovedRatio = 0.0;
@@ -214,7 +215,13 @@ public class ParameterSpaceReducer extends OptimizationController {
             o.setMaxn((double)(this.maxSamplingPerIteration.getValue()-retainList.size()));
                     
             log("injecting samples .. ");
-            o.injectSamples(retainList);
+            try{
+                o.injectSamples(retainList);
+            }catch(SampleLimitException sle){
+                log("not able to start random sampler, because sample limit was reached!");
+            }catch(ObjectiveAchievedException oae){
+                log("not able to start random sampler, because objective was reached!");
+            }
             log("start sampling .. ");
             o.optimize();
 

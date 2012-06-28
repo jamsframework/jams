@@ -55,7 +55,7 @@ public class ParameterGroup implements Identifiable {
         }
     }
 
-    ParameterGroup(SimpleEnsemble[] p,int n) {
+    public ParameterGroup(SimpleEnsemble[] p,int n) {
         this.parameterIDs = p;
         id = counter++;
         init(n);

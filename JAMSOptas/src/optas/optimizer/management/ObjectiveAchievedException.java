@@ -14,11 +14,11 @@ public class ObjectiveAchievedException extends Exception {
 
     String msg;
 
-    ObjectiveAchievedException(double value[], double target[]) {
+    public ObjectiveAchievedException(double value[], double target[]) {
         this.msg = "Objectives " + Arrays.toString(target) + " is achieved with value " + Arrays.toString(value);
     }
 
-    ObjectiveAchievedException(double value, double target) {
+    public ObjectiveAchievedException(double value, double target) {
         this.msg = "Objective " + target + " is achieved with value " + value;
     }
 

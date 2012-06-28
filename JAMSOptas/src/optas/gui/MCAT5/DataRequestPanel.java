@@ -124,6 +124,10 @@ public final class DataRequestPanel extends JPanel{
             throw new NoDataException("datacollection not provided!");
         ArrayList<SimpleRequest> request = plot.getRequiredData();
 
+        if (request.isEmpty()){
+            updatePlot();
+            return;
+        }
         for (SimpleRequest r : request){
             RequestGUI rGUI = new RequestGUI(r);
             requests.add(rGUI);

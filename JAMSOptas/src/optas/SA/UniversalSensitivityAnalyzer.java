@@ -11,9 +11,9 @@ import optas.SA.VarianceBasedSensitivityIndex.Measure;
 import optas.gui.MCAT5.MCAT5Plot.NoDataException;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.SimpleEnsemble;
-import optas.regression.Interpolation;
-import optas.regression.Interpolation.NormalizationMethod;
-import optas.regression.NeuralNetwork;
+import optas.regression.SimpleInterpolation;
+import optas.regression.SimpleInterpolation.NormalizationMethod;
+import optas.regression.SimpleNeuralNetwork;
 
 /**
  *
@@ -26,8 +26,8 @@ public class UniversalSensitivityAnalyzer {
     optas.SA.SensitivityAnalyzer sa = null;
     boolean useANNRegression = false;
 
-    NormalizationMethod parameterNormalizationMethod = Interpolation.NormalizationMethod.Linear;
-    NormalizationMethod objectiveNormalizationMethod = Interpolation.NormalizationMethod.Linear;
+    NormalizationMethod parameterNormalizationMethod = SimpleInterpolation.NormalizationMethod.Linear;
+    NormalizationMethod objectiveNormalizationMethod = SimpleInterpolation.NormalizationMethod.Linear;
 
     int sampleCount = 2000;
     int n = 0;
@@ -80,7 +80,7 @@ public class UniversalSensitivityAnalyzer {
     public void setup(SimpleEnsemble xData[], EfficiencyEnsemble yData){
         sa.setInterpolation(useANNRegression);
         if (useANNRegression){
-            sa.setInterpolationMethod(new NeuralNetwork());
+            sa.setInterpolationMethod(new SimpleNeuralNetwork());
             sa.getInterpolationMethod().setxNormalizationMethod(this.parameterNormalizationMethod);
             sa.getInterpolationMethod().setyNormalizationMethod(objectiveNormalizationMethod);
         }

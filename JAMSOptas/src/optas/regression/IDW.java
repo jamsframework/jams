@@ -11,7 +11,7 @@ import java.util.TreeSet;
  *
  * @author chris
  */
-public class IDW extends Interpolation{
+public class IDW extends SimpleInterpolation{
     
     int R = 3;
     double expWeights[];
@@ -81,7 +81,7 @@ public class IDW extends Interpolation{
 
     }
 
-    protected double[][] getValue(TreeSet<Integer> validationSet) {
+    protected double[][] getInterpolatedValue(TreeSet<Integer> validationSet) {
         int counter = 0;
         double ystar[][] = new double[validationSet.size()][m];
 
@@ -158,7 +158,7 @@ public class IDW extends Interpolation{
             return ystar;*/
         }
 
-    public double[] getValue(double u[]){
+    public double[] getInterpolatedValue(double u[]){
         int      nearestNeighbours[] = new int[R];
         double   distanceToNeighbour[] = new double[R];
 

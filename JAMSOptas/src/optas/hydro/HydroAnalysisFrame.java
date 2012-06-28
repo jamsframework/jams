@@ -95,6 +95,7 @@ import org.w3c.dom.Document;
  *
  * @author chris
  */
+@Deprecated
 public class HydroAnalysisFrame extends JFrame {
 
     final int MAX_WEIGHTS = 9;
@@ -503,8 +504,8 @@ public class HydroAnalysisFrame extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 JCheckBox src = (JCheckBox) e.getSource();
-                peakSlider.setMaximum(chart.getPeakCount());
-                chart.showPeaks(src.isSelected());
+//                peakSlider.setMaximum(chart.getPeakCount());
+//                chart.showPeaks(src.isSelected());
             }
         });
         JPanel peakPanel = new JPanel();
@@ -515,7 +516,7 @@ public class HydroAnalysisFrame extends JFrame {
 
             public void stateChanged(ChangeEvent e) {
                 peakNumberField.setText(Integer.toString(peakSlider.getValue()));
-                chart.setVisiblePeaks(peakSlider.getValue());
+//                chart.setVisiblePeaks(peakSlider.getValue());
             }
         });
         peakNumberField.setEditable(false);
@@ -526,8 +527,8 @@ public class HydroAnalysisFrame extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 JCheckBox src = (JCheckBox) e.getSource();
-                recessionSlider.setMaximum(chart.getRecessionCount());
-                chart.showRecessionCurve(src.isSelected());
+//                recessionSlider.setMaximum(chart.getRecessionCount());
+  //              chart.showRecessionCurve(src.isSelected());
             }
         });
         JPanel recessionPanel = new JPanel();
@@ -538,7 +539,7 @@ public class HydroAnalysisFrame extends JFrame {
 
             public void stateChanged(ChangeEvent e) {
                 recessionNumberField.setText(Integer.toString(recessionSlider.getValue()));
-                chart.setVisibleRecessions(recessionSlider.getValue());
+//                chart.setVisibleRecessions(recessionSlider.getValue());
             }
         });
         recessionNumberField.setEditable(false);
@@ -549,7 +550,7 @@ public class HydroAnalysisFrame extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 JCheckBox src = (JCheckBox) e.getSource();
-                chart.showGroundwaterCurve(src.isSelected());
+   //             chart.showGroundwaterCurve(src.isSelected());
             }
         });
         JPanel groundwaterPanel = new JPanel();
@@ -561,7 +562,7 @@ public class HydroAnalysisFrame extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 JCheckBox src = (JCheckBox) e.getSource();
-                chart.showBaseFlowPeriods(src.isSelected());
+     //           chart.showBaseFlowPeriods(src.isSelected());
             }
         });
 
@@ -575,8 +576,8 @@ public class HydroAnalysisFrame extends JFrame {
 
             public void stateChanged(ChangeEvent e) {
                 groundwaterThresholdField.setText(Double.toString((groundwaterSlider.getValue() / 1000.0) * 5.0));
-                double groundwaterThreshold = (groundwaterSlider.getValue() / 1000.0) * 5.0;
-                chart.setGroundwaterThreshold(groundwaterThreshold);
+//                double groundwaterThreshold = (groundwaterSlider.getValue() / 1000.0) * 5.0;
+  //              chart.setGroundwaterThreshold(groundwaterThreshold);
             }
         });
         groundwaterThresholdField.setEditable(false);
@@ -639,7 +640,7 @@ public class HydroAnalysisFrame extends JFrame {
 
                 optimizationSchemeDesc.setText(text);
                                               
-                HydroAnalysisFrame.this.chart.setMarkSerie(o.dominatedTimeStepsForGroup.get(index));
+//                HydroAnalysisFrame.this.chart.setMarkSerie(o.dominatedTimeStepsForGroup.get(index));
                 
             }
         });

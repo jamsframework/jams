@@ -14,7 +14,9 @@ import java.util.TreeSet;
  * @author chris
  */
 public class GreedyOptimizationScheme extends OptimizationScheme{
-   
+    double tau = 0.7;
+    double minDominatedTimesteps = 0.2;
+    
     @Override
     public String toString(){
         return "Greedy";
@@ -28,6 +30,36 @@ public class GreedyOptimizationScheme extends OptimizationScheme{
             }
         }
         return sum;
+    }
+
+    @Override
+    public void update(){
+        double weight_cur[] = new double[T];
+        dominatedTimeStepsForGroup.clear();
+        double weight_sum[] = accumulateWeightsOverParameters(weights);
+        
+        for (int i=0;i<this.solutionGroups.size();i++){
+            ArrayList<Integer> timeStepsTmp = new ArrayList<Integer>();
+            ParameterGroup p = this.solutionGroups.get(i);
+            
+
+            for (int t=0;t<T;t++){
+                for (int j=0;j<p.getSize();j++){
+                    weight_cur[t] += weights[p.get(j)][t];
+                }
+                if (weight_cur[t]>=tau*weight_sum[t]-1E-14){ //rundungsfehler
+                    timeStepsTmp.add(t);
+                }
+                //weight_sum[t] -= weight_cur[t];
+                weight_cur[t]  = 0;
+            }
+            int timeSteps[] = new int[timeStepsTmp.size()];
+            for (int k=0;k<timeStepsTmp.size();k++){
+                timeSteps[k] = timeStepsTmp.get(k);
+            }
+            this.dominatedTimeStepsForGroup.add(timeSteps);
+        }
+
     }
 
     public void calcOptimizationScheme(){
@@ -70,7 +102,7 @@ public class GreedyOptimizationScheme extends OptimizationScheme{
 
                         double delta_weight = weight_sum[i] - weight_old[i];
                         if (delta_weight != 0) {
-                            if (weight_cur_tmp[i] / delta_weight > 0.8) {
+                            if (weight_cur_tmp[i] / delta_weight > tau) {
                                 timeList.add(i);
                             }
                         }
@@ -89,7 +121,7 @@ public class GreedyOptimizationScheme extends OptimizationScheme{
                 usedParameters.add(bestParameter);
                 weight_cur = best_weight_cur;
 
-                if ((double) bestTimeList.size() / (double) T > 0.1 || usedParameters.size()>=n ) {
+                if ((double) bestTimeList.size() / (double) T > minDominatedTimesteps || usedParameters.size()>=n ) {
                     addMore = false;
                 }
             }
@@ -97,8 +129,9 @@ public class GreedyOptimizationScheme extends OptimizationScheme{
                 weight_old[i] += weight_cur[i];
             }
             this.solutionGroups.add(group);
-            this.dominatedTimeStepsForGroup.add(this.calcDominatedTimeSteps(group, allParameters));
+            //this.dominatedTimeStepsForGroup.add(this.calcDominatedTimeSteps(group, allParameters));
             allParameters.sub(group);
         }
+        update();
     }  
 }

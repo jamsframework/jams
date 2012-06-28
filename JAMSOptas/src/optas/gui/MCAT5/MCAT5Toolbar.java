@@ -4,7 +4,6 @@
  */
 package optas.gui.MCAT5;
 
-import optas.gui.DataCollectionPanel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -293,9 +292,14 @@ public class MCAT5Toolbar extends JToolBar {
                 DottyPlot.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
+                "DottyPlot3D",
+                "DottyPlot3D",
+                DottyPlot3D.class));
+
+        registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
                 "Temporal Analyzer",
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
-                TemporalAnalysis.class));
+                TemporalAnalysisGUI.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
                 "Interaction Analyzer",
@@ -366,6 +370,11 @@ public class MCAT5Toolbar extends JToolBar {
                 "testxx",
                 "testxx",
                 optas.SA.APosterioriPlot.class));
+
+        registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
+                "testxx2",
+                "testxx2",
+                ParameterInterpolation2.class));
 
         for (PlotDesc pd : registeredPlots) {
             JButton button = new JButton(pd.icon);

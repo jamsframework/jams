@@ -6,6 +6,7 @@
 package optas.optimizer.DirectSearchMethods;
 
 import Jama.Matrix;
+import java.io.Serializable;
 
 import java.util.Random;
 import java.util.Vector;
@@ -18,7 +19,7 @@ import optas.optimizer.management.ObjectiveAchievedException;
  *
  * @author Christian Fischer
  */
-abstract public class PatternSearch {
+abstract public class PatternSearch implements Serializable{
     abstract public SampleSO step(Optimizer context,SampleSO[] Simplex,Matrix LinearConstraintMatrixA,Matrix LinearConstraintVectorb,double lowBound[],double upBound[]) throws SampleLimitException, ObjectiveAchievedException;
     static Random Generator = null;
         

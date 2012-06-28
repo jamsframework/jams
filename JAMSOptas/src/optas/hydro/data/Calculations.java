@@ -112,10 +112,10 @@ public class Calculations {
        
         Integer ids[] = e.sort();
 
+        double tau = 0.1;
         double elitismThreshold = e.getValue(ids[(int)(ids.length*0.1)]);
-        //double elitismThreshold = e.getValue(ids[(int)(ids.length*0.05)]);
-
-        for (int i=0;i<ids.length*0.95;i++){
+        
+        for (int i=0;i<ids.length*tau;i++){
             double fx = e.getValue(ids[i]);
             if (Double.isInfinite(fx) || Double.isNaN(fx))
                 continue;

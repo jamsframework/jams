@@ -7,7 +7,10 @@ package reg.dsproc;
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
 import jams.data.JAMSDataFactory;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -54,10 +57,11 @@ public class ImportMonteCarloData implements Serializable{
     DataCollection importedCollection = null;
     
     final TreeMap<String, String> defaultAttributeTypes = new TreeMap<String, String>();
-        
+
+    boolean isValid = false;
     public ImportMonteCarloData(File file) {        
         init();
-        addFile(file);
+        isValid = addFile(file);
     }
 /*
 DataCollection newCollection = null;
@@ -193,6 +197,9 @@ DataCollection newCollection = null;
                         EnsembleTimeSeriesProcessor s = ((EnsembleTimeSeriesProcessor) p);
                         long[] ids = s.getModelRuns();
                         Calendar[] timesteps = s.getTimeSteps();
+                        if (timesteps == null){
+                            continue;
+                        }
                         String[] namedTimesteps = new String[timesteps.length];
                         for (int i = 0; i < timesteps.length; i++) {
                             namedTimesteps[i] = timesteps[i].toString();
@@ -268,10 +275,41 @@ DataCollection newCollection = null;
     public boolean isEmpty(){
         return this.attributeDataMap.isEmpty();
     }
-        
-    private void addFile(File file) {
+
+    private boolean isEmptyFile(File file){
+        BufferedReader reader = null;
+        try{
+        reader = new BufferedReader(new FileReader(file));
+        String line = null;
+        boolean isDataStart = false;
+        int dataCounter = 0;
+
+        while((line = reader.readLine())!=null){
+            if (line.contains("@data")){
+                isDataStart = true;
+            }else
+                if (isDataStart)
+                    dataCounter++;
+        }
+        reader.close();
+        return dataCounter<=1;
+
+        }catch(IOException fnfe){
+            try{
+                if (reader!=null)
+                    reader.close();
+            }catch(IOException ioe){
+                ioe.printStackTrace();
+            }
+            return true;
+        }
+    }
+    private boolean addFile(File file) {
+        if (isEmptyFile(file))
+            return false;
         loadDataStore(file);
-        updateDataTable();              
+        updateDataTable();
+        return true;
     }
             
     TreeSet<String> ensembleIDs = new TreeSet<String>();
@@ -279,6 +317,8 @@ DataCollection newCollection = null;
     TimeInterval ensembleTime = null;
 
     public DataCollection getEnsemble() {
+        if (!isValid)
+            return null;
         buildEnsemble();
         return ensemble;
     }
@@ -380,7 +420,9 @@ DataCollection newCollection = null;
             + "le1_normalized=Efficiency(Negative);"
             + "le2_normalized=Efficiency(Negative);"
             + "bias_normalized=Efficiency(Negative);"
-            + "ave_normalized=Efficiency(Negative);";
+            + "ave_normalized=Efficiency(Negative);"
+            + "x1=Parameter;"
+            + "x2=Parameter;";
 
     private void init() {
         simpleDatasetClasses.put(parameterString, Parameter.class);
@@ -388,7 +430,7 @@ DataCollection newCollection = null;
         simpleDatasetClasses.put(efficiencyStringNeg, NegativeEfficiency.class);
         simpleDatasetClasses.put(efficiencyStringPos, PositiveEfficiency.class);
         simpleDatasetClasses.put(stateVariableString, StateVariable.class);
-        //simpleDatasetClasses.put(unknownString, Parameter.class);
+        simpleDatasetClasses.put(unknownString, Parameter.class);
 
         timeSerieDatasetClasses.put(timeseriesString, TimeSerie.class);
         //timeSerieDatasetClasses.put(unknownString, TimeSerie.class);
@@ -427,5 +469,10 @@ DataCollection newCollection = null;
         this.ensemble = null;
         this.ensembleIDs = null;
         this.importedCollection = null;
+    }
+
+    public static void main(String[] args) {
+        ImportMonteCarloData imcd = new ImportMonteCarloData(new File("C:/Arbeit/optimization_wizard_optimizer.dat"));
+        System.out.println(imcd.getEnsemble());
     }
 }

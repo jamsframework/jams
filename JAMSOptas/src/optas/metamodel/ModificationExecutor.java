@@ -6,6 +6,7 @@ package optas.metamodel;
 
 import java.util.ArrayList;
 import optas.metamodel.ModelModifier.WizardException;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -140,7 +141,11 @@ public class ModificationExecutor {
         for (Modification m : list) {            
             if (m instanceof RemoveElement) {
                 RemoveElement re = (RemoveElement)m;
-                re.parent.removeChild(re.node);
+                try{
+                    re.parent.removeChild(re.node);
+                }catch(DOMException domE){
+                    domE.printStackTrace();
+                }
             } else if (m instanceof InsertElement) {
                 ((InsertElement) m).previousNode.appendChild(((InsertElement) m).newNode);
             } else if (m instanceof WrapElement) {
@@ -148,10 +153,10 @@ public class ModificationExecutor {
 
                 Node currentNode = w.inner;
                 ArrayList<Node> followingNodes = new ArrayList<Node>();
-                while (currentNode.getNextSibling() != null) {
+                do {
                     followingNodes.add(currentNode);
                     currentNode = currentNode.getNextSibling();
-                }
+                }while(currentNode != null);
 
                 if (w.inner.getParentNode() == null) {
                     throw new WizardException(("Error_model_file_does_not_contain_a_model_context"));
