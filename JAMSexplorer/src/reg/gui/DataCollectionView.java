@@ -17,6 +17,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -36,7 +37,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import optas.gui.DataCollectionPanel;
+import optas.gui.MCAT5.DataCollectionPanel;
 import optas.gui.MCAT5.MCAT5Toolbar;
 import org.jdesktop.swingx.JXDatePicker;
 import optas.hydro.data.Ensemble;
@@ -141,7 +142,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
     private TitledBorder disabledPercentilFilterPanelBorder = null;
     private JButton filterButton = null;
     private JButton inverseFilterButton = null;
-    private JButton clearTimeFilterButton = null;
+    private JButton clearTimeFilterButton = null;    
     private JButton clearValueFilterButton = null;
     private JButton deleteFilteredValuesButton = null;
     private JButton deleteAttribute = null;
@@ -876,7 +877,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 delegate.clearTimeFilter();
             }
         });
-
+        
         clearValueFilterButton = new JButton("Clear ID-Filters");
         clearValueFilterButton.addActionListener(new ActionListener() {
 
@@ -1034,7 +1035,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 .addComponent(filterSimPanel)
                 .addComponent(filterPercentilPanel)
                 .addGroup(layout.createSequentialGroup()
-                    .addComponent(filterButton)
+                    .addComponent(filterButton)                    
                     .addComponent(inverseFilterButton)
                     .addComponent(deleteFilteredValuesButton)
                 )
@@ -1117,7 +1118,6 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
         );
     }
 
-    @Override
     public DataCollection getDataCollection() {
         if (this.delegate instanceof DataCollectionViewController) {
             DataCollectionViewController controller = (DataCollectionViewController) delegate;

@@ -251,6 +251,8 @@ public class ImportMonteCarloDataPanel extends JPanel {
                         EnsembleTimeSeriesProcessor s = ((EnsembleTimeSeriesProcessor) p);
                         long[] ids = s.getModelRuns();
                         Calendar[] timesteps = s.getTimeSteps();
+                        if (timesteps == null)
+                            continue;
                         String[] namedTimesteps = new String[timesteps.length];
                         for (int i = 0; i < timesteps.length; i++) {
                             namedTimesteps[i] = timesteps[i].toString();

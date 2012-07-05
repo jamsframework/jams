@@ -99,7 +99,8 @@ public class EnsembleTimeSeriesProcessor extends Processor {
 
     public int getTimeUnit() throws SQLException, IOException{
         Attribute.Calendar timeSteps[] = this.getTimeSteps();
-
+        if (timeSteps == null)
+            return -1;
         Attribute.Calendar t0 = timeSteps[0];
         Attribute.Calendar tn = timeSteps[timeSteps.length-1];
 

@@ -439,6 +439,8 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
             Attribute.Calendar[] dates = ((EnsembleTimeSeriesProcessor) getProc()).getTimeSteps();
 
             public int getSize() {
+                if (dates==null)
+                    return 0;
                 return dates.length;
             }
 
