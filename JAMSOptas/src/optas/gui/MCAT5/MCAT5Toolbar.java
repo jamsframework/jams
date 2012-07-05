@@ -367,13 +367,13 @@ public class MCAT5Toolbar extends JToolBar {
                 RegionalSensitivityAnalyser2.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
-                "testxx",
-                "testxx",
+                "Experimental I",
+                "Experimental I",
                 optas.SA.APosterioriPlot.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
-                "testxx2",
-                "testxx2",
+                "Experimental II",
+                "Experimental II",
                 ParameterInterpolation2.class));
 
         for (PlotDesc pd : registeredPlots) {
