@@ -1,6 +1,7 @@
 /*
  * DoubleConditionalContext.java
  * Created on 9. April 2008, 11:31
+ * ID: $Id$
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
