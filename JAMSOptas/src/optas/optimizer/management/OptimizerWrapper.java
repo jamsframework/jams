@@ -43,7 +43,8 @@ public abstract class OptimizerWrapper extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
-    description = "List of parameter identifiers to be sampled")
+    description = "List of parameter identifiers to be sampled",
+    defaultValue="")
     public JAMSString startValue;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,

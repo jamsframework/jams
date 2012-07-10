@@ -301,9 +301,23 @@ public class ModelModifier {
 
     private String getStartValueString() {
         String startValues = "";
+        int n=odd.getParameter().size();
+        if (n==0)
+            return "";
+        if (odd.getParameter().values().iterator().next().getStartValue()==null)
+            return "";
+        int m=odd.getParameter().values().iterator().next().getStartValue().length;
+        double startValueArray[][] = new double[m][n];
+        int i=0;
         for (Parameter p : odd.getParameter().values()) {
-            startValues += Arrays.toString(p.getStartValue()) + ";";
+            for (int j=0;j<p.getStartValue().length;j++)
+                startValueArray[j][i] = p.getStartValue()[j];
+            i++;            
         }
+
+        for (i=0;i<m;i++)
+            startValues += "[" + Arrays.toString(startValueArray[i]).replace(';', ',') + "];";
+
         return startValues;
     }
 
@@ -344,8 +358,8 @@ public class ModelModifier {
                 OPTIMIZER_CONTEXT_NAME, false);
 
         String str = "" + mainObjectiveIndex;
-        optas.metamodel.Tools.addAttribute(optimizerContext, "mainObjective", str,
-                null, true);
+        /*optas.metamodel.Tools.addAttribute(optimizerContext, "mainObjective", str,
+                null, true);*/
 
 
         optas.metamodel.Tools.addAttribute(optimizerContext, "parameterIDs", parameterList,
