@@ -64,8 +64,6 @@ import jamsui.juice.gui.tree.JAMSNode;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.ScrollPane;
-import javax.swing.BoxLayout;
 
 /**
  *
@@ -73,8 +71,8 @@ import javax.swing.BoxLayout;
  */
 public class ComponentPanel extends JPanel {
 
-    private static final String DEFAULT_STRING = JAMS.i18n("[none]"), ATTR_CONFIG_STRING = JAMS.i18n("Attribute_configuration:"), MODEL_CONFIG_STRING = JAMS.i18n("Model_configuration:"), ATTR_OVERVIEW_STRING = JAMS.i18n("Attribute_overview:");
-    private static final Dimension BUTTON_DIMENSION = new Dimension(100, 20);
+    private static final String DEFAULT_STRING = JAMS.i18n("[none]");
+//    ATTR_CONFIG_STRING = JAMS.i18n("Attribute_configuration:"), MODEL_CONFIG_STRING = JAMS.i18n("Model_configuration:"), ATTR_OVERVIEW_STRING = JAMS.i18n("Attribute_overview:");
     private static final Dimension TABLE_DIMENSION = new Dimension(500, 200);
     private ComponentDescriptor componentDescriptor = null;
     private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
@@ -90,7 +88,7 @@ public class ComponentPanel extends JPanel {
     private JTabbedPane tabPane;
     private ComponentAttributePanel attributeConfigPanel;
     private JPanel switchPanel;
-    private JLabel configLabel;
+//    private JLabel configLabel;
 
     public ComponentPanel(ModelView view) {
         super();
@@ -104,7 +102,7 @@ public class ComponentPanel extends JPanel {
 
         // create some bold font for the labels
         Font labelFont = (Font) UIManager.getDefaults().get("Label.font");
-        labelFont = new Font(labelFont.getName(), Font.BOLD, labelFont.getSize() + 1);
+        labelFont = new Font(labelFont.getName(), Font.BOLD, labelFont.getSize() );
 
         GridBagLayout mainLayout = new GridBagLayout();
         componentPanel.setLayout(mainLayout);
@@ -253,7 +251,6 @@ public class ComponentPanel extends JPanel {
 
         attributeEditButton = new JButton(JAMS.i18n("Edit"));
         attributeEditButton.setEnabled(false);
-        attributeEditButton.setPreferredSize(BUTTON_DIMENSION);
         attributeEditButton.addActionListener(new ActionListener() {
 
             @Override
@@ -263,7 +260,6 @@ public class ComponentPanel extends JPanel {
         });
         attributeAddButton = new JButton(JAMS.i18n("Add"));
         attributeAddButton.setEnabled(true);
-        attributeAddButton.setPreferredSize(BUTTON_DIMENSION);
         attributeAddButton.addActionListener(new ActionListener() {
 
             @Override
@@ -273,7 +269,6 @@ public class ComponentPanel extends JPanel {
         });
         attributeDeleteButton = new JButton(JAMS.i18n("Delete"));
         attributeDeleteButton.setEnabled(false);
-        attributeDeleteButton.setPreferredSize(BUTTON_DIMENSION);
         attributeDeleteButton.addActionListener(new ActionListener() {
 
             @Override
@@ -283,10 +278,12 @@ public class ComponentPanel extends JPanel {
         });
 
         JPanel attributeButtonPanel = new JPanel();
-        attributeButtonPanel.setPreferredSize(new Dimension(BUTTON_DIMENSION.width + 10, 20));
-        attributeButtonPanel.add(attributeAddButton);
-        attributeButtonPanel.add(attributeDeleteButton);
-        attributeButtonPanel.add(attributeEditButton);
+        GridBagLayout gbl = new GridBagLayout();
+        attributeButtonPanel.setLayout(gbl);
+        GUIHelper.addGBComponent(attributeButtonPanel, gbl, attributeAddButton, 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(attributeButtonPanel, gbl, attributeDeleteButton, 0, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(attributeButtonPanel, gbl, attributeEditButton, 0, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(attributeButtonPanel, gbl, new JPanel(), 0, 3, 1, 1, 1, 1);
         attributePanel.add(attributeButtonPanel, BorderLayout.EAST);
 
 
@@ -298,19 +295,21 @@ public class ComponentPanel extends JPanel {
         tabPane.setEnabledAt(1, false);
 
         attributeConfigPanel = new ComponentAttributePanel();
-        configLabel = new JLabel(MODEL_CONFIG_STRING);
-        configLabel.setFont(labelFont);
+        
+//        configLabel = new JLabel(MODEL_CONFIG_STRING);
+//        configLabel.setFont(labelFont);
 
         switchPanel = new JPanel();
+        switchPanel.setBackground(Color.red);
 
-        JLabel attrOverviewLabel = new JLabel(ATTR_OVERVIEW_STRING);
-        attrOverviewLabel.setFont(labelFont);
+//        JLabel attrOverviewLabel = new JLabel(ATTR_OVERVIEW_STRING);
+//        attrOverviewLabel.setFont(labelFont);
         
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 2, 4, 1, 1.0, 1.0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, attrOverviewLabel, 0, 10, 4, 1, 0, 0);
+//        GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 2, 4, 1, 1.0, 1.0);
+//        GUIHelper.addGBComponent(componentPanel, mainLayout, attrOverviewLabel, 0, 10, 4, 1, 0, 0);
         GUIHelper.addGBComponent(componentPanel, mainLayout, tabPane, 0, 20, 4, 1, 1.0, 1.0, GridBagConstraints.VERTICAL, GridBagConstraints.WEST);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 25, 4, 1, 1.0, 1.0);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, configLabel, 0, 27, 4, 1, 0, 0);
+//        GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 25, 4, 1, 1.0, 1.0);
+//        GUIHelper.addGBComponent(componentPanel, mainLayout, configLabel, 0, 27, 4, 1, 0, 0);
         GUIHelper.addGBComponent(componentPanel, mainLayout, switchPanel, 0, 30, 4, 1, 1.0, 1.0);
 
         switchPanel.add(attributeConfigPanel);
@@ -405,15 +404,17 @@ public class ComponentPanel extends JPanel {
         if (componentDescriptor.getType() == JAMSNode.MODEL_TYPE) {
             if (switchPanel.getComponents()[0] != view.getModelEditPanel()) {
                 switchPanel.remove(switchPanel.getComponents()[0]);
+                view.getModelEditPanel().setPreferredSize(switchPanel.getSize());
                 switchPanel.add(view.getModelEditPanel());
-                configLabel.setText(MODEL_CONFIG_STRING);
+//                configLabel.setText(MODEL_CONFIG_STRING);
                 switchPanel.updateUI();
             }
         } else {
             if (switchPanel.getComponents()[0] != attributeConfigPanel) {
                 switchPanel.remove(switchPanel.getComponents()[0]);
+                attributeConfigPanel.setPreferredSize(switchPanel.getSize());
                 switchPanel.add(attributeConfigPanel);
-                configLabel.setText(ATTR_CONFIG_STRING);
+//                configLabel.setText(ATTR_CONFIG_STRING);
                 this.updateUI();
             }
         }

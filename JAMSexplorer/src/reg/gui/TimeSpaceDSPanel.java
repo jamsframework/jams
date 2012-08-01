@@ -331,6 +331,8 @@ public class TimeSpaceDSPanel extends DSPanel {
 
 
         GUIHelper.addGBComponent(outerPanel, mainLayout, buttonPanelA, 40, 20, 1, 1, 0, 0);
+        
+/*        
         GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTHS:")), 60, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(outerPanel, mainLayout, monthListScroll, 60, 20, 1, 1, 0, 0);
         GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YEARS:")), 70, 10, 1, 1, 0, 0);
@@ -356,7 +358,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         GUIHelper.addGBComponent(buttonPanelB, panelBLayout, button, 0, 20, 1, 1, 0, 0);
 
         GUIHelper.addGBComponent(outerPanel, mainLayout, buttonPanelB, 80, 20, 1, 1, 0, 0);
-
+*/
         this.add(outerPanel);
 
     }

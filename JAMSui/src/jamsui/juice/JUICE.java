@@ -49,8 +49,8 @@ public class JUICE {
 
     public static final String APP_TITLE = "JAMS Builder";
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
-    public static final int SCREEN_WIDTH = 1200;
-    public static final int SCREEN_HEIGHT = 850;
+    public static final int SCREEN_WIDTH = 1024;
+    public static final int SCREEN_HEIGHT = 768;
     private static JUICEFrame juiceFrame;
     private static JAMSProperties jamsProperties = JAMSProperties.createProperties();
     private static File baseDir = null;

@@ -258,6 +258,7 @@ public class SimpleDSPanel extends DSPanel {
         buttonPanelA.add(filterPanel);
 
         GUIHelper.addGBComponent(this, mainLayout, buttonPanelA, 40, 20, 1, 1, 0, 0);
+        /*
         GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTHS:")), 60, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, monthListScroll, 60, 20, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YEARS:")), 70, 10, 1, 1, 0, 0);
@@ -284,7 +285,7 @@ public class SimpleDSPanel extends DSPanel {
         buttonPanelB.add(button);
 
         GUIHelper.addGBComponent(this, mainLayout, buttonPanelB, 80, 20, 1, 1, 0, 0);
-
+*/
     }
 
     /**

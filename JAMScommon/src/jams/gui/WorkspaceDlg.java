@@ -89,7 +89,7 @@ public class WorkspaceDlg extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 ws.setTitle(titleInput.getValue());
                 ws.setDescription(descriptionInput.getText());
-                if (persistenceInput.getValue().equalsIgnoreCase("1")) {
+                if (persistenceInput.getValue().equalsIgnoreCase("true")) {
                     ws.setPersistent(true);
                 } else {
                     ws.setPersistent(false);

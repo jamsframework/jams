@@ -55,20 +55,25 @@ public class ContextDescriptor extends ComponentDescriptor {
 //    public ContextDescriptor(Class clazz) throws JAMSException {
 //        this(clazz.getSimpleName(), clazz);
 //    }
-//    public ContextAttribute addToDynamicAttribute(String name, ComponentField field) throws JAMSException {
-//
-//        ContextAttribute ca = dynamicAttributes.get(name);
-//
-//        // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
-//        if (ca == null) {
-//            Class type = field.getClass();
-//            ca = new ContextAttribute(name, type, this);
-//            dynamicAttributes.put(name, ca);
-//        }
-//
-//        return ca;
-//    }
-        public ContextAttribute addStaticAttribute(String name, Class type, String value) throws ContextAttributeException {
+    public ContextAttribute addDynamicAttribute(String name, Class type) throws JAMSException {
+
+        ContextAttribute ca = dynamicAttributes.get(name);
+
+        // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
+        if (ca != null) {
+
+            throw new ContextAttributeException(MessageFormat.format(JAMS.i18n("Context_attribute_does_already_exist"), name),
+                    JAMS.i18n("Error_adding_context_attribute"));
+
+        } else {
+            ca = new ContextAttribute(name, type, this);
+            this.getDynamicAttributes().put(name, ca);
+        }
+
+        return ca;
+    }
+
+    public ContextAttribute addStaticAttribute(String name, Class type, String value) throws ContextAttributeException {
 
         ContextAttribute ca = staticAttributes.get(name);
 

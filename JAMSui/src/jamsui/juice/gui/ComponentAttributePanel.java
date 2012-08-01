@@ -28,10 +28,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -47,24 +44,28 @@ import jams.gui.tools.GUIHelper;
 import jams.gui.input.InputComponent;
 import jams.gui.input.InputComponentFactory;
 import jams.JAMS;
-import jams.gui.input.ValueChangeListener;
+import jams.JAMSException;
+import jams.data.JAMSDataFactory;
+import jams.gui.input.*;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ComponentField;
 import jams.meta.ComponentField.AttributeLinkException;
 import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
 import jams.tools.StringTools;
-import java.awt.Color;
+import jamsui.juice.JUICE;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.StringTokenizer;
-import javax.swing.DefaultListModel;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.text.Position;
 
 /**
  *
@@ -75,12 +76,13 @@ import javax.swing.event.ListSelectionEvent;
  */
 public class ComponentAttributePanel extends JPanel {
 
-    private static final Dimension LISTPANEL_DIMENSION = new Dimension(160, 245),
+    private static final Dimension LISTPANEL_DIMENSION = new Dimension(160, 220),
             DETAILPANEL_DIMENSION = new Dimension(460, 245);
     private JComboBox contextCombo;
     private InputComponent valueInput;
     private GridBagLayout infoLayout;
-    private JTextField localNameText, compNameText, linkText, customAttributeText;
+    private JTextField localNameText, linkText;
+    private JButton customAttributeButton;
     private JPanel listPanel, infoPanel, valuePanel;
     private Class type;
     private JList attributeList;
@@ -96,50 +98,53 @@ public class ComponentAttributePanel extends JPanel {
 
     public ComponentAttributePanel() {
 
-        this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        this.setLayout(new BorderLayout());
 
         listPanel = new JPanel();
         listPanel.setLayout(new BorderLayout());
         listPanel.setPreferredSize(LISTPANEL_DIMENSION);
-
+        
         infoPanel = new JPanel();
         //infoPanel.setBorder(BorderFactory.createLoweredBevelBorder());
         //infoPanel.setPreferredSize(new Dimension(250,245));
         infoLayout = new GridBagLayout();
-        //infoLayout.preferredLayoutSize(infoPanel);
+//        infoLayout.preferredLayoutSize(infoPanel);
+        infoPanel.setBackground(Color.green);
         infoPanel.setLayout(infoLayout);
 
         JPanel detailPanel = new JPanel();
-        detailPanel.setBorder(BorderFactory.createLoweredBevelBorder());
-        //detailPanel.setPreferredSize(DETAILPANEL_DIMENSION);
-        detailPanel.add(infoPanel);
+        detailPanel.setLayout(new BorderLayout());
+        detailPanel.setBackground(Color.blue);
+//        detailPanel.setBorder(BorderFactory.createLoweredBevelBorder());
+//        detailPanel.setPreferredSize(DETAILPANEL_DIMENSION);
+//        detailPanel.add(infoPanel, BorderLayout.WEST);
 
-        this.add(detailPanel);
-        this.add(listPanel);
+        this.add(infoPanel, BorderLayout.CENTER);
+        this.add(listPanel, BorderLayout.EAST);
 
-        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.i18n("Component:")), 0, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.i18n("Local_name:")), 0, 10, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.i18n("Link:")), 0, 15, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(infoPanel, infoLayout, new JPanel(), 0, 17, 1, 1, 0, 0);
+//        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.i18n("Component:")), 0, 0, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.i18n("Local_name:")), 0, 10, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.i18n("Link:")), 0, 15, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
+//        GUIHelper.addGBComponent(infoPanel, infoLayout, new JPanel(), 0, 17, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
         GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.i18n("Value:")), 0, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
-        compNameText = new JTextField();
-        compNameText.setEditable(false);
-        compNameText.setBorder(BorderFactory.createEtchedBorder());
-        compNameText.setPreferredSize(new Dimension(300, 20));
-        GUIHelper.addGBComponent(infoPanel, infoLayout, compNameText, 1, 0, 1, 1, 0, 0);
+//        compNameText = new JTextField();
+//        compNameText.setEditable(false);
+//        compNameText.setBorder(BorderFactory.createEtchedBorder());
+//        compNameText.setPreferredSize(new Dimension(250, 20));
+//        GUIHelper.addGBComponent(infoPanel, infoLayout, compNameText, 1, 0, 2, 1, 0, 0);
 
         localNameText = new JTextField();
         localNameText.setEditable(false);
         localNameText.setBorder(BorderFactory.createEtchedBorder());
-        localNameText.setPreferredSize(new Dimension(320, 20));
-        GUIHelper.addGBComponent(infoPanel, infoLayout, localNameText, 1, 10, 1, 1, 0, 0);
+//        localNameText.setPreferredSize(new Dimension(250, 20));
+        GUIHelper.addGBComponent(infoPanel, infoLayout, localNameText, 1, 10, 2, 1, 0, 0);
 
         linkText = new JTextField();
         linkText.setEditable(false);
         linkText.setBorder(BorderFactory.createEtchedBorder());
-        linkText.setPreferredSize(new Dimension(300, 20));
-        GUIHelper.addGBComponent(infoPanel, infoLayout, linkText, 1, 15, 1, 1, 0, 0);
+        linkText.setPreferredSize(new Dimension(320, 0));
+        GUIHelper.addGBComponent(infoPanel, infoLayout, linkText, 1, 15, 1, 1, 1, 0);
 
         linkButton = new JToggleButton("LINK");
         linkButton.setMargin(new Insets(1, 1, 1, 1));
@@ -149,9 +154,11 @@ public class ComponentAttributePanel extends JPanel {
         GUIHelper.addGBComponent(infoPanel, infoLayout, linkButton, 2, 15, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTH);
 
         valuePanel = new JPanel();
+        valuePanel.setBackground(Color.yellow);
         valuePanel.setLayout(new BorderLayout());
+        valuePanel.setPreferredSize(new Dimension(320, 140));
 
-        GUIHelper.addGBComponent(infoPanel, infoLayout, valuePanel, 1, 20, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, valuePanel, 1, 20, 1, 1, 1, 0, GridBagConstraints.BOTH, GridBagConstraints.NORTHWEST);
 
         setButton = new JToggleButton("SET");
         setButton.setMargin(new Insets(1, 1, 1, 1));
@@ -164,15 +171,36 @@ public class ComponentAttributePanel extends JPanel {
         contextCombo.setBorder(BorderFactory.createEtchedBorder());
         listPanel.add(contextCombo, BorderLayout.NORTH);
 
-        JPanel customContextPanel = new JPanel();
-        customContextPanel.setLayout(new BoxLayout(customContextPanel, BoxLayout.Y_AXIS));
-        customAttributeText = new JTextField();
-        customAttributeText.setBorder(BorderFactory.createEtchedBorder());
+        customAttributeButton = new JButton(JAMS.i18n("Custom_Attribute"));
+        customAttributeButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    ContextDescriptor context = (ContextDescriptor) contextCombo.getSelectedItem();
+                    String name = GUIHelper.showInputDlg(JUICE.getJuiceFrame(), JAMS.i18n("Custom_Attribute"), null);
+                    if (name == null) {
+                        return;
+                    }
+                    if (type.isArray()) {
+                        context.addDynamicAttribute(name, JAMSDataFactory.getBelongingInterface(type.getComponentType()));
+                    } else {
+                        context.addDynamicAttribute(name, JAMSDataFactory.getBelongingInterface(type));
+                    }
+                    updateRepository();
+                    updateAttributeLinkGUI();
+                    DefaultListModel model = (DefaultListModel) attributeList.getModel();
+                    int listIndex = attributeList.getNextMatch(name, 0, Position.Bias.Forward);
+                    attributeList.scrollRectToVisible(attributeList.getCellBounds(listIndex, listIndex));
+                } catch (JAMSException ex) {
+                    JUICE.getExHandler().handle(ex);
+                }
+            }
+        });
+
 
         //customContextPanel.add(contextCombo);
-        customContextPanel.add(new JLabel(JAMS.i18n("Custom_Attribute:")));
-        customContextPanel.add(customAttributeText);
-        listPanel.add(customContextPanel, BorderLayout.SOUTH);
+        listPanel.add(customAttributeButton, BorderLayout.SOUTH);
 
         attributeList = new JList();
         JScrollPane listScroll = new JScrollPane(attributeList);
@@ -193,21 +221,29 @@ public class ComponentAttributePanel extends JPanel {
             return;
         }
 
-        String attributeName = customAttributeText.getText();
+        String attributeString = "";
+        List<String> l = attributeList.getSelectedValuesList();
+        if (!l.isEmpty()) {
+            for (String s : l) {
+                attributeString += ";" + s;
+            }
+            attributeString = attributeString.substring(1);
+        }
+
         ContextDescriptor context = (ContextDescriptor) contextCombo.getSelectedItem();
 
-        if (!attributeName.equals("") && context != null) {
+        if (!attributeString.equals("") && context != null) {
             linkButton.setEnabled(true);
         } else {
             linkButton.setEnabled(false);
         }
 
-        if (linkButton.isSelected() && !attributeName.equals("") && (context != null)) {
+        if (linkButton.isSelected() && !attributeString.equals("") && (context != null)) {
             try {
                 //@TODO: proper handling
-                field.linkToAttribute(context, attributeName);
+                field.linkToAttribute(context, attributeString);
             } catch (AttributeLinkException ex) {
-                Logger.getLogger(ComponentAttributePanel.class.getName()).log(Level.SEVERE, null, ex);
+                JUICE.getExHandler().handle(ex);
             }
             linkText.setText(field.getContext() + "." + field.getAttribute());
             tableModel.setValueAt(field.getContext() + "." + field.getAttribute(), selectedRow, 3);
@@ -273,25 +309,23 @@ public class ComponentAttributePanel extends JPanel {
 
                 int indices[] = new int[values.length];
                 int c = 0;
-                
+
                 for (int i = 0; i < attributeList.getModel().getSize(); i++) {
                     String value = (String) attributeList.getModel().getElementAt(i);
                     if (valueList.contains(value)) {
                         indices[c++] = i;
                     }
                 }
-                
+
                 attributeList.setSelectedIndices(indices);
-                
+
 //                for (String value : values) {
 //                    attributeList.setSelectedValue(value, true);
 //                }
 
-                customAttributeText.setText(field.getAttribute());
             } else {
                 // @todo: should stay empty if attribute not provided by some 
                 // context -- workaround for errorneous model files
-                customAttributeText.setText(field.getAttribute());
 
                 attributeList.setSelectedValue(field.getAttribute().toString(), true);
             }
@@ -307,7 +341,7 @@ public class ComponentAttributePanel extends JPanel {
         }
         valueInput.setValue(field.getValue());
 
-        if (customAttributeText.getText().equals("")) {
+        if (attributeList.isSelectionEmpty()) {
             linkButton.setEnabled(false);
         } else {
             linkButton.setEnabled(true);
@@ -327,7 +361,7 @@ public class ComponentAttributePanel extends JPanel {
 
         //set component's and var's name
         localNameText.setText(var.getName());
-        compNameText.setText(component.getInstanceName());
+//        compNameText.setText(component.getInstanceName());
 
         //fill the context combo box
         this.contextCombo.setModel(new DefaultComboBoxModel(ancestorArray));
@@ -337,9 +371,9 @@ public class ComponentAttributePanel extends JPanel {
         if ((var.getAccessType() == ComponentField.READ_ACCESS) && !type.isArray()) {
             // @todo: this should be disabled since some other context must
             // provide this attribute -- workaround for incomplete attributes list
-            customAttributeText.setEnabled(true);
+            customAttributeButton.setEnabled(true);
         } else {
-            customAttributeText.setEnabled(true);
+            customAttributeButton.setEnabled(true);
         }
 
         //remove existing input component if necessary
@@ -349,7 +383,7 @@ public class ComponentAttributePanel extends JPanel {
 
         //create value input component
         valueInput = InputComponentFactory.createInputComponent(var.getType(), true);
-        valuePanel.add(valueInput.getComponent(), BorderLayout.WEST);
+        valuePanel.add(valueInput.getComponent(), BorderLayout.NORTH);
         valuePanel.updateUI();
 
         //enable set-value-button (disabled, when no var is displayed)
@@ -445,7 +479,7 @@ public class ComponentAttributePanel extends JPanel {
         contextCombo.setModel(new DefaultComboBoxModel());
         attributeList.setModel(new DefaultListModel());
         localNameText.setText(null);
-        compNameText.setText(null);
+//        compNameText.setText(null);
         linkText.setText(null);
         if (valueInput != null) {
             valuePanel.remove(valueInput.getComponent());
@@ -456,8 +490,7 @@ public class ComponentAttributePanel extends JPanel {
         linkButton.setEnabled(false);
         setButton.setSelected(false);
         setButton.setEnabled(false);
-        customAttributeText.setText(null);
-        customAttributeText.setEnabled(false);
+        customAttributeButton.setEnabled(false);
 
         adjusting = false;
     }
@@ -514,12 +547,7 @@ public class ComponentAttributePanel extends JPanel {
             public void valueChanged(ListSelectionEvent e) {
 
                 if (!e.getValueIsAdjusting()) {
-                    Object o = attributeList.getSelectedValue();
-                    if (o != null) {
-                        customAttributeText.setText(o.toString());
-                    } else {
-                        customAttributeText.setText("");
-                    }
+                    setAttributeLink();
                 }
             }
         };
@@ -529,7 +557,6 @@ public class ComponentAttributePanel extends JPanel {
         linkButton.removeActionListener(linkButtonListener);
         setButton.removeActionListener(setButtonListener);
         contextCombo.removeItemListener(contextComboListener);
-        customAttributeText.getDocument().removeDocumentListener(customAttributeTextListener);
         attributeList.removeListSelectionListener(attributeListListener);
     }
 
@@ -537,8 +564,8 @@ public class ComponentAttributePanel extends JPanel {
         linkButton.addActionListener(linkButtonListener);
         setButton.addActionListener(setButtonListener);
         contextCombo.addItemListener(contextComboListener);
-        customAttributeText.getDocument().addDocumentListener(customAttributeTextListener);
         attributeList.addListSelectionListener(attributeListListener);
 
     }
+
 }
