@@ -43,6 +43,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -64,10 +67,14 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
 import org.w3c.dom.Document;
 import reg.DataCollectionViewController;
 import reg.JAMSExplorer;
 import optas.hydro.data.DataCollection;
+import optas.hydro.data.DataSet;
+import optas.io.NetCDFFileReader;
+import optas.io.NetCDFFileWriter;
 import reg.spreadsheet.STPConfigurator;
 import reg.viewer.Viewer;
 
@@ -338,6 +345,124 @@ public class ExplorerFrame extends JFrame {
         mainMenu.add(ensemblesMenu);
         //</editor-fold>
         
+        // NetCDF Menu
+        JMenu netCDFMenu = new JMenu("NetCDF");
+        mainMenu.add(netCDFMenu);
+        final JMenuItem saveToNetCDFItem = new JMenuItem(new AbstractAction("Save as NetCDF...") {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                Component component = ExplorerFrame.this.getTPane().getSelectedComponent();
+                DataCollection collection = ((DataCollectionView) component).getDataCollection();
+                JFileChooser chooser = new JFileChooser();
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                chooser.setFileFilter(new FileFilter() {
+
+                    @Override
+                    public boolean accept(File file) {
+                        return file.getName().endsWith(".cdf");
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "NetCDF 3.0 Format";
+                    }
+                });
+                int result = chooser.showSaveDialog(ExplorerFrame.this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String name = chooser.getSelectedFile().getName();
+                    String path = chooser.getSelectedFile().getAbsolutePath();
+                    NetCDFFileWriter stream = null;
+                    try {
+                        stream = new NetCDFFileWriter(path);
+                        stream.write(collection);
+                    } catch (IOException ex) {
+                        System.out.println("Unable to write file: " + name + ".");
+                    } catch (DataSet.MismatchException ex) {
+                        System.out.println(ex.getMessage());
+                    } catch (ucar.ma2.InvalidRangeException ex) {
+                        System.out.println(ex.getMessage());
+                    } finally {
+                        if (stream != null) {
+                            try {
+                                stream.flush();
+                                stream.close();
+                            } catch (IOException ex) {
+                                System.out.println("Unable to close file: " + name + ".");
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        saveToNetCDFItem.setEnabled(false);
+        netCDFMenu.add(saveToNetCDFItem);
+        JMenuItem readFromNetCDFItem = new JMenuItem(new AbstractAction("Read from NetCDF...") {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                
+                JFileChooser chooser = new JFileChooser();
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                chooser.setFileFilter(new FileFilter() {
+
+                    @Override
+                    public boolean accept(File file) {
+                        return file.getName().endsWith(".cdf");
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "NetCDF 3.0 Format";
+                    }
+                });
+                int result = chooser.showOpenDialog(ExplorerFrame.this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String name = chooser.getSelectedFile().getName();
+                    String path = chooser.getSelectedFile().getAbsolutePath();
+                    DataCollection collection = null;
+                    NetCDFFileReader stream = null;
+                    try {
+                        stream = new NetCDFFileReader(path);
+                        collection = stream.read();
+                        DataCollectionViewController controller = new DataCollectionViewController(collection);
+                        tPane.addTab("New Ensemble", controller.getView());
+                        tPane.setSelectedIndex(tPane.getComponentCount() - 1);
+                    } catch (IOException ex) {
+                        System.out.println("Unable to write file: " + name + ".");
+                    } catch (ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                    } catch (InstantiationException ex) {
+                        ex.printStackTrace();
+                    } catch (IllegalAccessException ex) {
+                        ex.printStackTrace();
+                    } catch (DataSet.MismatchException ex) {
+                        System.out.println(ex.getMessage());
+                    } finally {
+                        if (stream != null) {
+                            try {
+                                stream.close();
+                            } catch (IOException ex) {
+                                System.out.println("Unable to close file: " + name + ".");
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        netCDFMenu.add(readFromNetCDFItem);
+        tPane.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                Component pane = ExplorerFrame.this.getTPane().getSelectedComponent();
+                if (pane instanceof DataCollectionView) {
+                    saveToNetCDFItem.setEnabled(true);
+                } else {
+                    saveToNetCDFItem.setEnabled(false);
+                }
+            }
+        });
         
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
