@@ -1,4 +1,4 @@
-// Zeitschritte nicht abspeichern, aber Start und Enddatum, globale time domain über updateTimeDomain (public setzen)
+// Zeitschritte nicht abspeichern, aber Start und Enddatum, globale time domain Ã¼ber updateTimeDomain (public setzen)
 // gui implementieren
 
 package optas.io;

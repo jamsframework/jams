@@ -1,5 +1,5 @@
 /*
- * JAMSSpatialContext.java
+ * FilteredSpatialContext.java
  * Created on 6. July 2012, 13:58
  *
  * This file is part of JAMS

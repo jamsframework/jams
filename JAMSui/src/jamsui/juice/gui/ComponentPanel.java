@@ -313,6 +313,7 @@ public class ComponentPanel extends JPanel {
         GUIHelper.addGBComponent(componentPanel, mainLayout, switchPanel, 0, 30, 4, 1, 1.0, 1.0);
 
         switchPanel.add(attributeConfigPanel);
+//        switchPanel.add(new JPanel());
         ((FlowLayout)switchPanel.getLayout()).setHgap(0);
         ((FlowLayout)switchPanel.getLayout()).setVgap(0);
         

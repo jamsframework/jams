@@ -19,9 +19,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package jams.components.aggregate;
-
 
 import jams.model.*;
 import jams.data.*;
@@ -31,42 +29,33 @@ import jams.data.*;
  * @author S. Kralisch
  */
 public class VariableMultiply extends JAMSComponent {
-    
+
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "Current time"
-            )
-            public JAMSCalendar time;
-    
+    update = JAMSVarDescription.UpdateType.RUN,
+    description = "Current time")
+    public JAMSCalendar time;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "value attribute"
-            )
-            public JAMSDouble input;
-            
+    update = JAMSVarDescription.UpdateType.RUN,
+    description = "value attribute")
+    public JAMSDouble input;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
-            description = "sum attribute"
-            )
-            public JAMSDouble output;
-                
+    update = JAMSVarDescription.UpdateType.RUN,
+    description = "sum attribute")
+    public JAMSDouble output;
     private long count;
-    
+
     public void init() {
-        
     }
 
     public void run() {
         int max_d = time.getActualMaximum(time.DAY_OF_MONTH);
-        
-        output.setValue(input.getValue()/(double)max_d);                        
+
+        output.setValue(input.getValue() / (double) max_d);
     }
-    
+
     public void cleanup() {
-       
     }
-    
 }
