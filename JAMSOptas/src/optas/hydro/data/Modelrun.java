@@ -17,6 +17,7 @@ import java.util.Iterator;
 public class Modelrun extends DataSet{
     private ArrayList<DataSet> datasets;
     private HashMap<Class, ArrayList<DataSet>> map;
+    private SpatialDataSet spatialDataSet = null;
     private Integer id;
 
     TimeInterval timeDomain;
@@ -47,6 +48,18 @@ public class Modelrun extends DataSet{
                 return d;
         }
         return null;
+    }
+    
+    public void addSpatialDataSet(SpatialDataSet spatialDataSet) {
+        this.spatialDataSet = spatialDataSet;
+    }
+    
+    public boolean hasSpatialDataSet() {
+        return this.spatialDataSet != null;
+    }
+    
+    public SpatialDataSet getSpatialDataSet() {
+        return this.spatialDataSet;
     }
 
     public void addDataSet(DataSet set) throws MismatchException{

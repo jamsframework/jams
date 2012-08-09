@@ -19,16 +19,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.TreeSet;
+import java.util.*;
 import optas.optimizer.management.SampleFactory;
 
 /**
@@ -36,7 +27,13 @@ import optas.optimizer.management.SampleFactory;
  * @author chris
  */
 public class DataCollection extends DataSet implements Serializable{
-    TimeInterval timeDomain;    
+    
+    // 
+    // abfrage über modelrun ID -> gesamtfläche (SpatialDataSet)
+    // abfrage über räumliche ID -> SimpleEnsemble / TimeSerieEnsemble
+    private Map<Integer, Area> spatialDomain = null;
+    
+    TimeInterval timeDomain;
     TimeFilter timeFilter;
     HashMap<Integer, Boolean> idFilter = new HashMap<Integer, Boolean>();
 
@@ -314,6 +311,7 @@ public class DataCollection extends DataSet implements Serializable{
     }
 
     public void addEnsemble(SimpleEnsemble s){
+        
         isBusy = true;
         Integer srcIdList[] = s.getIds();
         Integer dstIdList[] = getModelrunIds();
@@ -375,25 +373,76 @@ public class DataCollection extends DataSet implements Serializable{
         isBusy = false;
         fireChangeEvent(new DatasetChangeEvent(this, this));
     }
-//this is highly inefficient!!
-    private void updateTimeDomain(){
+    
+    public void addTimeSeriesEnsemble(TimeSerieEnsemble ensemble) throws MismatchException {
+        
+        this.isBusy = true;
+        
+        // split existing and new IDs
+        Integer[] ensembleIDArray = ensemble.getIds();
+        Integer[] collectionIDArray = this.getModelrunIds();
+        Set<Integer> ensembleIDSet = new HashSet<Integer>(Arrays.asList(ensembleIDArray));
+        Set<Integer> collectionIDSet = new HashSet<Integer>(Arrays.asList(collectionIDArray));
+        Set<Integer> existingIDSet = new HashSet<Integer>(collectionIDSet);
+        existingIDSet.retainAll(ensembleIDSet);
+        Set<Integer> newIDSet = new HashSet<Integer>(ensembleIDSet);
+        newIDSet.removeAll(existingIDSet);
+        
+        // add datasets for existing IDs
+        for (Integer id : existingIDSet) {
+            double[] values = ensemble.getValue(id);
+            TimeSerie series = new TimeSerie(values, ensemble.getTimeInterval(), ensemble.getName(), null);
+            this.set.get(id).addDataSet(series);
+            this.datasets.put(series.name, series.getClass());
+        }
+        
+        // add datasets for existing IDs
+        for (Integer id : newIDSet) {
+            double[] values = ensemble.getValue(id);
+            TimeSerie series = new TimeSerie(values, ensemble.getTimeInterval(), ensemble.getName(), null);
+            Modelrun run = new Modelrun(id, series.getTimeDomain());
+            this.addModelRun(run);
+            this.datasets.put(series.name, series.getClass());
+        }
+        
+        this.isBusy = false;
+        fireChangeEvent(new DatasetChangeEvent(this, this));
+    }
+    
+    public void setGlobalTimeDomain(TimeInterval interval) {
+        if (this.timeDomain == null) {
+            this.timeDomain = JAMSDataFactory.createTimeInterval();
+        }
+        this.timeDomain.setStart(interval.getStart().clone());
+        this.timeDomain.setEnd(interval.getEnd().clone());
+        this.timeDomain.setTimeUnit(interval.getTimeUnit());
+        this.timeDomain.setTimeUnitCount(interval.getTimeUnitCount());
+    }
+    
+    //this is highly inefficient!!
+    // --> update time domain incrementally when new dataset is added?
+    public void updateTimeDomain(){
+        
         this.timeDomain.getStart().set(1000, 1, 1, 1, 1, 1);
         this.timeDomain.getEnd().set(10000, 1, 1, 1, 1, 1);
 
-        Set<String> set = this.getDatasets(TimeSerie.class);
-        for (String s : set){
-            TimeInterval t = ((TimeSerie)this.getDataSet(s)).getTimeDomain();
+        Set<String> datasets = this.getDatasets(TimeSerie.class);
+        for (String dataset : datasets){
+            TimeInterval t = ((TimeSerie)this.getDataSet(dataset)).getTimeDomain();
 
-            if (this.timeDomain.getStart().after(t.getStart()))
+            if (this.timeDomain.getStart().after(t.getStart())) {
                 this.timeDomain.setStart(t.getStart().clone());
-            if (this.timeDomain.getEnd().before(t.getEnd()))
+            }
+            if (this.timeDomain.getEnd().before(t.getEnd())) {
                 this.timeDomain.setEnd(t.getEnd().clone());
+            }
         }
     }
 
     public void addTimeSerie(TimeSerie s){
         globalDatasets.put(s.name,s);
         this.datasets.put(s.name, s.getClass());
+        s.parent = this;
 
         fireChangeEvent(new DatasetChangeEvent(this, this));
     }
@@ -584,7 +633,7 @@ public class DataCollection extends DataSet implements Serializable{
 
     /**
      * Returns a set of all available data set types within the collection
-     * denotedby their respective class names. Recommended for use in
+     * denoted by their respective class names. Recommended for use in
      * conjunction with the getDataSets(Class c) method.
      *
      * @return set of data types
