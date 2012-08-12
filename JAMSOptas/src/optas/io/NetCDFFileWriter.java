@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import optas.hydro.data.DataSet.MismatchException;
 import optas.hydro.data.*;
 import reg.dsproc.ImportMonteCarloData;
@@ -77,7 +79,7 @@ public class NetCDFFileWriter {
         return offset;
     }
     
-    public void write(DataCollection collection) throws IOException, InvalidRangeException, UnsupportedOperationException, MismatchException {
+    public void write(DataCollection collection) throws IOException, UnsupportedOperationException, MismatchException {
         
         // store meta information
         file.addAttribute(null, new Attribute("samplerClass", collection.getSamplerClass()));
@@ -160,7 +162,11 @@ public class NetCDFFileWriter {
         for (i = 0; i < collectionModelRuns.length; i++) {
             modelRunArray.set(i, collectionModelRuns[i]);
         }
-        file.write("modelRunID", modelRunArray);
+        try {
+            file.write("modelRunID", modelRunArray);
+        } catch (InvalidRangeException ex) {
+            Logger.getLogger(NetCDFFileWriter.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         // write datasets to file
         for (String name : dataSetNames) {
@@ -187,7 +193,11 @@ public class NetCDFFileWriter {
                         }
                     }
                     int[] offset = new int[]{getModelRunIDOffset(collectionModelRuns, dataSetModelRuns), getTimeIntervalOffset(collectionInterval, dataSetInterval)};
-                    file.write(name, offset, dataSetArray);
+                    try {
+                        file.write(name, offset, dataSetArray);
+                    } catch (InvalidRangeException ex) {
+                        Logger.getLogger(NetCDFFileWriter.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 
                 
@@ -205,7 +215,11 @@ public class NetCDFFileWriter {
                         dataSetArray.set(t, measurement.getValue(t));
                     }
                     int[] offset = new int[]{getTimeIntervalOffset(collectionInterval, dataSetInterval)};
-                    file.write(name, offset, dataSetArray);
+                    try {
+                        file.write(name, offset, dataSetArray);
+                    } catch (InvalidRangeException ex) {
+                        Logger.getLogger(NetCDFFileWriter.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             
             } else if (dataSet instanceof SimpleEnsemble || dataSet instanceof EfficiencyEnsemble) {
@@ -221,7 +235,11 @@ public class NetCDFFileWriter {
                         dataSetArray.set(i, ensemble.getValue(dataSetModelRuns[i]));
                     }
                     int[] offset = new int[]{getModelRunIDOffset(collectionModelRuns, dataSetModelRuns)};
-                    file.write(name, offset, dataSetArray);
+                    try {
+                        file.write(name, offset, dataSetArray);
+                    } catch (InvalidRangeException ex) {
+                        Logger.getLogger(NetCDFFileWriter.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             } else {
                 throw new UnsupportedOperationException();

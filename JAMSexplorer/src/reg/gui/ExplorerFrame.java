@@ -380,8 +380,6 @@ public class ExplorerFrame extends JFrame {
                         System.out.println("Unable to write file: " + name + ".");
                     } catch (DataSet.MismatchException ex) {
                         System.out.println(ex.getMessage());
-                    } catch (ucar.ma2.InvalidRangeException ex) {
-                        System.out.println(ex.getMessage());
                     } finally {
                         if (stream != null) {
                             try {
