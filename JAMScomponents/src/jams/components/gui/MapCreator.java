@@ -319,13 +319,16 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
         mc = new MapCollection[numOfParams];
         getCollections();
         for (int i = 0; i < numOfParams; i++) {
+            if (mc[i] == null) {
+                continue;
+            }
             gispanel.addMap(mc[i]);
             infoidx = i;
         }
 
         /* Add additional maps to topmap context */
         for (DefaultMapLayer l : optLayers) {
-            if (l != null) {
+            if ((l != null) && (topmap != null)) {
                 topmap.addLayer(l);
             }
         }
@@ -336,6 +339,18 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
 
         finished = true;
 
+        if (topmap == null) {
+            panel.removeAll();
+            JLabel label = new JLabel("No geometry features found in entity set!", SwingConstants.CENTER);
+            label.setVerticalTextPosition(JLabel.BOTTOM);
+            label.setHorizontalTextPosition(JLabel.CENTER);
+            label.setFont(new Font("Dialog", Font.BOLD, 14));           
+            panel.setLayout(new BorderLayout());
+            panel.add(label, BorderLayout.CENTER);
+            panel.updateUI();
+            return;
+        }
+        
         fullExtent = topmap.getAreaOfInterest();
 
         mp.setMapArea(topmap.getLayerBounds());
@@ -398,12 +413,21 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             while (hrusIterate.hasNext()) {
 
                 e = hrusIterate.next();
+                
+                if (!e.existsAttribute("geom")) {
+                    continue;
+                }
+                
                 SimpleFeature f = SimpleFeatureBuilder.template(mapFType, new Integer(
                         new Double(e.getDouble("ID")).intValue()).toString());
                 f.setAttribute("geo", e.getGeometry("geom"));
                 f.setAttribute("newAt", e.getDouble(showAttr.getValue()[i]));
                 fc.add(f);
                 s.add(e.getDouble(showAttr.getValue()[i]));
+            }
+            
+            if (fc.isEmpty()) {
+                continue;
             }
             
             mc[i] = new MapCollection(showAttr.getValue()[i], fc, s, rangeColor.getValue()[i], Integer.parseInt(numOfRanges.getValue()[i]), crs);

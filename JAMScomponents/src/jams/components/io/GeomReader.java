@@ -101,12 +101,16 @@ public class GeomReader extends JAMSComponent {
             SimpleFeature f = iterator.next();
             Object attribute = f.getAttribute(idName.getValue());
             if (attribute==null){
-                getModel().getRuntime().sendInfoMsg(JAMS.i18n("Could_access_attribute:") + idName.getValue() + JAMS.i18n("_please_check_your_shapefile."));
+                iterator.close();
+                getModel().getRuntime().sendInfoMsg("Could not access attribute " + idName.getValue() + ". Please check your shapefile!");
+                return;
             }
             Long id = new Long(attribute.toString());
             geomMap.put(id, (Geometry) f.getDefaultGeometry());
         }
 
+        iterator.close();
+        
         for (Attribute.Entity e : hrus.getEntities()) {
             long id = new Double(e.getDouble("ID")).longValue();
             e.setGeometry("geom", geomMap.get(id));
