@@ -64,9 +64,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import reg.dsproc.DataMatrix;
-import reg.dsproc.DataStoreProcessor;
-import reg.dsproc.TimeSpaceProcessor;
+import jams.workspace.dsproc.DataMatrix;
+import jams.workspace.dsproc.DataStoreProcessor;
+import jams.workspace.dsproc.TimeSpaceProcessor;
 
 /**
  *

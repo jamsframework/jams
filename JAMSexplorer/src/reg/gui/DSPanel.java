@@ -29,8 +29,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import reg.dsproc.DataStoreProcessor;
-import reg.dsproc.DataMatrix;
+import jams.workspace.dsproc.DataStoreProcessor;
+import jams.workspace.dsproc.DataMatrix;
 import reg.spreadsheet.JAMSSpreadSheet;
 
 /**

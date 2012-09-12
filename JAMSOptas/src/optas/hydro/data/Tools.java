@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.StringTokenizer;
-import reg.dsproc.ImportMonteCarloData;
+import optas.io.ImportMonteCarloData;
 
 /**
  *

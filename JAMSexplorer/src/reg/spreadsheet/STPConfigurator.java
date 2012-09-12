@@ -51,7 +51,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import reg.JAMSExplorer;
-import reg.dsproc.SimpleSerieProcessor;
+import jams.workspace.dsproc.SimpleSerieProcessor;
 
 /**
  *

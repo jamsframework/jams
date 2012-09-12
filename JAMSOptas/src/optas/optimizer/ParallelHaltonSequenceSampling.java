@@ -23,7 +23,7 @@ import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.parallel.ParallelExecution;
 import optas.optimizer.parallel.ParallelJob;
 import optas.optimizer.parallel.ParallelTask;
-import reg.dsproc.ImportMonteCarloData;
+import optas.io.ImportMonteCarloData;
 
 @SuppressWarnings("unchecked")
 @JAMSComponentDescription(

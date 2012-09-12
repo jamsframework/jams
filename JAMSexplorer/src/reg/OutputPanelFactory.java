@@ -32,7 +32,7 @@ import java.io.IOException;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import optas.hydro.data.DataCollection;
-import reg.dsproc.DataStoreProcessor;
+import jams.workspace.dsproc.DataStoreProcessor;
 import reg.gui.ExplorerFrame;
 import reg.gui.ImportMonteCarloDataPanel;
 import reg.gui.OutputDSPanel;

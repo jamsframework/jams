@@ -41,7 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import reg.DataTransfer;
 import reg.JAMSExplorer;
-import reg.dsproc.DataMatrix;
+import jams.workspace.dsproc.DataMatrix;
 import reg.gui.StatisticDialogPanel;
 import reg.viewer.Viewer;
 

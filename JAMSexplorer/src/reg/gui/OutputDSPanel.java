@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 import reg.DataCollectionViewController;
 import reg.JAMSExplorer;
 import reg.OutputPanelFactory;
-import reg.dsproc.DataStoreProcessor;
+import jams.workspace.dsproc.DataStoreProcessor;
 import reg.spreadsheet.JAMSSpreadSheet;
 
 /**

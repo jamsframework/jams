@@ -16,7 +16,7 @@ import optas.hydro.data.DataCollection;
 import optas.optimizer.management.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.SampleFactory.SampleSO;
-import reg.dsproc.ImportMonteCarloData;
+import optas.io.ImportMonteCarloData;
 
 @SuppressWarnings("unchecked")
 @JAMSComponentDescription(
