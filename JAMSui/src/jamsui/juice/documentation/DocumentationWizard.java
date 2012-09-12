@@ -76,7 +76,7 @@ public class DocumentationWizard extends Observable {
             try {
                 process.exitValue();
             } catch (Exception e) {
-                stateMessage("waiting on xsltproc");
+                stateMessage("waiting for xsltproc");
                 try {
                     Thread.sleep(300);
                 } catch (Exception e2) {
