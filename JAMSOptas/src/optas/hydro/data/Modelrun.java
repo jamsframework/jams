@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package optas.hydro.data;
 
@@ -15,6 +11,7 @@ import java.util.Iterator;
  * @author chris
  */
 public class Modelrun extends DataSet{
+    
     private ArrayList<DataSet> datasets;
     private HashMap<Class, ArrayList<DataSet>> map;
     private SpatialDataSet spatialDataSet = null;
@@ -42,16 +39,13 @@ public class Modelrun extends DataSet{
     public Iterator<DataSet> getDatasets(){
         return datasets.iterator();
     }
+    
     public DataSet getDataset(String name){
         for (DataSet d : datasets){
             if (d.name.equals(name))
                 return d;
         }
         return null;
-    }
-    
-    public void addSpatialDataSet(SpatialDataSet spatialDataSet) {
-        this.spatialDataSet = spatialDataSet;
     }
     
     public boolean hasSpatialDataSet() {
@@ -62,12 +56,29 @@ public class Modelrun extends DataSet{
         return this.spatialDataSet;
     }
 
-    public void addDataSet(DataSet set) throws MismatchException{
-        if (set instanceof SimpleDataSet){
-        } else if (set instanceof TimeSerie) {
+    public void addDataSet(DataSet set) throws MismatchException {
+        this.addDataSet(null, set);
+//        if (set instanceof SimpleDataSet){
+//        } else if (set instanceof TimeSerie) {
+//            addTimeSerie((TimeSerie)set);
+//        }
+//        registerDataSet(set);
+    }
+    
+    public void addDataSet(Integer areaID, DataSet set) throws MismatchException {
+        
+        if (set instanceof TimeSerie) {
             addTimeSerie((TimeSerie)set);
+        } else {
+            registerDataSet(set);
         }
-        registerDataSet(set);
+        
+        if (areaID != null) {
+            if (!hasSpatialDataSet()) {
+                this.spatialDataSet = new SpatialDataSet();
+            }
+            this.spatialDataSet.addDatasetForAreaID(areaID, set);
+        }
     }
 
     private void registerDataSet(DataSet set){

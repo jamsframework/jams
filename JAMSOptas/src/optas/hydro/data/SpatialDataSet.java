@@ -1,41 +1,46 @@
 
 package optas.hydro.data;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class SpatialDataSet extends DataSet {
     
-    private Map<Integer, Area> areas = null;
-    private Map<Integer, DataSet> dataSets = null; // ein Pool von Areas für alle Modelruns
-    // map area id -> dataset
-    // index mapping für IDs
+    private int[] index = null;
+    private Map<Integer, DataSet> dataSets = null;
     
-    public void addArea(Area area) {
-        if (this.areas != null) {
-            this.areas = new HashMap<Integer, Area>();
+    public void addDatasetForAreaID(Integer id, DataSet dataSet) {
+        if (this.dataSets == null) {
+            this.dataSets = new TreeMap<Integer, DataSet>();
         }
-        
-        // determine highest id value
-        Set<Integer> keys = this.areas.keySet();
-        int maxID = -1;
-        for (int id : keys) {
-            if (maxID < id) {
-                maxID = id;
-            }
-        }
-        
-        this.areas.put(maxID + 1, area);
+        this.dataSets.put(id, dataSet);
+        this.rebuildIndex();
     }
     
-    // methode für alle ares hinzufügen
+    public DataSet getDataSetForAreaID(int id) {
+        return this.dataSets.get(id);
+    }
     
-    public Area getAreaForID(int id) {
-        return this.areas.get(id);
+    public Integer getIDAtIndex(int i) {
+        return index[i];
     }
     
     public Set<Integer> getIDSet() {
-        return this.areas.keySet();
+        return this.dataSets.keySet();
+    }
+    
+    public int getSize() {
+        return index.length;
+    }
+    
+    private void rebuildIndex() {
+        index = new int[dataSets.size()];
+        int i = 0;
+        for (Object key : (TreeSet) dataSets.keySet()) {
+            index[i] = (Integer) key;
+            i++;
+        }
     }
 }

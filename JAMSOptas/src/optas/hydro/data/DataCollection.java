@@ -32,6 +32,7 @@ public class DataCollection extends DataSet implements Serializable{
     // abfrage über modelrun ID -> gesamtfläche (SpatialDataSet)
     // abfrage über räumliche ID -> SimpleEnsemble / TimeSerieEnsemble
     private Map<Integer, Area> spatialDomain = null;
+    private Map<Integer, DataSet> spatialDataSets = null;
     
     TimeInterval timeDomain;
     TimeFilter timeFilter;
@@ -309,11 +310,59 @@ public class DataCollection extends DataSet implements Serializable{
             }
         }
     }
+    
+    public Integer createArea(double latitude, double longitude, double elevation) {
+        
+        // if there is no spatial domain yet create one and add new area
+        if (this.spatialDomain == null) {
+            this.spatialDomain = new HashMap<Integer, Area>();
+            Area area = new Area(latitude, longitude, elevation);
+            Integer areaID = 0;
+            this.spatialDomain.put(areaID, area);
+            return areaID;
+        
+        // if there is a spatial domain, compare areas with new area and
+        // return id if it already exists or add new area and return new id
+        } else {
+            Integer areaID = -1;
+            for (Integer id : this.spatialDomain.keySet()) {
+                double currentLatitude = this.spatialDomain.get(id).getLatitude();
+                double currentLongitude = this.spatialDomain.get(id).getLongitude();
+                double currentElevation = this.spatialDomain.get(id).getElevation();
+                if (currentLatitude == latitude && currentLongitude == longitude && currentElevation == elevation) {
+                    areaID = id;
+                }
+            }
+            if (areaID == -1) {
+                for (Integer id : this.spatialDataSets.keySet()) {
+                    if (areaID < id) {
+                        areaID = id;
+                    }
+                }
+                areaID++;
+                Area area = new Area(latitude, longitude, elevation);
+                this.spatialDataSets.put(areaID, area);
+            }
+            return areaID;
+        }
+    }
 
-    public void addEnsemble(SimpleEnsemble s){
+    public void addSpatialDataSet(Integer areaID, DataSet set) {
+        
+        if (this.spatialDataSets == null) {
+            this.spatialDataSets = new HashMap<Integer, DataSet>();
+        }
+        this.spatialDataSets.put(areaID, set);
+    }
+    
+    public void addEnsemble(SimpleEnsemble ensemble) {
+        this.addEnsemble(ensemble, null);
+    }
+    
+    public void addEnsemble(SimpleEnsemble ensemble, Integer areaID){
         
         isBusy = true;
-        Integer srcIdList[] = s.getIds();
+        Integer srcIdList[] = ensemble.getIds();
         Integer dstIdList[] = getModelrunIds();
 
         Set<Integer> srcIdSet = new HashSet<Integer>();
@@ -332,15 +381,15 @@ public class DataCollection extends DataSet implements Serializable{
         newIds.removeAll(commonIds);
 
         for (Integer id : commonIds){
-            double srcR = s.getValue(id);
+            double srcR = ensemble.getValue(id);
 
             Modelrun dstR = this.set.get(id);
 
             try {
-                if (s instanceof EfficiencyEnsemble) {
-                    dstR.addDataSet(new Efficiency(new SimpleDataSet(srcR, s.name, this), ((EfficiencyEnsemble) s).isPostiveBest));
+                if (ensemble instanceof EfficiencyEnsemble) {
+                    dstR.addDataSet(areaID, new Efficiency(new SimpleDataSet(srcR, ensemble.name, this), ((EfficiencyEnsemble) ensemble).isPostiveBest));
                 } else {
-                    dstR.addDataSet(new SimpleDataSet(srcR, s.name, this));
+                    dstR.addDataSet(areaID, new SimpleDataSet(srcR, ensemble.name, this));
                 }
             } catch (MismatchException me) {
                 me.printStackTrace();
@@ -349,32 +398,36 @@ public class DataCollection extends DataSet implements Serializable{
 
         for (Integer id : newIds){
             Modelrun dstR = new Modelrun(id,null);
-            double srcR = s.getValue(id);
+            double srcR = ensemble.getValue(id);
 
             try {
-                if (s instanceof EfficiencyEnsemble) {
-                    dstR.addDataSet(new Efficiency(new SimpleDataSet(srcR, s.name, this), ((EfficiencyEnsemble) s).isPostiveBest));
+                if (ensemble instanceof EfficiencyEnsemble) {
+                    dstR.addDataSet(areaID, new Efficiency(new SimpleDataSet(srcR, ensemble.name, this), ((EfficiencyEnsemble) ensemble).isPostiveBest));
                 } else {
-                    dstR.addDataSet(new SimpleDataSet(srcR, s.name, this));
+                    dstR.addDataSet(areaID, new SimpleDataSet(srcR, ensemble.name, this));
                 }
                 this.addModelRun(dstR);
             } catch (MismatchException me) {
                 me.printStackTrace();
             }
         }
-        if (s instanceof EfficiencyEnsemble){
-            if (((EfficiencyEnsemble)s).isPostiveBest)
-                this.datasets.put(s.name, PositiveEfficiency.class);
+        if (ensemble instanceof EfficiencyEnsemble){
+            if (((EfficiencyEnsemble)ensemble).isPostiveBest)
+                this.datasets.put(ensemble.name, PositiveEfficiency.class);
             else
-                this.datasets.put(s.name, NegativeEfficiency.class);
+                this.datasets.put(ensemble.name, NegativeEfficiency.class);
         }else
-            this.datasets.put(s.name, Parameter.class);
+            this.datasets.put(ensemble.name, Parameter.class);
         
         isBusy = false;
         fireChangeEvent(new DatasetChangeEvent(this, this));
     }
     
     public void addTimeSeriesEnsemble(TimeSerieEnsemble ensemble) throws MismatchException {
+        this.addTimeSeriesEnsemble(null, ensemble);
+    }
+    
+    public void addTimeSeriesEnsemble(Integer areaID, TimeSerieEnsemble ensemble) throws MismatchException {
         
         this.isBusy = true;
         
@@ -392,15 +445,16 @@ public class DataCollection extends DataSet implements Serializable{
         for (Integer id : existingIDSet) {
             double[] values = ensemble.getValue(id);
             TimeSerie series = new TimeSerie(values, ensemble.getTimeInterval(), ensemble.getName(), null);
-            this.set.get(id).addDataSet(series);
+            this.set.get(id).addDataSet(areaID, series);
             this.datasets.put(series.name, series.getClass());
         }
         
-        // add datasets for existing IDs
+        // add datasets for non-existing IDs
         for (Integer id : newIDSet) {
             double[] values = ensemble.getValue(id);
             TimeSerie series = new TimeSerie(values, ensemble.getTimeInterval(), ensemble.getName(), null);
             Modelrun run = new Modelrun(id, series.getTimeDomain());
+            run.addDataSet(areaID, series);
             this.addModelRun(run);
             this.datasets.put(series.name, series.getClass());
         }
@@ -446,23 +500,27 @@ public class DataCollection extends DataSet implements Serializable{
 
         fireChangeEvent(new DatasetChangeEvent(this, this));
     }
+    
+    public void addModelRun(Modelrun run) throws MismatchException {
+        this.addModelRun(null, run);
+    }
 
-    public void addModelRun(Modelrun set) throws MismatchException {
-        if (set.getTimeDomain()!=null){
+    public void addModelRun(Integer areaID, Modelrun run) throws MismatchException {
+        if (run.getTimeDomain()!=null){
             if (this.timeDomain == null)
-                this.timeDomain = set.getTimeDomain();
+                this.timeDomain = run.getTimeDomain();
         }
-        Modelrun r = this.set.get(set.getId());
+        Modelrun r = this.set.get(run.getId());
         if (r == null) {
-            set.parent = this;
-            this.set.put(set.getId(), set);
+            run.parent = this;
+            this.set.put(run.getId(), run);
         }else{
-            Iterator<DataSet> iter = set.getDatasets();
+            Iterator<DataSet> iter = run.getDatasets();
             while(iter.hasNext()){
                 r.addDataSet(iter.next());
             }
         }
-        registerDatasets(set);
+        registerDatasets(run);
         fireChangeEvent(new DatasetChangeEvent(this, this));
     }
     public void removeModelRun(Integer id) {
@@ -491,6 +549,7 @@ public class DataCollection extends DataSet implements Serializable{
         }
         return sets;
     }
+    
     public Class getDatasetClass(String name){
         return this.datasets.get(name);
     }
@@ -511,6 +570,10 @@ public class DataCollection extends DataSet implements Serializable{
             }else
                 return e;
         }
+    }
+    
+    public DataSet getDataSetForAreaID(Integer id) {
+        return this.spatialDataSets.get(id);
     }
 
     public class StringLexOrder implements Comparator{
@@ -660,6 +723,10 @@ public class DataCollection extends DataSet implements Serializable{
         t.setStart(timeDomain.getStart().clone());
         t.setEnd(timeDomain.getEnd().clone());
         return t;
+    }
+    
+    public SpatialDataSet getSpatialDomainForModelRunID(Integer modelRunID) {
+        return this.set.get(modelRunID).getSpatialDataSet();
     }
 
     public DataCollection clone(){
