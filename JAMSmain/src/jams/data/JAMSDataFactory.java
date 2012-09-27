@@ -203,6 +203,10 @@ public class JAMSDataFactory {
     public static Attribute.Object createObject() {
         return new JAMSObject();
     }
+    
+    public static Attribute.ObjectArray createObjectArray() {
+        return new JAMSObjectArray();
+    }    
 
     /**
      * Returns the standard implementation of a JAMSData interface

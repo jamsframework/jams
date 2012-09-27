@@ -49,8 +49,8 @@ author = "Sven Kralisch",
 date = "2005-06-22",
 version = "1.0_0",
 description = "This component represents a JAMS "
-        + "context which is the top level component of every component"
-        + " hierarchie in JAMS models")
++ "context which is the top level component of every component"
++ " hierarchie in JAMS models")
 public class JAMSContext extends JAMSComponent implements Context {
 
     private Attribute.EntityCollection entities;
@@ -73,15 +73,18 @@ public class JAMSContext extends JAMSComponent implements Context {
      */
     public JAMSContext() {
 
+        // create a list with one entitiy, this is the minimum number for any context
         ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
         list.add(JAMSDataFactory.createEntity());
         setEntities(JAMSDataFactory.createEntityCollection());
         getEntities().setEntities(list);
+
         attributeMap = new HashMap<String, JAMSData>();
     }
 
     /**
      * Change the positions of two components
+     *
      * @param i The position of the first component
      * @param j The position of the second component
      */
@@ -94,6 +97,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     /**
      * Add a single component to this context
+     *
      * @param c The component to be added
      */
     public void addComponent(Component c) {
@@ -103,6 +107,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     /**
      * Remove a single component from this context
+     *
      * @param index The index of the component to be removed
      */
     public void removeComponent(int index) {
@@ -110,7 +115,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     /**
-     * 
+     *
      * @return All child components as ArrayList
      */
     public ArrayList<Component> getComponents() {
@@ -118,7 +123,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     /**
-     * 
+     *
      * @param components Set the child components of this context and set this
      * object as their context
      */
@@ -131,7 +136,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     /**
-     * 
+     *
      * @return An enumerator iterating over all child components depending on
      * this contexts functionality
      */
@@ -140,7 +145,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     /**
-     * 
+     *
      * @return An enumerator iterating once over all child components
      */
     protected ComponentEnumerator getChildrenEnumerator() {
@@ -148,10 +153,14 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     /**
-     * 
+     *
      * @return All child components as array
      */
     protected Component[] getCompArray() {
+        if (components.size() == 0) {
+            //add a dummy component
+            components.add(new JAMSComponent());
+        }
         Component[] comps = new Component[components.size()];
         components.toArray(comps);
         return comps;
@@ -159,10 +168,11 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     /**
      * Registers a new accessor managed by this context
+     *
      * @param user The components that wants to have access
      * @param varName The name of the components member which is connected
      * @param attributeName The name of the attribute within this context
-     * @param accessType The permission type (DataAccessor.READ_ACCESS, 
+     * @param accessType The permission type (DataAccessor.READ_ACCESS,
      * DataAccessor.WRITE_ACCESS or DataAccessor.READWRITE_ACCESS)
      */
     public void addAccess(Component user, String varName, String attributeName, int accessType) {
@@ -171,6 +181,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     /**
      * Registers a new attribute object for this context
+     *
      * @param attributeName The name of the attribute
      * @param clazz The type of the attribute
      * @param value The value of the attribute
@@ -180,7 +191,8 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     /**
-     * get registered attributes     
+     * get registered attributes
+     *
      * @return registered attributes
      */
 //    public ArrayList<AttributeSpec> getAttributes() {
@@ -194,6 +206,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     /**
      * Sets the model for this context. Additionally an observer of the runtimes
      * runstate is created in order to stop iteration on runstate changes
+     *
      * @param model The model object
      */
     @Override
@@ -202,7 +215,6 @@ public class JAMSContext extends JAMSComponent implements Context {
         JAMSRuntime rt = getModel().getRuntime();
 
         rt.addStateObserver(new Observer() {
-
             @Override
             public void update(Observable obs, Object obj) {
                 if (getModel().getRuntime().getState() != JAMSRuntime.STATE_RUN) {
@@ -215,9 +227,9 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     /**
-     * Iniatialization of all objects that are needed to manage the data 
-     * exchange between descendent components. Needs to be called once at the 
-     * beginning of the init stage before calling the init() methods of child 
+     * Iniatialization of all objects that are needed to manage the data
+     * exchange between descendent components. Needs to be called once at the
+     * beginning of the init stage before calling the init() methods of child
      * components.
      */
     public void initAccessors() {
@@ -246,8 +258,8 @@ public class JAMSContext extends JAMSComponent implements Context {
 
                 //add attributes to "handle map"
                 /*
-                String id = this.getInstanceName() + "." + attributeSpec.attributeName;
-                getModel().getRuntime().getDataHandles().put(id, data);
+                 String id = this.getInstanceName() + "." + attributeSpec.attributeName;
+                 getModel().getRuntime().getDataHandles().put(id, data);
                  */
                 for (Attribute.Entity entity : entityArray) {
                     entity.setObject(attributeSpec.attributeName, data);
@@ -342,16 +354,17 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     /**
-     * 
+     *
      * @return A string representing the current state of the context
      */
+    @Override
     public String getTraceMark() {
         return Long.toString(getEntities().getCurrent().getId());
     }
 
     /**
-     * 
-     * @param store A data store defining what data should be stored and 
+     *
+     * @param store A data store defining what data should be stored and
      * providing a writer object
      * @return A data tracer object
      */
@@ -360,7 +373,6 @@ public class JAMSContext extends JAMSComponent implements Context {
         // create a DataTracer which is suited for this context
         if (store.getFilters().length == 0) {
             return new AbstractTracer(this, store, JAMSLong.class) {
-
                 @Override
                 public void trace() {
 
@@ -411,7 +423,6 @@ public class JAMSContext extends JAMSComponent implements Context {
             };
         } else {
             return new AbstractTracer(this, store, JAMSLong.class) {
-
                 @Override
                 public void trace() {
 
@@ -487,32 +498,29 @@ public class JAMSContext extends JAMSComponent implements Context {
     /**
      * Set up the output data tracers defined for this context
      */
+    @Override
     public void setupDataTracer() {
 
         // check if there are output stores for this context
         if (getModel().getWorkspace() == null) {
+
+            // if there is no workspace, we can't use datastores
             this.dataTracers = new DataTracer[0];
-            return;
+
+        } else {
+
+            // get the output stores if existing
+            OutputDataStore[] stores = getModel().getWorkspace().getOutputDataStores(this.getInstanceName());
+
+            this.dataTracers = new DataTracer[stores.length];
+            int i = 0;
+            for (OutputDataStore store : stores) {
+                this.dataTracers[i] = createDataTracer(store);
+                i++;
+            }
+
         }
 
-        // get the output stores if existing
-        OutputDataStore[] stores = getModel().getWorkspace().getOutputDataStores(this.getInstanceName());
-
-        this.dataTracers = new DataTracer[stores.length];
-//        if (stores.length == 0) {
-//            for (int j = 0; j < this.components.size(); j++) {
-//                Component comp = components.get(j);
-//                if (comp instanceof Context) {
-//                    ((Context) comp).setupDataTracer();
-//                }
-//            }
-//            return;
-//        }
-        int i = 0;
-        for (OutputDataStore store : stores) {
-            this.dataTracers[i] = createDataTracer(store);
-            i++;
-        }        
         //initTracerDataAccess();
 
         for (int j = 0; j < this.components.size(); j++) {
@@ -525,12 +533,11 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     /**
-     * Initialization of this context:
-     * 1. Create accessors for all attributes of this context which are to be 
-     *    accessed by descendent components
-     * 2. Create the data tracer objects which take care of outputting values
-     *    of attributes of this context
-     * 3. Calling the init() method of all child components
+     * Initialization of this context: 1. Create accessors for all attributes of
+     * this context which are to be accessed by descendent components 2. Create
+     * the data tracer objects which take care of outputting values of
+     * attributes of this context 3. Calling the init() method of all child
+     * components
      */
     @Override
     public void init() {
@@ -552,14 +559,17 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         // initialize init/cleanup enumerator and start iteration
         initCleanupEnumerator.reset();
-        while (initCleanupEnumerator.hasNext() && doRun) {
-            Component comp = initCleanupEnumerator.next();
-            //comp.updateInit();
-            try {
+
+        Component comp = null;
+        try {
+            while (initCleanupEnumerator.hasNext() && doRun) {
+                comp = initCleanupEnumerator.next();
+                //comp.updateInit();
                 comp.init();
-            } catch (Exception e) {
-                getModel().getRuntime().handle(e, comp.getInstanceName());
+
             }
+        } catch (Exception e) {
+            getModel().getRuntime().handle(e, comp.getInstanceName());
         }
 
         initEntityData();
@@ -580,7 +590,6 @@ public class JAMSContext extends JAMSComponent implements Context {
         // measured or not
         if (doProfiling) {
             runRunnable = new Runnable() {
-
                 public void run() {
 
                     //initEntityData();
@@ -590,16 +599,18 @@ public class JAMSContext extends JAMSComponent implements Context {
                     }
 
                     runEnumerator.reset();
-                    while (runEnumerator.hasNext() && doRun) {
-                        Component comp = runEnumerator.next();
-                        //comp.updateRun();
-                        try {
+
+                    Component comp = null;
+                    try {
+                        while (runEnumerator.hasNext() && doRun) {
+                            comp = runEnumerator.next();
+                            //comp.updateRun();
                             long cStart = System.currentTimeMillis();
                             comp.run();
                             getModel().measureTime(cStart, comp);
-                        } catch (Exception e) {
-                            getModel().getRuntime().handle(e, comp.getInstanceName());
                         }
+                    } catch (Exception e) {
+                        getModel().getRuntime().handle(e, comp.getInstanceName());
                     }
 
                     updateEntityData();
@@ -614,7 +625,6 @@ public class JAMSContext extends JAMSComponent implements Context {
         } else {
 
             runRunnable = new Runnable() {
-
                 public void run() {
 
                     //initEntityData();
@@ -624,14 +634,16 @@ public class JAMSContext extends JAMSComponent implements Context {
                     }
 
                     runEnumerator.reset();
-                    while (runEnumerator.hasNext() && doRun) {
-                        Component comp = runEnumerator.next();
-                        //comp.updateRun();
-                        try {
+
+                    Component comp = null;
+                    try {
+                        while (runEnumerator.hasNext() && doRun) {
+                            comp = runEnumerator.next();
+                            //comp.updateRun();
                             comp.run();
-                        } catch (Exception e) {
-                            getModel().getRuntime().handle(e, comp.getInstanceName());
                         }
+                    } catch (Exception e) {
+                        getModel().getRuntime().handle(e, comp.getInstanceName());
                     }
 
                     updateEntityData();
@@ -651,7 +663,6 @@ public class JAMSContext extends JAMSComponent implements Context {
         // measured or not
         if (isProfiling) {
             resumeRunnable = new Runnable() {
-
                 public void run() {
                     if (runEnumerator == null) {
                         runEnumerator = getRunEnumerator();
@@ -693,7 +704,6 @@ public class JAMSContext extends JAMSComponent implements Context {
         } else {
 
             resumeRunnable = new Runnable() {
-
                 public void run() {
 
                     for (int i = 0; i < getCompArray().length; i++) {
@@ -850,6 +860,8 @@ public class JAMSContext extends JAMSComponent implements Context {
                 da = new GeometryAccessor(ea, dataObject, attributeName, accessType);
             } else if (clazz.equals(JAMSObject.class)) {
                 da = new ObjectAccessor(ea, dataObject, attributeName, accessType);
+            } else if (clazz.equals(JAMSObjectArray.class)) {
+                da = new ObjectArrayAccessor(ea, dataObject, attributeName, accessType);
             } else {
                 getModel().getRuntime().sendHalt(JAMS.i18n("Class_") + clazz.getCanonicalName() + JAMS.i18n("_not_supported!"));
             }
@@ -900,14 +912,17 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         initCleanupEnumerator.reset();
 
-        while (initCleanupEnumerator.hasNext() && doRun) {
-            Component comp = initCleanupEnumerator.next();
-            try {
-                if (comp!=null) // i dont know why this can happen?!
+        Component comp = null;
+        try {
+            while (initCleanupEnumerator.hasNext() && doRun) {
+                comp = initCleanupEnumerator.next();
+                if (comp != null) // i dont know why this can happen?!
+                {
                     comp.cleanup();
-            } catch (Exception e) {
-                getModel().getRuntime().handle(e, comp.getInstanceName());
+                }
             }
+        } catch (Exception e) {
+            getModel().getRuntime().handle(e, comp.getInstanceName());
         }
 
         ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
@@ -1055,6 +1070,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     /**
      * Update components' input attribute values with the attribute values from
      * the index-th entity of this context
+     *
      * @param index The index of the entity to use
      */
     public void updateComponentData(int index) {
