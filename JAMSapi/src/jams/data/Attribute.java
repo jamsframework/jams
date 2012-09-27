@@ -302,5 +302,12 @@ public interface Attribute extends Serializable{
 
         public void setValue(java.lang.Object value);
     }
+    
+    public interface ObjectArray extends JAMSData {
+
+        public java.lang.Object[] getValue();
+
+        public void setValue(java.lang.Object[] value);
+    }    
 }
 
