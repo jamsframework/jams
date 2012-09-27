@@ -1,6 +1,6 @@
 /*
- * TSDataStoreReader.java
- * Created on 16. Oktober 2008, 17:34
+ * GenericTSReader.java
+ * Created on 25. September 2012, 16:28
  *
  * This file is a JAMS component
  * Copyright (C) FSU Jena
@@ -36,14 +36,14 @@ import java.util.ArrayList;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-@JAMSComponentDescription(title = "TSDataStoreReader",
+@JAMSComponentDescription(title = "GenericTSReader",
 author = "Sven Kralisch",
-date = "2008-10-16",
-version = "1.0_1",
+date = "2012-09-26",
+version = "1.0_0",
 description = "This component can be used obtain data from a time series "
-+ "data store which contains only double values and a number of "
-+ "station-specific metadata.")
-public class TSDataStoreReader extends JAMSComponent {
++ "data store which contains only double values. Metadata are provided as a "
++ "sorted list of double values for each column.")
+public class GenericTSReader extends JAMSComponent {
 
     /*
      *  Component variables
@@ -53,49 +53,29 @@ public class TSDataStoreReader extends JAMSComponent {
     public Attribute.String id;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "Array of column indices to be accessed [0..length-1]")
+    public Attribute.IntegerArray columnIDs;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "The time interval within which the component shall read "
     + "data from the datastore")
     public Attribute.TimeInterval timeInterval;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Descriptive name of the dataset (equals datastore ID)")
-    public Attribute.String dataSetName;
+    description = "Datastore metadata attribute names")
+    public Attribute.StringArray metadataAttributes;
 
-    /*
-     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-     description = "The current time within the timeinterval")
-     public JAMSCalendar time;
-     */
-    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Array of double values received from the datastore. Order "
-    + "according to datastore")
-    public Attribute.DoubleArray dataArray;
-    
+    description = "Datastore metadata values - one DoubleArray for each column "
+            + "indicated by columnIDs")
+    public Attribute.StringArray[] metadataValues;
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Array of station elevations")
-    public Attribute.DoubleArray elevation;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Array of station's x coordinate")
-    public Attribute.DoubleArray xCoord;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Array of station's y coordinate")
-    public Attribute.DoubleArray yCoord;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Regression coefficients")
-    public Attribute.DoubleArray regCoeff;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Caching configuration: 0 - write cache, 1 - use cache, 2 - caching off",
-    defaultValue = "0")
-    public Attribute.Integer dataCaching;
+    description = "Datastore data - one Double for each column indicated by "
+            + "columnIDs")
+    public Attribute.Double[] dataValues;
     
     private TSDataStore store;
-    private double[] doubles;
-    private double[] elevationArray;
     boolean shifted = false;
 
     @Override
@@ -141,37 +121,32 @@ public class TSDataStoreReader extends JAMSComponent {
 
         // extract some meta information
         DataSetDefinition dsDef = store.getDataSetDefinition();
-        if (dsDef.getAttributeValues("X") == null) {
-            getModel().getRuntime().sendHalt("Error in data set definition \""
-                    + id + "\" from " + getInstanceName() + ": x coordinate not specified");
+        
+        String[] metadataAttributesArray = dsDef.getAttributeNames().toArray(new String[dsDef.getAttributeNames().size()]);
+        metadataAttributes.setValue(metadataAttributesArray);
+        
+        if (metadataValues.length != columnIDs.getValue().length) {
+            getModel().getRuntime().sendErrorMsg("Mismatch of indicated columns and number of metadata "
+                    + "attributes (metadataValues)! Reading of metadata will be skipped.");
+        } else {        
+            int i = 0;
+            for (int colID : columnIDs.getValue()) {
+                String[] metadataValuesArray = new String[metadataAttributesArray.length];
+                ArrayList l = dsDef.getAttributeValues(colID);
+                int j = 0;
+                for (Object o : l) {
+                    metadataValuesArray[j++] = o.toString();
+                }
+                metadataValues[i++].setValue(metadataValuesArray);
+            }
         }
-        if (dsDef.getAttributeValues("Y") == null) {
-            getModel().getRuntime().sendHalt("Error in data set definition \""
-                    + id + "\" from " + getInstanceName() + ": y coordinate not specified");
+        
+        if (dataValues.length != columnIDs.getValue().length) {
+            getModel().getRuntime().sendHalt("Mismatch of indicated columns and number of data "
+                    + "attributes! Will stop model execution.");
         }
-        if (dsDef.getAttributeValues("ELEVATION") == null) {
-            getModel().getRuntime().sendHalt("Error in data set definition \""
-                    + id + "\" from " + getInstanceName() + ": elevation not specified");
-        }
-        xCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("X")));
-        yCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("Y")));
-        elevation.setValue(listToDoubleArray(dsDef.getAttributeValues("ELEVATION")));
-        elevationArray = elevation.getValue();
-        dataSetName.setValue(id.getValue());
-
+        
         getModel().getRuntime().println("Datastore " + id + " initialized!", JAMS.VVERBOSE);
-        doubles = new double[store.getDataSetDefinition().getColumnCount()];
-        dataArray.setValue(doubles);
-    }
-
-    private double[] listToDoubleArray(ArrayList<Object> list) {
-        double[] result = new double[list.size()];
-        int i = 0;
-        for (Object o : list) {
-            result[i] = ((Double) o).doubleValue();
-            i++;
-        }
-        return result;
     }
 
     private void checkConsistency() {
@@ -231,14 +206,13 @@ public class TSDataStoreReader extends JAMSComponent {
 
         DefaultDataSet ds = store.getNext();
         DataValue[] data = ds.getData();
-        for (int i = 1; i < data.length; i++) {
-            doubles[i - 1] = data[i].getDouble();
-        }
 
-        dataArray.setValue(doubles);
-        if (dataCaching.getValue() != 1) {
-            regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));
-        }
+        int i = 0;
+        for (int colID : columnIDs.getValue()) {
+            // skip the first column
+            dataValues[i++].setValue(data[colID+1].getDouble());
+        }    
+
     }
 
     @Override
