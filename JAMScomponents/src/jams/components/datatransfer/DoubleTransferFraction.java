@@ -1,5 +1,5 @@
 /*
- * DoubleTransfer.java
+ * DoubleTransferFraction.java
  * Created on 27. September 2012, 22:02
  *
  * This file is part of JAMS
@@ -31,16 +31,18 @@ import jams.model.*;
  * @author Sven Kralisch
  */
 @JAMSComponentDescription(
-        title="DoubleTransfer",
+        title="DoubleTransferFraction",
         author="Sven Kralisch",
         description="Component for simply transferring multiple double "
-        + "attributes) to a target entity. Can be used to implement a "
-        + "simple routing mechanism (e.g. HRU to HRU or HRU to reach) by "
-        + "taking a source entity's double data and moving it to specified.",
+        + "attributes) to a target entity. In addition, options to transfer "
+        + "only fractions of source data and optional modification of source "
+        + "data are possible. Can be used to implement a simple routing "
+        + "mechanism (e.g. HRU to HRU or HRU to reach) by taking a source "
+        + "entity's double data and moving it to specified.",
         version="1.0_0",
         date="2012-09-27"
         )
-        public class DoubleTransfer extends JAMSComponent {
+        public class DoubleTransferFraction extends JAMSComponent {
     
     /*
      *  Component variables
@@ -64,7 +66,18 @@ import jams.model.*;
             )
             public Attribute.String[] inNames;
 
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,    
+            description = "Fractions of data to be transferred"
+            )
+            public Attribute.Double[] fraction;
     
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,    
+            description = "Remove transferred data from source values?",
+            defaultValue= "false"
+            )
+            public Attribute.Boolean removeFromSource;    
     /*
      *  Component run stages
      */
@@ -72,10 +85,12 @@ import jams.model.*;
     public void run() throws Attribute.Entity.NoSuchAttributeException {
 
         if(target.getValue() != null){
-            int i = 0;
-            for (Attribute.Double value : values) {                
-                target.setDouble(inNames[i].getValue(), value.getValue() + target.getDouble(inNames[i].getValue()));
-                i++;
+            for (int i = 0; i < values.length; i++) {            
+                double x = values[i].getValue() * fraction[i].getValue();
+                target.setDouble(inNames[i].getValue(),target.getDouble(inNames[i].getValue()) + x);
+                if (removeFromSource.getValue()) {
+                    values[i].setValue(values[i].getValue() - x);
+                }
             }   
         }
         
