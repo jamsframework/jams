@@ -101,7 +101,7 @@ public class ComponentAttributePanel extends JPanel {
         listPanel = new JPanel();
         listPanel.setLayout(new BorderLayout());
         listPanel.setPreferredSize(new Dimension(160, 200));
-        
+
         infoPanel = new JPanel();
         infoLayout = new GridBagLayout();
 //        infoPanel.setBackground(Color.green);
@@ -154,7 +154,6 @@ public class ComponentAttributePanel extends JPanel {
 
         customAttributeButton = new JButton(JAMS.i18n("Custom_Attribute"));
         customAttributeButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -171,8 +170,10 @@ public class ComponentAttributePanel extends JPanel {
                     updateRepository();
                     updateAttributeLinkGUI();
                     DefaultListModel model = (DefaultListModel) attributeList.getModel();
-                    int listIndex = attributeList.getNextMatch(name, 0, Position.Bias.Forward);
-                    attributeList.scrollRectToVisible(attributeList.getCellBounds(listIndex, listIndex));
+                    if (attributeList.getModel().getSize() > 0) {
+                        int listIndex = attributeList.getNextMatch(name, 0, Position.Bias.Forward);
+                        attributeList.scrollRectToVisible(attributeList.getCellBounds(listIndex, listIndex));
+                    }
                 } catch (JAMSException ex) {
                     JUICE.getExHandler().handle(ex);
                 }
@@ -372,7 +373,6 @@ public class ComponentAttributePanel extends JPanel {
         updateAttributeLinkGUI();
 
         valueInput.addValueChangeListener(new ValueChangeListener() {
-
             @Override
             public void valueChanged() {
                 setAttributeValue();
@@ -397,7 +397,6 @@ public class ComponentAttributePanel extends JPanel {
             attributes.add(attribute);
         }
         Collections.sort(attributes, new Comparator<ContextAttribute>() {
-
             @Override
             public int compare(ContextAttribute a1, ContextAttribute a2) {
                 return a1.toString().compareTo(a2.toString());
@@ -414,7 +413,6 @@ public class ComponentAttributePanel extends JPanel {
 
             //sort the list
             Collections.sort(attributes, new Comparator<ContextAttribute>() {
-
                 @Override
                 public int compare(ContextAttribute a1, ContextAttribute a2) {
                     return a1.toString().compareTo(a2.toString());
@@ -477,7 +475,6 @@ public class ComponentAttributePanel extends JPanel {
     private void createListeners() {
 
         linkButtonListener = new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 setAttributeLink();
@@ -485,7 +482,6 @@ public class ComponentAttributePanel extends JPanel {
         };
 
         setButtonListener = new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 setAttributeValue();
@@ -493,7 +489,6 @@ public class ComponentAttributePanel extends JPanel {
         };
 
         contextComboListener = new ItemListener() {
-
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -503,7 +498,6 @@ public class ComponentAttributePanel extends JPanel {
         };
 
         customAttributeTextListener = new DocumentListener() {
-
             @Override
             public void changedUpdate(DocumentEvent e) {
                 setAttributeLink();
@@ -521,7 +515,6 @@ public class ComponentAttributePanel extends JPanel {
         };
 
         attributeListListener = new ListSelectionListener() {
-
             @Override
             public void valueChanged(ListSelectionEvent e) {
 
@@ -546,5 +539,4 @@ public class ComponentAttributePanel extends JPanel {
         attributeList.addListSelectionListener(attributeListListener);
 
     }
-
 }
