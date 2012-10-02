@@ -41,6 +41,7 @@ import jams.data.Attribute;
 import jamsui.juice.JUICE;
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import javax.swing.text.BadLocationException;
 
 /**
  *
@@ -99,7 +100,7 @@ public class ModelEditPanel extends JPanel {
         helpBaseURL.setLength(TEXTFIELD_WIDTH);
 
         description = new JTextPane();
-        description.setContentType("text/plain");
+        description.setContentType("text/plain;charset=UTF-8");
         description.setEditable(true);
         JScrollPane scroll = new JScrollPane(description);
         scroll.setBorder(BorderFactory.createEtchedBorder());
@@ -222,7 +223,9 @@ public class ModelEditPanel extends JPanel {
     }
 
     private void updateDescription() {
-        view.getModelDescriptor().setDescription(description.getText());
+        try {
+            view.getModelDescriptor().setDescription(description.getDocument().getText(0, description.getDocument().getLength()));
+        } catch (BadLocationException ex) {}
     }
 
     private void updateHelpBaseUrl() {
