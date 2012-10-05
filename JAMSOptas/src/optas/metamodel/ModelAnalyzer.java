@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package optas.metamodel;
 
 import jams.JAMSProperties;
@@ -36,20 +35,20 @@ import org.w3c.dom.NodeList;
  * @author Christian Fischer
  */
 public class ModelAnalyzer {
+
     public static final int COLLECT_READATTRIBUTES = 0;
     public static final int COLLECT_WRITEATTTRIBUTES = 1;
-    
     public String error = null;
     StandardRuntime rt;
     Node root;
-
     Document doc;
     JAMSProperties properties;
 
-    public ModelAnalyzer(JAMSProperties propertyFile, Document modelFile){
+    public ModelAnalyzer(JAMSProperties propertyFile, Document modelFile) {
         init(propertyFile, modelFile);
     }
-    public ModelAnalyzer(File propertyFile, File modelFile) throws WizardException{
+
+    public ModelAnalyzer(File propertyFile, File modelFile) throws WizardException {
         //default properties
         properties = JAMSProperties.createProperties();
         try {
@@ -64,26 +63,29 @@ public class ModelAnalyzer {
         loader.modelFile = JAMSDataFactory.createString();
         loader.modelFile.setValue(modelFile.getName());
         loader.workspaceDir = JAMSDataFactory.createString();
-        if (modelFile.getParent()!=null)
+        if (modelFile.getParent() != null) {
             loader.workspaceDir.setValue(modelFile.getParent());
-        else
+        } else {
             loader.workspaceDir.setValue("");
+        }
         loader.modelDoc = JAMSDataFactory.createDocument();
         String errorString = loader.init_withResponse();
         Document loadedModel = loader.modelDoc.getValue();
         if (loadedModel == null) {
             throw new WizardException(errorString);
-        }        
+        }
         doc = Tools.preProcessDocument(loadedModel);
         init(properties, doc);
     }
 
-    public Document getModelDoc(){
+    public Document getModelDoc() {
         return doc;
     }
-    public JAMSProperties getProperties(){
+
+    public JAMSProperties getProperties() {
         return properties;
     }
+
     private static HashMap<String, Range> getDefaultRangeMap(Node launcherNode) {
         HashMap<String, Range> map = new HashMap<String, Range>();
 
@@ -155,9 +157,8 @@ public class ModelAnalyzer {
                     context = component.componentContext;
                 }
                 Class clazz = null;
-                Field field = null;                
+                Field field = null;
                 try {
-
                     if (parent.getTagName().equals("model")) {
                         className = "jams.model.JAMSModel";
                     } else {
@@ -181,25 +182,27 @@ public class ModelAnalyzer {
                 //notice: jvd can be null if we are accessing a context
                 if (type.isAssignableFrom(JAMSDouble.class)) {
                     JAMSVarDescription jvd = field.getAnnotation(JAMSVarDescription.class);
-                    if (((mode == COLLECT_READATTRIBUTES   && (jvd == null || jvd.access() == AccessType.READ  || attr == null)) ||
-                         (mode == COLLECT_WRITEATTTRIBUTES && (jvd == null || jvd.access() == AccessType.WRITE || jvd.access() == AccessType.READWRITE)))) {
-                    list.add(new AttributeWrapper(name,attr,
-                            parent.getAttribute("name"),context));
+                    if (((mode == COLLECT_READATTRIBUTES && (jvd == null || jvd.access() == AccessType.READ || attr == null))
+                            || (mode == COLLECT_WRITEATTTRIBUTES && (jvd == null || jvd.access() == AccessType.WRITE || jvd.access() == AccessType.READWRITE)))) {
+                        list.add(new AttributeWrapper(name, attr,
+                                parent.getAttribute("name"), context));
                     }
                 }
-                if (type.isAssignableFrom(JAMSDouble[].class)){
-                    StringTokenizer tok = new StringTokenizer(attr,";");
-                    while(tok.hasMoreTokens()){
-                        JAMSVarDescription jvd = field.getAnnotation(JAMSVarDescription.class);
-                        String subAttr = tok.nextToken();
-                        if (((mode == COLLECT_READATTRIBUTES  && ( jvd == null || jvd.access() == AccessType.READ  || attr == null)) ||
-                             (mode == COLLECT_WRITEATTTRIBUTES && (jvd == null || jvd.access() == AccessType.WRITE || jvd.access() == AccessType.READWRITE)))) {
-                            list.add(new AttributeWrapper(name,subAttr,
-                                parent.getAttribute("name"),context));
+                if (type.isAssignableFrom(JAMSDouble[].class)) {
+                    if (attr != null) {
+                        StringTokenizer tok = new StringTokenizer(attr, ";");
+                        while (tok.hasMoreTokens()) {
+                            JAMSVarDescription jvd = field.getAnnotation(JAMSVarDescription.class);
+                            String subAttr = tok.nextToken();
+                            if (((mode == COLLECT_READATTRIBUTES && (jvd == null || jvd.access() == AccessType.READ || attr == null))
+                                    || (mode == COLLECT_WRITEATTTRIBUTES && (jvd == null || jvd.access() == AccessType.WRITE || jvd.access() == AccessType.READWRITE)))) {
+                                list.add(new AttributeWrapper(name, subAttr,
+                                        parent.getAttribute("name"), context));
+                            }
                         }
                     }
                 }
-               
+
             }
             if (child.getNodeName().equals("attribute")) {
                 Element elem = (Element) child;
@@ -219,29 +222,30 @@ public class ModelAnalyzer {
         return list;
     }
 
-    public StandardRuntime getRuntime(){
+    public StandardRuntime getRuntime() {
         return rt;
     }
-    private boolean init(JAMSProperties propertyFile, Document modelFile){                
+
+    private boolean init(JAMSProperties propertyFile, Document modelFile) {
         properties = propertyFile;
         this.doc = modelFile;
 
         rt = new StandardRuntime(properties);
-        try{
+        try {
             rt.loadModel(doc, null);
-        }catch(Throwable t){
+        } catch (Throwable t) {
             if (rt.getDebugLevel() >= 3) {
-                if (rt.getErrorLog().length()>2){
-                    setError("++++Error Log+++++\n" + rt.getErrorLog() + 
-                             "+++++Info Log+++++\n" + rt.getInfoLog());            
+                if (rt.getErrorLog().length() > 2) {
+                    setError("++++Error Log+++++\n" + rt.getErrorLog()
+                            + "+++++Info Log+++++\n" + rt.getInfoLog());
                     return false;
                 }
             }
         }
 
         if (rt.getDebugLevel() >= 3) {
-            if (rt.getErrorLog().length()>2){
-                setError(rt.getErrorLog());            
+            if (rt.getErrorLog().length() > 2) {
+                setError(rt.getErrorLog());
                 return false;
             }
         }
@@ -249,10 +253,11 @@ public class ModelAnalyzer {
         return true;
     }
 
-    private void setError(String error){
+    private void setError(String error) {
         this.error = error;
     }
-    public void clearError(){
+
+    public void clearError() {
         error = null;
     }
 
@@ -282,34 +287,38 @@ public class ModelAnalyzer {
         }
         return result;
     }
+
     public SortedSet<AttributeWrapper> getAttributes() {
         SortedSet<AttributeWrapper> r = getObjectives();
         r.addAll(getParameters());
         return r;
     }
 
-    public SortedSet<Parameter> getParameters() {        
-        return getParameters(root,rt);
+    public SortedSet<Parameter> getParameters() {
+        return getParameters(root, rt);
     }
+
     public SortedSet<AttributeWrapper> getObjectives() {
-        return getObjectives(root,rt);
+        return getObjectives(root, rt);
     }
+
     public static String modelAnalyzer(File propertyFile, File modelFile) throws WizardException {
         ModelAnalyzer analyzer = new ModelAnalyzer(propertyFile, modelFile);
         return modelAnalyzer(analyzer.getProperties(), analyzer.getModelDoc());
     }
     //for compability with php interface
+
     public static String modelAnalyzer(JAMSProperties propertyFile, Document modelFile) {
         ModelAnalyzer analyzer = new ModelAnalyzer(propertyFile, modelFile);
 
         SortedSet<Parameter> parameters = analyzer.getParameters();
         SortedSet<AttributeWrapper> objectives = analyzer.getObjectives();
-        
+
         String paramResult = "";
         try {
             BufferedWriter paramOut = new BufferedWriter(new FileWriter("model_params.dat"));
             Iterator<Parameter> iter1 = parameters.iterator();
-            while(iter1.hasNext()){   
+            while (iter1.hasNext()) {
                 Parameter variable = iter1.next();
                 paramOut.write(variable.getName() + "\t" + variable.getLowerBound() + "\t" + variable.getUpperBound() + "\n");
             }
@@ -317,12 +326,13 @@ public class ModelAnalyzer {
 
             BufferedWriter objectiveOut = new BufferedWriter(new FileWriter("model_eff.dat"));
             Iterator<AttributeWrapper> iter2 = objectives.iterator();
-            while(iter2.hasNext()){
+            while (iter2.hasNext()) {
                 objectiveOut.write(iter2.next().getName() + "\n");
             }
             objectiveOut.close();
         } catch (Exception e) {
-            System.err.println(e);e.printStackTrace();
+            System.err.println(e);
+            e.printStackTrace();
         }
 
         return paramResult;
