@@ -69,8 +69,7 @@ public class Modelrun extends DataSet{
         
         if (set instanceof TimeSerie) {
             addTimeSerie((TimeSerie)set);
-        } else {
-            registerDataSet(set);
+        } else {            
         }
         
         if (areaID != null) {
@@ -79,6 +78,7 @@ public class Modelrun extends DataSet{
             }
             this.spatialDataSet.addDatasetForAreaID(areaID, set);
         }
+        registerDataSet(set);
     }
 
     private void registerDataSet(DataSet set){
