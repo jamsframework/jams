@@ -168,7 +168,7 @@ public class Statistics implements Serializable{
         Sample argMin = null;
         for (int i=start;i<last;i++){
             Sample s = this.sampleList.get(i);
-            if (min > s.F()[index]){
+            if (min >= s.F()[index]){
                 min = s.F()[index];
                 argMin = s;
             }
@@ -184,7 +184,7 @@ public class Statistics implements Serializable{
         Sample argMax = null;
         for (int i=start;i<last;i++){
             Sample s = this.sampleList.get(i);
-            if (max < s.F()[index]){
+            if (max <= s.F()[index]){
                 max = s.F()[index];
                 argMax = s;
             }

@@ -337,7 +337,7 @@ public class AdvancedOptimizationController extends OptimizationController {
             groupIndex++;
         }
 
-        int multiModeMax = 20;
+/*        int multiModeMax = 20;
         int multiModeCount = 0;        
         
         while (multiModeCount < multiModeMax) {            
@@ -410,7 +410,7 @@ public class AdvancedOptimizationController extends OptimizationController {
             for (int i=0;i<conf.subn;i++){
                 lastOptimization.getParameter().get(i).setLowerBound(l[0][i]);
                 lastOptimization.getParameter().get(i).setUpperBound(l[1][i]);
-            }*/
+            }
 
             //recreate conf to take parameter startvalues into account
             //conf = new AdvancedOptimizationConfiguration(lastOptimization);
@@ -476,7 +476,7 @@ public class AdvancedOptimizationController extends OptimizationController {
 
             bestSample = conf.getEvaluationProcedure().projectParametersetToSuperSpace(min.x, this.fillingParamterSet);
             bestSampleY = min.F();                        
-        }
+        }*/
         //ausgabe samples
         this.solution = JAMSDataFactory.createEntity();
         solution.setObject("solution", getStatistics().getParetoFront());
