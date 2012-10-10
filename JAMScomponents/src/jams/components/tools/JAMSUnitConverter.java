@@ -42,31 +42,27 @@ public class JAMSUnitConverter extends JAMSComponent {
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Unit of input value"
             )
-            public JAMSString inUnit;
+            public Attribute.String inUnit;
     
      @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Unit of output value"
             )
-            public JAMSString outUnit;   
+            public Attribute.String outUnit;   
      
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Input value"
             )
-            public JAMSDouble inValue;
+            public Attribute.Double[] inValue;
     
      @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Output value"
             )
-            public JAMSDouble outValue;
+            public Attribute.Double[] outValue;
      
      transient Unit in, out;
      transient Converter conv;
@@ -81,7 +77,9 @@ public class JAMSUnitConverter extends JAMSComponent {
      }
      
      public void run() {
-         outValue.setValue(conv.convert(inValue.getValue()));
+         for (int i = 0; i < inValue.length; i++) {
+            outValue[i].setValue(conv.convert(inValue[i].getValue()));
+         }
      }
          
      //unit, converter are not serializable so reinit, after deserialization .. 
