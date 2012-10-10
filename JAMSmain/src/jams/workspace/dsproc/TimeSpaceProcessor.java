@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -339,6 +338,7 @@ public class TimeSpaceProcessor extends Processor {
         int[] idPosition = new int[ids.length];
         ArrayList<double[]> data = new ArrayList<double[]>();
         ArrayList<String> timeStamps = new ArrayList<String>();
+        JAMSCalendar utcCal = new JAMSCalendar();
         double[][] weights;
 
         if (weightAttribIndex >= attributeIDs.length) {
@@ -364,7 +364,8 @@ public class TimeSpaceProcessor extends Processor {
             }
             weights = calcWeights(a, weightAttribIndex);
             data.add(getWeightedSum(a, weights));
-            timeStamps.add(rs.getTimestamp(timeID).toString());
+            utcCal.setMilliSeconds(rs.getTimestamp(timeID).getTime());
+            timeStamps.add(utcCal.toString());
         } else {
             return null;
         }
@@ -385,7 +386,8 @@ public class TimeSpaceProcessor extends Processor {
                 a[i] = m.getRow(idPosition[i]);
             }
             data.add(getWeightedSum(a, weights));
-            timeStamps.add(rs.getTimestamp(timeID).toString());
+            utcCal.setMilliSeconds(rs.getTimestamp(timeID).getTime());
+            timeStamps.add(utcCal.toString());
 
             // update the observer
             counter++;
@@ -805,6 +807,7 @@ public class TimeSpaceProcessor extends Processor {
         long position;
         ArrayList<double[]> data = new ArrayList<double[]>();
         ArrayList<String> timeStamps = new ArrayList<String>();
+        JAMSCalendar utcCal = new JAMSCalendar();
 
         // create the db table to store the calculated spatial mean
         customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_SPATSUM);
@@ -830,7 +833,8 @@ public class TimeSpaceProcessor extends Processor {
             position = rs.getLong("POSITION");
             DataMatrix m = dsdb.getData(position);
             data.add(m.getSumRow());
-            timeStamps.add(rs.getTimestamp(timeID).toString());
+            utcCal.setMilliSeconds(rs.getTimestamp(timeID).getTime());
+            timeStamps.add(utcCal.toString());
 
             if (abortOperation) {
                 customQuery("DROP TABLE IF EXISTS " + TABLE_NAME_SPATSUM);
@@ -906,10 +910,9 @@ public class TimeSpaceProcessor extends Processor {
 
         ResultSet rs = customSelectQuery("SELECT * FROM index");
         while (rs.next()) {
-            Timestamp ts = rs.getTimestamp(timeID);
-            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
-            cal.setValue(ts.toString());
-            result.add(cal);
+            JAMSCalendar utcCal = new JAMSCalendar();
+            utcCal.setMilliSeconds(rs.getTimestamp(timeID).getTime());
+            result.add(utcCal);
         }
 
         return result.toArray(new JAMSCalendar[result.size()]);

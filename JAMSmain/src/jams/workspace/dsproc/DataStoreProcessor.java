@@ -22,6 +22,7 @@
  */
 package jams.workspace.dsproc;
 
+import jams.data.JAMSCalendar;
 import jams.io.BufferedFileReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -29,10 +30,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Observable;
@@ -66,6 +70,7 @@ public class DataStoreProcessor {
     public static final int SimpleDataSerieDataStore = 3;
     public static final int SimpleTimeSerieDataStore = 4;
     public static final int SimpleEnsembleDataStore = 5;
+    private PreparedStatement pIndexInsertStmt;
 
     public DataStoreProcessor(File dsFile) {
         this.dsFile = dsFile;
@@ -180,7 +185,7 @@ public class DataStoreProcessor {
             //conn = null;
         }
     }
-
+    
     public boolean existsH2DB() throws SQLException {
 
         if ((conn == null) || (conn.isClosed())) {
@@ -375,6 +380,13 @@ public class DataStoreProcessor {
         while (!reader.readLine().equals("@data")) {
         }
 
+        String indexInsert = "INSERT INTO index VALUES (";
+        for (int i = contexts.size() - 1; i > 0; i--) {
+            indexInsert += "?,";
+        }        
+        indexInsert += "?)";
+        pIndexInsertStmt = conn.prepareStatement(indexInsert);
+        
         boolean result = parseBlock();
 
         while (result) {
@@ -393,6 +405,7 @@ public class DataStoreProcessor {
                 importProgressObservable.setProgress(percent);
             }
         }
+        System.out.println("index created");
     }
 
     public void cancelCreateIndex() {
@@ -401,8 +414,10 @@ public class DataStoreProcessor {
 
     private boolean parseBlock() throws IOException, SQLException {
         String row;
-        String query = "INSERT INTO index VALUES (";
-
+        JAMSCalendar cal = new JAMSCalendar();
+        Calendar localCal = Calendar.getInstance();
+        Timestamp ts = null;
+        
         // read the ancestor's data
         row = reader.readLine();
         if (row == null) {
@@ -416,22 +431,31 @@ public class DataStoreProcessor {
             String value = tok.nextToken();
             if (cd.getType().endsWith("TemporalContext")) {
                 value += ":00";
+                cal.setValue(value);
+                ts = new Timestamp(cal.getTimeInMillis());
+                pIndexInsertStmt.setTimestamp(contexts.size()-i, ts, localCal);                
             }
-            query += "'" + value + "',";
             row = reader.readLine();
         }
 
         long position = reader.getPosition();
-        query += "'" + position + "')";
+        pIndexInsertStmt.setLong(contexts.size(), position);
 
-        try{
-            while (!(row = reader.readLine()).startsWith("@end")) {
+        while ((row = reader.readLine()) != null) {
+            if (row.startsWith("@end")) {
+                break;
             }
-        }catch(NullPointerException npe){
-            //in case end tag not provided
-        }
+        }        
+        
+//        try{
+//            while (!(row = reader.readLine()).startsWith("@end")) {
+//            }
+//        }catch(NullPointerException npe){
+//            //in case end tag not provided
+//        }
 
-        stmt.execute(query);
+        pIndexInsertStmt.execute();
+//        stmt.execute(query);
 
         return true;
     }
@@ -592,13 +616,23 @@ public class DataStoreProcessor {
         });
 
         dsdb.createDB();
-        dsdb.createIndex();
+//        dsdb.createIndex();
+        
+        JAMSCalendar cal = new JAMSCalendar();
+        String query = "SELECT TimeLoopID, position FROM index WHERE position>38147439 AND position<38249762";
+        
+        Statement stmt = dsdb.conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        while (rs.next()) {
+            cal.setMilliSeconds(rs.getTimestamp("TimeLoopID").getTime());
+            System.out.println(cal + " - " + rs.getInt("position"));
+        }
 
-//        DataMatrix m = dsdb.getData(7323914);
-////        DataMatrix m = dsdb.getData(836);
-//        m.print(5, 3);
-//        for (String s : m.getIds()) {
-//            System.out.println(s);
+//        DataMatrix m = dsdb.getData(56139387);
+//////        DataMatrix m = dsdb.getData(836);
+////        m.print(5, 3);
+//        for (Object o : m.getIds()) {
+//            System.out.println(o);
 //        }
     }
 

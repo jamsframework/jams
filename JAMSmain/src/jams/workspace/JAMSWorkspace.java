@@ -878,7 +878,7 @@ public class JAMSWorkspace implements Workspace {
     public static void main(String[] args) throws IOException, InvalidWorkspaceException {
 
         SystemProperties properties = JAMSProperties.createProperties();
-        properties.load("D:/jamsapplication/nsk.jap");
+        properties.load("e:/jamsapplication/nsk.jap");
         String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
 
         JAMSRuntime runtime = new StandardRuntime(properties);
@@ -909,8 +909,8 @@ public class JAMSWorkspace implements Workspace {
 
 //        ws.inputDataStoreToFile();
 
-        InputDataStore store = ws.getInputDataStore("tmean");
-        TSDumpProcessor asciiConverter = new TSDumpProcessor();
-        System.out.println(asciiConverter.toASCIIString((TSDataStore) store));
+        InputDataStore store = ws.getInputDataStore("inData");
+//        TSDumpProcessor asciiConverter = new TSDumpProcessor();
+//        System.out.println(asciiConverter.toASCIIString((TSDataStore) store));
     }
 }

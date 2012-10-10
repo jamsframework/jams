@@ -36,7 +36,7 @@ import java.util.*;
 public class JAMSCalendar extends GregorianCalendar implements Attribute.Calendar {
 
     transient public final static String DATE_TIME_FORMAT_PATTERN = "yyyy-MM-dd HH:mm";
-    transient public final static TimeZone STANDARD_TIME_ZONE = new SimpleTimeZone(0, "GMT");
+    transient public final static TimeZone STANDARD_TIME_ZONE = new SimpleTimeZone(0, "UTC");
     private DateFormat dateFormat;
     private long milliSeconds;
 
