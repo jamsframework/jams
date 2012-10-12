@@ -92,8 +92,8 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
 
     public String toString(DateFormat dateFormat) {
         Date date = new Date();
-        dateFormat.setTimeZone(STANDARD_TIME_ZONE);
         date.setTime(this.getTimeInMillis());
+        dateFormat.setTimeZone(STANDARD_TIME_ZONE);
         return dateFormat.format(date);
     }
 
