@@ -397,7 +397,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         Logger globalLogger = Logger.getLogger("");
         GUIHelper.setupLogHandler(globalLogger, null);
 
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File("d:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop.dat"));
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("e:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop.dat"));
         //dsdb.removeDB();
         dsdb.addImportProgressObserver(new Observer() {
 
@@ -781,7 +781,11 @@ public class TimeSpaceDSPanel extends DSPanel {
                     m = getProc().getTemporalAggregate(dates, weightAttribIndex);
 
                 } catch (SQLException ex) {
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);                    
                 } catch (IOException ex) {
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);                    
+                } catch (Throwable ex) {
+                    Logger.getLogger(TimeSpaceDSPanel.class.getName()).log(Level.SEVERE, null, ex);                    
                 }
                 return m;
             }
