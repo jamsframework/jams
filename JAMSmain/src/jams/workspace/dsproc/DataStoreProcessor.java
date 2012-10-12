@@ -428,7 +428,6 @@ public class DataStoreProcessor {
                 importProgressObservable.setProgress(percent);
             }
         }
-        System.out.println("index created");
     }
 
     public void cancelCreateIndex() {
