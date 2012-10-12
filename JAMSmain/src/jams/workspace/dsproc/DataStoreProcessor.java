@@ -233,7 +233,30 @@ public class DataStoreProcessor {
         }
 
         if (!checkForDB || existsH2DBFiles()) {
-            conn = DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
+            // check of the DB has correct version
+            try {
+                conn = DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
+            } catch (org.h2.jdbc.JdbcSQLException ex) {
+                File[] children = dsFile.getParentFile().listFiles(new FileFilter() {
+
+                    @Override
+                    public boolean accept(File pathname) {
+                        if (pathname.getPath().endsWith("db")) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                });
+                for (File child : children) {
+                    child.delete();
+                }
+                try {
+                    conn = DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
+                } catch (org.h2.jdbc.JdbcSQLException ex2) {
+                    return null;
+                }                
+            }
             return conn;
         } else {
             return null;
@@ -606,7 +629,9 @@ public class DataStoreProcessor {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
 
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File("D:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop_1.dat"));
+//        DataStoreProcessor dsdb = new DataStoreProcessor(new File("E:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop.dat"));
+        
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("C:\\Users\\nsk\\Desktop\\jams\\data\\j2k_gehlberg\\output\\current\\HRULoop.dat"));
 //        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/TimeLoop.dat");
         dsdb.addImportProgressObserver(new Observer() {
 

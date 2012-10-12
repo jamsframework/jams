@@ -29,11 +29,14 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +49,8 @@ public class TimeSpaceProcessor extends Processor {
     private static final String TABLE_NAME_MONTHAVG = "MONTHAVG", TABLE_NAME_YEARAVG = "YEARAVG", TABLE_NAME_SPATSUM = "SPATSUM";
     private String spaceID, timeID;
     private String timeFilter = null;
-
+    private DateFormat dFormat;
+    
     public TimeSpaceProcessor(File file) {
         this(new DataStoreProcessor(file));
     }
@@ -54,6 +58,9 @@ public class TimeSpaceProcessor extends Processor {
     public TimeSpaceProcessor(DataStoreProcessor dsdb) {
         this.dsdb = dsdb;
         this.contexts = dsdb.getContexts();
+        dFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dFormat.setTimeZone(TimeZone.getDefault());
+
         if (dsdb.isTimeSpaceDatastore()) {
 
             spaceID = contexts.get(0).getName() + "ID";
@@ -70,6 +77,7 @@ public class TimeSpaceProcessor extends Processor {
 
     /**
      * Get data from the database based on defined filters on time and space
+     *
      * @return The data as JDBC result set
      * @throws java.sql.SQLException
      */
@@ -100,6 +108,7 @@ public class TimeSpaceProcessor extends Processor {
 
     /**
      * Check how many results are created
+     *
      * @return The number of results
      * @throws java.sql.SQLException
      */
@@ -153,8 +162,9 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     /**
-     * Gets the values of the selected attributes for all entities at a
-     * specific date
+     * Gets the values of the selected attributes for all entities at a specific
+     * date
+     *
      * @param date The date for which the data shall be returned
      * @return A DataMatrix object containing one row per entity with the
      * attribute values in columns
@@ -162,12 +172,11 @@ public class TimeSpaceProcessor extends Processor {
      * @throws java.io.IOException
      */
     private synchronized DataMatrix getTemporalData(Attribute.Calendar date) throws SQLException, IOException {
-
-        String oldFormat = ((SimpleDateFormat) date.getDateFormat()).toPattern();
-        date.setDateFormat("yyyy-MM-dd HH:mm:ss");
-        String filterString = date.toString();
-        date.setDateFormat(oldFormat);
-
+       
+        Date d = new Date();
+        d.setTime(date.getTimeInMillis());
+        String filterString = dFormat.format(d);
+        
         setTimeFilter(filterString);
         ResultSet rs = getData();
         DataMatrix result = null;
@@ -214,12 +223,13 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     /**
-     * Gets the aggregate of values of the selected attributes for a set of time steps
-     * given by an array of JAMSCalendar objects
+     * Gets the aggregate of values of the selected attributes for a set of time
+     * steps given by an array of JAMSCalendar objects
+     *
      * @param dates An array of JAMSCalendar objects
      * @param aggrType A value defining the type of aggrgetation (0-sum, 1-mean)
-     * @return A DataMatrix object containing one row per entity with the
-     * mean values of selected attributes in columns
+     * @return A DataMatrix object containing one row per entity with the mean
+     * values of selected attributes in columns
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
@@ -270,9 +280,10 @@ public class TimeSpaceProcessor extends Processor {
     /**
      * Gets the mean values of the selected attributes for a set of time steps
      * matching a given pattern
+     *
      * @param datePattern A date pattern string
-     * @return A DataMatrix object containing one row per entity with the
-     * mean values of selected attributes in columns
+     * @return A DataMatrix object containing one row per entity with the mean
+     * values of selected attributes in columns
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
@@ -323,11 +334,12 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     /**
-     * Gets the sum of the selected attributes for an array of
-     * spatial entities at all time steps
+     * Gets the sum of the selected attributes for an array of spatial entities
+     * at all time steps
+     *
      * @param ids The id array of the spatial enties
-     * @return A DataMatrix object containing one row per timestep with the
-     * mean values of selected attributes in columns
+     * @return A DataMatrix object containing one row per timestep with the mean
+     * values of selected attributes in columns
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
@@ -407,8 +419,9 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     /**
-     * Gets the overall spatial sum of the selected
-     * attributes for all time steps
+     * Gets the overall spatial sum of the selected attributes for all time
+     * steps
+     *
      * @return A DataMatrix object containing one row per timestep with the
      * spatial average values of selected attributes in columns
      * @throws java.sql.SQLException
@@ -448,8 +461,9 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     /**
-     * Gets the overall temporal average values of the selected
-     * attributes for all entities
+     * Gets the overall temporal average values of the selected attributes for
+     * all entities
+     *
      * @return A DataMatrix object containing one row per entity with the
      * temporal average values of selected attributes in columns
      * @throws java.sql.SQLException
@@ -474,10 +488,11 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     /**
-     * Gets the longtime monthly average values of the selected
-     * attributes for all entities
-     * @param month The month for which the average values shall be returned
-     * as int value between 1 and 12
+     * Gets the longtime monthly average values of the selected attributes for
+     * all entities
+     *
+     * @param month The month for which the average values shall be returned as
+     * int value between 1 and 12
      * @return A DataMatrix object containing one row per entity with the
      * longtime monthly average values of selected attributes in columns
      * @throws java.sql.SQLException
@@ -529,8 +544,9 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     /**
-     * Gets the yearly average values of the selected
-     * attributes for all entities
+     * Gets the yearly average values of the selected attributes for all
+     * entities
+     *
      * @param year The year for which the average values shall be returned
      * @return A DataMatrix object containing one row per entity with the
      * longtime monthly average values of selected attributes in columns
@@ -613,6 +629,7 @@ public class TimeSpaceProcessor extends Processor {
     /**
      * Initialises the calculation of yearly average values of the selected
      * attributes for all entities
+     *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
@@ -669,6 +686,7 @@ public class TimeSpaceProcessor extends Processor {
 
     /**
      * Get the years that data are available for
+     *
      * @return An int array containing the years
      * @throws java.sql.SQLException
      */
@@ -698,6 +716,7 @@ public class TimeSpaceProcessor extends Processor {
     /**
      * Initialises the calculation of longterm monthly average values of the
      * selected attributes for all entities
+     *
      * @throws java.sql.SQLException
      * @throws java.io.IOException
      */
@@ -794,6 +813,7 @@ public class TimeSpaceProcessor extends Processor {
     /**
      * Initialises the calculation of overall spatial average values of the
      * selected attributes for all time steps
+     *
      * @return A DataMatrix object containing one row per timestep with the
      * spatial average values of selected attributes in columns
      * @throws java.sql.SQLException
@@ -870,6 +890,7 @@ public class TimeSpaceProcessor extends Processor {
 
     /**
      * Gets the IDs of the entities stored in the dataset
+     *
      * @return An array of ID values
      * @throws java.sql.SQLException
      * @throws java.io.IOException
@@ -901,6 +922,7 @@ public class TimeSpaceProcessor extends Processor {
 
     /**
      * Get all available time steps
+     *
      * @return An array of calendar objects representing the time steps
      * @throws java.sql.SQLException
      */
@@ -955,7 +977,6 @@ public class TimeSpaceProcessor extends Processor {
         System.out.println();
 
         tsproc.addProcessingProgressObserver(new Observer() {
-
             public void update(Observable o, Object arg) {
                 System.out.println("Progress: " + arg);
             }
