@@ -202,10 +202,11 @@ public class ComponentAttributePanel extends JPanel {
         }
 
         String attributeString = "";
-        List<String> l = attributeList.getSelectedValuesList();
-        if (!l.isEmpty()) {
-            for (String s : l) {
-                attributeString += ";" + s;
+        Object[] values = attributeList.getSelectedValues();
+//        List<String> l = attributeList.getSelectedValuesList();
+        if (values.length > 0) {
+            for (Object o : values) {
+                attributeString += ";" + o;
             }
             attributeString = attributeString.substring(1);
         }
