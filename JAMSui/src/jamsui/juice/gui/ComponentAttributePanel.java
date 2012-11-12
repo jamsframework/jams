@@ -195,6 +195,7 @@ public class ComponentAttributePanel extends JPanel {
 
     }
 
+    @SuppressWarnings( "deprecation" )
     private void setAttributeLink() {
 
         if (adjusting) {
@@ -203,7 +204,6 @@ public class ComponentAttributePanel extends JPanel {
 
         String attributeString = "";
         Object[] values = attributeList.getSelectedValues();
-//        List<String> l = attributeList.getSelectedValuesList();
         if (values.length > 0) {
             for (Object o : values) {
                 attributeString += ";" + o;
