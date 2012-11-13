@@ -37,9 +37,9 @@ import jams.model.JAMSVarDescription;
 + "conditionally execute components. This context must contain two components. If \"value1\" equals \"value2\", the first one will be executed, otherwise the second one.")
 public class DoubleConditionalContext extends JAMSContext {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Double attribute defining which component to execute")
     public JAMSDouble value1;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Double attribute defining which component to execute")
     public JAMSDouble value2;
 
     public class DummyComponent extends JAMSComponent {

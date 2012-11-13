@@ -124,6 +124,12 @@ public class ComponentField {
         if (attribute == null) {
             attribute = new ContextAttribute(attributeName, basicType, context);
             context.getDynamicAttributes().put(attributeName, attribute);
+            
+//            if (this.accessType == READ_ACCESS) {
+//                // add this attribute to the list of undeclared attributes
+//                System.out.println("undeclared in " + context.getInstanceName() + ": " + attributeName);
+//            }
+            
         }
         attribute.getFields().add(this);
         this.contextAttributes.add(attribute);
