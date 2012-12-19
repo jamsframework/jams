@@ -84,21 +84,19 @@ public class JAMSExplorer {
             this.runtime = new StandardRuntime(properties);
             this.runtime.setDebugLevel(JAMS.VERBOSE);
             this.runtime.addErrorLogObserver(new Observer() {
-
                 public void update(Observable o, Object arg) {
                     GUIHelper.showErrorDlg(explorerFrame, arg.toString(), JAMS.i18n("Error"));
                 }
             });
             this.runtime.addInfoLogObserver(new Observer() {
-
                 public void update(Observable o, Object arg) {
                     //GUIHelper.showInfoDlg(regFrame, arg.toString(), JAMS.i18n("Info"));
                 }
             });
         } else {
             this.runtime = runtime;
-        }        
-        
+        }
+
         displayManager = new DisplayManager(this);
         explorerFrame = new ExplorerFrame(JAMSExplorer.this);
 
@@ -113,10 +111,14 @@ public class JAMSExplorer {
 
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
-
                 public void run() {
                     // create the JAMSExplorer object
                     explorer = new JAMSExplorer(null, true);
+                    try {
+                        explorer.explorerFrame.open(new File("D:/jamsmodeldata/J2K_Yzeron/j2k_yzeron_h"));
+                    } catch (InvalidWorkspaceException ex) {
+                        Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             });
         } catch (InterruptedException ex) {
@@ -183,7 +185,6 @@ public class JAMSExplorer {
 
             // make sure the window is removed from the list once it has been closed
             window.addWindowListener(new WindowListener() {
-
                 public void windowOpened(WindowEvent e) {
                 }
 
