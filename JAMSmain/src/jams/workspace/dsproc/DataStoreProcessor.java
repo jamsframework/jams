@@ -81,7 +81,9 @@ public class DataStoreProcessor {
             Logger.getLogger(DataStoreProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        jdbcURL = "jdbc:h2:" + dsFile.toString().substring(0, dsFile.toString().lastIndexOf(".")) + ";LOG=0";
+        // use a lot (100MB) of cache to avoid output of data to file which  
+        // causes errorneous handling of timestamps
+        jdbcURL = "jdbc:h2:mem:" + dsFile.toString().substring(0, dsFile.toString().lastIndexOf(".")) + ";LOG=0";
 
     }
 
@@ -270,6 +272,9 @@ public class DataStoreProcessor {
 
         // get a statement object
         stmt = conn.createStatement();
+        
+//        System.out.println("SET CACHE_SIZE 999000");
+//        stmt.execute("SET CACHE_SIZE 999000");
 
         // set some options
         //stmt.execute("SET LOG 0");
@@ -281,7 +286,6 @@ public class DataStoreProcessor {
         /*
          * Build index table
          */
-
         // remove index table if exists
         stmt.execute("DROP TABLE IF EXISTS index");
 
@@ -411,7 +415,6 @@ public class DataStoreProcessor {
         pIndexInsertStmt = conn.prepareStatement(indexInsert);
         
         boolean result = parseBlock();
-
         while (result) {
 
             if (cancelCreateIndex) {
@@ -455,12 +458,14 @@ public class DataStoreProcessor {
                 value += ":00";
                 cal.setValue(value);
                 ts = new Timestamp(cal.getTimeInMillis());
-                pIndexInsertStmt.setTimestamp(contexts.size()-i, ts, localCal);                
+                pIndexInsertStmt.setTimestamp(contexts.size()-i, ts, cal);                
             }
             row = reader.readLine();
         }
 
         long position = reader.getPosition();
+//        System.out.println(cal + " - " + ts.getTime() + " - " + position);
+            
         pIndexInsertStmt.setLong(contexts.size(), position);
 
         while ((row = reader.readLine()) != null) {
@@ -630,8 +635,8 @@ public class DataStoreProcessor {
 
 //        DataStoreProcessor dsdb = new DataStoreProcessor(new File("E:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop.dat"));
         
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File("C:\\Users\\nsk\\Desktop\\jams\\data\\j2k_gehlberg\\output\\current\\HRULoop.dat"));
-//        DataStoreProcessor dsdb = new DataStoreProcessor("D:/jamsapplication/JAMS-Gehlberg/output/current/TimeLoop.dat");
+//        DataStoreProcessor dsdb = new DataStoreProcessor(new File("C:\\Users\\nsk\\Desktop\\jams\\data\\j2k_gehlberg\\output\\current\\HRULoop.dat"));
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("D:\\jamsmodeldata\\J2K_Yzeron\\j2k_yzeron_h\\output\\20121128_114833\\HRULoop.dat"));
         dsdb.addImportProgressObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
@@ -643,15 +648,21 @@ public class DataStoreProcessor {
 //        dsdb.createIndex();
         
         JAMSCalendar cal = new JAMSCalendar();
-        String query = "SELECT TimeLoopID, position FROM index WHERE position>38147439 AND position<38249762";
+        String query = "SELECT TimeLoopID, position FROM index WHERE (position>38001964 AND position<38104316) OR (position>134824233 AND position<134953847)";
+//        String query = "SELECT TimeLoopID, position FROM index LIMIT 10000";
         
         Statement stmt = dsdb.conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
-            cal.setMilliSeconds(rs.getTimestamp("TimeLoopID").getTime());
-            System.out.println(cal + " - " + rs.getInt("position"));
+            long timeloopid = rs.getTimestamp("TimeLoopID", cal).getTime();
+            cal.setMilliSeconds(timeloopid);
+            System.out.println("###########" + cal + " - " + timeloopid + " - " + rs.getInt("position"));
         }
-
+        
+//###########1997-03-30 01:30 - 859685400000 - 38036072
+//###########1997-03-30 03:30 - 859692600000 - 38053131
+//###########1997-03-30 03:30 - 859692600000 - 38070199        
+        
 //        DataMatrix m = dsdb.getData(56139387);
 //////        DataMatrix m = dsdb.getData(836);
 ////        m.print(5, 3);

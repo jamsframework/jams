@@ -376,7 +376,7 @@ public class TimeSpaceProcessor extends Processor {
             }
             weights = calcWeights(a, weightAttribIndex);
             data.add(getWeightedSum(a, weights));
-            utcCal.setMilliSeconds(rs.getTimestamp(timeID).getTime());
+            utcCal.setMilliSeconds(rs.getTimestamp(timeID, utcCal).getTime());
             timeStamps.add(utcCal.toString());
         } else {
             return null;
@@ -398,7 +398,7 @@ public class TimeSpaceProcessor extends Processor {
                 a[i] = m.getRow(idPosition[i]);
             }
             data.add(getWeightedSum(a, weights));
-            utcCal.setMilliSeconds(rs.getTimestamp(timeID).getTime());
+            utcCal.setMilliSeconds(rs.getTimestamp(timeID, utcCal).getTime());
             timeStamps.add(utcCal.toString());
 
             // update the observer
@@ -853,7 +853,7 @@ public class TimeSpaceProcessor extends Processor {
             position = rs.getLong("POSITION");
             DataMatrix m = dsdb.getData(position);
             data.add(m.getSumRow());
-            utcCal.setMilliSeconds(rs.getTimestamp(timeID).getTime());
+            utcCal.setMilliSeconds(rs.getTimestamp(timeID, utcCal).getTime());
             timeStamps.add(utcCal.toString());
 
             if (abortOperation) {
@@ -933,7 +933,7 @@ public class TimeSpaceProcessor extends Processor {
         ResultSet rs = customSelectQuery("SELECT * FROM index");
         while (rs.next()) {
             JAMSCalendar utcCal = new JAMSCalendar();
-            utcCal.setMilliSeconds(rs.getTimestamp(timeID).getTime());
+            utcCal.setMilliSeconds(rs.getTimestamp(timeID, utcCal).getTime());
             result.add(utcCal);
         }
 
