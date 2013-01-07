@@ -59,7 +59,7 @@ public class TimeSpaceProcessor extends Processor {
         this.dsdb = dsdb;
         this.contexts = dsdb.getContexts();
         dFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dFormat.setTimeZone(TimeZone.getDefault());
+        dFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
 
         if (dsdb.isTimeSpaceDatastore()) {
 
@@ -173,9 +173,8 @@ public class TimeSpaceProcessor extends Processor {
      */
     private synchronized DataMatrix getTemporalData(Attribute.Calendar date) throws SQLException, IOException {
        
-        Date d = new Date();
-        d.setTime(date.getTimeInMillis());
-        String filterString = dFormat.format(d);
+        String filterString = date.toString(dFormat);
+        
         
         setTimeFilter(filterString);
         ResultSet rs = getData();
