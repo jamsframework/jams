@@ -36,7 +36,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Observable;
@@ -440,8 +439,8 @@ public class DataStoreProcessor {
     private boolean parseBlock() throws IOException, SQLException {
         String row;
         JAMSCalendar cal = new JAMSCalendar();
-        Calendar localCal = Calendar.getInstance();
-        Timestamp ts = null;
+//        Calendar localCal = Calendar.getInstance();
+        Timestamp ts;
         
         // read the ancestor's data
         row = reader.readLine();
@@ -639,6 +638,7 @@ public class DataStoreProcessor {
         DataStoreProcessor dsdb = new DataStoreProcessor(new File("D:\\jamsmodeldata\\J2K_Yzeron\\j2k_yzeron_h\\output\\20121128_114833\\HRULoop.dat"));
         dsdb.addImportProgressObserver(new Observer() {
 
+            @Override
             public void update(Observable o, Object arg) {
                 System.out.println("Progress: " + arg);
             }
@@ -800,8 +800,9 @@ public class DataStoreProcessor {
                     this.idType = "JAMSLong";
                 } else if (type.contains("jams.components.optimizer") || type.contains("optas.optimizer") || type.contains("dump")) {
                     this.idType = "JAMSLong";
-                } else
+                } else {
                     this.idType = "JAMSLong";
+                }
             }
         }
 
@@ -917,6 +918,7 @@ public class DataStoreProcessor {
             }
         }
 
+        @Override
         public int compareTo(Object obj) {
             return (this.getName().compareTo(((AttributeData) obj).getName()));
         }
