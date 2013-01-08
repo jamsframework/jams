@@ -646,7 +646,7 @@ public class DataStoreProcessor {
 
         dsdb.createDB();
 //        dsdb.createIndex();
-        
+
         JAMSCalendar cal = new JAMSCalendar();
         String query = "SELECT TimeLoopID, position FROM index WHERE (position>38001964 AND position<38104316) OR (position>134824233 AND position<134953847)";
 //        String query = "SELECT TimeLoopID, position FROM index LIMIT 10000";
