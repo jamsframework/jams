@@ -297,17 +297,20 @@ public class JUICEFrame extends JFrame {
                 /*optas.gui.OptimizationWizard.createDialog(JUICEFrame.this, view.getModelDoc(),
                         JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);*/
                 OptimizationWizardFrame frame = optas.gui.OptimizationWizard.createFrame(view.getModelDoc(), JUICE.getJamsProperties(), null);
+                if (view.getSavePath() == null) {
+                    GUIHelper.showInfoDlg(frame, JAMS.i18n("Save_model_first"));
+                    return;
+                }
                 frame.getWizard().setWorkspace(view.getSavePath().getParent());
+
                 frame.addActionListener(new ActionListener() {
-
-
-
 
                     public void actionPerformed(ActionEvent e) {
                         OptimizationWizard wizard = (OptimizationWizard)e.getSource();
                         Document newModelDoc = wizard.getNewModel();
-                        if (newModelDoc != null)
+                        if (newModelDoc != null) {
                             JUICEFrame.this.newModel(newModelDoc);
+                        }
                         /*try{
                             Thread.sleep(500);
                         }catch(Exception e2){
