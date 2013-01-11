@@ -83,8 +83,11 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
             JAMSNode siblingNode = newParentNode;
             newParentNode = (JAMSNode) newParentNode.getParent();
             position = newParentNode.getIndex(siblingNode);
-            if (draggedNode.getParent().getIndex(draggedNode) < position) {
-                position--;
+            if (draggedNode.getParent().getIndex(draggedNode) > position) {
+                position++;
+            }
+            if (draggedNode.getParent() != newParentNode) {
+                position++;
             }
         } else {
             position = newParentNode.getChildCount();
