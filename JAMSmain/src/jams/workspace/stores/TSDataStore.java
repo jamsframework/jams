@@ -62,6 +62,8 @@ public class TSDataStore extends TableDataStore {
     private static final int OBJECT = 4;
     private int[] type;
     private RingBuffer<Long>[] latestTimesteps = null;
+    protected Attribute.Calendar[] startDates;
+    protected boolean[] endReached;
 
     public class RingBuffer<T>{
         int index = 0;
@@ -133,16 +135,23 @@ public class TSDataStore extends TableDataStore {
             bufferSize = 2;
         }
         //if no cache should be read, access datastore directy
-        if (!readCache()){
-            // check validity of the data, e.g. unique start dates
-            // a tsdatastore assumes that all columns have synchronous time and
-            // start/end at the same time step
+        if (!readCache()){           
             
             latestTimesteps = new RingBuffer[dataIOArray.length];
-            for (int i=0;i<dataIOArray.length;i++)
+            startDates = new Attribute.Calendar[dataIOArray.length];
+            endReached = new boolean[dataIOArray.length];
+
+            for (int i = 0; i < dataIOArray.length; i++) {
+            
                 latestTimesteps[i] = new RingBuffer<Long>(2);
-            //fillBuffer();
-           
+
+                fillBuffer(i);
+                long timeStamp = dataIOArray[i].getData()[0].getData()[0].getLong();
+                startDates[i] = JAMSDataFactory.createCalendar();
+                startDates[i].setTimeInMillis(timeStamp * 1000);
+                endReached[i] = false;
+
+            }
         }
 
         currentDate.add(timeUnit, -1 * timeUnitCount);
@@ -267,33 +276,17 @@ public class TSDataStore extends TableDataStore {
         return o;
     }
 
-    @Override
-    public boolean hasNext() {
-
-        if (currentDate.after(stopDate)) {
-            return false;
-        }
-
-        if (writeCache || this.accessMode != InputDataStore.CACHE_MODE) {
-
-            return super.hasNext();
-
-        } else {
-
-            return true;
-
-        }
-    }
-
     public void skip(int count) {                
         if (this.accessMode != InputDataStore.CACHE_MODE) {
             //todo .. make this step efficient
-            for (int i=0;i<count;i++)
+            for (int i=0;i<count;i++) {
                 getNext();
+            }
         } else {
             try {
-                for (int i=0;i<count;i++)
+                for (int i=0;i<count;i++) {
                     dumpFileReader.readLine();
+                }
                 currentDate.add(timeUnit, timeUnitCount*count);
                 if (currentDate.after(stopDate)) {
                     return;
@@ -305,69 +298,68 @@ public class TSDataStore extends TableDataStore {
         }
     }
 
-    private boolean checkDataConsistency(){
+    /*
+     * checks for correct step size of the data, i.e. for a unique time interval
+     */
+    private boolean checkStepSize(int i){
         // check interval size for all columns
-        for (int i = 0; i < dataIOArray.length; i++) {
-            //get the timestamps of the first two rows (in seconds)
-            this.latestTimesteps[i].push(dataIOArray[i].getData()[currentPosition].getData()[0].getLong());
-            if (this.latestTimesteps[i].fillsize < 2) {
-                continue;
-            }
-            long timeStamp1 = this.latestTimesteps[i].get(-1);
-            long timeStamp2 = this.latestTimesteps[i].get(0);
-            
-            //compare the two time stamps
-            Attribute.Calendar cal1 = JAMSDataFactory.createCalendar();
-            cal1.setTimeInMillis(timeStamp1 * 1000);
-            Attribute.Calendar cal2 = JAMSDataFactory.createCalendar();
-            cal2.setTimeInMillis(timeStamp2 * 1000);
-
-            cal1.add(timeUnit, timeUnitCount);
-            if (cal1.compareTo(cal2) != 0) {
-
-                Attribute.Calendar cal = cal1.clone();
-                cal.add(timeUnit, -1 * timeUnitCount);
-                long demandedSeconds = Math.abs(cal1.getTimeInMillis() - cal.getTimeInMillis()) / 1000;
-                long currentSeconds = Math.abs(cal2.getTimeInMillis() - cal.getTimeInMillis()) / 1000;
-
-                this.ws.getRuntime().sendErrorMsg(JAMS.i18n("Error_in_") + this.getClass().getName() + JAMS.i18n(":_wrong_time_interval_in_column_") + i + JAMS.i18n("_(demanded_interval_=_") + demandedSeconds + JAMS.i18n("_sec,_provided_interval_=_") + currentSeconds + JAMS.i18n("_sec)!"));
-
-                dataIOSet.clear();
-                currentPosition = maxPosition;
-                return false;
-            }
+        //get the timestamps of the first two rows (in seconds)
+        this.latestTimesteps[i].push(dataIOArray[i].getData()[currentPosition[i]].getData()[0].getLong());
+        if (this.latestTimesteps[i].fillsize < 2) {
             return true;
         }
-        if (!currentDate.after(startDate)) {
-            // check identical start date of all columns
-            // for all but the first columns
-            boolean shifted = false;
-            for (int i = 0; i < dataIOArray.length; i++) {
+        long timeStamp1 = this.latestTimesteps[i].get(-1);
+        long timeStamp2 = this.latestTimesteps[i].get(0);
 
-                long timeStamp2 = dataIOArray[i].getData()[0].getData()[0].getLong();
+        //compare the two time stamps
+        Attribute.Calendar cal1 = JAMSDataFactory.createCalendar();
+        cal1.setTimeInMillis(timeStamp1 * 1000);
+        Attribute.Calendar cal2 = JAMSDataFactory.createCalendar();
+        cal2.setTimeInMillis(timeStamp2 * 1000);
 
-                //compare the two time stamps
-                Attribute.Calendar cal = JAMSDataFactory.createCalendar();
-                cal.setTimeInMillis(timeStamp2 * 1000);
+        cal1.add(timeUnit, timeUnitCount);
+        if (cal1.compareTo(cal2, timeUnit) != 0) {
 
-                if (cal.compareTo(startDate, timeUnit) != 0) {
+            Attribute.Calendar cal = cal1.clone();
+            cal.add(timeUnit, -1 * timeUnitCount);
+            long demandedSeconds = Math.abs(cal1.getTimeInMillis() - cal.getTimeInMillis()) / 1000;
+            long currentSeconds = Math.abs(cal2.getTimeInMillis() - cal.getTimeInMillis()) / 1000;
 
-                    this.ws.getRuntime().sendErrorMsg(JAMS.i18n("Error_in_") + this.getClass().getName() + JAMS.i18n(":_wrong_start_time_in_column_") + i + JAMS.i18n("_(demanded_=_") + startDate + JAMS.i18n(",_provided_=_") + cal + JAMS.i18n(")!"));
+            this.ws.getRuntime().sendErrorMsg(JAMS.i18n("Error_in_") + this.getClass().getName() + JAMS.i18n(":_wrong_time_interval_in_column_") + i + JAMS.i18n("_(demanded_interval_=_") + demandedSeconds + JAMS.i18n("_sec,_provided_interval_=_") + currentSeconds + JAMS.i18n("_sec)!"));
 
-                    dataIOSet.clear();
-                    currentPosition = maxPosition;
-                    return false;
-                } else if (!shifted) {
-                    if (cal.compareTo(currentDate) != 0) {
-                        currentDate.setValue(cal);
-                    }
-                    shifted = true;
-                }
-            }
+            dataIOSet.clear();
+            currentPosition[i] = maxPosition[i];
+            return false;
         }
         return true;
     }
 
+    @Override
+    public boolean hasNext() {
+
+        if (currentDate.after(stopDate)) {
+            return false;
+        }
+        
+//        boolean allEndReached = true;
+
+        if (!readCache()) {
+            
+            for (int i = 0; i < dataIOArray.length; i++) {
+
+                if (!(startDates[i].after(currentDate)) && (currentPosition[i] >= maxPosition[i])) {
+                    fillBuffer(i);
+                    if (currentPosition[i] >= maxPosition[i]) {
+                        endReached[i] = true;
+                    }                    
+                }
+//                allEndReached &= endReached[i];
+            }
+        }
+        
+        return true;
+    }    
+    
     @Override
     public DefaultDataSet getNext() {
 
@@ -382,40 +374,43 @@ public class TSDataStore extends TableDataStore {
 
             result = new DefaultDataSet(positionArray.length + 1);
             result.setData(0, calendar);
+            
             for (int i = 0; i < dataIOArray.length; i++) {
 
-                DataSet ds = dataIOArray[i].getData()[currentPosition];
-                DataValue[] values = ds.getData();
-                result.setData(i + 1, values[positionArray[i]]);
+                boolean outOfInterval = startDates[i].after(currentDate) || endReached[i];
+
+                if (outOfInterval) {
+                    
+                    result.setData(i + 1, new DoubleValue(Double.NaN));
+                    
+                } else {
+                    
+                    DataSet ds = dataIOArray[i].getData()[currentPosition[i]];
+                    DataValue[] values = ds.getData();
+                    result.setData(i + 1, values[positionArray[i]]);
+                    checkStepSize(i);
+                    currentPosition[i]++;
+                    
+                }
 
             }
-
-            if (!checkDataConsistency()){
-                
-            }
-
-            currentPosition++;
-
+          
         } else {
 
             try {
 
                 String str = dumpFileReader.readLine();
 
-                StringTokenizer tok = new StringTokenizer(str, SEPARATOR);
+                String a[] = str.split(SEPARATOR, -1);
 
-                int length = tok.countTokens();
-
-                result = new DefaultDataSet(length);
+                result = new DefaultDataSet(a.length);
                 result.setData(0, calendar);
 
                 // dump date since this is not evaluated!
-                tok.nextToken();
-
-                for (int i = 1; i < length; i++) {
+                for (int i = 1; i < a.length; i++) {
 
                     DataValue value;
-                    String valueString = tok.nextToken();
+                    String valueString = a[i];
                     switch (type[i - 1]) {
                         case DOUBLE:
                             value = new DoubleValue(valueString);

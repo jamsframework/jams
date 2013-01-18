@@ -47,6 +47,10 @@ public class DefaultDataSet implements DataSet {
     
     @Override
     public String toString() {
+        return toString("");
+    }
+    
+    public String toString(String missingValueIndetifier) {
         
         String result = "";
 
@@ -57,7 +61,11 @@ public class DefaultDataSet implements DataSet {
         } 
         
         for (int i = 1; i < data.length; i++) {
-            result += "\t" + data[i].getString();
+            String s = data[i].getString();
+            if (s.equals("NaN") || s.isEmpty()) {
+                s = missingValueIndetifier;
+            }
+            result += "\t" + s;
         }
         
         return result;

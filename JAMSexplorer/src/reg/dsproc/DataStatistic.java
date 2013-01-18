@@ -6,6 +6,7 @@
  */
 package reg.dsproc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.commons.math.stat.StatUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
@@ -35,7 +36,26 @@ public class DataStatistic {
     public DataStatistic(String name, double[] data) {
         this.name = name;
         this.data = data;
+        cleanData();
         init();
+    }
+    
+    /*  
+     * get rid of NaN values in data array
+     */
+    private void cleanData() {
+        
+        ArrayList<Double> cleanList = new ArrayList();
+        for (double d : data) {
+            if (!Double.isNaN(d)) {
+                cleanList.add(d);
+            }
+        }
+        data = new double[cleanList.size()];
+        int i = 0;
+        for (double d : cleanList) {
+            data[i++] = d;
+        }
     }
 
     /**

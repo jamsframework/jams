@@ -45,7 +45,7 @@ public class TableDataStore extends StandardInputDataStore {
     /**
      * The maximal position within the buffer
      */
-    protected int currentPosition, maxPosition;
+    protected int[] currentPosition, maxPosition;
 
     /**
      * A set of DataReader objects that this datastore uses to read data
@@ -109,31 +109,32 @@ public class TableDataStore extends StandardInputDataStore {
 
             positionArray[i] = Integer.parseInt(columnElement.getAttribute("sourcecolumn"));
         }
-
-        for (DataReader io : dataIOSet) {
-            io.init();
+        
+        currentPosition = new int[dataIOArray.length];
+        maxPosition = new int[dataIOArray.length];
+        
+        for (int i = 0; i < dataIOArray.length; i++) {
+            dataIOArray[i].init();
+            currentPosition[i] = Integer.MAX_VALUE;
+            maxPosition[i] = Integer.MAX_VALUE;
         }
 
-        currentPosition = Integer.MAX_VALUE;
-        maxPosition = Integer.MAX_VALUE;
 
     }
 
     /**
      * Fills the buffer according to the buffer size
      */
-    protected void fillBuffer() {
+    protected void fillBuffer(int i) {
+        DataReader io = dataIOArray[i];
 
-        for (DataReader io : dataIOSet) {
-
-            if (bufferSize > 0) {
-                io.fetchValues(bufferSize);
-            } else {
-                io.fetchValues();
-            }
-            maxPosition = Math.min(maxPosition, io.getData().length);
-            currentPosition = 0;
+        if (bufferSize > 0) {
+            io.fetchValues(bufferSize);
+        } else {
+            io.fetchValues();
         }
+        maxPosition[i] = Math.min(maxPosition[i], io.getData().length);
+        currentPosition[i] = 0;
     }
 
     /**
@@ -142,18 +143,20 @@ public class TableDataStore extends StandardInputDataStore {
      */
     @Override
     public boolean hasNext() {
-        if (currentPosition < maxPosition) {
-            return true;
-        } else {
-            fillBuffer();
-            if (currentPosition < maxPosition) {
-                return true;
-            } else {
-                return false;
+        
+        for (int i = 0; i < dataIOArray.length; i++) {      
+            
+            if (currentPosition[i] >= maxPosition[i]) {
+                fillBuffer(i);
+                if (currentPosition[i] >= maxPosition[i]) {
+                    return false;
+                }
             }
+            
         }
+        return true;
     }
-
+    
     /**
      * Gets the next dataset from the datastore
      * @return A dataset object
@@ -165,12 +168,12 @@ public class TableDataStore extends StandardInputDataStore {
 
         for (int i = 0; i < dataIOArray.length; i++) {
 
-            DataSet ds = dataIOArray[i].getData()[currentPosition];
+            DataSet ds = dataIOArray[i].getData()[currentPosition[i]];
             DataValue[] values = ds.getData();
             result.setData(i, values[positionArray[i]]);
+            currentPosition[i]++;       
 
         }
-        currentPosition++;       
         return result;
     }
 

@@ -87,6 +87,11 @@ public abstract class StandardInputDataStore implements InputDataStore, Serializ
             this.accessMode = Integer.parseInt(accessmodeElement.getAttribute("value"));
         }
 
+        Element missingdataElement = (Element) parameterElement.getElementsByTagName("missingdatavalue").item(0);
+        if (missingdataElement != null) {
+            this.missingDataValue = missingdataElement.getAttribute("value");
+        }
+
         if (this.accessMode == InputDataStore.CACHE_MODE) {
             File file = null;
             file = new File(ws.getLocalDumpDirectory(), id + ".dump");

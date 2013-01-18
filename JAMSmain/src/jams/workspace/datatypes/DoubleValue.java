@@ -38,7 +38,11 @@ public class DoubleValue implements DataValue {
     }
 
     public DoubleValue(String value) {
-        this.value = new Double(value);
+        if (value.isEmpty()) {
+            this.value = Double.NaN;
+        } else {
+            this.value = new Double(value);
+        }
     }
 
     public double getDouble() {

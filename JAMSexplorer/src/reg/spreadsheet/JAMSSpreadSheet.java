@@ -764,11 +764,13 @@ public class JAMSSpreadSheet extends JPanel {
     public void setOutputDSDir(File outputDSDir) {
         this.outputDSDir = outputDSDir;
     }
-
+    
     private void formatDoubleArray(double[] rowBuffer) {
         // shorten double values to four decimal digits
         for (int i = 0; i < rowBuffer.length; i++) {
-            rowBuffer[i] = Math.round(rowBuffer[i] * 10000.) / 10000.;
+            if (!Double.isNaN(rowBuffer[i])) {
+                rowBuffer[i] = Math.round(rowBuffer[i] * 10000.) / 10000.;
+            }
         }
     }
 
@@ -906,10 +908,16 @@ public class JAMSSpreadSheet extends JPanel {
 
             rowBuffer = new double[colNumber];
             for (i = 1; i < rowData.length; i++) {
-                rowBuffer[i - 1] = ((DoubleValue) rowData[i]).getDouble();
+                if (rowData[i] instanceof DoubleValue) {
+                    rowBuffer[i - 1] = ((DoubleValue) rowData[i]).getDouble();
+                } else {
+                    rowBuffer[i - 1] = Double.NaN;
+                }
             }
 
+//            System.out.print(timeval + " : " + rowBuffer[0]);
             formatDoubleArray(rowBuffer);
+//            System.out.println(" : " + rowBuffer[0]);
 
             arrayVector.add(rowBuffer);
         }
