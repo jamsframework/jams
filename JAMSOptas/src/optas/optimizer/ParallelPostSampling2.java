@@ -7,7 +7,6 @@ package optas.optimizer;
 
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSModel;
-import jams.model.Model;
 import jams.runtime.StandardRuntime;
 import java.io.File;
 import java.io.Serializable;
@@ -25,6 +24,7 @@ import optas.optimizer.parallel.ParallelExecution;
 import optas.optimizer.parallel.ParallelJob;
 import optas.optimizer.parallel.ParallelTask;
 import optas.io.ImportMonteCarloData;
+import optas.io.ImportMonteCarloException;
 
 @SuppressWarnings("unchecked")
 @JAMSComponentDescription(
@@ -76,11 +76,18 @@ public class ParallelPostSampling2 extends Optimizer{
         }
 
         public void add(String context, File dataStore) {
-            ImportMonteCarloData importer = new ImportMonteCarloData(dataStore);
-            if (dc == null)
-                dc = importer.getEnsemble();
-            else
-                dc.unifyDataCollections(importer.getEnsemble());            
+            ImportMonteCarloData importer = new ImportMonteCarloData();
+            try {
+                importer.addFile(dataStore);
+                if (dc == null) {
+                    dc = importer.getEnsemble();
+                } else {
+                    dc.unifyDataCollections(importer.getEnsemble());
+                }
+            } catch (ImportMonteCarloException imce) {
+                imce.printStackTrace();
+                System.out.println(imce);
+            }
         }
     }
 
@@ -109,11 +116,18 @@ public class ParallelPostSampling2 extends Optimizer{
         }
 
         public void add(String context, File dataStore) {
-            ImportMonteCarloData importer = new ImportMonteCarloData(dataStore);
-            if (dc == null)
-                dc = importer.getEnsemble();
-            else
-                dc.unifyDataCollections(importer.getEnsemble());
+            ImportMonteCarloData importer = new ImportMonteCarloData();
+            try {
+                importer.addFile(dataStore);
+                if (dc == null) {
+                    dc = importer.getEnsemble();
+                } else {
+                    dc.unifyDataCollections(importer.getEnsemble());
+                }
+            } catch (ImportMonteCarloException imce) {
+                imce.printStackTrace();
+                System.out.println(imce);
+            }
         }
     }
     

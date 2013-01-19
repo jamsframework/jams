@@ -88,7 +88,7 @@ public class DataCollection extends DataSet implements Serializable{
 
     public String getSamplerClass() {
         if (samplerClass == null) {
-            return null;//jams.components.optimizer.Optimizer.class;
+            return optas.optimizer.RandomSampler.class.toString();//jams.components.optimizer.Optimizer.class;
         }
         return samplerClass;
     }

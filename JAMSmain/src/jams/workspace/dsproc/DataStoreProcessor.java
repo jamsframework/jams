@@ -458,6 +458,8 @@ public class DataStoreProcessor {
                 cal.setValue(value);
                 ts = new Timestamp(cal.getTimeInMillis());
                 pIndexInsertStmt.setTimestamp(contexts.size()-i, ts, cal);                
+            }else if (cd.getType().contains("optas") || cd.getType().contains("optimizer")) {                
+                pIndexInsertStmt.setLong(contexts.size()-i, Long.parseLong(value));
             }
             row = reader.readLine();
         }

@@ -56,6 +56,7 @@ public class OutputPanelFactory {
         });
 
         JDialog dialog = importDlg.getDialog();
+        dialog.setLocationRelativeTo(null);
         dialog.setModal(true);
         dialog.setVisible(true);
 

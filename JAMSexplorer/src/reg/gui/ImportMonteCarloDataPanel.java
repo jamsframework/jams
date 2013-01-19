@@ -4,9 +4,6 @@
  */
 package reg.gui;
 
-import jams.data.Attribute.Calendar;
-import jams.data.Attribute.TimeInterval;
-import jams.data.JAMSDataFactory;
 import jams.gui.WorkerDlg;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -17,46 +14,34 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
-import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.event.TableModelEvent;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.table.DefaultTableModel;
-import jams.workspace.dsproc.DataMatrix;
-import jams.workspace.dsproc.DataStoreProcessor;
 import jams.workspace.dsproc.DataStoreProcessor.AttributeData;
-import jams.workspace.dsproc.DataStoreProcessor.ContextData;
-import jams.workspace.dsproc.EnsembleTimeSeriesProcessor;
 import jams.workspace.dsproc.Processor;
-import jams.workspace.dsproc.SimpleSerieProcessor;
-import jams.workspace.dsproc.TimeSpaceProcessor;
+import java.io.IOException;
+import javax.swing.JOptionPane;
+import optas.Optas;
 import optas.hydro.data.DataCollection;
-import optas.hydro.data.DataSet.MismatchException;
-import optas.hydro.data.Measurement;
-import optas.hydro.data.Modelrun;
-import optas.hydro.data.NegativeEfficiency;
-import optas.hydro.data.Parameter;
-import optas.hydro.data.PositiveEfficiency;
-import optas.hydro.data.SimpleDataSet;
-import optas.hydro.data.StateVariable;
-import optas.hydro.data.TimeSerie;
+import optas.io.ImportMonteCarloData;
+import optas.io.ImportMonteCarloData.EnsembleType;
+import optas.io.ImportMonteCarloException;
+
+import ucar.ma2.Array;
+import ucar.ma2.ArrayChar;
+import ucar.ma2.ArrayDouble;
+import ucar.ma2.DataType;
+import ucar.ma2.Index;
+import ucar.ma2.InvalidRangeException;
+import ucar.nc2.NetcdfFileWriteable;
 
 /**
  *
@@ -64,68 +49,100 @@ import optas.hydro.data.TimeSerie;
  */
 public class ImportMonteCarloDataPanel extends JPanel {
 
-    enum MergeMode{
-        ATTACH,     //attaches the new datacollection at the end of the old one
+    enum MergeMode {
+
+        ATTACH, //attaches the new datacollection at the end of the old one
         UNIFY       //unifies the attributes of both datacollections
     };
-
-    Dimension defaultFilesTable = new Dimension(500, 150);
     Dimension defaultDatasetTable = new Dimension(500, 200);
-    Dimension defaultWindowSize = new Dimension(550, 500);
-
-    ArrayList<Processor> fileProcessors = new ArrayList<Processor>();
-    HashMap<AttributeData, Processor> attributeDataMap = new HashMap<AttributeData, Processor>();
-    HashMap<AttributeData, JComboBox> attributeComboBoxMap = new HashMap<AttributeData, JComboBox>();
-    HashMap<String, Class> simpleDatasetClasses = new HashMap<String, Class>();
-    HashMap<String, Class> timeSerieDatasetClasses = new HashMap<String, Class>();
-    JTable fileTable = null;
+    Dimension defaultWindowSize = new Dimension(550, 290);
     JPanel dataPanel = null;
-    String parameterString = "Parameter";
-    String stateVariableString = "State-Variable";
-    String measurementString = "Measurement";
-    String efficiencyStringNeg = "Efficiency(Negative)";
-    String efficiencyStringPos = "Efficiency(Postive)";
-    String timeseriesString = "Timeserie - Ensemble";
-    String emptyString = "";
-    DataCollection ensemble = null;
-    JFileChooser chooser = new JFileChooser();
-
-    JComboBox mergeModeBox = new JComboBox(new String[]{"Attach Mode", "Unify Mode"});
-
-    ArrayList<ActionListener> listenerList =  new ArrayList<ActionListener>();
+    JComboBox mergeModeBox = new JComboBox(new String[]{Optas.i18n("Attach_Mode"), Optas.i18n("Unify_Mode")});
+    ArrayList<ActionListener> listenerList = new ArrayList<ActionListener>();
+    HashMap<AttributeData, JComboBox> attributeComboBoxMap = new HashMap<AttributeData, JComboBox>();
     JFrame owner;
     JDialog ownerDlg = null;
-
-    boolean isImportCollection = false;
     DataCollection importedCollection = null;
+    ImportMonteCarloData importer = null;
+    DataCollection finalEnsemble = null;
 
-    final HashMap<String, String> defaultAttributeTypes = new HashMap<String, String>();
+    private class EnsembleTypeStringMap {
+
+        EnsembleType t;
+
+        public EnsembleTypeStringMap(EnsembleType t) {
+            this.t = t;
+        }
+
+        public EnsembleType get() {
+            return t;
+        }
+
+        @Override
+        public String toString() {
+            switch (t) {
+                case Parameter:
+                    return Optas.i18n("Parameter");
+                case PosEfficiency:
+                    return Optas.i18n("Efficiency(Positive)");
+                case NegEfficiency:
+                    return Optas.i18n("Efficiency(Negative)");
+                case Measurement:
+                    return Optas.i18n("Measurement");
+                case Timeserie:
+                    return Optas.i18n("Timeserie-Ensemble");
+                case StateVariable:
+                    return Optas.i18n("State-Variable");
+                case Ignore:
+                    return "";
+            }
+            return "";
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof EnsembleTypeStringMap) {
+                if (((EnsembleTypeStringMap) obj).get().equals(t)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 
     public ImportMonteCarloDataPanel(JFrame owner) {
         this.owner = owner;
+        importer = new ImportMonteCarloData();
+
         init();
     }
+
     public ImportMonteCarloDataPanel(JFrame owner, DataCollection dc) {
         this.owner = owner;
-        this.ensemble = dc;
+        importer = new ImportMonteCarloData();
+        finalEnsemble = dc;
         init();
     }
+
     public ImportMonteCarloDataPanel(JFrame owner, DataCollection dc, File file) {
         this.owner = owner;
-        this.ensemble = dc;
-        if (file.getAbsolutePath().endsWith("cdat")){
-            isImportCollection = true;
+        importer = new ImportMonteCarloData();
+        finalEnsemble = dc;
+        if (file.getAbsolutePath().endsWith("cdat")) {
             importedCollection = DataCollection.createFromFile(file);
         }
         init();
-
-        addFile(file);
+        if (!file.getAbsolutePath().endsWith("cdat")) {
+            addFile(file);
+        }
     }
 
+    private void showError(ImportMonteCarloException imce) {
+        JOptionPane.showMessageDialog(dataPanel, imce.toString(), Optas.i18n("An_error_occured..."), JOptionPane.ERROR_MESSAGE);
+    }
 
-
-    public JDialog getDialog(){
-        ownerDlg = new JDialog(this.owner,"Import Ensemble Data");
+    public JDialog getDialog() {
+        ownerDlg = new JDialog(this.owner, Optas.i18n("Import_Ensemble_Data"));
         ownerDlg.add(this);
         ownerDlg.setPreferredSize(defaultWindowSize);
         ownerDlg.setMinimumSize(defaultWindowSize);
@@ -133,249 +150,42 @@ public class ImportMonteCarloDataPanel extends JPanel {
         return ownerDlg;
     }
 
-    private MergeMode getMergeMode(){
-        if (this.mergeModeBox.getSelectedIndex()==0)
+    private MergeMode getMergeMode() {
+        if (this.mergeModeBox.getSelectedIndex() == 0) {
             return MergeMode.ATTACH;
-        else
+        } else {
             return MergeMode.UNIFY;
-    }
-
-    private void loadDataStore(File file) {
-        Processor proc = null;
-        DataStoreProcessor dsdb = new DataStoreProcessor(file);
-        try{
-            dsdb.createDB();
-
-        }catch(IOException ioe){
-            System.out.println(ioe.toString());
-        }catch(SQLException ioe){
-            System.out.println(ioe.toString());
-        }catch(ClassNotFoundException ioe){
-            System.out.println(ioe.toString());
         }
-        switch (DataStoreProcessor.getDataStoreType(file)) {
-            case DataStoreProcessor.UnsupportedDataStore:
-                JOptionPane.showMessageDialog(ImportMonteCarloDataPanel.this, "unsupported datastore");
-                return;
-            case DataStoreProcessor.EnsembleTimeSeriesDataStore:
-                proc = new EnsembleTimeSeriesProcessor(dsdb);
-                break;
-            case DataStoreProcessor.TimeSpaceDataStore:
-                proc = new TimeSpaceProcessor(dsdb);
-                break;
-            case DataStoreProcessor.SimpleEnsembleDataStore:
-                proc = new SimpleSerieProcessor(dsdb);
-                break;
-            case DataStoreProcessor.SimpleDataSerieDataStore:
-                proc = new SimpleSerieProcessor(dsdb);
-                break;
-            case DataStoreProcessor.SimpleTimeSerieDataStore:
-                proc = new SimpleSerieProcessor(dsdb);
-                break;
-            default:
-                JOptionPane.showMessageDialog(ImportMonteCarloDataPanel.this, "unsupported datastore");
-                return;
-        }        
-        fileProcessors.add(proc);
     }
 
-    static int badIDCounter = 1000000;
-    private DataCollection buildEnsemble() {
-        DataCollection ensemble = new DataCollection();
-        String samplerClass = null;
-
-        for (AttributeData a : this.attributeDataMap.keySet()) {
-            JComboBox b = this.attributeComboBoxMap.get(a);
-            Processor p = this.attributeDataMap.get(a);
-            String selection = (String) b.getSelectedItem();
-
-            for (ContextData c : p.getDataStoreProcessor().getContexts()) {
-                if (c.getType().startsWith("jams.components.optimizer")) {
-                    if (samplerClass == null) {
-                        samplerClass = c.getType();
-                        ensemble.setSamplerClass(samplerClass);
-                    } else if (!c.getType().equals(samplerClass)) {
-                        samplerClass = "jams.components.optimizer.Optimizer";
-                    }
-                }
-            }
-            try {
-                for (String dataSetClassName : simpleDatasetClasses.keySet()) {
-                    if (selection.equals(dataSetClassName)) {
-                        if (!(p instanceof SimpleSerieProcessor))
-                            continue;
-                        SimpleSerieProcessor s = ((SimpleSerieProcessor) p);
-                        String[] ids = s.getIDs();
-                        for (AttributeData ad : s.getDataStoreProcessor().getAttributes())
-                            ad.setSelected(false);
-                        a.setSelected(true);
-                        DataMatrix m = s.getData(ids);
-                        a.setSelected(false);
-                        int row = 0;
-                        for (String id : ids) {
-                            Integer intID = null;
-                            try{
-                                intID = Integer.parseInt(id);
-                            }catch(NumberFormatException nfe){
-                                nfe.printStackTrace();
-                                //fallback (there should be a list of all used ids)
-                                intID = new Integer(badIDCounter++);
-                            }
-                            Modelrun r = new Modelrun(intID, null);
-                            Class datasetClass = simpleDatasetClasses.get(dataSetClassName);
-                            Constructor c = datasetClass.getConstructor(SimpleDataSet.class);
-                            SimpleDataSet nonTypedSDS = new SimpleDataSet(m.get(row, 0), a.getName(), r);
-                            row++;
-                            SimpleDataSet typedSDS = (SimpleDataSet) c.newInstance(nonTypedSDS);
-                            r.addDataSet(typedSDS);
-                            ensemble.addModelRun(r);
-                        }
-                    }
-                }                
-            } catch (SQLException sqle) {
-                System.out.println(sqle);
-                sqle.printStackTrace();
-            } catch (IOException ioe) {
-                System.out.println(ioe);
-                ioe.printStackTrace();
-            } catch (MismatchException me) {
-                System.out.println(me);
-                me.printStackTrace();
-            } catch (Throwable t){
-                System.out.println(t.toString());
-                t.printStackTrace();
-            }
-            try {
-                for (String dataSetClassName : timeSerieDatasetClasses.keySet()) {
-                    if (selection.equals(dataSetClassName)) {
-                        EnsembleTimeSeriesProcessor s = ((EnsembleTimeSeriesProcessor) p);
-                        long[] ids = s.getModelRuns();
-                        Calendar[] timesteps = s.getTimeSteps();
-                        if (timesteps == null)
-                            continue;
-                        String[] namedTimesteps = new String[timesteps.length];
-                        for (int i = 0; i < timesteps.length; i++) {
-                            namedTimesteps[i] = timesteps[i].toString();
-                        }
-
-                        ensembleTime = JAMSDataFactory.createTimeInterval();
-                        ensembleTime.setStart(timesteps[0]);
-                        ensembleTime.setEnd(timesteps[timesteps.length - 1]);
-                        
-                        ensembleTime.setTimeUnit(s.getTimeUnit());
-
-                        for (AttributeData ad : s.getDataStoreProcessor().getAttributes())
-                            ad.setSelected(false);
-                        a.setSelected(true);
-                        DataMatrix m = s.getCrossProduct(ids, namedTimesteps);
-                        a.setSelected(false);
-
-                        if (this.timeSerieDatasetClasses.get(dataSetClassName).equals(TimeSerie.class)) {
-                            int col = 0;
-                            for (Long id : ids) {
-                                Modelrun r = new Modelrun(id.intValue(), null);
-                                r.addDataSet(new TimeSerie(m.getCol(col), ensembleTime, a.getName(), r));
-                                col++;
-                                ensemble.addModelRun(r);
-                            }
-                        } else if (this.timeSerieDatasetClasses.get(dataSetClassName).equals(Measurement.class)){
-                            int col = 0;
-                            Measurement ts = null;
-                            for (Long id : ids) {
-                                Modelrun r = new Modelrun(id.intValue(), null);
-                                Measurement ts2 = new Measurement(new TimeSerie(m.getCol(col), ensembleTime, a.getName(), r));
-                                if (ts == null)
-                                    ts = ts2;
-                                else{
-                                    for (int i=0;i<ts.getTimeDomain().getNumberOfTimesteps();i++){
-                                        if (Math.abs(ts.getValue(i)-ts2.getValue(i))>1E-5)
-                                            throw new MismatchException("timeserie ensemble could not be used as measurement");
-                                    }
-                                }
-                                col++;
-                            }
-                            ensemble.addTimeSerie(ts);
-                        }
-                    }
-                }
-            } catch (SQLException sqle) {
-                System.out.println(sqle);
-                sqle.printStackTrace();
-            } catch (IOException ioe) {
-                System.out.println(ioe);
-                ioe.printStackTrace();
-            } catch (MismatchException me) {
-                System.out.println(me);
-                me.printStackTrace();
-            } catch (Throwable t){
-                System.out.println(t.toString());t.printStackTrace();
-            }
-        }
-        return ensemble;
-    }
-
-    private Object getAttributeTypeDefault(AttributeData a, String[] types){
-        String defaultType = this.defaultAttributeTypes.get(a.getName());
-        for (String type : types){
-            if (type.equals(defaultType))
-                return type;
-        }
-        //unknown attribute --> fallback return first string
-        return types[0];
-    }
-
-    public boolean isEmpty(){
-        return this.attributeDataMap.isEmpty();
+    public boolean isEmpty() {
+        return importer.isEmpty();
     }
 
     private void updateDataTable() {
-        String ensembleVariableTypes[] = {emptyString, parameterString, stateVariableString, efficiencyStringNeg, efficiencyStringPos};
-        String timeserieTypes[] = {emptyString, measurementString};
-        String ensembleTimeSerieTypes[] = {emptyString, timeseriesString, measurementString};
-
-        HashMap<Processor, String[]> processorTypeMap = new HashMap<Processor, String[]>();
-        /*attributeComboboxList.clear();
-        attributeDataMap.clear();*/
-
-        for (Processor p : fileProcessors) {
-            switch (DataStoreProcessor.getDataStoreType(p.getDataStoreProcessor().getFile())) {
-
-                case DataStoreProcessor.EnsembleTimeSeriesDataStore:
-                    processorTypeMap.put(p, ensembleTimeSerieTypes);
-                    break;
-                case DataStoreProcessor.SimpleEnsembleDataStore:
-                    processorTypeMap.put(p, ensembleVariableTypes);
-                    break;
-                case DataStoreProcessor.SimpleDataSerieDataStore:
-                    processorTypeMap.put(p, ensembleVariableTypes);
-                    break;
-                case DataStoreProcessor.SimpleTimeSerieDataStore:
-                    processorTypeMap.put(p, timeserieTypes);
-                    break;
-            }
-
-            for (AttributeData a : p.getDataStoreProcessor().getAttributes()) {
-                attributeDataMap.put(a, p);
-            }
-        }
-        TreeSet<AttributeData> t = new TreeSet<AttributeData>(attributeDataMap.keySet());
         dataPanel.removeAll();
         dataPanel.setLayout(new GridBagLayout());
 
+        TreeSet<AttributeData> attributes = importer.getAttributeData();
+
         int counter = 0;
-        for (AttributeData a : t) {
-            Processor p = attributeDataMap.get(a);
+        for (AttributeData a : attributes) {
+            Processor p = importer.getProcessorForAttribute(a);
 
             JComboBox typeSelection = this.attributeComboBoxMap.get(a);
             if (typeSelection == null) {
-                typeSelection = new JComboBox(processorTypeMap.get(p));
-                typeSelection.setSelectedItem(getAttributeTypeDefault(a,processorTypeMap.get(p)));
-                typeSelection.setPreferredSize(new Dimension(175,25));
-                typeSelection.setMaximumSize(new Dimension(175,25));
+                EnsembleType options[] = importer.getValidProcessingOptions(p);
+                EnsembleTypeStringMap maps[] = new EnsembleTypeStringMap[options.length];
+                for (int i = 0; i < options.length; i++) {
+                    maps[i] = new EnsembleTypeStringMap(options[i]);
+                }
+                typeSelection = new JComboBox(maps);
+                typeSelection.setSelectedItem(new EnsembleTypeStringMap(importer.getAttributeTypeDefault(a)));
+                typeSelection.setPreferredSize(new Dimension(175, 25));
+                typeSelection.setMaximumSize(new Dimension(175, 25));
                 this.attributeComboBoxMap.put(a, typeSelection);
             }
             typeSelection.putClientProperty("attribute", a);
-
             GridBagConstraints c = new GridBagConstraints();
             c.gridy = counter;
 
@@ -387,7 +197,7 @@ public class ImportMonteCarloDataPanel extends JPanel {
             dataPanel.add(lbl, c);
             c.gridx = 1;
             dataPanel.add(new JLabel(p.getDataStoreProcessor().getFile().getName()), c);
-            
+
             c.gridx = 2;
             dataPanel.add(typeSelection, c);
             counter++;
@@ -396,50 +206,19 @@ public class ImportMonteCarloDataPanel extends JPanel {
         dataPanel.updateUI();
     }
 
-    private void updateFileTable() {
-        String[] columnNames = {
-            "Filename", "Type", "Number of Columns"
-        };
+    private abstract class CustomRunnable implements Runnable {
 
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(columnNames);
-
-        for (Processor p : fileProcessors) {
-            File file = p.getDataStoreProcessor().getFile();
-            String type = null;
-            switch (DataStoreProcessor.getDataStoreType(file)) {
-                case DataStoreProcessor.EnsembleTimeSeriesDataStore:
-                    type = "Ensemble Timeserie";
-                    break;
-                case DataStoreProcessor.TimeSpaceDataStore:
-                    type = "Time/Space";
-                    break;
-                case DataStoreProcessor.SimpleDataSerieDataStore:
-                    type = "Ensemble Value";
-                    break;
-                case DataStoreProcessor.SimpleTimeSerieDataStore:
-                    type = "Simple Timeserie";
-                    break;
-            }
-            String columns = Integer.toString(p.getDataStoreProcessor().getAttributes().size());
-            model.addRow(new String[]{file.getName(), type, columns});
-
-            fileTable.setModel(model);
-            fileTable.getColumnModel().getColumn(0).setWidth(150);
-        }
-
-    }
-
-    private abstract class CustomRunnable implements Runnable{
         private Object customData;
 
-        public CustomRunnable(Object o){
+        public CustomRunnable(Object o) {
             setCustomData(o);
         }
-        public void setCustomData(Object o){
+
+        public void setCustomData(Object o) {
             this.customData = o;
         }
-        public Object getCustomData(){
+
+        public Object getCustomData() {
             return this.customData;
         }
     }
@@ -449,104 +228,22 @@ public class ImportMonteCarloDataPanel extends JPanel {
         progress.setInderminate(true);
 
         progress.setTask(new CustomRunnable(file) {
-
             public void run() {
-                loadDataStore((File)this.getCustomData());
-                updateFileTable();
-                updateDataTable();
+                try {
+                    importer.addFile((File) this.getCustomData());
+                    //updateFileTable();
+                    updateDataTable();
+                } catch (ImportMonteCarloException imce) {
+                    showError(imce);
+                }
+
             }
         });
         progress.execute();
     }
 
-    private JPanel createFileTable() {
-        JPanel overviewLoadedFiles = new JPanel(new BorderLayout());
-
-        String[][] rowData = {
-            {"", "", ""}
-        };
-        String[] columnNames = {
-            "Filename", "Type", "Number of Columns"
-        };
-        fileTable = new JTable(rowData, columnNames) {
-
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                super.tableChanged(e);
-                //adjust row height
-
-            }
-        };
-
-        JScrollPane loadedFilesScroll = new JScrollPane(fileTable);
-        loadedFilesScroll.setSize(defaultFilesTable);
-        loadedFilesScroll.setMinimumSize(defaultFilesTable);
-        loadedFilesScroll.setPreferredSize(defaultFilesTable);
-        //loadedFilesScroll.setRowHeight(0, 30);
-
-        overviewLoadedFiles.add(loadedFilesScroll, BorderLayout.NORTH);
-
-        JPanel buttonBar = new JPanel(new FlowLayout());
-
-        JButton loadFileButton = new JButton("Load File");
-        if (isImportCollection)
-            loadFileButton.setEnabled(false);
-        
-        loadFileButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                chooser.setFileFilter(new FileFilter() {
-
-                    public boolean accept(File f) {
-                        if (f.getName().toLowerCase().endsWith(".dat")) {
-                            return true;
-                        }
-                        if (f.isDirectory()) {
-                            return true;
-                        }
-                        return false;
-                    }
-
-                    public String getDescription() {
-                        return "data file";
-                    }
-                });
-                int returnValue = chooser.showOpenDialog(ImportMonteCarloDataPanel.this);
-                if (returnValue == JFileChooser.APPROVE_OPTION) {
-                    addFile(chooser.getSelectedFile());
-                }
-            }
-        });
-        buttonBar.add(loadFileButton);
-        
-
-        JButton removeFileButton = new JButton("Remove Dataset");
-        if (this.isImportCollection)
-            removeFileButton.setEnabled(false);
-        removeFileButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = ImportMonteCarloDataPanel.this.fileTable.getSelectedRow();
-                ImportMonteCarloDataPanel.this.fileProcessors.remove(selectedRow);
-                updateFileTable();
-                updateDataTable();
-            }
-        });
-
-        buttonBar.add(removeFileButton);
-        mergeModeBox.setSelectedIndex(1);
-        buttonBar.add(mergeModeBox);
-        overviewLoadedFiles.add(loadedFilesScroll, BorderLayout.NORTH);
-        overviewLoadedFiles.add(buttonBar, BorderLayout.SOUTH);
-
-        return overviewLoadedFiles;
-    }
-    TreeSet<String> ensembleIDs = new TreeSet<String>();
-    TreeSet<String> ensembleTimesteps = new TreeSet<String>();
-    TimeInterval ensembleTime = null;
-
     public DataCollection getEnsemble() {
-        return ensemble;
+        return finalEnsemble;
     }
 
     private Component createDataSetOverview() {
@@ -557,65 +254,46 @@ public class ImportMonteCarloDataPanel extends JPanel {
         datasetScroll.setPreferredSize(defaultDatasetTable);
         return datasetScroll;
     }
-   
-    public void addActionEventListener(ActionListener listener){
+
+    public void addActionEventListener(ActionListener listener) {
         this.listenerList.add(listener);
     }
 
     private void init() {
-        simpleDatasetClasses.put(parameterString, Parameter.class);
-        simpleDatasetClasses.put(measurementString, Measurement.class);
-        simpleDatasetClasses.put(efficiencyStringNeg, NegativeEfficiency.class);
-        simpleDatasetClasses.put(efficiencyStringPos, PositiveEfficiency.class);
-        simpleDatasetClasses.put(stateVariableString, StateVariable.class);
-
-        timeSerieDatasetClasses.put(timeseriesString, TimeSerie.class);
-        timeSerieDatasetClasses.put(measurementString, Measurement.class);
-
-        Properties prop = new Properties();
-        try{
-            prop.load(ClassLoader.getSystemResourceAsStream("reg/resources/DefaultAttributeTypes.properties"));
-        }catch(IOException ioe){
-            System.out.println("Could not load DefaultAttributeTypes.properties!");
-            ioe.printStackTrace();
-        }
-
-        Set<Object> keys = prop.keySet();
-        for (Object key : keys){
-            this.defaultAttributeTypes.put(key.toString(), prop.getProperty(key.toString()));
-        }
         JPanel panel = new JPanel(new BorderLayout());
+        JPanel buttonBar = new JPanel(new FlowLayout());
 
-        panel.add(createFileTable(), BorderLayout.NORTH);
         panel.add(createDataSetOverview(), BorderLayout.CENTER);
 
-        JPanel buttonBar = new JPanel(new FlowLayout());
-        JButton okButton = new JButton("OK");
-        okButton.addActionListener(new ActionListener() {
+        mergeModeBox.setSelectedIndex(1);
+        buttonBar.add(mergeModeBox);
 
+        JButton okButton = new JButton(Optas.i18n("OK"));
+        okButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                WorkerDlg progress = new WorkerDlg(ImportMonteCarloDataPanel.this.owner, "Import Data");
+                WorkerDlg progress = new WorkerDlg(ImportMonteCarloDataPanel.this.owner, Optas.i18n("Import_Data"));
                 progress.setInderminate(true);
                 progress.setTask(new Runnable() {
-
+                    @Override
                     public void run() {
                         try {
-                            DataCollection newCollection = null;
-                            if (isImportCollection)
-                                newCollection = importedCollection;
-                            else
-                                newCollection = ImportMonteCarloDataPanel.this.buildEnsemble();
-                            
-                            if (ensemble == null) {
-                                ensemble = newCollection;
+                            for (AttributeData a : attributeComboBoxMap.keySet()) {
+                                JComboBox b = attributeComboBoxMap.get(a);
+                                importer.setType(a, ((EnsembleTypeStringMap) b.getSelectedItem()).get());
+                            }
+                            DataCollection newCollection = importer.getEnsemble();
+
+                            if (finalEnsemble == null) {
+                                finalEnsemble = newCollection;
                             } else {
                                 switch (getMergeMode()) {
                                     case ATTACH: {
-                                        ensemble.mergeDataCollections(newCollection);
+                                        finalEnsemble.mergeDataCollections(newCollection);
                                         break;
                                     }
                                     case UNIFY: {
-                                        ensemble.unifyDataCollections(newCollection);
+                                        finalEnsemble.unifyDataCollections(newCollection);
                                         break;
                                     }
                                 }
@@ -630,21 +308,21 @@ public class ImportMonteCarloDataPanel extends JPanel {
                             }
                         } catch (Throwable t) {
                             t.printStackTrace();
-                            System.out.println(t);
+                            showError(new ImportMonteCarloException(Optas.i18n("An_error_occured_while_building_the_final_ensemble"), t));
                         }
                     }
                 });
                 progress.execute();
             }
         });
-        buttonBar.add(okButton);
-        buttonBar.add(new JButton("Cancel") {
 
+        buttonBar.add(okButton);
+        buttonBar.add(new JButton(Optas.i18n("CANCEL")) {
             {
                 addActionListener(new ActionListener() {
-
+                    @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (ImportMonteCarloDataPanel.this.ownerDlg!=null){
+                        if (ImportMonteCarloDataPanel.this.ownerDlg != null) {
                             ImportMonteCarloDataPanel.this.ownerDlg.setVisible(false);
                         }
                     }
@@ -655,4 +333,103 @@ public class ImportMonteCarloDataPanel extends JPanel {
         this.add(panel);
         setSize(defaultWindowSize);
     }
+
+    /*public static void main(String[] args) throws Exception {
+        String filename = "E:/ModelData/testWrite.nc";
+        NetcdfFileWriteable ncfile = NetcdfFileWriteable.createNew(filename, false);
+        // add dimensions
+        ucar.nc2.Dimension latDim = ncfile.addDimension("lat", 64);
+        ucar.nc2.Dimension lonDim = ncfile.addDimension("lon", 128);
+        // define Variable
+        ArrayList dims = new ArrayList();
+        dims.add(latDim);
+        dims.add(lonDim);
+        ncfile.addVariable("temperature", DataType.DOUBLE, dims);
+        ncfile.addVariableAttribute("temperature", "units", "K");
+        // add a 1D attribute of length 3
+        Array data = Array.factory(int.class, new int[]{3}, new int[]{1, 2, 3});
+        ncfile.addVariableAttribute("temperature", "scale", data);
+        // add a string-valued variable: char svar(80)
+        ucar.nc2.Dimension svar_len = ncfile.addDimension("svar_len", 80);
+        dims = new ArrayList();
+        dims.add(svar_len);
+        ncfile.addVariable("svar", DataType.CHAR, dims);
+        // string array: char names(3, 80)
+        ucar.nc2.Dimension names = ncfile.addDimension("names", 3);
+        ArrayList dima = new ArrayList();
+        dima.add(names);
+        dima.add(svar_len);
+        ncfile.addVariable("names", DataType.CHAR, dima);
+        // how about a scalar variable?
+        ncfile.addVariable("scalar", DataType.DOUBLE, new ArrayList());
+        // add global attributes
+        ncfile.addGlobalAttribute("yo", "face");
+        ncfile.addGlobalAttribute("versionD", new Double(1.2));
+        ncfile.addGlobalAttribute("versionF", new Float(1.2));
+        ncfile.addGlobalAttribute("versionI", new Integer(1));
+        ncfile.addGlobalAttribute("versionS", new Short((short) 2));
+        ncfile.addGlobalAttribute("versionB", new Byte((byte) 3));
+        // create the file
+        try {
+            ncfile.create();
+        } catch (IOException e) {
+            System.err.println("ERROR creating file " + ncfile.getLocation() + "\n" + e);
+        }
+
+        ArrayDouble A = new ArrayDouble.D2(latDim.getLength(), lonDim.getLength());
+        int i, j;
+        Index ima = A.getIndex();
+        for (i = 0; i < latDim.getLength(); i++) {
+            for (j = 0; j < lonDim.getLength(); j++) {
+                A.setDouble(ima.set(i, j), (double) (i * 1000000 + j * 1000));
+            }
+        }
+        int[] origin = new int[2];
+        try {
+            ncfile.write("temperature", origin, A);
+        } catch (IOException e) {
+            System.err.println("ERROR writing file");
+        } catch (InvalidRangeException e) {
+            e.printStackTrace();
+        }
+
+        // write char variable as String
+        try {
+            ArrayChar ac2 = new ArrayChar.D1(svar_len.getLength());
+            ac2.setString("Two pairs of ladies stockings!");
+            ncfile.write("svar", ac2);
+        } catch (IOException e) {
+            System.err.println("ERROR writing Achar2");
+        } catch (InvalidRangeException e) {
+            e.printStackTrace();
+        }
+
+        // write String array
+        try {
+            ArrayChar ac2 = new ArrayChar.D2(names.getLength(), svar_len.getLength());
+            ac2.setString(0, "0 pairs of ladies stockings!");
+            ac2.setString(1, "1 pair of ladies stockings!");
+            ac2.setString(2, "2 pairs of ladies stockings!");
+            ncfile.write("names", ac2);
+        } catch (IOException e) {
+            System.err.println("ERROR writing Achar4");
+        } catch (InvalidRangeException e) {
+            e.printStackTrace();
+        }
+        // write scalar data
+        try {
+            ArrayDouble.D0 datas = new ArrayDouble.D0();
+            datas.set(222.333);
+            ncfile.write("scalar", datas);
+        } catch (IOException e) {
+            System.err.println("ERROR writing scalar");
+        } catch (InvalidRangeException e) {
+            e.printStackTrace();
+        }
+        try {
+            ncfile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }*/
 }

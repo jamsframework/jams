@@ -17,6 +17,7 @@ import optas.optimizer.management.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.SampleFactory.SampleSO;
 import optas.io.ImportMonteCarloData;
+import optas.io.ImportMonteCarloException;
 
 @SuppressWarnings("unchecked")
 @JAMSComponentDescription(
@@ -50,14 +51,21 @@ public class ParallelSequence implements Serializable {
         }
 
         public void add(String context, File dataStore) {
-            ImportMonteCarloData importer = new ImportMonteCarloData(dataStore);
-            DataCollection nextDC = importer.getEnsemble();
-            if (nextDC == null)
-                return;
-            if (dc == null)
-                dc = importer.getEnsemble();
-            else{
-                dc.unifyDataCollections(importer.getEnsemble());
+            try {
+                ImportMonteCarloData importer = new ImportMonteCarloData();
+                importer.addFile(dataStore);
+                DataCollection nextDC = importer.getEnsemble();
+                if (nextDC == null) {
+                    return;
+                }
+                if (dc == null) {
+                    dc = importer.getEnsemble();
+                } else {
+                    dc.unifyDataCollections(importer.getEnsemble());
+                }
+            }catch(ImportMonteCarloException imce){
+                imce.printStackTrace();
+                System.out.println(imce);
             }
         }
     }

@@ -254,14 +254,15 @@ public class NetCDFFileWriter {
         file.flush();
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         
-        ImportMonteCarloData data = new ImportMonteCarloData(new File("/Users/Tilo/Dropbox/Java/JADE/workspace/output/optimizer/optimization_wizard_optimizer.dat"));
+        ImportMonteCarloData data = new ImportMonteCarloData();
+        data.addFile(new File("E:/ModelData/JAMS-Gehlberg/output/mc3_1600Final_Nov2/optimization_wizard_optimizer.dat"));
         DataCollection collection = data.getEnsemble();
         
         NetCDFFileWriter stream = null;
         try {
-            stream = new NetCDFFileWriter("/Users/Tilo/Desktop/test.cdf");
+            stream = new NetCDFFileWriter("E:/ModelData/test.nc");
             stream.write(collection);
         } catch (Exception e) {
             e.printStackTrace();
@@ -276,7 +277,7 @@ public class NetCDFFileWriter {
             }
         }
         
-        data = new ImportMonteCarloData(new File("/Users/Tilo/Dropbox/Java/JADE/workspace/output/optimizer/optimization_wizard_TimeLoop.dat"));
+        /*data = new ImportMonteCarloData(new File("/Users/Tilo/Dropbox/Java/JADE/workspace/output/optimizer/optimization_wizard_TimeLoop.dat"));
         collection = data.getEnsemble();
         
         try {
@@ -293,6 +294,6 @@ public class NetCDFFileWriter {
                     e.printStackTrace();
                 }
             }
-        }
+        }*/
     }
 }

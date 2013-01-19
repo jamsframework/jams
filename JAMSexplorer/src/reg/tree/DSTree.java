@@ -211,7 +211,7 @@ public class DSTree extends JAMSTree {
         }else{
             ImportMonteCarloDataPanel importer = new ImportMonteCarloDataPanel(this.explorer.getExplorerFrame(), collection, fo.getFile());
             JDialog dialog = importer.getDialog();
-        
+            dialog.setLocationRelativeTo(null);
             dialog.setModal(true);
             dialog.setVisible(true);
         }

@@ -13,6 +13,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import optas.io.ImportMonteCarloData;
+import optas.io.ImportMonteCarloException;
 
 /**
  *
@@ -50,9 +51,16 @@ public class Tools {
         for (File f: fDirectory.listFiles()){
             if (f.getName().startsWith("scalar") && f.getName().endsWith(".dat")){
                 System.out.println("Working on " + f);
-                ImportMonteCarloData importer = new ImportMonteCarloData(f);
-                DataCollection dc = importer.getEnsemble();
-                importer.finish();
+                ImportMonteCarloData importer = new ImportMonteCarloData();
+                DataCollection dc = null;
+                try{
+                    importer.addFile(f);
+                    dc = importer.getEnsemble();
+                    importer.finish();
+                }catch(ImportMonteCarloException imce){
+                    imce.printStackTrace();
+                    System.out.println(imce);
+                }
                 String parts[] = f.getName().split("[_\\.]");
                 long value = Long.parseLong(parts[2]);
                 String newName = f.getParent() + "/" + "timeseries_" + parts[1] + "_" + df.format(value) + ".dat";
@@ -70,8 +78,15 @@ public class Tools {
                     }
                 }
 
-                ImportMonteCarloData importer2 = new ImportMonteCarloData(f2);
-                DataCollection dc2 = importer2.getEnsemble();
+                ImportMonteCarloData importer2 = new ImportMonteCarloData();
+                DataCollection dc2 = null;
+                try{
+                importer2.addFile(f2);
+                dc2 = importer2.getEnsemble();
+                }catch(ImportMonteCarloException imce){
+                    imce.printStackTrace();
+                    System.out.println(imce);
+                }
                 importer2.finish();
                 dc.unifyDataCollections(dc2);
                 for (String attr : rangeMap.keySet()){

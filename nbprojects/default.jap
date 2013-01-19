@@ -1,7 +1,7 @@
 #JAMS-Konfigurationsdatei
-#Mon Jun 11 07:50:29 CEST 2012
+#Mon Jan 14 10:49:23 CET 2013
 infolog=
-libs=../../lib
+libs=E\:\\JAMS\\lib;../../lib
 guiconfig=true
 docbook-home=docbook/
 model=
@@ -14,8 +14,8 @@ errordlg=true
 windowontop=false
 forcelocale=
 windowheight=600
-verbose=false
-debug=1
+verbose=true
+debug=3
 guiconfigheight=600
 windowwidth=900
 guiconfigwidth=600
