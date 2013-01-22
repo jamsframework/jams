@@ -100,7 +100,7 @@ public class SwitchContext extends JAMSContext {
             if (compArray.length <= values.length) {
                 return dummy;
             } else {
-                return compArray[values.length+1];
+                return compArray[values.length];
             }
         }
 
