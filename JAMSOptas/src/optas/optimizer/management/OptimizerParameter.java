@@ -2,7 +2,7 @@ package optas.optimizer.management;
 
 import java.io.Serializable;
 
-public class OptimizerParameter implements Serializable{
+public abstract class OptimizerParameter implements Serializable{
     private String description;
     private String name;
 
@@ -42,4 +42,7 @@ public class OptimizerParameter implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
+    
+    abstract public String getString();
+    abstract public boolean setString(String value);
 }

@@ -19,11 +19,21 @@ public class StringOptimizerParameter extends OptimizerParameter {
     public String getValue() {
         return value;
     }
+    
+      public String getString() {
+        return value;
+    }
 
     /**
      * @param value the value to set
      */
     public void setValue(String value) {
         this.value = value;
+    }
+    
+    @Override
+    public boolean setString(String value){
+        this.value = value;        
+        return true;
     }
 }

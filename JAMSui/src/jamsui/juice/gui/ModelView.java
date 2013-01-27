@@ -489,6 +489,19 @@ public class ModelView {
             e.printStackTrace();
         }
     }
+    
+    public void loadModel(Document doc) {
+        try {
+            // first do search&replace on the input xml file
+            this.setTree(new ModelTree(this, doc));
+
+            this.setInitialState();
+
+        } catch (Exception e) {
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Unknown_error_during_Model_loading"), JAMS.i18n("Error_loading_model"));
+            e.printStackTrace();
+        }
+    }
 
     public JInternalFrame getFrame() {
         return frame;

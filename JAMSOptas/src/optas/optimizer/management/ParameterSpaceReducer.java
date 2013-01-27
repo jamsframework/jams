@@ -9,6 +9,7 @@ import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import optas.hydro.data.Calculations;
@@ -94,7 +95,7 @@ public class ParameterSpaceReducer extends OptimizationController {
                              "minn=" + this.minSamplingPerIteration.getValue() +  ";analyzeQuality=true;targetQuality=0.6";
 
         String params[] = paramString.split(";");
-        ArrayList<OptimizerParameter> list = new ArrayList<OptimizerParameter>();
+        HashMap<String,OptimizerParameter> list = new HashMap<String, OptimizerParameter>();
 
         for (int i=0;i<params.length;i++){
             String entry[] = params[i].split("=");
@@ -102,15 +103,15 @@ public class ParameterSpaceReducer extends OptimizationController {
                 this.getModel().getRuntime().sendErrorMsg("Invalid parameterization of SimpleOptimizationController. The Parameter in question is" + params[i]);
             }else{
                 if (entry[1].equals("true")) {
-                    list.add(new BooleanOptimizerParameter(entry[0],"unknown", true));
+                    list.put(entry[0],new BooleanOptimizerParameter(entry[0],"unknown", true));
                 }else if (entry[1].equals("false")){
-                    list.add(new BooleanOptimizerParameter(entry[0],"unknown", false));
+                    list.put(entry[0],new BooleanOptimizerParameter(entry[0],"unknown", false));
                 }else{
                     try{
                         double value = Double.parseDouble(entry[1]);
-                        list.add(new NumericOptimizerParameter(entry[0], "unknown", value, Double.MIN_VALUE, Double.MAX_VALUE));
+                        list.put(entry[0],new NumericOptimizerParameter(entry[0], "unknown", value, Double.MIN_VALUE, Double.MAX_VALUE));
                     }catch(NumberFormatException nfe){
-                        list.add(new StringOptimizerParameter(entry[0], "unknown", entry[1]));
+                        list.put(entry[0],new StringOptimizerParameter(entry[0], "unknown", entry[1]));
                     }
                 }
             }

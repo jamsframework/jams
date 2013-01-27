@@ -348,7 +348,7 @@ public class WizardOptimizerPanel extends JPanel {
         c.gridwidth = 1;
         c.insets = new Insets(0, 0, 2, 0);
 
-        for (OptimizerParameter p : optimizationScheme.getOptimizerDescription().getPropertyMap()) {
+        for (OptimizerParameter p : optimizationScheme.getOptimizerDescription().getPropertyMap().values()) {
             c.gridx = 0;
             c.gridy = counter;
             c.anchor = GridBagConstraints.NORTHWEST;

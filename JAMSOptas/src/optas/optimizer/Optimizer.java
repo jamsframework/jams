@@ -32,7 +32,7 @@ import optas.optimizer.management.Statistics;
  *
  * @author Christian Fischer
  */
-public abstract class Optimizer implements Serializable{
+public abstract class Optimizer implements Serializable, Comparable{
 
     private String parameterNames[];
     protected double[] lowBound;
@@ -64,6 +64,11 @@ public abstract class Optimizer implements Serializable{
         public abstract void logging(String msg);
     }
 
+    @Override
+    public int compareTo(Object o){
+        return this.toString().compareTo(o.toString());
+    }
+    
     protected void log(String msg) {
         if (verbose)
             function.logging(msg);

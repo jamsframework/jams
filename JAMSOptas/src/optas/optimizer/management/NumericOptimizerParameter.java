@@ -57,4 +57,17 @@ public class NumericOptimizerParameter extends OptimizerParameter {
     public void setUpperBound(double upperBound) {
         this.upperBound = upperBound;
     }
+    
+    public String getString(){
+        return this.getName() + "=" + this.value;
+    }
+    
+    public boolean setString(String value){
+        try{
+            this.value = Double.parseDouble(value);
+        }catch(NumberFormatException nfe){
+            return false;
+        }
+        return true;
+    }
 }

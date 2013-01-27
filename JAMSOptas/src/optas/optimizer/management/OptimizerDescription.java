@@ -6,6 +6,7 @@ package optas.optimizer.management;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -15,7 +16,7 @@ public class OptimizerDescription implements Serializable{
     private String shortName;
     private String optimizerClassName;
     private int id;
-    private ArrayList<OptimizerParameter> propertyMap = new ArrayList<OptimizerParameter>();
+    private HashMap<String,OptimizerParameter> propertyMap = new HashMap<String,OptimizerParameter>();
     private boolean multiObjective = false;
     private BooleanOptimizerParameter doSpatialRelaxation = new BooleanOptimizerParameter("spatialRelaxation", "do spatial relaxation", false);
     private BooleanOptimizerParameter assessNonUniqueness = new BooleanOptimizerParameter("assessNonUniqueness", "assess non uniqueness", false);
@@ -49,7 +50,7 @@ public class OptimizerDescription implements Serializable{
     }
 
     public void addParameter(OptimizerParameter param) {
-        getPropertyMap().add(param);
+        getPropertyMap().put(param.getName(),param);
     }
 
     @Override
@@ -81,7 +82,7 @@ public class OptimizerDescription implements Serializable{
     /**
      * @return the propertyMap
      */
-    public ArrayList<OptimizerParameter> getPropertyMap() {
+    public HashMap<String,OptimizerParameter> getPropertyMap() {
         return propertyMap;
         
     }
@@ -103,7 +104,7 @@ public class OptimizerDescription implements Serializable{
     /**
      * @param propertyMap the propertyMap to set
      */
-    public void setPropertyMap(ArrayList<OptimizerParameter> propertyMap) {
+    public void setPropertyMap(HashMap<String,OptimizerParameter> propertyMap) {
         this.propertyMap = propertyMap;
     }
 

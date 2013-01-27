@@ -26,4 +26,18 @@ public class BooleanOptimizerParameter extends OptimizerParameter {
     public void setValue(boolean value) {
         this.value = value;
     }
+    
+    @Override
+    public String getString(){
+        return this.getName() + "=" + value;
+    }
+    
+    public boolean setString(String value){
+        try{
+            this.value = Boolean.parseBoolean(value);
+        }catch(NumberFormatException nfe){
+            return false;
+        }
+        return true;
+    }
 }

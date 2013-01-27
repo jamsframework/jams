@@ -172,7 +172,7 @@ public abstract class OptimizationController extends OptimizerWrapper {
             }
 
             optimizer.setDebugMode(OptimizationController.this.debugMode.getValue());
-            for (OptimizerParameter key : o.getOptimizerDescription().getPropertyMap()) {
+            for (OptimizerParameter key : o.getOptimizerDescription().getPropertyMap().values()) {
                 optimizer.setSetup(key);
             }
 

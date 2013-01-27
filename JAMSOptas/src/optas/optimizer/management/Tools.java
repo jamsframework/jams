@@ -6,6 +6,7 @@ package optas.optimizer.management;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 /**
@@ -95,10 +96,10 @@ public class Tools {
         return result;
     }
 
-    static public ArrayList<OptimizerParameter> paramString2PropertyList(String paramString) throws Exception {
-        ArrayList<OptimizerParameter> propertyList = new ArrayList<OptimizerParameter>();
+    static public HashMap<String,OptimizerParameter> paramString2PropertyMap(String paramString) throws Exception {
+        HashMap<String,OptimizerParameter> propertyList = new HashMap<String,OptimizerParameter>();
         if (paramString.isEmpty()) {
-            return new ArrayList<OptimizerParameter>();
+            return new HashMap<String,OptimizerParameter>();
         }
         String params[] = paramString.split(";");
         for (int i = 0; i < params.length; i++) {
@@ -107,13 +108,13 @@ public class Tools {
                 throw new Exception("Invalid parameterization of SimpleOptimizationController. The Parameter in question is" + params[i]);
             } else {
                 if (entry[1].equals("true") || entry[1].equals("false")) {
-                    propertyList.add(new BooleanOptimizerParameter(entry[0], "unknown", Boolean.getBoolean(entry[1])));
+                    propertyList.put(entry[0],new BooleanOptimizerParameter(entry[0], "unknown", Boolean.getBoolean(entry[1])));
                 } else {
                     try {
                         double value = Double.parseDouble(entry[1]);
-                        propertyList.add(new NumericOptimizerParameter(entry[0], "unknown", value, Double.MIN_VALUE, Double.MAX_VALUE));
+                        propertyList.put(entry[0],new NumericOptimizerParameter(entry[0], "unknown", value, Double.MIN_VALUE, Double.MAX_VALUE));
                     } catch (NumberFormatException nfe) {
-                        propertyList.add(new StringOptimizerParameter(entry[0], "unknown", entry[1]));
+                        propertyList.put(entry[0],new StringOptimizerParameter(entry[0], "unknown", entry[1]));
                     }
                 }
             }
@@ -135,7 +136,7 @@ public class Tools {
 
     static public OptimizerDescription getStandardOptimizerDesc(String paramString) throws Exception {
         OptimizerDescription desc = getStandardOptimizerDesc();
-        desc.setPropertyMap(paramString2PropertyList(paramString));
+        desc.setPropertyMap(paramString2PropertyMap(paramString));
 
         return desc;
     }

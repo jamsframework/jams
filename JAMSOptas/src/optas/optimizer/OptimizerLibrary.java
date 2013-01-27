@@ -8,15 +8,15 @@ package optas.optimizer;
 import jams.runtime.JAMSRuntime;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.NumericOptimizerParameter;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
  * @author chris
  */
 public class OptimizerLibrary {
-    static Set<Optimizer> optimizerPool= new HashSet<Optimizer>();
+    static Set<Optimizer> optimizerPool= new TreeSet<Optimizer>();
 
     public static void register(Optimizer clazz) {
         if (clazz instanceof optas.optimizer.Optimizer) {

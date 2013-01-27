@@ -204,7 +204,7 @@ public abstract class OptimizationScheme extends ObservableProgress{
         c.setCustomName("obj. group #" + (groupIndex+1));
         c.setMethod(UniversalEfficiencyCalculator.availableEfficiencies[UniversalEfficiencyCalculator.NSE2]);
         o.setOptimizerDescription(new optas.optimizer.SCE().getDescription());
-        for (OptimizerParameter op : o.getOptimizerDescription().getPropertyMap()){
+        for (OptimizerParameter op : o.getOptimizerDescription().getPropertyMap().values()){
             if (op instanceof  NumericOptimizerParameter && op.getName().equals("maxn"))
                 ((NumericOptimizerParameter)op).setValue(nTotal*10+nGroup*100);
         }
