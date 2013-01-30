@@ -48,13 +48,12 @@ public class IOTest {
         SystemProperties properties = JAMSProperties.createProperties();
         properties.load("d:/jamsapplication/nsk.jap");
         String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
-        
+
         JAMSRuntime runtime = new StandardRuntime(properties);
 
         ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new JAMSLog());
 
         ModelIO io = new ModelIO(new NodeFactory() {
-
             public ModelNode createNode(ComponentDescriptor cd) {
                 return new ModelNode(cd);
             }
@@ -68,7 +67,6 @@ public class IOTest {
 
         try {
             md = io.loadModel(doc, classLoader, true, new ExceptionHandler() {
-
                 public void handle(JAMSException ex) {
                     ex.printStackTrace();
                 }

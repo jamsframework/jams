@@ -24,7 +24,6 @@ package jams.meta;
 import jams.JAMSException;
 import jams.meta.ComponentField.AttributeLinkException;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +55,7 @@ public class ModelNode extends DefaultMutableTreeNode {
     }
 
     @SuppressWarnings("unchecked")
-    public ModelNode clone(ModelDescriptor target, boolean deepCopy, Map<ContextDescriptor, ContextDescriptor> contextMap) {
+    public ModelNode clone(ComponentCollection target, boolean deepCopy, Map<ContextDescriptor, ContextDescriptor> contextMap) {
 
         ModelNode nodeCopy = null;
         try {

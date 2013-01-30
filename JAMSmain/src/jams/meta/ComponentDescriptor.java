@@ -194,6 +194,13 @@ public class ComponentDescriptor extends Observable {
         this.enabled = enabled;
     }
 
+    /**
+     * @return the componentRepository
+     */
+    public ComponentCollection getComponentRepository() {
+        return componentRepository;
+    }
+
     public class RenameException extends JAMSException {
 
         public RenameException(String message, String header) {

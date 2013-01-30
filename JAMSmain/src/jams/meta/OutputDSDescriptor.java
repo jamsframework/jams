@@ -110,6 +110,13 @@ public class OutputDSDescriptor {
     public ContextDescriptor getContext() {
         return context;
     }
+    
+    /**
+     * @param context the context to set
+     */
+    public void setContext(ContextDescriptor context) {
+        this.context = context;
+    }    
 
     @Override
     public String toString() {

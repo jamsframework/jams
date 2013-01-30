@@ -24,11 +24,19 @@ package jams.meta;
 import jams.JAMS;
 import jams.JAMSException;
 import jams.ExceptionHandler;
+import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.io.ParameterProcessor;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelElement;
 import jams.meta.ModelProperties.ModelProperty;
+import jams.runtime.JAMSClassLoader;
+import jams.runtime.JAMSLog;
+import jams.runtime.JAMSRuntime;
+import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
+import jams.tools.XMLTools;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -36,6 +44,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -50,6 +59,7 @@ public class ModelDescriptor extends ComponentCollection {
     private ModelProperties modelProperties;
     private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "", modelName = "";
     private Node dataStoresNode;
+    private NodeList metaProcessorNodes;
     private ModelNode rootNode;
 
     public ModelDescriptor() {
@@ -378,202 +388,84 @@ public class ModelDescriptor extends ComponentCollection {
         return fields;
     }
 
-    private boolean enableConcurrency(ModelNode node, ContextDescriptor concurrencyController, int maxThreads, ExceptionHandler exHandler) throws JAMSException {
-
-        Object o = node.getUserObject();
-
-        if (o instanceof ContextDescriptor) {
-            ContextDescriptor cd = (ContextDescriptor) o;
-
-            if (!cd.isEnabled()) {
-                return false;
-            }
-
-            if (cd.getConcurrency() > 1) {
-
-                /*
-                 * use the minimum of overall max threads (hardware dependant)
-                 * and number of threads for this context (model dependant)
-                 */
-                int numThreads = Math.min(cd.getConcurrency(), maxThreads);
-
-                /**
-                 * 1. detach context from parent, replace it by controller 2.
-                 * create n copies of context and attach them to controller
-                 */
-                ModelNode parent = (ModelNode) node.getParent();
-                int index = parent.getIndex(node);
-
-                ModelNode ccNode = new ModelNode(concurrencyController.cloneNode());
-                ccNode.setType(ModelNode.CONTEXT_TYPE);
-
-                parent.insert(ccNode, index);
-                node.removeFromParent();
-
-                for (int i = 0; i < numThreads; i++) {
-                    ModelNode copy = node.clone(this, true, new HashMap<ContextDescriptor, ContextDescriptor>());
-                    ccNode.add(copy);
-                }
-
-                return true;
-            }
-
-            for (int i = 0; i < node.getChildCount(); i++) {
-                ModelNode child = (ModelNode) node.getChildAt(i);
-                if (enableConcurrency(child, concurrencyController, maxThreads, exHandler)) {
-                    break;
-                }
-            }
-        }
-        return false;
+    /**
+     * @param metaProcessorNodes the metaProcessorNodes to set
+     */
+    public void setMetaProcessorNodes(NodeList metaProcessorNodes) {
+        this.metaProcessorNodes = metaProcessorNodes;
     }
 
-    @SuppressWarnings("unchecked")
-    private boolean enableSpatialConcurrency(ModelNode node, ContextDescriptor concurrencyController, ComponentDescriptor partitioner, int maxThreads, ExceptionHandler exHandler) throws JAMSException {
+    public void metaProcess(ClassLoader loader, ExceptionHandler exHandler) {
+        Element processorElement, attributeElement, parentElement;
 
-        Class contextClazz = jams.model.JAMSContext.class;
-        Class spatialContextClazz = jams.model.JAMSSpatialContext.class;
+        for (int i = 0; i < metaProcessorNodes.getLength(); i++) {
 
-        Object o = node.getUserObject();
+            processorElement = (Element) metaProcessorNodes.item(i);
+            boolean enabled = Boolean.parseBoolean(processorElement.getAttribute("enabled"));
 
-        if (o instanceof ContextDescriptor) {
-            ContextDescriptor cd = (ContextDescriptor) o;
+            if (enabled) {
+                try {
 
-            if (!cd.isEnabled()) {
-                return false;
-            }
+                    Class clazz = loader.loadClass(processorElement.getAttribute("class"));
+                    MetaProcessor mp = (MetaProcessor) clazz.newInstance();
 
-            if (cd.getConcurrency() > 1) {
-
-                /*
-                 * use the minimum of overall max threads (hardware dependant)
-                 * and number of threads for this context (model dependant)
-                 */
-                int numThreads = Math.min(cd.getConcurrency(), maxThreads);
-
-                /**
-                 * 1. detach context from parent, replace it by controller 2.
-                 * create n copies of context and attach them to controller
-                 */
-                ModelNode parent = (ModelNode) node.getParent();
-                int index = parent.getIndex(node);
-
-                ContextDescriptor ccContainer = new ContextDescriptor(concurrencyController.getInstanceName() + "Container", contextClazz, this, exHandler);
-                ModelNode ccContainerNode = new ModelNode(ccContainer);
-                ccContainerNode.setType(ModelNode.CONTEXT_TYPE);
-
-                ModelNode ccNode = new ModelNode(concurrencyController.cloneNode());
-                ccNode.setType(ModelNode.CONTEXT_TYPE);
-                ccContainerNode.insert(ccNode, 0);
-
-                if (spatialContextClazz.isAssignableFrom(cd.getClazz())) {
-
-                    ComponentDescriptor partitionerClone = partitioner.cloneNode();
-                    ComponentField inEntities = partitionerClone.getComponentFields().get("inEntities");
-                    ComponentField outEntities = partitionerClone.getComponentFields().get("outEntities");
-
-                    ComponentField entities = cd.getComponentFields().get("entities");
-
-                    String entitiesAttributeName = entities.getAttribute();
-                    ContextDescriptor entitiesProvider = entities.getContext();
-                    inEntities.linkToAttribute(entitiesProvider, entitiesAttributeName);
-
-                    String newAttributeName = entitiesAttributeName + "_1";
-                    for (int i = 1; i < numThreads; i++) {
-                        newAttributeName += ";" + entitiesAttributeName + "_" + (i + 1);
+                    NodeList properties = processorElement.getElementsByTagName("property");
+                    for (int j = 0; j < properties.getLength(); j++) {
+                        attributeElement = (Element) properties.item(j);                      
+                        mp.setValue(attributeElement.getAttribute("name"), attributeElement.getAttribute("value"));
                     }
-                    outEntities.linkToAttribute(ccContainer, newAttributeName);
 
-                    ModelNode partitionerNode = new ModelNode(partitionerClone);
-                    partitionerNode.setType(ModelNode.COMPONENT_TYPE);
-                    ccContainerNode.insert(partitionerNode, 0);
+                    parentElement = (Element) processorElement.getParentNode();
+                    
+                    ComponentDescriptor cd = getComponentDescriptor(parentElement.getAttribute("name"));
+                    if (cd instanceof ContextDescriptor) {
+                        mp.process((ContextDescriptor) cd, this, exHandler);
+                    }
 
-                    /*
-                     * this.unRegisterComponentDescriptor(cd);
-                     *
-                     * ContextDescriptor dataStoreContext = new
-                     * ContextDescriptor(cd.getInstanceName(),
-                     * spatialContextClazz, this, exHandler); ModelNode
-                     * dataStoreContextNode = new ModelNode(dataStoreContext);
-                     * dataStoreContextNode.setType(ModelNode.CONTEXT_TYPE);
-                     * entities =
-                     * dataStoreContext.getComponentFields().get("entities");
-                     * entities.linkToAttribute(entitiesProvider,
-                     * entitiesAttributeName);
-                     *
-                     * ccContainerNode.add(dataStoreContextNode);
-                     */
-                }
-
-                parent.insert(ccContainerNode, index);
-                node.removeFromParent();
-
-                for (int i = 0; i < numThreads; i++) {
-                    ModelNode copy = node.clone(this, true, new HashMap<ContextDescriptor, ContextDescriptor>());
-
-                    ContextDescriptor cdCopy = (ContextDescriptor) copy.getUserObject();
-                    ComponentField entities = cdCopy.getComponentFields().get("entities");
-                    entities.linkToAttribute(ccContainer, entities.getAttribute() + "_" + (i + 1));
-
-                    ccNode.add(copy);
-                }
-
-                return true;
-            }
-
-            for (int i = 0; i < node.getChildCount(); i++) {
-                ModelNode child = (ModelNode) node.getChildAt(i);
-                if (enableSpatialConcurrency(child, concurrencyController, partitioner, maxThreads, exHandler)) {
-                    break;
+                } catch (Exception ex) {
+                    exHandler.handle(new JAMSException("Error while while preprocessing model", ex));
                 }
             }
+
         }
-        return false;
-    }
-
-    /**
-     * This methods will search the model for contexts that can be executed in
-     * parallel. Using depth first search, the first context found will be
-     * replaced by a special controller context that contains numThread copies
-     * of the original context. The controller context controls the parallel
-     * execution of the numThreads contexts.
-     *
-     * @param numThreads Number of parallel threads
-     * @param controllerClazz The type to be used as concurrency controller
-     * @param exHandler An exception handler
-     * @throws JAMSException
-     */
-    public void enableConcurrency(int numThreads, Class controllerClazz, ExceptionHandler exHandler) throws JAMSException {
-
-        ContextDescriptor controller = new ContextDescriptor(controllerClazz, this, exHandler);
-        enableConcurrency(getRootNode(), controller, numThreads, exHandler);
-
-    }
-
-    /**
-     * This methods will search the model for contexts that can be executed in
-     * parallel. Using depth first search, the first context found will be
-     * replaced by a special controller context that contains numThread copies
-     * of the original context. The controller context controls the parallel
-     * execution of the numThreads contexts. Spatial contexts will be modified
-     * by adding a partitioner component which allows to split entity
-     * collections for parallel processing
-     *
-     * @param numThreads Number of parallel threads
-     * @param controllerClazz The type to be used as concurrency controller
-     * @param partitionerClazz The type to be used for entity partitioning
-     * @param exHandler An exception handler
-     * @throws JAMSException
-     */
-    public void enableSpatialConcurrency(int numThreads, Class controllerClazz, Class partitionerClazz, ExceptionHandler exHandler) throws JAMSException {
-
-        ContextDescriptor controller = new ContextDescriptor(controllerClazz, this, exHandler);
-        ComponentDescriptor partitioner = new ComponentDescriptor(partitionerClazz, this, exHandler);
-        enableSpatialConcurrency(getRootNode(), controller, partitioner, numThreads, exHandler);
-
     }
     
-    public void metaProcess() {
+    public static void main(String[] args) throws IOException, JAMSException {
+
+        SystemProperties properties = JAMSProperties.createProperties();
+        properties.load("e:/jamsapplication/nsk.jap");
+        String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
+
+        JAMSRuntime runtime = new StandardRuntime(properties);
+
+        ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new JAMSLog());
+
+        ModelIO io = new ModelIO(new NodeFactory() {
+            public ModelNode createNode(ComponentDescriptor cd) {
+                return new ModelNode(cd);
+            }
+        });
+
+        Document doc = XMLTools.getDocument("e:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam");
+
+        // get the model and access some meta data
+
+        ModelDescriptor md = null;
+
+        ExceptionHandler exHandler = new ExceptionHandler() {
+            public void handle(JAMSException ex) {
+                ex.printStackTrace();
+            }
+
+            public void handle(ArrayList<JAMSException> exList) {
+            }
+        };
+
+        md = io.loadModel(doc, classLoader, false, exHandler);
+
+        md.metaProcess(classLoader, exHandler);
+
+        XMLTools.writeXmlFile(io.getModelDocument(md), "e:/jamsapplication/JAMS-Gehlberg/j2k_concurrent.jam");
         
-    }
+    }    
 }

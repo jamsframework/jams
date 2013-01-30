@@ -123,6 +123,12 @@ public class ModelIO {
         if (dataStoreNode != null) {
             md.setDataStoresNode(dataStoreNode);
         }
+        
+        //handle the metaprocessors node
+        NodeList metaProcessorNodes = docRoot.getElementsByTagName("metaprocessor");
+        if (metaProcessorNodes != null) {
+            md.setMetaProcessorNodes(metaProcessorNodes);
+        }        
 
         //create the tree's root node
         ContextDescriptor cd = new ContextDescriptor(modelName, modelClazz, md, exHandler);
@@ -143,9 +149,9 @@ public class ModelIO {
 
         //handle all contextcomponent and component nodes
 
-        NodeList childs = docRoot.getChildNodes();
-        for (int index = 0; index < childs.getLength(); index++) {
-            node = childs.item(index);
+        NodeList children = docRoot.getChildNodes();
+        for (int index = 0; index < children.getLength(); index++) {
+            node = children.item(index);
             if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
                 element = (Element) node;
 
@@ -248,7 +254,7 @@ public class ModelIO {
             rootNode.setType(ModelNode.CONTEXT_TYPE);
 
             if (rootElement.hasAttribute("concurrency")) {
-                cd.setConcurrency(Integer.parseInt(rootElement.getAttribute("concurrency")));
+//                cd.setConcurrency(Integer.parseInt(rootElement.getAttribute("concurrency")));
             }
             
             NodeList children = rootElement.getChildNodes();
