@@ -33,7 +33,7 @@ import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.runtime.JAMSClassLoader;
-import jams.runtime.JAMSLog;
+import jams.runtime.JAMSLogger;
 import jams.tools.StringTools;
 import jamsui.juice.gui.JUICEFrame;
 import jamsui.juice.gui.ModelView;
@@ -159,7 +159,7 @@ public class JUICE {
 
         String[] libsArray = StringTools.toArray(libs, ";");
 
-        JUICE.loader = JAMSClassLoader.createClassLoader(libsArray, new JAMSLog());
+        JUICE.loader = JAMSClassLoader.createClassLoader(libsArray, new JAMSLogger());
     }
 
     private static Class[] getJAMSDataClasses() {

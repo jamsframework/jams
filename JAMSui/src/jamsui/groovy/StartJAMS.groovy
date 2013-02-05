@@ -41,8 +41,8 @@ class ExHandler implements ExceptionHandler {
 }
 
 // set some variables first
-propertyFile = "D:/jamsapplication/nsk.jap"
-modelFile = "D:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam"
+propertyFile = "e:/jamsapplication/nsk.jap"
+modelFile = "e:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam"
 defaultWorkspacePath = new File(modelFile).getParent()
 
 // create some property object
@@ -77,8 +77,12 @@ controllerClazz = runtime.getClassLoader().loadClass("jams.components.concurrenc
 partitionerClazz = runtime.getClassLoader().loadClass("jams.components.concurrency.EntityPartitioner")
 
 //modelDescriptor.enableConcurrency(2, controllerClazz, new ExHandler());
-modelDescriptor.metaProcess();
-modelDescriptor.enableSpatialConcurrency(100, controllerClazz, partitionerClazz, new ExHandler());
+//modelDescriptor.metaProcess();
+
+
+//modelDescriptor.enableSpatialConcurrency(4, controllerClazz, partitionerClazz, new ExHandler());
+
+
 //System.out.println(XMLTools.getStringFromDocument(modelIO.getModelDocument(modelDescriptor)));
 
 // load the model into the runtime and execute it
