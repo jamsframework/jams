@@ -31,8 +31,15 @@ import jams.meta.MetaProcessor;
 import jams.meta.ModelDescriptor;
 import jams.meta.ModelNode;
 import jams.meta.OutputDSDescriptor;
+import jams.runtime.JAMSRuntime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -41,12 +48,23 @@ import java.util.HashSet;
 public class ConcurrentContextProcessor implements MetaProcessor {
 
     private int nthreads = 1;
+    private List<String> excludeComponents;
+    private String partitionerClassName = "jams.components.concurrency.EntityPartitioner";
 
     @Override
     public void setValue(String key, String value) {
         if (key.equals("nthreads")) {
             nthreads = Integer.parseInt(value);
         }
+
+        if (key.equals("exclude_component")) {
+            excludeComponents = Arrays.asList(value.split(";"));
+        }
+
+        if (key.equals("partitioner_class")) {
+            partitionerClassName = value;
+        }
+
     }
 
     /**
@@ -58,13 +76,24 @@ public class ConcurrentContextProcessor implements MetaProcessor {
      * allows to split entity collections for parallel processing
      */
     @Override
-    public void process(ContextDescriptor context, ModelDescriptor model, ExceptionHandler exHandler) {
-
+    public void process(ContextDescriptor context, ModelDescriptor model, final JAMSRuntime rt) {
 
         if (!context.isEnabled() || (nthreads < 2)
                 || !jams.model.JAMSSpatialContext.class.isAssignableFrom(context.getClazz())) {
             return;
         }
+
+        ExceptionHandler exHandler = new ExceptionHandler() {
+            public void handle(JAMSException ex) {
+                rt.handle(ex);
+            }
+
+            public void handle(ArrayList<JAMSException> exList) {
+                for (JAMSException ex : exList) {
+                    rt.handle(ex);
+                }
+            }
+        };
 
         try {
 
@@ -75,7 +104,8 @@ public class ConcurrentContextProcessor implements MetaProcessor {
             ContextDescriptor cContainer = new ContextDescriptor(controller.getInstanceName() + "Container", jams.model.JAMSContext.class, model, exHandler);
 
             // create partitioner component
-            ComponentDescriptor partitioner = new ComponentDescriptor(EntityPartitioner.class, model, exHandler);
+            Class partitionerClass = Class.forName(partitionerClassName);
+            ComponentDescriptor partitioner = new ComponentDescriptor(partitionerClass, model, exHandler);
 
             // 1. detach context from parent, replace it by cContainer 
             // 2. create n copies of context and attach them to controller
@@ -116,6 +146,95 @@ public class ConcurrentContextProcessor implements MetaProcessor {
             // replace the spatial context by the newly created container node
             parent.insert(cContainerNode, index);
             node.removeFromParent();
+            rt.println("    Removed context " + context.getInstanceName() + " and added new context " + cContainer.getInstanceName());
+
+            // create a deep copy of the context in order to handle serial
+            // component processing and datastore output
+            ModelNode serialContextNode = node.clone(new ModelDescriptor(), true, new HashMap<ContextDescriptor, ContextDescriptor>());
+            ContextDescriptor serialContext = (ContextDescriptor) serialContextNode.getUserObject();
+            serialContext.setInstanceName(context.getInstanceName() + "_Serial");
+            cContainerNode.insert(serialContextNode, 2);
+            rt.println("    Added new serial context " + serialContext.getInstanceName());
+
+            // iterate over nodes in the serial context and pick up all selected
+            // serial components
+            ArrayList<ModelNode> serialNodeList = new ArrayList();
+            Enumeration<ModelNode> nodeEnum = serialContextNode.depthFirstEnumeration();
+            while (nodeEnum.hasMoreElements()) {
+                ModelNode n = nodeEnum.nextElement();
+                ComponentDescriptor cd = (ComponentDescriptor) n.getUserObject();
+                if (excludeComponents.contains(cd.getInstanceName())) {
+                    serialNodeList.add(n);
+                }
+            }
+
+            // iterate again and remove all nodes except those representing
+            // serial components or their ancestors
+            nodeEnum = serialContextNode.depthFirstEnumeration();
+            ArrayList<ModelNode> removeList = new ArrayList();
+            while (nodeEnum.hasMoreElements()) {
+                ModelNode n = nodeEnum.nextElement();
+
+                boolean removeNode = true;
+                if (serialNodeList.contains(n)) {
+                    removeNode = false;
+                }
+
+                for (ModelNode serialNode : serialNodeList) {
+                    if (n.isNodeDescendant(serialNode)) {
+                        removeNode = false;
+                        break;
+                    }
+                }
+
+                if (removeNode && !n.equals(serialContextNode)) {
+                    removeList.add(n);
+                } else {
+                    ComponentDescriptor cd = (ComponentDescriptor) n.getUserObject();
+                    try {
+                        cd.register(model);
+                    } catch (ComponentDescriptor.RenameException ex) {
+                        Logger.getLogger(ModelNode.class.getName()).log(Level.INFO, ex.getMessage());
+                    }
+                }
+            }
+            for (ModelNode n : removeList) {
+                n.removeFromParent();
+            }
+
+            // remove serial components from the original spatial context
+            removeList = new ArrayList();
+            nodeEnum = node.depthFirstEnumeration();
+            while (nodeEnum.hasMoreElements()) {
+                ModelNode n = nodeEnum.nextElement();
+                ComponentDescriptor cd = (ComponentDescriptor) n.getUserObject();
+                if (excludeComponents.contains(cd.getInstanceName())) {
+                    removeList.add(n);
+                }
+            }
+            for (ModelNode n : removeList) {
+                n.removeFromParent();
+            }
+
+
+            // create new context for serial iteration
+//            ContextDescriptor serialContext = new ContextDescriptor(context.getInstanceName() + "_Serial", jams.model.JAMSSpatialContext.class, model, exHandler);
+//            ModelNode serialNode = new ModelNode(serialContext);
+//            serialNode.setType(ModelNode.CONTEXT_TYPE);
+//            cContainerNode.insert(serialNode, 2);
+//            rt.println("    Added new serial context " + context.getInstanceName() + "_Serial");
+//            entitiesField = serialContext.getComponentFields().get("entities");
+//            entitiesField.linkToAttribute(entitiesProvider, entitiesAttributeName);
+//
+//            // move all serial components to the serial context and add the 
+//            // serial context to the outter container node
+//            for (ModelNode n : serialNodeList) {
+//                n.removeFromParent();
+//
+//                if (serialNode.getParent() == null) {
+//                }
+//            }
+
 
             // create "nthread" deep copies of the spatial context and insert 
             // them into the controller context, reconfiguring their "entities"
@@ -129,46 +248,38 @@ public class ConcurrentContextProcessor implements MetaProcessor {
             }
 
             // take care of datastores
-            ContextDescriptor storeContext = null;
+
             ComponentField proxyAttributes = null;
+            ComponentDescriptor caProxy = null;
             HashSet<ContextAttribute> attributes = new HashSet();
             HashMap<String, OutputDSDescriptor> stores = model.getDatastores();
             for (OutputDSDescriptor store : stores.values()) {
                 if (store.getContext() == context) {
 
-                    if (storeContext == null) {
-
-                        // create new context to iterate over entities
-                        storeContext = new ContextDescriptor(context.getInstanceName() + "_Stores", jams.model.JAMSSpatialContext.class, model, exHandler);
-                        ModelNode storeNode = new ModelNode(storeContext);
-                        storeNode.setType(ModelNode.CONTEXT_TYPE);
-                        cContainerNode.insert(storeNode, 2);
-
-                        // configure entities field
-                        entitiesField = storeContext.getComponentFields().get("entities");
-                        entitiesField.linkToAttribute(entitiesProvider, entitiesAttributeName);
-
+                    if (caProxy == null) {
                         // create datastore helper component
-                        ComponentDescriptor caProxy = new ComponentDescriptor(context.getInstanceName() + "_DSProxy", CAProxy.class, model, exHandler);
+                        caProxy = new ComponentDescriptor(context.getInstanceName() + "_DSProxy", CAProxy.class, model, exHandler);
                         ModelNode caProxyNode = new ModelNode(caProxy);
                         caProxyNode.setType(ModelNode.COMPONENT_TYPE);
-                        storeNode.insert(caProxyNode, 0);
+                        serialContextNode.insert(caProxyNode, 0);
 
                         proxyAttributes = caProxy.getComponentFields().get("attributes");
 
                     }
 
-                    store.setContext(storeContext);
+                    store.setContext(serialContext);
                     attributes.addAll(store.getContextAttributes());
                 }
             }
 
             for (ContextAttribute ca : attributes) {
-                proxyAttributes.linkToAttribute(storeContext, ca.getName(), false);
-            }            
+                proxyAttributes.linkToAttribute(serialContext, ca.getName(), false);
+            }
 
         } catch (JAMSException ex) {
             exHandler.handle(ex);
+        } catch (ClassNotFoundException cnfe) {
+            exHandler.handle(new JAMSException("Error while loading class", cnfe));
         }
 
     }
