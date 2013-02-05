@@ -31,8 +31,9 @@ import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelElement;
 import jams.meta.ModelProperties.ModelProperty;
 import jams.runtime.JAMSClassLoader;
-import jams.runtime.JAMSLog;
+import jams.runtime.JAMSLogger;
 import jams.runtime.JAMSRuntime;
+import jams.runtime.Logger;
 import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
 import jams.tools.XMLTools;
@@ -41,6 +42,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.StringTokenizer;
 import org.w3c.dom.DOMException;
@@ -56,10 +60,9 @@ import org.w3c.dom.NodeList;
 public class ModelDescriptor extends ComponentCollection {
 
     private HashMap<String, OutputDSDescriptor> outputDataStores;
+    private ArrayList<MetaProcessorDescriptor> preprocessors;
     private ModelProperties modelProperties;
     private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "", modelName = "";
-    private Node dataStoresNode;
-    private NodeList metaProcessorNodes;
     private ModelNode rootNode;
 
     public ModelDescriptor() {
@@ -104,7 +107,45 @@ public class ModelDescriptor extends ComponentCollection {
         outputDataStores.remove(dataStore.getName());
     }
 
-    public void initDatastores(ExceptionHandler exHandler) {
+    public void initPreprocessors(Node preprocessorNode, ExceptionHandler exHandler) {
+
+        preprocessors = new ArrayList();
+
+        if (preprocessorNode == null) {
+            return;
+        }
+
+        NodeList nodes = ((Element) preprocessorNode).getElementsByTagName("metaprocessor");
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+
+            Element processorElement = (Element) nodes.item(i);
+
+            ComponentDescriptor context = getComponentDescriptor(processorElement.getAttribute("context"));
+
+            if ((context == null) || !(context instanceof ContextDescriptor)) {
+                continue;
+            }
+
+            HashMap<String, String> properties = new HashMap();
+
+            NodeList propertyNodes = processorElement.getElementsByTagName("property");
+            for (int j = 0; j < propertyNodes.getLength(); j++) {
+                Element attributeElement = (Element) propertyNodes.item(j);
+                properties.put(attributeElement.getAttribute("name"), attributeElement.getAttribute("value"));
+            }
+
+            String className = processorElement.getAttribute("class");
+            boolean enabled = Boolean.parseBoolean(processorElement.getAttribute("enabled"));
+
+            MetaProcessorDescriptor mpd = new MetaProcessorDescriptor(className, (ContextDescriptor) context, enabled);
+            mpd.setProperties(properties);
+            preprocessors.add(mpd);
+
+        }
+    }
+
+    public void initDatastores(Node dataStoresNode, ExceptionHandler exHandler) {
 
         outputDataStores = new HashMap<String, OutputDSDescriptor>();
 
@@ -367,13 +408,6 @@ public class ModelDescriptor extends ComponentCollection {
         return ((ComponentDescriptor) rootNode.getUserObject()).getInstanceName();
     }
 
-    /**
-     * @param dataStoresNode the dataStoresNode to set
-     */
-    public void setDataStoresNode(Node dataStoresNode) {
-        this.dataStoresNode = dataStoresNode;
-    }
-
     @SuppressWarnings("unchecked")
     public ArrayList<ComponentField> getParameterFields() {
 
@@ -389,47 +423,38 @@ public class ModelDescriptor extends ComponentCollection {
     }
 
     /**
-     * @param metaProcessorNodes the metaProcessorNodes to set
+     * @return the preprocessors
      */
-    public void setMetaProcessorNodes(NodeList metaProcessorNodes) {
-        this.metaProcessorNodes = metaProcessorNodes;
+    public ArrayList<MetaProcessorDescriptor> getPreprocessors() {
+        return preprocessors;
     }
 
-    public void metaProcess(ClassLoader loader, ExceptionHandler exHandler) {
-        Element processorElement, attributeElement, parentElement;
+    public void metaProcess(ClassLoader loader, JAMSRuntime rt) {
 
-        for (int i = 0; i < metaProcessorNodes.getLength(); i++) {
+        for (MetaProcessorDescriptor mpd : preprocessors) {
 
-            processorElement = (Element) metaProcessorNodes.item(i);
-            boolean enabled = Boolean.parseBoolean(processorElement.getAttribute("enabled"));
+            if (mpd.isEnabled()) {
 
-            if (enabled) {
                 try {
 
-                    Class clazz = loader.loadClass(processorElement.getAttribute("class"));
+                    Class clazz = loader.loadClass(mpd.getClassName());
                     MetaProcessor mp = (MetaProcessor) clazz.newInstance();
 
-                    NodeList properties = processorElement.getElementsByTagName("property");
-                    for (int j = 0; j < properties.getLength(); j++) {
-                        attributeElement = (Element) properties.item(j);                      
-                        mp.setValue(attributeElement.getAttribute("name"), attributeElement.getAttribute("value"));
+                    for (Entry<String, String> e : mpd.getProperties().entrySet()) {
+                        mp.setValue(e.getKey(), e.getValue());
                     }
 
-                    parentElement = (Element) processorElement.getParentNode();
-                    
-                    ComponentDescriptor cd = getComponentDescriptor(parentElement.getAttribute("name"));
-                    if (cd instanceof ContextDescriptor) {
-                        mp.process((ContextDescriptor) cd, this, exHandler);
-                    }
+                    rt.println("Running MetaProcessor " + clazz.getName() + " on " + mpd.getContext().getInstanceName());
+                    mp.process(mpd.getContext(), this, rt);
+//                    mpd.setEnabled(false);
 
                 } catch (Exception ex) {
-                    exHandler.handle(new JAMSException("Error while while preprocessing model", ex));
+                    rt.handle(new JAMSException("Error while while preprocessing model", ex));
                 }
             }
-
         }
     }
-    
+
     public static void main(String[] args) throws IOException, JAMSException {
 
         SystemProperties properties = JAMSProperties.createProperties();
@@ -438,7 +463,7 @@ public class ModelDescriptor extends ComponentCollection {
 
         JAMSRuntime runtime = new StandardRuntime(properties);
 
-        ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new JAMSLog());
+        ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new JAMSLogger());
 
         ModelIO io = new ModelIO(new NodeFactory() {
             public ModelNode createNode(ComponentDescriptor cd) {
@@ -461,11 +486,19 @@ public class ModelDescriptor extends ComponentCollection {
             }
         };
 
+        Logger log = new JAMSLogger();
+        log.addObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                System.out.print(arg);
+            }
+        });
+
         md = io.loadModel(doc, classLoader, false, exHandler);
 
-        md.metaProcess(classLoader, exHandler);
+        md.metaProcess(classLoader, runtime);
 
         XMLTools.writeXmlFile(io.getModelDocument(md), "e:/jamsapplication/JAMS-Gehlberg/j2k_concurrent.jam");
-        
-    }    
+
+    }
 }

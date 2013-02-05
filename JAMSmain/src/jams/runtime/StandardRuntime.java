@@ -79,8 +79,8 @@ import org.w3c.dom.Document;
 public class StandardRuntime extends Observable implements JAMSRuntime, Serializable {
 
     private HashMap<String, JAMSData> dataHandles = new HashMap<String, JAMSData>();
-    private JAMSLog errorLog = new JAMSLog();
-    private JAMSLog infoLog = new JAMSLog();
+    private JAMSLogger errorLog = new JAMSLogger();
+    private JAMSLogger infoLog = new JAMSLogger();
     private int debugLevel = JAMS.STANDARD;
     //private RunState runState = new RunState();
     private ArrayList<GUIComponent> guiComponents = new ArrayList<GUIComponent>();
@@ -106,6 +106,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     /**
      * Loads a model from an XML document
+     *
      * @param modelDocument the XML document
      * @param properties a set of system properties providing information on
      * libs to be used and other parameter
@@ -126,7 +127,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
 
         ExceptionHandler exHandler = new ExceptionHandler() {
-
             @Override
             public void handle(JAMSException ex) {
                 StandardRuntime.this.handle(ex, true);
@@ -146,6 +146,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             // ModelDescriptor object
             ModelIO modelIO = ModelIO.getStandardModelIO();
             ModelDescriptor md = modelIO.loadModel(modelDocument, this.getClassLoader(), false, exHandler);
+
+            boolean doAutoPreprocessing = Boolean.parseBoolean(properties.getProperty(JAMSProperties.AUTO_PREPROCESSING, "false"));
+            if (doAutoPreprocessing) {
+                md.metaProcess(classLoader, this);
+            }
 
             if (StringTools.isEmptyString(md.getWorkspacePath()) && (defaultWorkspacePath != null)) {
                 md.setWorkspacePath(defaultWorkspacePath);
@@ -206,7 +211,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
 
         ExceptionHandler exHandler = new ExceptionHandler() {
-
             @Override
             public void handle(JAMSException ex) {
                 StandardRuntime.this.handle(ex, true);
@@ -259,7 +263,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         long end = System.currentTimeMillis();
         this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
         this.println(JAMS.i18n("JAMS_model_setup_time:_") + (end - start) + " ms", JAMS.STANDARD);
-        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);        
+        this.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
 
 //        classLoader = null;
 //        Runtime.getRuntime().gc();
@@ -293,7 +297,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         // load the libraries and create the class loader
 
 //        this.println(JAMS.i18n("Creating_class_loader"), JAMS.STANDARD);
-        JAMSLog log = new JAMSLog();
+        JAMSLogger log = new JAMSLogger();
         classLoader = JAMSClassLoader.createClassLoader(getLibs(), log);
         for (String line : log.toString().split("\n")) {
             this.println(line, JAMS.STANDARD);
@@ -308,14 +312,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
             // add info and error log output
             this.addInfoLogObserver(new Observer() {
-
                 @Override
                 public void update(Observable obs, Object obj) {
                     System.out.print(obj);
                 }
             });
             this.addErrorLogObserver(new Observer() {
-
                 @Override
                 public void update(Observable obs, Object obj) {
                     System.out.print(obj);
@@ -328,7 +330,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
             // add error log output via JDialog
             this.addErrorLogObserver(new Observer() {
-
                 @Override
                 public void update(Observable obs, Object obj) {
                     Object[] options = {JAMS.i18n("OK"), JAMS.i18n("OK,_skip_other_messages")};
@@ -546,7 +547,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         stopButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelStop.png")));
         stopButton.setEnabled(true);
         stopButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent evt) {
                 StandardRuntime.this.sendHalt();
@@ -561,7 +561,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         pauseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelPause.png")));
         pauseButton.setEnabled(true);
         pauseButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent evt) {
                 if (StandardRuntime.this.runState == JAMSRuntime.STATE_RUN) {
@@ -570,7 +569,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                     saveButton.setEnabled(true);
                 } else if (StandardRuntime.this.runState == JAMSRuntime.STATE_PAUSE) {
                     Thread resumedModelThread = new Thread(new Runnable() {
-
                         public void run() {
                             pauseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelPause.png")));
                             saveButton.setEnabled(false);
@@ -596,13 +594,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         saveButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelSave.png")));
         saveButton.setEnabled(false);
         saveButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent evt) {
                 if (StandardRuntime.this.runState == JAMSRuntime.STATE_PAUSE) {
                     JFileChooser fc = new JFileChooser();
                     fc.setFileFilter(new FileFilter() {
-
                         @Override
                         public boolean accept(File f) {
                             return f.isDirectory() || f.getName().toLowerCase().endsWith(".ser");
@@ -636,7 +632,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         closeButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Shutdown.png")));
         closeButton.setEnabled(false);
         closeButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent evt) {
                 StandardRuntime.this.sendHalt();
@@ -648,7 +643,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         frame.add(toolBar, BorderLayout.NORTH);
 
         frame.addWindowListener(new WindowAdapter() {
-
             @Override
             public void windowClosing(WindowEvent e) {
                 StandardRuntime.this.sendHalt();
@@ -658,7 +652,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         });
 
         this.addStateObserver(new Observer() {
-
             @Override
             public void update(Observable obs, Object obj) {
                 if (StandardRuntime.this.getState() == JAMSRuntime.STATE_STOP) {

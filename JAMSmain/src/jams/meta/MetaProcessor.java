@@ -22,8 +22,7 @@
 
 package jams.meta;
 
-import jams.ExceptionHandler;
-import javax.swing.tree.MutableTreeNode;
+import jams.runtime.JAMSRuntime;
 
 /**
  *
@@ -32,6 +31,6 @@ import javax.swing.tree.MutableTreeNode;
 public interface MetaProcessor {
     
     public void setValue(String key, String value);
-    public void process(ContextDescriptor context, ModelDescriptor model, ExceptionHandler exHandler);
+    public void process(ContextDescriptor context, ModelDescriptor model, JAMSRuntime rt);
 
 }

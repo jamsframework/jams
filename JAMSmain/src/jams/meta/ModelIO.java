@@ -33,7 +33,6 @@ import jams.meta.ComponentField.AttributeLinkException;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelProperty;
 import jams.tools.StringTools;
-import jams.tools.XMLTools;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,7 +59,6 @@ public class ModelIO {
 
     public static ModelIO getStandardModelIO() {
         return new ModelIO(new NodeFactory() {
-
             @Override
             public ModelNode createNode(ComponentDescriptor cd) {
                 return new ModelNode(cd);
@@ -80,7 +78,7 @@ public class ModelIO {
         rootNode.setType(ModelNode.MODEL_TYPE);
         md.setRootNode(rootNode);
 
-        md.initDatastores(exHandler);
+        md.initDatastores(null, exHandler);
 
         return md;
     }
@@ -91,10 +89,10 @@ public class ModelIO {
 
         // do some preprocessing on the XML document to be backward compatible
         ParameterProcessor.preProcess(modelDoc);
-        
+
         ModelDescriptor md = getModelDescriptor(modelDoc, processEditors, exHandler);
         return md;
-        
+
     }
 
     private ModelDescriptor getModelDescriptor(Document modelDoc, boolean processEditors, ExceptionHandler exHandler) throws NullClassException {
@@ -117,18 +115,6 @@ public class ModelIO {
         if (descriptionNode != null) {
             md.setDescription(descriptionNode.getTextContent().trim());
         }
-
-        //handle the datastores node
-        Node dataStoreNode = docRoot.getElementsByTagName("datastores").item(0);
-        if (dataStoreNode != null) {
-            md.setDataStoresNode(dataStoreNode);
-        }
-        
-        //handle the metaprocessors node
-        NodeList metaProcessorNodes = docRoot.getElementsByTagName("metaprocessor");
-        if (metaProcessorNodes != null) {
-            md.setMetaProcessorNodes(metaProcessorNodes);
-        }        
 
         //create the tree's root node
         ContextDescriptor cd = new ContextDescriptor(modelName, modelClazz, md, exHandler);
@@ -193,7 +179,13 @@ public class ModelIO {
             }
         }
 
-        md.initDatastores(exHandler);
+        //handle the datastores node
+        Node dataStoreNode = docRoot.getElementsByTagName("datastores").item(0);
+        md.initDatastores(dataStoreNode, exHandler);
+
+        //handle the metaprocessors node
+        Node metaProcessorNode = docRoot.getElementsByTagName("preprocessors").item(0);
+        md.initPreprocessors(metaProcessorNode, exHandler);
 
         return md;
     }
@@ -253,10 +245,6 @@ public class ModelIO {
             rootNode = nodeFactory.createNode(cd);
             rootNode.setType(ModelNode.CONTEXT_TYPE);
 
-            if (rootElement.hasAttribute("concurrency")) {
-//                cd.setConcurrency(Integer.parseInt(rootElement.getAttribute("concurrency")));
-            }
-            
             NodeList children = rootElement.getChildNodes();
             for (int index = 0; index < children.getLength(); index++) {
                 Node node = children.item(index);
@@ -288,7 +276,6 @@ public class ModelIO {
                     } catch (JAMSException ex) {
                         exHandler.handle(ex);
                     }
-
                 }
             }
         }
@@ -329,11 +316,11 @@ public class ModelIO {
             }
             //cd.linkComponentAttribute(name, view.getComponentDescriptor(context), attribute);
                 /*            }
-            try {
-            if (cd.getComponentAttributes().get(name).accessType != ComponentAttribute.READ_ACCESS) {
-            Class attributeType = cd.getComponentAttributes().get(name).type;
-            context.getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, context));
-            }*/
+             try {
+             if (cd.getComponentAttributes().get(name).accessType != ComponentAttribute.READ_ACCESS) {
+             Class attributeType = cd.getComponentAttributes().get(name).type;
+             context.getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, context));
+             }*/
 
         }
         if (e.hasAttribute("value")) {
@@ -471,6 +458,21 @@ public class ModelIO {
                 element.appendChild(document.importNode(outputDSDoc.getDocumentElement(), true));
             }
             rootElement.appendChild(element);
+
+            //create metaprocessors
+            element = (Element) document.createElement("preprocessors");
+            for (MetaProcessorDescriptor mpd : md.getPreprocessors()) {
+                Document mpdDoc = mpd.createDocument();
+                element.appendChild(document.importNode(mpdDoc.getDocumentElement(), true));
+            }
+            rootElement.appendChild(element);
+
+
+//                    //handle the metaprocessors node
+//        NodeList metaProcessorNodes = docRoot.getElementsByTagName("metaprocessor");
+//        if (metaProcessorNodes != null) {
+//            md.setMetaProcessorNodes(metaProcessorNodes);
+//        }      
 
             if (cd instanceof ContextDescriptor) {
                 ContextDescriptor context = (ContextDescriptor) cd;

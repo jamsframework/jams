@@ -27,7 +27,7 @@ import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.data.JAMSEntity;
 import jams.runtime.JAMSClassLoader;
-import jams.runtime.JAMSLog;
+import jams.runtime.JAMSLogger;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
@@ -51,7 +51,7 @@ public class IOTest {
 
         JAMSRuntime runtime = new StandardRuntime(properties);
 
-        ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new JAMSLog());
+        ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new JAMSLogger());
 
         ModelIO io = new ModelIO(new NodeFactory() {
             public ModelNode createNode(ComponentDescriptor cd) {

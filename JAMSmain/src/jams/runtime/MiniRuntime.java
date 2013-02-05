@@ -43,8 +43,8 @@ public class MiniRuntime implements JAMSRuntime {
 
     private JFrame frame;
     private int debugLevel = JAMS.VVERBOSE;
-    private JAMSLog errorLog = new JAMSLog();
-    private JAMSLog infoLog = new JAMSLog();
+    private JAMSLogger errorLog = new JAMSLogger();
+    private JAMSLogger infoLog = new JAMSLogger();
 
     /** 
      * Creates a new instance of MiniRuntime. This Runtime can be used to

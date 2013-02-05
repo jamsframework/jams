@@ -1,5 +1,5 @@
 /*
- * JAMSLog.java
+ * JAMSLogger.java
  * Created on 30. Juni 2007, 17:10
  *
  * This file is part of JAMS
@@ -21,7 +21,6 @@
  */
 package jams.runtime;
 
-import java.io.Serializable;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -29,7 +28,7 @@ import java.util.Observer;
  *
  * @author Sven Kralisch
  */
-public class JAMSLog extends Observable implements Serializable {
+public class JAMSLogger extends Observable implements Logger {
 
     StringBuffer logString = new StringBuffer();
     String lastString;
@@ -54,14 +53,17 @@ public class JAMSLog extends Observable implements Serializable {
         return logString.toString();
     }
     
+    @Override
     public String toString() {
         return getLogString();
     }    
 
+    @Override
     public String getLastString() {
         return lastString;
     }
 
+    @Override
     public void print(String str) {
         lastString = str;
         logString.append(str);
@@ -71,6 +73,7 @@ public class JAMSLog extends Observable implements Serializable {
         this.notifyObservers(str);
     }
 
+    @Override
     public void println(String str) {
         print(str + "\n");
     }    
