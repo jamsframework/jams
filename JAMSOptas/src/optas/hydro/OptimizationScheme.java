@@ -229,10 +229,10 @@ public abstract class OptimizationScheme extends ObservableProgress{
                 current = next;
             }
             
-            TimeInterval interval = JAMSDataFactory.createTimeInterval();
+            TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
 
-            Calendar startCal = JAMSDataFactory.createCalendar();
-            Calendar endCal = JAMSDataFactory.createCalendar();
+            Calendar startCal = JAMSDataFactory.getDataFactory().createCalendar();
+            Calendar endCal = JAMSDataFactory.getDataFactory().createCalendar();
 
             startCal.setTime(ts.getTime(start));
             endCal.setTime(ts.getTime(end));

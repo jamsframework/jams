@@ -34,6 +34,7 @@ public interface SystemProperties {
     String LIBS_IDENTIFIER = "libs";
     String DEBUG_IDENTIFIER = "debug";
     String VERBOSITY_IDENTIFIER = "verbose";
+    String DEBUG_MODE = "debugmode";
     String INFOLOG_IDENTIFIER = "infolog";
     String ERRORLOG_IDENTIFIER = "errorlog";
     String ERRORDLG_IDENTIFIER = "errordlg";

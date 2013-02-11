@@ -38,7 +38,7 @@ public class LongAccessor implements DataAccessor {
 
     int accessType;
 
-    public LongAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public LongAccessor(DataFactory dataFactory,Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new JAMSLong[entities.length];
@@ -50,7 +50,7 @@ public class LongAccessor implements DataAccessor {
                 }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = JAMSDataFactory.createLong();
+                    entityObject[i] = dataFactory.createLong();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + attributeName + JAMS.i18n("_does_not_exist!"));

@@ -157,7 +157,7 @@ public class TimeSerie extends DataSet{
         if (this.filter.isEmpty())
             return range;
         else{
-            TimeInterval range = JAMSDataFactory.createTimeInterval();
+            TimeInterval range = JAMSDataFactory.getDataFactory().createTimeInterval();
             range.setTimeUnit(this.range.getTimeUnit());
             range.setTimeUnitCount(this.range.getTimeUnitCount());
             range.getStart().setTime(getTime(0));
@@ -172,7 +172,7 @@ public class TimeSerie extends DataSet{
     }
 
     public static TimeSerie createFromJ2KTSDataStore(J2KTSDataStore store, int index, String name){
-        TimeInterval range = JAMSDataFactory.createTimeInterval();
+        TimeInterval range = JAMSDataFactory.getDataFactory().createTimeInterval();
         range.setStart(store.getStartDate());
         range.setEnd(store.getEndDate());
         range.setTimeUnit(store.getTimeUnit());

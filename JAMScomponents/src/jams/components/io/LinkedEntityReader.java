@@ -213,7 +213,7 @@ public class LinkedEntityReader extends JAMSComponent {
         }
 
         //create empty entities, i.e. those that are linked to in case there is no linkage ;-)
-        Attribute.Entity nullEntity = JAMSDataFactory.createEntity();
+        Attribute.Entity nullEntity = getModel().getRuntime().getDataFactory().createEntity();
         nullEntity.setValue((HashMap<String, Object>) null);
         hruMap.put(new Double(0), nullEntity);
         reachMap.put(new Double(0), nullEntity);
@@ -379,7 +379,7 @@ public class LinkedEntityReader extends JAMSComponent {
 
                 Attribute.Entity e;
 
-                e = JAMSDataFactory.createEntity();
+                e = getModel().getRuntime().getDataFactory().createEntity();
                 tokenizer = new StringTokenizer(s, "\t");
 
                 String token;

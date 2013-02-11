@@ -28,13 +28,13 @@ public class NetCDFFileReader {
     
     private TimeInterval createTimeInterval(long start, long end, int timeUnit, int timeUnitCount) {
         
-        TimeInterval interval = JAMSDataFactory.createTimeInterval();
+        TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
         interval.setTimeUnit(timeUnit);
         interval.setTimeUnitCount(timeUnitCount);
-        Calendar startCalendar = JAMSDataFactory.createCalendar();
+        Calendar startCalendar = JAMSDataFactory.getDataFactory().createCalendar();
         startCalendar.setTimeInMillis(start);
         interval.setStart(startCalendar);
-        Calendar endCalendar = JAMSDataFactory.createCalendar();
+        Calendar endCalendar = JAMSDataFactory.getDataFactory().createCalendar();
         endCalendar.setTimeInMillis(end);
         interval.setEnd(endCalendar);
         
@@ -140,15 +140,15 @@ public class NetCDFFileReader {
         
         if (file.findGlobalAttribute("timeDomainStart") != null) {
             
-            Attribute.Calendar startCal = JAMSDataFactory.createCalendar();
+            Attribute.Calendar startCal = JAMSDataFactory.getDataFactory().createCalendar();
             long start = Long.valueOf(file.findGlobalAttribute("timeDomainStart").getStringValue());
             startCal.setTimeInMillis(start);
-            Attribute.Calendar endCal = JAMSDataFactory.createCalendar();
+            Attribute.Calendar endCal = JAMSDataFactory.getDataFactory().createCalendar();
             long end = Long.valueOf(file.findGlobalAttribute("timeDomainEnd").getStringValue());
             endCal.setTimeInMillis(end);
             int timeUnit = Integer.valueOf(file.findGlobalAttribute("timeUnit").getStringValue());
             int timeUnitCount = Integer.valueOf(file.findGlobalAttribute("timeUnitCount").getStringValue());
-            TimeInterval interval = JAMSDataFactory.createTimeInterval();
+            TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
             interval.setStart(startCal);
             interval.setEnd(endCal);
             interval.setTimeUnit(timeUnit);

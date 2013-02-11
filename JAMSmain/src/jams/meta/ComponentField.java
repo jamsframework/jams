@@ -113,7 +113,7 @@ public class ComponentField {
             basicType = this.type;
         }
         if (!basicType.isInterface()) {
-            basicType = JAMSDataFactory.getBelongingInterface(basicType);
+            basicType = JAMSDataFactory.getDataFactory().getBelongingInterface(basicType);
         }
         ContextAttribute attribute = context.getDynamicAttributes().get(attributeName);
         // check if already existing

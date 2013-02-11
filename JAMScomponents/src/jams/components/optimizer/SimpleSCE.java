@@ -516,7 +516,7 @@ public class SimpleSCE extends SOOptimizer {
         this.upBound = upBound;
         this.N = lowBound.length;
         this.n = this.N;
-        this.mode = JAMSDataFactory.createInteger();
+        this.mode = getModel().getRuntime().getDataFactory().createInteger();
         this.mode.setValue(MaximizeEff);
 
         double x0[] = RandomSampler();

@@ -200,7 +200,7 @@ public class TSDataReader{
             data[i] = doubleArray.get(i);
         }
 
-        Attribute.TimeInterval interval = JAMSDataFactory.createTimeInterval();
+        Attribute.TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
         interval.setStart(startTime);
         interval.setEnd(endTime);
         if (tres.compareTo("d")==0){
@@ -240,7 +240,7 @@ public class TSDataReader{
             timeArray[i] = st.nextToken();
         }
         
-        Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+        Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
         cal.setValue(timeArray[2]+"-"+timeArray[1]+"-"+timeArray[0]+" "+timeArray[3]+":"+timeArray[4]);
         return cal;
     }    

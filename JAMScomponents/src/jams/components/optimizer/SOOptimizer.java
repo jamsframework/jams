@@ -133,10 +133,10 @@ public abstract class SOOptimizer extends Optimizer {
                 c++;
             }
         }*/
-        //this.bestParameterSets = JAMSDataFactory.createEntityCollection();
+        //this.bestParameterSets = getModel().getRuntime().getDataFactory().createEntityCollection();
 
         ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
-        Attribute.Entity entity = JAMSDataFactory.createEntity();
+        Attribute.Entity entity = getModel().getRuntime().getDataFactory().createEntity();
         entity.setId(0);
         for (int j = 0; j < n; j++) {
             entity.setDouble("x_" + (j + 1), x[j]);

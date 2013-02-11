@@ -39,7 +39,7 @@ public class CalendarAccessor implements DataAccessor {
 
     int accessType;
 
-    public CalendarAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public CalendarAccessor(DataFactory dataFactory, Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new Attribute.Calendar[entities.length];
@@ -51,7 +51,7 @@ public class CalendarAccessor implements DataAccessor {
                 }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = JAMSDataFactory.createCalendar();
+                    entityObject[i] = dataFactory.createCalendar();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + attributeName + JAMS.i18n("_does_not_exist!"));

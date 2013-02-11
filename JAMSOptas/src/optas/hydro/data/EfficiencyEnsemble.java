@@ -396,10 +396,10 @@ public class EfficiencyEnsemble extends SimpleEnsemble {
                     currentIndex = next;
                 }
 
-                TimeInterval interval = JAMSDataFactory.createTimeInterval();
+                TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
 
-                Attribute.Calendar startCal = JAMSDataFactory.createCalendar();
-                Attribute.Calendar endCal = JAMSDataFactory.createCalendar();
+                Attribute.Calendar startCal = JAMSDataFactory.getDataFactory().createCalendar();
+                Attribute.Calendar endCal = JAMSDataFactory.getDataFactory().createCalendar();
 
                 startCal.setTime(domain.getStart().clone().getTime());
                 endCal.setTime(domain.getStart().clone().getTime());

@@ -216,7 +216,7 @@ public class AdvancedOptimizationController_ extends OptimizationController {
 
         }
         //ausgabe samples
-        this.solution = JAMSDataFactory.createEntity();
+        this.solution = JAMSDataFactory.getDataFactory().createEntity();
         solution.setObject("solution", getStatistics().getParetoFront());
     }
 }

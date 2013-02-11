@@ -83,7 +83,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
             }
 
         }
-        entities = JAMSDataFactory.createEntityCollection();
+        entities = getModel().getRuntime().getDataFactory().createEntityCollection();
         entities.setEntities(entityList);
 
         super.init();

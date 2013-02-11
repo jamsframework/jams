@@ -842,27 +842,27 @@ public class NSGA2 extends Optimizer {
         }
 /*
         nsga.GoalFunction = new TestFunction();
-        nsga.boundaries = (JAMSString)JAMSDataFactory.createString();
+        nsga.boundaries = (JAMSString)JAMSDataFactory.getDataFactory().createString();
         nsga.boundaries.setValue("[0.0>1.0];[0.0>1.0]");
         nsga.parameterIDs = new JAMSDouble[2];
 
-        nsga.setCrossoverDistributionIndex(JAMSDataFactory.createDouble());
+        nsga.setCrossoverDistributionIndex(JAMSDataFactory.getDataFactory().createDouble());
         nsga.getCrossoverDistributionIndex().setValue(10.0);
-        nsga.setCrossoverProbability(JAMSDataFactory.createDouble());
+        nsga.setCrossoverProbability(JAMSDataFactory.getDataFactory().createDouble());
         nsga.getCrossoverProbability().setValue(0.5);
-        nsga.enable = (JAMSBoolean)JAMSDataFactory.createBoolean();
+        nsga.enable = (JAMSBoolean)JAMSDataFactory.getDataFactory().createBoolean();
         nsga.enable.setValue(true);
-        nsga.setMaxGeneration(JAMSDataFactory.createInteger());
+        nsga.setMaxGeneration(JAMSDataFactory.getDataFactory().createInteger());
         nsga.getMaxGeneration().setValue(10);
-        nsga.mode = (JAMSString)JAMSDataFactory.createString();
+        nsga.mode = (JAMSString)JAMSDataFactory.getDataFactory().createString();
         nsga.mode.setValue("1;1");
-        nsga.effMethodName = (JAMSString)JAMSDataFactory.createString();
+        nsga.effMethodName = (JAMSString)JAMSDataFactory.getDataFactory().createString();
         nsga.effMethodName.setValue("f1;f2");
-        nsga.setMutationDistributionIndex(JAMSDataFactory.createDouble());
+        nsga.setMutationDistributionIndex(JAMSDataFactory.getDataFactory().createDouble());
         nsga.getMutationDistributionIndex().setValue(10);
-        nsga.setMutationProbability(JAMSDataFactory.createDouble());
+        nsga.setMutationProbability(JAMSDataFactory.getDataFactory().createDouble());
         nsga.getMutationProbability().setValue(0.5);
-        nsga.setPopulationSize(JAMSDataFactory.createInteger());
+        nsga.setPopulationSize(JAMSDataFactory.getDataFactory().createInteger());
         nsga.getPopulationSize().setValue(20);
 
         nsga.init();

@@ -38,7 +38,7 @@ public class BooleanArrayAccessor implements DataAccessor {
 
     int accessType;
 
-    public BooleanArrayAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public BooleanArrayAccessor(DataFactory dataFactory, Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new Attribute.BooleanArray[entities.length];
@@ -50,7 +50,7 @@ public class BooleanArrayAccessor implements DataAccessor {
                 }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = JAMSDataFactory.createBooleanArray();
+                    entityObject[i] = dataFactory.createBooleanArray();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + attributeName + JAMS.i18n("_does_not_exist!"));

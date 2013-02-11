@@ -393,7 +393,7 @@ public class ParameterProcessor {
                     targetElement = attributeMap.get(componentName);
 
                     //convert to proper boolean representation
-                    Attribute.Boolean a = JAMSDataFactory.createBoolean();
+                    Attribute.Boolean a = JAMSDataFactory.getDataFactory().createBoolean();
                     a.setValue(propertyElement.getAttribute("value"));
                     value = a.toString();
 

@@ -112,7 +112,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
 
     public JAMSSpreadSheet(JFrame parent, String[] headers) {
         this.parent_frame = parent;
-        this.headers = JAMSDataFactory.createStringArray();
+        this.headers = getModel().getRuntime().getDataFactory().createStringArray();
         this.headers.setValue(headers);
     }
 
@@ -358,7 +358,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
 
                                         //timeVector
                                         if (col == timeIndex && timeRuns) {
-                                            Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
+                                            Attribute.Calendar timeval = getModel().getRuntime().getDataFactory().createCalendar();
                                             timeval.setValue(datarow.nextToken());
                                             timeVector.add(timeval);
                                         } //rowArray
@@ -588,7 +588,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
                         } else {
 
                             if (k == 0) {
-                                Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
+                                Attribute.Calendar timeval = getModel().getRuntime().getDataFactory().createCalendar();
                                 timeval.setValue(itemtext);
                                 timeVector.add(timeval);
 

@@ -210,7 +210,7 @@ public class CalendarInput extends JPanel implements InputComponent {
         try {
 
             Date dateTime = dateTimeFormat.parse(dateText.getText() + " " + timeText.getText());
-            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+            Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
             cal.setTime(dateTime);
             return cal.toString();
 
@@ -223,7 +223,7 @@ public class CalendarInput extends JPanel implements InputComponent {
         try {
 
             Date dateTime = dateTimeFormat.parse(dateText.getText() + " " + timeText.getText());
-            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+            Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
             cal.setTime(dateTime);
             return cal;
 
@@ -234,7 +234,7 @@ public class CalendarInput extends JPanel implements InputComponent {
 
     public void setValue(String value) {
 
-        Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+        Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
         if (!StringTools.isEmptyString(value)) {
             cal.setValue(value);
         }
@@ -348,7 +348,7 @@ public class CalendarInput extends JPanel implements InputComponent {
     public static void main(String[] args) {
         InputComponent tii = new CalendarInput();
 
-        Attribute.Calendar c = JAMSDataFactory.createCalendar();
+        Attribute.Calendar c = JAMSDataFactory.getDataFactory().createCalendar();
         c.setValue("1996-11-01 23:30");
         //tii.setMarked(true);
 

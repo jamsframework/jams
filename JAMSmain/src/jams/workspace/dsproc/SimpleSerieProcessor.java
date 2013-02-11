@@ -219,8 +219,8 @@ public class SimpleSerieProcessor extends Processor {
         
         DataMatrix rs = dsdb.getData(dsdb.getStartPosition());
         
-        Attribute.Calendar minDate = JAMSDataFactory.createCalendar();
-        Attribute.Calendar maxDate = JAMSDataFactory.createCalendar();
+        Attribute.Calendar minDate = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar maxDate = JAMSDataFactory.getDataFactory().createCalendar();
         minDate.setValue(rs.getIds()[0].toString());
         maxDate.setValue(rs.getIds()[rs.getIds().length-1].toString());
                 

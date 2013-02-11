@@ -50,6 +50,7 @@ public class ModelLoader {
 
     private HashMap<String, Component> componentRepository = new HashMap<String, Component>();
     transient private ClassLoader loader;
+    private DataFactory dataFactory;
     private Model jamsModel;
     transient private HashMap<Component, ArrayList<Field>> nullFields = new HashMap<Component, ArrayList<Field>>();
     private HashMap<String, Integer> idMap = new HashMap<String, Integer>();
@@ -58,7 +59,7 @@ public class ModelLoader {
     public ModelLoader(JAMSRuntime rt) {
 
         this.loader = rt.getClassLoader();
-
+        dataFactory = rt.getDataFactory();
         // create an empty model
         jamsModel = new JAMSModel(rt);
 
@@ -269,7 +270,7 @@ public class ModelLoader {
                             JAMSData[] array = (JAMSData[]) Array.newInstance(varComponentClazz, varValues.length);
 
                             for (int i = 0; i < varValues.length; i++) {
-                                array[i] = JAMSDataFactory.createInstance(varComponentClazz);
+                                array[i] = dataFactory.createInstance(varComponentClazz);
                                 array[i].setValue(varValues[i]);
                             }
 
@@ -277,7 +278,7 @@ public class ModelLoader {
 
                         } else if (JAMSData.class.isAssignableFrom(varClazz)) {
 
-                            JAMSData jamsVar = JAMSDataFactory.createInstance(varClazz);
+                            JAMSData jamsVar = dataFactory.createInstance(varClazz);
                             jamsVar.setValue(varValue);
                             variable = jamsVar;
 
@@ -442,7 +443,7 @@ public class ModelLoader {
 
                 // get variable object or create one if not existing
                 if ((dataObject == null) && (!jvd.defaultValue().equals(JAMSVarDescription.NULL_VALUE) || (jvd.access() == JAMSVarDescription.AccessType.WRITE))) {
-                    dataObject = JAMSDataFactory.createInstance(dataType);
+                    dataObject = dataFactory.createInstance(dataType);
                     fields[i].set(component, dataObject);
                 } else {
                     result.add(fields[i]);

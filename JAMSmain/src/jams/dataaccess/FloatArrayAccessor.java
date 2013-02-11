@@ -38,7 +38,7 @@ public class FloatArrayAccessor implements DataAccessor {
 
     int accessType;
 
-    public FloatArrayAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public FloatArrayAccessor(DataFactory dataFactory,Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new JAMSFloatArray[entities.length];
@@ -50,7 +50,7 @@ public class FloatArrayAccessor implements DataAccessor {
                 }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = JAMSDataFactory.createFloatArray();
+                    entityObject[i] = dataFactory.createFloatArray();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + attributeName + JAMS.i18n("_does_not_exist!"));

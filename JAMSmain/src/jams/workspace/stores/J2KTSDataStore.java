@@ -124,7 +124,7 @@ public class J2KTSDataStore extends TSDataStore {
 
         this.columnCount = this.getDataSetDefinition().getColumnCount();
 
-        currentDate = JAMSDataFactory.createCalendar();
+        currentDate = JAMSDataFactory.getDataFactory().createCalendar();
         currentDate.setDateFormat(timeFormat);
         currentDate.setValue(startDate);
         currentDate.add(timeUnit, -1 * timeUnitCount);

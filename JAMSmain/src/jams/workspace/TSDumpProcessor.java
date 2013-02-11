@@ -81,7 +81,7 @@ public class TSDumpProcessor {
         target.append("#STEPSIZE: " + store.getTimeUnitCount() + "\n");
         target.append("#MISSINGDATAVALUE: " + store.getMissingDataValue() + "\n");
 
-        Attribute.Calendar creationDate = JAMSDataFactory.createCalendar();
+        Attribute.Calendar creationDate = JAMSDataFactory.getDataFactory().createCalendar();
         target.append("#DATE: " + creationDate + "\n");
         target.append("#DESCRIPTION:\n");
         String description = store.getDescription();

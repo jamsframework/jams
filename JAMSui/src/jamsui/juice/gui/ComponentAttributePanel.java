@@ -163,9 +163,9 @@ public class ComponentAttributePanel extends JPanel {
                         return;
                     }
                     if (type.isArray()) {
-                        context.addDynamicAttribute(name, JAMSDataFactory.getBelongingInterface(type.getComponentType()));
+                        context.addDynamicAttribute(name, JAMSDataFactory.getDataFactory().getBelongingInterface(type.getComponentType()));
                     } else {
-                        context.addDynamicAttribute(name, JAMSDataFactory.getBelongingInterface(type));
+                        context.addDynamicAttribute(name, JAMSDataFactory.getDataFactory().getBelongingInterface(type));
                     }
                     updateRepository();
                     updateAttributeLinkGUI();

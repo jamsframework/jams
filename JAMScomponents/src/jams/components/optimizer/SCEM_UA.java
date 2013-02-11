@@ -443,7 +443,7 @@ title="Title",
                     System.out.println("Fehler -> Parameter ist NaN!!");
             }
             for (int i=0;i<N;i++) {
-                tmpArray[i] = JAMSDataFactory.createDouble();
+                tmpArray[i] = getModel().getRuntime().getDataFactory().createDouble();
                 tmpArray[i].setValue(offspring[i]);
             }
         }while (!IsSampleValid(tmpArray));

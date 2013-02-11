@@ -253,13 +253,13 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
         gispanel.removeAll();
 
         if (shapeFileName1 == null) {
-            shapeFileName1 = JAMSDataFactory.createString();
+            shapeFileName1 = getModel().getRuntime().getDataFactory().createString();
         }
         if (shapeFileName2 == null) {
-            shapeFileName2 = JAMSDataFactory.createString();
+            shapeFileName2 = getModel().getRuntime().getDataFactory().createString();
         }
         if (shapeFileName3 == null) {
-            shapeFileName3 = JAMSDataFactory.createString();
+            shapeFileName3 = getModel().getRuntime().getDataFactory().createString();
         }
 
         otherLayers = new String[]{shapeFileName1.getValue(), shapeFileName2.getValue(), shapeFileName3.getValue()};

@@ -99,9 +99,9 @@ public class WizardObjectivePanel extends JPanel implements Comparable{
         addTimeInterval.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                TimeInterval t = JAMSDataFactory.createTimeInterval();
-                t.setStart(JAMSDataFactory.createCalendar());
-                t.setEnd(JAMSDataFactory.createCalendar());
+                TimeInterval t = JAMSDataFactory.getDataFactory().createTimeInterval();
+                t.setStart(JAMSDataFactory.getDataFactory().createCalendar());
+                t.setEnd(JAMSDataFactory.getDataFactory().createCalendar());
                 WizardObjectivePanel.this.objective.addTimeDomain(t);
                 WizardObjectivePanel.this.syncData();
                 WizardObjectivePanel.this.updateMainPanel();

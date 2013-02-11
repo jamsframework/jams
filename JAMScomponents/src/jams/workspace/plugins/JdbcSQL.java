@@ -200,7 +200,7 @@ public class JdbcSQL implements DataReader {
                             dataSet.setData(j, value);
                             break;
                         case TIMESTAMP:
-                            Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+                            Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
                             //does not work .. hours are not represented well
                             GregorianCalendar greg = new GregorianCalendar();
                             greg.setTimeZone(TimeZone.getTimeZone("GMT"));

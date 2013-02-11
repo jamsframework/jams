@@ -113,7 +113,7 @@ public class ContextDescriptor extends ComponentDescriptor {
     }
 
     public HashMap<String, ContextAttribute> getAttributes(Class<?> type) {
-        type = JAMSDataFactory.getBelongingInterface(type);
+        type = JAMSDataFactory.getDataFactory().getBelongingInterface(type);
         HashMap<String, ContextAttribute> result = new HashMap<String, ContextAttribute>();
         for (Entry<String, ContextAttribute> entry : dynamicAttributes.entrySet()) {
             if (type.isAssignableFrom(entry.getValue().getType())) {

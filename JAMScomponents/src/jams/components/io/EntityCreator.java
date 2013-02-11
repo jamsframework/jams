@@ -54,7 +54,7 @@ public class EntityCreator extends JAMSComponent {
         ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
 
         for (int i = 0; i < count.getValue(); i++) {
-            list.add(JAMSDataFactory.createEntity());
+            list.add(getModel().getRuntime().getDataFactory().createEntity());
         }
 
         entities.setEntities(list);

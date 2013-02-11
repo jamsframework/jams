@@ -44,7 +44,7 @@ public class Objective implements Serializable, Comparable {
         o.setSimulation(this.getSimulation());
         o.setMethodName(this.getMethodName().substring(0));
         for (TimeInterval t : getTimeDomain()){
-            TimeInterval t2 = JAMSDataFactory.createTimeInterval();
+            TimeInterval t2 = JAMSDataFactory.getDataFactory().createTimeInterval();
             t2.setValue(t.getValue());
             o.getTimeDomain().add(t2);
         }

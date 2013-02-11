@@ -21,6 +21,7 @@
  */
 package jams.runtime;
 
+import jams.data.DataFactory;
 import java.io.Serializable;
 import java.util.*;
 import javax.swing.JFrame;
@@ -106,6 +107,8 @@ public interface JAMSRuntime extends Serializable {
 
     public Model getModel();
 
+    public DataFactory getDataFactory();
+    
     public Document getModelDocument();
 
     public ClassLoader getClassLoader();

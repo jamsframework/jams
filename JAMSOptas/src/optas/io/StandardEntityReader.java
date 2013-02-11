@@ -160,7 +160,7 @@ public class StandardEntityReader extends JAMSComponent {
 
                 Attribute.Entity e;
 
-                e = JAMSDataFactory.createEntity();
+                e = JAMSDataFactory.getDataFactory().createEntity();
                 tokenizer = new StringTokenizer(s, "\t");
 
                 String token;

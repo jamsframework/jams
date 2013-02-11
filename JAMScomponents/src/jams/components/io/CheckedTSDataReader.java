@@ -251,7 +251,7 @@ public class CheckedTSDataReader extends JAMSComponent {
         yCoord.setValue(staty);
         
         currentTime = timeInterval.getStart().clone();
-        tsTime = JAMSDataFactory.createCalendar();
+        tsTime = getModel().getRuntime().getDataFactory().createCalendar();
         tsTime.setValue("0-01-01 00:00");
         
         getModel().getRuntime().println(dataSetName.getValue() + " data file initalised ... ", JAMS.VERBOSE);
@@ -277,7 +277,7 @@ public class CheckedTSDataReader extends JAMSComponent {
         
     }
         
-    private static Attribute.Calendar parseTime(String timeString) {
+    private Attribute.Calendar parseTime(String timeString) {
         
         //Array keeping values for year, month, day, hour, minute
         String[] timeArray = new String[5];
@@ -294,7 +294,7 @@ public class CheckedTSDataReader extends JAMSComponent {
             timeArray[i] = st.nextToken();
         }
         
-        Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+        Attribute.Calendar cal = getModel().getRuntime().getDataFactory().createCalendar();
         cal.setValue(timeArray[2]+"-"+timeArray[1]+"-"+timeArray[0]+" "+timeArray[3]+":"+timeArray[4]);
         return cal;
     }

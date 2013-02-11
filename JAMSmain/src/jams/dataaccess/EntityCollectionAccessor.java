@@ -39,7 +39,7 @@ public class EntityCollectionAccessor implements DataAccessor {
 
     int accessType;
 
-    public EntityCollectionAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public EntityCollectionAccessor(DataFactory dataFactory,Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new JAMSEntityCollection[entities.length];
@@ -51,7 +51,7 @@ public class EntityCollectionAccessor implements DataAccessor {
                 }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = JAMSDataFactory.createEntityCollection();
+                    entityObject[i] = dataFactory.createEntityCollection();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + attributeName + JAMS.i18n("_does_not_exist!"));

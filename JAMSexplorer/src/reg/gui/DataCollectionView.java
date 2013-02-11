@@ -784,7 +784,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                     Date startDate = filterStartDatePicker.getDate();
                     Date endDate = filterFinalDatePicker.getDate();
 
-                    TimeInterval interval = JAMSDataFactory.createTimeInterval();
+                    TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
                     interval.getStart().setTime(startDate);
                     interval.getEnd().setTime(endDate);
 
@@ -830,7 +830,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                     Date startDate = filterStartDatePicker.getDate();
                     Date endDate = filterFinalDatePicker.getDate();
 
-                    TimeInterval interval = JAMSDataFactory.createTimeInterval();
+                    TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
                     interval.getStart().setTime(startDate);
                     interval.getEnd().setTime(endDate);
 

@@ -834,7 +834,7 @@ public class STPConfigurator extends JFrame {
 
                 if (b_data) {
                     int i = 0;
-                    Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
+                    Attribute.Calendar timeval = JAMSDataFactory.getDataFactory().createCalendar();
                     rowBuffer = new double[file_columns];
                     while (st.hasMoreTokens()) {
                         actual_string = st.nextToken();
@@ -936,7 +936,7 @@ public class STPConfigurator extends JFrame {
 
             DataValue[] rowData = ds.getData();
 
-            Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
+            Attribute.Calendar timeval = JAMSDataFactory.getDataFactory().createCalendar();
             timeval.setValue(rowData[0].getString());
             timeval.setDateFormat(dumpTimeFormat);
             timeVector.add(timeval);

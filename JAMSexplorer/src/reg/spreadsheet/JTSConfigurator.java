@@ -1963,7 +1963,7 @@ try{
                 
                 if(b_data){
                     int i = 0;
-                    Attribute.Calendar timeval = JAMSDataFactory.createCalendar();
+                    Attribute.Calendar timeval = JAMSDataFactory.getDataFactory().createCalendar();
                     rowBuffer = new double[file_columns];
                     while(st.hasMoreTokens()){
                         actual_string = st.nextToken();

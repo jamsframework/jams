@@ -154,7 +154,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
         StringTokenizer tok = new StringTokenizer(timeInterval.getValue(),";");
         while(tok.hasMoreTokens()){
             String interval = tok.nextToken();
-            TimeInterval t = JAMSDataFactory.createTimeInterval();
+            TimeInterval t = JAMSDataFactory.getDataFactory().createTimeInterval();
             t.setValue(interval);
             timeIntervalList.add(t);
         }

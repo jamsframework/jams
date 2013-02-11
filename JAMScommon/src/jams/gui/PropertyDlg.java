@@ -43,7 +43,7 @@ public class PropertyDlg extends JDialog {
 
     private static final int JCOMP_HEIGHT = 20;
     private FileListInput list;
-    private BooleanInput verboseCheck,  windowEnable,  windowOnTop,  errorDlg, profiling, defaultWSPath;
+    private BooleanInput verboseCheck, debugMode, windowEnable,  windowOnTop,  errorDlg, profiling, defaultWSPath;
     private JSpinner debugSpinner;
     private FileInput infoFile,  errorFile, docbookDir;
     private TextInput windowHeight,  windowWidth, helpBaseURL, userName, forceLocale, charset;
@@ -81,6 +81,12 @@ public class PropertyDlg extends JDialog {
         verboseCheck = new BooleanInput();
         verboseCheck.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, verboseCheck, 1, y, 1, 1, 1, 1);
+        
+        y++;
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Debug_mode:")), 0, y, 1, 1, 0, 0);
+        debugMode = new BooleanInput();
+        debugMode.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
+        GUIHelper.addGBComponent(contentPanel, gbl, debugMode, 1, y, 1, 1, 1, 1);
 
         y++;
         GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Verbosity_level:")), 0, y, 1, 1, 0, 0);
@@ -265,6 +271,7 @@ public class PropertyDlg extends JDialog {
         } catch (NumberFormatException e) {
         }
         debugSpinner.setValue(debugLevel);
+        debugMode.setValue(properties.getProperty(SystemProperties.DEBUG_MODE));
 
         errorFile.setFile(properties.getProperty(SystemProperties.ERRORLOG_IDENTIFIER));
         infoFile.setFile(properties.getProperty(SystemProperties.INFOLOG_IDENTIFIER));
@@ -299,6 +306,7 @@ public class PropertyDlg extends JDialog {
         properties.setProperty(SystemProperties.LIBS_IDENTIFIER, libs);
         properties.setProperty(SystemProperties.DEBUG_IDENTIFIER, debugSpinner.getValue().toString());
         properties.setProperty(SystemProperties.VERBOSITY_IDENTIFIER, verboseCheck.getValue());
+        properties.setProperty(SystemProperties.DEBUG_MODE, debugMode.getValue());
         properties.setProperty(SystemProperties.ERRORLOG_IDENTIFIER, errorFile.getFileName());
         properties.setProperty(SystemProperties.INFOLOG_IDENTIFIER, infoFile.getFileName());
         properties.setProperty(SystemProperties.WINDOWENABLE_IDENTIFIER, windowEnable.getValue());

@@ -207,7 +207,7 @@ public class WaterML2Reader implements DataReader {
         TimeValuePair tvp = next();
         dataSet = new DefaultDataSet(numberOfColumns);
 
-        Attribute.Calendar cal = JAMSDataFactory.createCalendar();
+        Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
         cal.setTimeInMillis(tvp.time.getTimeInMillis());
         dataSet.setData(0, new CalendarValue(cal));
         dataSet.setData(1, new DoubleValue(tvp.getValue()));

@@ -114,7 +114,7 @@ public class EntityReader extends JAMSComponent {
             model.getRuntime().handle(ioe);
         }
     }
-    public static ArrayList<Attribute.Entity> readParas(String fileName, Model model) {
+    public ArrayList<Attribute.Entity> readParas(String fileName, Model model) {
 
         BufferedReader reader;
         ArrayList<Attribute.Entity> entityList = new ArrayList<Attribute.Entity>();
@@ -160,7 +160,7 @@ public class EntityReader extends JAMSComponent {
 
                 Attribute.Entity e;
 
-                e = JAMSDataFactory.createEntity();
+                e = getModel().getRuntime().getDataFactory().createEntity();
                 tokenizer = new StringTokenizer(s, "\t");
 
                 String token;

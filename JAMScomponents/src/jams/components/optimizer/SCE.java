@@ -440,7 +440,7 @@ title="Title",
     private boolean IsSampleValid(double[] sample) {
         Attribute.Double conv_sample[] = new Attribute.Double[sample.length];
         for (int i = 0;i<sample.length;i++) {
-            conv_sample[i] = JAMSDataFactory.createDouble();
+            conv_sample[i] = getModel().getRuntime().getDataFactory().createDouble();
             conv_sample[i].setValue(sample[i]);
         }
         return IsSampleValid(conv_sample);

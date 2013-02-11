@@ -465,7 +465,7 @@ public class DataCollection extends DataSet implements Serializable{
     
     public void setGlobalTimeDomain(TimeInterval interval) {
         if (this.timeDomain == null) {
-            this.timeDomain = JAMSDataFactory.createTimeInterval();
+            this.timeDomain = JAMSDataFactory.getDataFactory().createTimeInterval();
         }
         this.timeDomain.setStart(interval.getStart().clone());
         this.timeDomain.setEnd(interval.getEnd().clone());
@@ -626,9 +626,9 @@ public class DataCollection extends DataSet implements Serializable{
 
         int c=0;
 
-        TimeInterval unifiedTimeInterval = JAMSDataFactory.createTimeInterval();
-        Calendar c1 = JAMSDataFactory.createCalendar();
-        Calendar c2 = JAMSDataFactory.createCalendar();
+        TimeInterval unifiedTimeInterval = JAMSDataFactory.getDataFactory().createTimeInterval();
+        Calendar c1 = JAMSDataFactory.getDataFactory().createCalendar();
+        Calendar c2 = JAMSDataFactory.getDataFactory().createCalendar();
 
         long startTime = 0;
         long endTime   = Long.MAX_VALUE;
@@ -719,7 +719,7 @@ public class DataCollection extends DataSet implements Serializable{
     public TimeInterval getTimeDomain() {
         if (timeDomain == null)
             return null;
-        TimeInterval t = JAMSDataFactory.createTimeInterval();
+        TimeInterval t = JAMSDataFactory.getDataFactory().createTimeInterval();
         t.setStart(timeDomain.getStart().clone());
         t.setEnd(timeDomain.getEnd().clone());
         return t;

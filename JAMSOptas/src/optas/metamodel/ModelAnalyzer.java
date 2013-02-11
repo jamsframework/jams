@@ -60,15 +60,15 @@ public class ModelAnalyzer {
         }
 
         DocumentLoader loader = new DocumentLoader();
-        loader.modelFile = JAMSDataFactory.createString();
+        loader.modelFile = JAMSDataFactory.getDataFactory().createString();
         loader.modelFile.setValue(modelFile.getName());
-        loader.workspaceDir = JAMSDataFactory.createString();
+        loader.workspaceDir = JAMSDataFactory.getDataFactory().createString();
         if (modelFile.getParent() != null) {
             loader.workspaceDir.setValue(modelFile.getParent());
         } else {
             loader.workspaceDir.setValue("");
         }
-        loader.modelDoc = JAMSDataFactory.createDocument();
+        loader.modelDoc = JAMSDataFactory.getDataFactory().createDocument();
         String errorString = loader.init_withResponse();
         Document loadedModel = loader.modelDoc.getValue();
         if (loadedModel == null) {

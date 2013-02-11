@@ -88,7 +88,7 @@ public class MOCOM extends MOOptimizer {
     private boolean isSampleValid(double[] sample) {
         Attribute.Double conv_sample[] = new JAMSDouble[sample.length];
         for (int i = 0; i < sample.length; i++) {
-            conv_sample[i] = JAMSDataFactory.createDouble();
+            conv_sample[i] = getModel().getRuntime().getDataFactory().createDouble();
             conv_sample[i].setValue(sample[i]);
         }
         return isSampleValid(conv_sample);

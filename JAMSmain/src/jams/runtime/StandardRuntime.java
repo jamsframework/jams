@@ -44,7 +44,10 @@ import jams.JAMS;
 import jams.JAMSProperties;
 import jams.JAMSVersion;
 import jams.SystemProperties;
+import jams.data.DataFactory;
 import jams.data.JAMSData;
+import jams.data.JAMSDataFactory;
+import jams.data.JAMSDataFactoryChecked;
 import jams.io.ModelLoader;
 import jams.model.SmallModelState;
 import jams.io.ParameterProcessor;
@@ -96,7 +99,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private int runState = -1;
     private HashMap<String, Integer> idMap;
     transient private SmallModelState state = new JAMSSmallModelState();
-
+    private DataFactory dataFactory = JAMSDataFactory.getDataFactory();;
+    
     public StandardRuntime(SystemProperties properties) {
         this.properties = properties;
 
@@ -306,6 +310,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         // set the debug (i.e. output verbosity) level
         this.setDebugLevel(Integer.parseInt(properties.getProperty(SystemProperties.DEBUG_IDENTIFIER, "1")));
 
+        boolean debugMode = Boolean.parseBoolean(this.properties.getProperty(SystemProperties.DEBUG_MODE));
+        if (debugMode){
+            dataFactory = JAMSDataFactoryChecked.getDataFactory();
+        }else{
+            dataFactory = JAMSDataFactory.getDataFactory();
+        }
         // add log observers for output to system.out if needed
         boolean verbose = Boolean.parseBoolean(properties.getProperty(SystemProperties.VERBOSITY_IDENTIFIER, "true"));
         if (verbose) {
@@ -671,6 +681,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         return dataHandles;
     }
 
+    public DataFactory getDataFactory(){
+        return dataFactory;
+    }
+    
     public void setDataHandles(HashMap<String, JAMSData> dataHandles) {
         this.dataHandles = dataHandles;
     }

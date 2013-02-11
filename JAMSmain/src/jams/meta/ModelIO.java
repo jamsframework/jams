@@ -347,7 +347,7 @@ public class ModelIO {
         // workaround for models that use the "old" API, i.e. JAMSData
         // classes instead of interfaces
         if (!type.isInterface()) {
-            type = JAMSDataFactory.getBelongingInterface(type);
+            type = JAMSDataFactory.getDataFactory().getBelongingInterface(type);
         }
 
         if (!type.isArray()) {
@@ -508,10 +508,10 @@ public class ModelIO {
         propertyElement.setAttribute("component", property.component.getInstanceName());
         if (property.var != null) {
             propertyElement.setAttribute("attribute", property.var.getName());
-            propertyElement.setAttribute("type", JAMSDataFactory.getBelongingInterface(property.var.getType()).getSimpleName());
+            propertyElement.setAttribute("type", JAMSDataFactory.getDataFactory().getBelongingInterface(property.var.getType()).getSimpleName());
         } else if (property.attribute != null) {
             propertyElement.setAttribute("attribute", property.attribute.getName());
-            propertyElement.setAttribute("type", JAMSDataFactory.getBelongingInterface(property.attribute.getType()).getSimpleName());
+            propertyElement.setAttribute("type", JAMSDataFactory.getDataFactory().getBelongingInterface(property.attribute.getType()).getSimpleName());
         } else {
             propertyElement.setAttribute("attribute", ParameterProcessor.COMPONENT_ENABLE_VALUE);
             propertyElement.setAttribute("type", Attribute.Boolean.class.getSimpleName());

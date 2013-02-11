@@ -478,7 +478,7 @@ public class AdvancedOptimizationController extends OptimizationController {
             bestSampleY = min.F();                        
         }*/
         //ausgabe samples
-        this.solution = JAMSDataFactory.createEntity();
+        this.solution = JAMSDataFactory.getDataFactory().createEntity();
         solution.setObject("solution", getStatistics().getParetoFront());
     }
 }

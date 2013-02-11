@@ -108,15 +108,15 @@ public class ModelModifier {
         }
 
         DocumentLoader loader = new DocumentLoader();
-        loader.modelFile = JAMSDataFactory.createString();
+        loader.modelFile = JAMSDataFactory.getDataFactory().createString();
         loader.modelFile.setValue(modelFile.getName());
-        loader.workspaceDir = JAMSDataFactory.createString();
+        loader.workspaceDir = JAMSDataFactory.getDataFactory().createString();
         if (modelFile.getParentFile() != null) {
             loader.workspaceDir.setValue(modelFile.getParentFile().getAbsolutePath());
         } else {
             loader.workspaceDir.setValue("");
         }
-        loader.modelDoc = JAMSDataFactory.createDocument();
+        loader.modelDoc = JAMSDataFactory.getDataFactory().createDocument();
         String errorString = loader.init_withResponse();
         loadedModel = loader.modelDoc.getValue();
         loadedModel = Tools.preProcessDocument(loadedModel); // do only here!

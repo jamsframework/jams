@@ -199,7 +199,7 @@ public class NonUniquenessAssessor2 extends OptimizationController {
         paretoFront = (ArrayList<Sample>) o.getSolution().clone();
 
         //ausgabe samples
-        //this.solution = JAMSDataFactory.createEntity();
+        //this.solution = JAMSDataFactory.getDataFactory().createEntity();
         //solution.setObject("solution", getStatistics().getParetoFront());
         //paretoFront = (ArrayList<Sample>)getStatistics().getParetoFront().clone();
 

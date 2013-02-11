@@ -49,7 +49,7 @@ description = "This component represents a JAMS model which is a special type of
 public class JAMSModel extends JAMSContext implements Model {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
-    public Attribute.DirName workspaceDirectory = JAMSDataFactory.createDirName();
+    public Attribute.DirName workspaceDirectory = JAMSDataFactory.getDataFactory().createDirName();
     private JAMSRuntime runtime;
     private String name, author, date;
     public JAMSWorkspace workspace;

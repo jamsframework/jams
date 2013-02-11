@@ -313,7 +313,7 @@ public class ImportMonteCarloData implements Serializable {
                         namedTimesteps[i] = timesteps[i].toString();
                     }
 
-                    ensembleTime = JAMSDataFactory.createTimeInterval();
+                    ensembleTime = JAMSDataFactory.getDataFactory().createTimeInterval();
                     ensembleTime.setStart(timesteps[0]);
                     ensembleTime.setEnd(timesteps[timesteps.length - 1]);
                     ensembleTime.setTimeUnit(s.getTimeUnit());

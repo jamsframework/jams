@@ -196,7 +196,7 @@ public abstract class MOOptimizer extends Optimizer {
             Sample s = iter.next();
             
             ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
-            Attribute.Entity entity = JAMSDataFactory.createEntity();
+            Attribute.Entity entity = getModel().getRuntime().getDataFactory().createEntity();
             entity.setId(i);
             for (int j=0;j<n;j++){
                 entity.setDouble("x_"+(j+1), s.getParameter()[j]);

@@ -23,9 +23,9 @@ package jams.dataaccess;
 
 import jams.data.Attribute;
 import jams.data.JAMSData;
-import jams.data.JAMSDataFactory;
 import jams.data.JAMSEntity;
 import jams.JAMS;
+import jams.data.DataFactory;
 
 /**
  *
@@ -41,7 +41,7 @@ public class ObjectAccessor implements DataAccessor {
 
     int accessType;
 
-    public ObjectAccessor(Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    public ObjectAccessor(DataFactory dataFactory,Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new Attribute.Object[entities.length];
@@ -53,7 +53,7 @@ public class ObjectAccessor implements DataAccessor {
                 }
             } else {
                 if (accessType != DataAccessor.READ_ACCESS) {
-                    entityObject[i] = JAMSDataFactory.createObject();
+                    entityObject[i] = dataFactory.createObject();
                     entities[i].setObject(attributeName, entityObject[i]);
                 } else {
                     throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + attributeName + JAMS.i18n("_does_not_exist!"));

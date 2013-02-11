@@ -115,10 +115,10 @@ public class ShapeEntityReader extends JAMSComponent {
         while (featureIterator.hasNext()) {
             SimpleFeature f = featureIterator.next();
 
-            Attribute.Entity e = JAMSDataFactory.createEntity();
+            Attribute.Entity e = getModel().getRuntime().getDataFactory().createEntity();
 
             for (int i = 0; i < atts.size(); i++) {
-                e.setObject(atts.get(i).getName().toString(), JAMSDataFactory.createInstance(f.getAttribute(i)));
+                e.setObject(atts.get(i).getName().toString(), getModel().getRuntime().getDataFactory().createInstance(f.getAttribute(i)));
             }
             Geometry geom = (Geometry) f.getDefaultGeometry();
             AreaFunction af = new AreaFunction();

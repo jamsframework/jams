@@ -61,7 +61,7 @@ public class InputComponentFactory {
         InputComponent ic;
 
         if (type.isInterface()) {
-            type = JAMSDataFactory.getImplementingClass(type);
+            type = JAMSDataFactory.getDataFactory().getImplementingClass(type);
         }
 
         if (Attribute.FileName.class.isAssignableFrom(type)) {

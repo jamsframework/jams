@@ -75,8 +75,8 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         // create a list with one entitiy, this is the minimum number for any context
         ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
-        list.add(JAMSDataFactory.createEntity());
-        setEntities(JAMSDataFactory.createEntityCollection());
+        list.add(JAMSDataFactory.getDataFactory().createEntity());
+        setEntities(JAMSDataFactory.getDataFactory().createEntityCollection());
         getEntities().setEntities(list);
 
         attributeMap = new HashMap<String, JAMSData>();
@@ -252,7 +252,7 @@ public class JAMSContext extends JAMSComponent implements Context {
             try {
 
                 clazz = Class.forName(attributeSpec.className);
-                JAMSData data = JAMSDataFactory.createInstance(clazz);
+                JAMSData data = JAMSDataFactory.getDataFactory().createInstance(clazz);
                 data.setValue(attributeSpec.value);
                 attributeMap.put(attributeSpec.attributeName, data);
 
@@ -806,7 +806,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                 dataObject = componentObject;
             } else {
                 try {
-                    dataObject = JAMSDataFactory.createInstance(clazz);
+                    dataObject = JAMSDataFactory.getDataFactory().createInstance(clazz);
                 } catch (InstantiationException ex) {
                     getModel().getRuntime().handle(ex, false);
                 } catch (IllegalAccessException ex) {
@@ -815,53 +815,53 @@ public class JAMSContext extends JAMSComponent implements Context {
             }
 
             attributeMap.put(attributeName, dataObject);
-
+            DataFactory dataFactory = getModel().getRuntime().getDataFactory();
             if (clazz.isInterface()) {
-                clazz = JAMSDataFactory.getImplementingClass(clazz);
+                clazz = dataFactory.getImplementingClass(clazz);
             }
 
-            if (clazz.equals(JAMSDouble.class)) {
-                da = new DoubleAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSDoubleArray.class)) {
-                da = new DoubleArrayAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSLong.class)) {
-                da = new CalendarAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSLongArray.class)) {
-                da = new LongArrayAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSString.class)) {
-                da = new StringAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSStringArray.class)) {
-                da = new StringArrayAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSBoolean.class)) {
-                da = new BooleanAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSBooleanArray.class)) {
-                da = new BooleanArrayAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSFloat.class)) {
-                da = new FloatAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSFloatArray.class)) {
-                da = new FloatArrayAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSInteger.class)) {
-                da = new IntegerAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSIntegerArray.class)) {
-                da = new IntegerArrayAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSFileName.class)) {
-                da = new StringAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSDirName.class)) {
-                da = new StringAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSEntity.class)) {
-                da = new EntityAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSEntityCollection.class)) {
-                da = new EntityCollectionAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSCalendar.class)) {
-                da = new CalendarAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSDocument.class)) {
-                da = new DocumentAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSGeometry.class)) {
-                da = new GeometryAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSObject.class)) {
-                da = new ObjectAccessor(ea, dataObject, attributeName, accessType);
-            } else if (clazz.equals(JAMSObjectArray.class)) {
-                da = new ObjectArrayAccessor(ea, dataObject, attributeName, accessType);
+            if (JAMSDouble.class.isAssignableFrom(clazz)) {
+                da = new DoubleAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSDoubleArray.class.isAssignableFrom(clazz)) {
+                da = new DoubleArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSLong.class.isAssignableFrom(clazz)) {
+                da = new CalendarAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSLongArray.class.isAssignableFrom(clazz)) {
+                da = new LongArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSString.class.isAssignableFrom(clazz)) {
+                da = new StringAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSStringArray.class.isAssignableFrom(clazz)) {
+                da = new StringArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSBoolean.class.isAssignableFrom(clazz)) {
+                da = new BooleanAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSBooleanArray.class.isAssignableFrom(clazz)) {
+                da = new BooleanArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSFloat.class.isAssignableFrom(clazz)) {
+                da = new FloatAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSFloatArray.class.isAssignableFrom(clazz)) {
+                da = new FloatArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSInteger.class.isAssignableFrom(clazz)) {
+                da = new IntegerAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSIntegerArray.class.isAssignableFrom(clazz)) {
+                da = new IntegerArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSIntegerArray.class.isAssignableFrom(clazz)) {
+                da = new StringAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSDirName.class.isAssignableFrom(clazz)) {
+                da = new StringAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSEntity.class.isAssignableFrom(clazz)) {
+                da = new EntityAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSEntityCollection.class.isAssignableFrom(clazz)) {
+                da = new EntityCollectionAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSCalendar.class.isAssignableFrom(clazz)) {
+                da = new CalendarAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSDocument.class.isAssignableFrom(clazz)) {
+                da = new DocumentAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSGeometry.class.isAssignableFrom(clazz)) {
+                da = new GeometryAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSObject.class.isAssignableFrom(clazz)) {
+                da = new ObjectAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSObjectArray.class.isAssignableFrom(clazz)) {
+                da = new ObjectArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
             } else {
                 getModel().getRuntime().sendHalt(JAMS.i18n("Class_") + clazz.getCanonicalName() + JAMS.i18n("_not_supported!"));
             }
@@ -926,7 +926,7 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
 
         ArrayList<JAMSEntity> list = new ArrayList<JAMSEntity>();
-        list.add((JAMSEntity) JAMSDataFactory.createEntity());
+        list.add((JAMSEntity) getModel().getRuntime().getDataFactory().createEntity());
     }
 
     public HashMap<String, DataAccessor> getDataAccessorMap() {
