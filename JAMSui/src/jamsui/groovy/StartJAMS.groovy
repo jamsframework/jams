@@ -54,6 +54,8 @@ properties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "true")
 properties.setProperty(JAMSProperties.ERRORDLG_IDENTIFIER, "false")
 properties.setProperty(JAMSProperties.DEBUG_IDENTIFIER, "1")
 
+System.out.println(properties.getProperty(JAMSProperties.AUTO_PREPROCESSING))
+
 // tweak localization
 JAMSTools.configureLocaleEncoding(properties)
 
@@ -77,7 +79,7 @@ controllerClazz = runtime.getClassLoader().loadClass("jams.components.concurrenc
 partitionerClazz = runtime.getClassLoader().loadClass("jams.components.concurrency.EntityPartitioner")
 
 //modelDescriptor.enableConcurrency(2, controllerClazz, new ExHandler());
-//modelDescriptor.metaProcess();
+//modelDescriptor.metaProcess(runtime);
 
 
 //modelDescriptor.enableSpatialConcurrency(4, controllerClazz, partitionerClazz, new ExHandler());

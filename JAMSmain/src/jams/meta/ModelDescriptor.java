@@ -429,7 +429,7 @@ public class ModelDescriptor extends ComponentCollection {
         return preprocessors;
     }
 
-    public void metaProcess(ClassLoader loader, JAMSRuntime rt) {
+    public void metaProcess(JAMSRuntime rt) {
 
         for (MetaProcessorDescriptor mpd : preprocessors) {
 
@@ -437,7 +437,7 @@ public class ModelDescriptor extends ComponentCollection {
 
                 try {
 
-                    Class clazz = loader.loadClass(mpd.getClassName());
+                    Class clazz = rt.getClassLoader().loadClass(mpd.getClassName());
                     MetaProcessor mp = (MetaProcessor) clazz.newInstance();
 
                     for (Entry<String, String> e : mpd.getProperties().entrySet()) {
@@ -496,7 +496,7 @@ public class ModelDescriptor extends ComponentCollection {
 
         md = io.loadModel(doc, classLoader, false, exHandler);
 
-        md.metaProcess(classLoader, runtime);
+        md.metaProcess(runtime);
 
         XMLTools.writeXmlFile(io.getModelDocument(md), "e:/jamsapplication/JAMS-Gehlberg/j2k_concurrent.jam");
 
