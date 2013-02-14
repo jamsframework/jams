@@ -170,6 +170,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             this.idMap = modelLoader.getIdMap();
 
         } catch (Exception jex) {
+            jex.printStackTrace();
             this.handle(jex, false);
         }
 

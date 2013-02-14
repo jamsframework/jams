@@ -45,24 +45,21 @@ description = "This component can be used to output a number of selected entity 
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSString fileName;
+            public Attribute.String fileName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file header descriptions"
             )
-            public JAMSStringArray headers;
+            public Attribute.StringArray headers;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Output file attributes"
             )
-            public JAMSDouble[] value;
+            public Attribute.Double[] value;
     
     private GenericDataWriter writer;
     

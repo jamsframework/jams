@@ -48,7 +48,7 @@ import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import jams.data.JAMSCalendar;
+import jams.data.*;
 
 /**
  *
@@ -71,7 +71,7 @@ public class CTSPlot {
             boolean rightAxisInverted;
             boolean leftAxisInverted;
             String dateFormat; //"dd-MM-yyyy"
-            public JAMSCalendar time;
+            public Attribute.Calendar time;
             double[] valueLeft;
             double[] valueRight;
             String title;
@@ -120,7 +120,7 @@ public class CTSPlot {
             String rightAxisTitle = "right axis title";
             boolean rightAxisInverted = false;
             String dateFormat = "dd/MM/yyyy"; //"dd-MM-yyyy"
-            //public JAMSCalendar time;
+            //public Attribute.Calendar time;
             //double[] valueLeft;
             //double[] valueRight;
             String title = "CTSPlot ver. 0.10";
@@ -335,7 +335,7 @@ public class CTSPlot {
     }
 
     
-    public void plot(JAMSCalendar time, double[] valueLeft, double[] valueRight) {
+    public void plot(Attribute.Calendar time, double[] valueLeft, double[] valueRight) {
         try {
             for (i = 0; i < graphCountRight; i++) {
                 double value = valueRight[i];

@@ -22,9 +22,6 @@
 package jams.components.gui;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
-import jams.data.Attribute;
-import jams.data.Attribute.Entity.NoSuchAttributeException;
-import jams.data.JAMSDataFactory;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -38,10 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.map.DefaultMapLayer;
-import jams.data.JAMSEntityCollection;
-import jams.data.JAMSInteger;
-import jams.data.JAMSString;
-import jams.data.JAMSStringArray;
+import jams.data.*;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSVarDescription;
 
@@ -95,7 +89,6 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import jams.components.io.ShapeTool;
-import jams.data.JAMSBoolean;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JSlider;
@@ -117,88 +110,75 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Name of SLD-File containing layer style information"
-            )public JAMSString stylesFileName;
+            )public Attribute.String stylesFileName;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "ID of a style in the SLD-File"
-            )public JAMSInteger styleID;
+            )public Attribute.Integer styleID;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Collection of hru objects"
-            )public JAMSEntityCollection hrus;
+            )public Attribute.EntityCollection hrus;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Name of hru attribute to add for mapping"
-            )public JAMSStringArray showAttr;
+            )public Attribute.StringArray showAttr;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Number of ranges for classification attribute"
-            )public JAMSStringArray numOfRanges;
+            )public Attribute.StringArray numOfRanges;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Color shading the ranges"
-            )public JAMSStringArray rangeColor;
+            )public Attribute.StringArray rangeColor;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Name of shapefile to add as a layer to the map"
             )public Attribute.String shapeFileName1;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Name of shapefile to add as a layer to the map"
             )public Attribute.String shapeFileName2;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Name of shapefile to add as a layer to the map"
             )public Attribute.String shapeFileName3;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Colors for extra shapefiles"
-            )public JAMSStringArray shapeColors;
+            )public Attribute.StringArray shapeColors;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.RUN, description = "Original shape file name")
-    public JAMSString baseShape;
+    public Attribute.String baseShape;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "path to height map"
             )
-            public JAMSString heightMap;
+            public Attribute.String heightMap;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "resolution of 3d model, that means number of grid cells in each row",
             defaultValue = "256"
             )
-            public JAMSInteger resolution = null;
+            public Attribute.Integer resolution = null;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "switch to toggle directional lighting of 3d model on and off",
             defaultValue = "true"
             )
-            public JAMSBoolean light = null;
+            public Attribute.Boolean light = null;
     
     transient private JPanel panel, waitPanel;
     transient private GISPanel gispanel;
@@ -384,7 +364,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
         return this.selectedF;
     }
 
-    private void getCollections() throws NoSuchAttributeException, Exception {
+    private void getCollections() throws Exception {
 
         for (int i = 0; i <= numOfParams - 1; i++) {
 

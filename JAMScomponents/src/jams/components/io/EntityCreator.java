@@ -31,8 +31,8 @@ import jams.model.*;
  */
 @JAMSComponentDescription(title = "EntityCreator",
 author = "Sven Kralisch",
-description = "Creates a number of empty (holding no attributes) JAMSEntity " +
-        "objects and stores them in a JAMSEntityCollection object")
+description = "Creates a number of empty (holding no attributes) Attribute.Entity " +
+        "objects and stores them in a Attribute.EntityCollection object")
 public class EntityCreator extends JAMSComponent {
 
     /*
@@ -40,11 +40,11 @@ public class EntityCreator extends JAMSComponent {
      */
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "Entities being created")
-    public JAMSEntityCollection entities;
+    public Attribute.EntityCollection entities;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Number of entities to be created")
-    public JAMSDouble count;
+    public Attribute.Double count;
 
     /*
      *  Component runstages

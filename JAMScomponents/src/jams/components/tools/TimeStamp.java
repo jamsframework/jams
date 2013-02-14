@@ -5,8 +5,7 @@
 
 package jams.components.tools;
 
-import jams.data.JAMSBoolean;
-import jams.data.JAMSString;
+import jams.data.*;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 
@@ -17,27 +16,24 @@ import jams.model.JAMSVarDescription;
 public class TimeStamp extends JAMSComponent{       
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Description",
             defaultValue = "1"
             )
-            public JAMSBoolean stopInit;
+            public Attribute.Boolean stopInit;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Description",
             defaultValue = "1"
             )
-            public JAMSBoolean stopRun;
+            public Attribute.Boolean stopRun;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Description",
             defaultValue = "1"
             )
-            public JAMSBoolean stopCleanup;
+            public Attribute.Boolean stopCleanup;
 
     @Override
     public void init(){        

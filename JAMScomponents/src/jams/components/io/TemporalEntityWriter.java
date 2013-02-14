@@ -46,38 +46,33 @@ title="Entity file writer (temporal)",
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "EntitySet"
             )
-            public JAMSEntityCollection entities;
+            public Attribute.EntityCollection entities;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Current time"
             )
-            public JAMSCalendar time;
+            public Attribute.Calendar time;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSString fileName;
+            public Attribute.String fileName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file attribute names"
             )
-            public JAMSString idAttributeName;
+            public Attribute.String idAttributeName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file attribute names"
             )
-            public JAMSString dataAttributeName;
+            public Attribute.String dataAttributeName;
     
     private GenericDataWriter writer;
     
@@ -85,7 +80,7 @@ title="Entity file writer (temporal)",
      *  Component runstages
      */
     
-    public void init() throws JAMSEntity.NoSuchAttributeException {
+    public void init() throws Attribute.Entity.NoSuchAttributeException {
         writer = new GenericDataWriter(getModel().getWorkspaceDirectory().getPath()+"/"+fileName.getValue());
         writer.addComment("JAMS entity output from TemporalEntityWriter");
         writer.addComment("Attribute name: " + dataAttributeName);
@@ -101,7 +96,7 @@ title="Entity file writer (temporal)",
         writer.writeHeader();
     }
     
-    public void run() throws JAMSEntity.NoSuchAttributeException {
+    public void run() throws Attribute.Entity.NoSuchAttributeException {
         
         //always write time
         //the time also knows a toString() method with additional formatting parameters

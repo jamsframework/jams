@@ -29,66 +29,57 @@ public class NNLearner extends Learner {
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity trainData;
+            public Attribute.Entity trainData;
             
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity validationData;
+            public Attribute.Entity validationData;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
             public Attribute.Double learningrate;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
             public Attribute.Double momentum;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSString layers;
+            public Attribute.String layers;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
             public Attribute.Integer epochen;
                             
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSString resultFile = null;
+            public Attribute.String resultFile = null;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSString options = null;
+            public Attribute.String options = null;
                            
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSBoolean applyLinearRegression;
+            public Attribute.Boolean applyLinearRegression;
     
     int LayerCount;
     Vector<Neuron> Layers[];                

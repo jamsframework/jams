@@ -34,31 +34,27 @@ public class GPSearch extends SOOptimizer {
      */            
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSString outputFileName;
+            public Attribute.String outputFileName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSString modelGridFileName;
+            public Attribute.String modelGridFileName;
             
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSBoolean writeGPData;
+            public Attribute.Boolean writeGPData;
             
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSInteger GPMethod;
+            public Attribute.Integer GPMethod;
     
     public class GaussEffFunction extends AbstractFunction{
         GaussianLearner GP = null;
@@ -160,7 +156,7 @@ public class GPSearch extends SOOptimizer {
             GP.trainData.setObject("data",data);
             GP.trainData.setObject("predict",predict);
         
-            GP.optimizationData = (JAMSEntity)getModel().getRuntime().getDataFactory().createEntity();
+            GP.optimizationData = (Attribute.Entity)getModel().getRuntime().getDataFactory().createEntity();
             GP.optimizationData.setObject("data",data);
             GP.optimizationData.setObject("predict",predict);
                         

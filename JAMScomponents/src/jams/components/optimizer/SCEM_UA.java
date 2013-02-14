@@ -48,59 +48,51 @@ title="Title",
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter identifiers to be sampled"
             )
-            public JAMSString parameterIDs;
+            public Attribute.String parameterIDs;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter value bounaries corresponding to parameter identifiers"
             )
-            public JAMSString boundaries;
+            public Attribute.String boundaries;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Number of samples to be taken"
             )
-            public JAMSInteger sampleCount;
+            public Attribute.Integer sampleCount;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "efficiency methods"
             )
-            public JAMSString effMethodNames;
+            public Attribute.String effMethodNames;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "efficiency values"
             )
-            public JAMSDouble[] effValues;
+            public Attribute.Double[] effValues;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "optimization mode, 1 - minimization, 2 - maximization, 3 - max |f(x)|, 4 - min |f(x)|"
             )
-            public JAMSIntegerArray mode;
+            public Attribute.IntegerArray mode;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "number of points in population, common values for are in the range [10;100]"
             )
-            public JAMSInteger Population;
+            public Attribute.Integer Population;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "optimization parameter: number of complex, a common value for this is 2 or 3"
             )
-            public JAMSInteger Complexes;
+            public Attribute.Integer Complexes;
             
     public class SCE_Comparator implements Comparator {
         private int col = 0;
@@ -128,7 +120,7 @@ title="Title",
         }        
     } 
     
-    JAMSDouble[] parameters;
+    Attribute.Double[] parameters;
     String[] parameterNames;
     String[] effNames;
     double[] lowBound;
@@ -157,18 +149,18 @@ title="Title",
         int i;
         StringTokenizer tok = new StringTokenizer(parameterIDs.getValue(), ";");
         String key;
-        parameters = new JAMSDouble[tok.countTokens()];
+        parameters = new Attribute.Double[tok.countTokens()];
         parameterNames = new String[tok.countTokens()];
         
         i = 0;
         while (tok.hasMoreTokens()) {
             key = tok.nextToken();
             parameterNames[i] = key;
-            parameters[i] = (JAMSDouble) getModel().getRuntime().getDataHandles().get(key);
+            parameters[i] = (Attribute.Double) getModel().getRuntime().getDataHandles().get(key);
             i++;
         }
         
-        setEntities((JAMSEntityCollection)getModel().getRuntime().getDataHandles().get("hrus"));
+        setEntities((Attribute.EntityCollection)getModel().getRuntime().getDataHandles().get("hrus"));
         
         //retreiving boundaries
         tok = new StringTokenizer(boundaries.getValue(), ";");

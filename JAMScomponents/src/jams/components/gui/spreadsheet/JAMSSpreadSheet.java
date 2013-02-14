@@ -35,17 +35,14 @@ import jams.model.*;
 public class JAMSSpreadSheet extends JAMSGUIComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "Column Name Array")
     public Attribute.StringArray headers;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "Current time")
-    public JAMSCalendar time;
+    public Attribute.Calendar time;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "Array with data of one row")
-    public JAMSDouble[] rowarray;
+    public Attribute.Double[] rowarray;
     /* TESTING VARIABLES */
     //private String[] columnNameArray = headers.getValue();
     //{"test1","test2"};
@@ -207,7 +204,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         final String END = "@end";
 
         final String ID = "ID";
-        final String TIME = "JAMSCalendar";
+        final String TIME = "Attribute.Calendar";
 
         final String METADATA = "@metadata";
         final String TYPE_ = "#TYPE_";
@@ -1049,7 +1046,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
         tmodel.addTime(time);
     }
 
-    public void addTime(JAMSCalendar time) {
+    public void addTime(Attribute.Calendar time) {
         tmodel.addTime(time);
     }
 

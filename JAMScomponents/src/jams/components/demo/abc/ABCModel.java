@@ -33,66 +33,59 @@ public class ABCModel extends JAMSComponent {
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Parameter a",
             lowerBound = 0,
             upperBound = 1
             )
-            public JAMSDouble a;
+            public Attribute.Double a;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Parameter b",
             lowerBound = 0,
             upperBound = 1
             )
-            public JAMSDouble b;
+            public Attribute.Double b;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Parameter c",
             lowerBound = 0,
             upperBound = 1
             )
-            public JAMSDouble c;
+            public Attribute.Double c;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "The initial storage content",
             lowerBound = 0,
             upperBound = Double.POSITIVE_INFINITY
             )
-            public JAMSDouble initStorage;
+            public Attribute.Double initStorage;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "The precip input",
             lowerBound = 0,
             upperBound = Double.POSITIVE_INFINITY
             )
-            public JAMSDouble precip;
+            public Attribute.Double precip;
         
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "The current storage content",
             lowerBound = 0,
             upperBound = Double.POSITIVE_INFINITY
             )
-            public JAMSDouble storage;
+            public Attribute.Double storage;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Simulated runoff",
             lowerBound = 0,
             upperBound = Double.POSITIVE_INFINITY
             )
-            public JAMSDouble simRunoff;
+            public Attribute.Double simRunoff;
     
     /*
      *  Component run stages

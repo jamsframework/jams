@@ -4,10 +4,9 @@
  */
 package jams.workspace.plugins;
 
-import jams.data.Attribute;
+import jams.data.*;
 import jams.data.Attribute.Entity;
 import jams.data.Attribute.Entity.NoSuchAttributeException;
-import jams.data.JAMSDouble;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 import jams.tools.JAMSTools;
@@ -28,115 +27,94 @@ import java.util.LinkedList;
 public class OMIInputDataReader extends JAMSComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "address of omi connection server")
     public Attribute.String ipAddress;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "port for tcp/ip connection")
     public Attribute.Integer port;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "minimum of data value",
     defaultValue = "-99999999")
-    public JAMSDouble min;
+    public Attribute.Double min;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "minimum of data value",
     defaultValue = "99999999")
-    public JAMSDouble max;
+    public Attribute.Double max;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "x position of data")
-    public JAMSDouble x[];
+    public Attribute.Double x[];
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "y position of data")
-    public JAMSDouble y[];
+    public Attribute.Double y[];
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "elevation of data point")
-    public JAMSDouble elevation[];
+    public Attribute.Double elevation[];
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "unit of data")
     public Attribute.String unit[];
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "property type",
     defaultValue = "type")
     public Attribute.String propertyType;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "domainID",
     defaultValue = "1")
     public Attribute.String domainID;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "referenceID",
     defaultValue = "1")
     public Attribute.String referenceID;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "quantityDescription",
     defaultValue = "unknown quantity")
     public Attribute.String quantityDescription;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "spatial domain description",
     defaultValue = "unknown spatial domain")
     public Attribute.String spatialDomainDescription;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "ids of stations")
     public Attribute.Integer[] stationIDs;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "ids of stations")
     public Attribute.String[] stationNames;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "missingDataValue",
     defaultValue = "-9999")
-    public JAMSDouble missingDataValue;
+    public Attribute.Double missingDataValue;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "time of data")
     public Attribute.Calendar time;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "timeinterval of data")
     public Attribute.TimeInterval timeInterval;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "data to export")
-    public JAMSDouble[] attribute;
+    public Attribute.Double[] attribute;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "entities")
     public Attribute.EntityCollection entities;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "attribute of entities")
     public Attribute.String entityAttribute;
 
@@ -245,7 +223,7 @@ public class OMIInputDataReader extends JAMSComponent {
 
             int i = 0;
             try {
-                for (Entity e : this.entities.getEntities()) {
+                for (Attribute.Entity e : this.entities.getEntities()) {
                     double x = e.getDouble("X");
                     double y = e.getDouble("Y");
 
@@ -324,7 +302,7 @@ public class OMIInputDataReader extends JAMSComponent {
     }
 
     @Override
-    public void run() throws NoSuchAttributeException {
+    public void run() {
         String date = J2KHeader.j2kSdf.format(this.time.getTime());
         Datagram dg = null;
         try{

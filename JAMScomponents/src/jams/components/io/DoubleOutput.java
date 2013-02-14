@@ -43,10 +43,9 @@ title="DoubleOutput",
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Data to be output"
             )
-            public JAMSDouble value;
+            public Attribute.Double value;
     
     
     /*

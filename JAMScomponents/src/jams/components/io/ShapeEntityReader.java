@@ -25,9 +25,7 @@ import com.vividsolutions.jts.algorithm.CentroidArea;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
-import jams.data.JAMSEntityCollection;
-import jams.data.JAMSString;
+import jams.data.*;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
@@ -54,30 +52,30 @@ public class ShapeEntityReader extends JAMSComponent {
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
                          description = "Name of the shape file")
-    public JAMSString shapeFileName;
+    public Attribute.String shapeFileName;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
                          description = "Name of identifying attribute in shape file")
-    public JAMSString idName;
+    public Attribute.String idName;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
                          description = "Name of the area attribute to be created",
                          defaultValue = "area")
-    public JAMSString areaAttribute;
+    public Attribute.String areaAttribute;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
                          description = "Name of the x attribute to be created",
                          defaultValue = "x")
-    public JAMSString xAttribute;
+    public Attribute.String xAttribute;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
                          description = "Name of the y attribute to be created",
                          defaultValue = "y")
-    public JAMSString yAttribute;
+    public Attribute.String yAttribute;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.WRITE,
                          description = "Entity collection to be created")
-    public JAMSEntityCollection entities;
+    public Attribute.EntityCollection entities;
 
     @Override
     public void init() throws Exception {

@@ -12,45 +12,39 @@ public class DataDisturber extends JAMSContext {
         
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger startComponent;
+            public Attribute.Integer startComponent;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger endComponent;
+            public Attribute.Integer endComponent;
            
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity Data;
+            public Attribute.Entity Data;
             
      @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSDouble NoiseAmpitude;
+            public Attribute.Double NoiseAmpitude;
      
      @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSDouble ErrorAmpitude;
+            public Attribute.Double ErrorAmpitude;
      
      @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSBoolean AllowNegative;
+            public Attribute.Boolean AllowNegative;
      
     public DataDisturber() {
 	 

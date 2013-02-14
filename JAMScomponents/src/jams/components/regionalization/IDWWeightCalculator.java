@@ -44,32 +44,32 @@ public class IDWWeightCalculator extends JAMSComponent {
      */
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "entity x-coordinate")
-    public JAMSDouble entityX;
+    public Attribute.Double entityX;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "entity y-coordinate")
-    public JAMSDouble entityY;
+    public Attribute.Double entityY;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Number of IDW stations")
-    public JAMSInteger nidw;
+    public Attribute.Integer nidw;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Power of IDW function")
-    public JAMSDouble pidw;
+    public Attribute.Double pidw;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
     description = "weights for IDW part of regionalisation")
-    public JAMSDoubleArray statWeights;
+    public Attribute.DoubleArray statWeights;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Doug Boyle's famous function",
     defaultValue = "false")
-    public JAMSBoolean equalWeights;
+    public Attribute.Boolean equalWeights;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "ID of the datastore to read station coordinates from")
-    public JAMSString dataStoreID;
+    public Attribute.String dataStoreID;
 
     private double[] statX;
 

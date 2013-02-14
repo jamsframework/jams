@@ -32,26 +32,23 @@ public class VariableMultiply extends JAMSComponent {
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "Current time")
-    public JAMSCalendar time;
+    public Attribute.Calendar time;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "value attribute")
-    public JAMSDouble input;
+    public Attribute.Double input;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "sum attribute")
-    public JAMSDouble output;
+    public Attribute.Double output;
     private long count;
 
     public void init() {
     }
 
     public void run() {
-        int max_d = time.getActualMaximum(time.DAY_OF_MONTH);
+        int max_d = time.getActualMaximum(JAMSCalendar.DAY_OF_MONTH);
 
         output.setValue(input.getValue() / (double) max_d);
     }

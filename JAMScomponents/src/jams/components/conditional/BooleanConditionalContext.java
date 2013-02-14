@@ -21,7 +21,7 @@
  */
 package jams.components.conditional;
 
-import jams.data.JAMSBoolean;
+import jams.data.*;
 import jams.model.Component;
 import jams.model.ComponentEnumerator;
 import jams.model.JAMSComponent;
@@ -38,7 +38,7 @@ import jams.model.JAMSVarDescription;
 public class BooleanConditionalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
-    public JAMSBoolean condition;
+    public Attribute.Boolean condition;
 
     public BooleanConditionalContext() {
     }

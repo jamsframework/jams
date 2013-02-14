@@ -37,7 +37,7 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.xy.*;
 import org.jfree.util.ShapeUtilities.*;
 
-import jams.data.JAMSCalendar;
+import jams.data.*;
 
 
 public class GraphProperties {
@@ -398,7 +398,7 @@ public class GraphProperties {
     }
     
     public void applyTSProperties(){
-        JAMSCalendar time;
+        Attribute.Calendar time;
         double value;
         selectedColumn = setColumn.getSelectedIndex();
         //color = (String) colorchoice.getSelectedItem();
@@ -406,7 +406,7 @@ public class GraphProperties {
         
         for(int i=getTimeSTART(); i<=getTimeEND(); i++){
             
-            time =  (JAMSCalendar) table.getValueAt(i,0); //ONLY FOR TIME SERIES TABLE WITH TIME IN COL 0!!!
+            time =  (Attribute.Calendar) table.getValueAt(i,0); //ONLY FOR TIME SERIES TABLE WITH TIME IN COL 0!!!
             if(!setColumn.getSelectedItem().equals("---")){
                 value = (Double) table.getValueAt(i, selectedColumn);
                 ts.add(new Second(new Date(time.getTimeInMillis())), value);

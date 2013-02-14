@@ -9,8 +9,7 @@ import jams.io.*;
 import java.io.File;
 import java.io.IOException;
 import jams.tools.JAMSTools;
-import jams.data.JAMSDocument;
-import jams.data.JAMSString;
+import jams.data.*;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 import org.xml.sax.SAXException;
@@ -25,23 +24,20 @@ import jams.tools.XMLTools;
 public class DocumentLoader extends JAMSComponent{
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Description"
             )
-            public JAMSString modelFile;
+            public Attribute.String modelFile;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Description"
             )
-            public JAMSString workspaceDir;
+            public Attribute.String workspaceDir;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE, 
-            update = JAMSVarDescription.UpdateType.RUN, 
             description = "Collection of hru objects")
-    public JAMSDocument modelDoc;
+    public Attribute.Document modelDoc;
     
     public String init_withResponse(){
         try{

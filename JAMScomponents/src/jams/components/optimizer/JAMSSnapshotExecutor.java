@@ -5,10 +5,8 @@
 
 package jams.components.optimizer;
 
-import jams.data.JAMSData;
-import jams.data.JAMSDouble;
-import jams.data.JAMSEntity;
-import jams.data.JAMSString;
+import jams.data.*;
+
 import jams.model.Context;
 import jams.model.JAMSComponent;
 import jams.model.JAMSFullModelState;
@@ -16,10 +14,6 @@ import jams.model.JAMSVarDescription;
 import jams.model.Model;
 import java.io.File;
 import jams.JAMS;
-import jams.data.Attribute;
-import jams.data.Attribute.Entity;
-import jams.data.JAMSBoolean;
-import jams.data.JAMSObject;
 import jams.model.Component;
 import java.io.IOException;
 
@@ -31,249 +25,216 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
     //this enumeration is not nice, but is there a better method?
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble in1;
+            public Attribute.Double in1;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString inName1;
+            public Attribute.String inName1;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble in2;
+            public Attribute.Double in2;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString inName2;
+            public Attribute.String inName2;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble in3;
+            public Attribute.Double in3;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString inName3;
+            public Attribute.String inName3;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble in4;
+            public Attribute.Double in4;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString inName4;
+            public Attribute.String inName4;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble in5;
+            public Attribute.Double in5;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString inName5;
+            public Attribute.String inName5;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble in6;
+            public Attribute.Double in6;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString inName6;
+            public Attribute.String inName6;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble in7;
+            public Attribute.Double in7;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString inName7;
+            public Attribute.String inName7;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble in8;
+            public Attribute.Double in8;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString inName8;
+            public Attribute.String inName8;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble in9;
+            public Attribute.Double in9;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString inName9;
+            public Attribute.String inName9;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble in10;
+            public Attribute.Double in10;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString inName10;
+            public Attribute.String inName10;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble out1;
+            public Attribute.Double out1;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString outName1;
+            public Attribute.String outName1;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble out2;
+            public Attribute.Double out2;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString outName2;
+            public Attribute.String outName2;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble out3;
+            public Attribute.Double out3;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString outName3;
+            public Attribute.String outName3;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble out4;
+            public Attribute.Double out4;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString outName4;
+            public Attribute.String outName4;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSDouble out5;
+            public Attribute.Double out5;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
-            public JAMSString outName5;
+            public Attribute.String outName5;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
             public Attribute.Object outObj1;
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "parameter input"
             )
             public Attribute.String outObjName1;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "if you dont want to execute the jams model completly in every iteration, you can specify a JAMS - Snapshot which is loaded before execution"
             )
-            public JAMSString snapshotFile;
+            public Attribute.String snapshotFile;
     
     private final int inValueCount = 10;
     private final int outValueCount = 5;
     private final int outObjValueCount = 1;
 
-    public double searchForAttributeInModel(Context c, String key) throws JAMSEntity.NoSuchAttributeException{
+    public double searchForAttributeInModel(Context c, String key) throws Attribute.Entity.NoSuchAttributeException{
         JAMSData d = (c.getAttributeMap().get(key));
         if (d!=null){
-            if (d instanceof JAMSDouble)
-                return ((JAMSDouble)d).getValue();
+            if (d instanceof Attribute.Double)
+                return ((Attribute.Double)d).getValue();
             else
-                throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
+                throw new Attribute.Entity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
         }else{
             for (Component comp : c.getComponents()){
                 if (comp instanceof Context){
                     try{
                         return searchForAttributeInModel((Context)comp,key);
-                    }catch(JAMSEntity.NoSuchAttributeException nsae){
+                    }catch(Attribute.Entity.NoSuchAttributeException nsae){
 
                     }
                 }
             }
         }
-        throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
+        throw new Attribute.Entity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
     }
 
-    public Object searchForObjectInModel(Context c, String key) throws JAMSEntity.NoSuchAttributeException{
+    public Object searchForObjectInModel(Context c, String key) throws Attribute.Entity.NoSuchAttributeException{
         JAMSData d = (c.getAttributeMap().get(key));
         if (d!=null){
             if (d instanceof JAMSObject)
                 return ((JAMSObject)d).getValue();
             else
-                throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
+                throw new Attribute.Entity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
         }else{
             for (Component comp : c.getComponents()){
                 if (comp instanceof Context){
                     try{
                         return searchForAttributeInModel((Context)comp,key);
-                    }catch(JAMSEntity.NoSuchAttributeException nsae){
+                    }catch(Attribute.Entity.NoSuchAttributeException nsae){
 
                     }
                 }
             }
         }
-        throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
+        throw new Attribute.Entity.NoSuchAttributeException(JAMS.i18n("Attribute_") + key + JAMS.i18n("_(float)_not_found!"));
     }
 
     @Override
@@ -330,15 +291,15 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
             String key = inNames[i];
             double value = inValues[i];
             if (key != null){
-                if (model.getRuntime().getDataHandles().get(key) instanceof JAMSDouble){
-                    ((JAMSDouble)model.getRuntime().getDataHandles().get(key) ).setValue(value);
+                if (model.getRuntime().getDataHandles().get(key) instanceof Attribute.Double){
+                    ((Attribute.Double)model.getRuntime().getDataHandles().get(key) ).setValue(value);
                 }
 
-                if (model.getRuntime().getDataHandles().get(key) instanceof JAMSBoolean){
+                if (model.getRuntime().getDataHandles().get(key) instanceof Attribute.Boolean){
                     if (value==1.0){
-                        ((JAMSBoolean)model.getRuntime().getDataHandles().get(key) ).setValue(true);
+                        ((Attribute.Boolean)model.getRuntime().getDataHandles().get(key) ).setValue(true);
                     }else if(value == 0.0){
-                        ((JAMSBoolean)model.getRuntime().getDataHandles().get(key) ).setValue(false);
+                        ((Attribute.Boolean)model.getRuntime().getDataHandles().get(key) ).setValue(false);
                     }else{
                         this.getModel().getRuntime().sendHalt("invalid value for boolean:" + value);
                     }
@@ -357,7 +318,7 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
             if (key != null){
                 try{
                     outValues[i] = searchForAttributeInModel(model,key);
-                }catch(Entity.NoSuchAttributeException nsae){
+                }catch(Attribute.Entity.NoSuchAttributeException nsae){
                     System.out.println(nsae.toString());
                 }
                 System.out.println("key:" + key + " ----> " + outValues[i]);
@@ -369,7 +330,7 @@ public class JAMSSnapshotExecutor extends JAMSComponent{
             if (key != null){
                 try{
                     outObjValues[i] = searchForObjectInModel(model,key);
-                }catch(Entity.NoSuchAttributeException nsae){
+                }catch(Attribute.Entity.NoSuchAttributeException nsae){
                     System.out.println(nsae.toString());
                 }
                 System.out.println("key:" + key + " ----> " + outValues[i]);

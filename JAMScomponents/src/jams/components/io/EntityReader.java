@@ -39,17 +39,15 @@ public class EntityReader extends JAMSComponent {
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "HRU parameter file name"
             )
-            public JAMSString hruFileName;
+            public Attribute.String hruFileName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Collection of hru objects"
             )
-            public JAMSEntityCollection hrus;
+            public Attribute.EntityCollection hrus;
     
     
     public void init() throws Attribute.Entity.NoSuchAttributeException {

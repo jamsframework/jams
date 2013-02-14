@@ -29,31 +29,27 @@ public class MocomTest extends JAMSComponent {
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter identifiers to be sampled"
             )
-            public JAMSDouble x1;
+            public Attribute.Double x1;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter identifiers to be sampled"
             )
-            public JAMSDouble x2;
+            public Attribute.Double x2;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "List of parameter identifiers to be sampled"
             )
-            public JAMSDouble y1;
+            public Attribute.Double y1;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "List of parameter identifiers to be sampled"
             )
-            public JAMSDouble y2;
+            public Attribute.Double y2;
                
     public void run(){
 	y1.setValue(x1.getValue()*x1.getValue() + 

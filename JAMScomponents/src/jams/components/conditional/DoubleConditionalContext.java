@@ -21,7 +21,7 @@
  */
 package jams.components.conditional;
 
-import jams.data.JAMSDouble;
+import jams.data.*;
 import jams.model.Component;
 import jams.model.ComponentEnumerator;
 import jams.model.JAMSComponent;
@@ -38,9 +38,9 @@ import jams.model.JAMSVarDescription;
 public class DoubleConditionalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Double attribute defining which component to execute")
-    public JAMSDouble value1;
+    public Attribute.Double value1;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Double attribute defining which component to execute")
-    public JAMSDouble value2;
+    public Attribute.Double value2;
 
     public class DummyComponent extends JAMSComponent {
         public void run() {

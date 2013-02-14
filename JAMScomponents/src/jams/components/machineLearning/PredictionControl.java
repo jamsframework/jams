@@ -35,94 +35,81 @@ import java.io.*;
 public class PredictionControl extends JAMSComponent {
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Precip Data"
             )
-             public JAMSString datafile;
+             public Attribute.String datafile;
                 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-             public JAMSInteger ExampleLength;
+             public Attribute.Integer ExampleLength;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-             public JAMSInteger numOfExamples;
+             public Attribute.Integer numOfExamples;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger trainStart;
+            public Attribute.Integer trainStart;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger trainEnd;
+            public Attribute.Integer trainEnd;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger validationStart;
+            public Attribute.Integer validationStart;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger validationEnd;
+            public Attribute.Integer validationEnd;
                           
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger relevantTime;
+            public Attribute.Integer relevantTime;
             
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger TrainLengthForOptimizing;
+            public Attribute.Integer TrainLengthForOptimizing;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSBoolean doOptimizing;
+            public Attribute.Boolean doOptimizing;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity trainData;
+            public Attribute.Entity trainData;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity validationData;
+            public Attribute.Entity validationData;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger dataShift;
+            public Attribute.Integer dataShift;
                                         
     HashMap<Integer, double[]> rawData;    
     HashMap<Integer, double[]> rawPredict;
@@ -142,7 +129,7 @@ public class PredictionControl extends JAMSComponent {
     
     int ExamplLength,numOfExampl;
     
-    public void loadData() throws JAMSEntity.NoSuchAttributeException {  
+    public void loadData() throws Attribute.Entity.NoSuchAttributeException {  
 	BufferedReader reader = null;
 	HashMap<Integer, double[]> rawData = new HashMap<Integer,double[]>();
 	HashMap<Integer, double[]> rawPredict = new HashMap<Integer,double[]>();
@@ -293,9 +280,9 @@ public class PredictionControl extends JAMSComponent {
 	}
     }
     
-    public void init() throws JAMSEntity.NoSuchAttributeException {                	
+    public void init() throws Attribute.Entity.NoSuchAttributeException {                	
 	loadData();
     }
-    public void run() throws JAMSEntity.NoSuchAttributeException {                	
+    public void run() throws Attribute.Entity.NoSuchAttributeException {                	
     }
 }

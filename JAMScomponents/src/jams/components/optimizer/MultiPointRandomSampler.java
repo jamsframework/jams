@@ -21,14 +21,12 @@ import java.util.Arrays;
 public class MultiPointRandomSampler extends MOOptimizer{
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "points for derivation"
             )
             public Attribute.Integer pfd;
 
      @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "distance used in gradient estimation",
             defaultValue = "0.01"
             )

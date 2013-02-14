@@ -19,22 +19,19 @@ import jams.data.*;
 public class PostProcessor extends JAMSComponent {
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "function y"            
             )
-            public JAMSDouble yVal;
+            public Attribute.Double yVal;
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "transform type"
             )
-            public JAMSInteger type;
+            public Attribute.Integer type;
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "transform type"
             )
-            public JAMSDouble shift;   
+            public Attribute.Double shift;   
     
     public void cleanup() {
         if (shift != null){

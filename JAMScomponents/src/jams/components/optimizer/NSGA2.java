@@ -7,11 +7,7 @@ package jams.components.optimizer;
 import jams.JAMS;
 import jams.components.optimizer.SampleFactory.Sample;
 import jams.components.optimizer.SampleFactory.SampleComperator;
-import jams.data.Attribute;
-import jams.data.JAMSBoolean;
-import jams.data.JAMSDataFactory;
-import jams.data.JAMSDouble;
-import jams.data.JAMSString;
+import jams.data.*;
 import jams.model.JAMSVarDescription;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -22,37 +18,31 @@ import java.util.Arrays;
  */
 public class NSGA2 extends MOOptimizer {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "population size",
     defaultValue="30")
     public Attribute.Integer populationSize;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "probability for population crossover, range between 0.5 and 1",
             defaultValue="0.9")
     public Attribute.Double crossoverProbability;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "probability for population mutation, range between 0.0 and 1/nvar",
             defaultValue="1.0")
     public Attribute.Double mutationProbability;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "crossover distribution index, range between 0.5 and 100",
             defaultValue="20")
     public Attribute.Double crossoverDistributionIndex;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "mutation distribution index, range between 0.5 and 100",
             defaultValue="20")
     public Attribute.Double mutationDistributionIndex;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "maximum number of generations",
             defaultValue="10000")
     public Attribute.Integer maxGeneration;
@@ -724,25 +714,25 @@ public class NSGA2 extends MOOptimizer {
         }
 
         nsga.GoalFunction = new TestFunction();
-        nsga.boundaries = (JAMSString)JAMSDataFactory.getDataFactory().createString();
+        nsga.boundaries = (Attribute.String)JAMSDataFactory.getDataFactory().createString();
         nsga.boundaries.setValue("[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];");
-        nsga.parameterIDs = new JAMSDouble[16];
+        nsga.parameterIDs = new Attribute.Double[16];
 
         nsga.crossoverDistributionIndex = JAMSDataFactory.getDataFactory().createDouble();
         nsga.crossoverDistributionIndex.setValue(20);
         nsga.crossoverProbability = JAMSDataFactory.getDataFactory().createDouble();
         nsga.crossoverProbability.setValue(0.9);
-        nsga.enable = (JAMSBoolean)JAMSDataFactory.getDataFactory().createBoolean();
+        nsga.enable = (Attribute.Boolean)JAMSDataFactory.getDataFactory().createBoolean();
         nsga.enable.setValue(true);
         nsga.maxGeneration = JAMSDataFactory.getDataFactory().createInteger();
         nsga.maxGeneration.setValue(100000);
-        nsga.mode = (JAMSString)JAMSDataFactory.getDataFactory().createString();
+        nsga.mode = (Attribute.String)JAMSDataFactory.getDataFactory().createString();
         nsga.mode.setValue("1");
         nsga.target = JAMSDataFactory.getDataFactory().createDoubleArray();
         nsga.target.setValue(new double[]{0.00});
         nsga.epsilonToTarget =JAMSDataFactory.getDataFactory().createDouble();
         nsga.epsilonToTarget.setValue(0.018);
-        nsga.effMethodName = (JAMSString)JAMSDataFactory.getDataFactory().createString();
+        nsga.effMethodName = (Attribute.String)JAMSDataFactory.getDataFactory().createString();
         nsga.effMethodName.setValue("f1");
         nsga.mutationDistributionIndex = JAMSDataFactory.getDataFactory().createDouble();
         nsga.mutationDistributionIndex.setValue(20);

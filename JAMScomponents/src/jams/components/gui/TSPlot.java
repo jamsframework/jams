@@ -48,12 +48,7 @@ import org.jfree.chart.renderer.xy.XYStepRenderer;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
-import jams.data.JAMSBoolean;
-import jams.data.JAMSCalendar;
-import jams.data.JAMSDouble;
-import jams.data.JAMSInteger;
-import jams.data.JAMSString;
-import jams.data.JAMSStringArray;
+import jams.data.*;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSVarDescription;
@@ -78,79 +73,76 @@ public class TSPlot extends JAMSGUIComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Title string for plot. Default: component name")
-    public JAMSString plotTitle;
+    public Attribute.String plotTitle;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Static title strings for left graphs. Number of entries "
     + "must be identical to number of plottet values (valueLeft).",
     defaultValue = "titleLeft1;titleLeft2")
-    public JAMSStringArray titleLeft;
+    public Attribute.StringArray titleLeft;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Dynamic addon title strings added after left static titles (titleLeft)")
-    public JAMSStringArray varTitleLeft;
+    public Attribute.StringArray varTitleLeft;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Static title strings for right graphs",
     defaultValue = "titleRight")
-    public JAMSStringArray titleRight;
+    public Attribute.StringArray titleRight;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Colors for left graphs (yellow, orange, red, pink, "
     + "magenta, cyan, yellow, green, lightgray, gray, black). Number of "
     + "entries must be identical to number of plottet values (valueLeft).",
     defaultValue = "blue;red")
-    public JAMSStringArray colorLeft;
+    public Attribute.StringArray colorLeft;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Colors for right graphs (yellow, orange, red, pink, "
     + "magenta, cyan, yellow, green, lightgray, gray, black). Number of "
     + "entries must be identical to number of plottet values (valueRight).",
     defaultValue = "red")
-    public JAMSStringArray colorRight;
+    public Attribute.StringArray colorRight;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Graph type for left y axis graphs",
     defaultValue = "0")
-    public JAMSInteger typeLeft;
+    public Attribute.Integer typeLeft;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Graph type for right y axis graphs",
     defaultValue = "0")
-    public JAMSInteger typeRight;
+    public Attribute.Integer typeRight;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Title string for x axis",
     defaultValue = "Time")
-    public JAMSString xAxisTitle;
+    public Attribute.String xAxisTitle;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Title string for left y axis",
     defaultValue = "LeftTitle")
-    public JAMSString leftAxisTitle;
+    public Attribute.String leftAxisTitle;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Title string for right y axis",
     defaultValue = "RightTitle")
-    public JAMSString rightAxisTitle;
+    public Attribute.String rightAxisTitle;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     defaultValue = "0",
     description = "Paint inverted right y axis?")
-    public JAMSBoolean rightAxisInverted;
+    public Attribute.Boolean rightAxisInverted;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Date format",
     defaultValue = "dd-MM-yyyy")
-    public JAMSString dateFormat;
+    public Attribute.String dateFormat;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "Current time")
-    public JAMSCalendar time;
+    public Attribute.Calendar time;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "Values to be plotted on left x-axis")
-    public JAMSDouble[] valueLeft;
+    public Attribute.Double[] valueLeft;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.RUN,
     description = "Values to be plotted on right x-axis")
-    public JAMSDouble[] valueRight;
+    public Attribute.Double[] valueRight;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Value for \"No data\" (shouldn't be plotted)",
     defaultValue = "-9999")
-    public JAMSDouble noDataValue;
+    public Attribute.Double noDataValue;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Plot data, after cacheSize values have been collected",
     defaultValue = "10")
-    public JAMSInteger cacheSize;
+    public Attribute.Integer cacheSize;
     TimeSeries[] tsLeft, tsRight;
     transient TimeSeriesCollection dataset1, dataset2;
     transient XYItemRenderer rightRenderer, leftRenderer;

@@ -34,17 +34,15 @@ public class TimeSerieToArray extends JAMSComponent {
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Array of data values for current time step"
             )
-            public JAMSDoubleArray dataArray;
+            public Attribute.DoubleArray dataArray;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Array of data values for current time step"
             )
-            public JAMSEntity CompleteArray;
+            public Attribute.Entity CompleteArray;
 
     HashMap<Integer, double[]> TimeData;    
     Integer time;

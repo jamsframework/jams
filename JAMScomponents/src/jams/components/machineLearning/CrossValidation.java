@@ -20,38 +20,33 @@ public class CrossValidation extends JAMSContext {
         
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger k;
+            public Attribute.Integer k;
            
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity Data;
+            public Attribute.Entity Data;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity trainingData;
+            public Attribute.Entity trainingData;
     
      @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity validationData;
+            public Attribute.Entity validationData;
      
      @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSBoolean enable;
+            public Attribute.Boolean enable;
      
      public CrossValidation() {
 	 

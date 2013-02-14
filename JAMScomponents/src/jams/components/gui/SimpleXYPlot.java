@@ -33,12 +33,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import jams.data.JAMSBoolean;
-import jams.data.JAMSDouble;
-import jams.data.JAMSInteger;
-import jams.data.JAMSString;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSVarDescription;
+import jams.data.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -52,52 +49,45 @@ public class SimpleXYPlot extends JAMSGUIComponent {
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Title string for plot"
             )
-            public JAMSString plotTitle;                              
+            public Attribute.String plotTitle;                              
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Title string for x axis"
             )
-            public JAMSString xAxisTitle;
+            public Attribute.String xAxisTitle;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Title string for x axis"
             )
-            public JAMSString yAxisTitle;
+            public Attribute.String yAxisTitle;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Title string for x axis"
             )
-            public JAMSDouble xValue;
+            public Attribute.Double xValue;
   
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Title string for x axis"
             )
-            public JAMSDouble[] yValue;
+            public Attribute.Double[] yValue;
                                    
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Flag for disabling or enabling the plot"
             )
-            public JAMSBoolean paint;
+            public Attribute.Boolean paint;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Flag for disabling or enabling the plot"
             )
-            public JAMSInteger PlotCount;
+            public Attribute.Integer PlotCount;
     
     transient private XYPlot plot;
     transient private XYSeries dataset[];

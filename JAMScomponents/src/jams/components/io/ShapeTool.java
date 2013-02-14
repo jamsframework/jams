@@ -46,7 +46,7 @@ import org.geotools.data.collection.CollectionDataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.dbf.DbaseFileHeader;
 import org.geotools.feature.FeatureIterator;
-import jams.data.JAMSString;
+import jams.data.*;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 import jams.components.gui.MapCollection;
@@ -106,7 +106,7 @@ public class ShapeTool extends JPanel {
         return boxes;
     }
 
-	public ShapeTool(MapCollection features, JAMSString Shapefile, final JSplitPane panel)
+	public ShapeTool(MapCollection features, Attribute.String Shapefile, final JSplitPane panel)
 			throws Exception {
 
 		baseShapeUrl = (new java.io.File(Shapefile.toString().split(";")[0])

@@ -25,52 +25,45 @@ import jams.components.machineLearning.GaussianLearner;
 public class SensitivityAnalyser extends SOOptimizer{
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter identifiers to be sampled"
             )
-            public JAMSString parameterIDs;
+            public Attribute.String parameterIDs;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter value bounaries corresponding to parameter identifiers"
             )
-            public JAMSString boundaries;
+            public Attribute.String boundaries;
            
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "objective function name"
             )
-            public JAMSString effMethodName;
+            public Attribute.String effMethodName;
             
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "the prediction series"
             )
-            public JAMSDouble effValue;
+            public Attribute.Double effValue;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Data file directory name"
             )
-            public JAMSString dirName;
+            public Attribute.String dirName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSString outputFileName;
+            public Attribute.String outputFileName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSInteger method;
+            public Attribute.Integer method;
     
     public void init(){            
         super.init();            
@@ -112,7 +105,7 @@ public class SensitivityAnalyser extends SOOptimizer{
         GP.trainData.setObject("data",data);
         GP.trainData.setObject("predict",predict);
         
-        GP.optimizationData = (JAMSEntity)getModel().getRuntime().getDataFactory().createEntity();
+        GP.optimizationData = (Attribute.Entity)getModel().getRuntime().getDataFactory().createEntity();
         GP.optimizationData.setObject("data",data);
         GP.optimizationData.setObject("predict",predict);
                         

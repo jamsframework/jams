@@ -51,43 +51,37 @@ public class SimpleSCE extends SOOptimizer {
      */
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
-        update = JAMSVarDescription.UpdateType.INIT,
         description = "A and B specify linear constraints, so that for every x the condition Ax = B is satisfied. if you don^t specify A and B the unconstrained problem will be solved")
-        public JAMSString LinearConstraintMatrixA;
+        public Attribute.String LinearConstraintMatrixA;
     
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
-        update = JAMSVarDescription.UpdateType.INIT,
         description = "A and B specify linear constraints, so that for every x the condition Ax = B is satisfied. if you don^t specify A and B the unconstrained problem will be solved")
-        public JAMSString LinearConstraintVectorB;
+        public Attribute.String LinearConstraintVectorB;
     
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
-        update = JAMSVarDescription.UpdateType.RUN,
         description = "optimization parameter: number of complex, a common value for this is 2 or 3",
         defaultValue = "2")
-        public JAMSInteger NumberOfComplexes;
+        public Attribute.Integer NumberOfComplexes;
     
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
-        update = JAMSVarDescription.UpdateType.RUN,
         description = "stopping parameter: pcento, optimization is stopped if objective function does not improve by pcento percent in the last kstop iterations",
         defaultValue = "0.01")
-        public JAMSDouble pcento;
+        public Attribute.Double pcento;
     
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
-        update = JAMSVarDescription.UpdateType.RUN,
         description = "stopping parameter: kstop, for further description see pcento",
         defaultValue = "5")
-        public JAMSInteger kstop;
+        public Attribute.Integer kstop;
     
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
-        update = JAMSVarDescription.UpdateType.RUN,
         description = "stopping parameter: peps, optimization is stopped if the parameter - space has converged to a volume less than peps",
         defaultValue = "0.0001")
-        public JAMSDouble peps;
+        public Attribute.Double peps;
     
     int N; //parameter dimension
     int p; //number of complexes

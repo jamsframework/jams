@@ -1599,7 +1599,7 @@ public class JXYConfigurator extends JFrame{
 ////
 ////         //System.out.println("plotframe.setVisible(true)");
 ////
-////        //JAMSCalendar test = new JAMSCalendar();
+////        //Attribute.Calendar test = new Attribute.Calendar();
 ////        //if(table.getValueAt(rows[0], columns[0]).getClass() != test.getClass()){
 //        int numActiveLeft=0;
 //        int numActiveRight=0;
@@ -1726,7 +1726,7 @@ public class JXYConfigurator extends JFrame{
 //                                corr++;
 //                            }
 //                    }                 
-//                ctsplot.plot((JAMSCalendar)table.getValueAt(k,0), valueLeft, valueRight);
+//                ctsplot.plot((Attribute.Calendar)table.getValueAt(k,0), valueLeft, valueRight);
 //            }
 //
 //        repaint();

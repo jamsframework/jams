@@ -23,50 +23,44 @@ public class DataLoader extends JAMSComponent {
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "TimeSerie of Precip Data"
             )
-             public JAMSString datafile;
+             public Attribute.String datafile;
                 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "TimeSerie of Temp Data"
             )
-             public JAMSInteger ExampleLength;
+             public Attribute.Integer ExampleLength;
                                               
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger relevantTime;
+            public Attribute.Integer relevantTime;
                                     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity Data;
+            public Attribute.Entity Data;
             
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSInteger dataShift;
+            public Attribute.Integer dataShift;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSString Gaps;
+            public Attribute.String Gaps;
     
     public DataLoader() {        
     }
     
-    public void init() throws JAMSEntity.NoSuchAttributeException {  
+    public void init() throws Attribute.Entity.NoSuchAttributeException {  
 	BufferedReader reader = null;
 	HashMap<Integer, double[]> rawData = new HashMap<Integer,double[]>();
 	HashMap<Integer, double[]> rawPredict = new HashMap<Integer,double[]>();

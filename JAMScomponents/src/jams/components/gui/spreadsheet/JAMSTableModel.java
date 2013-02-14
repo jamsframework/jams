@@ -281,7 +281,7 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
 //        rows++;
 //    }
     
-    public void addRowArray(JAMSDouble[] rowdata){
+    public void addRowArray(Attribute.Double[] rowdata){
         int c = rowdata.length;
         double data[] = new double[c];
         
@@ -301,13 +301,13 @@ public class JAMSTableModel extends AbstractTableModel implements Serializable {
     }
      **/
     
-    public void addTime(JAMSCalendar time){
-        JAMSCalendar nextTime = time.clone();
+    public void addTime(Attribute.Calendar time){
+        Attribute.Calendar nextTime = time.clone();
         timeVector.add(nextTime);
     }
     
     /*
-    public JAMSCalendar getTime(){
+    public Attribute.Calendar getTime(){
         
        
     }

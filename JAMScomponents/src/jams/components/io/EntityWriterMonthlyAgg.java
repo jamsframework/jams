@@ -48,73 +48,63 @@ title="Entity file writer (spatial+monthly)",
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "EntitySet"
             )
-            public JAMSEntityCollection entities;
+            public Attribute.EntityCollection entities;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSString fileName;
+            public Attribute.String fileName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "The model time interval"
             )
-            public JAMSTimeInterval modelTimeInterval;
+            public Attribute.TimeInterval modelTimeInterval;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "The aggregation time interval"
             )
-            public JAMSTimeInterval aggTimeInterval;
+            public Attribute.TimeInterval aggTimeInterval;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "time"
             )
             public Attribute.Calendar time;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file header descriptions"
             )
-            public JAMSString header;
+            public Attribute.String header;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file attribute names"
             )
-            public JAMSString attributeName;
+            public Attribute.String attributeName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "entity attribute name for weight [attName | none]"
             )
-            public JAMSString weight;
+            public Attribute.String weight;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "true/false enables output of each simulated month"
             )
-            public JAMSBoolean monthlyValuesWriting;
+            public Attribute.Boolean monthlyValuesWriting;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "type of calculation - sum, average, stDev"
             )
-            public JAMSString type;
+            public Attribute.String type;
     
     private GenericDataWriter writer;
     private double[][] valueMatrix;
@@ -134,7 +124,7 @@ title="Entity file writer (spatial+monthly)",
     private double[][] aggMatrix;
     private int[] aggCounter;
     private String[] aggFieldNames;
-    private JAMSTimeInterval timeInterval2;
+    private Attribute.TimeInterval timeInterval2;
     
     
     private int counter = 0;
@@ -145,7 +135,7 @@ title="Entity file writer (spatial+monthly)",
      *  Component runstages
      */
     
-    public void init() throws JAMSEntity.NoSuchAttributeException {
+    public void init() throws Attribute.Entity.NoSuchAttributeException {
         
         //some checking if time intervals correlate well
         //....
@@ -215,7 +205,7 @@ title="Entity file writer (spatial+monthly)",
         int oldMonth = time.get(JAMSCalendar.MONTH);
     }
     
-    public void run() throws JAMSEntity.NoSuchAttributeException {
+    public void run() throws Attribute.Entity.NoSuchAttributeException {
         
         if (!time.after(aggTimeInterval.getEnd()) && !time.before(aggTimeInterval.getStart())) {
             
@@ -267,7 +257,7 @@ title="Entity file writer (spatial+monthly)",
             if(this.weight.getValue().equals("none")){
                 for(int i = 0; i < nEnts; i++){
                     //hier wird der Tageswert aus dem Modell geholt
-                    dailyValue[i] = (((JAMSDouble)entities.getEntityArray()[i].getObject(this.attributeName.getValue())).getValue());
+                    dailyValue[i] = (((Attribute.Double)entities.getEntityArray()[i].getObject(this.attributeName.getValue())).getValue());
                     //hier für die Berechnung der Standardabweichung zwischengespeichert
                     if(this.type.getValue().equals("stDev")){
                         monthValueMatrix[daycounter][i] = dailyValue[i];
@@ -282,9 +272,9 @@ title="Entity file writer (spatial+monthly)",
             //user selected weight attribute
             else{
                 for(int i = 0; i < nEnts; i++){
-                    weightVal[i] = (((JAMSDouble)entities.getEntityArray()[i].getObject(this.weight.getValue())).getValue());
-                    //double weight = (((JAMSDouble)entities.getEntityArray()[i].getObject(this.weight.getValue())).getValue());
-                    dailyValue[i] = (((JAMSDouble)entities.getEntityArray()[i].getObject(this.attributeName.getValue())).getValue()) / weightVal[i];
+                    weightVal[i] = (((Attribute.Double)entities.getEntityArray()[i].getObject(this.weight.getValue())).getValue());
+                    //double weight = (((Attribute.Double)entities.getEntityArray()[i].getObject(this.weight.getValue())).getValue());
+                    dailyValue[i] = (((Attribute.Double)entities.getEntityArray()[i].getObject(this.attributeName.getValue())).getValue()) / weightVal[i];
                     if(this.type.getValue().equals("stDev")){
                         monthValueMatrix[daycounter][i] = dailyValue[i];
                     }
@@ -297,7 +287,7 @@ title="Entity file writer (spatial+monthly)",
         }
     }
     
-    public void cleanup() throws JAMSEntity.NoSuchAttributeException {
+    public void cleanup() throws Attribute.Entity.NoSuchAttributeException {
         
         getModel().getRuntime().println("Writing distributed output file ... may take a while ... please wait ...", JAMS.STANDARD);
         getModel().getRuntime().println("Number of entities: " + nEnts + ", number of timeSteps: " + dateVals.length);
@@ -338,7 +328,7 @@ title="Entity file writer (spatial+monthly)",
             
             //data matrix
             for(int e = 0; e < nEnts; e++){
-                int ID = (int)(((JAMSDouble)entities.getEntityArray()[e].getObject("ID")).getValue());
+                int ID = (int)(((Attribute.Double)entities.getEntityArray()[e].getObject("ID")).getValue());
                 writer.addData(ID);
                 if(monthlyValuesWriting.getValue()){
                     for(int t = 1; t < tcounter; t++){

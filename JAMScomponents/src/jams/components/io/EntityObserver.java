@@ -36,21 +36,18 @@ import jams.model.*;
 public class EntityObserver extends JAMSComponent {
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         update = JAMSVarDescription.UpdateType.RUN,
                          description = "Description")
-    public JAMSEntityCollection entities;
+    public Attribute.EntityCollection entities;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         update = JAMSVarDescription.UpdateType.INIT,
                          description = "Description")
-    public JAMSString idAttribute;
+    public Attribute.String idAttribute;
 
     @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         update = JAMSVarDescription.UpdateType.INIT,
                          description = "Description")
-    public JAMSDouble idValue;
+    public Attribute.Double idValue;
 
-    public void run() throws JAMSEntity.NoSuchAttributeException {
+    public void run() throws Attribute.Entity.NoSuchAttributeException {
         String s;
         for (Attribute.Entity e : entities.getEntities()) {
             if (e.getDouble(idAttribute.getValue()) == idValue.getValue()) {
@@ -60,8 +57,8 @@ public class EntityObserver extends JAMSComponent {
                 Object[] keys = e.getKeys();
                 for (int i = 0; i < keys.length; i++) {
                     Object value = e.getObject(keys[i].toString());
-                    if (value instanceof JAMSDoubleArray) {
-                        double[] d = ((JAMSDoubleArray) value).getValue();
+                    if (value instanceof Attribute.DoubleArray) {
+                        double[] d = ((Attribute.DoubleArray) value).getValue();
                         if (d != null) {
                             for (int j = 0; j < d.length; j++) {
                                 s = String.format("%20s: %s", keys[i] + "[" + j + "]", d[j]);

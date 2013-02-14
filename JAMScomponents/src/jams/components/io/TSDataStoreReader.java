@@ -64,7 +64,7 @@ public class TSDataStoreReader extends JAMSComponent {
     /*
      @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
      description = "The current time within the timeinterval")
-     public JAMSCalendar time;
+     public Attribute.Calendar time;
      */
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,

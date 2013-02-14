@@ -12,7 +12,7 @@ package jams.components.machineLearning;
 
 import jams.data.Attribute;
 import java.util.*;
-import jams.data.JAMSEntity;
+import jams.data.Attribute.Entity;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 /**
@@ -22,17 +22,15 @@ import jams.model.JAMSVarDescription;
 public class Learner extends JAMSComponent{   
      @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
             public Attribute.Entity trainData;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "TimeSerie of Temp Data"
             )
-            public JAMSEntity validationData;
+            public Attribute.Entity validationData;
     
     protected int DataLength = 0;
     protected int TrainLength = 0;
@@ -109,7 +107,7 @@ public class Learner extends JAMSComponent{
 	}
     }
     
-    public void run() throws JAMSEntity.NoSuchAttributeException { 
+    public void run() throws Attribute.Entity.NoSuchAttributeException { 
 	double t1[][] = (double[][])this.trainData.getObject("data");
 	double t2[] = (double[])this.trainData.getObject("predict");
 	setTrainingData(t1,t2);

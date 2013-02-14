@@ -59,10 +59,9 @@ public class MOCOM extends MOOptimizer {
     }   
                                         
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    update = JAMSVarDescription.UpdateType.INIT,
     description = "population size",
     defaultValue="500" )
-    public JAMSInteger populationSize;
+    public Attribute.Integer populationSize;
             
     int currentCount;
                     
@@ -86,7 +85,7 @@ public class MOCOM extends MOOptimizer {
         return generator.nextDouble();
     }       
     private boolean isSampleValid(double[] sample) {
-        Attribute.Double conv_sample[] = new JAMSDouble[sample.length];
+        Attribute.Double conv_sample[] = new Attribute.Double[sample.length];
         for (int i = 0; i < sample.length; i++) {
             conv_sample[i] = getModel().getRuntime().getDataFactory().createDouble();
             conv_sample[i].setValue(sample[i]);

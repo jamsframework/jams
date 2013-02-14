@@ -21,28 +21,24 @@ import java.util.ArrayList;
 public abstract class SOOptimizer extends Optimizer {                
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "best paramter values found so far"
             )
             public Attribute.EntityCollection bestParameterSets;
                        
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "objective function name"
             )
-            public JAMSString effMethodName;
+            public Attribute.String effMethodName;
             
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "the prediction series"
             )
-            public JAMSDouble effValue;
+            public Attribute.Double effValue;
         
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "optimization mode, 1 - minimization, 2 - maximization, 3 - max |f(x)|, 4 - min |f(x)|",
             defaultValue = "1"
             )
@@ -50,7 +46,6 @@ public abstract class SOOptimizer extends Optimizer {
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "known optimal value",
             defaultValue = "0"
             )
@@ -58,7 +53,6 @@ public abstract class SOOptimizer extends Optimizer {
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "stopping criterion if target is met",
             defaultValue = "-Infinity"
             )

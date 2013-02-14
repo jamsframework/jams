@@ -39,28 +39,24 @@ public abstract class Optimizer extends JAMSContext {
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "List of parameter identifiers to be sampled"
             )
-            public JAMSDouble[] parameterIDs;
+            public Attribute.Double[] parameterIDs;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "List of parameter identifiers to be sampled"
             )
-            public JAMSString startValue;
+            public Attribute.String startValue;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter value bounaries corresponding to parameter identifiers"
             )
-            public JAMSString boundaries;
+            public Attribute.String boundaries;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "maximum numer of function evaluations",
             defaultValue = "1000"
             )
@@ -68,33 +64,29 @@ public abstract class Optimizer extends JAMSContext {
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Flag for enabling/disabling this sampler",
             defaultValue = "true"
             )
-            public JAMSBoolean enable;
+            public Attribute.Boolean enable;
 
      @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "file for saving sample data"
             )
-            public JAMSString sampleDumpFile;
+            public Attribute.String sampleDumpFile;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "current iteration"
             )
             public Attribute.Integer iterationCounter;
 
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "file for saving sample data",
             defaultValue = "false"
             )
-            public JAMSBoolean debugMode;
+            public Attribute.Boolean debugMode;
                      
     public class ObjectiveAchievedException extends Exception{
         String msg;
@@ -112,7 +104,7 @@ public abstract class Optimizer extends JAMSContext {
 
     public SampleFactory factory = new SampleFactory();
 
-    protected JAMSDouble[] parameters;
+    protected Attribute.Double[] parameters;
     protected double[] lowBound;
     protected double[] upBound;
     protected String dirName;
@@ -259,7 +251,7 @@ public abstract class Optimizer extends JAMSContext {
 
     @Override
     protected AbstractTracer createDataTracer(OutputDataStore store) {
-        return new AbstractTracer(this, store, JAMSInteger.class) {
+        return new AbstractTracer(this, store, Attribute.Integer.class) {
             @Override
             public void trace() {
                 // check for filters on other contexts first

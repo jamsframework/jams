@@ -42,34 +42,29 @@ public class JAMSProgress extends JAMSComponent {
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Title string for progress bar"
             )
-            public JAMSString title;
+            public Attribute.String title;
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Progress bar height"
             )
-            public JAMSInteger height;
+            public Attribute.Integer height;
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Progress bar width"
             )
-            public JAMSInteger width;
+            public Attribute.Integer width;
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Progress bar always on top?"
             )
-            public JAMSBoolean ontop;
+            public Attribute.Boolean ontop;
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Progress bar always on top?"
             )
-            public JAMSInteger counter;
+            public Attribute.Integer counter;
     
     private JProgressBar jamsProgressBar;
     private JFrame frame;

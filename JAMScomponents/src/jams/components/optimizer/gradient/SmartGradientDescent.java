@@ -44,66 +44,57 @@ import java.io.*;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter identifiers to be sampled"
             )
-            public JAMSString parameterIDs;
+            public Attribute.String parameterIDs;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter value bounaries corresponding to parameter identifiers"
             )
-            public JAMSString boundaries;
+            public Attribute.String boundaries;
           
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "efficiency methods"
             )
-            public JAMSString effMethodName;
+            public Attribute.String effMethodName;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "efficiency values; note: only first value is optimized"
             )
-            public JAMSDouble[] effValue;   
+            public Attribute.Double[] effValue;   
                            
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "file with optimization information and best parameter set"
             )
-            public JAMSString resultFile;
+            public Attribute.String resultFile;
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "number of monte carlo runs to determine current minimal distance"
             )
-            public JAMSInteger MonteCarloParameter;
+            public Attribute.Integer MonteCarloParameter;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "minimal distance until optimization is stopped"
             )
-            public JAMSDouble MinimalDistance;
+            public Attribute.Double MinimalDistance;
     
      @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "worst efficiency which is accepted"
             )
-            public JAMSDouble ValueBoundary;
+            public Attribute.Double ValueBoundary;
      
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Minimization,Mazimation or absolute optimization"
             )
-            public JAMSInteger OptimizationType;
+            public Attribute.Integer OptimizationType;
     
         
     static final int MAXIMIZATION = 1;
@@ -112,7 +103,7 @@ import java.io.*;
     static final int ABSMINIMIZATION = 4;
     
     String[] parameterNames;
-    JAMSDouble parameters[] = null;
+    Attribute.Double parameters[] = null;
     
     double[] lowBound;
     double[] upBound;
@@ -146,14 +137,14 @@ import java.io.*;
         int i;
         StringTokenizer tok = new StringTokenizer(parameterIDs.getValue(), ";");
         String key;
-        parameters = new JAMSDouble[tok.countTokens()];
+        parameters = new Attribute.Double[tok.countTokens()];
         parameterNames = new String[tok.countTokens()];
         
         i = 0;
         while (tok.hasMoreTokens()) {
             key = tok.nextToken();
             parameterNames[i] = key;
-            parameters[i] = ((JAMSDouble)getModel().getRuntime().getDataHandles().get(key));
+            parameters[i] = ((Attribute.Double)getModel().getRuntime().getDataHandles().get(key));
             i++;
         }
         
@@ -262,7 +253,7 @@ import java.io.*;
 	   } 
     }
     
-    private void TranslateToMaximization(JAMSDouble value) {
+    private void TranslateToMaximization(Attribute.Double value) {
 	if (OptimizationType.getValue() == MAXIMIZATION) {
             //do nothing
 	}
@@ -375,7 +366,7 @@ import java.io.*;
 	return true;
     }
         
-    private boolean IsSampleValid(JAMSDouble [] sample) {
+    private boolean IsSampleValid(Attribute.Double [] sample) {
 	int paras = this.parameterNames.length;
         boolean criticalPara = false;
         double criticalParaValue = 0; 

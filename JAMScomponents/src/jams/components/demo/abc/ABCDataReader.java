@@ -46,19 +46,16 @@ public class ABCDataReader extends JAMSComponent {
      *  Component variables
      */
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-                        update = JAMSVarDescription.UpdateType.INIT,
                         description = "Input data file name")
-                        public JAMSString fileName;
+                        public Attribute.String fileName;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-                        update = JAMSVarDescription.UpdateType.RUN,
                         description = "Precip value read from file")
-                        public JAMSDouble precip;
+                        public Attribute.Double precip;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-                        update = JAMSVarDescription.UpdateType.RUN,
                         description = "Runoff value read from file")
-                        public JAMSDouble runoff;
+                        public Attribute.Double runoff;
     
     private BufferedReader reader;
 

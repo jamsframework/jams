@@ -5,9 +5,8 @@
 
 package jams.components.tools;
 
-import jams.data.Attribute;
+import jams.data.*;
 import jams.model.*;
-import jams.data.JAMSString;
 import jams.runtime.StandardRuntime;
 import jams.tools.FileTools;
 import java.io.File;
@@ -20,7 +19,6 @@ import java.io.IOException;
 public class JAMSModelSnapshot extends JAMSComponent{                  
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Description"
             )
             public Attribute.String snapshotFile;
@@ -28,7 +26,6 @@ public class JAMSModelSnapshot extends JAMSComponent{
         
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Description"
             )
             public Attribute.Boolean enable;

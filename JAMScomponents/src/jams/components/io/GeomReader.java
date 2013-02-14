@@ -26,8 +26,8 @@ import jams.JAMS.*;
 import jams.data.Attribute;
 import org.geotools.data.shapefile.ShapefileDataStore;
 
-import jams.data.JAMSEntityCollection;
-import jams.data.JAMSString;
+import jams.data.Attribute.EntityCollection;
+import jams.data.Attribute.String;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
@@ -58,31 +58,27 @@ public class GeomReader extends JAMSComponent {
 
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
-        update = JAMSVarDescription.UpdateType.INIT,
         description = "shape file name"
         )
-        public JAMSString shapeFileName;
+        public Attribute.String shapeFileName;
 
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
-        update = JAMSVarDescription.UpdateType.RUN,
         description = "Collection of hru objects"
         )
-        public JAMSEntityCollection hrus;
+        public Attribute.EntityCollection hrus;
 
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
-        update = JAMSVarDescription.UpdateType.INIT,
         description = "Name of identifier column in shape file"
         )
-        public JAMSString idName;
+        public Attribute.String idName;
 
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.WRITE,
-        update = JAMSVarDescription.UpdateType.RUN,
         description = "Original Shape file name"
         )
-        public JAMSString baseShape;
+        public Attribute.String baseShape;
 
     @Override
     public void run() throws Exception {

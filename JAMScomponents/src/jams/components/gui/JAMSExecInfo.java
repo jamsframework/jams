@@ -45,7 +45,6 @@ import java.io.Serializable;
     
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Number of invocations of this component"
             )
             public Attribute.Integer counter;

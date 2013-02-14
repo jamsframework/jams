@@ -28,8 +28,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import jams.data.JAMSData;
-import jams.data.JAMSString;
-import jams.data.JAMSStringArray;
+import jams.data.*;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
@@ -48,16 +47,16 @@ public class JAMSDataWriter extends JAMSComponent {
      */
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Name of output file")
-    public JAMSString outputFile;
+    public Attribute.String outputFile;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Header of output file (i.e. attribute names)")
-    public JAMSStringArray header;
+    public Attribute.StringArray header;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Attributes to be written")
     public JAMSData[] attributes;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Comment")
-    public JAMSString comment;
+    public Attribute.String comment;
 
     public void cleanup() {
 

@@ -40,80 +40,69 @@ public class CheckedTSDataReader extends JAMSComponent {
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Data file name"
             )
-            public JAMSString dataFileName;
+            public Attribute.String dataFileName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Column of first data value"
             )
-            public JAMSInteger startColumn;
+            public Attribute.Integer startColumn;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Time interval of current temporal context"
             )
-            public JAMSTimeInterval timeInterval;
+            public Attribute.TimeInterval timeInterval;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Time interval of current temporal context"
             )
-            public JAMSCalendar time;
+            public Attribute.Calendar time;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Array of data values for current time step"
             )
-            public JAMSDoubleArray dataArray;
+            public Attribute.DoubleArray dataArray;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "data set descriptor"
             )
-            public JAMSString dataSetName;
+            public Attribute.String dataSetName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Array of station elevations"
             )
-            public JAMSDoubleArray elevation;
+            public Attribute.DoubleArray elevation;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Array of station's x coordinate"
             )
-            public JAMSDoubleArray xCoord;
+            public Attribute.DoubleArray xCoord;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Array of station's y coordinate"
             )
-            public JAMSDoubleArray yCoord;
+            public Attribute.DoubleArray yCoord;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.WRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "Regression coefficients"
             )
-            public JAMSDoubleArray regCoeff;
+            public Attribute.DoubleArray regCoeff;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Calculate regression coefficients? If not, regCoeff array stays empty!"
             )
-            public JAMSBoolean skipRegression;
+            public Attribute.Boolean skipRegression;
     
     private JAMSTableDataStore store;
     private JAMSTableDataArray da;

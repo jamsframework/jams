@@ -444,7 +444,7 @@ public class JAMSXYPlot {
     
     
 
-//    public void plot(JAMSCalendar time, double[] valueLeft, double[] valueRight) {
+//    public void plot(Attribute.Calendar time, double[] valueLeft, double[] valueRight) {
 //        try {
 //            for (i = 0; i < graphCountRight; i++) {
 //                double value = valueRight[i];

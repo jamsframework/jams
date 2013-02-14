@@ -15,10 +15,7 @@ import jams.tools.JAMSTools;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import jams.data.JAMSBoolean;
-import jams.data.JAMSDouble;
-import jams.data.JAMSInteger;
-import jams.data.JAMSString;
+import jams.data.*;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 
@@ -34,80 +31,69 @@ public class Sandbox extends SOOptimizer{
      */    
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter identifiers to be sampled"
             )
-            public JAMSString parameterIDs;
+            public Attribute.String parameterIDs;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "List of parameter value bounaries corresponding to parameter identifiers"
             )
-            public JAMSString boundaries;
+            public Attribute.String boundaries;
            
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "objective function name"
             )
-            public JAMSString effMethodName;
+            public Attribute.String effMethodName;
             
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "the prediction series"
             )
-            public JAMSDouble effValue;
+            public Attribute.Double effValue;
         
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "optimization mode"
             )
-            public JAMSInteger mode;
+            public Attribute.Integer mode;
           
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READWRITE,
-            update = JAMSVarDescription.UpdateType.RUN,
             description = "maximum runs"
             )
-            public JAMSInteger maxn;
+            public Attribute.Integer maxn;
         
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Flag for enabling/disabling this sampler"
             )
-            public JAMSBoolean enable;
+            public Attribute.Boolean enable;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Data file directory name"
             )
-            public JAMSString dirName;
+            public Attribute.String dirName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSString outputFileName;
+            public Attribute.String outputFileName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSString modelGridFileName;
+            public Attribute.String modelGridFileName;
     
     @JAMSVarDescription(
     access = JAMSVarDescription.AccessType.READ,
-            update = JAMSVarDescription.UpdateType.INIT,
             description = "Output file name"
             )
-            public JAMSString SampleDumpFileName;
+            public Attribute.String SampleDumpFileName;
            
     BufferedWriter writer = null;
     final double Version = 1.0;
