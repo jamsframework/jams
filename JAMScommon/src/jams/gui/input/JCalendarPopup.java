@@ -8,6 +8,7 @@
  
 package jams.gui.input;
 
+import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -160,7 +161,7 @@ public class JCalendarPopup extends javax.swing.JPanel
                 m_df = DateFormat.getDateInstance(DateFormat.FULL, locale);
             }
         }
-        m_calendar.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
+        m_calendar.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
         m_calendar.setTime(dateTarget);
         m_calendar.set(Calendar.HOUR_OF_DAY, 12);
         m_calendar.set(Calendar.MINUTE, 0);

@@ -80,7 +80,7 @@ title="Entity file writer (temporal)",
      *  Component runstages
      */
     
-    public void init() throws Attribute.Entity.NoSuchAttributeException {
+    public void init() {
         writer = new GenericDataWriter(getModel().getWorkspaceDirectory().getPath()+"/"+fileName.getValue());
         writer.addComment("JAMS entity output from TemporalEntityWriter");
         writer.addComment("Attribute name: " + dataAttributeName);
@@ -96,7 +96,7 @@ title="Entity file writer (temporal)",
         writer.writeHeader();
     }
     
-    public void run() throws Attribute.Entity.NoSuchAttributeException {
+    public void run() {
         
         //always write time
         //the time also knows a toString() method with additional formatting parameters

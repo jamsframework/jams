@@ -224,8 +224,8 @@ public class SimpleSerieProcessor extends Processor {
         minDate.setValue(rs.getIds()[0].toString());
         maxDate.setValue(rs.getIds()[rs.getIds().length-1].toString());
                 
-        int startYear = minDate.get(JAMSCalendar.YEAR);
-        int endYear = maxDate.get(JAMSCalendar.YEAR);
+        int startYear = minDate.get(Attribute.Calendar.YEAR);
+        int endYear = maxDate.get(Attribute.Calendar.YEAR);
         int[] years = new int[endYear - startYear + 1];
         int c = 0;
 

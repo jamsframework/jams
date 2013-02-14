@@ -153,9 +153,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
             boolean doAutoPreprocessing = Boolean.parseBoolean(properties.getProperty(JAMSProperties.AUTO_PREPROCESSING, "false"));
             if (doAutoPreprocessing) {
-                md.metaProcess(classLoader, this);
-            }
-
+                md.metaProcess(this);
+            } 
+            
             if (StringTools.isEmptyString(md.getWorkspacePath()) && (defaultWorkspacePath != null)) {
                 md.setWorkspacePath(defaultWorkspacePath);
                 this.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + defaultWorkspacePath);

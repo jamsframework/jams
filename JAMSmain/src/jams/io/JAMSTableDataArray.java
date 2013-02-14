@@ -56,12 +56,11 @@ public class JAMSTableDataArray implements Serializable {
             String timeString = parts[1];   // time
             int dataReadIndex = 2;
             
-            String dateFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
             dateString += " " + timeString;
             valueNumber = parts.length - 2;
 
             Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
-            cal.setValue(dateString, dateFormat);
+            cal.setValue(dateString, cal.getFormatPattern());
             this.setTime(cal);
 
             String[] theValues = new String[valueNumber];

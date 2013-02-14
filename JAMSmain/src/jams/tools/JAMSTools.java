@@ -39,8 +39,6 @@ import java.util.StringTokenizer;
  */
 public class JAMSTools {
 
-    public final static String DATE_TIME_FORMAT_PATTERN = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
-
     /**
      * Looks for a field with a given name in a class and all its superclasses
      * @param clazz The class to be searched in

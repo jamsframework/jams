@@ -36,7 +36,7 @@ public class EntityAccessor implements DataAccessor {
     int accessType;
     String attributeName;
 
-    public EntityAccessor(DataFactory dataFactory,Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws Attribute.Entity.NoSuchAttributeException {
+    public EntityAccessor(DataFactory dataFactory,Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) {
 
         //get the entities' data objects
         entityObject = new Attribute.Entity[entities.length];

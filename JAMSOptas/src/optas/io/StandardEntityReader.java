@@ -52,7 +52,7 @@ public class StandardEntityReader extends JAMSComponent {
             public JAMSEntityCollection hrus;
     
     
-    public void init() throws Attribute.Entity.NoSuchAttributeException {
+    public void init() {
         hrus.setEntities(readParas(getModel().getWorkspaceDirectory().getPath() + "/" + hruFileName.getValue(),this.getModel()));
     }
 

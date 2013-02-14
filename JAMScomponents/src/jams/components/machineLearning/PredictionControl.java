@@ -129,7 +129,7 @@ public class PredictionControl extends JAMSComponent {
     
     int ExamplLength,numOfExampl;
     
-    public void loadData() throws Attribute.Entity.NoSuchAttributeException {  
+    public void loadData() {  
 	BufferedReader reader = null;
 	HashMap<Integer, double[]> rawData = new HashMap<Integer,double[]>();
 	HashMap<Integer, double[]> rawPredict = new HashMap<Integer,double[]>();
@@ -280,9 +280,9 @@ public class PredictionControl extends JAMSComponent {
 	}
     }
     
-    public void init() throws Attribute.Entity.NoSuchAttributeException {                	
+    public void init() {                	
 	loadData();
     }
-    public void run() throws Attribute.Entity.NoSuchAttributeException {                	
+    public void run() {                	
     }
 }

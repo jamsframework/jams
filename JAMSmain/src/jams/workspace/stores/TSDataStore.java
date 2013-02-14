@@ -110,7 +110,7 @@ public class TSDataStore extends TableDataStore {
         Element stepsizeElement = (Element) tiNode.getElementsByTagName("stepsize").item(0);
         Element timeFormatElement = (Element) tiNode.getElementsByTagName("dumptimeformat").item(0);
 
-        timeFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
+        timeFormat = Attribute.Calendar.DEFAULT_FORMAT_PATTERN;
         if (timeFormatElement != null) {
             timeFormat = timeFormatElement.getAttribute("value");
         }

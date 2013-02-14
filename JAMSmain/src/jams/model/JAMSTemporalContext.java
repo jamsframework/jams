@@ -114,7 +114,7 @@ public class JAMSTemporalContext extends JAMSContext {
         }
         lastValue = timeInterval.getEnd().clone();
         lastValue.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());
-        lastValue.add(JAMSCalendar.MILLISECOND, 1);
+        lastValue.add(Attribute.Calendar.MILLISECOND, 1);
         if (current == null) {
             current = this.getModel().getRuntime().getDataFactory().createCalendar();
         }

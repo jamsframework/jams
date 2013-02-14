@@ -69,7 +69,7 @@ import jams.model.*;
      *  Component run stages
      */
     
-    public void run() throws Attribute.Entity.NoSuchAttributeException {
+    public void run() {
 
         if(target.getValue() != null){
             int i = 0;

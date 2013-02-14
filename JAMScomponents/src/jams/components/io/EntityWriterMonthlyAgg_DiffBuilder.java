@@ -158,7 +158,7 @@ title="Entity file writer (spatial+monthly)",
      *  Component runstages
      */
     
-    public void init() throws Attribute.Entity.NoSuchAttributeException {
+    public void init() {
         
         //some checking if time intervals correlate well
         //....
@@ -205,7 +205,7 @@ title="Entity file writer (spatial+monthly)",
         
         writer = new GenericDataWriter(getModel().getWorkspaceDirectory().getPath()+"/"+fileName.getValue());
         
-        timeInterval2 = new JAMSTimeInterval(this.aggTimeInterval.getStart(), this.aggTimeInterval.getEnd(), (int) JAMSCalendar.MONTH, 1);
+        timeInterval2 = new JAMSTimeInterval(this.aggTimeInterval.getStart(), this.aggTimeInterval.getEnd(), (int) Attribute.Calendar.MONTH, 1);
         
         int tsteps = (int)this.timeInterval2.getNumberOfTimesteps();
         
@@ -235,10 +235,10 @@ title="Entity file writer (spatial+monthly)",
                 
         tcounter = 0;
         
-        int oldMonth = time.get(JAMSCalendar.MONTH);
+        int oldMonth = time.get(Attribute.Calendar.MONTH);
     }
     
-    public void run() throws Attribute.Entity.NoSuchAttributeException {
+    public void run() {
         
         /*Für die Differenz braucht man immer den Attributwert des Vortages.
         Um zu Verhindern, dass man immer das Aggregationsinterval einen Tag eher startet,
@@ -268,7 +268,7 @@ title="Entity file writer (spatial+monthly)",
         
         
         if (!time.after(aggTimeInterval.getEnd()) && !time.before(aggTimeInterval.getStart())) {
-            int newMonth=time.get(JAMSCalendar.MONTH);
+            int newMonth=time.get(Attribute.Calendar.MONTH);
             if(newMonth != oldMonth){
                 
                 //Einfügen: Lesen von Monat und Jahr für Header!
@@ -310,7 +310,7 @@ title="Entity file writer (spatial+monthly)",
 
 //no weight
             if(daycounter == 0){
-                int d = time.getActualMaximum(JAMSCalendar.DATE);
+                int d = time.getActualMaximum(Attribute.Calendar.DATE);
                 diffValueMatrix = new double[d][nEnts];
             }
             
@@ -356,14 +356,14 @@ title="Entity file writer (spatial+monthly)",
                 
             }
             daycounter++;
-            oldMonth = time.get(JAMSCalendar.MONTH);
+            oldMonth = time.get(Attribute.Calendar.MONTH);
             
         }
 
             
     }
     
-    public void cleanup() throws Attribute.Entity.NoSuchAttributeException {
+    public void cleanup() {
         
         getModel().getRuntime().println("Writing distributed output file ... may take a while ... please wait ...", JAMS.STANDARD);
         getModel().getRuntime().println("Number of entities: " + nEnts + ", number of timeSteps: " + dateVals.length);

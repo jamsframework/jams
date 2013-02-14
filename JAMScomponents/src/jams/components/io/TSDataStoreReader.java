@@ -189,20 +189,20 @@ public class TSDataStoreReader extends JAMSComponent {
             // this can be done if the step size can be calculated directly from
             // milliseconds representation, i.e. for weekly steps and below
             // ps: this is evil :]
-            if (timeUnit >= JAMSCalendar.WEEK_OF_YEAR) {
+            if (timeUnit >= Attribute.Calendar.WEEK_OF_YEAR) {
                 long diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
                 int steps;
                 switch (timeUnit) {
-                    case JAMSCalendar.DAY_OF_YEAR:
+                    case Attribute.Calendar.DAY_OF_YEAR:
                         steps = (int) diff / 3600 / 24;
                         break;
-                    case JAMSCalendar.HOUR_OF_DAY:
+                    case Attribute.Calendar.HOUR_OF_DAY:
                         steps = (int) diff / 3600;
                         break;
-                    case JAMSCalendar.WEEK_OF_YEAR:
+                    case Attribute.Calendar.WEEK_OF_YEAR:
                         steps = (int) diff / 3600 / 24 / 7;
                         break;
-                    case JAMSCalendar.MINUTE:
+                    case Attribute.Calendar.MINUTE:
                         steps = (int) diff / 60;
                         break;
                     default:

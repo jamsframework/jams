@@ -96,19 +96,19 @@ public class TimeintervalInput extends JPanel implements InputComponent {
         endDate.getTimeText().setToolTipText(JAMS.i18n("Endtime"));
         endDate.getDateText().setToolTipText(JAMS.i18n("Enddate"));
 
-        indexMap.put(JAMSCalendar.YEAR, 0);
-        indexMap.put(JAMSCalendar.MONTH, 1);
-        indexMap.put(JAMSCalendar.DAY_OF_YEAR, 2);
-        indexMap.put(JAMSCalendar.HOUR_OF_DAY, 3);
-        indexMap.put(JAMSCalendar.MINUTE, 4);
-        indexMap.put(JAMSCalendar.SECOND, 5);
+        indexMap.put(Attribute.Calendar.YEAR, 0);
+        indexMap.put(Attribute.Calendar.MONTH, 1);
+        indexMap.put(Attribute.Calendar.DAY_OF_YEAR, 2);
+        indexMap.put(Attribute.Calendar.HOUR_OF_DAY, 3);
+        indexMap.put(Attribute.Calendar.MINUTE, 4);
+        indexMap.put(Attribute.Calendar.SECOND, 5);
 
-        fieldMap.put(0, JAMSCalendar.YEAR);
-        fieldMap.put(1, JAMSCalendar.MONTH);
-        fieldMap.put(2, JAMSCalendar.DAY_OF_YEAR);
-        fieldMap.put(3, JAMSCalendar.HOUR_OF_DAY);
-        fieldMap.put(4, JAMSCalendar.MINUTE);
-        fieldMap.put(5, JAMSCalendar.SECOND);
+        fieldMap.put(0, Attribute.Calendar.YEAR);
+        fieldMap.put(1, Attribute.Calendar.MONTH);
+        fieldMap.put(2, Attribute.Calendar.DAY_OF_YEAR);
+        fieldMap.put(3, Attribute.Calendar.HOUR_OF_DAY);
+        fieldMap.put(4, Attribute.Calendar.MINUTE);
+        fieldMap.put(5, Attribute.Calendar.SECOND);
 
         timeUnit = new JComboBox();
         timeUnit.addItem(JAMS.i18n("YEAR"));

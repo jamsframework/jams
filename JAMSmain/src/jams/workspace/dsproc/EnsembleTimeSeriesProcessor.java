@@ -623,8 +623,8 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         Attribute.Calendar maxDate = JAMSDataFactory.getDataFactory().createCalendar();
         maxDate.setValue((String) block0.getIds()[block0.getIds().length - 1]);
 
-        int startYear = minDate.get(JAMSCalendar.YEAR);
-        int endYear = maxDate.get(JAMSCalendar.YEAR);
+        int startYear = minDate.get(Attribute.Calendar.YEAR);
+        int endYear = maxDate.get(Attribute.Calendar.YEAR);
         int[] years = new int[endYear - startYear + 1];
         int c = 0;
 

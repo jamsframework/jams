@@ -21,10 +21,10 @@
  */
 package reg.gui;
 
-import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
 import jams.workspace.stores.StandardInputDataStore;
 import jams.workspace.stores.TSDataStore;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JLabel;
@@ -48,12 +48,12 @@ public class InputInfoPanelTS extends InputInfoPanelSimple {
         GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LÜCKENWERT:")), 1, 5, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("KOMMENTAR:")), 1, 6, 1, 1, 0, 0);
 
-        indexMap.put(JAMSCalendar.YEAR, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("JAHR(E)"));
-        indexMap.put(JAMSCalendar.MONTH, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONAT(E)"));
-        indexMap.put(JAMSCalendar.DAY_OF_YEAR, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TAG(E)"));
-        indexMap.put(JAMSCalendar.HOUR_OF_DAY, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STUNDE(N)"));
-        indexMap.put(JAMSCalendar.MINUTE, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINUTE(N)"));
-        indexMap.put(JAMSCalendar.SECOND, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SEKUNDE(N)"));
+        indexMap.put(Calendar.YEAR, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("JAHR(E)"));
+        indexMap.put(Calendar.MONTH, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONAT(E)"));
+        indexMap.put(Calendar.DAY_OF_YEAR, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TAG(E)"));
+        indexMap.put(Calendar.HOUR_OF_DAY, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STUNDE(N)"));
+        indexMap.put(Calendar.MINUTE, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINUTE(N)"));
+        indexMap.put(Calendar.SECOND, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SEKUNDE(N)"));
 
     }
 

@@ -59,7 +59,7 @@ public class TimeSpaceProcessor extends Processor {
         this.dsdb = dsdb;
         this.contexts = dsdb.getContexts();
         dFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        dFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
+        dFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
 
         if (dsdb.isTimeSpaceDatastore()) {
 
@@ -660,11 +660,11 @@ public class TimeSpaceProcessor extends Processor {
         minDate.setValue(rs.getTimestamp("MINDATE").toString());
         maxDate.setValue(rs.getTimestamp("MAXDATE").toString());
 
-        int percent = 0, max = maxDate.get(JAMSCalendar.YEAR) - minDate.get(JAMSCalendar.YEAR) + 1;
+        int percent = 0, max = maxDate.get(Attribute.Calendar.YEAR) - minDate.get(Attribute.Calendar.YEAR) + 1;
         float counter = 0;
 
         // loop over years
-        for (int i = minDate.get(JAMSCalendar.YEAR); i <= maxDate.get(JAMSCalendar.YEAR); i++) {
+        for (int i = minDate.get(Attribute.Calendar.YEAR); i <= maxDate.get(Attribute.Calendar.YEAR); i++) {
             String filterString = String.format("%04d", i) + "-%-%";
             calcTemporalMean(filterString, TABLE_NAME_YEARAVG, String.valueOf(i));
 
@@ -700,8 +700,8 @@ public class TimeSpaceProcessor extends Processor {
         minDate.setValue(rs.getTimestamp("MINDATE").toString());
         maxDate.setValue(rs.getTimestamp("MAXDATE").toString());
 
-        int startYear = minDate.get(JAMSCalendar.YEAR);
-        int endYear = maxDate.get(JAMSCalendar.YEAR);
+        int startYear = minDate.get(Attribute.Calendar.YEAR);
+        int endYear = maxDate.get(Attribute.Calendar.YEAR);
         int[] years = new int[endYear - startYear + 1];
         int c = 0;
 

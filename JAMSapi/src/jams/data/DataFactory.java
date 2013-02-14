@@ -4,9 +4,6 @@
  */
 package jams.data;
 
-import com.vividsolutions.jts.geom.Geometry;
-import java.util.HashMap;
-
 /**
  *
  * @author christian
@@ -20,6 +17,7 @@ public interface DataFactory {
      * @return A JAMSData instance
      */
     public JAMSData createInstance(Object value);
+    
     public Attribute.Double createDouble();
 
     public  Attribute.DoubleArray createDoubleArray();

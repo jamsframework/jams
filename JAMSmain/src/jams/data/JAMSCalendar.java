@@ -35,8 +35,8 @@ import java.util.*;
  */
 public class JAMSCalendar extends GregorianCalendar implements Attribute.Calendar {
 
-    transient public final static String DATE_TIME_FORMAT_PATTERN = "yyyy-MM-dd HH:mm";
-    transient public final static TimeZone STANDARD_TIME_ZONE = new SimpleTimeZone(0, "UTC");
+    transient private final static String FORMAT_PATTERN = Attribute.Calendar.DEFAULT_FORMAT_PATTERN;
+    transient private final static TimeZone TIME_ZONE = Attribute.Calendar.DEFAULT_TIME_ZONE;
     private DateFormat dateFormat;
     private long milliSeconds;
 
@@ -69,19 +69,19 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     }
 
     private void initTZ() {
-        this.setTimeZone(STANDARD_TIME_ZONE);
-        dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT_PATTERN);
-        dateFormat.setTimeZone(STANDARD_TIME_ZONE);
+        this.setTimeZone(DEFAULT_TIME_ZONE);
+        dateFormat = new SimpleDateFormat(getFormatPattern());
+        dateFormat.setTimeZone(DEFAULT_TIME_ZONE);
     }
 
     public void setTimeZone(TimeZone timezone){
         super.setTimeZone(timezone);
-        dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT_PATTERN);
+        dateFormat = new SimpleDateFormat(getFormatPattern());
         dateFormat.setTimeZone(timezone);
     }
 
     public JAMSCalendar clone() {
-        return new JAMSCalendar(get(YEAR), get(MONTH), get(DAY_OF_MONTH), get(HOUR_OF_DAY), get(MINUTE), get(SECOND));
+        return new JAMSCalendar(get(Attribute.Calendar.YEAR), get(Attribute.Calendar.MONTH), get(Attribute.Calendar.DAY_OF_MONTH), get(Attribute.Calendar.HOUR_OF_DAY), get(Attribute.Calendar.MINUTE), get(Attribute.Calendar.SECOND));
     }
 
     public String toString() {
@@ -93,7 +93,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     public String toString(DateFormat dateFormat) {
         Date date = new Date();
         date.setTime(this.getTimeInMillis());
-        dateFormat.setTimeZone(STANDARD_TIME_ZONE);
+        dateFormat.setTimeZone(DEFAULT_TIME_ZONE);
         return dateFormat.format(date);
     }
 
@@ -124,20 +124,20 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
 
     @Override
     public void removeUnsignificantComponents(int accuracy) {
-        if (accuracy < SECOND) {
-            this.set(SECOND, 0);
+        if (accuracy < Attribute.Calendar.SECOND) {
+            this.set(Attribute.Calendar.SECOND, 0);
         }
-        if (accuracy < MINUTE) {
-            this.set(MINUTE, 0);
+        if (accuracy < Attribute.Calendar.MINUTE) {
+            this.set(Attribute.Calendar.MINUTE, 0);
         }
-        if (accuracy < HOUR_OF_DAY) {
-            this.set(HOUR_OF_DAY, 0);
+        if (accuracy < Attribute.Calendar.HOUR_OF_DAY) {
+            this.set(Attribute.Calendar.HOUR_OF_DAY, 0);
         }
-        if (accuracy < DAY_OF_MONTH) {
-            this.set(DAY_OF_MONTH, 1);
+        if (accuracy < Attribute.Calendar.DAY_OF_MONTH) {
+            this.set(Attribute.Calendar.DAY_OF_MONTH, 1);
         }
-        if (accuracy < MONTH) {
-            this.set(MONTH, 0);
+        if (accuracy < Attribute.Calendar.MONTH) {
+            this.set(Attribute.Calendar.MONTH, 0);
         }
     }
 
@@ -180,37 +180,37 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         }
 
         try {
-            set(YEAR, Integer.parseInt(year));
+            set(Attribute.Calendar.YEAR, Integer.parseInt(year));
         } catch (NumberFormatException nfe) {
             jams.tools.JAMSTools.handle(nfe);
         }
         try {
-            set(MONTH, Integer.parseInt(month) - 1);
+            set(Attribute.Calendar.MONTH, Integer.parseInt(month) - 1);
         } catch (NumberFormatException nfe) {
             jams.tools.JAMSTools.handle(nfe);
         }
         try {
-            set(DAY_OF_MONTH, Integer.parseInt(day));
+            set(Attribute.Calendar.DAY_OF_MONTH, Integer.parseInt(day));
         } catch (NumberFormatException nfe) {
             jams.tools.JAMSTools.handle(nfe);
         }
         try {
-            set(HOUR_OF_DAY, Integer.parseInt(hour));
+            set(Attribute.Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
         } catch (NumberFormatException nfe) {
             jams.tools.JAMSTools.handle(nfe);
         }
         try {
-            set(MINUTE, Integer.parseInt(minute));
+            set(Attribute.Calendar.MINUTE, Integer.parseInt(minute));
         } catch (NumberFormatException nfe) {
             jams.tools.JAMSTools.handle(nfe);
         }
         try {
-            set(SECOND, Integer.parseInt(second));
+            set(Attribute.Calendar.SECOND, Integer.parseInt(second));
         } catch (NumberFormatException nfe) {
             jams.tools.JAMSTools.handle(nfe);
         }
         try {
-            set(MILLISECOND, Integer.parseInt(millisecond));
+            set(Attribute.Calendar.MILLISECOND, Integer.parseInt(millisecond));
         } catch (NumberFormatException nfe) {
             jams.tools.JAMSTools.handle(nfe);
         }
@@ -280,4 +280,15 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         d.setTime(milliSeconds);
         this.setTime(d);
     }
+
+    @Override
+    public String getFormatPattern() {
+        return FORMAT_PATTERN;
+    }
+
+    @Override
+    public TimeZone getTimeZone() {
+        return TIME_ZONE;
+    }
+
 }

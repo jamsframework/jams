@@ -55,7 +55,7 @@ title="Title",
     public void init() {
         double[] x = {1, 2, 3};
         if (d == null) {
-            d = JAMSDataFactory.createDoubleArray();
+            d = getModel().getRuntime().getDataFactory().createDoubleArray();
             d.setValue(x);
         }
     }

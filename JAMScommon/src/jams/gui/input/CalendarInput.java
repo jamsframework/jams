@@ -62,9 +62,9 @@ public class CalendarInput extends JPanel implements InputComponent {
 
     public CalendarInput() {
         this(true);
-        timeFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
-        dateFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
-        dateTimeFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);        
+        timeFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
+        dateFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
+        dateTimeFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);        
     }
 
     public CalendarInput(boolean doLayout) {
@@ -100,8 +100,8 @@ public class CalendarInput extends JPanel implements InputComponent {
     }
 
     public void createPanels() {
-        dateFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
-        dateTimeFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
+        dateFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
+        dateTimeFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
 
         // create the time panel
 
@@ -247,7 +247,7 @@ public class CalendarInput extends JPanel implements InputComponent {
         Date d = calendar.getTime();
 
         TimeZone oldZone = timeFormat.getTimeZone();
-        timeFormat.setTimeZone(JAMSCalendar.STANDARD_TIME_ZONE);
+        timeFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
 
         String dateString = dateFormat.format(d);
         String timeString = timeFormat.format(d);

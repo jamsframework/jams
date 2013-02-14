@@ -22,6 +22,7 @@
 package jams.workspace.stores;
 
 import jams.JAMS;
+import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import jams.data.JAMSDataFactory;
 import jams.io.BufferedFileReader;
@@ -83,7 +84,7 @@ public class J2KTSDataStore extends TSDataStore {
         if (timeFormatElement != null) {
             timeFormat = timeFormatElement.getAttribute("value");
         } else {
-            timeFormat = JAMSCalendar.DATE_TIME_FORMAT_PATTERN;
+            timeFormat = Attribute.Calendar.DEFAULT_FORMAT_PATTERN;
         }
 
         // check if an charset is defined. if not, use JAMS default
@@ -233,11 +234,11 @@ public class J2KTSDataStore extends TSDataStore {
             } else if (key.equalsIgnoreCase(TAGNAME_TEMP_RES)) {
                 String tres = tok2.nextToken();
                 if (tres.equals("d")) {
-                    timeUnit = JAMSCalendar.DAY_OF_YEAR;
+                    timeUnit = Attribute.Calendar.DAY_OF_YEAR;
                 } else if (tres.equals("m")) {
-                    timeUnit = JAMSCalendar.MONTH;
+                    timeUnit = Attribute.Calendar.MONTH;
                 } else if (tres.equals("h")) {
-                    timeUnit = JAMSCalendar.HOUR_OF_DAY;
+                    timeUnit = Attribute.Calendar.HOUR_OF_DAY;
                 }
             }
         }

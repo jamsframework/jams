@@ -50,7 +50,7 @@ public class EntityReader extends JAMSComponent {
             public Attribute.EntityCollection hrus;
     
     
-    public void init() throws Attribute.Entity.NoSuchAttributeException {
+    public void init() {
         hrus.setEntities(readParas(getModel().getWorkspaceDirectory().getPath() + "/" + hruFileName.getValue(),this.getModel()));
     }
 

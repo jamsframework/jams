@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
 /**
@@ -126,18 +127,22 @@ public interface Attribute extends Serializable{
 
     public interface Calendar extends JAMSData {
 
-//        public final static int YEAR = java.util.Calendar.YEAR;
-//        public final static int MONTH = java.util.Calendar.MONTH;
-//        public final static int WEEK_OF_YEAR = java.util.Calendar.WEEK_OF_YEAR;
-//        public final static int WEEK_OF_MONTH = java.util.Calendar.WEEK_OF_MONTH;
-//        public final static int DAY_OF_YEAR = java.util.Calendar.DAY_OF_YEAR;
-//        public final static int DAY_OF_MONTH = java.util.Calendar.DAY_OF_MONTH;
-//        public final static int DAY_OF_WEEK = java.util.Calendar.DAY_OF_WEEK;
-//        public final static int HOUR_OF_DAY = java.util.Calendar.HOUR_OF_DAY;
-//        public final static int MINUTE = java.util.Calendar.MINUTE;
-//        public final static int DST_OFFSET = java.util.Calendar.DST_OFFSET;
-//        public final static int SECOND = java.util.Calendar.SECOND;
-//        public final static int ZONE_OFFSET = java.util.Calendar.ZONE_OFFSET;
+        public final static int YEAR = java.util.Calendar.YEAR;
+        public final static int MONTH = java.util.Calendar.MONTH;
+        public final static int WEEK_OF_YEAR = java.util.Calendar.WEEK_OF_YEAR;
+        public final static int WEEK_OF_MONTH = java.util.Calendar.WEEK_OF_MONTH;
+        public final static int DAY_OF_YEAR = java.util.Calendar.DAY_OF_YEAR;
+        public final static int DAY_OF_MONTH = java.util.Calendar.DAY_OF_MONTH;
+        public final static int DATE = java.util.Calendar.DATE;
+        public final static int DAY_OF_WEEK = java.util.Calendar.DAY_OF_WEEK;
+        public final static int HOUR_OF_DAY = java.util.Calendar.HOUR_OF_DAY;
+        public final static int MINUTE = java.util.Calendar.MINUTE;
+        public final static int DST_OFFSET = java.util.Calendar.DST_OFFSET;
+        public final static int SECOND = java.util.Calendar.SECOND;
+        public final static int MILLISECOND = java.util.Calendar.MILLISECOND;
+        public final static int ZONE_OFFSET = java.util.Calendar.ZONE_OFFSET;
+        public final static java.lang.String DEFAULT_FORMAT_PATTERN = "yyyy-MM-dd HH:mm";
+        public final static TimeZone DEFAULT_TIME_ZONE = new SimpleTimeZone(0, "UTC");        
 
         public Attribute.Calendar getValue();
 
@@ -182,6 +187,10 @@ public interface Attribute extends Serializable{
         public void setTimeInMillis(long millis);
 
         public void set(int year, int month, int day, int hour, int minute, int second);
+        
+        public java.lang.String getFormatPattern();
+        
+        public TimeZone getTimeZone();
     }
 
     public interface FileName extends Attribute.String {
@@ -242,7 +251,7 @@ public interface Attribute extends Serializable{
 
         public void setId(long id);
 
-        public class NoSuchAttributeException extends Exception {
+        public class NoSuchAttributeException extends RuntimeException {
 
             public NoSuchAttributeException(java.lang.String errorMsg) {
                 super(errorMsg);

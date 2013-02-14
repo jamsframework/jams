@@ -60,7 +60,7 @@ public class DataLoader extends JAMSComponent {
     public DataLoader() {        
     }
     
-    public void init() throws Attribute.Entity.NoSuchAttributeException {  
+    public void init() {  
 	BufferedReader reader = null;
 	HashMap<Integer, double[]> rawData = new HashMap<Integer,double[]>();
 	HashMap<Integer, double[]> rawPredict = new HashMap<Integer,double[]>();

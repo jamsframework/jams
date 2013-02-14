@@ -47,7 +47,7 @@ public class EntityObserver extends JAMSComponent {
                          description = "Description")
     public Attribute.Double idValue;
 
-    public void run() throws Attribute.Entity.NoSuchAttributeException {
+    public void run() {
         String s;
         for (Attribute.Entity e : entities.getEntities()) {
             if (e.getDouble(idAttribute.getValue()) == idValue.getValue()) {
