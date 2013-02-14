@@ -31,7 +31,7 @@ import java.util.HashMap;
 public class JAMSDataFactory implements DataFactory{
 
     private  HashMap<Class, Class> interfaceLookup, classLookup;
-    protected static DataFactory instance = instance = new JAMSDataFactory(); 
+    protected static DataFactory instance = new JAMSDataFactory(); 
 
     protected JAMSDataFactory(){
         
