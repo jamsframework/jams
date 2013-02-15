@@ -657,7 +657,7 @@ public class DataStoreProcessor {
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()) {
             long timeloopid = rs.getTimestamp("TimeLoopID", cal).getTime();
-            cal.setMilliSeconds(timeloopid);
+            cal.setTimeInMillis(timeloopid);
             System.out.println("###########" + cal + " - " + timeloopid + " - " + rs.getInt("position"));
         }
         

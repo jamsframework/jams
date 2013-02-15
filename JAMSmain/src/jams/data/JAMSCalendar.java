@@ -38,8 +38,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     transient private final static String FORMAT_PATTERN = Attribute.Calendar.DEFAULT_FORMAT_PATTERN;
     transient private final static TimeZone TIME_ZONE = Attribute.Calendar.DEFAULT_TIME_ZONE;
     private DateFormat dateFormat;
-    private long milliSeconds;
-
+    
     {
         try {
             BeanInfo info = Introspector.getBeanInfo(JAMSCalendar.class);
@@ -261,24 +260,6 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     @Override
     public void add(int field, int amount) {
         super.add(field, amount);
-    }
-
-    /**
-     * @return the milliSeconds
-     */
-    public long getMilliSeconds() {
-        milliSeconds = this.getTime().getTime();
-        return milliSeconds;
-    }
-
-    /**
-     * @param milliSeconds the milliSeconds to set
-     */
-    public void setMilliSeconds(long milliSeconds) {
-        this.milliSeconds = milliSeconds;
-        Date d = new Date();
-        d.setTime(milliSeconds);
-        this.setTime(d);
     }
 
     @Override
