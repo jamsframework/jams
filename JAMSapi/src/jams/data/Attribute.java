@@ -110,12 +110,6 @@ public interface Attribute extends Serializable{
 
         public java.lang.String getValue();
 
-        @Override
-        public void setValue(java.lang.String value);
-
-        public int getLength();
-
-        public void setLength(int length);
     }
 
     public interface StringArray extends JAMSData {
@@ -191,7 +185,20 @@ public interface Attribute extends Serializable{
         public java.lang.String getFormatPattern();
         
         public TimeZone getTimeZone();
+        
+        public java.lang.String toString();
     }
+    
+    public interface Calendar_ extends JAMSData {
+
+        public final static java.lang.String DEFAULT_FORMAT_PATTERN = "yyyy-MM-dd HH:mm";
+        public final static TimeZone DEFAULT_TIME_ZONE = new SimpleTimeZone(0, "UTC");        
+
+        public java.util.Calendar getValue();
+
+        public void setValue(java.util.Calendar cal);
+    }
+    
 
     public interface FileName extends Attribute.String {
     }
