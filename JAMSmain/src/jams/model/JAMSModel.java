@@ -23,7 +23,7 @@ package jams.model;
 
 import jams.JAMS;
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.OutputDataStore;
 import java.io.File;
@@ -49,7 +49,7 @@ description = "This component represents a JAMS model which is a special type of
 public class JAMSModel extends JAMSContext implements Model {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
-    public Attribute.DirName workspaceDirectory = JAMSDataFactory.getDataFactory().createDirName();
+    public Attribute.DirName workspaceDirectory = DefaultDataFactory.getDataFactory().createDirName();
     private JAMSRuntime runtime;
     private String name, author, date;
     public JAMSWorkspace workspace;

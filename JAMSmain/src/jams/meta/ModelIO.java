@@ -26,7 +26,7 @@ import jams.JAMSException;
 import jams.ExceptionHandler;
 import jams.JAMSVersion;
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.io.ParameterProcessor;
 import jams.meta.ComponentDescriptor.NullClassException;
 import jams.meta.ComponentField.AttributeLinkException;
@@ -347,7 +347,7 @@ public class ModelIO {
         // workaround for models that use the "old" API, i.e. JAMSData
         // classes instead of interfaces
         if (!type.isInterface()) {
-            type = JAMSDataFactory.getDataFactory().getBelongingInterface(type);
+            type = DefaultDataFactory.getDataFactory().getBelongingInterface(type);
         }
 
         if (!type.isArray()) {
@@ -508,10 +508,10 @@ public class ModelIO {
         propertyElement.setAttribute("component", property.component.getInstanceName());
         if (property.var != null) {
             propertyElement.setAttribute("attribute", property.var.getName());
-            propertyElement.setAttribute("type", JAMSDataFactory.getDataFactory().getBelongingInterface(property.var.getType()).getSimpleName());
+            propertyElement.setAttribute("type", DefaultDataFactory.getDataFactory().getBelongingInterface(property.var.getType()).getSimpleName());
         } else if (property.attribute != null) {
             propertyElement.setAttribute("attribute", property.attribute.getName());
-            propertyElement.setAttribute("type", JAMSDataFactory.getDataFactory().getBelongingInterface(property.attribute.getType()).getSimpleName());
+            propertyElement.setAttribute("type", DefaultDataFactory.getDataFactory().getBelongingInterface(property.attribute.getType()).getSimpleName());
         } else {
             propertyElement.setAttribute("attribute", ParameterProcessor.COMPONENT_ENABLE_VALUE);
             propertyElement.setAttribute("type", Attribute.Boolean.class.getSimpleName());

@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
 import jams.workspace.datatypes.CalendarValue;
 import jams.JAMS;
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.io.SerializableBufferedReader;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
@@ -94,9 +94,9 @@ public class TSDataStore extends TableDataStore {
 
     public TSDataStore(JAMSWorkspace ws) {
         super(ws);
-        startDate = JAMSDataFactory.getDataFactory().createCalendar();
-        endDate = JAMSDataFactory.getDataFactory().createCalendar();
-        currentDate = JAMSDataFactory.getDataFactory().createCalendar();
+        startDate = DefaultDataFactory.getDataFactory().createCalendar();
+        endDate = DefaultDataFactory.getDataFactory().createCalendar();
+        currentDate = DefaultDataFactory.getDataFactory().createCalendar();
         calendar = new CalendarValue(currentDate);
     }
     
@@ -115,18 +115,18 @@ public class TSDataStore extends TableDataStore {
             timeFormat = timeFormatElement.getAttribute("value");
         }
 
-        startDate = JAMSDataFactory.getDataFactory().createCalendar();
+        startDate = DefaultDataFactory.getDataFactory().createCalendar();
         startDate.setValue(startElement.getAttribute("value"));
 
         timeUnit = Integer.parseInt(stepsizeElement.getAttribute("unit"));
         timeUnitCount = Integer.parseInt(stepsizeElement.getAttribute("count"));
 
-        endDate = JAMSDataFactory.getDataFactory().createCalendar();
+        endDate = DefaultDataFactory.getDataFactory().createCalendar();
         endDate.setValue(endElement.getAttribute("value"));
         stopDate = endDate.clone();
         stopDate.add(timeUnit, -1 * timeUnitCount);
 
-        currentDate = JAMSDataFactory.getDataFactory().createCalendar();
+        currentDate = DefaultDataFactory.getDataFactory().createCalendar();
         currentDate.setDateFormat(timeFormat);
         currentDate.setValue(startDate);
 
@@ -147,7 +147,7 @@ public class TSDataStore extends TableDataStore {
 
                 fillBuffer(i);
                 long timeStamp = dataIOArray[i].getData()[0].getData()[0].getLong();
-                startDates[i] = JAMSDataFactory.getDataFactory().createCalendar();
+                startDates[i] = DefaultDataFactory.getDataFactory().createCalendar();
                 startDates[i].setTimeInMillis(timeStamp * 1000);
                 endReached[i] = false;
 
@@ -260,11 +260,11 @@ public class TSDataStore extends TableDataStore {
         } else if (clazz.equals(Long.class)) {
             o = new Long(valueString);
         } else if (clazz.equals(Attribute.Calendar.class)) {
-            Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
+            Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
             cal.setValue(valueString);
             o = cal;
         } else if (clazz.equals(Timestamp.class)) {
-            Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
+            Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
             cal.setTimeInMillis(new Long(valueString) * 1000);
             o = cal;
         } else if (clazz.equals(String.class)) {
@@ -312,9 +312,9 @@ public class TSDataStore extends TableDataStore {
         long timeStamp2 = this.latestTimesteps[i].get(0);
 
         //compare the two time stamps
-        Attribute.Calendar cal1 = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar cal1 = DefaultDataFactory.getDataFactory().createCalendar();
         cal1.setTimeInMillis(timeStamp1 * 1000);
-        Attribute.Calendar cal2 = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar cal2 = DefaultDataFactory.getDataFactory().createCalendar();
         cal2.setTimeInMillis(timeStamp2 * 1000);
 
         cal1.add(timeUnit, timeUnitCount);
@@ -424,7 +424,7 @@ public class TSDataStore extends TableDataStore {
                             value = new StringValue(valueString);
                             break;
                         case TIMESTAMP:
-                            Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
+                            Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
                             cal.setTimeInMillis(new Long(valueString));
                             value = new CalendarValue(cal);
                             break;

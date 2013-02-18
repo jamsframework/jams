@@ -24,7 +24,7 @@ package jams.workspace.dsproc;
 
 import jams.data.Attribute;
 import jams.data.JAMSCalendar;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -219,8 +219,8 @@ public class SimpleSerieProcessor extends Processor {
         
         DataMatrix rs = dsdb.getData(dsdb.getStartPosition());
         
-        Attribute.Calendar minDate = JAMSDataFactory.getDataFactory().createCalendar();
-        Attribute.Calendar maxDate = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar minDate = DefaultDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar maxDate = DefaultDataFactory.getDataFactory().createCalendar();
         minDate.setValue(rs.getIds()[0].toString());
         maxDate.setValue(rs.getIds()[rs.getIds().length-1].toString());
                 

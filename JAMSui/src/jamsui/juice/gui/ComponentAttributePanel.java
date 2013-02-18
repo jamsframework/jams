@@ -45,7 +45,7 @@ import jams.gui.input.InputComponent;
 import jams.gui.input.InputComponentFactory;
 import jams.JAMS;
 import jams.JAMSException;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.gui.input.*;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ComponentField;
@@ -163,9 +163,9 @@ public class ComponentAttributePanel extends JPanel {
                         return;
                     }
                     if (type.isArray()) {
-                        context.addDynamicAttribute(name, JAMSDataFactory.getDataFactory().getBelongingInterface(type.getComponentType()));
+                        context.addDynamicAttribute(name, DefaultDataFactory.getDataFactory().getBelongingInterface(type.getComponentType()));
                     } else {
-                        context.addDynamicAttribute(name, JAMSDataFactory.getDataFactory().getBelongingInterface(type));
+                        context.addDynamicAttribute(name, DefaultDataFactory.getDataFactory().getBelongingInterface(type));
                     }
                     updateRepository();
                     updateAttributeLinkGUI();

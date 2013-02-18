@@ -714,36 +714,36 @@ public class NSGA2 extends MOOptimizer {
         }
 
         nsga.GoalFunction = new TestFunction();
-        nsga.boundaries = (Attribute.String)JAMSDataFactory.getDataFactory().createString();
+        nsga.boundaries = (Attribute.String)DefaultDataFactory.getDataFactory().createString();
         nsga.boundaries.setValue("[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];[-10.0>10.0];");
         nsga.parameterIDs = new Attribute.Double[16];
 
-        nsga.crossoverDistributionIndex = JAMSDataFactory.getDataFactory().createDouble();
+        nsga.crossoverDistributionIndex = DefaultDataFactory.getDataFactory().createDouble();
         nsga.crossoverDistributionIndex.setValue(20);
-        nsga.crossoverProbability = JAMSDataFactory.getDataFactory().createDouble();
+        nsga.crossoverProbability = DefaultDataFactory.getDataFactory().createDouble();
         nsga.crossoverProbability.setValue(0.9);
-        nsga.enable = (Attribute.Boolean)JAMSDataFactory.getDataFactory().createBoolean();
+        nsga.enable = (Attribute.Boolean)DefaultDataFactory.getDataFactory().createBoolean();
         nsga.enable.setValue(true);
-        nsga.maxGeneration = JAMSDataFactory.getDataFactory().createInteger();
+        nsga.maxGeneration = DefaultDataFactory.getDataFactory().createInteger();
         nsga.maxGeneration.setValue(100000);
-        nsga.mode = (Attribute.String)JAMSDataFactory.getDataFactory().createString();
+        nsga.mode = (Attribute.String)DefaultDataFactory.getDataFactory().createString();
         nsga.mode.setValue("1");
-        nsga.target = JAMSDataFactory.getDataFactory().createDoubleArray();
+        nsga.target = DefaultDataFactory.getDataFactory().createDoubleArray();
         nsga.target.setValue(new double[]{0.00});
-        nsga.epsilonToTarget =JAMSDataFactory.getDataFactory().createDouble();
+        nsga.epsilonToTarget =DefaultDataFactory.getDataFactory().createDouble();
         nsga.epsilonToTarget.setValue(0.018);
-        nsga.effMethodName = (Attribute.String)JAMSDataFactory.getDataFactory().createString();
+        nsga.effMethodName = (Attribute.String)DefaultDataFactory.getDataFactory().createString();
         nsga.effMethodName.setValue("f1");
-        nsga.mutationDistributionIndex = JAMSDataFactory.getDataFactory().createDouble();
+        nsga.mutationDistributionIndex = DefaultDataFactory.getDataFactory().createDouble();
         nsga.mutationDistributionIndex.setValue(20);
-        nsga.mutationProbability = JAMSDataFactory.getDataFactory().createDouble();
+        nsga.mutationProbability = DefaultDataFactory.getDataFactory().createDouble();
         nsga.mutationProbability.setValue(1.0);
-        nsga.populationSize = JAMSDataFactory.getDataFactory().createInteger();
+        nsga.populationSize = DefaultDataFactory.getDataFactory().createInteger();
         nsga.populationSize.setValue(30);
-        nsga.iterationCounter = JAMSDataFactory.getDataFactory().createInteger();
-        nsga.maxn = JAMSDataFactory.getDataFactory().createInteger();
+        nsga.iterationCounter = DefaultDataFactory.getDataFactory().createInteger();
+        nsga.maxn = DefaultDataFactory.getDataFactory().createInteger();
         nsga.maxn.setValue(10000000);
-        nsga.bestParameterSets = JAMSDataFactory.getDataFactory().createEntityCollection();
+        nsga.bestParameterSets = DefaultDataFactory.getDataFactory().createEntityCollection();
         nsga.init();
         nsga.run();
         for (Sample s : nsga.factory.getSampleList())

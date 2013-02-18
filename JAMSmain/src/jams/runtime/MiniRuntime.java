@@ -29,7 +29,7 @@ import javax.swing.JFrame;
 import jams.JAMS;
 import jams.data.DataFactory;
 import jams.data.JAMSData;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.model.Component;
 import jams.model.GUIComponent;
 import jams.model.JAMSModel;
@@ -47,7 +47,7 @@ public class MiniRuntime implements JAMSRuntime {
     private int debugLevel = JAMS.VVERBOSE;
     private JAMSLogger errorLog = new JAMSLogger();
     private JAMSLogger infoLog = new JAMSLogger();
-    private DataFactory dataFactory = JAMSDataFactory.getDataFactory();
+    private DataFactory dataFactory = DefaultDataFactory.getDataFactory();
     /** 
      * Creates a new instance of MiniRuntime. This Runtime can be used to
      * test a single component without model, e.g. for debugging purposes.

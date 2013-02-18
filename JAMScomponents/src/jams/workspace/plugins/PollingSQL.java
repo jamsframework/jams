@@ -22,7 +22,7 @@
 package jams.workspace.plugins;
 
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.workspace.DataReader;
 import jams.workspace.DataSet;
 import jams.workspace.DataValue;
@@ -224,7 +224,7 @@ public class PollingSQL implements DataReader {
             ResultSet rs2 = null;
             rs2 = pgsql.execQuery(lastDateQuery);
             
-            Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();                                                                             
+            Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();                                                                             
             String date = lastDate;
             
             if (rs2.next())
@@ -254,7 +254,7 @@ public class PollingSQL implements DataReader {
                     dataSet.setData(j, new StringValue("-9999"));
                     break;
                 case TIMESTAMP:
-                    Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
+                    Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
                     cal.setTime(date);
                     dataSet.setData(j, new CalendarValue(cal));
                     break;
@@ -295,7 +295,7 @@ public class PollingSQL implements DataReader {
                         dataSet.setData(j, value);
                         break;
                     case TIMESTAMP:
-                        Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
+                        Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
                         //does not work .. hours are not represented well
                         GregorianCalendar greg = new GregorianCalendar();
                         greg.setTimeZone(TimeZone.getTimeZone("GMT"));

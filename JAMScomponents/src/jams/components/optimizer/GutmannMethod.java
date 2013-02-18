@@ -15,7 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import jams.tools.JAMSTools;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.model.JAMSComponentDescription;
 import jams.tools.FileTools;
 import jams.JAMS;

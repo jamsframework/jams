@@ -9,7 +9,7 @@
 package reg.spreadsheet;
 
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import java.util.HashMap;
 import java.util.Vector;
 import java.awt.event.*;
@@ -1963,7 +1963,7 @@ try{
                 
                 if(b_data){
                     int i = 0;
-                    Attribute.Calendar timeval = JAMSDataFactory.getDataFactory().createCalendar();
+                    Attribute.Calendar timeval = DefaultDataFactory.getDataFactory().createCalendar();
                     rowBuffer = new double[file_columns];
                     while(st.hasMoreTokens()){
                         actual_string = st.nextToken();

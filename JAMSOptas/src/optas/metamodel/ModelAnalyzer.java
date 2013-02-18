@@ -5,7 +5,7 @@
 package optas.metamodel;
 
 import jams.JAMSProperties;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.data.JAMSDouble;
 import jams.model.JAMSVarDescription;
 import jams.model.JAMSVarDescription.AccessType;
@@ -60,15 +60,15 @@ public class ModelAnalyzer {
         }
 
         DocumentLoader loader = new DocumentLoader();
-        loader.modelFile = JAMSDataFactory.getDataFactory().createString();
+        loader.modelFile = DefaultDataFactory.getDataFactory().createString();
         loader.modelFile.setValue(modelFile.getName());
-        loader.workspaceDir = JAMSDataFactory.getDataFactory().createString();
+        loader.workspaceDir = DefaultDataFactory.getDataFactory().createString();
         if (modelFile.getParent() != null) {
             loader.workspaceDir.setValue(modelFile.getParent());
         } else {
             loader.workspaceDir.setValue("");
         }
-        loader.modelDoc = JAMSDataFactory.getDataFactory().createDocument();
+        loader.modelDoc = DefaultDataFactory.getDataFactory().createDocument();
         String errorString = loader.init_withResponse();
         Document loadedModel = loader.modelDoc.getValue();
         if (loadedModel == null) {

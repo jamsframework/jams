@@ -354,11 +354,11 @@ public class HRUReducer extends JAMSComponent {
 
     public static void main(String[] args) {
         HRUReducer reducer = new HRUReducer();
-        reducer.dstHRUFileName = JAMSDataFactory.getDataFactory().createString();
+        reducer.dstHRUFileName = DefaultDataFactory.getDataFactory().createString();
         reducer.dstHRUFileName.setValue("C:/Arbeit/test.par");
-        reducer.srcHRUFileName = JAMSDataFactory.getDataFactory().createString();
+        reducer.srcHRUFileName = DefaultDataFactory.getDataFactory().createString();
         reducer.srcHRUFileName.setValue("C:/Arbeit/ModelData/JAMS-Gehlberg/parameter/hrus_hor_dist.par");
-        reducer.method = JAMSDataFactory.getDataFactory().createInteger();
+        reducer.method = DefaultDataFactory.getDataFactory().createInteger();
 
         reducer.createDstHRUFile(new File("C:/Arbeit/ModelData/JAMS-Gehlberg/parameter/hrus_hor_dist.par"), new File("C:/Arbeit/test.par"), 0.50);
     }

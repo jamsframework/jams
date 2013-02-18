@@ -1,5 +1,5 @@
 /*
- * JAMSDataFactory.getDataFactory().java
+ * DefaultDataFactory.getDataFactory().java
  * Created on 24. November 2005, 07:33
  *
  * This file is part of JAMS
@@ -28,12 +28,12 @@ import java.util.HashMap;
  *
  * @author S. Kralisch
  */
-public class JAMSDataFactoryChecked extends JAMSDataFactory {
+public class CheckedDataFactory extends DefaultDataFactory {
 
     private static HashMap<Class, Class> interfaceLookup, classLookup;
-    static private JAMSDataFactoryChecked instance = new JAMSDataFactoryChecked();
+    static private CheckedDataFactory instance = new CheckedDataFactory();
     
-    private JAMSDataFactoryChecked(){
+    private CheckedDataFactory(){
         
     }
     /**

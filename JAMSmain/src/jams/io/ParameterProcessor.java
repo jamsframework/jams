@@ -23,7 +23,7 @@ package jams.io;
 
 import jams.JAMS;
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.meta.ComponentField;
 import jams.meta.ModelDescriptor;
 import jams.tools.StringTools;
@@ -393,7 +393,7 @@ public class ParameterProcessor {
                     targetElement = attributeMap.get(componentName);
 
                     //convert to proper boolean representation
-                    Attribute.Boolean a = JAMSDataFactory.getDataFactory().createBoolean();
+                    Attribute.Boolean a = DefaultDataFactory.getDataFactory().createBoolean();
                     a.setValue(propertyElement.getAttribute("value"));
                     value = a.toString();
 

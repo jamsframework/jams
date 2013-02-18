@@ -6,7 +6,7 @@ package optas.hydro.data;
 
 import jams.data.Attribute;
 import jams.data.Attribute.TimeInterval;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -396,10 +396,10 @@ public class EfficiencyEnsemble extends SimpleEnsemble {
                     currentIndex = next;
                 }
 
-                TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
+                TimeInterval interval = DefaultDataFactory.getDataFactory().createTimeInterval();
 
-                Attribute.Calendar startCal = JAMSDataFactory.getDataFactory().createCalendar();
-                Attribute.Calendar endCal = JAMSDataFactory.getDataFactory().createCalendar();
+                Attribute.Calendar startCal = DefaultDataFactory.getDataFactory().createCalendar();
+                Attribute.Calendar endCal = DefaultDataFactory.getDataFactory().createCalendar();
 
                 startCal.setTime(domain.getStart().clone().getTime());
                 endCal.setTime(domain.getStart().clone().getTime());

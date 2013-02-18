@@ -6,7 +6,7 @@ package optas.io;
 import jams.data.Attribute;
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +28,13 @@ public class NetCDFFileReader {
     
     private TimeInterval createTimeInterval(long start, long end, int timeUnit, int timeUnitCount) {
         
-        TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
+        TimeInterval interval = DefaultDataFactory.getDataFactory().createTimeInterval();
         interval.setTimeUnit(timeUnit);
         interval.setTimeUnitCount(timeUnitCount);
-        Calendar startCalendar = JAMSDataFactory.getDataFactory().createCalendar();
+        Calendar startCalendar = DefaultDataFactory.getDataFactory().createCalendar();
         startCalendar.setTimeInMillis(start);
         interval.setStart(startCalendar);
-        Calendar endCalendar = JAMSDataFactory.getDataFactory().createCalendar();
+        Calendar endCalendar = DefaultDataFactory.getDataFactory().createCalendar();
         endCalendar.setTimeInMillis(end);
         interval.setEnd(endCalendar);
         
@@ -140,15 +140,15 @@ public class NetCDFFileReader {
         
         if (file.findGlobalAttribute("timeDomainStart") != null) {
             
-            Attribute.Calendar startCal = JAMSDataFactory.getDataFactory().createCalendar();
+            Attribute.Calendar startCal = DefaultDataFactory.getDataFactory().createCalendar();
             long start = Long.valueOf(file.findGlobalAttribute("timeDomainStart").getStringValue());
             startCal.setTimeInMillis(start);
-            Attribute.Calendar endCal = JAMSDataFactory.getDataFactory().createCalendar();
+            Attribute.Calendar endCal = DefaultDataFactory.getDataFactory().createCalendar();
             long end = Long.valueOf(file.findGlobalAttribute("timeDomainEnd").getStringValue());
             endCal.setTimeInMillis(end);
             int timeUnit = Integer.valueOf(file.findGlobalAttribute("timeUnit").getStringValue());
             int timeUnitCount = Integer.valueOf(file.findGlobalAttribute("timeUnitCount").getStringValue());
-            TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
+            TimeInterval interval = DefaultDataFactory.getDataFactory().createTimeInterval();
             interval.setStart(startCal);
             interval.setEnd(endCal);
             interval.setTimeUnit(timeUnit);

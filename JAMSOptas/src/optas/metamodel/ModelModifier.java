@@ -1,6 +1,6 @@
 package optas.metamodel;
 
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.io.XMLProcessor;
 import jams.runtime.StandardRuntime;
 import java.io.BufferedWriter;
@@ -108,15 +108,15 @@ public class ModelModifier {
         }
 
         DocumentLoader loader = new DocumentLoader();
-        loader.modelFile = JAMSDataFactory.getDataFactory().createString();
+        loader.modelFile = DefaultDataFactory.getDataFactory().createString();
         loader.modelFile.setValue(modelFile.getName());
-        loader.workspaceDir = JAMSDataFactory.getDataFactory().createString();
+        loader.workspaceDir = DefaultDataFactory.getDataFactory().createString();
         if (modelFile.getParentFile() != null) {
             loader.workspaceDir.setValue(modelFile.getParentFile().getAbsolutePath());
         } else {
             loader.workspaceDir.setValue("");
         }
-        loader.modelDoc = JAMSDataFactory.getDataFactory().createDocument();
+        loader.modelDoc = DefaultDataFactory.getDataFactory().createDocument();
         String errorString = loader.init_withResponse();
         loadedModel = loader.modelDoc.getValue();
         loadedModel = Tools.preProcessDocument(loadedModel); // do only here!

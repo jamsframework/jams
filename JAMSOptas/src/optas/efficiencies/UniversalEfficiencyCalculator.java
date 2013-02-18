@@ -7,7 +7,7 @@ package optas.efficiencies;
 import jams.data.Attribute;
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 import java.text.DecimalFormat;
@@ -154,7 +154,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
         StringTokenizer tok = new StringTokenizer(timeInterval.getValue(),";");
         while(tok.hasMoreTokens()){
             String interval = tok.nextToken();
-            TimeInterval t = JAMSDataFactory.getDataFactory().createTimeInterval();
+            TimeInterval t = DefaultDataFactory.getDataFactory().createTimeInterval();
             t.setValue(interval);
             timeIntervalList.add(t);
         }

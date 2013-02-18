@@ -25,7 +25,7 @@ import jams.JAMSException;
 import java.util.HashMap;
 import jams.JAMS;
 import jams.ExceptionHandler;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.meta.ComponentField.AttributeLinkException;
 import java.text.MessageFormat;
 import java.util.Map.Entry;
@@ -113,7 +113,7 @@ public class ContextDescriptor extends ComponentDescriptor {
     }
 
     public HashMap<String, ContextAttribute> getAttributes(Class<?> type) {
-        type = JAMSDataFactory.getDataFactory().getBelongingInterface(type);
+        type = DefaultDataFactory.getDataFactory().getBelongingInterface(type);
         HashMap<String, ContextAttribute> result = new HashMap<String, ContextAttribute>();
         for (Entry<String, ContextAttribute> entry : dynamicAttributes.entrySet()) {
             if (type.isAssignableFrom(entry.getValue().getType())) {

@@ -6,7 +6,7 @@ package optas.hydro;
 
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -229,10 +229,10 @@ public abstract class OptimizationScheme extends ObservableProgress{
                 current = next;
             }
             
-            TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
+            TimeInterval interval = DefaultDataFactory.getDataFactory().createTimeInterval();
 
-            Calendar startCal = JAMSDataFactory.getDataFactory().createCalendar();
-            Calendar endCal = JAMSDataFactory.getDataFactory().createCalendar();
+            Calendar startCal = DefaultDataFactory.getDataFactory().createCalendar();
+            Calendar endCal = DefaultDataFactory.getDataFactory().createCalendar();
 
             startCal.setTime(ts.getTime(start));
             endCal.setTime(ts.getTime(end));

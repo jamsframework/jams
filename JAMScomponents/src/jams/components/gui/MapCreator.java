@@ -25,7 +25,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import jams.data.Attribute;
 import jams.data.Attribute.Entity.NoSuchAttributeException;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 

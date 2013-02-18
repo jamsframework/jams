@@ -1,5 +1,5 @@
 /*
- * JAMSDataFactory.getDataFactory().java
+ * DefaultDataFactory.getDataFactory().java
  * Created on 24. November 2005, 07:33
  *
  * This file is part of JAMS
@@ -28,10 +28,13 @@ import java.util.HashMap;
  *
  * @author S. Kralisch
  */
-@Deprecated
-public class JAMSDataFactory {
+public class DefaultDataFactory implements DataFactory {
 
-    private static HashMap<Class, Class> interfaceLookup, classLookup;
+    private HashMap<Class, Class> interfaceLookup, classLookup;
+    protected static DataFactory instance = new DefaultDataFactory();
+
+    protected DefaultDataFactory() {
+    }
 
     /**
      * Creates a new instance of a given JAMSData class
@@ -41,7 +44,7 @@ public class JAMSDataFactory {
      * @throws java.lang.InstantiationException
      * @throws java.lang.IllegalAccessException
      */
-    public static JAMSData createInstance(Class clazz) throws InstantiationException, IllegalAccessException {
+    public JAMSData createInstance(Class clazz) throws InstantiationException, IllegalAccessException {
 
         if (clazz.isInterface()) {
             clazz = getImplementingClass(clazz);
@@ -64,7 +67,7 @@ public class JAMSDataFactory {
      * ocurred
      * @return An instance of the provided class
      */
-//    public static JAMSData createInstance(Class clazz, JAMSRuntime rt) {
+//    public  JAMSData createInstance(Class clazz, JAMSRuntime rt) {
 //
 //        if (clazz.isInterface()) {
 //            clazz = getImplementingClass(clazz);
@@ -87,7 +90,7 @@ public class JAMSDataFactory {
      * @param value The object to be represented by a JAMSData instance
      * @return A JAMSData instance
      */
-    public static JAMSData createInstance(Object value) {
+    public JAMSData createInstance(Object value) {
         Class type = value.getClass();
         JAMSData result;
 
@@ -122,95 +125,95 @@ public class JAMSDataFactory {
         return result;
     }
 
-    public static Attribute.Double createDouble() {
+    public Attribute.Double createDouble() {
         return new JAMSDouble();
     }
 
-    public static Attribute.DoubleArray createDoubleArray() {
+    public Attribute.DoubleArray createDoubleArray() {
         return new JAMSDoubleArray();
     }
 
-    public static Attribute.Float createFloat() {
+    public Attribute.Float createFloat() {
         return new JAMSFloat();
     }
 
-    public static Attribute.FloatArray createFloatArray() {
+    public Attribute.FloatArray createFloatArray() {
         return new JAMSFloatArray();
     }
 
-    public static Attribute.Long createLong() {
+    public Attribute.Long createLong() {
         return new JAMSLong();
     }
 
-    public static Attribute.LongArray createLongArray() {
+    public Attribute.LongArray createLongArray() {
         return new JAMSLongArray();
     }
 
-    public static Attribute.Integer createInteger() {
+    public Attribute.Integer createInteger() {
         return new JAMSInteger();
     }
 
-    public static Attribute.IntegerArray createIntegerArray() {
+    public Attribute.IntegerArray createIntegerArray() {
         return new JAMSIntegerArray();
     }
 
-    public static Attribute.String createString() {
+    public Attribute.String createString() {
         return new JAMSString();
     }
 
-    public static Attribute.StringArray createStringArray() {
+    public Attribute.StringArray createStringArray() {
         return new JAMSStringArray();
     }
 
-    public static Attribute.Boolean createBoolean() {
+    public Attribute.Boolean createBoolean() {
         return new JAMSBoolean();
     }
 
-    public static Attribute.BooleanArray createBooleanArray() {
+    public Attribute.BooleanArray createBooleanArray() {
         return new JAMSBooleanArray();
     }
 
-    public static Attribute.Calendar createCalendar() {
+    public Attribute.Calendar createCalendar() {
         return new JAMSCalendar();
     }
 
-    public static Attribute.DirName createDirName() {
+    public Attribute.DirName createDirName() {
         return new JAMSDirName();
     }
 
-    public static Attribute.Document createJAMSDocument() {
+    public Attribute.Document createJAMSDocument() {
         return new JAMSDocument();
     }
 
-    public static Attribute.FileName createFileName() {
+    public Attribute.FileName createFileName() {
         return new JAMSFileName();
     }
 
-    public static Attribute.Geometry createGeometry() {
+    public Attribute.Geometry createGeometry() {
         return new JAMSGeometry();
     }
 
-    public static Attribute.TimeInterval createTimeInterval() {
+    public Attribute.TimeInterval createTimeInterval() {
         return new JAMSTimeInterval();
     }
 
-    public static Attribute.Entity createEntity() {
+    public Attribute.Entity createEntity() {
         return new JAMSEntity();
     }
 
-    public static Attribute.Document createDocument() {
+    public Attribute.Document createDocument() {
         return new JAMSDocument();
     }
 
-    public static Attribute.EntityCollection createEntityCollection() {
+    public Attribute.EntityCollection createEntityCollection() {
         return new JAMSEntityCollection();
     }
 
-    public static Attribute.Object createObject() {
+    public Attribute.Object createObject() {
         return new JAMSObject();
     }
 
-    public static Attribute.ObjectArray createObjectArray() {
+    public Attribute.ObjectArray createObjectArray() {
         return new JAMSObjectArray();
     }
 
@@ -221,7 +224,7 @@ public class JAMSDataFactory {
      * @return The class that represents the standard implementation of the
      * provided interface
      */
-    public static Class getImplementingClass(Class interfaceType) {
+    public Class getImplementingClass(Class interfaceType) {
 
         while (interfaceType.isArray()) {
             interfaceType = interfaceType.getComponentType();
@@ -264,7 +267,7 @@ public class JAMSDataFactory {
      * @param clazz A class that implements a JAMSData interface
      * @return The belonging JAMSData interface
      */
-    public static Class getBelongingInterface(Class clazz) {
+    public Class getBelongingInterface(Class clazz) {
 
         if (clazz.isInterface()) {
             return clazz;
@@ -289,5 +292,9 @@ public class JAMSDataFactory {
             }
         }
         return classLookup.get(clazz);
+    }
+
+    public static DataFactory getDataFactory() {
+        return instance;
     }
 }

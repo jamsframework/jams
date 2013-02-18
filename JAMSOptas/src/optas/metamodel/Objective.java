@@ -6,7 +6,7 @@ package optas.metamodel;
 
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,7 +44,7 @@ public class Objective implements Serializable, Comparable {
         o.setSimulation(this.getSimulation());
         o.setMethodName(this.getMethodName().substring(0));
         for (TimeInterval t : getTimeDomain()){
-            TimeInterval t2 = JAMSDataFactory.getDataFactory().createTimeInterval();
+            TimeInterval t2 = DefaultDataFactory.getDataFactory().createTimeInterval();
             t2.setValue(t.getValue());
             o.getTimeDomain().add(t2);
         }

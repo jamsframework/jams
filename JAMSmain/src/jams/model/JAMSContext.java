@@ -75,8 +75,8 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         // create a list with one entitiy, this is the minimum number for any context
         ArrayList<Attribute.Entity> list = new ArrayList<Attribute.Entity>();
-        list.add(JAMSDataFactory.getDataFactory().createEntity());
-        setEntities(JAMSDataFactory.getDataFactory().createEntityCollection());
+        list.add(DefaultDataFactory.getDataFactory().createEntity());
+        setEntities(DefaultDataFactory.getDataFactory().createEntityCollection());
         getEntities().setEntities(list);
 
         attributeMap = new HashMap<String, JAMSData>();
@@ -252,7 +252,7 @@ public class JAMSContext extends JAMSComponent implements Context {
             try {
 
                 clazz = Class.forName(attributeSpec.className);
-                JAMSData data = JAMSDataFactory.getDataFactory().createInstance(clazz);
+                JAMSData data = DefaultDataFactory.getDataFactory().createInstance(clazz);
                 data.setValue(attributeSpec.value);
                 attributeMap.put(attributeSpec.attributeName, data);
 
@@ -806,7 +806,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                 dataObject = componentObject;
             } else {
                 try {
-                    dataObject = JAMSDataFactory.getDataFactory().createInstance(clazz);
+                    dataObject = DefaultDataFactory.getDataFactory().createInstance(clazz);
                 } catch (InstantiationException ex) {
                     getModel().getRuntime().handle(ex, false);
                 } catch (IllegalAccessException ex) {

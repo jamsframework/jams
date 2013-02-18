@@ -27,7 +27,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 
 /**
  *
@@ -81,7 +81,7 @@ public class TSDumpProcessor {
         target.append("#STEPSIZE: " + store.getTimeUnitCount() + "\n");
         target.append("#MISSINGDATAVALUE: " + store.getMissingDataValue() + "\n");
 
-        Attribute.Calendar creationDate = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar creationDate = DefaultDataFactory.getDataFactory().createCalendar();
         target.append("#DATE: " + creationDate + "\n");
         target.append("#DESCRIPTION:\n");
         String description = store.getDescription();

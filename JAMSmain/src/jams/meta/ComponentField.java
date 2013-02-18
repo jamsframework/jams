@@ -2,7 +2,7 @@ package jams.meta;
 
 import jams.JAMS;
 import jams.JAMSException;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.tools.StringTools;
 import java.util.ArrayList;
 
@@ -113,7 +113,7 @@ public class ComponentField {
             basicType = this.type;
         }
         if (!basicType.isInterface()) {
-            basicType = JAMSDataFactory.getDataFactory().getBelongingInterface(basicType);
+            basicType = DefaultDataFactory.getDataFactory().getBelongingInterface(basicType);
         }
         ContextAttribute attribute = context.getDynamicAttributes().get(attributeName);
         // check if already existing

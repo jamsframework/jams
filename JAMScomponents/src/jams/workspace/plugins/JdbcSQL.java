@@ -22,7 +22,7 @@
 package jams.workspace.plugins;
 
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.workspace.DataReader;
 import jams.workspace.DataSet;
 import jams.workspace.DataValue;
@@ -200,7 +200,7 @@ public class JdbcSQL implements DataReader {
                             dataSet.setData(j, value);
                             break;
                         case TIMESTAMP:
-                            Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
+                            Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
                             //does not work .. hours are not represented well
                             GregorianCalendar greg = new GregorianCalendar();
                             greg.setTimeZone(TimeZone.getTimeZone("GMT"));

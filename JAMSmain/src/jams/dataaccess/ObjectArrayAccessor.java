@@ -23,7 +23,7 @@ package jams.dataaccess;
 
 import jams.data.Attribute;
 import jams.data.JAMSData;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.data.JAMSEntity;
 import jams.JAMS;
 import jams.data.DataFactory;

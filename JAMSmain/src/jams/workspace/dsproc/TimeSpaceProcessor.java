@@ -24,7 +24,7 @@ package jams.workspace.dsproc;
 
 import jams.data.Attribute;
 import jams.data.JAMSCalendar;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -138,7 +138,7 @@ public class TimeSpaceProcessor extends Processor {
     public synchronized DataMatrix getCrossProduct(long[] entityIds, String[] dateIds) throws SQLException, IOException {
         double[][] matrix = new double[dateIds.length][entityIds.length];
         int idMap[] = null;
-        Attribute.Calendar calendar = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar calendar = DefaultDataFactory.getDataFactory().createCalendar();
         for (int i = 0; i < dateIds.length; i++) {
             calendar.setValue(dateIds[i]);
             DataMatrix col = getTemporalData(calendar);
@@ -655,8 +655,8 @@ public class TimeSpaceProcessor extends Processor {
         q = "SELECT min(" + timeID + ") AS MINDATE, max(" + timeID + ") AS MAXDATE FROM index";
         ResultSet rs = customSelectQuery(q);
         rs.next();
-        Attribute.Calendar minDate = JAMSDataFactory.getDataFactory().createCalendar();
-        Attribute.Calendar maxDate = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar minDate = DefaultDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar maxDate = DefaultDataFactory.getDataFactory().createCalendar();
         minDate.setValue(rs.getTimestamp("MINDATE").toString());
         maxDate.setValue(rs.getTimestamp("MAXDATE").toString());
 
@@ -695,8 +695,8 @@ public class TimeSpaceProcessor extends Processor {
         String q = "SELECT min(" + timeID + ") AS MINDATE, max(" + timeID + ") AS MAXDATE FROM index";
         ResultSet rs = customSelectQuery(q);
         rs.next();
-        Attribute.Calendar minDate = JAMSDataFactory.getDataFactory().createCalendar();
-        Attribute.Calendar maxDate = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar minDate = DefaultDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar maxDate = DefaultDataFactory.getDataFactory().createCalendar();
         minDate.setValue(rs.getTimestamp("MINDATE").toString());
         maxDate.setValue(rs.getTimestamp("MAXDATE").toString());
 
@@ -1016,7 +1016,7 @@ public class TimeSpaceProcessor extends Processor {
                 break;
             case 5:
                 // get values for a specific date
-                Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
+                Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
                 cal.setValue("2000-10-31 07:30");
                 m = tsproc.getTemporalData(cal);
                 break;
@@ -1027,9 +1027,9 @@ public class TimeSpaceProcessor extends Processor {
             case 7:
                 // get temporal mean values for an array of specific dates
                 Attribute.Calendar[] dates = new Attribute.Calendar[2];
-                dates[0] = JAMSDataFactory.getDataFactory().createCalendar();
+                dates[0] = DefaultDataFactory.getDataFactory().createCalendar();
                 dates[0].setValue("2000-10-31 07:30");
-                dates[1] = JAMSDataFactory.getDataFactory().createCalendar();
+                dates[1] = DefaultDataFactory.getDataFactory().createCalendar();
                 dates[1].setValue("2000-10-30 07:30");
                 m = tsproc.getTemporalAggregate(dates, -1);
                 break;

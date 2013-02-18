@@ -171,18 +171,18 @@ public class GPSearch extends optas.optimizer.Optimizer {
     GaussianLearner CreateGPModel(ArrayList<double[]> samplePoint,ArrayList<Double> sampleValue){
         if (GP == null || createCount % 10 == 0){
             GP = new GaussianLearner();
-            GP.MeanMethod = JAMSDataFactory.getDataFactory().createInteger();
+            GP.MeanMethod = DefaultDataFactory.getDataFactory().createInteger();
             GP.MeanMethod.setValue(0);
-            GP.PerformanceMeasure = JAMSDataFactory.getDataFactory().createInteger();
+            GP.PerformanceMeasure = DefaultDataFactory.getDataFactory().createInteger();
             GP.PerformanceMeasure.setValue(PerformanceMeasure);
-            GP.mode = JAMSDataFactory.getDataFactory().createInteger();
+            GP.mode = DefaultDataFactory.getDataFactory().createInteger();
             GP.mode.setValue(GaussianLearner.MODE_OPTIMIZE);                          
             //GP.setModel(this.getModel());
-            GP.kernelMethod = JAMSDataFactory.getDataFactory().createInteger();
+            GP.kernelMethod = DefaultDataFactory.getDataFactory().createInteger();
             GP.kernelMethod.setValue(8);
-            GP.resultFile = JAMSDataFactory.getDataFactory().createString();
+            GP.resultFile = DefaultDataFactory.getDataFactory().createString();
             GP.resultFile.setValue("tmp.dat");
-            GP.param_theta = JAMSDataFactory.getDataFactory().createDoubleArray();
+            GP.param_theta = DefaultDataFactory.getDataFactory().createDoubleArray();
             if (createCount == 0){
                 params = new double[n*n+5*n];
                 for (int i=0;i<params.length;i++){                
@@ -201,11 +201,11 @@ public class GPSearch extends optas.optimizer.Optimizer {
             for (int i=0;i<sampleValue.size();i++){
                 predict[i] = sampleValue.get(i).doubleValue();
             }
-            GP.trainData = JAMSDataFactory.getDataFactory().createEntity();
+            GP.trainData = DefaultDataFactory.getDataFactory().createEntity();
             GP.trainData.setObject("data",data);
             GP.trainData.setObject("predict",predict);
         
-            GP.optimizationData = (JAMSEntity)JAMSDataFactory.getDataFactory().createEntity();
+            GP.optimizationData = (JAMSEntity)DefaultDataFactory.getDataFactory().createEntity();
             GP.optimizationData.setObject("data",data);
             GP.optimizationData.setObject("predict",predict);
                         

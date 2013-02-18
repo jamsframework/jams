@@ -1,7 +1,7 @@
 package reg.gui;
 
 import jams.data.Attribute.TimeInterval;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -784,7 +784,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                     Date startDate = filterStartDatePicker.getDate();
                     Date endDate = filterFinalDatePicker.getDate();
 
-                    TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
+                    TimeInterval interval = DefaultDataFactory.getDataFactory().createTimeInterval();
                     interval.getStart().setTime(startDate);
                     interval.getEnd().setTime(endDate);
 
@@ -830,7 +830,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                     Date startDate = filterStartDatePicker.getDate();
                     Date endDate = filterFinalDatePicker.getDate();
 
-                    TimeInterval interval = JAMSDataFactory.getDataFactory().createTimeInterval();
+                    TimeInterval interval = DefaultDataFactory.getDataFactory().createTimeInterval();
                     interval.getStart().setTime(startDate);
                     interval.getEnd().setTime(endDate);
 

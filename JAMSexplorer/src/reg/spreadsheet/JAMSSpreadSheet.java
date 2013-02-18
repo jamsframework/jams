@@ -623,7 +623,7 @@ public class JAMSSpreadSheet extends JPanel {
 
                 if (b_data) {
                     int i = 0;
-                    Attribute.Calendar timeval = JAMSDataFactory.getDataFactory().createCalendar();
+                    Attribute.Calendar timeval = DefaultDataFactory.getDataFactory().createCalendar();
                     rowBuffer = new double[file_columns - 1];
                     while (st.hasMoreTokens()) {
                         actual_string = st.nextToken();
@@ -802,7 +802,7 @@ public class JAMSSpreadSheet extends JPanel {
         for (Object id : ids) {
 
             if (timeSeries) {
-                Attribute.Calendar timeval = JAMSDataFactory.getDataFactory().createCalendar();
+                Attribute.Calendar timeval = DefaultDataFactory.getDataFactory().createCalendar();
                 timeval.setValue(id.toString());
                 timeVector.add(timeval);
                 rowBuffer = m.getRow(pos);
@@ -891,7 +891,7 @@ public class JAMSSpreadSheet extends JPanel {
                 break;
             }
 
-            Attribute.Calendar timeval = JAMSDataFactory.getDataFactory().createCalendar();
+            Attribute.Calendar timeval = DefaultDataFactory.getDataFactory().createCalendar();
             try {
                 String timeString = rowData[0].getString();
 

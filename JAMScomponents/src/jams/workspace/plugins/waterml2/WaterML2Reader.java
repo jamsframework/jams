@@ -22,7 +22,7 @@
 package jams.workspace.plugins.waterml2;
 
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.workspace.DataReader;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.Workspace;
@@ -207,7 +207,7 @@ public class WaterML2Reader implements DataReader {
         TimeValuePair tvp = next();
         dataSet = new DefaultDataSet(numberOfColumns);
 
-        Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
         cal.setTimeInMillis(tvp.time.getTimeInMillis());
         dataSet.setData(0, new CalendarValue(cal));
         dataSet.setData(1, new DoubleValue(tvp.getValue()));

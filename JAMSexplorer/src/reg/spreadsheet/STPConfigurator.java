@@ -7,7 +7,7 @@ package reg.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.JAMSFileFilter;
@@ -834,7 +834,7 @@ public class STPConfigurator extends JFrame {
 
                 if (b_data) {
                     int i = 0;
-                    Attribute.Calendar timeval = JAMSDataFactory.getDataFactory().createCalendar();
+                    Attribute.Calendar timeval = DefaultDataFactory.getDataFactory().createCalendar();
                     rowBuffer = new double[file_columns];
                     while (st.hasMoreTokens()) {
                         actual_string = st.nextToken();
@@ -936,7 +936,7 @@ public class STPConfigurator extends JFrame {
 
             DataValue[] rowData = ds.getData();
 
-            Attribute.Calendar timeval = JAMSDataFactory.getDataFactory().createCalendar();
+            Attribute.Calendar timeval = DefaultDataFactory.getDataFactory().createCalendar();
             timeval.setValue(rowData[0].getString());
             timeval.setDateFormat(dumpTimeFormat);
             timeVector.add(timeval);

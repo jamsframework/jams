@@ -24,7 +24,7 @@ package jams.workspace.stores;
 import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.JAMSCalendar;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.io.BufferedFileReader;
 import jams.runtime.JAMSRuntime;
 import jams.tools.StringTools;
@@ -125,7 +125,7 @@ public class J2KTSDataStore extends TSDataStore {
 
         this.columnCount = this.getDataSetDefinition().getColumnCount();
 
-        currentDate = JAMSDataFactory.getDataFactory().createCalendar();
+        currentDate = DefaultDataFactory.getDataFactory().createCalendar();
         currentDate.setDateFormat(timeFormat);
         currentDate.setValue(startDate);
         currentDate.add(timeUnit, -1 * timeUnitCount);

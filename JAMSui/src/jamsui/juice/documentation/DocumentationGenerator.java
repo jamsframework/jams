@@ -4,7 +4,7 @@ import jams.JAMS;
 import jams.JAMSProperties;
 import jams.JAMSVersion;
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.model.JAMSComponentDescription;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
@@ -301,7 +301,7 @@ public class DocumentationGenerator {
 
         String modelName = ((Element) modelNode).getAttribute("name");
         String modelAuthor = ((Element) modelNode).getAttribute("author");
-        Attribute.Calendar modelDate = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar modelDate = DefaultDataFactory.getDataFactory().createCalendar();
         modelDate.setValue(((Element) modelNode).getAttribute("date"));
 
         String modelDescription = null;

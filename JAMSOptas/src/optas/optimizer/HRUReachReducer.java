@@ -641,13 +641,13 @@ public class HRUReachReducer extends JAMSComponent {
 
     public static void main(String[] args) {
         HRUReachReducer reducer = new HRUReachReducer();
-        reducer.dstHRUFileName = JAMSDataFactory.getDataFactory().createString();
+        reducer.dstHRUFileName = DefaultDataFactory.getDataFactory().createString();
         reducer.dstHRUFileName.setValue("C:/Arbeit/test.par");
-        reducer.srcHRUFileName = JAMSDataFactory.getDataFactory().createString();
+        reducer.srcHRUFileName = DefaultDataFactory.getDataFactory().createString();
         reducer.srcHRUFileName.setValue("C:/Arbeit/ModelData/JAMS-Gehlberg/parameter/hrus_hor_dist.par");
-        reducer.method = JAMSDataFactory.getDataFactory().createInteger();
+        reducer.method = DefaultDataFactory.getDataFactory().createInteger();
         reducer.method.setValue(4);
-        reducer.debug = JAMSDataFactory.getDataFactory().createBoolean();
+        reducer.debug = DefaultDataFactory.getDataFactory().createBoolean();
         reducer.debug.setValue(true);
 
         reducer.createDstHRUFile(

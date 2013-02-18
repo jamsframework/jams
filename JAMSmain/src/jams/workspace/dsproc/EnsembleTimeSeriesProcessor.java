@@ -24,7 +24,7 @@ package jams.workspace.dsproc;
 
 import jams.data.Attribute;
 import jams.data.JAMSCalendar;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -618,9 +618,9 @@ public class EnsembleTimeSeriesProcessor extends Processor {
     public synchronized int[] getYears() throws SQLException, IOException {
         DataMatrix block0 = getTimeSeriesData(this.getModelRuns()[0]);
 
-        Attribute.Calendar minDate = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar minDate = DefaultDataFactory.getDataFactory().createCalendar();
         minDate.setValue((String) block0.getIds()[0]);
-        Attribute.Calendar maxDate = JAMSDataFactory.getDataFactory().createCalendar();
+        Attribute.Calendar maxDate = DefaultDataFactory.getDataFactory().createCalendar();
         maxDate.setValue((String) block0.getIds()[block0.getIds().length - 1]);
 
         int startYear = minDate.get(Attribute.Calendar.YEAR);
@@ -649,7 +649,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         Attribute.Calendar steps[] = new Attribute.Calendar[ids.length];
 
         for (int i = 0; i < ids.length; i++) {
-            Attribute.Calendar calendar = JAMSDataFactory.getDataFactory().createCalendar();
+            Attribute.Calendar calendar = DefaultDataFactory.getDataFactory().createCalendar();
             calendar.setValue((String) ids[i]);
             steps[i] = calendar;
         }
@@ -737,7 +737,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
                 break;
             case 5:
                 // get values for a specific date
-                Attribute.Calendar cal = JAMSDataFactory.getDataFactory().createCalendar();
+                Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
                 cal.setValue("2000-10-31 07:30");
                 //m = tsproc.getTemporalData(cal);
                 break;
@@ -748,9 +748,9 @@ public class EnsembleTimeSeriesProcessor extends Processor {
             case 7:
                 // get temporal mean values for an array of specific dates
                 Attribute.Calendar[] dates = new Attribute.Calendar[2];
-                dates[0] = JAMSDataFactory.getDataFactory().createCalendar();
+                dates[0] = DefaultDataFactory.getDataFactory().createCalendar();
                 dates[0].setValue("2000-10-31 07:30");
-                dates[1] = JAMSDataFactory.getDataFactory().createCalendar();
+                dates[1] = DefaultDataFactory.getDataFactory().createCalendar();
                 dates[1].setValue("2000-10-30 07:30");
                 //m = tsproc.getTemporalMean(dates);
                 break;

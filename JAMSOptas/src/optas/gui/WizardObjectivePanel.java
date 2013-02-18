@@ -6,7 +6,7 @@ package optas.gui;
 
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.gui.input.CalendarInput;
 import jams.gui.input.ValueChangeListener;
 import java.awt.BorderLayout;
@@ -99,9 +99,9 @@ public class WizardObjectivePanel extends JPanel implements Comparable{
         addTimeInterval.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                TimeInterval t = JAMSDataFactory.getDataFactory().createTimeInterval();
-                t.setStart(JAMSDataFactory.getDataFactory().createCalendar());
-                t.setEnd(JAMSDataFactory.getDataFactory().createCalendar());
+                TimeInterval t = DefaultDataFactory.getDataFactory().createTimeInterval();
+                t.setStart(DefaultDataFactory.getDataFactory().createCalendar());
+                t.setEnd(DefaultDataFactory.getDataFactory().createCalendar());
                 WizardObjectivePanel.this.objective.addTimeDomain(t);
                 WizardObjectivePanel.this.syncData();
                 WizardObjectivePanel.this.updateMainPanel();

@@ -5,7 +5,7 @@
 package optas.optimizer.management;
 
 import jams.data.Attribute;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class SimpleOptimizationController extends OptimizationController {
 
 
         //ausgabe samples
-        this.solution = JAMSDataFactory.getDataFactory().createEntity();
+        this.solution = DefaultDataFactory.getDataFactory().createEntity();
         solution.setObject("solution", getStatistics().getParetoFront());
     }
 }

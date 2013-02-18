@@ -6,7 +6,7 @@ package optas.io;
 
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.workspace.dsproc.DataMatrix;
 import jams.workspace.dsproc.DataStoreProcessor;
 import java.io.BufferedReader;
@@ -313,7 +313,7 @@ public class ImportMonteCarloData implements Serializable {
                         namedTimesteps[i] = timesteps[i].toString();
                     }
 
-                    ensembleTime = JAMSDataFactory.getDataFactory().createTimeInterval();
+                    ensembleTime = DefaultDataFactory.getDataFactory().createTimeInterval();
                     ensembleTime.setStart(timesteps[0]);
                     ensembleTime.setEnd(timesteps[timesteps.length - 1]);
                     ensembleTime.setTimeUnit(s.getTimeUnit());

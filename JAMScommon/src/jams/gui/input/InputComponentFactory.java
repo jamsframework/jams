@@ -25,7 +25,7 @@ package jams.gui.input;
 import jams.data.Attribute;
 import java.awt.Dimension;
 import javax.swing.BorderFactory;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 
 /**
  *
@@ -61,7 +61,7 @@ public class InputComponentFactory {
         InputComponent ic;
 
         if (type.isInterface()) {
-            type = JAMSDataFactory.getDataFactory().getImplementingClass(type);
+            type = DefaultDataFactory.getDataFactory().getImplementingClass(type);
         }
 
         if (Attribute.FileName.class.isAssignableFrom(type)) {

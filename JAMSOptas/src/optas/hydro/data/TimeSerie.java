@@ -7,7 +7,7 @@ package optas.hydro.data;
 
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
-import jams.data.JAMSDataFactory;
+import jams.data.DefaultDataFactory;
 import jams.workspace.stores.J2KTSDataStore;
 import java.util.ArrayList;
 import java.util.Date;
@@ -157,7 +157,7 @@ public class TimeSerie extends DataSet{
         if (this.filter.isEmpty())
             return range;
         else{
-            TimeInterval range = JAMSDataFactory.getDataFactory().createTimeInterval();
+            TimeInterval range = DefaultDataFactory.getDataFactory().createTimeInterval();
             range.setTimeUnit(this.range.getTimeUnit());
             range.setTimeUnitCount(this.range.getTimeUnitCount());
             range.getStart().setTime(getTime(0));
@@ -172,7 +172,7 @@ public class TimeSerie extends DataSet{
     }
 
     public static TimeSerie createFromJ2KTSDataStore(J2KTSDataStore store, int index, String name){
-        TimeInterval range = JAMSDataFactory.getDataFactory().createTimeInterval();
+        TimeInterval range = DefaultDataFactory.getDataFactory().createTimeInterval();
         range.setStart(store.getStartDate());
         range.setEnd(store.getEndDate());
         range.setTimeUnit(store.getTimeUnit());
