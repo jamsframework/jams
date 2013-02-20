@@ -406,7 +406,10 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                 
                 SimpleFeature f = SimpleFeatureBuilder.template(mapFType, new Integer(
                         new Double(e.getDouble("ID")).intValue()).toString());
-                f.setAttribute("geo", e.getGeometry("geom"));
+                if (e.getGeometry("geom") == null){
+                    getModel().getRuntime().sendHalt("no geometry for HRU:" + e.getDouble("ID"));
+                }
+                f.setAttribute("geo", e.getGeometry("geom"));                
                 f.setAttribute("newAt", e.getDouble(showAttr.getValue()[i]));
                 fc.add(f);
                 s.add(e.getDouble(showAttr.getValue()[i]));

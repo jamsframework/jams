@@ -844,7 +844,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                 da = new IntegerAccessor(dataFactory, ea, dataObject, attributeName, accessType);
             } else if (JAMSIntegerArray.class.isAssignableFrom(clazz)) {
                 da = new IntegerArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
-            } else if (JAMSIntegerArray.class.isAssignableFrom(clazz)) {
+            } else if (JAMSString.class.isAssignableFrom(clazz)) {
                 da = new StringAccessor(dataFactory, ea, dataObject, attributeName, accessType);
             } else if (JAMSDirName.class.isAssignableFrom(clazz)) {
                 da = new StringAccessor(dataFactory, ea, dataObject, attributeName, accessType);
@@ -863,7 +863,7 @@ public class JAMSContext extends JAMSComponent implements Context {
             } else if (JAMSObjectArray.class.isAssignableFrom(clazz)) {
                 da = new ObjectArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
             } else {
-                getModel().getRuntime().sendHalt(JAMS.i18n("Class_") + clazz.getCanonicalName() + JAMS.i18n("_not_supported!"));
+                getModel().getRuntime().sendHalt(JAMS.i18n("Class_") + clazz.getCanonicalName() + JAMS.i18n("_not_supported!") + " (attribute:" + attributeName + ")");
             }
 
             if (da != null) {
