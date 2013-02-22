@@ -61,27 +61,25 @@ import optas.optimizer.OptimizerLibrary;
 public class WizardOptimizerPanel extends JPanel {
 
     public static SortedSet<Objective> availableObjectives = new TreeSet<Objective>();
-
     SortedSet<AttributeWrapper> objectiveData = null;
     WizardParameterPanel parameterPanel = null;
-
-    OptimizerDescription availableOptimizer[];    
+    OptimizerDescription availableOptimizer[];
     NumericKeyListener stdNumericKeyListener = new NumericKeyListener();
     NumericFocusListener stdFocusListener = new NumericFocusListener();
     JFrame owner = null;
     JPanel objectiveSpecificationPanel = new JPanel(new GridBagLayout());
-
     Optimization optimizationScheme = new Optimization();
 
     public WizardOptimizerPanel(JFrame owner) {
-        init(owner,null);
-    }
-    public WizardOptimizerPanel(JFrame owner, Optimization o) {
-        init(owner,o);
+        init(owner, null);
     }
 
-    private void init(JFrame owner, Optimization o){
-        if (o!=null){
+    public WizardOptimizerPanel(JFrame owner, Optimization o) {
+        init(owner, o);
+    }
+
+    private void init(JFrame owner, Optimization o) {
+        if (o != null) {
             this.optimizationScheme = o;
             availableObjectives.addAll(o.getObjective());
         }
@@ -90,10 +88,10 @@ public class WizardOptimizerPanel extends JPanel {
         this.setLayout(new GridBagLayout());
         this.setMinimumSize(new Dimension(800, 700));
 
-        updateMainPanel();
+        updateMainPanel(true);
     }
 
-    private void updateMainPanel() {
+    private void updateMainPanel(boolean firstInit) {
         removeAll();
 
         GridBagConstraints c = new GridBagConstraints();
@@ -101,7 +99,7 @@ public class WizardOptimizerPanel extends JPanel {
         c.gridx = 0;
         c.gridy = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
-        add(getOptimizerConfigurationPanel(), c);
+        add(getOptimizerConfigurationPanel(firstInit), c);
 
         c.gridx = 0;
         c.gridy = 1;
@@ -116,11 +114,10 @@ public class WizardOptimizerPanel extends JPanel {
         updateUI();
     }
 
-    
-    private class CreateObjectiveDialog extends JDialog {        
+    private class CreateObjectiveDialog extends JDialog {
+
         JComboBox objList = null;
         JButton createButton = null;
-
         boolean isApproved;
         DefaultComboBoxModel model = null;
 
@@ -132,11 +129,10 @@ public class WizardOptimizerPanel extends JPanel {
             objList.setModel(model);
 
             createButton = new JButton(new AbstractAction("Create Objective") {
-
                 public void actionPerformed(ActionEvent e) {
                     Objective o = new Objective();
                     WizardObjectivePanel wizard = new WizardObjectivePanel(o, objectiveData);
-                    if (wizard.showDialog(owner)){
+                    if (wizard.showDialog(owner)) {
                         availableObjectives.add(o);
                         model = new DefaultComboBoxModel(WizardOptimizerPanel.availableObjectives.toArray());
                         objList.setModel(model);
@@ -155,7 +151,6 @@ public class WizardOptimizerPanel extends JPanel {
             JPanel southPanel = new JPanel(new FlowLayout());
 
             southPanel.add(new JButton(new AbstractAction("Ok") {
-
                 public void actionPerformed(ActionEvent e) {
                     isApproved = true;
                     setVisible(false);
@@ -163,7 +158,6 @@ public class WizardOptimizerPanel extends JPanel {
             }));
 
             southPanel.add(new JButton(new AbstractAction("Cancel") {
-
                 public void actionPerformed(ActionEvent e) {
                     isApproved = false;
                     setVisible(false);
@@ -186,29 +180,30 @@ public class WizardOptimizerPanel extends JPanel {
             int left = (screenSize.width - this.getPreferredSize().width) / 2;
             this.setLocation(left, top);
             this.setModal(true);
-            
+
         }
 
-        public Objective getObjective(){
-            if (objList.getSelectedItem()!=null)
-                return (Objective)objList.getSelectedItem();
+        public Objective getObjective() {
+            if (objList.getSelectedItem() != null) {
+                return (Objective) objList.getSelectedItem();
+            }
             return null;
         }
     }
 
-    private class ObjectiveTableList extends TableInput{
+    private class ObjectiveTableList extends TableInput {
+
         public ObjectiveTableList() {
-            super(new String[]{"name", "simulation", "measurement"}, new Class[]{String.class,String.class, String.class}, new boolean[]{false, false, false}, true);
+            super(new String[]{"name", "simulation", "measurement"}, new Class[]{String.class, String.class, String.class}, new boolean[]{false, false, false}, true);
 
             getTable().setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-            
-            ((AbstractTableModel) this.getTable().getModel()).addTableModelListener(new TableModelListener() {
 
+            ((AbstractTableModel) this.getTable().getModel()).addTableModelListener(new TableModelListener() {
                 public void tableChanged(TableModelEvent e) {
                     ArrayList<Objective> list = new ArrayList<Objective>();
                     for (Object row[] : tableData.getValue()) {
-                        if (row[0] instanceof Objective){
-                            list.add((Objective)row[0]);
+                        if (row[0] instanceof Objective) {
+                            list.add((Objective) row[0]);
                         }
                     }
                     WizardOptimizerPanel.this.optimizationScheme.setObjective(list);
@@ -224,8 +219,8 @@ public class WizardOptimizerPanel extends JPanel {
             int selection = getTable().getSelectedRow();
             Object selectedData = tableData.getElementAt(selection)[0];
 
-            if (selectedData instanceof Objective){
-                Objective o = (Objective)selectedData;
+            if (selectedData instanceof Objective) {
+                Objective o = (Objective) selectedData;
                 WizardObjectivePanel panel = new WizardObjectivePanel(o, objectiveData);
                 panel.showDialog(WizardOptimizerPanel.this.owner);
                 tableData.setElementAt(selection, new Object[]{selectedData, o.getSimulation(), o.getMeasurement()});
@@ -237,9 +232,9 @@ public class WizardOptimizerPanel extends JPanel {
         protected void addItem() {
             CreateObjectiveDialog createObjectiveDialog = new CreateObjectiveDialog();
             createObjectiveDialog.setVisible(true);
-            if (createObjectiveDialog.isApproved){
+            if (createObjectiveDialog.isApproved) {
                 Objective o = createObjectiveDialog.getObjective();
-                tableData.addElement( new Object[]{o, o.getSimulation(), o.getMeasurement()});
+                tableData.addElement(new Object[]{o, o.getSimulation(), o.getMeasurement()});
                 this.setTableData(tableData.getValue());
             }
         }
@@ -249,13 +244,12 @@ public class WizardOptimizerPanel extends JPanel {
         JPanel contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Objectives"));
         contentPanel.add(new ObjectiveTableList(), BorderLayout.CENTER);
-        return contentPanel;        
+        return contentPanel;
     }
 
     private JComponent getStringField(StringOptimizerParameter p) {
         JTextField field = new JTextField(((StringOptimizerParameter) p).getValue(), 15);
         field.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 JTextField src = (JTextField) e.getSource();
                 StringOptimizerParameter p = (StringOptimizerParameter) src.getClientProperty("property");
@@ -271,7 +265,6 @@ public class WizardOptimizerPanel extends JPanel {
     private JComponent getBooleanField(BooleanOptimizerParameter p) {
         JCheckBox checkBox = new JCheckBox("", ((BooleanOptimizerParameter) p).isValue());
         checkBox.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 JCheckBox src = (JCheckBox) e.getSource();
                 BooleanOptimizerParameter p = (BooleanOptimizerParameter) src.getClientProperty("property");
@@ -296,35 +289,39 @@ public class WizardOptimizerPanel extends JPanel {
 
         return field;
     }
-
     int oldState = 0;
-    private JComponent getOptimizerConfigurationPanel() {
-        JPanel superPanel = new JPanel(new BorderLayout());
-        JPanel optimizerConfigurationPanel = new JPanel(new GridBagLayout());
-        JScrollPane scrollPaneOptimizerSpecificationPanel = new JScrollPane(optimizerConfigurationPanel);
+    JPanel superPanel = new JPanel(new BorderLayout());
+    JPanel optimizerConfigurationPanel = new JPanel(new GridBagLayout());
+    JComboBox selectOptimizer = null;
+    int curSelection = 0;
+    
+    private JComponent getOptimizerConfigurationPanel(boolean firstInit) {
+        if (firstInit) {            
+            JScrollPane scrollPaneOptimizerSpecificationPanel = new JScrollPane(optimizerConfigurationPanel);
+            scrollPaneOptimizerSpecificationPanel.setPreferredSize(new Dimension(700, 200));
+            
+            curSelection = this.initOptimizerDesc();
 
-        int curSelection = this.initOptimizerDesc();
+            selectOptimizer = new JComboBox(availableOptimizer);
+            selectOptimizer.addItemListener(new ItemListener() {
+                public void itemStateChanged(ItemEvent e) {
+                    if (e.getStateChange() == e.SELECTED) {
+                        curSelection = selectOptimizer.getSelectedIndex();
+                        optimizationScheme.setOptimizerDescription((OptimizerDescription) e.getItem());
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                updateMainPanel(false);
+                            }
+                        });
 
-        JComboBox selectOptimizer = new JComboBox(availableOptimizer);
-        selectOptimizer.addItemListener(new ItemListener() {
-
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == e.SELECTED){
-                    optimizationScheme.setOptimizerDescription((OptimizerDescription) e.getItem());
-                   SwingUtilities.invokeLater(new Runnable() {
-
-                        public void run() {
-                            updateMainPanel();
-                        }
-                    });
-                    
+                    }
                 }
-            }
-        });
+            });
+            superPanel.add(selectOptimizer, BorderLayout.NORTH);        
+            superPanel.add(scrollPaneOptimizerSpecificationPanel, BorderLayout.CENTER);
+        }
         selectOptimizer.setSelectedIndex(curSelection);
         optimizationScheme.setOptimizerDescription((OptimizerDescription) selectOptimizer.getSelectedItem());
-
-        scrollPaneOptimizerSpecificationPanel.setPreferredSize(new Dimension(700, 200));
 
         //configuration panel
         optimizerConfigurationPanel.removeAll();
@@ -338,7 +335,6 @@ public class WizardOptimizerPanel extends JPanel {
         c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(5, 0, 5, 0);
         optimizerConfigurationPanel.add(new JLabel(optimizationScheme.getOptimizerDescription().getShortName()) {
-
             {
                 Font f = this.getFont();
                 setFont(f.deriveFont(20.0f));
@@ -358,8 +354,8 @@ public class WizardOptimizerPanel extends JPanel {
             lbl.setPreferredSize(new Dimension(440, 40));
             optimizerConfigurationPanel.add(lbl, c);
 
-            c.gridx = 1;            
-            c.anchor = GridBagConstraints.NORTH;            
+            c.gridx = 1;
+            c.anchor = GridBagConstraints.NORTH;
 
             if (p instanceof NumericOptimizerParameter) {
                 optimizerConfigurationPanel.add(
@@ -371,7 +367,7 @@ public class WizardOptimizerPanel extends JPanel {
             }
             if (p instanceof StringOptimizerParameter) {
                 optimizerConfigurationPanel.add(
-                        getStringField((StringOptimizerParameter)p), c);
+                        getStringField((StringOptimizerParameter) p), c);
             }
             counter++;
         }
@@ -397,9 +393,6 @@ public class WizardOptimizerPanel extends JPanel {
 
         optimizerConfigurationPanel.add(getBooleanField(doSpatial), c);
         
-        superPanel.add(selectOptimizer, BorderLayout.NORTH);
-        superPanel.add(scrollPaneOptimizerSpecificationPanel, BorderLayout.CENTER);
-
         return superPanel;
     }
 
@@ -410,17 +403,17 @@ public class WizardOptimizerPanel extends JPanel {
         int c = 0;
         for (Optimizer o : set) {
             availableOptimizer[c] = o.getDescription();
-            if (this.optimizationScheme.getOptimizerDescription()!=null){
-                    if (this.optimizationScheme.getOptimizerDescription().getOptimizerClassName().equals(availableOptimizer[c].getOptimizerClassName())){
-                        availableOptimizer[c] = this.optimizationScheme.getOptimizerDescription();
-                        selection = c;
-                    }
+            if (this.optimizationScheme.getOptimizerDescription() != null) {
+                if (this.optimizationScheme.getOptimizerDescription().getOptimizerClassName().equals(availableOptimizer[c].getOptimizerClassName())) {
+                    availableOptimizer[c] = this.optimizationScheme.getOptimizerDescription();
+                    selection = c;
+                }
             }
             c++;
         }
         return selection;
     }
-    
+
     public void setObjectiveList(SortedSet<AttributeWrapper> objectiveSet) {
         this.objectiveData = objectiveSet;
     }
@@ -429,7 +422,7 @@ public class WizardOptimizerPanel extends JPanel {
         this.parameterPanel.fillParameterList(p);
     }
 
-    public Optimization getDescription(){
+    public Optimization getDescription() {
         return optimizationScheme;
     }
 }

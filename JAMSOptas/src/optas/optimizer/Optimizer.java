@@ -200,7 +200,15 @@ public abstract class Optimizer implements Serializable, Comparable{
                 f.setBoolean(this, ((BooleanOptimizerParameter) p).isValue());
             }
             if (p instanceof NumericOptimizerParameter) {
+                try{
                 f.setDouble(this, ((NumericOptimizerParameter) p).getValue());
+                }catch(IllegalArgumentException iea){
+                    try{
+                        f.setFloat(this, (float)((NumericOptimizerParameter) p).getValue());
+                    }catch(IllegalArgumentException iae){
+                        f.setInt(this, (int)((NumericOptimizerParameter) p).getValue());
+                    }
+                }
             }
             if (p instanceof StringOptimizerParameter) {
                 f.set(this, ((StringOptimizerParameter) p).getValue());

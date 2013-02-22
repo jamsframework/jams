@@ -60,7 +60,7 @@ import org.w3c.dom.NodeList;
 public class ModelDescriptor extends ComponentCollection {
 
     private HashMap<String, OutputDSDescriptor> outputDataStores;
-    private ArrayList<MetaProcessorDescriptor> preprocessors;
+    private ArrayList<MetaProcessorDescriptor> preprocessors = new ArrayList();
     private ModelProperties modelProperties;
     private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "", modelName = "";
     private ModelNode rootNode;
