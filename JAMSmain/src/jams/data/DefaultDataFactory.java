@@ -22,6 +22,7 @@
 package jams.data;
 
 import com.vividsolutions.jts.geom.Geometry;
+import jams.runtime.JAMSRuntime;
 import java.util.HashMap;
 
 /**
@@ -67,22 +68,23 @@ public class DefaultDataFactory implements DataFactory {
      * ocurred
      * @return An instance of the provided class
      */
-//    public  JAMSData createInstance(Class clazz, JAMSRuntime rt) {
-//
-//        if (clazz.isInterface()) {
-//            clazz = getImplementingClass(clazz);
-//        }
-//
-//        JAMSData value = null;
-//        try {
-//            value = createInstance(clazz);
-//        } catch (InstantiationException ex) {
-//            rt.handle(ex, false);
-//        } catch (IllegalAccessException ex) {
-//            rt.handle(ex, false);
-//        }
-//        return value;
-//    }
+    public  JAMSData createInstance(Class clazz, JAMSRuntime rt) {
+
+        if (clazz.isInterface()) {
+            clazz = getImplementingClass(clazz);
+        }
+
+        JAMSData value = null;
+        try {
+            value = createInstance(clazz);
+        } catch (InstantiationException ex) {
+            rt.handle(ex, false);
+        } catch (IllegalAccessException ex) {
+            rt.handle(ex, false);
+        }
+        return value;
+    }
+    
     /**
      * Creates a new JAMSData instance that is a representation of a given data
      * object
