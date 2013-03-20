@@ -134,7 +134,6 @@ public class JAMSSpreadSheet extends JPanel {
             table.setDragEnabled(true);
 
             table.addMouseMotionListener(new MouseMotionListener() {
-
                 public void mouseDragged(MouseEvent e) {
                     e.consume();
                     JComponent c = (JComponent) e.getSource();
@@ -189,20 +188,20 @@ public class JAMSSpreadSheet extends JPanel {
 
         //not supported!
         /*public boolean importData(JComponent comp, Transferable t) {
-        if (comp == myTable) {
-        try {
-        Object value = t.getTransferData(FLAVOR);
+         if (comp == myTable) {
+         try {
+         Object value = t.getTransferData(FLAVOR);
 
-        int row = myTable.getSelectedRow();
-        int col = myTable.getSelectedColumn();
+         int row = myTable.getSelectedRow();
+         int col = myTable.getSelectedColumn();
 
-        //insert insertion here ..
-        return true;
-        } catch (Exception e) {
-        }
-        }
-        return super.importData(comp, t);
-        }*/
+         //insert insertion here ..
+         return true;
+         } catch (Exception e) {
+         }
+         }
+         return super.importData(comp, t);
+         }*/
         public int getSourceActions(JComponent c) {
             if (myTable == c) {
                 return DnDConstants.ACTION_COPY;
@@ -243,9 +242,10 @@ public class JAMSSpreadSheet extends JPanel {
 
         updateGUI();
     }
-    /************* *** Event Handling *** ****l*****************************/
+    /**
+     * *********** *** Event Handling *** ****l****************************
+     */
     ActionListener calcbuttonclick = new ActionListener() {
-
         public void actionPerformed(ActionEvent e) {
             kindofcalc = calculations.getSelectedIndex();
 
@@ -260,63 +260,46 @@ public class JAMSSpreadSheet extends JPanel {
     };
     /* Save */
     ActionListener saveAction = new ActionListener() {
-
         public void actionPerformed(ActionEvent e) {
             // ABSOLUT NEW TEST
-            JFileChooser Save = new JFileChooser();
-            Save.setSelectedFile(new File("new file"));
-            Save.setFileSelectionMode(javax.swing.JFileChooser.FILES_ONLY);
-            Save.setCurrentDirectory(new File("user.dir"));
+            JFileChooser saveDlg = new JFileChooser();
+            saveDlg.setFileFilter(JAMSFileFilter.getSdatFilter());
+            saveDlg.setFileSelectionMode(javax.swing.JFileChooser.FILES_ONLY);
+            saveDlg.setCurrentDirectory(explorer.getWorkspace().getDirectory());
             try {
-                boolean dont_save = true;
-                while (dont_save) {
-                    int rc = Save.showSaveDialog(panel);
-                    if (rc != JFileChooser.APPROVE_OPTION) {
-                        dont_save = false;
 
-                    } else {
-                        String filename = Save.getSelectedFile().getName();
-                        setOutputDSDir(Save.getCurrentDirectory());
-                        if (!(filename == null)) {
+                int rc = saveDlg.showSaveDialog(panel);
+                if (rc == JFileChooser.APPROVE_OPTION) {
+                    String filename = saveDlg.getSelectedFile().getName();
+                    setOutputDSDir(saveDlg.getCurrentDirectory());
+                    if (filename != null) {
+                        if (!filename.contains(".") && (saveDlg.getFileFilter() == JAMSFileFilter.getSdatFilter())) {
                             filename += SpreadsheetConstants.FILE_ENDING_DAT;
-                            if (isOutputSheet()) {
-                                File file = new File(getOutputDSDir(), filename);
-                                if (!file.exists()) {
-                                    save(filename, getSaveHeaders());
-                                    dont_save = false;
-                                } else {
-                                    String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_") + file + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
-                                    int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
-                                    if (result == 0) { //overwrite
-                                        filename = Save.getSelectedFile().getName();
-                                        filename += SpreadsheetConstants.FILE_ENDING_DAT;
-                                        save(filename, getSaveHeaders());
-                                        // saveAll(filename);
-                                        dont_save = false;
-                                    }
-                                }
-                            } else {
-                                File file = new File(explorer.getWorkspace().getDirectory().toString() + "/explorer", filename);
-                                if (!file.exists()) {
-                                    save(filename, getSaveHeaders());
-                                    dont_save = false;
-                                } else {
-                                    String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_") + file + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
-                                    int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
-                                    if (result == 0) { //overwrite
-                                        filename = Save.getSelectedFile().getName();
-                                        filename += SpreadsheetConstants.FILE_ENDING_DAT;
-                                        save(filename, getSaveHeaders());
-                                        // saveAll(filename);
-                                        dont_save = false;
-                                    }
+                        }
+                        if (isOutputSheet()) {
+                            File file = new File(getOutputDSDir(), filename);
+                            if (file.exists()) {
+                                String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_") + file + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
+                                int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
+                                if (result != GUIHelper.YES_OPTION) {
+                                    return;
                                 }
                             }
+                            save(filename, getSaveHeaders());
                         } else {
-                            dont_save = false; //Abbruch
+                            File file = new File(explorer.getWorkspace().getDirectory().toString() + "/explorer", filename);
+                            if (file.exists()) {
+                                String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_") + file + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
+                                int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
+                                if (result != GUIHelper.YES_OPTION) {
+                                    return;
+                                }
+                            }
+                            save(filename, getSaveHeaders());
                         }
-                    }
+                    } 
                 }
+
             } catch (Exception ex) {
                 Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -328,14 +311,14 @@ public class JAMSSpreadSheet extends JPanel {
         int[] selectedColumns = table.getSelectedColumns();
         int[] writeColumns;
 
-        if (timeRuns && selectedColumns[0] == 0) {
-            writeColumns = new int[selectedColumns.length - 1];
-            for (int i = 0; i < writeColumns.length; i++) {
-                writeColumns[i] = selectedColumns[i + 1];
-            }
-        } else {
-            writeColumns = selectedColumns;
-        }
+//        if (selectedColumns[0] == 0) {
+//            writeColumns = new int[selectedColumns.length - 1];
+//            for (int i = 0; i < writeColumns.length; i++) {
+//                writeColumns[i] = selectedColumns[i + 1];
+//            }
+//        } else {
+        writeColumns = selectedColumns;
+//        }
 
         String[] write_headers = new String[writeColumns.length];
 
@@ -348,10 +331,9 @@ public class JAMSSpreadSheet extends JPanel {
         headers_with_time[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ID");
         java.lang.System.arraycopy(write_headers, 0, headers_with_time, 1, write_headers.length);
 //        System.out.println(headers_with_time[0]+headers_with_time[1]);
-        return headers_with_time;
+        return write_headers;
     }
     ActionListener loadAction = new ActionListener() {
-
         public void actionPerformed(ActionEvent e) {
 
             int returnVal = -1;
@@ -372,7 +354,6 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
     ActionListener statisticAction = new ActionListener() {
-
         public void actionPerformed(ActionEvent e) {
 
             String[] headers = getSelectedColumnNames();
@@ -401,11 +382,8 @@ public class JAMSSpreadSheet extends JPanel {
 
             File file;
             if (isOutputSheet()) {
-                //        file = new File(regionalizer.getWorkspace().getOutputDataDirectory()+filename);
-                //     file = new File(regionalizer.getWorkspace().getDirectory().toString() + "/output/current/" + filename);
                 file = new File(this.getOutputDSDir().toString() + "/" + filename);
             } else {
-                //      file = new File(explorer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME + filename);
                 file = new File(this.getOutputDSDir().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME + filename);
             }
 
@@ -441,15 +419,10 @@ public class JAMSSpreadSheet extends JPanel {
 //                        filewriter.write("\t");
                     for (int i = 0; i < write_col_cnt; i++) {
 
-                        if (i == write_col_cnt - 1) {
-                            value = table.getValueAt(k, col_index[i]).toString();
-                            filewriter.write(value, 0, value.length());
-//                            filewriter.write("\t");
-                        } else {
-
-                            value = table.getValueAt(k, col_index[i]).toString();
-                            filewriter.write(value, 0, value.length());
-                            filewriter.write("\t\t");
+                        value = table.getValueAt(k, col_index[i]).toString();
+                        filewriter.write(value, 0, value.length());
+                        if (i < write_col_cnt - 1) {
+                            filewriter.write("\t");
                         }
                     }
                     filewriter.write("\r\n");
@@ -750,7 +723,6 @@ public class JAMSSpreadSheet extends JPanel {
         return epsFileChooser;
     }
     ActionListener closeTabAction = new ActionListener() {
-
         public void actionPerformed(ActionEvent e) {
             close();
         }
@@ -764,7 +736,7 @@ public class JAMSSpreadSheet extends JPanel {
     public void setOutputDSDir(File outputDSDir) {
         this.outputDSDir = outputDSDir;
     }
-    
+
     private void formatDoubleArray(double[] rowBuffer) {
         // shorten double values to four decimal digits
         for (int i = 0; i < rowBuffer.length; i++) {
@@ -995,7 +967,6 @@ public class JAMSSpreadSheet extends JPanel {
         STPConfigurator stp = new STPConfigurator(explorer, this);
     }
     ActionListener plotAction = new ActionListener() {
-
         public void actionPerformed(ActionEvent e) {
 
             if (useTemplateButton.isSelected()) {
@@ -1074,7 +1045,6 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
     ActionListener dataplotAction = new ActionListener() {
-
         public void actionPerformed(ActionEvent e) {
 
             if (useTemplateButton.isSelected()) {
@@ -1150,7 +1120,6 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
     ActionListener stpAction = new ActionListener() {
-
         public void actionPerformed(ActionEvent e) {
 
             try {
@@ -1167,7 +1136,6 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
     Action joinMapAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AUF_KARTE_ZEIGEN")) {
-
         public void actionPerformed(ActionEvent e) {
 
             String selectedShape = (String) shapeSelector.getSelectedItem();
@@ -1184,7 +1152,7 @@ public class JAMSSpreadSheet extends JPanel {
             }
 
             URI uri = dataStore.getUri();
-            if (uri==null){
+            if (uri == null) {
                 System.out.println("error: can't access shapefile! path is: "
                         + dataStore.getShapeFile().getAbsolutePath());
                 return;
@@ -1227,10 +1195,10 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     /**
-     * get id values of table
-     * (id-column = 1st column)
+     * get id values of table (id-column = 1st column)
      *
-     **/
+     *
+     */
     private double[] getIdValues() {
 
         int rowCount = table.getRowCount();
@@ -1244,8 +1212,9 @@ public class JAMSSpreadSheet extends JPanel {
 
     /**
      * get selected data of table
-     * 
-     **/
+     *
+     *
+     */
     private double[][] getSelectedData() {
 
         int[] columns = table.getSelectedColumns();
@@ -1268,7 +1237,8 @@ public class JAMSSpreadSheet extends JPanel {
     /**
      * get all selected column names
      *
-     **/
+     *
+     */
     private String[] getSelectedColumnNames() {
         int[] columns = table.getSelectedColumns();
         if (columns.length == 0) {
@@ -1282,7 +1252,9 @@ public class JAMSSpreadSheet extends JPanel {
         return headers;
     }
 
-    /*************** Math *******************************/
+    /**
+     * ************* Math ******************************
+     */
     private double calcsum() {
 
         double sum = 0;
@@ -1548,7 +1520,9 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     /**
-     * updates the shape-selector with names of all shapes defined as inputDataStore
+     * updates the shape-selector with names of all shapes defined as
+     * inputDataStore
+     *
      * @return true, if any shapes found
      */
     private boolean updateShapeSelector() {
