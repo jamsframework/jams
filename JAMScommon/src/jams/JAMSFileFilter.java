@@ -119,13 +119,24 @@ public class JAMSFileFilter {
     private static FileFilter datFilter = new FileFilter() {
         @Override
         public boolean accept(File f) {
-            return f.isDirectory() || f.getName().toLowerCase().endsWith(".dat") || f.getName().toLowerCase().endsWith(".dtp");
+            return f.isDirectory() || f.getName().toLowerCase().endsWith(".dat");
         }
         @Override
         public String getDescription() {
             return JAMS.i18n("Spreadsheet_data_(*.dat)");
         }
     };
+    
+    private static FileFilter sdatFilter = new FileFilter() {
+        @Override
+        public boolean accept(File f) {
+            return f.isDirectory() || f.getName().toLowerCase().endsWith(".sdat");
+        }
+        @Override
+        public String getDescription() {
+            return JAMS.i18n("JADE_export_(*.sdat)");
+        }
+    };   
 
     private static FileFilter oddFilter = new FileFilter() {
         @Override
@@ -238,6 +249,13 @@ public class JAMSFileFilter {
      */
     public static FileFilter getOddFilter() {
         return oddFilter;
+    }
+
+    /**
+     * @return the sdatFilter
+     */
+    public static FileFilter getSdatFilter() {
+        return sdatFilter;
     }
 
 
