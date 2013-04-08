@@ -594,10 +594,14 @@ public class JAMSContext extends JAMSComponent implements Context {
 
                     //initEntityData();
 
+                    if (getEntities().getEntities().size() == 0) {
+                        return;
+                    }                    
+
                     if (runEnumerator == null) {
                         runEnumerator = getRunEnumerator();
                     }
-
+                    
                     runEnumerator.reset();
 
                     Component comp = null;
@@ -629,10 +633,14 @@ public class JAMSContext extends JAMSComponent implements Context {
 
                     //initEntityData();
 
+                    if (getEntities().getEntities().size() == 0) {
+                        return;
+                    }
+                    
                     if (runEnumerator == null) {
                         runEnumerator = getRunEnumerator();
                     }
-
+                    
                     runEnumerator.reset();
 
                     Component comp = null;
