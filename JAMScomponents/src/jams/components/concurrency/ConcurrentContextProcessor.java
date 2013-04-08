@@ -279,7 +279,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
         } catch (JAMSException ex) {
             exHandler.handle(ex);
         } catch (ClassNotFoundException cnfe) {
-            exHandler.handle(new JAMSException("Error while loading class", cnfe));
+            exHandler.handle(new JAMSException("Error while loading class " + partitionerClassName, cnfe));
         }
 
     }
