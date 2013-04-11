@@ -4,17 +4,27 @@
  */
 package optas.metamodel;
 
+import jams.meta.ComponentDescriptor;
+import jams.meta.ComponentField;
+import jams.meta.ModelDescriptor;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Set;
+import optas.optimizer.Optimizer;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.OptimizerLibrary;
+import optas.optimizer.management.OptimizerParameter;
+import optas.optimizer.management.SimpleOptimizationController;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  *
  * @author chris
  */
 public class Optimization implements Serializable {
+   
     private OptimizerDescription optimizerDescription;
     private ArrayList<optas.metamodel.Parameter> parameter = new ArrayList<optas.metamodel.Parameter>();
     private ArrayList<Objective> objective = new ArrayList<Objective>();
@@ -91,4 +101,6 @@ public class Optimization implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+    
+    
 }

@@ -26,6 +26,18 @@ public class Tools {
             upperBound = b;
         }
 
+        public Range(String s) throws NumberFormatException{
+            String s2 = s.replace("[", "");
+            s2 = s2.replace("]", "");
+            String bounds[] = s2.split("&gt;");
+            if (bounds.length!=2){
+                throw new NumberFormatException();
+            }else{
+                lowerBound = Double.parseDouble(bounds[0]);
+                upperBound = Double.parseDouble(bounds[1]);
+            }
+        }
+        
         @Override
         public String toString(){
             return lowerBound + "\t" + upperBound;

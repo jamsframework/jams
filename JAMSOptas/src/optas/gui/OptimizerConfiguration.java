@@ -4,6 +4,8 @@
  */
 package optas.gui;
 
+import jams.JAMS;
+import jams.meta.ModelDescriptor;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -15,9 +17,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -25,14 +29,15 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import optas.metamodel.ModelModifier2;
-import optas.metamodel.Optimization;
-import optas.metamodel.Tools;
+import optas.metamodel.Optimization2;
+import optas.metamodel.Parameter2;
 import optas.optimizer.Optimizer;
 import optas.optimizer.OptimizerLibrary;
 import optas.optimizer.management.BooleanOptimizerParameter;
@@ -40,10 +45,6 @@ import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.OptimizerParameter;
 import optas.optimizer.management.StringOptimizerParameter;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  *
@@ -51,104 +52,42 @@ import org.w3c.dom.NodeList;
  */
 public class OptimizerConfiguration extends JPanel {
 
-    OptimizerDescription availableOptimizer[];
-    Optimization optimizationScheme = new Optimization();
+    OptimizerDescription availableOptimizer[] = null;
+    Set<Parameter2> availableParameters = null;
+    
+    Optimization2 optimizationScheme = null;
     NumericKeyListener stdNumericKeyListener = new NumericKeyListener();
     NumericFocusListener stdFocusListener = new NumericFocusListener();
-    Document doc = null, newDoc = null;
     JDialog dialog = null;
     JPanel optimizerConfigurationPanel = new JPanel(new GridBagLayout());
-    Dimension prefSize = new Dimension(700, 260);
+    JPanel parameterConfigurationPanel = new JPanel(new GridBagLayout());
+    Dimension prefSize = new Dimension(1024, 500);
     HashSet<ActionListener> listeners = new HashSet<ActionListener>();
+
+    public OptimizerConfiguration(ModelDescriptor md) {
+        optimizationScheme = new Optimization2(md);
+
+        initData();
+        initGUI();
+        
+        updateOptimizerPanel();
+        updateParameterPanel();
+    }
 
     public void addActionListener(ActionListener listener) {
         this.listeners.add(listener);
     }
 
-    public Document getModifiedDocument() {
-        return newDoc;
+    public ModelDescriptor getModelDescriptor() {
+        if (optimizationScheme != null) {
+            return optimizationScheme.getModelDescriptor();
+        }
+        return null;
     }
 
-    private Optimization getSchemeFromOptimizer(Element node) {
-        Optimization scheme = new Optimization();
-
-        initOptimizerDesc(null);
-
-        String optimizerClass = null;
-        for (int i = 0; i < node.getChildNodes().getLength(); i++) {
-            Node child = node.getChildNodes().item(i);
-            if (child.getNodeName().equals("var")) {
-                Element e = (Element) child;
-                if (e.getAttribute("name").equals("optimizationClassName")) {
-                    optimizerClass = e.getAttribute("value");
-                }
-            }
-
-        }
-        if (optimizerClass == null) {
-            return null;
-        }
-        for (int i = 0; i < this.availableOptimizer.length; i++) {
-            if (this.availableOptimizer[i].getOptimizerClassName().equals(optimizerClass)) {
-                scheme.setOptimizerDescription(availableOptimizer[i]);
-            }
-        }
-
-        NodeList list = node.getElementsByTagName("var");
-        for (int i = 0; i < list.getLength(); i++) {
-            if (list.item(i) instanceof Element) {
-                Element e = (Element) list.item(i);
-                if (!e.hasAttribute("name")) {
-                    continue;
-                }
-                if (e.getAttribute("name").equals("parameterization")) {
-                    String parameterValue = e.getAttribute("value");
-                    String parameterList[] = parameterValue.split(";");
-                    for (String parameterValuePair : parameterList) {
-                        String entry[] = parameterValuePair.split("=");
-                        String name = entry[0];
-                        String value = entry[1];
-
-                        if (entry.length != 2) {
-                            continue;
-                        }
-                        OptimizerParameter op = scheme.getOptimizerDescription().getPropertyMap().get(name);
-                        if (op!=null)
-                            op.setString(value);
-                    }
-                }
-            }
-        }
-
-        if (Tools.getNodeByClass(node, "optas.optimizer.HRUReducer").size() > 0) {
-            scheme.getOptimizerDescription().getDoSpatialRelaxation().setValue(true);
-        } else {
-            scheme.getOptimizerDescription().getDoSpatialRelaxation().setValue(false);
-        }
-
-        return scheme;
-    }
-
-    public OptimizerConfiguration(Document doc) {
-        this.doc = doc;
-        Node root = Tools.getModelNode(doc);
-        ArrayList<Element> optimizerNodes = Tools.getNodeByName(root, "optimizer");
-        if (optimizerNodes.size() > 0) {
-            Element optimizer = optimizerNodes.get(0);
-            optimizationScheme = getSchemeFromOptimizer(optimizer);
-            if (optimizationScheme==null){
-                optimizationScheme = new Optimization();
-            }
-        }
-        initOnce(optimizationScheme);
-        init();
-    }
-
-    private void initOnce(Optimization defaultOptimizer) {
-        int selection = this.initOptimizerDesc(defaultOptimizer);
-
+    private void initGUI() {
         this.removeAll();
-        this.setLayout(new BorderLayout());
+        //create optimizer panel
         JScrollPane scrollPaneOptimizerSpecificationPanel = new JScrollPane(optimizerConfigurationPanel);
 
         JComboBox selectOptimizer = new JComboBox(availableOptimizer);
@@ -160,31 +99,72 @@ public class OptimizerConfiguration extends JPanel {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            init();
+                            updateOptimizerPanel();
                         }
                     });
                 }
             }
         });
-        if (selection != -1) {
-            selectOptimizer.setSelectedIndex(selection);
-        } else {
-            optimizationScheme.setOptimizerDescription((OptimizerDescription) selectOptimizer.getSelectedItem());
-        }
-
+        selectOptimizer.setSelectedIndex(0);
         scrollPaneOptimizerSpecificationPanel.setPreferredSize(new Dimension(700, 200));
+  
+        //create parameter panel
+        final JList parameterList = new JList(availableParameters.toArray());
+        JScrollPane scrollPaneParameterList = new JScrollPane(parameterList);
 
-        this.add(selectOptimizer, BorderLayout.NORTH);
-        this.add(scrollPaneOptimizerSpecificationPanel, BorderLayout.CENTER);
+        scrollPaneParameterList.setPreferredSize(new Dimension(300, 250));
 
+        scrollPaneParameterList.setBorder(BorderFactory.createTitledBorder(
+                JAMS.i18n("Parameter_Configuration")));
+
+        parameterConfigurationPanel = new JPanel(new GridBagLayout());
+        JScrollPane scrollPaneParameterConfiguration = new JScrollPane(parameterConfigurationPanel);
+        scrollPaneParameterConfiguration.setPreferredSize(new Dimension(440, 250));
+        parameterList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+       
+        JButton addParameter = new JButton(">>");
+        addParameter.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                 List selectedParameters = parameterList.getSelectedValuesList();
+                 for (Object obj : selectedParameters){
+                     Parameter2 p = (Parameter2)obj;
+                     if (optimizationScheme.addParameter(p)){
+                         //do nothing
+                     }
+                 }
+                 updateParameterPanel();
+            }
+        });
+        
+        GroupLayout mainLayout = new GroupLayout(this);
+        this.setLayout(mainLayout);
+
+        mainLayout.setHorizontalGroup(mainLayout.createParallelGroup()
+                .addComponent(selectOptimizer)
+                .addComponent(scrollPaneOptimizerSpecificationPanel)
+                .addGroup(mainLayout.createSequentialGroup()
+                .addComponent(scrollPaneParameterList)
+                .addComponent(addParameter)                
+                .addComponent(scrollPaneParameterConfiguration)));
+
+        mainLayout.setVerticalGroup(mainLayout.createSequentialGroup()
+                .addComponent(selectOptimizer)
+                .addComponent(scrollPaneOptimizerSpecificationPanel)
+                .addGroup(mainLayout.createParallelGroup()
+                .addComponent(scrollPaneParameterList)
+                .addComponent(addParameter)                
+                .addComponent(scrollPaneParameterConfiguration)));
+
+        this.revalidate();
     }
 
-    public Optimization getOptimizer() {
+    public Optimization2 getOptimizer() {
         return optimizationScheme;
     }
 
-    private void init() {
-        newDoc = null;
+    private void updateOptimizerPanel() {
         //configuration panel
         optimizerConfigurationPanel.removeAll();
         GridBagConstraints c = new GridBagConstraints();
@@ -231,8 +211,6 @@ public class OptimizerConfiguration extends JPanel {
                 optimizerConfigurationPanel.add(
                         getStringField((StringOptimizerParameter) p), c);
             }
-
-
             counter++;
         }
 
@@ -259,7 +237,83 @@ public class OptimizerConfiguration extends JPanel {
         this.revalidate();
     }
 
-    public JDialog showDialog(JFrame parent) {
+    private void updateParameterPanel() {
+        GridBagConstraints c = new GridBagConstraints();
+        int counter = 0;
+        parameterConfigurationPanel.removeAll();
+        c.gridx = 0;
+        c.gridy = counter;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.insets = new Insets(5, 0, 5, 0);
+        c.anchor = GridBagConstraints.NORTH;
+        parameterConfigurationPanel.add(new JLabel(JAMS.i18n("parameter")), c);
+        c.gridx = 1;
+        parameterConfigurationPanel.add(new JLabel(JAMS.i18n("lower_bound")), c);
+        c.gridx = 2;
+        parameterConfigurationPanel.add(new JLabel(JAMS.i18n("upper_bound")), c);
+        c.gridx = 3;
+        parameterConfigurationPanel.add(new JLabel(JAMS.i18n("start_value")), c);
+        c.gridx = 4;
+        parameterConfigurationPanel.add(new JLabel("remove"), c);
+        
+        int n = this.optimizationScheme.getParameter().size();
+        
+        for (Parameter2 p : this.optimizationScheme.getParameter()) {            
+            counter++;
+            c.insets = new Insets(0, 0, 2, 0);
+            c.gridx = 0;
+            c.gridy = counter;
+            c.anchor = GridBagConstraints.NORTHWEST;
+
+            parameterConfigurationPanel.add(new JLabel(p.toString()), c);
+            c.gridx = 1;
+            c.anchor = GridBagConstraints.NORTH;
+            JTextField lowerBound = new JTextField(Double.toString(p.getLowerBound()), 5);
+            lowerBound.addKeyListener(stdNumericKeyListener);
+            lowerBound.addFocusListener(stdFocusListener);
+            lowerBound.putClientProperty("parameter", p);
+            lowerBound.putClientProperty("mode", NumericKeyListener.MODE_LOWERBOUND);
+            parameterConfigurationPanel.add(lowerBound, c);
+
+            c.gridx = 2;
+            c.anchor = GridBagConstraints.NORTH;
+            JTextField upperBound = new JTextField(Double.toString(p.getUpperBound()), 5);
+            upperBound.addKeyListener(stdNumericKeyListener);
+            upperBound.addFocusListener(stdFocusListener);
+            upperBound.putClientProperty("parameter", p);
+            upperBound.putClientProperty("mode", NumericKeyListener.MODE_UPPERBOUND);
+            parameterConfigurationPanel.add(upperBound, c);
+
+            c.gridx = 3;
+            c.anchor = GridBagConstraints.NORTH;
+            if (counter == n) {
+                if (250 > n * 25) {
+                    c.insets = new Insets(0, 0, 250 - n * 25, 0);
+                }
+            }
+
+            JTextField startValue = new JTextField(5);
+            if (p.getStartValue() != null && p.getStartValue().length > 0) {
+                startValue.setText(Double.toString(p.getStartValue()[0]));
+            }
+            startValue.addKeyListener(stdNumericKeyListener);
+            startValue.addFocusListener(stdFocusListener);
+            startValue.putClientProperty("parameter", p);
+            startValue.putClientProperty("mode", NumericKeyListener.MODE_STARTVALUE);
+            parameterConfigurationPanel.add(startValue, c);
+            
+            JButton remButton = new JButton("x");
+            c.gridx = 4;
+            parameterConfigurationPanel.add(remButton, c);
+        }
+        
+        parameterConfigurationPanel.updateUI();
+        parameterConfigurationPanel.invalidate();
+    }
+
+
+public JDialog showDialog(JFrame parent) {
         dialog = new JDialog(parent);
         JPanel panel = new JPanel(new BorderLayout());
         JPanel buttonBar = new JPanel(new FlowLayout());
@@ -270,8 +324,7 @@ public class OptimizerConfiguration extends JPanel {
             {
                 addActionListener(new ActionListener() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
-                        OptimizerConfiguration.this.newDoc = ModelModifier2.addOptimizationContext(OptimizerConfiguration.this.doc, optimizationScheme);
+        public void actionPerformed(ActionEvent e) {                        
                         dialog.setVisible(false);
                         for (ActionListener listener : listeners) {
                             listener.actionPerformed(new ActionEvent(OptimizerConfiguration.this, 1, "doc_modified"));
@@ -285,7 +338,7 @@ public class OptimizerConfiguration extends JPanel {
             {
                 addActionListener(new ActionListener() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
                         dialog.setVisible(false);
                     }
                 });
@@ -299,27 +352,15 @@ public class OptimizerConfiguration extends JPanel {
         return dialog;
     }
 
-    private int initOptimizerDesc(Optimization defaultOptimizer) {
+    private void initData() {
         Set<Optimizer> set = OptimizerLibrary.getAvailableOptimizer();
         availableOptimizer = new OptimizerDescription[set.size()];
-        int selection = -1;
-        int c = 0;
+        int c=0;
         for (Optimizer o : set) {
-            availableOptimizer[c] = o.getDescription();
-            if (optimizationScheme != null) {
-                if (this.optimizationScheme.getOptimizerDescription() != null) {
-                    if (this.optimizationScheme.getOptimizerDescription().getOptimizerClassName().equals(availableOptimizer[c].getOptimizerClassName())) {
-                        availableOptimizer[c] = this.optimizationScheme.getOptimizerDescription();
-                        if (defaultOptimizer != null) {
-                            if (availableOptimizer[c].getOptimizerClassName().equals(defaultOptimizer.getOptimizerDescription().getOptimizerClassName()));
-                            selection = c;
-                        }
-                    }
-                }
-            }
-            c++;
+            availableOptimizer[c++] = o.getDescription();            
         }
-        return selection;
+        
+        availableParameters = this.optimizationScheme.getModelParameters();
     }
 
     private JComponent getNumericField(NumericOptimizerParameter p) {

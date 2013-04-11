@@ -27,6 +27,20 @@ import optas.io.ImportMonteCarloException;
         )
 public class ParallelSequence implements Serializable {
 
+    /**
+     * @return the threadCount
+     */
+    public int getThreadCount() {
+        return threadCount;
+    }
+
+    /**
+     * @param threadCount the threadCount to set
+     */
+    public void setThreadCount(int threadCount) {
+        this.threadCount = threadCount;
+    }
+
     static public class InputData implements Serializable {        
         public Optimizer context;
         public double x[][];
@@ -71,7 +85,7 @@ public class ParallelSequence implements Serializable {
     }
         
     public String excludeFiles = "(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log";
-    public int threadCount = 12;
+    private int threadCount = 12;
     Optimizer context;
         
     public String getExcludeFiles(){
@@ -185,7 +199,7 @@ public class ParallelSequence implements Serializable {
             executor = new ParallelExecution<InputData, OutputData>(context.getModel().getWorkspaceDirectory(), excludeFiles);
 
         InputData param = new InputData(x, 0, x.length, context);
-        result = executor.execute(param, new ParallelSequenceTask(), threadCount);
+        result = executor.execute(param, new ParallelSequenceTask(), getThreadCount());
 
         return result;
     }

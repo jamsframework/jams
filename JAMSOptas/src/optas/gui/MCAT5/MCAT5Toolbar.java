@@ -291,7 +291,7 @@ public class MCAT5Toolbar extends JToolBar {
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
                 DottyPlot.class));
 
-        registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
+        /*registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
                 "DottyPlot3D",
                 "DottyPlot3D",
                 DottyPlot3D.class));
@@ -305,7 +305,7 @@ public class MCAT5Toolbar extends JToolBar {
                 "Interaction Analyzer",
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
                 ParameterInteractionAnalyser.class));
-
+*/
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/sensitivity.png")),
                 "Sensitivityanalyzer",
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Sensitivity_Analysis"),
@@ -366,7 +366,7 @@ public class MCAT5Toolbar extends JToolBar {
                 java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS_II"),
                 RegionalSensitivityAnalyser2.class));
 
-        registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
+        /*registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
                 "Experimental I",
                 "Experimental I",
                 optas.SA.APosterioriPlot.class));
@@ -374,7 +374,7 @@ public class MCAT5Toolbar extends JToolBar {
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
                 "Experimental II",
                 "Experimental II",
-                ParameterInterpolation2.class));
+                ParameterInterpolation2.class));*/
 
         for (PlotDesc pd : registeredPlots) {
             JButton button = new JButton(pd.icon);

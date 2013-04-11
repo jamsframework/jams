@@ -46,13 +46,18 @@ import optas.hydro.data.TimeSerie;
  */
 public class ImportMonteCarloData implements Serializable {
 
-    String defaultTypes = "initRG1=Parameter;"
-            + "initRG2=Parameter;"
-            + "maxPercAdaptation=Parameter;"
-            + "linETRed=Parameter;"
-            + "ddf=Parameter;"
-            + "ACAdaptation=Parameter;"
+    String defaultTypes = 
+              "ACAdaptation=Parameter;"
+            + "basQTanks=Parameter;"
+            + "basQk=Parameter;"
+            + "ddf=Parameter;"            
+            + "dirQTanks=Parameter;"
+            + "dirQk=Parameter;"
             + "FCAdaptation=Parameter;"
+            + "initRG1=Parameter;"
+            + "initRG2=Parameter;"
+            + "maxPercAdaptation=Parameter;"            
+            + "linETRed=Parameter;"
             + "latVertDist=Parameter;"
             + "k=Parameter;"
             + "petMult=Parameter;"
@@ -104,16 +109,44 @@ public class ImportMonteCarloData implements Serializable {
             + "r2=Efficiency(Positive);"
             + "rsq=PosEfficiency;"
             + "catchmentSimRunoff_qm=Timeserie;"
+            + "totQ=Timeserie;"            
             + "catchmentObsRunoff=Measurement;"
             + "e1_normalized=NegEfficiency;"
             + "e2_normalized=NegEfficiency;"
             + "le1_normalized=NegEfficiency;"
-            + "le2_normalized=NegEfficiency;"
+            + "le2_normalized=NegEfficiency;"            
+            + "norm_le2_lowflow=NegEfficiency;"
+            + "norm_e2_peaks=NegEfficiency;"
             + "bias_normalized=NegEfficiency;"
+            + "norm_e1_recession=NegEfficiency;"
             + "ave_normalized=NegEfficiency;"
             + "x1=Parameter;"
-            + "x2=Parameter;";
+            + "x2=Parameter;"
+            + "norm_bias_cold=NegEfficiency;"
+            + "norm_bias_hot=NegEfficiency;"
+            + "norm_bias_summer=NegEfficiency;"
+            + "norm_bias_total=NegEfficiency;"
+            + "norm_e1_cold=NegEfficiency;"
+            + "norm_e1_hot=NegEfficiency;"
+            + "norm_e1_summer=NegEfficiency;"
+            + "norm_e1_total=NegEfficiency;"
+            + "norm_e2_cold=NegEfficiency;"
+            + "norm_e2_hot=NegEfficiency;"
+            + "norm_e2_summer=NegEfficiency;"
+            + "norm_e2_total=NegEfficiency;"
+            + "norm_le2_cold=NegEfficiency;"
+            + "norm_le2_hot=NegEfficiency;"
+            + "norm_le2_summer=NegEfficiency;"
+            + "norm_le2_total=NegEfficiency;"
+            + "norm_e1_summer=NegEfficiency;"
+            + "norm_e1_summer=NegEfficiency;"
+            + "norm_bias=NegEfficiency;"
+            + "norm_e1=NegEfficiency;"
+            + "norm_e2=NegEfficiency;"
+            + "norm_le2=NegEfficiency;";
     
+
+
     ArrayList<Processor> fileProcessors = new ArrayList<Processor>();
     HashMap<AttributeData, Processor> attributeDataMap = new HashMap<AttributeData, Processor>();
     HashMap<AttributeData, EnsembleType> typeMap = new HashMap<AttributeData, EnsembleType>();
@@ -373,7 +406,18 @@ public class ImportMonteCarloData implements Serializable {
     }
 
     public EnsembleType getAttributeTypeDefault(AttributeData a) {
-        return (EnsembleType)this.defaultAttributeTypes.get(a.getName());
+        EnsembleType type = (EnsembleType)this.defaultAttributeTypes.get(a.getName());
+        //best guess
+        if (type == null){
+            for (String key : this.defaultAttributeTypes.keySet()){
+                if (a.getName().contains(key)){
+                    return (EnsembleType)this.defaultAttributeTypes.get(key);
+                }
+            }
+            return null;
+        }else{
+            return type;
+        }
     }
 
     public boolean isEmpty() {

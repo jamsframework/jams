@@ -21,6 +21,7 @@ import optas.optimizer.parallel.ParallelSequence;
  * @author Christian Fischer
  */
 public class NSGA2 extends Optimizer {
+
     public double populationSize = 30;
     public double crossoverProbability = 0.9;
     public double mutationProbability = 1.0;
@@ -28,17 +29,16 @@ public class NSGA2 extends Optimizer {
     public double mutationDistributionIndex = 20;
     public int maxGeneration = 1000;
     public double parallelExecution = 0.0;
+    public double threadCount = 12.0;
     public String excludeFiles = "(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log";
-
     int crossoverCount = 0;
     int mutationCount = 0;
-
     ParallelSequence pseq = null;
     SampleComperator moComparer = new SampleComperator(false);
     CustomRand generator = null;
     transient DataCollection collection = null;
 
-    public OptimizerDescription getDescription(){
+    public OptimizerDescription getDescription() {
         OptimizerDescription desc = OptimizerLibrary.getDefaultOptimizerDescription(NSGA2.class.getSimpleName(), NSGA2.class.getName(), 500, false);
 
         desc.addParameter(new NumericOptimizerParameter("populationSize", "size of population", 30, 1, 100000));
@@ -132,7 +132,7 @@ public class NSGA2 extends Optimizer {
      * @param maxGeneration the maxGeneration to set
      */
     public void setMaxGeneration(double maxGeneration) {
-        this.maxGeneration = (int)maxGeneration;
+        this.maxGeneration = (int) maxGeneration;
     }
 
     /**
@@ -164,9 +164,12 @@ public class NSGA2 extends Optimizer {
     }
 
     static private class Individual implements Serializable {
+
         Sample sample;
         int rank;/*Rank of the individual*/
+
         double cub_len;/*crowding distance of the individual*/
+
 
         public Individual(Sample sample) {
             this.sample = sample;
@@ -174,28 +177,35 @@ public class NSGA2 extends Optimizer {
             this.cub_len = 0.0;
         }
     }
+
     private class Population implements Serializable {
+
         int maxrank;        /*Maximum rank present in the population*/
+
         int rankar[][];     /*record of array of individual numbers at a particular rank */
+
         int rankno[];       /*Individual at different ranks*/
+
         Individual ind[];   /*Different Individuals*/
+
         int size;
-        
+
         public Population(int size) {
             this.size = size;
-            rankno = new int[size+1];
+            rankno = new int[size + 1];
             ind = new Individual[size];
             rankar = new int[size][size];
         }
     }
 
-    public static class CustomRand implements Serializable{
+    public static class CustomRand implements Serializable {
+
         double oldrand[] = new double[55];
         int jrand = 0;
 
         CustomRand(double random_seed) {
-            double new_random  = 0.000000001,
-                   prev_random = random_seed;
+            double new_random = 0.000000001,
+                    prev_random = random_seed;
             oldrand[54] = random_seed;
 
             for (int j1 = 1; j1 <= 54; j1++) {
@@ -232,44 +242,47 @@ public class NSGA2 extends Optimizer {
             }
         }
 
-        public double rand() {            
+        public double rand() {
             if (++jrand >= 55) {
                 jrand = 1;
                 advance_random();
             }
             return oldrand[jrand];
         }
-    }  
+    }
     /* Fetch a single random number between 0.0 and 1.0 - Subtractive Method */
     /* See Knuth, D. (1969), v. 2 for details */
     /* name changed from random() to avoid library conflicts on some machines*/
+
     @Override
     protected double randomValue() {
-       return super.generator.nextDouble();// this.generator.rand();
+        return super.generator.nextDouble();// this.generator.rand();
     }
 
     private void ranking(Population population) {
         /*Initializing the ranks to zero*/
         int rnk = 0;
         int nondom = 0;
-        /*Initializing all the flags to 2*/       
-        int flag[] = new int[population.size];        
+        /*Initializing all the flags to 2*/
+        int flag[] = new int[population.size];
         Arrays.fill(flag, 2);
-                
-        for (int k = 0,q=0; k < population.size; k++, q = 0) {
+
+        for (int k = 0, q = 0; k < population.size; k++, q = 0) {
             int j;
-            for (j = 0; j < population.size; j++) {                
-                if (flag[j] != 1)
+            for (j = 0; j < population.size; j++) {
+                if (flag[j] != 1) {
                     break;
+                }
             }/*Break if all the individuals are assigned a rank*/
-            if (j == population.size)
+            if (j == population.size) {
                 break;
+            }
             rnk++;
             /*Set the flag of dominated individuals to 2*/
             for (j = 0; j < population.size; j++) {
                 if (flag[j] == 0) {
                     flag[j] = 2;
-                }                
+                }
             }
 
             for (int i = 0; i < population.size; i++) {
@@ -283,7 +296,7 @@ public class NSGA2 extends Optimizer {
                         if (flag[j] != 1) {
                             /*Compare the two individuals for fitness*/
                             int val = moComparer.compare(population.ind[i].sample, population.ind[j].sample);
-                            
+
                             /*VAL =  1 for dominated individual which rank to be given*/
                             /*VAL = -1 for dominating individual which rank to be given*/
                             /*VAL =  0 for non comparable individuals*/
@@ -301,11 +314,11 @@ public class NSGA2 extends Optimizer {
                                 }
                             }
                         }
-                    } 
+                    }
                     if (j == population.size) {
                         /*Assign the rank and set the flag*/
                         population.ind[i].rank = rnk;
-                        flag[i] = 1;                        
+                        flag[i] = 1;
                         q++;
                     }
                 }       /*Loop over flag check ends*/
@@ -323,34 +336,45 @@ public class NSGA2 extends Optimizer {
 
     @Override
     public boolean init() {
-        if (!super.init())
+        if (!super.init()) {
             return false;
+        }
         this.crossoverCount = 0;
-        this.mutationCount  = 0;
+        this.mutationCount = 0;
 
-        if (this.mutationProbability> 1.0 / n)
-            this.mutationProbability=(1.0 / n);
+        if (this.mutationProbability > 1.0 / n) {
+            this.mutationProbability = (1.0 / n);
+        }
 
-        if (this.parallelExecution!=0){
+        if (this.parallelExecution != 0) {
             pseq = new ParallelSequence(this);
             pseq.setExcludeFiles(excludeFiles);
+            pseq.setThreadCount((int) this.threadCount);
         }
         return true;
     }
 
-    void nselect(Population old_pop, Population pop2) {        
+    void nselect(Population old_pop, Population pop2) {
         for (int n = 0, k = 0; n < old_pop.size; n++, k++) {
             int rnd1 = (int) Math.floor(randomValue() * (double) old_pop.size);
             int rnd2 = (int) Math.floor(randomValue() * (double) old_pop.size);
 
-            if (rnd1 == 0)              rnd1 = old_pop.size - k;
-            if (rnd2 == 0)              rnd2 = old_pop.size - n;
-            
-            if (rnd1 == old_pop.size)   rnd1 = (old_pop.size - 2) / 2;
-            if (rnd2 == old_pop.size)   rnd2 = (old_pop.size - 4) / 2;
-            
+            if (rnd1 == 0) {
+                rnd1 = old_pop.size - k;
+            }
+            if (rnd2 == 0) {
+                rnd2 = old_pop.size - n;
+            }
+
+            if (rnd1 == old_pop.size) {
+                rnd1 = (old_pop.size - 2) / 2;
+            }
+            if (rnd2 == old_pop.size) {
+                rnd2 = (old_pop.size - 4) / 2;
+            }
+
             /*Select parents randomly*/
-            int j  = rnd1 - 1;
+            int j = rnd1 - 1;
             int j1 = rnd2 - 1;
             /*------------------SELECTION PROCEDURE------------------------------------*/
             /*Comparing the fitnesses*/
@@ -370,7 +394,7 @@ public class NSGA2 extends Optimizer {
         }
     }
 
-    double[][] realcross(Population mate_pop) {        
+    double[][] realcross(Population mate_pop) {
         int nvar = mate_pop.ind[0].sample.getParameter().length;
         double newParameter[][] = new double[mate_pop.size][nvar];
 
@@ -402,7 +426,7 @@ public class NSGA2 extends Optimizer {
                         if (Math.abs(par1 - par2) > 1E-8) { // changed by Deb (31/10/01)
                             if (par2 <= par1) {
                                 y1 = par2;
-                                y2 = par1;                                
+                                y2 = par1;
                             }
                             /*Find beta value*/
                             if ((y1 - yl) > (yu - y2)) {
@@ -429,10 +453,18 @@ public class NSGA2 extends Optimizer {
                         chld1 = 0.5 * ((y1 + y2) - betaq * (y2 - y1));
                         chld2 = 0.5 * ((y1 + y2) + betaq * (y2 - y1));
                         // added by deb (31/10/01)
-                        if (chld1 < yl)     chld1 = yl;
-                        if (chld1 > yu)     chld1 = yu;
-                        if (chld2 < yl)     chld2 = yl;
-                        if (chld2 > yu)     chld2 = yu;
+                        if (chld1 < yl) {
+                            chld1 = yl;
+                        }
+                        if (chld1 > yu) {
+                            chld1 = yu;
+                        }
+                        if (chld2 < yl) {
+                            chld2 = yl;
+                        }
+                        if (chld2 > yu) {
+                            chld2 = yu;
+                        }
 
                     } else {
                         /*Copying the children to parents*/
@@ -480,18 +512,22 @@ public class NSGA2 extends Optimizer {
 
                         rnd = randomValue();
 
-                        if (rnd <= 0.5) {                            
+                        if (rnd <= 0.5) {
                             val = 2.0 * rnd + (1 - 2 * rnd) * (Math.pow(delta, (getMutationDistributionIndex() + 1)));
                             deltaq = Math.pow(val, indi) - 1.0;
-                        } else {                            
+                        } else {
                             val = 2.0 * (1.0 - rnd) + 2.0 * (rnd - 0.5) * (Math.pow(delta, (getMutationDistributionIndex() + 1)));
                             deltaq = 1.0 - (Math.pow(val, indi));
                         }
                         /*Change the value for the parent */
                         y = y + deltaq * (yu - yl);
-                        if (y < yl)     y = yl;
-                        if (y > yu)     y = yu;
-                        
+                        if (y < yl) {
+                            y = yl;
+                        }
+                        if (y > yu) {
+                            y = yu;
+                        }
+
                         new_pop[j][i] = y;
                     } else { // y == yl
                         new_pop[j][i] = randomValue() * (yu - yl) + yl;
@@ -510,7 +546,7 @@ public class NSGA2 extends Optimizer {
         int nondom = 0;
 
         Arrays.fill(gflg, 2);
-        
+
         for (int k = 0; k < globalPopulation.size; k++) {
             int j = 0, q = 0;
 
@@ -535,7 +571,7 @@ public class NSGA2 extends Optimizer {
                 for (j = 0; j < globalPopulation.size; j++) {
                     if (i == j || gflg[j] == 1) {
                         continue;
-                    }                    
+                    }
                     int val = moComparer.compare(globalPopulation.ind[i].sample, globalPopulation.ind[j].sample);
                     if (val == 1) {
                         gflg[i] = 0;/* individual 1 is dominated */
@@ -561,15 +597,17 @@ public class NSGA2 extends Optimizer {
         globalPopulation.maxrank = rnk;
 
         /*log("   RANK     No Of Individuals");
-        String text = "";
-        for (int i = 0; i < rnk; i++) 
-            text += ("\t" + (i + 1) + "\t" + globalPopulation.rankno[i]) + "\n";
-        log(text);*/
+         String text = "";
+         for (int i = 0; i < rnk; i++) 
+         text += ("\t" + (i + 1) + "\t" + globalPopulation.rankno[i]) + "\n";
+         log(text);*/
     }
     //simple bubblesort
+
     void sort(int m1, int index[], double value[]) {
-        double temp;int temp1;
-        for (int k1 = 0; k1 < m1 ; k1++) {
+        double temp;
+        int temp1;
+        for (int k1 = 0; k1 < m1; k1++) {
             for (int i1 = k1 + 1; i1 < m1; i1++) {
                 if (value[k1] > value[i1]) {
                     temp = value[k1];
@@ -588,7 +626,7 @@ public class NSGA2 extends Optimizer {
         int nfunc = globalPopulation.ind[0].sample.F().length;
         int index[] = new int[globalPopulation.size];
         double value[] = new double[globalPopulation.size];
-        
+
         for (int j = 0; j < nfunc; j++) {
             for (int i = 0; i < m1; i++) {
                 index[i] = globalPopulation.rankar[rnk - 1][i];
@@ -598,17 +636,18 @@ public class NSGA2 extends Optimizer {
 
             double max = value[m1 - 1];
             double min = value[0];
-            
-            for (int i = 0; i < m1; i++) {                
+
+            for (int i = 0; i < m1; i++) {
                 if (i == 0 || i == (m1 - 1)) {
                     globalPopulation.ind[index[i]].cub_len += 100 * max;
-                } else {                    
-                    globalPopulation.ind[index[i]].cub_len += Math.abs(value[i+1] - value[i-1]) / (max - min); // crowding distances are normalized
+                } else {
+                    globalPopulation.ind[index[i]].cub_len += Math.abs(value[i + 1] - value[i - 1]) / (max - min); // crowding distances are normalized
                 }
-            }            
+            }
         }
     }
     /* This is the method used to sort the dummyfitness arrays */
+
     void gsort(int rnk, int sel, Population globalPopulation, boolean flag[]) {
         int index[] = new int[globalPopulation.size];
         double value[] = new double[globalPopulation.size];
@@ -619,7 +658,7 @@ public class NSGA2 extends Optimizer {
             index[i] = globalPopulation.rankar[rnk - 1][i];
             value[i] = -globalPopulation.ind[index[i]].cub_len;
         }
-        sort(q,index,value);
+        sort(q, index, value);
 
         for (int i = 0; i < sel; i++) {
             flag[index[i]] = true;
@@ -628,7 +667,7 @@ public class NSGA2 extends Optimizer {
 
     void keepalive(Population pop1, Population pop2, Population pop3, int gen) {
         Population globalPopulation = new Population(pop1.size * 2);
-        boolean flag[] = new boolean[pop1.size*2];
+        boolean flag[] = new boolean[pop1.size * 2];
         int lastRank = 0;
         /*Forming the global mating pool*/
         /*Initial;ising the dummyfitness to zero */
@@ -645,25 +684,27 @@ public class NSGA2 extends Optimizer {
         /* Sharing the fitness to get the dummy fitness */
         for (int i = 0; i < globalPopulation.maxrank; i++) {
             gshare(i + 1, globalPopulation);
-        }                
+        }
         // decide which all solutions belong to the pop3
-        int st = 0,pool=0;
+        int st = 0, pool = 0;
         for (int i = 0; i < globalPopulation.maxrank; i++) {
             /*    Elitism Applied Here     */
             st = pool;
             pool += globalPopulation.rankno[i];
             if (pool <= pop1.size) {
-                for (int k = 0; k < 2 * pop1.size; k++)
-                    if (globalPopulation.ind[k].rank == i + 1) 
+                for (int k = 0; k < 2 * pop1.size; k++) {
+                    if (globalPopulation.ind[k].rank == i + 1) {
                         flag[k] = true;
+                    }
+                }
                 pop3.rankno[i] = globalPopulation.rankno[i];
             } else {
                 int sel = pop1.size - st;
                 lastRank = i + 1;
-               /* if (i >= pop3.size)
-                    System.out.println("NSGA2 error, pop3 array out of bounds .. ");
-                else*/
-                    pop3.rankno[i] = sel;
+                /* if (i >= pop3.size)
+                 System.out.println("NSGA2 error, pop3 array out of bounds .. ");
+                 else*/
+                pop3.rankno[i] = sel;
                 gsort(i + 1, sel, globalPopulation, flag);
                 break;
             }
@@ -680,39 +721,45 @@ public class NSGA2 extends Optimizer {
     void report(int t, Population pop1, Population pop2) {
         log("\n-----------------------------------------------------------------------------------");
         log("Generation No.     ->" + (t + 1));
-        log("-----------------------------------------------------------------------------------");        
+        log("-----------------------------------------------------------------------------------");
         int popSize = pop1.ind.length;
         DecimalFormat f = new DecimalFormat("#0.00000");
-        String text="";
+        String text = "";
 
-        for (int j = 0; j < n; j++)
+        for (int j = 0; j < n; j++) {
             text += ("x" + j) + "\t\t";
-        for (int j = 0; j < m; j++)
+        }
+        for (int j = 0; j < m; j++) {
             text += ("y" + j) + "\t\t";
+        }
         log(text + "\tcublen\trank");
 
         text = "";
-        for (int i = 0; i < popSize; i++) {            
-            for (int j = 0; j < n; j++)
+        for (int i = 0; i < popSize; i++) {
+            for (int j = 0; j < n; j++) {
                 text += (f.format(pop1.ind[i].sample.getParameter()[j]) + "\t");
-            for (int j = 0; j < m; j++)
+            }
+            for (int j = 0; j < m; j++) {
                 text += (f.format(pop1.ind[i].sample.F()[j]) + "\t");
+            }
             text += (pop1.ind[i].cub_len + "\t" + pop1.ind[i].rank);
             log(text);
-            text="";
+            text = "";
         }
         log(text);
         text = "";
         log("-----------------------------------------------------------------------------------");
-        for (int i = 0; i < popSize; i++) {            
-            for (int j = 0; j < n; j++)
+        for (int i = 0; i < popSize; i++) {
+            for (int j = 0; j < n; j++) {
                 text += f.format(pop2.ind[i].sample.getParameter()[j]) + "\t";
-            for (int j = 0; j < m; j++)
+            }
+            for (int j = 0; j < m; j++) {
                 text += f.format(pop2.ind[i].sample.F()[j]) + "\t";
+            }
 
             text += (pop2.ind[i].cub_len + "\t" + pop2.ind[i].rank);
             log(text);
-            text="";
+            text = "";
         }
         log("-----------------------------------------------------------------------------------");
         log("-----------------------------------------------------------------------------------");
@@ -757,14 +804,55 @@ public class NSGA2 extends Optimizer {
             Population matePopulation = new Population((int) getPopulationSize());
             Population newPopulation = new Population((int) getPopulationSize());
 
+            double initParameter[][] = new double[(int) this.getPopulationSize()][];
+
             for (int i = 0; i < this.getPopulationSize(); i++) {
-                if (this.x0!=null && this.x0.length>i)
-                    oldPopulation.ind[i] = new Individual(this.getSample(this.x0[i]));
-                else
-                    oldPopulation.ind[i] = new Individual(this.getSample(randomSampler()));
+                if (this.x0 != null && this.x0.length > i) {
+                    initParameter[i] = this.x0[i].clone();
+                } else {
+                    initParameter[i] = randomSampler();
+                }
             }
+
+            if (this.parallelExecution == 0) {
+                for (int i = 0; i < this.getPopulationSize(); i++) {
+                    oldPopulation.ind[i] = new Individual(this.getSample(initParameter[i]));
+                }
+            } else {
+                ParallelSequence.OutputData result = pseq.procedure(initParameter);
+                for (int j = 0; j < initParameter.length; j++) {
+                    try {
+                        oldPopulation.ind[j] = new Individual(result.list.get(j));
+                    } catch (ArrayIndexOutOfBoundsException aioobe) {
+                        System.out.println("For an unknown reason parallel sampling did not succeed completly .. switching to sequential execution");
+                        for (int k = j; k < initParameter.length; k++) {
+                            oldPopulation.ind[k] = new Individual(this.getSample(initParameter[k]));
+                        }
+                        j = initParameter.length;
+                        break;
+                    }
+                }
+                if (collection == null) {
+                    collection = result.dc;
+                } else {
+                    synchronized (collection) {
+                        collection.mergeDataCollections(result.dc);
+                    }
+                }
+                this.injectSamples(result.list);
+            }
+
+            /*for (int i = 0; i < this.getPopulationSize(); i++) {
+                if (this.x0 != null && this.x0.length > i) {
+                    oldPopulation.ind[i] = new Individual(this.getSample(this.x0[i]));
+                } else {
+                    oldPopulation.ind[i] = new Individual(this.getSample(randomSampler()));
+                }
+            }*/
             ranking(oldPopulation);
-            /********************************************************************/
+            /**
+             * *****************************************************************
+             */
             /*----------------------GENERATION STARTS HERE----------------------*/
             for (int i = 0; i < this.getMaxGeneration(); i++) {
                 matePopulation = new Population((int) getPopulationSize());
@@ -776,21 +864,21 @@ public class NSGA2 extends Optimizer {
                 /*------MUTATION-------------------*/
                 real_mutate(newParameter);
                 /*----------FUNCTION EVALUATION-----------*/
-                if (this.parallelExecution==0) {
+                if (this.parallelExecution == 0) {
                     for (int j = 0; j < newParameter.length; j++) {
                         newPopulation.ind[j] = new Individual(this.getSample(newParameter[j]));
                     }
                 } else {
-                    ParallelSequence.OutputData result = pseq.procedure(newParameter);                    
+                    ParallelSequence.OutputData result = pseq.procedure(newParameter);
                     for (int j = 0; j < newParameter.length; j++) {
-                        try{
+                        try {
                             newPopulation.ind[j] = new Individual(result.list.get(j));
-                        }catch(ArrayIndexOutOfBoundsException aioobe){
+                        } catch (ArrayIndexOutOfBoundsException aioobe) {
                             System.out.println("For an unknown reason parallel sampling did not succeed completly .. switching to sequential execution");
                             for (int k = j; k < newParameter.length; k++) {
                                 newPopulation.ind[k] = new Individual(this.getSample(newParameter[k]));
                             }
-                            j=newParameter.length;
+                            j = newParameter.length;
                             break;
                         }
                     }
@@ -815,7 +903,9 @@ public class NSGA2 extends Optimizer {
                 oldPopulation = newPopulation;
             }
             /*                   Generation Loop Ends                                */
-            /************************************************************************/
+            /**
+             * *********************************************************************
+             */
             log(JAMS.i18n("NO_OF_MUTATION") + this.crossoverCount);
             log(JAMS.i18n("NO_OF_CROSSOVER") + this.mutationCount);
             log("-----------------------------------------------------------------------------------");
@@ -826,46 +916,48 @@ public class NSGA2 extends Optimizer {
         }
     }
 
-    public static void main(String arg[]){
+    public static void main(String arg[]) {
         NSGA2 nsga = new NSGA2();
 
-        class TestFunction extends AbstractFunction{
-            public void logging(String str){
+        class TestFunction extends AbstractFunction {
+
+            public void logging(String str) {
                 System.out.println(str);
             }
-            public double[] f(double x[]){
+
+            public double[] f(double x[]) {
                 double y[] = new double[2];
-                y[0] = -Math.pow((x[1]-(5.1/(4*Math.PI*Math.PI))*x[0]*x[0]+5*x[0]/Math.PI-6),2.0)+10*(1-1/(8*Math.PI))*Math.cos(x[0])+10;
-                y[1] = -Math.pow(x[0]+2*x[1]-7,2.0)+Math.pow(2*x[0]+x[1]-5,2.0);
+                y[0] = -Math.pow((x[1] - (5.1 / (4 * Math.PI * Math.PI)) * x[0] * x[0] + 5 * x[0] / Math.PI - 6), 2.0) + 10 * (1 - 1 / (8 * Math.PI)) * Math.cos(x[0]) + 10;
+                y[1] = -Math.pow(x[0] + 2 * x[1] - 7, 2.0) + Math.pow(2 * x[0] + x[1] - 5, 2.0);
                 return y;
             }
         }
-/*
-        nsga.GoalFunction = new TestFunction();
-        nsga.boundaries = (JAMSString)JAMSDataFactory.getDataFactory().createString();
-        nsga.boundaries.setValue("[0.0>1.0];[0.0>1.0]");
-        nsga.parameterIDs = new JAMSDouble[2];
+        /*
+         nsga.GoalFunction = new TestFunction();
+         nsga.boundaries = (JAMSString)JAMSDataFactory.getDataFactory().createString();
+         nsga.boundaries.setValue("[0.0>1.0];[0.0>1.0]");
+         nsga.parameterIDs = new JAMSDouble[2];
 
-        nsga.setCrossoverDistributionIndex(JAMSDataFactory.getDataFactory().createDouble());
-        nsga.getCrossoverDistributionIndex().setValue(10.0);
-        nsga.setCrossoverProbability(JAMSDataFactory.getDataFactory().createDouble());
-        nsga.getCrossoverProbability().setValue(0.5);
-        nsga.enable = (JAMSBoolean)JAMSDataFactory.getDataFactory().createBoolean();
-        nsga.enable.setValue(true);
-        nsga.setMaxGeneration(JAMSDataFactory.getDataFactory().createInteger());
-        nsga.getMaxGeneration().setValue(10);
-        nsga.mode = (JAMSString)JAMSDataFactory.getDataFactory().createString();
-        nsga.mode.setValue("1;1");
-        nsga.effMethodName = (JAMSString)JAMSDataFactory.getDataFactory().createString();
-        nsga.effMethodName.setValue("f1;f2");
-        nsga.setMutationDistributionIndex(JAMSDataFactory.getDataFactory().createDouble());
-        nsga.getMutationDistributionIndex().setValue(10);
-        nsga.setMutationProbability(JAMSDataFactory.getDataFactory().createDouble());
-        nsga.getMutationProbability().setValue(0.5);
-        nsga.setPopulationSize(JAMSDataFactory.getDataFactory().createInteger());
-        nsga.getPopulationSize().setValue(20);
+         nsga.setCrossoverDistributionIndex(JAMSDataFactory.getDataFactory().createDouble());
+         nsga.getCrossoverDistributionIndex().setValue(10.0);
+         nsga.setCrossoverProbability(JAMSDataFactory.getDataFactory().createDouble());
+         nsga.getCrossoverProbability().setValue(0.5);
+         nsga.enable = (JAMSBoolean)JAMSDataFactory.getDataFactory().createBoolean();
+         nsga.enable.setValue(true);
+         nsga.setMaxGeneration(JAMSDataFactory.getDataFactory().createInteger());
+         nsga.getMaxGeneration().setValue(10);
+         nsga.mode = (JAMSString)JAMSDataFactory.getDataFactory().createString();
+         nsga.mode.setValue("1;1");
+         nsga.effMethodName = (JAMSString)JAMSDataFactory.getDataFactory().createString();
+         nsga.effMethodName.setValue("f1;f2");
+         nsga.setMutationDistributionIndex(JAMSDataFactory.getDataFactory().createDouble());
+         nsga.getMutationDistributionIndex().setValue(10);
+         nsga.setMutationProbability(JAMSDataFactory.getDataFactory().createDouble());
+         nsga.getMutationProbability().setValue(0.5);
+         nsga.setPopulationSize(JAMSDataFactory.getDataFactory().createInteger());
+         nsga.getPopulationSize().setValue(20);
 
-        nsga.init();
-        nsga.run();*/
+         nsga.init();
+         nsga.run();*/
     }
 }

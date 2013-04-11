@@ -146,7 +146,7 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         XYLineAndShapeRenderer renderer2 = new XYLineAndShapeRenderer();
         XYLineAndShapeRenderer renderer_mean = new XYLineAndShapeRenderer();
         XYLineAndShapeRenderer renderer_median = new XYLineAndShapeRenderer();
-
+                
         renderer1.setBaseFillPaint(Color.LIGHT_GRAY);
         renderer1.setPaint(Color.BLACK);
 
@@ -154,13 +154,13 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         renderer2.setBaseShapesVisible(false);
         renderer2.setOutlinePaint(Color.BLUE);
         renderer2.setPaint(Color.BLUE);
-        renderer2.setStroke(new BasicStroke(1));
+        renderer2.setStroke(new BasicStroke(2));
 
         renderer_mean.setBaseLinesVisible(true);
         renderer_mean.setBaseShapesVisible(false);
         renderer_mean.setOutlinePaint(Color.RED);
         renderer_mean.setPaint(Color.RED);
-        renderer_mean.setStroke(new BasicStroke(1));
+        renderer_mean.setStroke(new BasicStroke(0.25f));
 
         renderer_median.setBaseLinesVisible(true);
         renderer_median.setBaseShapesVisible(false);
@@ -322,7 +322,8 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         Arrays.sort(tmp_data, new ArrayComparator(1, true));
         return tmp_data;
     }
-
+    
+    boolean showAll = true;
     public void refresh() throws NoDataException {
         if (!this.isRequestFulfilled()) {
             return;
@@ -343,9 +344,27 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
 
         TimeSeries dataset4 = new TimeSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN"));
         TimeSeries dataset5 = new TimeSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEDIAN"));
-
+                
         int T = ts.getTimesteps();
+        int N = ts.getSize();
 
+        if (showAll) {
+            TimeSeries dataset_full[] = new TimeSeries[N];
+            TimeSeriesCollection ensemble_full = new TimeSeriesCollection();
+            for (int i = 0; i < N; i++) {
+                dataset_full[i] = new TimeSeries("data_" + i);
+                int id = ts.getId(i);
+                for (int j = 0; j < T; j++) {
+                    Day d = new Day(obs.getTime((int) j));
+                    dataset_full[i].add(d, ts.get(j, id));
+                }
+                ensemble_full.addSeries(dataset_full[i]);
+            }
+            //plot1.setDataset(1, ensemble_full);
+            chartPanel1.getChart().removeLegend();
+            plot1.setDomainGridlinesVisible(false);
+            plot1.setRangeGridlinesVisible(false);
+        }
         double low_conf[] = new double[T];
         double high_conf[] = new double[T];
         double conf = 1.0 - percentil;
@@ -430,23 +449,26 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
 
         TimeSeriesCollection mean_ensemble = new TimeSeriesCollection();
         mean_ensemble.addSeries(dataset4);
-
+        
         TimeSeriesCollection median_ensemble = new TimeSeriesCollection();
         median_ensemble.addSeries(dataset5);
 
         plot1.setDataset(0, obs_runoff);
-        plot1.setDataset(3, interval);
+        plot1.setDataset(3, interval);        
+        if (!showAll) {
+        plot1.setDataset(0, obs_runoff);
+        plot1.setDataset(3, interval);        
+            if (this.isShowMean) {
+                plot1.setDataset(1, mean_ensemble);
+            } else {
+                plot1.setDataset(1, null);
+            }
 
-        if (this.isShowMean) {
-            plot1.setDataset(1, mean_ensemble);
-        } else {
-            plot1.setDataset(1, null);
-        }
-
-        if (this.isShowMedian) {
-            plot1.setDataset(2, median_ensemble);
-        } else {
-            plot1.setDataset(2, null);
+            if (this.isShowMedian) {
+                plot1.setDataset(2, median_ensemble);
+            } else {
+                plot1.setDataset(2, null);
+            }
         }
     }
 

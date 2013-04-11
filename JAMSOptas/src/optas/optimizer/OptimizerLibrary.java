@@ -85,6 +85,14 @@ public class OptimizerLibrary {
         return (optas.optimizer.Optimizer) objOptimizer;
     }
 
+    static public Optimizer getOptimizer(String className){
+        for (Optimizer o : getAvailableOptimizer()){
+            if (o.getDescription().getOptimizerClassName().equals(className))
+                return o;
+        }
+        return null;
+    }
+    
     static public Optimizer loadOptimizer(JAMSRuntime rt, String name) {
         Class optimizerClass = null;
         Object objOptimizer = null;
