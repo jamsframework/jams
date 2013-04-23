@@ -81,7 +81,7 @@ public interface DataFactory extends Serializable {
     public Attribute.Object createObject();
 
     public Attribute.ObjectArray createObjectArray();
-
+    
     /**
      * Returns the standard implementation of a JAMSData interface
      *

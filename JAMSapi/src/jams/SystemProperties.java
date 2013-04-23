@@ -59,6 +59,7 @@ public interface SystemProperties {
     String USE_DEFAULT_WS_PATH = "defaultworkspace";
     String DOCBOOK_HOME_PATH = "docbook-home";
     String AUTO_PREPROCESSING = "preprocessing";
+    String FLOAT_FORMAT = "floatformat";
 
     /**
      * Adds an observer for some property
