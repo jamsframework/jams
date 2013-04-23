@@ -38,6 +38,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -77,6 +78,9 @@ public class ConcurrentContextProcessor implements MetaProcessor {
      */
     @Override
     public void process(ContextDescriptor context, ModelDescriptor model, final JAMSRuntime rt) {
+
+        // switch off logging temporary
+        Logger.getLogger(ModelNode.class.getName()).setUseParentHandlers(false);
 
         if (!context.isEnabled() || (nthreads < 2)
                 || !jams.model.JAMSSpatialContext.class.isAssignableFrom(context.getClazz())) {
@@ -281,6 +285,10 @@ public class ConcurrentContextProcessor implements MetaProcessor {
         } catch (ClassNotFoundException cnfe) {
             exHandler.handle(new JAMSException("Error while loading class " + partitionerClassName, cnfe));
         }
+        
+        // switch logging on again
+        Logger.getLogger(ModelNode.class.getName()).setUseParentHandlers(true);
+        
 
     }
 }

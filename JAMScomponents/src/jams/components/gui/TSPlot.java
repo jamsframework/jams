@@ -141,7 +141,7 @@ public class TSPlot extends JAMSGUIComponent {
     public Attribute.Double noDataValue;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Plot data, after cacheSize values have been collected",
-    defaultValue = "10")
+    defaultValue = "50")
     public Attribute.Integer cacheSize;
     TimeSeries[] tsLeft, tsRight;
     transient TimeSeriesCollection dataset1, dataset2;
