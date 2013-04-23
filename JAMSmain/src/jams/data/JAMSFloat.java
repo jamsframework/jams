@@ -21,6 +21,8 @@
  */
 package jams.data;
 
+import jams.JAMS;
+
 /**
  *
  * @author S. Kralisch
@@ -28,7 +30,7 @@ package jams.data;
 public class JAMSFloat implements Attribute.Float {
 
     private float value;
-
+    
     /**
      * Creates a new instance of JAMSFloat
      */
@@ -40,7 +42,8 @@ public class JAMSFloat implements Attribute.Float {
     }
 
     public String toString() {
-        return Float.toString(value);
+//        return Float.toString(value);
+        return String.format(JAMS.getFloatFormat(), value);
     }
 
     public float getValue() {

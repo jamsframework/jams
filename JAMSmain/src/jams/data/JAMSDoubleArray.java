@@ -21,6 +21,7 @@
  */
 package jams.data;
 
+import jams.JAMS;
 import java.util.*;
 
 /**
@@ -30,7 +31,7 @@ import java.util.*;
 public class JAMSDoubleArray implements Attribute.DoubleArray {
 
     private double[] value;
-
+    
     /**
      * Creates a new instance of JAMSDoubleArray
      */
@@ -38,13 +39,13 @@ public class JAMSDoubleArray implements Attribute.DoubleArray {
     }
 
     public String toString() {
-        String s = "";
+        String s = "", formatString = JAMS.getFloatFormat();
         if (value == null || value.length == 0) {
             s = "";
         } else {
-            s += value[0];
+            s += String.format(formatString, value[0]);
             for (int i = 1; i < value.length; i++) {
-                s += ";" + value[i];
+                s += ";" + String.format(formatString, value[i]);
             }
         }
         return s;
@@ -65,5 +66,5 @@ public class JAMSDoubleArray implements Attribute.DoubleArray {
             values[i] = Double.parseDouble(st.nextToken().trim());
         }
         this.value = values;
-    }
+    }   
 }

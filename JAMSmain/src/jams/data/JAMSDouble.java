@@ -21,6 +21,8 @@
  */
 package jams.data;
 
+import jams.JAMS;
+
 /**
  *
  * @author S. Kralisch
@@ -48,7 +50,8 @@ public class JAMSDouble implements Attribute.Double {
     */
 
     public String toString() {
-        return Double.toString(value);
+//        return Double.toString(value);
+        return String.format(JAMS.getFloatFormat(), value);
     }
 
     public double getValue() {

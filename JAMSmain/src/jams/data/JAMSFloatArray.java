@@ -21,6 +21,7 @@
  */
 package jams.data;
 
+import jams.JAMS;
 import java.util.*;
 
 /**
@@ -38,13 +39,13 @@ public class JAMSFloatArray implements Attribute.FloatArray {
     }
 
     public String toString() {
-        String s = "";
+        String s = "", formatString = JAMS.getFloatFormat();
         if (value == null || value.length == 0) {
             s = "null";
         } else {
-            s += value[0];
+            s += String.format(formatString, value[0]);
             for (int i = 1; i < value.length; i++) {
-                s += "," + value[i];
+                s += ";" + String.format(formatString, value[i]);
             }
         }
         return s;
@@ -59,11 +60,11 @@ public class JAMSFloatArray implements Attribute.FloatArray {
     }
 
     public void setValue(String value) {
-        StringTokenizer st = new StringTokenizer(value, ",");
+        StringTokenizer st = new StringTokenizer(value, ";");
         float[] values = new float[st.countTokens()];
         for (int i = 0; i < values.length; i++) {
             values[i] = Float.parseFloat(st.nextToken().trim());
         }
         this.value = values;
-    }
+    }    
 }

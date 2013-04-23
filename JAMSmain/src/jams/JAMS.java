@@ -68,6 +68,10 @@ public class JAMS {
      * Default name of parameter output file
      */
     public static final String DEFAULT_PARAMETER_FILENAME = "default.jap";
+    /**
+     * Default output formatting for floating point data
+     */  
+    private static String floatFormat = "%f";
 
     /**
      * Return a localized string 
@@ -110,4 +114,20 @@ public class JAMS {
     public static void setCharset(String aCharset) {
         charset = aCharset;
     }
+
+    /**
+     * @return the doubleFormatString
+     */
+    public static String getFloatFormat() {
+        return floatFormat;
+    }
+
+    /**
+     * @param aDoubleFormatString the doubleFormatString to set
+     */
+    public static void setFloatFormat(String aFloatFormat) {
+        floatFormat = aFloatFormat;
+    }
+    
+    
 }

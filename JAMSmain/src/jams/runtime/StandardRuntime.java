@@ -95,12 +95,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     transient private ClassLoader classLoader;
     private Document modelDocument = null;
     private SystemProperties properties = null;
-    String[] libs = null;
     private int runState = -1;
     private HashMap<String, Integer> idMap;
     transient private SmallModelState state = new JAMSSmallModelState();
-    private DataFactory dataFactory = DefaultDataFactory.getDataFactory();;
-    
+    private DataFactory dataFactory = DefaultDataFactory.getDataFactory();
+
     public StandardRuntime(SystemProperties properties) {
         this.properties = properties;
 
@@ -122,9 +121,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         // start the loading process
         long start = System.currentTimeMillis();
-
-        // get libraries specified in properties
-        libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
 
         // load the model
         this.println("", JAMS.STANDARD);
@@ -154,8 +150,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             boolean doAutoPreprocessing = Boolean.parseBoolean(properties.getProperty(JAMSProperties.AUTO_PREPROCESSING, "false"));
             if (doAutoPreprocessing) {
                 md.metaProcess(this);
-            } 
-            
+            }
+
             if (StringTools.isEmptyString(md.getWorkspacePath()) && (defaultWorkspacePath != null)) {
                 md.setWorkspacePath(defaultWorkspacePath);
                 this.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + defaultWorkspacePath);
@@ -207,9 +203,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         // start the loading process
         long start = System.currentTimeMillis();
-
-        // get libraries specified in properties
-        libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
 
         // load the model
         this.println("", JAMS.STANDARD);
@@ -312,11 +305,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         this.setDebugLevel(Integer.parseInt(properties.getProperty(SystemProperties.DEBUG_IDENTIFIER, "1")));
 
         boolean debugMode = Boolean.parseBoolean(this.properties.getProperty(SystemProperties.DEBUG_MODE));
-        if (debugMode){
+        if (debugMode) {
             dataFactory = CheckedDataFactory.getDataFactory();
-        }else{
+        } else {
             dataFactory = DefaultDataFactory.getDataFactory();
-        }
+        }        
+        
         // add log observers for output to system.out if needed
         boolean verbose = Boolean.parseBoolean(properties.getProperty(SystemProperties.VERBOSITY_IDENTIFIER, "true"));
         if (verbose) {
@@ -682,10 +676,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         return dataHandles;
     }
 
-    public DataFactory getDataFactory(){
+    public DataFactory getDataFactory() {
         return dataFactory;
     }
-    
+
     public void setDataHandles(HashMap<String, JAMSData> dataHandles) {
         this.dataHandles = dataHandles;
     }
