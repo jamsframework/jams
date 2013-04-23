@@ -31,6 +31,7 @@ import jams.io.*;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
+import jams.data.JAMSNumeric;
 import jams.model.JAMSFullModelState;
 import jams.model.Model;
 import jams.tools.FileTools;
@@ -103,6 +104,9 @@ public class JAMSui {
 
         boolean guiConfig = Boolean.parseBoolean(properties.getProperty(SystemProperties.GUICONFIG_IDENTIFIER, "false"));
         String modelFileName = cmdLine.getModelFileName();
+        
+        String floatFormat = properties.getProperty(SystemProperties.FLOAT_FORMAT, "%f");
+        JAMS.setFloatFormat(floatFormat);
 
         // check if there is a model file provided
         if ((modelFileName == null)) {

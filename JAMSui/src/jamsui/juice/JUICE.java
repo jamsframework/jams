@@ -29,6 +29,7 @@ import javax.swing.UIManager;
 import jams.JAMS;
 import jams.ExceptionHandler;
 import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
@@ -94,7 +95,12 @@ public class JUICE {
                 }
             }
 
+            // configure local encoding
             JAMSTools.configureLocaleEncoding(getJamsProperties());
+            
+            // set output formatting of floating point numbers
+            String floatFormat = getJamsProperties().getProperty(SystemProperties.FLOAT_FORMAT, "%f");
+            JAMS.setFloatFormat(floatFormat);
 
             createJUICEFrame();
 
@@ -127,7 +133,6 @@ public class JUICE {
         juiceFrame.setLibTree(libTree);
 
         getJamsProperties().addObserver(JAMSProperties.LIBS_IDENTIFIER, new Observer() {
-
             public void update(Observable obs, Object obj) {
                 JUICE.updateLibs();
             }
@@ -140,7 +145,6 @@ public class JUICE {
         }
         try {
             loadLibsDlg.setTask(new Runnable() {
-
                 public void run() {
                     JUICE.getJuiceFrame().getLibTreePanel().setEnabled(false);
                     JUICE.createClassLoader();
@@ -234,7 +238,6 @@ public class JUICE {
 
         if (exHandler == null) {
             exHandler = new ExceptionHandler() {
-
                 public void handle(JAMSException ex) {
 //                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
                     notificationDlg.addNotification(ex);
@@ -259,7 +262,6 @@ public class JUICE {
 
         if (multiExHandler == null) {
             multiExHandler = new ExceptionHandler() {
-
                 public void handle(JAMSException ex) {
                 }
 
