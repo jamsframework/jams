@@ -43,9 +43,9 @@ public class JAMSDoubleArray implements Attribute.DoubleArray {
         if (value == null || value.length == 0) {
             s = "";
         } else {
-            s += String.format(formatString, value[0]);
+            s += String.format(Locale.ENGLISH, formatString, value[0]);
             for (int i = 1; i < value.length; i++) {
-                s += ";" + String.format(formatString, value[i]);
+                s += ";" + String.format(Locale.ENGLISH, formatString, value[i]);
             }
         }
         return s;

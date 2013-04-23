@@ -22,6 +22,7 @@
 package jams.data;
 
 import jams.JAMS;
+import java.util.Locale;
 
 /**
  *
@@ -51,7 +52,7 @@ public class JAMSDouble implements Attribute.Double {
 
     public String toString() {
 //        return Double.toString(value);
-        return String.format(JAMS.getFloatFormat(), value);
+        return String.format(Locale.ENGLISH, JAMS.getFloatFormat(), value);
     }
 
     public double getValue() {

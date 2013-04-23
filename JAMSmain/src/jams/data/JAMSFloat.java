@@ -22,6 +22,7 @@
 package jams.data;
 
 import jams.JAMS;
+import java.util.Locale;
 
 /**
  *
@@ -43,7 +44,7 @@ public class JAMSFloat implements Attribute.Float {
 
     public String toString() {
 //        return Float.toString(value);
-        return String.format(JAMS.getFloatFormat(), value);
+        return String.format(Locale.ENGLISH, JAMS.getFloatFormat(), value);
     }
 
     public float getValue() {
