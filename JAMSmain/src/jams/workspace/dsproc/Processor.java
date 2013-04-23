@@ -93,7 +93,7 @@ public abstract class Processor {
 
             i++;
 
-            if (attrib.getWeightingType() != DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA) {
+            if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_NONE) {
 
                 double weight = 0;
                 if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_MEAN) {
@@ -112,39 +112,69 @@ public abstract class Processor {
             } else if (weightAttribIndex >= 0) {
 
                 if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_MEAN) {
+                    if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA) {
+                        // if the relative weights have not been calculated yet
+                        // do so now
+                        if (relWeights == null) {
+                            relWeights = new double[a.length];
+                            double sum = 0;
+                            for (int j = 0; j < a.length; j++) {
+                                sum += a[j][weightAttribIndex];
+                            }
 
-                    // if the relative weights have not been calculated yet
-                    // do so now
-                    if (relWeights == null) {
-                        relWeights = new double[a.length];
-                        double sum = 0;
-                        for (int j = 0; j < a.length; j++) {
-                            sum += a[j][weightAttribIndex];
+                            for (int j = 0; j < a.length; j++) {
+                                relWeights[j] = a[j][weightAttribIndex] / sum;
+                            }
                         }
+
                         for (int j = 0; j < a.length; j++) {
-                            relWeights[j] = a[j][weightAttribIndex] / sum;
+                            result[j][i] = relWeights[j];
+                        }
+                    }else if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) {
+                         if (relWeights == null) {
+                            relWeights = new double[a.length];
+                            double sum = 0;
+                            for (int j = 0; j < a.length; j++) {
+                                sum += 1. / a[j][weightAttribIndex];
+                            }
+
+                            for (int j = 0; j < a.length; j++) {
+                                relWeights[j] = (1. / a[j][weightAttribIndex]) / sum;
+                            }
+                        }
+
+                        for (int j = 0; j < a.length; j++) {
+                            result[j][i] = relWeights[j];
                         }
                     }
-
-                    for (int j = 0; j < a.length; j++) {
-                        result[j][i] = relWeights[j];
-                    }
-
                 } else if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_SUM) {
+                    if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA) {
+                        // if the absolute weights have not been calculated yet
+                        // do so now
+                        if (absWeights == null) {
+                            absWeights = new double[a.length];
+                            for (int j = 0; j < a.length; j++) {
+                                absWeights[j] = a[j][weightAttribIndex];
+                            }
+                        }
 
-                    // if the absolute weights have not been calculated yet
-                    // do so now
-                    if (absWeights == null) {
-                        absWeights = new double[a.length];
                         for (int j = 0; j < a.length; j++) {
-                            absWeights[j] = a[j][weightAttribIndex];
+                            result[j][i] = absWeights[j];
+                        }
+                    }else if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) {
+                        // if the absolute weights have not been calculated yet
+                        // do so now
+                        if (absWeights == null) {
+                            absWeights = new double[a.length];
+                            for (int j = 0; j < a.length; j++) {
+                                absWeights[j] = 1. /a[j][weightAttribIndex];
+                            }
+                        }
+
+                        for (int j = 0; j < a.length; j++) {
+                            result[j][i] = absWeights[j];
                         }
                     }
-
-                    for (int j = 0; j < a.length; j++) {
-                        result[j][i] = absWeights[j];
-                    }
-
                 }
 
             } else {

@@ -127,7 +127,7 @@ public class ContextDescriptor extends ComponentDescriptor {
         }
         return result;
     }
-
+    
     @Override
     public ContextDescriptor cloneNode() throws AttributeLinkException, NullClassException {
 

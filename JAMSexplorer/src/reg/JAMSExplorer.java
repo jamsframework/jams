@@ -114,11 +114,11 @@ public class JAMSExplorer {
                 public void run() {
                     // create the JAMSExplorer object
                     explorer = new JAMSExplorer(null, true);
-                    try {
+                    /*try {
                         explorer.explorerFrame.open(new File("D:/jamsmodeldata/J2K_Yzeron/j2k_yzeron_h"));
                     } catch (InvalidWorkspaceException ex) {
                         Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    }*/
                 }
             });
         } catch (InterruptedException ex) {

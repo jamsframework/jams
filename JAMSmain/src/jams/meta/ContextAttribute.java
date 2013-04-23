@@ -101,4 +101,8 @@ public class ContextAttribute {
     public HashSet<ComponentField> getFields() {
         return fields;
     }
+    
+    public int compareTo(Object o){
+        return this.toString().compareTo(o.toString());
+    }
 }

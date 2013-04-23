@@ -86,29 +86,31 @@ public class LinkedEntityReader extends JAMSComponent {
     @Override
     public void init() {
 
-        //read hru parameter
-        hrus.setEntities(readParas(FileTools.createAbsoluteFileName(getModel().getWorkspaceDirectory().getPath(), hruFileName.getValue()), getModel()));
-
+        ArrayList<Attribute.Entity> hruCollection = readParas(FileTools.createAbsoluteFileName(getModel().getWorkspaceDirectory().getPath(), hruFileName.getValue()), getModel());
+                
         //assign IDs to all hru entities
-        for (Attribute.Entity e : hrus.getEntityArray()) {
+        for (Attribute.Entity e : hruCollection) {
             try {
-                e.setId((long) e.getDouble(hruIDAttribute.getValue()));
+                e.setId((long) e.getDouble(hruFileName.getValue()));
             } catch (Attribute.Entity.NoSuchAttributeException nsae) {
-                getModel().getRuntime().sendErrorMsg("Couldn't find attribute \"ID\" while reading J2K HRU parameter file (" + hruFileName.getValue() + ")!");
+                getModel().getRuntime().sendErrorMsg("Couldn't find attribute \"ID\" while reading J2K HRUu parameter file (" + hruFileName.getValue() + ")!");
             }
         }
-
+        hrus.setEntities(hruCollection);
+        
         //read reach parameter
-        reaches.setEntities(readParas(FileTools.createAbsoluteFileName(getModel().getWorkspaceDirectory().getPath(), reachFileName.getValue()), getModel()));
-
+        ArrayList<Attribute.Entity> reachCollection = readParas(FileTools.createAbsoluteFileName(getModel().getWorkspaceDirectory().getPath(), reachFileName.getValue()), getModel());
+        
         //assign IDs to all reach entities
-        for (Attribute.Entity e : reaches.getEntityArray()) {
+        for (Attribute.Entity e : reachCollection) {
             try {
-                e.setId((long) e.getDouble(reachIDAttribute.getValue()));
+                e.setId((long) e.getDouble(reachFileName.getValue()));
             } catch (Attribute.Entity.NoSuchAttributeException nsae) {
-                getModel().getRuntime().sendErrorMsg("Couldn't find attribute \"ID\" while reading J2K HRU parameter file (" + hruFileName.getValue() + ")!");
+                getModel().getRuntime().sendErrorMsg("Couldn't find attribute \"ID\" while reading J2K Reach parameter file (" + reachFileName.getValue() + ")!");
             }
         }
+        
+        reaches.setEntities(reachCollection);
 
         //create object associations from id attributes for hrus and reaches
         createTopology();
@@ -225,9 +227,14 @@ public class LinkedEntityReader extends JAMSComponent {
             toPoly = hruMap.get(e.getDouble(hru2hruAttribute.getValue()));
             toReach = reachMap.get(e.getDouble(hru2reachAttribute.getValue()));
 
-            if ((toPoly == null) || (toReach == null)) {
-                getModel().getRuntime().sendErrorMsg("Topological neighbour for HRU with ID "
-                        + e.getId() + " could not be found. This may cause errors!");
+            if ((toPoly == null) ) {
+                getModel().getRuntime().sendErrorMsg("Topological hru neighbour for HRU with ID "
+                        + e.getId() + " could not be found. This may cause errors! The neighbour in question is " + hru2hruAttribute.getValue());
+            }
+            
+            if ((toReach == null) ) {
+                getModel().getRuntime().sendErrorMsg("Topological reach neighbour for HRU with ID "
+                        + e.getId() + " could not be found. This may cause errors! The neighbour in question is " + hru2reachAttribute.getValue());
             }
 
             e.setObject(hru2hruAttribute.getValue(), toPoly);

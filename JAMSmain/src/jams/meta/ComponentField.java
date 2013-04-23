@@ -6,7 +6,7 @@ import jams.data.DefaultDataFactory;
 import jams.tools.StringTools;
 import java.util.ArrayList;
 
-public class ComponentField {
+public class ComponentField implements Comparable {
 
     public static final int READ_ACCESS = 0;
     public static final int WRITE_ACCESS = 1;
@@ -172,5 +172,12 @@ public class ComponentField {
      */
     public int getAccessType() {
         return accessType;
+    }
+    
+    public String toString(){
+        return this.parent.getInstanceName() + "." + this.name;
+    }
+    public int compareTo(Object o){
+        return this.toString().compareTo(o.toString());
     }
 }

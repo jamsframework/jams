@@ -289,17 +289,24 @@ public class JUICEFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) { 
                 final ModelView view = getCurrentView();    
-                OptimizerConfiguration conf = new OptimizerConfiguration(view.getModelDoc());
+                OptimizerConfiguration conf = new OptimizerConfiguration(view.getModelDescriptor());
                 
                 conf.addActionListener(new ActionListener() {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         OptimizerConfiguration wizard = (OptimizerConfiguration)e.getSource();
-                        Document newModelDoc = wizard.getModifiedDocument();
-                        if (newModelDoc != null) {                            
-                            view.loadModel(newModelDoc);
-                        }                        
+                        ModelDescriptor newModelDoc = wizard.getModelDescriptor();
+                        view.setModelDescriptor(newModelDoc);
+                        view.loadModel(view.getModelDoc());
+                        /*if (newModelDoc != null) { 
+                            ModelView mView = new ModelView(modelPanel);
+                            mView.setTree(new ModelTree(mView, null));
+                            mView.setInitialState();
+                            mView.getFrame().setVisible(true);
+                            mView.getFrame().requestFocus();
+                            
+                        } */                       
                     }
                 });
                 
@@ -730,7 +737,7 @@ public class JUICEFrame extends JFrame {
 
         addOptimizerItem = new JMenuItem(addOptimizerAction);
         addOptimizerAction.setEnabled(false);
-        //modelMenu.add(addOptimizerItem);
+        modelMenu.add(addOptimizerItem);
                         
         JMenuItem GenerateDocumentationItem = new JMenuItem(GenerateDocumentationGUIAction);
         GenerateDocumentationGUIAction.setEnabled(true);
