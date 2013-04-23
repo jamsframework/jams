@@ -55,7 +55,6 @@ public class DefaultOutputDataStore implements OutputDataStore {
     private int columnCounter;
     private boolean firstRow;
     private File outputFile;
-    private String fileName;
     
     public DefaultOutputDataStore(JAMSWorkspace ws, Document doc, String id) {
 

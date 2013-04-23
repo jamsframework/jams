@@ -60,6 +60,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Properties;
@@ -248,7 +249,7 @@ public class JAMSWorkspace implements Workspace {
 
         if (this.isPersistent()) {
             Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmmss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
             this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
         } else {
             this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
