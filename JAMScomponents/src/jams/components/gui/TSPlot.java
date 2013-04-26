@@ -64,85 +64,86 @@ import org.jfree.data.time.TimeSeriesDataItem;
  * @author S. Kralisch
  */
 @JAMSComponentDescription(title = "Timeseries plot",
-author = "Sven Kralisch",
-date = "2005-07-31",
-description = "This component creates a graphical plot of time series data, "
-+ "e.g. precipitation and runoff over time.",
-version = "1.0_0")
+        author = "Sven Kralisch",
+        date = "2013-04-26",
+        description = "This component creates a graphical plot of time series data, "
+        + "e.g. precipitation and runoff over time.",
+        version = "1.0_1")
 public class TSPlot extends JAMSGUIComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Title string for plot. Default: component name")
+            description = "Title string for plot. Default: component name")
     public Attribute.String plotTitle;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Static title strings for left graphs. Number of entries "
-    + "must be identical to number of plottet values (valueLeft).",
-    defaultValue = "titleLeft1;titleLeft2")
+            description = "Static title strings for left graphs. Number of entries "
+            + "must be identical to number of plottet values (valueLeft).",
+            defaultValue = "titleLeft1;titleLeft2")
     public Attribute.StringArray titleLeft;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Dynamic addon title strings added after left static titles (titleLeft)")
+            description = "Dynamic addon title strings added after left static titles (titleLeft)")
     public Attribute.StringArray varTitleLeft;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Static title strings for right graphs",
-    defaultValue = "titleRight")
+            description = "Static title strings for right graphs",
+            defaultValue = "titleRight")
     public Attribute.StringArray titleRight;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Colors for left graphs (yellow, orange, red, pink, "
-    + "magenta, cyan, yellow, green, lightgray, gray, black). Number of "
-    + "entries must be identical to number of plottet values (valueLeft).",
-    defaultValue = "blue;red")
+            description = "Colors for left graphs (yellow, orange, red, pink, "
+            + "magenta, cyan, yellow, green, lightgray, gray, black). Number of "
+            + "entries must be identical to number of plottet values (valueLeft).",
+            defaultValue = "blue;red")
     public Attribute.StringArray colorLeft;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Colors for right graphs (yellow, orange, red, pink, "
-    + "magenta, cyan, yellow, green, lightgray, gray, black). Number of "
-    + "entries must be identical to number of plottet values (valueRight).",
-    defaultValue = "red")
+            description = "Colors for right graphs (yellow, orange, red, pink, "
+            + "magenta, cyan, yellow, green, lightgray, gray, black). Number of "
+            + "entries must be identical to number of plottet values (valueRight).",
+            defaultValue = "red")
     public Attribute.StringArray colorRight;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Graph type for left y axis graphs",
-    defaultValue = "0")
+            description = "Graph type for left y axis graphs",
+            defaultValue = "0")
     public Attribute.Integer typeLeft;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Graph type for right y axis graphs",
-    defaultValue = "0")
+            description = "Graph type for right y axis graphs",
+            defaultValue = "0")
     public Attribute.Integer typeRight;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Title string for x axis",
-    defaultValue = "Time")
+            description = "Title string for x axis",
+            defaultValue = "Time")
     public Attribute.String xAxisTitle;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Title string for left y axis",
-    defaultValue = "LeftTitle")
+            description = "Title string for left y axis",
+            defaultValue = "LeftTitle")
     public Attribute.String leftAxisTitle;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Title string for right y axis",
-    defaultValue = "RightTitle")
+            description = "Title string for right y axis",
+            defaultValue = "RightTitle")
     public Attribute.String rightAxisTitle;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    defaultValue = "0",
-    description = "Paint inverted right y axis?")
+            defaultValue = "0",
+            description = "Paint inverted right y axis?")
     public Attribute.Boolean rightAxisInverted;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Date format",
-    defaultValue = "dd-MM-yyyy")
+            description = "Date format",
+            defaultValue = "dd-MM-yyyy")
     public Attribute.String dateFormat;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Current time")
+            description = "Current time")
     public Attribute.Calendar time;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Values to be plotted on left x-axis")
+            description = "Values to be plotted on left x-axis")
     public Attribute.Double[] valueLeft;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Values to be plotted on right x-axis")
+            description = "Values to be plotted on right x-axis")
     public Attribute.Double[] valueRight;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Value for \"No data\" (shouldn't be plotted)",
-    defaultValue = "-9999")
+            description = "Value for \"No data\" (shouldn't be plotted)",
+            defaultValue = "-9999")
     public Attribute.Double noDataValue;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Plot data, after cacheSize values have been collected",
-    defaultValue = "50")
+            description = "Plot data, after cacheSize values have been collected",
+            defaultValue = "1")
     public Attribute.Integer cacheSize;
+    
     TimeSeries[] tsLeft, tsRight;
     transient TimeSeriesCollection dataset1, dataset2;
     transient XYItemRenderer rightRenderer, leftRenderer;
@@ -272,7 +273,7 @@ public class TSPlot extends JAMSGUIComponent {
             for (i = 0; i < graphCountLeft; i++) {
                 String legendEntry = titleLeft.getValue()[i];
 
-                if(this.varTitleLeft != null){
+                if (this.varTitleLeft != null) {
                     legendEntry = legendEntry + getModel().getRuntime().getDataHandles().get(varTitleLeft.getValue()[i]);
                 }
                 leftRenderer.setSeriesPaint(i, colorTable.get(colorLeft.getValue()[i]));
@@ -321,7 +322,7 @@ public class TSPlot extends JAMSGUIComponent {
         for (i = 0; i < graphCountRight; i++) {
             double value = valueRight[i].getValue();
             if (value == noDataValue_) {
-                value = 0;
+                value = Double.NaN;
             }
             dataValuesRight[offsetRight + i] = value;
         }
@@ -329,7 +330,7 @@ public class TSPlot extends JAMSGUIComponent {
         for (i = 0; i < graphCountLeft; i++) {
             double value = valueLeft[i].getValue();
             if (value == noDataValue_) {
-                value = 0;
+                value = Double.NaN;
             }
             dataValuesLeft[offsetLeft + i] = value;
         }
@@ -356,26 +357,6 @@ public class TSPlot extends JAMSGUIComponent {
                 }
             }
 
-        } catch (Exception e) {
-        } //caused by bugs in JFreeChart
-    }
-
-    public void run_() {
-        try {
-            for (i = 0; i < graphCountRight; i++) {
-                double value = valueRight[i].getValue();
-                if (value == noDataValue_) {
-                    value = 0;
-                }
-                tsRight[i].add(new Second(new Date(time.getTimeInMillis())), value);
-            }
-            for (i = 0; i < graphCountLeft; i++) {
-                double value = valueLeft[i].getValue();
-                if (value == noDataValue_) {
-                    value = 0;
-                }
-                tsLeft[i].add(new Second(new Date(time.getTimeInMillis())), value);
-            }
         } catch (Exception e) {
         } //caused by bugs in JFreeChart
     }
