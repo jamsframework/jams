@@ -70,6 +70,7 @@ public class J2KTSDataStore extends TSDataStore {
     private String relativPath = null;
     private boolean parseDate = false;
     private String charsetName;
+    private double missingData;
 
     public J2KTSDataStore(JAMSWorkspace ws, String id, Document doc) throws IOException {
 
@@ -213,6 +214,7 @@ public class J2KTSDataStore extends TSDataStore {
             String key = tok2.nextToken();
             if (key.equalsIgnoreCase(TAGNAME_MISSINGDATAVAL)) {
                 missingDataValue = tok2.nextToken();
+                missingData = Double.parseDouble(missingDataValue);
             } else if (key.equalsIgnoreCase(TAGNAME_DATASTART) || key.equalsIgnoreCase(TAGNAME_DATAEND)) {
 
                 String dateFormat = DATE_TIME_FORMAT_PATTERN_J2K;
@@ -316,6 +318,9 @@ public class J2KTSDataStore extends TSDataStore {
 
         for (int i = 2; i < values.length; i++) {
             double d = Double.parseDouble(values[i]);
+            if (d == missingData) {
+                d = Double.NaN;
+            }
             result.setData(i - 1, new DoubleValue(d));
         }
 
