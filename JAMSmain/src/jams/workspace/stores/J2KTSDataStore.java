@@ -318,9 +318,9 @@ public class J2KTSDataStore extends TSDataStore {
 
         for (int i = 2; i < values.length; i++) {
             double d = Double.parseDouble(values[i]);
-            if (d == missingData) {
-                d = Double.NaN;
-            }
+//            if (d == missingData) {
+//                d = Double.NaN;
+//            }
             result.setData(i - 1, new DoubleValue(d));
         }
 
