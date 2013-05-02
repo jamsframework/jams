@@ -60,6 +60,8 @@ public interface SystemProperties {
     String DOCBOOK_HOME_PATH = "docbook-home";
     String AUTO_PREPROCESSING = "preprocessing";
     String FLOAT_FORMAT = "floatformat";
+    String RECENT_FILES = "recentfiles";
+    String MAX_RECENT_FILES = "maxrecentfiles";
 
     /**
      * Adds an observer for some property

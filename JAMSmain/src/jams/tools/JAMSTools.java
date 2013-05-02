@@ -24,12 +24,16 @@ package jams.tools;
 import jams.JAMS;
 import jams.SystemProperties;
 import jams.data.Attribute;
-import jams.data.JAMSCalendar;
 import jams.model.Component;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
@@ -41,6 +45,7 @@ public class JAMSTools {
 
     /**
      * Looks for a field with a given name in a class and all its superclasses
+     *
      * @param clazz The class to be searched in
      * @param name The name of the field
      * @return A Field object
@@ -59,6 +64,7 @@ public class JAMSTools {
 
     /**
      * Sets a component's attribute to a value using a setter
+     *
      * @param component The component
      * @param attribName The attributes name
      * @param value The value
@@ -78,8 +84,9 @@ public class JAMSTools {
     }
 
     /**
-     * Decides whether the a component's attribute is accessible or not and 
-     * sets the value of that attribute either directly or by calling a setter
+     * Decides whether the a component's attribute is accessible or not and sets
+     * the value of that attribute either directly or by calling a setter
+     *
      * @param component The component
      * @param field The field representing the attributes
      * @param value The value
@@ -107,6 +114,7 @@ public class JAMSTools {
 
     /**
      * Gets the value of a component's attribute
+     *
      * @param component The component
      * @param attribName The name of the atribute
      * @return
@@ -126,6 +134,7 @@ public class JAMSTools {
 
     /**
      * Exception handling method
+     *
      * @param t Throwable to be handled
      */
     public static void handle(Throwable t) {
@@ -134,6 +143,7 @@ public class JAMSTools {
 
     /**
      * Exception handling method
+     *
      * @param t Throwable to be handled
      * @param proceed Proceed or not?
      */
@@ -145,8 +155,9 @@ public class JAMSTools {
     }
 
     /**
-     * Sets the static fields JAMS.resources to a language specific resource bundle
-     * and JAMS.charset to charset defined in a JAMS property file
+     * Sets the static fields JAMS.resources to a language specific resource
+     * bundle and JAMS.charset to charset defined in a JAMS property file
+     *
      * @param properties JAMSProperty object containing the language information
      */
     public static void configureLocaleEncoding(SystemProperties properties) {
@@ -170,62 +181,68 @@ public class JAMSTools {
         }
     }
 
-    static public int[] convertJAMSArrayToArray(Attribute.Integer[] in){
+    static public int[] convertJAMSArrayToArray(Attribute.Integer[] in) {
         int out[] = new int[in.length];
-        for (int i=0;i<in.length;i++){
+        for (int i = 0; i < in.length; i++) {
             out[i] = in[i].getValue();
         }
         return out;
     }
 
-    static public String[] convertJAMSArrayToArray(Attribute.String[] in){
+    static public String[] convertJAMSArrayToArray(Attribute.String[] in) {
         String out[] = new String[in.length];
-        for (int i=0;i<in.length;i++){
+        for (int i = 0; i < in.length; i++) {
             out[i] = in[i].getValue();
         }
         return out;
     }
 
-    static public double[] convertJAMSArrayToArray(Attribute.Double[] in){
+    static public double[] convertJAMSArrayToArray(Attribute.Double[] in) {
         double out[] = new double[in.length];
-        for (int i=0;i<in.length;i++){
+        for (int i = 0; i < in.length; i++) {
             out[i] = in[i].getValue();
         }
         return out;
     }
 
-    static public boolean cloneInto(Object dst, Object src, Class clazz){
-        if (!clazz.isInstance(dst) ||
-            !clazz.isInstance(src))
+    static public boolean cloneInto(Object dst, Object src, Class clazz) {
+        if (!clazz.isInstance(dst)
+                || !clazz.isInstance(src)) {
             return false;
-        if (clazz.getSuperclass()!=null){
-            cloneInto(dst,src,clazz.getSuperclass());
+        }
+        if (clazz.getSuperclass() != null) {
+            cloneInto(dst, src, clazz.getSuperclass());
         }
         Field fields[] = clazz.getDeclaredFields();
-        for (Field f : fields){
-            try{                
+        for (Field f : fields) {
+            try {
                 f.setAccessible(true);
                 Modifier m;
-                if (Modifier.isFinal(f.getModifiers()) ||
-                    Modifier.isStatic(f.getModifiers()) )
+                if (Modifier.isFinal(f.getModifiers())
+                        || Modifier.isStatic(f.getModifiers())) {
                     continue;
+                }
                 f.set(dst, f.get(src));
                 f.setAccessible(false);
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
         }
         return true;
-    }        
+    }
+
     /**
      *
      * @param dirName
      * @param fileName
      * @return
-     * @deprecated Only existing for compatibility reasons. Use {@link jams.tools.FileTools#createAbsoluteFileName FileTools.createAbsoluteFileName(dirName, fileName)} instead!
+     * @deprecated Only existing for compatibility reasons. Use
+     * {@link jams.tools.FileTools#createAbsoluteFileName FileTools.createAbsoluteFileName(dirName, fileName)}
+     * instead!
      */
-    @Deprecated public static String CreateAbsoluteFileName(String dirName, String fileName) {
+    @Deprecated
+    public static String CreateAbsoluteFileName(String dirName, String fileName) {
         return FileTools.createAbsoluteFileName(dirName, fileName);
     }
 
@@ -256,5 +273,61 @@ public class JAMSTools {
 //            System.out.println(e.getMessage());
 //        }
 //    }
+    /**
+     * Add a new file name to the list of recent files
+     *
+     * @param p a JAMS properties object
+     * @param fileName the file name to be added
+     */
+    public static void addToRecentFiles(SystemProperties p, String fileName) {
 
+        File f = new File(fileName);
+        if (f.exists()) {
+            try {
+                fileName = f.getCanonicalPath();
+            } catch (IOException ioe) {
+                fileName = f.getAbsolutePath();
+            }
+        }
+
+        int maxFiles = Integer.parseInt(p.getProperty(SystemProperties.MAX_RECENT_FILES));
+
+        List<String> recentFileNames = new ArrayList();
+        String s = p.getProperty(SystemProperties.RECENT_FILES);
+        if (s != null) {
+            String[] recentArray = s.split("\\|");
+            recentFileNames.addAll(Arrays.asList(recentArray));
+        }
+
+        if (recentFileNames.contains(fileName)) {
+            recentFileNames.remove(fileName);
+        }
+
+        if (recentFileNames.size() == maxFiles) {
+            recentFileNames.remove(maxFiles - 1);
+        }
+
+        String resultString = fileName;
+        for (String recentFileName : recentFileNames) {
+            resultString += "|" + recentFileName;
+        }
+        p.setProperty(SystemProperties.RECENT_FILES, resultString);
+    }
+
+    /**
+     * Get the list of recently opened files
+     *
+     * @param p a JAMS properties object
+     * @return an array containing the names of recently opened files
+     */
+    public static String[] getRecentFiles(SystemProperties p) {
+
+        String s = p.getProperty(SystemProperties.RECENT_FILES);
+
+        if (s != null) {
+            return s.split("\\|");
+        } else {
+            return new String[0];
+        }
+    }
 }

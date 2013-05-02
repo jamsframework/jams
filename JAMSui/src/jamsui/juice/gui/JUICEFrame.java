@@ -59,7 +59,7 @@ import org.w3c.dom.Node;
 
 /**
  *
- * @author  S. Kralisch
+ * @author S. Kralisch
  */
 public class JUICEFrame extends JFrame {
 
@@ -69,7 +69,7 @@ public class JUICEFrame extends JFrame {
     private JFileChooser jfcProps, jfcParams, jfcModels;
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
-    private JMenu windowMenu, modelMenu;
+    private JMenu windowMenu, modelMenu, recentMenu;
     private JMenuItem OptimizationWizardItem, addOptimizerItem;
     private JLabel statusLabel;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Info_Log"));
@@ -113,7 +113,6 @@ public class JUICEFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
         this.addWindowListener(new WindowListener() {
-
             @Override
             public void windowActivated(WindowEvent e) {
             }
@@ -145,7 +144,6 @@ public class JUICEFrame extends JFrame {
         });
 
         editPrefsAction = new AbstractAction(JAMS.i18n("Edit_Preferences...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 propertyDlg.setProperties(JUICE.getJamsProperties());
@@ -157,7 +155,6 @@ public class JUICEFrame extends JFrame {
         };
 
         reloadLibsAction = new AbstractAction(JAMS.i18n("Reload")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 JUICE.updateLibs();
@@ -165,7 +162,6 @@ public class JUICEFrame extends JFrame {
         };
 
         newModelAction = new AbstractAction(JAMS.i18n("New_Model")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 newModel();
@@ -173,7 +169,6 @@ public class JUICEFrame extends JFrame {
         };
 
         loadPrefsAction = new AbstractAction(JAMS.i18n("Load_Preferences...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfcProps.setSelectedFile(new File(""));
@@ -193,7 +188,6 @@ public class JUICEFrame extends JFrame {
         };
 
         savePrefsAction = new AbstractAction(JAMS.i18n("Save_Preferences...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfcProps.setSelectedFile(new File(""));
@@ -212,7 +206,6 @@ public class JUICEFrame extends JFrame {
         };
 
         loadModelAction = new AbstractAction(JAMS.i18n("Open_Model...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 loadModel(getCurrentView());
@@ -220,7 +213,6 @@ public class JUICEFrame extends JFrame {
         };
 
         saveModelAction = new AbstractAction(JAMS.i18n("Save_Model")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveModel(getCurrentView());
@@ -229,7 +221,6 @@ public class JUICEFrame extends JFrame {
         saveModelAction.setEnabled(false);
 
         saveAsModelAction = new AbstractAction(JAMS.i18n("Save_Model_As...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveModelAs(getCurrentView());
@@ -238,7 +229,6 @@ public class JUICEFrame extends JFrame {
         saveAsModelAction.setEnabled(false);
 
         exitAction = new AbstractAction(JAMS.i18n("Exit")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 exit();
@@ -246,7 +236,6 @@ public class JUICEFrame extends JFrame {
         };
 
         aboutAction = new AbstractAction(JAMS.i18n("About")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 new AboutDlg(JUICEFrame.this).setVisible(true);
@@ -254,7 +243,6 @@ public class JUICEFrame extends JFrame {
         };
 
         searchAction = new AbstractAction(JAMS.i18n("Find...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (searchDlg == null) {
@@ -265,7 +253,6 @@ public class JUICEFrame extends JFrame {
         };
 
         copyModelGUIAction = new AbstractAction(JAMS.i18n("Copy_Model_GUI")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 pasteModelGUIAction.setEnabled(true);
@@ -275,7 +262,6 @@ public class JUICEFrame extends JFrame {
         };
 
         pasteModelGUIAction = new AbstractAction(JAMS.i18n("Paste_Model_GUI")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
@@ -287,37 +273,35 @@ public class JUICEFrame extends JFrame {
 
         addOptimizerAction = new AbstractAction(JAMS.i18n("Configure_Optimizer")) {
             @Override
-            public void actionPerformed(ActionEvent e) { 
-                final ModelView view = getCurrentView();    
+            public void actionPerformed(ActionEvent e) {
+                final ModelView view = getCurrentView();
                 OptimizerConfiguration conf = new OptimizerConfiguration(view.getModelDescriptor());
-                
-                conf.addActionListener(new ActionListener() {
 
+                conf.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        OptimizerConfiguration wizard = (OptimizerConfiguration)e.getSource();
+                        OptimizerConfiguration wizard = (OptimizerConfiguration) e.getSource();
                         ModelDescriptor newModelDoc = wizard.getModelDescriptor();
                         view.setModelDescriptor(newModelDoc);
                         view.loadModel(view.getModelDoc());
                         /*if (newModelDoc != null) { 
-                            ModelView mView = new ModelView(modelPanel);
-                            mView.setTree(new ModelTree(mView, null));
-                            mView.setInitialState();
-                            mView.getFrame().setVisible(true);
-                            mView.getFrame().requestFocus();
+                         ModelView mView = new ModelView(modelPanel);
+                         mView.setTree(new ModelTree(mView, null));
+                         mView.setInitialState();
+                         mView.getFrame().setVisible(true);
+                         mView.getFrame().requestFocus();
                             
-                        } */                       
+                         } */
                     }
                 });
-                
+
                 conf.showDialog(JUICEFrame.this);
             }
         };
         OptimizationWizardGUIAction = new AbstractAction(JAMS.i18n("Optimization_Wizard")) {
-
             @Override
-            public void actionPerformed(ActionEvent e) {         
-                ModelView view = getCurrentView();                
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = getCurrentView();
                 OptimizationWizardFrame frame = optas.gui.OptimizationWizard.createFrame(view.getModelDoc(), JUICE.getJamsProperties(), null);
                 if (view.getSavePath() == null) {
                     GUIHelper.showInfoDlg(frame, JAMS.i18n("Save_model_first"));
@@ -326,13 +310,12 @@ public class JUICEFrame extends JFrame {
                 frame.getWizard().setWorkspace(view.getSavePath().getParent());
 
                 frame.addActionListener(new ActionListener() {
-
                     public void actionPerformed(ActionEvent e) {
-                        OptimizationWizard wizard = (OptimizationWizard)e.getSource();
+                        OptimizationWizard wizard = (OptimizationWizard) e.getSource();
                         Document newModelDoc = wizard.getNewModel();
                         if (newModelDoc != null) {
                             JUICEFrame.this.newModel(newModelDoc);
-                        }                        
+                        }
                     }
                 });
                 frame.setVisible(true);
@@ -340,7 +323,6 @@ public class JUICEFrame extends JFrame {
         };
 
         GenerateDocumentationGUIAction = new AbstractAction(JAMS.i18n("Generate_Docu")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
@@ -349,12 +331,11 @@ public class JUICEFrame extends JFrame {
 
                 docuWiz.createDocumentation(JUICEFrame.this, view.getModelDoc(), JUICE.getJamsProperties(), view.getSavePath());
                 /*DocumentationWizard.(JUICEFrame.this, view.getModelDoc() ,
-                JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);*/
+                 JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);*/
             }
         };
 
         loadModelParamAction = new AbstractAction(JAMS.i18n("Load_Model_Parameter...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfcParams.setSelectedFile(new File(""));
@@ -369,7 +350,6 @@ public class JUICEFrame extends JFrame {
         };
 
         saveModelParamAction = new AbstractAction(JAMS.i18n("Save_Model_Parameter...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfcParams.setSelectedFile(new File(""));
@@ -384,7 +364,6 @@ public class JUICEFrame extends JFrame {
         };
 
         runModelAction = new AbstractAction(JAMS.i18n("Run_Model")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
@@ -393,7 +372,6 @@ public class JUICEFrame extends JFrame {
         };
 
         runModelFromLauncherAction = new AbstractAction(JAMS.i18n("Run_model_from_JAMS_Launcher")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
@@ -402,7 +380,6 @@ public class JUICEFrame extends JFrame {
         };
 
         infoLogAction = new AbstractAction(JAMS.i18n("Info_Log...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 infoDlg.setVisible(true);
@@ -410,7 +387,6 @@ public class JUICEFrame extends JFrame {
         };
 
         errorLogAction = new AbstractAction(JAMS.i18n("Error_Log...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 errorDlg.setVisible(true);
@@ -418,7 +394,6 @@ public class JUICEFrame extends JFrame {
         };
 
         onlineAction = new AbstractAction(JAMS.i18n("JAMS_online...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 GUIHelper.openURL(JAMS.i18n("JAMS_URL"));
@@ -426,7 +401,6 @@ public class JUICEFrame extends JFrame {
         };
 
         outputDSAction = new AbstractAction(JAMS.i18n("Model_output")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 getCurrentView().getOutputDSDlg().setVisible(true);
@@ -434,7 +408,6 @@ public class JUICEFrame extends JFrame {
         };
 
         explorerAction = new AbstractAction(JAMS.i18n("DATA_EXPLORER")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
@@ -443,7 +416,6 @@ public class JUICEFrame extends JFrame {
         };
 
         browserAction = new AbstractAction(JAMS.i18n("Browse_WS_Dir")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
@@ -644,6 +616,10 @@ public class JUICEFrame extends JFrame {
         JMenuItem loadModelItem = new JMenuItem(loadModelAction);
         loadModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
         fileMenu.add(loadModelItem);
+        
+        recentMenu = new JMenu(JAMS.i18n("Recent_Files"));
+        updateRecentMenu();
+        fileMenu.add(recentMenu);
 
         JMenuItem saveModelItem = new JMenuItem(saveModelAction);
         saveModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
@@ -738,7 +714,7 @@ public class JUICEFrame extends JFrame {
         addOptimizerItem = new JMenuItem(addOptimizerAction);
         addOptimizerAction.setEnabled(false);
         modelMenu.add(addOptimizerItem);
-                        
+
         JMenuItem GenerateDocumentationItem = new JMenuItem(GenerateDocumentationGUIAction);
         GenerateDocumentationGUIAction.setEnabled(true);
         modelMenu.add(GenerateDocumentationItem);
@@ -760,7 +736,6 @@ public class JUICEFrame extends JFrame {
         windowMenu = new JMenu(JAMS.i18n("Windows"));
         windowMenu.setEnabled(false);
         ModelView.viewList.addObserver(new Observer() {
-
             @Override
             public void update(Observable o, Object arg) {
                 JUICEFrame.this.windowMenu.removeAll();
@@ -769,7 +744,6 @@ public class JUICEFrame extends JFrame {
                     JInternalFrame frame = mViews.get(i).getFrame();
                     WindowItem windowItem = new WindowItem(frame.getTitle(), frame);
                     windowItem.addActionListener(new ActionListener() {
-
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             WindowItem item = (WindowItem) e.getSource();
@@ -808,7 +782,6 @@ public class JUICEFrame extends JFrame {
          * register observer for ModelView.viewList
          */
         ModelView.viewList.addObserver(new Observer() {
-
             @Override
             public void update(Observable o, Object arg) {
                 if (ModelView.viewList.getViewList().size() > 0) {
@@ -857,7 +830,6 @@ public class JUICEFrame extends JFrame {
 
     public void newModel() {
         SwingWorker w = new SwingWorker() {
-
             @Override
             protected Object doInBackground() throws Exception {
                 ModelView mView = new ModelView(modelPanel);
@@ -871,9 +843,9 @@ public class JUICEFrame extends JFrame {
         w.execute();
     }
     //this method is necessary if we like to create a view and set a doc
+
     public void newModel(final Document doc) {
         SwingWorker w = new SwingWorker() {
-
             @Override
             protected Object doInBackground() throws Exception {
                 ModelView mView = new ModelView(modelPanel);
@@ -905,13 +877,14 @@ public class JUICEFrame extends JFrame {
 
     private void loadModel() {
         loadModelDlg.setTask(new Runnable() {
-
             public void run() {
                 String path = JUICEFrame.this.modelPath;
                 ModelView mView = new ModelView(path, modelPanel);
                 mView.loadModel(path);
                 mView.getFrame().setVisible(true);
                 mView.getFrame().requestFocus();
+                JAMSTools.addToRecentFiles(JUICE.getJamsProperties(), path);
+                updateRecentMenu();
             }
         });
         loadModelDlg.execute();
@@ -955,7 +928,7 @@ public class JUICEFrame extends JFrame {
         int result = jfcModels.showOpenDialog(JUICEFrame.this);
 
         if (result == JFileChooser.APPROVE_OPTION) {
-            JUICEFrame.this.loadModel(jfcModels.getSelectedFile().getAbsolutePath());
+            loadModel(jfcModels.getSelectedFile().getAbsolutePath());
         }
     }
 
@@ -1024,6 +997,21 @@ public class JUICEFrame extends JFrame {
             this.setVisible(false);
             this.dispose();
             System.exit(0);
+        }
+    }
+
+    private void updateRecentMenu() {
+        recentMenu.removeAll();
+        String[] recentFiles = JAMSTools.getRecentFiles(JUICE.getJamsProperties());
+        for (String fileName : recentFiles) {
+            Action openAction = new AbstractAction(fileName) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    loadModel(this.getValue(Action.NAME).toString());
+                }
+            };
+            JMenuItem recentItem = new JMenuItem(openAction);
+            recentMenu.add(recentItem);
         }
     }
 }

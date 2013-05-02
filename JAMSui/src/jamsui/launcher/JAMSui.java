@@ -31,7 +31,6 @@ import jams.io.*;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
-import jams.data.JAMSNumeric;
 import jams.model.JAMSFullModelState;
 import jams.model.Model;
 import jams.tools.FileTools;

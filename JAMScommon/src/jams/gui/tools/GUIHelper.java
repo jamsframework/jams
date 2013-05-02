@@ -28,6 +28,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.JOptionPane;
 import jams.JAMS;
+import jams.SystemProperties;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileSystemView;
 
@@ -365,5 +367,13 @@ public class GUIHelper {
             public void close() {
             }
         });
+    }
+    
+    public static JMenuItem getRecentMenu(SystemProperties properties) {
+        
+        JMenuItem recentMenu = new JMenuItem(JAMS.i18n("Recent_Files"));
+        
+        return recentMenu;
+        
     }
 }

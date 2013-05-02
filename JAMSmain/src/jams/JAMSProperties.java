@@ -210,6 +210,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
             p.setProperty(USE_DEFAULT_WS_PATH, "true");
             p.setProperty(AUTO_PREPROCESSING, "true");
             p.setProperty(FLOAT_FORMAT, "%f");
+            p.setProperty(MAX_RECENT_FILES, "5");
 
             theProperties = new JAMSProperties(p);
             theProperties.setDefaultFilename(System.getProperty("user.dir") + File.separator + JAMS.DEFAULT_PARAMETER_FILENAME);

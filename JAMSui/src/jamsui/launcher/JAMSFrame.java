@@ -72,7 +72,7 @@ import reg.JAMSExplorer;
 public class JAMSFrame extends JAMSLauncher {
 
     private JMenuBar mainMenu;
-    private JMenu logsMenu, modelMenu;
+    private JMenu logsMenu, modelMenu, recentMenu;
     private JMenuItem saveItem, saveAsItem;
     private JFileChooser jfcProps, jfcSer, jfcModel, jfcParam;
     private JDialog rtManagerDlg;
@@ -140,7 +140,7 @@ public class JAMSFrame extends JAMSLauncher {
                 modelDocument = ParameterProcessor.loadParams(modelDocument, jmpParameters);
             }
 
-            ParameterProcessor.preProcess(modelDocument);            
+            ParameterProcessor.preProcess(modelDocument);
             this.initialModelDocString = XMLTools.getStringFromDocument(this.modelDocument);
 
         } catch (IOException ioe) {
@@ -166,6 +166,9 @@ public class JAMSFrame extends JAMSLauncher {
         explorerAction.setEnabled(true);
         getRunModelAction().setEnabled(true);
 
+        JAMSTools.addToRecentFiles(getProperties(), fileName);
+        updateRecentMenu();
+
         //GUIHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
     }
 
@@ -177,7 +180,6 @@ public class JAMSFrame extends JAMSLauncher {
 
         // define some actions
         editPrefsAction = new AbstractAction(JAMS.i18n("Edit_Preferences...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 propertyDlg.setProperties(getProperties());
@@ -189,7 +191,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         loadPrefsAction = new AbstractAction(JAMS.i18n("Load_Preferences...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfcProps.setSelectedFile(new File(""));
@@ -208,7 +209,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         savePrefsAction = new AbstractAction(JAMS.i18n("Save_Preferences...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfcProps.setSelectedFile(new File(""));
@@ -227,7 +227,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         loadModelExecutionStateAction = new AbstractAction(JAMS.i18n("Resume_Model_Execution")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 jfcSer.setSelectedFile(new File(""));
@@ -256,7 +255,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         loadModelAction = new AbstractAction(JAMS.i18n("Open_Model...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!StringTools.isEmptyString(modelFilename)) {
@@ -273,7 +271,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         saveModelAction = new AbstractAction(JAMS.i18n("Save_Model")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveModel();
@@ -282,7 +279,6 @@ public class JAMSFrame extends JAMSLauncher {
         saveModelAction.setEnabled(false);
 
         saveAsModelAction = new AbstractAction(JAMS.i18n("Save_Model_As...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!StringTools.isEmptyString(modelFilename)) {
@@ -299,7 +295,6 @@ public class JAMSFrame extends JAMSLauncher {
         saveAsModelAction.setEnabled(false);
 
         editModelAction = new AbstractAction(JAMS.i18n("Edit_Model...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!closeModel()) {
@@ -315,7 +310,6 @@ public class JAMSFrame extends JAMSLauncher {
         editModelAction.setEnabled(false);
 
         exitAction = new AbstractAction(JAMS.i18n("Exit")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 exit();
@@ -323,7 +317,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         aboutAction = new AbstractAction(JAMS.i18n("About")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 new AboutDlg(JAMSFrame.this).setVisible(true);
@@ -331,7 +324,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         onlineAction = new AbstractAction(JAMS.i18n("JAMS_online...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 GUIHelper.openURL(JAMS.i18n("JAMS_URL"));
@@ -339,7 +331,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         loadModelParamAction = new AbstractAction(JAMS.i18n("Load_Model_Parameter...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -354,7 +345,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         saveModelParamAction = new AbstractAction(JAMS.i18n("Save_Model_Parameter...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -369,7 +359,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         rtManagerAction = new AbstractAction(JAMS.i18n("Show_Runtime_Manager...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 rtManagerDlg.setVisible(true);
@@ -377,7 +366,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         infoLogAction = new AbstractAction(JAMS.i18n("Info_Log...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 getInfoDlg().setVisible(true);
@@ -385,7 +373,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         errorLogAction = new AbstractAction(JAMS.i18n("Error_Log...")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 getErrorDlg().setVisible(true);
@@ -393,7 +380,6 @@ public class JAMSFrame extends JAMSLauncher {
         };
 
         explorerAction = new AbstractAction(JAMS.i18n("DATA_EXPLORER")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 openExplorer();
@@ -402,7 +388,6 @@ public class JAMSFrame extends JAMSLauncher {
         explorerAction.setEnabled(false);
 
         browserAction = new AbstractAction(JAMS.i18n("Browse_WS_Dir")) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 browseWSDir();
@@ -439,7 +424,6 @@ public class JAMSFrame extends JAMSLauncher {
 
         JButton closeButton = new JButton(JAMS.i18n("Close"));
         closeButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 rtManagerDlg.setVisible(false);
@@ -457,6 +441,10 @@ public class JAMSFrame extends JAMSLauncher {
         JMenuItem loadItem = new JMenuItem(loadModelAction);
         loadItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         fileMenu.add(loadItem);
+
+        recentMenu = new JMenu(JAMS.i18n("Recent_Files"));
+        updateRecentMenu();
+        fileMenu.add(recentMenu);
 
         saveItem = new JMenuItem(saveModelAction);
         saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
@@ -521,7 +509,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         JMenuItem rtManagerItem = new JMenuItem(rtManagerAction);
         modelMenu.add(rtManagerItem);
-        
+
         JMenuItem loadModelExecutionStateItem = new JMenuItem(loadModelExecutionStateAction);
         modelMenu.add(loadModelExecutionStateItem);
 
@@ -788,5 +776,20 @@ public class JAMSFrame extends JAMSLauncher {
 
     protected LogViewDlg getErrorDlg() {
         return errorDlg;
+    }
+
+    private void updateRecentMenu() {
+        recentMenu.removeAll();
+        String[] recentFiles = JAMSTools.getRecentFiles(getProperties());
+        for (String fileName : recentFiles) {
+            Action openAction = new AbstractAction(fileName) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    loadModelDefinition(this.getValue(Action.NAME).toString(), null, null);
+                }
+            };
+            JMenuItem recentItem = new JMenuItem(openAction);
+            recentMenu.add(recentItem);
+        }
     }
 }
