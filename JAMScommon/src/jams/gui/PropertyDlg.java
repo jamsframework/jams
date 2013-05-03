@@ -43,7 +43,7 @@ public class PropertyDlg extends JDialog {
 
     private static final int JCOMP_HEIGHT = 20;
     private FileListInput list;
-    private BooleanInput verboseCheck, debugMode, windowEnable,  windowOnTop,  errorDlg, profiling, defaultWSPath;
+    private BooleanInput verboseCheck, debugMode, windowEnable,  windowOnTop,  errorDlg, profiling, defaultWSPath, preprocessing;
     private JSpinner debugSpinner;
     private FileInput infoFile,  errorFile, docbookDir;
     private TextInput windowHeight,  windowWidth, helpBaseURL, userName, forceLocale, charset;
@@ -89,6 +89,18 @@ public class PropertyDlg extends JDialog {
         GUIHelper.addGBComponent(contentPanel, gbl, debugMode, 1, y, 1, 1, 1, 1);
 
         y++;
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Create_profile_info:")), 0, y, 1, 1, 0, 0);
+        profiling = new BooleanInput();
+        profiling.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
+        GUIHelper.addGBComponent(contentPanel, gbl, profiling, 1, y, 1, 1, 1, 1);        
+        
+        y++;
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Preprocessing:")), 0, y, 1, 1, 0, 0);
+        preprocessing = new BooleanInput();
+        preprocessing.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
+        GUIHelper.addGBComponent(contentPanel, gbl, preprocessing, 1, y, 1, 1, 1, 1);        
+        
+        y++;
         GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Verbosity_level:")), 0, y, 1, 1, 0, 0);
         debugSpinner = new JSpinner();
         JPanel spinnerPanel = new JPanel();
@@ -133,12 +145,6 @@ public class PropertyDlg extends JDialog {
         windowOnTop = new BooleanInput();
         windowOnTop.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, windowOnTop, 1, y, 1, 1, 1, 1);
-
-        y++;
-        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Create_profile_info:")), 0, y, 1, 1, 0, 0);
-        profiling = new BooleanInput();
-        profiling.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
-        GUIHelper.addGBComponent(contentPanel, gbl, profiling, 1, y, 1, 1, 1, 1);
 
         y++;
         GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Default_WS_path:")), 0, y, 1, 1, 0, 0);
@@ -280,6 +286,7 @@ public class PropertyDlg extends JDialog {
         errorDlg.setValue(properties.getProperty(SystemProperties.ERRORDLG_IDENTIFIER));
         windowOnTop.setValue(properties.getProperty(SystemProperties.WINDOWONTOP_IDENTIFIER));
         profiling.setValue(properties.getProperty(SystemProperties.PROFILING_IDENTIFIER));
+        preprocessing.setValue(properties.getProperty(SystemProperties.AUTO_PREPROCESSING));
         defaultWSPath.setValue(properties.getProperty(SystemProperties.USE_DEFAULT_WS_PATH));
         forceLocale.setValue(properties.getProperty(SystemProperties.LOCALE_IDENTIFIER));
         charset.setValue(properties.getProperty(SystemProperties.CHARSET_IDENTIFIER));
@@ -313,6 +320,7 @@ public class PropertyDlg extends JDialog {
         properties.setProperty(SystemProperties.ERRORDLG_IDENTIFIER, errorDlg.getValue());
         properties.setProperty(SystemProperties.WINDOWONTOP_IDENTIFIER, windowOnTop.getValue());
         properties.setProperty(SystemProperties.PROFILING_IDENTIFIER, profiling.getValue());
+        properties.setProperty(SystemProperties.AUTO_PREPROCESSING, preprocessing.getValue());
         properties.setProperty(SystemProperties.USE_DEFAULT_WS_PATH, defaultWSPath.getValue());
         properties.setProperty(SystemProperties.LOCALE_IDENTIFIER, forceLocale.getValue());
         properties.setProperty(SystemProperties.CHARSET_IDENTIFIER, charset.getValue());
