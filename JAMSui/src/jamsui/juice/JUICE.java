@@ -233,7 +233,7 @@ public class JUICE {
     public static ExceptionHandler getExHandler() {
 
         if (notificationDlg == null) {
-            notificationDlg = new NotificationDlg(juiceFrame, JAMS.i18n("Error"));
+            notificationDlg = new NotificationDlg(juiceFrame, JAMS.i18n("Info"));
         }
 
         if (exHandler == null) {
@@ -243,7 +243,7 @@ public class JUICE {
                     notificationDlg.addNotification(ex);
                 }
 
-                public void handle(ArrayList<JAMSException> exList) {
+                public void handle(List<JAMSException> exList) {
                 }
             };
         }
@@ -265,7 +265,7 @@ public class JUICE {
                 public void handle(JAMSException ex) {
                 }
 
-                public void handle(ArrayList<JAMSException> exList) {
+                public void handle(List<JAMSException> exList) {
                     for (JAMSException ex : exList) {
 //                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
                         notificationDlg.addNotification(ex);

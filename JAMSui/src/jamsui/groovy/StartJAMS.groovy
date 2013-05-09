@@ -33,7 +33,7 @@ class ExHandler implements ExceptionHandler {
         println ex
     }
 
-    public void handle(ArrayList<JAMSException> exList) {
+    public void handle(List<JAMSException> exList) {
         for (JAMSException jex : exList) {
             println ex
         }
