@@ -31,13 +31,17 @@ import jams.model.*;
  *
  * @author ${user}
  */
- @JAMSComponentDescription(
-        title="Title",
-        author="Author",
-        description="Description",
-        date = "YYYY-MM-DD",
-        version = "1.0_0"
-        )
+@JAMSComponentDescription(
+    title="Title",
+    author="Author",
+    description="Description",
+    date = "YYYY-MM-DD",
+    version = "1.0_0"
+)
+@VersionComments(entries = {
+    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", comment = "Some improvements")
+})
 public class ${name} extends JAMSComponent {
 
     /*
