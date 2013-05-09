@@ -52,6 +52,7 @@ import jams.data.*;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSVarDescription;
+import jams.model.VersionComments;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -69,6 +70,10 @@ import org.jfree.data.time.TimeSeriesDataItem;
         description = "This component creates a graphical plot of time series data, "
         + "e.g. precipitation and runoff over time.",
         version = "1.0_1")
+@VersionComments(entries = {
+    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", comment = "Changed default cache size")
+})
 public class TSPlot extends JAMSGUIComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -143,7 +148,6 @@ public class TSPlot extends JAMSGUIComponent {
             description = "Plot data, after cacheSize values have been collected",
             defaultValue = "1")
     public Attribute.Integer cacheSize;
-    
     TimeSeries[] tsLeft, tsRight;
     transient TimeSeriesCollection dataset1, dataset2;
     transient XYItemRenderer rightRenderer, leftRenderer;

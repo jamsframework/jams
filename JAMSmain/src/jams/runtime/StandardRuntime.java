@@ -71,6 +71,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.w3c.dom.Document;
@@ -133,7 +134,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             }
 
             @Override
-            public void handle(ArrayList<JAMSException> exList) {
+            public void handle(List<JAMSException> exList) {
                 for (JAMSException jex : exList) {
                     StandardRuntime.this.handle(jex, true);
                 }
@@ -215,7 +216,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             }
 
             @Override
-            public void handle(ArrayList<JAMSException> exList) {
+            public void handle(List<JAMSException> exList) {
                 for (JAMSException jex : exList) {
                     StandardRuntime.this.handle(jex, true);
                 }
@@ -309,8 +310,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             dataFactory = CheckedDataFactory.getDataFactory();
         } else {
             dataFactory = DefaultDataFactory.getDataFactory();
-        }        
-        
+        }
+
         // add log observers for output to system.out if needed
         boolean verbose = Boolean.parseBoolean(properties.getProperty(SystemProperties.VERBOSITY_IDENTIFIER, "true"));
         if (verbose) {
@@ -730,15 +731,24 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         message += t.toString();
+
+        if (JAMSException.class.isAssignableFrom(t.getClass())) {
+            JAMSException ex = (JAMSException) t;
+            if (ex.getType() == JAMSException.INFO_TYPE) {
+                sendInfoMsg(ex.getMessage());
+                return;
+            }
+        }
+
         if (getDebugLevel() > JAMS.STANDARD) {
             message += "\n" + StringTools.getStackTraceString(t.getStackTrace());
         }
         sendErrorMsg(message);
-        try {
-            Thread.sleep(200);
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
+//        try {
+//            Thread.sleep(200);
+//        } catch (Exception e) {
+//            System.out.println(e.toString());
+//        }
         if (!proceed) {
             sendHalt();
         }

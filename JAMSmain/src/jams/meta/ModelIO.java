@@ -32,6 +32,7 @@ import jams.meta.ComponentDescriptor.NullClassException;
 import jams.meta.ComponentField.AttributeLinkException;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelProperty;
+import jams.model.JAMSComponentDescription;
 import jams.tools.StringTools;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilder;
@@ -73,7 +74,7 @@ public class ModelIO {
     public ModelDescriptor createModel(ExceptionHandler exHandler) throws JAMSException {
 
         ModelDescriptor md = new ModelDescriptor();
-        ContextDescriptor cd = new ContextDescriptor(JAMS.i18n("New_Model").replace(" ", "_"), modelClazz, md, exHandler);
+        ContextDescriptor cd = new ContextDescriptor(JAMS.i18n("New_Model"), modelClazz, null, md, exHandler);
         ModelNode rootNode = nodeFactory.createNode(cd);
         rootNode.setType(ModelNode.MODEL_TYPE);
         md.setRootNode(rootNode);
@@ -117,7 +118,7 @@ public class ModelIO {
         }
 
         //create the tree's root node
-        ContextDescriptor cd = new ContextDescriptor(modelName, modelClazz, md, exHandler);
+        ContextDescriptor cd = new ContextDescriptor(modelName, modelClazz, null, md, exHandler);
         ModelNode rootNode = nodeFactory.createNode(cd);
         rootNode.setType(ModelNode.MODEL_TYPE);
 
@@ -193,7 +194,7 @@ public class ModelIO {
     private ModelNode getSubTree(Element rootElement, ModelDescriptor md, ExceptionHandler exHandler) throws ModelLoadException, NullClassException {
 
         Class<?> clazz;
-        String componentName = "", className = "";
+        String componentName = "", className = "", version;
         ModelNode rootNode = null;
         boolean enabled = true;
 
@@ -201,9 +202,17 @@ public class ModelIO {
 
             componentName = rootElement.getAttribute("name");
             className = rootElement.getAttribute("class");
+
+            if (rootElement.hasAttribute("version")) {
+                version = rootElement.getAttribute("version");
+            } else {
+                version = JAMSComponentDescription.DEFAULT_VERSION;
+            }
+
             if (rootElement.hasAttribute("enabled")) {
                 enabled = Boolean.parseBoolean(rootElement.getAttribute("enabled"));
             }
+
             clazz = loader.loadClass(className);
 
         } catch (ClassNotFoundException cnfe) {
@@ -222,7 +231,7 @@ public class ModelIO {
 
         if (type.equals("component")) {
 
-            ComponentDescriptor cd = new ComponentDescriptor(componentName, clazz, md, exHandler);
+            ComponentDescriptor cd = new ComponentDescriptor(componentName, clazz, version, md, exHandler);
             cd.setEnabled(enabled);
             rootNode = nodeFactory.createNode(cd);
             rootNode.setType(ModelNode.COMPONENT_TYPE);
@@ -240,7 +249,7 @@ public class ModelIO {
 
         } else if (type.equals("contextcomponent")) {
 
-            ContextDescriptor cd = new ContextDescriptor(componentName, clazz, md, exHandler);
+            ContextDescriptor cd = new ContextDescriptor(componentName, clazz, version, md, exHandler);
             cd.setEnabled(enabled);
             rootNode = nodeFactory.createNode(cd);
             rootNode.setType(ModelNode.CONTEXT_TYPE);
@@ -557,6 +566,7 @@ public class ModelIO {
         rootElement.setAttribute("name", cd.getInstanceName());
         rootElement.setAttribute("class", cd.getClazz().getName());
         rootElement.setAttribute("enabled", Boolean.toString(cd.isEnabled()));
+        rootElement.setAttribute("version", cd.getVersion());
 
         Element element;
 

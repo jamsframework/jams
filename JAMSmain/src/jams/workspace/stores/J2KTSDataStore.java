@@ -318,9 +318,9 @@ public class J2KTSDataStore extends TSDataStore {
 
         for (int i = 2; i < values.length; i++) {
             double d = Double.parseDouble(values[i]);
-//            if (d == missingData) {
-//                d = Double.NaN;
-//            }
+            if (d == missingData) {
+                d = Double.NaN;
+            }
             result.setData(i - 1, new DoubleValue(d));
         }
 
@@ -328,6 +328,15 @@ public class J2KTSDataStore extends TSDataStore {
         return result;
     }
 
+    public static void main(String[] args) {
+        double a = Double.MIN_NORMAL;
+        System.out.println(a == 0);
+        double d = -a/a;
+        System.out.println(d);
+        System.out.println(a);
+        
+    }
+    
     @Override
     public void skip(int count){
         for (int i=0;i<count;i++)

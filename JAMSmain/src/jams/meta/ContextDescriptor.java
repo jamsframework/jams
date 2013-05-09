@@ -43,12 +43,12 @@ public class ContextDescriptor extends ComponentDescriptor {
         super(instanceName, clazz);
     }
 
-    public ContextDescriptor(String instanceName, Class clazz, ComponentCollection md, ExceptionHandler jeh) throws NullClassException {
-        super(instanceName, clazz, md, jeh);
+    public ContextDescriptor(String instanceName, Class clazz, String versionID, ComponentCollection md, ExceptionHandler eh) throws NullClassException {
+        super(instanceName, clazz, versionID, md, eh);
     }
 
-    public ContextDescriptor(Class clazz, ComponentCollection md, ExceptionHandler jeh) throws NullClassException {
-        super(clazz, md, jeh);
+    public ContextDescriptor(Class clazz, String versionID, ComponentCollection md, ExceptionHandler eh) throws NullClassException {
+        super(clazz, versionID, md, eh);
     }
 
 //    public ContextDescriptor(Class clazz) throws JAMSException {

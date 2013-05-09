@@ -1,6 +1,6 @@
 /*
- * ExceptionHandler.java
- * Created on 22.02.2011, 11:48:39
+ * VersionComments.java
+ * Created on 09.05.2013, 19:11:41
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,17 +20,21 @@
  *
  */
 
-package jams;
+package jams.model;
 
-import java.util.List;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public interface ExceptionHandler {
-
-    public void handle(JAMSException ex);
-    public void handle(List<JAMSException> exList);
-
+@Retention(RetentionPolicy.RUNTIME)
+public @interface VersionComments {
+    Entry[] entries();
+    
+    public @interface Entry {
+        String version();
+        String comment();
+    }
 }

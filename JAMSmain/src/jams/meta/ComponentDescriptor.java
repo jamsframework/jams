@@ -29,6 +29,9 @@ import jams.JAMS;
 import jams.JAMSException;
 import jams.ExceptionHandler;
 import jams.model.Context;
+import jams.model.JAMSComponentDescription;
+import jams.model.VersionComments;
+import jams.model.VersionComments.Entry;
 import jams.tools.StringTools;
 import java.text.MessageFormat;
 import java.util.Observable;
@@ -45,8 +48,8 @@ public class ComponentDescriptor extends Observable {
     private Class<?> clazz;
     private ArrayList<String> componentFieldList = new ArrayList<String>();
     protected HashMap<String, ComponentField> componentFields = new HashMap<String, ComponentField>();
-//    private int type;
     private ComponentCollection componentRepository;
+    private String version = JAMSComponentDescription.DEFAULT_VERSION;
     private ModelNode node;
     private boolean enabled = true;
 
@@ -56,14 +59,38 @@ public class ComponentDescriptor extends Observable {
             throw new NullClassException(JAMS.i18n("Could_not_find_class_for_component_") + instanceName + "_!", JAMS.i18n("Error"));
         }
 
+        JAMSComponentDescription jcd = (JAMSComponentDescription) clazz.getAnnotation(JAMSComponentDescription.class);
+        if (jcd != null) {
+            version = jcd.version();
+        }
+
         this.clazz = clazz;
         this.instanceName = instanceName;
 
         init();
     }
 
-    public ComponentDescriptor(String instanceName, Class clazz, ComponentCollection md, ExceptionHandler eh) throws NullClassException {
+    public ComponentDescriptor(String instanceName, Class clazz, String versionID, ComponentCollection md, ExceptionHandler eh) throws NullClassException {
         this(instanceName, clazz);
+
+        if (versionID != null && !versionID.equals(this.version)) {
+            
+            String message = String.format(JAMS.i18n("ComponentVersionMismatch"), instanceName, this.version, versionID);
+
+            // get the change comments
+            VersionComments vc = (VersionComments) clazz.getAnnotation(VersionComments.class);
+            if (vc != null) {
+                
+                for (Entry entry : vc.entries()) {
+                    if (entry.version().compareTo(versionID) > 0) {
+                        message += "\n" + "            - version " + entry.version() + ": " + entry.comment();
+                    }
+                }
+            }
+
+            eh.handle(new VersionMismatchException(message, JAMS.i18n("Notice")));
+        }
+
         try {
             register(md);
         } catch (RenameException re) {
@@ -71,8 +98,8 @@ public class ComponentDescriptor extends Observable {
         }
     }
 
-    public ComponentDescriptor(Class clazz, ComponentCollection md, ExceptionHandler jeh) throws NullClassException {
-        this(clazz.getSimpleName(), clazz, md, jeh);
+    public ComponentDescriptor(Class clazz, String versionID, ComponentCollection md, ExceptionHandler jeh) throws NullClassException {
+        this(clazz.getSimpleName(), clazz, versionID, md, jeh);
     }
 
     private void init() {
@@ -201,10 +228,18 @@ public class ComponentDescriptor extends Observable {
         return componentRepository;
     }
 
+    /**
+     * @return the versionID
+     */
+    public String getVersion() {
+        return version;
+    }
+
     public class RenameException extends JAMSException {
 
         public RenameException(String message, String header) {
             super(message, header);
+            type = JAMSException.INFO_TYPE;
         }
     }
 
@@ -212,6 +247,14 @@ public class ComponentDescriptor extends Observable {
 
         public NullClassException(String message, String header) {
             super(message, header);
+        }
+    }
+
+    public class VersionMismatchException extends JAMSException {
+
+        public VersionMismatchException(String message, String header) {
+            super(message, header);
+            type = JAMSException.INFO_TYPE;
         }
     }
 

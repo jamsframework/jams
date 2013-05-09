@@ -35,6 +35,7 @@ import jams.tools.XMLTools;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.w3c.dom.Document;
 
 /**
@@ -71,7 +72,7 @@ public class IOTest {
                     ex.printStackTrace();
                 }
 
-                public void handle(ArrayList<JAMSException> exList) {
+                public void handle(List<JAMSException> exList) {
                 }
             });
         } catch (JAMSException jex) {

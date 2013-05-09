@@ -92,7 +92,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
                 rt.handle(ex);
             }
 
-            public void handle(ArrayList<JAMSException> exList) {
+            public void handle(List<JAMSException> exList) {
                 for (JAMSException ex : exList) {
                     rt.handle(ex);
                 }
@@ -102,14 +102,14 @@ public class ConcurrentContextProcessor implements MetaProcessor {
         try {
 
             // create controller context 
-            ContextDescriptor controller = new ContextDescriptor(ConcurrentContext.class, model, exHandler);
+            ContextDescriptor controller = new ContextDescriptor(ConcurrentContext.class, null, model, exHandler);
 
             // create container for the controller context as outermost element
-            ContextDescriptor cContainer = new ContextDescriptor(controller.getInstanceName() + "Container", jams.model.JAMSContext.class, model, exHandler);
+            ContextDescriptor cContainer = new ContextDescriptor(controller.getInstanceName() + "Container", jams.model.JAMSContext.class, null, model, exHandler);
 
             // create partitioner component
             Class partitionerClass = Class.forName(partitionerClassName);
-            ComponentDescriptor partitioner = new ComponentDescriptor(partitionerClass, model, exHandler);
+            ComponentDescriptor partitioner = new ComponentDescriptor(partitionerClass, null, model, exHandler);
 
             // 1. detach context from parent, replace it by cContainer 
             // 2. create n copies of context and attach them to controller
@@ -262,7 +262,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
 
                     if (caProxy == null) {
                         // create datastore helper component
-                        caProxy = new ComponentDescriptor(context.getInstanceName() + "_DSProxy", CAProxy.class, model, exHandler);
+                        caProxy = new ComponentDescriptor(context.getInstanceName() + "_DSProxy", CAProxy.class, null, model, exHandler);
                         ModelNode caProxyNode = new ModelNode(caProxy);
                         caProxyNode.setType(ModelNode.COMPONENT_TYPE);
                         serialContextNode.insert(caProxyNode, 0);

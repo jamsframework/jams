@@ -31,9 +31,10 @@ import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JAMSComponentDescription {
+    public String DEFAULT_VERSION = "1.0_0";
     String title();
     String author();
     String date() default "";
     String description();
-    String version() default "";
+    String version() default DEFAULT_VERSION;
 }

@@ -28,8 +28,10 @@ package jams;
  */
 public class JAMSException extends Exception {
 
+    public static final int INFO_TYPE = 0, ERROR_TYPE = 1;
     private String header;
     private Throwable wrappedException;
+    protected int type = ERROR_TYPE;
 
     public JAMSException(String message, String header) {
         super(message);
@@ -57,5 +59,12 @@ public class JAMSException extends Exception {
 
     public Throwable getWrappedException() {
         return wrappedException;
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType() {
+        return type;
     }
 }

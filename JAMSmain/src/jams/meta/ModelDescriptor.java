@@ -42,6 +42,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
@@ -482,7 +483,7 @@ public class ModelDescriptor extends ComponentCollection {
                 ex.printStackTrace();
             }
 
-            public void handle(ArrayList<JAMSException> exList) {
+            public void handle(List<JAMSException> exList) {
             }
         };
 
