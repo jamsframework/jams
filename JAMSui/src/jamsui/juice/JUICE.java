@@ -41,6 +41,11 @@ import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.cmdline.JAMSCmdLine;
 import jamsui.juice.gui.NotificationDlg;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -52,6 +57,7 @@ public class JUICE {
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
     public static final int SCREEN_WIDTH = 1200;
     public static final int SCREEN_HEIGHT = 720;
+    private static final Logger log = Logger.getLogger(JUICE.class.getName());
     private static JUICEFrame juiceFrame;
     private static JAMSProperties jamsProperties = JAMSProperties.createProperties();
     private static File baseDir = null;
@@ -62,6 +68,7 @@ public class JUICE {
     private static WorkerDlg loadLibsDlg;
     private static ExceptionHandler exHandler, multiExHandler;
     private static NotificationDlg notificationDlg;
+    private static Handler logHandler;
 
     public static void main(String args[]) {
 
@@ -73,6 +80,20 @@ public class JUICE {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             } catch (Exception ex) {
                 JAMSTools.handle(ex);
+            }
+        }
+
+        boolean os64 = JAMSTools.is64Bit();
+        boolean vm64 = System.getProperty("os.arch").endsWith("64");
+
+        if (os64 != vm64) {
+            String osArch = (os64 ? "64 bit" : "32 bit");
+            String vmArch = (vm64 ? "64 bit" : "32 bit");
+            int result = GUIHelper.showYesNoDlg(null, String.format("Architectures of OS (%s) and Java VM (%s) used with JAMS seem to differ.\n"
+                    + "You should update your Java VM to a matching version to avoid strange model behaviour.\n"
+                    + "Continue anyway?", osArch, vmArch), "Warning");
+            if (result == JOptionPane.NO_OPTION) {
+                System.exit(0);
             }
         }
 
@@ -97,7 +118,7 @@ public class JUICE {
 
             // configure local encoding
             JAMSTools.configureLocaleEncoding(getJamsProperties());
-            
+
             // set output formatting of floating point numbers
             String floatFormat = getJamsProperties().getProperty(SystemProperties.FLOAT_FORMAT, "%f");
             JAMS.setFloatFormat(floatFormat);
@@ -126,7 +147,7 @@ public class JUICE {
 
         juiceFrame.setVisible(true);
 
-        libTree = new LibTree(new ComponentCollection());
+        libTree = new LibTree(new ComponentCollection(log));
 
         JUICE.updateLibs();
 
@@ -227,53 +248,32 @@ public class JUICE {
         return libTree;
     }
 
-    /**
-     * @return the exHandler
-     */
-    public static ExceptionHandler getExHandler() {
-
+    public static Logger getLogger() {
         if (notificationDlg == null) {
             notificationDlg = new NotificationDlg(juiceFrame, JAMS.i18n("Info"));
         }
 
-        if (exHandler == null) {
-            exHandler = new ExceptionHandler() {
-                public void handle(JAMSException ex) {
-//                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
-                    notificationDlg.addNotification(ex);
-                }
-
-                public void handle(List<JAMSException> exList) {
-                }
-            };
-        }
-
-        return exHandler;
-    }
-
-    /**
-     * @return the exMultiHandler
-     */
-    public static ExceptionHandler getMultiExHandler() {
-
-        if (notificationDlg == null) {
-            notificationDlg = new NotificationDlg(juiceFrame, JAMS.i18n("Error"));
-        }
-
-        if (multiExHandler == null) {
-            multiExHandler = new ExceptionHandler() {
-                public void handle(JAMSException ex) {
-                }
-
-                public void handle(List<JAMSException> exList) {
-                    for (JAMSException ex : exList) {
-//                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), ex.getMessage(), ex.getHeader());
-                        notificationDlg.addNotification(ex);
+        if (logHandler == null) {
+            logHandler = new Handler() {
+                @Override
+                public void publish(LogRecord record) {
+                    if (record.getLevel().intValue() > Level.WARNING.intValue()) {
+                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), record.getMessage(), JAMS.i18n("Error"));
                     }
+                    notificationDlg.addNotification(JAMS.i18n(record.getLevel().toString()), record.getMessage());
+                }
+
+                @Override
+                public void flush() {
+                }
+
+                @Override
+                public void close() throws SecurityException {
                 }
             };
+            log.addHandler(logHandler);
+            log.setUseParentHandlers(false);
         }
-
-        return multiExHandler;
+        return log;
     }
 }

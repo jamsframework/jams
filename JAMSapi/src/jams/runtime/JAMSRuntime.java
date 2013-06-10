@@ -29,6 +29,7 @@ import jams.data.JAMSData;
 import jams.model.SmallModelState;
 import jams.model.GUIComponent;
 import jams.model.Model;
+import java.util.logging.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -108,10 +109,12 @@ public interface JAMSRuntime extends Serializable {
     public Model getModel();
 
     public DataFactory getDataFactory();
-    
+
     public Document getModelDocument();
 
     public ClassLoader getClassLoader();
 
     public void saveModelParameter();
+    
+    public Logger getLogger();
 }

@@ -25,6 +25,8 @@ import jams.model.Component;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,12 +42,12 @@ description = "A context that executes its child components concurrently")
 public class ConcurrentContext extends JAMSContext {
 
     private ExecutorService executor;
-    private Runnable[] tasks;
-    private Future[] futures;
+    List<Callable<Component>> callables;
 
     /*
      * Component run stages
      */
+    
     @Override
     public void run() {
 
@@ -54,29 +56,23 @@ public class ConcurrentContext extends JAMSContext {
                 runEnumerator = getRunEnumerator();
             }
 
-            ArrayList<Runnable> runnableList = new ArrayList<Runnable>();
-
             runEnumerator.reset();
+            callables = new ArrayList();
             while (runEnumerator.hasNext() && doRun) {
                 Component comp = runEnumerator.next();
-                runnableList.add(new RunnableComponent(comp));
+                callables.add(new CallableComponent(comp));
             }
-            tasks = runnableList.toArray(new Runnable[runnableList.size()]);
-            futures = new Future[tasks.length];
-            executor = Executors.newFixedThreadPool(tasks.length);
+            executor = Executors.newFixedThreadPool(callables.size());
         }
 
         try {
 
-            for (int i = 0; i < tasks.length; i++) {
-                //submit task and store future object
-                futures[i] = executor.submit(tasks[i]);
+            List<Future<Component>> futures = executor.invokeAll(callables);
+            
+            for (Future f : futures) {
+                f.get();
             }
-            for (int i = 0; i < tasks.length; i++) {
-                //call future's get method (blocking) in order to wait for task to continue
-                futures[i].get();
-            }
-
+            
         } catch (ExecutionException ee) {
             this.getModel().getRuntime().handle(ee, this.getInstanceName());
         } catch (InterruptedException ie) {
@@ -85,5 +81,10 @@ public class ConcurrentContext extends JAMSContext {
 
         updateEntityData();
 
+    }
+    
+    @Override
+    public void cleanup() {
+        executor.shutdown();
     }
 }

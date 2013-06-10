@@ -25,6 +25,7 @@ import jams.JAMS;
 import jams.SystemProperties;
 import jams.data.Attribute;
 import jams.model.Component;
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -36,12 +37,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import javax.swing.ImageIcon;
 
 /**
  *
  * @author Sven Kralisch
  */
 public class JAMSTools {
+
+    private static List<Image> jamsIcons;
 
     /**
      * Looks for a field with a given name in a class and all its superclasses
@@ -330,4 +334,36 @@ public class JAMSTools {
             return new String[0];
         }
     }
+
+    /**
+     * Creates a JAMS icon image
+     *
+     * @return The icon image
+     */
+    public static List<Image> getJAMSIcons() {
+
+        if (jamsIcons == null) {
+            jamsIcons = new ArrayList();
+            jamsIcons.add(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon.png")).getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH));
+            jamsIcons.add(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon.png")).getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH));
+            jamsIcons.add(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon.png")).getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH));
+            jamsIcons.add(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon.png")).getImage().getScaledInstance(256, 256, Image.SCALE_SMOOTH));
+        }
+        return jamsIcons;
+    }
+
+    /**
+     * Find out if OS (not VM) is 64 bit
+     * @return if OS (not VM) is 64 bit
+     */
+    public static boolean is64Bit() {
+        boolean is64bit = false;
+        if (System.getProperty("os.name").contains("Windows")) {
+            is64bit = (System.getenv("ProgramFiles(x86)") != null);
+        } else {
+            is64bit = (System.getProperty("os.arch").indexOf("64") != -1);
+        }
+        return is64bit;
+    }
+    
 }

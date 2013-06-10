@@ -50,14 +50,14 @@ public class JAMSClassLoader extends URLClassLoader {
         return defineClass(name, data, 0, data.length);
     }
 
-    private static void addFile(Set<URL> urls, File f, JAMSLogger log) {
+    private static void addFile(Set<URL> urls, File f, JAMSLogger logger) {
         try {
             URL url = f.toURI().toURL();
             if (!urls.add(url)) {
-                log.println(JAMS.i18n("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.i18n("_is_already_loaded"));
+                logger.println(JAMS.i18n("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.i18n("_is_already_loaded"));
             }
         } catch (MalformedURLException murle) {
-            log.println(JAMS.i18n("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.i18n("_could_not_be_converted_to_URL."));
+            logger.println(JAMS.i18n("WARNING_:_The_file_") + f.getAbsolutePath() + JAMS.i18n("_could_not_be_converted_to_URL."));
         }
     }
 

@@ -24,6 +24,7 @@ package jams.components.gui;
 
 import jams.data.*;
 import jams.model.*;
+import jams.tools.JAMSTools;
 import java.awt.*;
 import javax.swing.*;
 
@@ -103,7 +104,7 @@ public class JAMSProgress extends JAMSComponent {
         });
         
         frame.getContentPane().add(cancelButton, java.awt.BorderLayout.EAST);
-        frame.setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
+        frame.setIconImages(JAMSTools.getJAMSIcons());
         frame.pack();
         
         frame.setLocation((int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth()-frame.getWidth())/2, (int)(Toolkit.getDefaultToolkit().getScreenSize().getHeight()-frame.getHeight())/2);

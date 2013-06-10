@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.StringTokenizer;
 import jams.JAMS;
+import jams.JAMSException;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.model.SmallModelState;
@@ -103,20 +104,21 @@ public class JAMSWorkspace implements Workspace {
         this.contextStores.clear();
         this.inputDataStores.clear();
         this.outputDataStores.clear();
-        
-        this.loadConfig();
+
         this.checkValidity(readonly);
+        this.loadConfig();
         this.updateDataStores();
 
         Set<DataStore> rmCandidates = new HashSet<DataStore>();
-        for (DataStore d: this.currentStores){
-            try{
-                if (d instanceof OutputDataStore){
+        for (DataStore d : this.currentStores) {
+            try {
+                if (d instanceof OutputDataStore) {
                     d.close();
                     rmCandidates.add(d);
-                } else
+                } else {
                     d.setWorkspace(this);
-            }catch(IOException ioe){
+                }
+            } catch (IOException ioe) {
                 throw new InvalidWorkspaceException(ioe.toString());
             }
         }
@@ -132,6 +134,7 @@ public class JAMSWorkspace implements Workspace {
      * Loads the workspace config from the config file in the root of the
      * workspace directory
      */
+    @Override
     public void loadConfig() {
         try {
 
@@ -157,6 +160,7 @@ public class JAMSWorkspace implements Workspace {
      * Saves the workspace config in the config file in the root of the
      * workspace directory
      */
+    @Override
     public void saveConfig() {
         try {
             File file = new File(directory.getPath() + File.separator + CONFIG_FILE_NAME);
@@ -168,6 +172,7 @@ public class JAMSWorkspace implements Workspace {
     }
 
     /*restores all datastores from a saved execution state*/
+    @Override
     public void restore(SmallModelState state) {
         Iterator<DataStore> iter = this.getRegisteredDataStores().iterator();
         while (iter.hasNext()) {
@@ -181,6 +186,7 @@ public class JAMSWorkspace implements Workspace {
     }
     /*restores all datastores from a saved execution state*/
 
+    @Override
     public void saveState(SmallModelState state) {
         Iterator<DataStore> iter = this.getRegisteredDataStores().iterator();
         while (iter.hasNext()) {
@@ -190,6 +196,7 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      * Checks if this workspace is valid
+     *
      * @param readonly If readonly is false, the workspace can be fixed (e.g.
      * missing directories will be created), otherwise not
      * @throws jams.workspace.JAMSWorkspace.InvalidWorkspaceException
@@ -273,12 +280,12 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      * Creates an individual class loader
+     *
      * @param libs Array of libs that the new classloader will be based on
      */
 //    public void setLibs(String[] libs) {
 //        this.classLoader = JAMSClassLoader.createClassLoader(libs, runtime);
 //    }
-
     /**
      *
      * @return The classloader that this workspace uses
@@ -319,6 +326,7 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      * Removes a datastore from the list of datastores
+     *
      * @param store The datastore to be removed
      */
     public void removeDataStore(InputDataStore store) {
@@ -522,6 +530,7 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      * Sets the workspace title
+     *
      * @param title The title
      */
     public void setTitle(String title) {
@@ -538,6 +547,7 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      * Sets the workspace description
+     *
      * @param description The description
      */
     public void setDescription(String description) {
@@ -554,9 +564,10 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      * Defines if the data output directory is overwritten or not
-     * @param persistent If persistent is true, a new data output directory will be created
-     * for model output, otherwise output will be directed to standard data
-     * output directory ("current")
+     *
+     * @param persistent If persistent is true, a new data output directory will
+     * be created for model output, otherwise output will be directed to
+     * standard data output directory ("current")
      */
     public void setPersistent(boolean persistent) {
         properties.setProperty("persistent", Boolean.toString(persistent));
@@ -572,6 +583,7 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      * Sets the default model path of the workspace
+     *
      * @param path The path
      */
     public void setModelFile(String path) {
@@ -602,7 +614,7 @@ public class JAMSWorkspace implements Workspace {
                     this.getRuntime().println(MessageFormat.format(JAMS.i18n("Added_input_store_"), storeID, child.getAbsolutePath()), JAMS.VERBOSE);
                 }
 
-            } catch (FileNotFoundException fnfe) {
+            } catch (JAMSException jex) {
                 this.getRuntime().sendErrorMsg(MessageFormat.format(JAMS.i18n("Error_reading_datastore_"), child.getAbsolutePath()));
             }
         }
@@ -633,7 +645,7 @@ public class JAMSWorkspace implements Workspace {
                     }
                 }
 
-            } catch (FileNotFoundException fnfe) {
+            } catch (JAMSException jex) {
                 this.getRuntime().sendErrorMsg(MessageFormat.format(JAMS.i18n("Error_reading_datastore_"), child.getAbsolutePath()));
             }
         }
@@ -661,6 +673,7 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      * Creates a string dump of an input datastore
+     *
      * @param dsTitle The name of the datastore to be dumped
      * @return The string representation of the datastore
      * @throws java.io.IOException
@@ -674,6 +687,7 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      * Creates a string dump of an input datastore
+     *
      * @param store The datastore to be dumped
      * @return The string representation of the datastore
      * @throws java.io.IOException
@@ -692,10 +706,9 @@ public class JAMSWorkspace implements Workspace {
         }
     }
 
-
-
     /**
      * Creates a file dump of an input datastore
+     *
      * @param store The datastore to be dumped
      * @throws java.io.IOException
      */
@@ -717,6 +730,7 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      * Creates file dumps of all input datastores
+     *
      * @throws java.io.IOException
      */
     public void inputDataStoreToFile() throws IOException {
@@ -727,6 +741,7 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      * Get the IDs of all datastores of a given type
+     *
      * @param type The type to look for
      * @return A String array containg the datastores IDs
      */
@@ -776,7 +791,6 @@ public class JAMSWorkspace implements Workspace {
      */
     public File[] getOutputDataDirectories() {
         FileFilter filter = new FileFilter() {
-
             @Override
             public boolean accept(File pathname) {
                 if (pathname.isDirectory() && !pathname.getName().endsWith(".svn")) {
@@ -796,7 +810,6 @@ public class JAMSWorkspace implements Workspace {
      */
     public File[] getOutputDataFiles(File outputDataDirectory) {
         FileFilter filter = new FileFilter() {
-
             @Override
             public boolean accept(File pathname) {
                 if (pathname.isFile() && (pathname.getName().endsWith(OUTPUT_FILE_ENDING) || pathname.getName().endsWith(SPREADSHEET_FILE_ENDING) || pathname.getName().endsWith(DATACOLLECTION_FILE_ENDING))) {
@@ -885,14 +898,12 @@ public class JAMSWorkspace implements Workspace {
         JAMSRuntime runtime = new StandardRuntime(properties);
         runtime.setDebugLevel(JAMS.VERBOSE);
         runtime.addErrorLogObserver(new Observer() {
-
             @Override
             public void update(Observable o, Object arg) {
                 System.out.print(arg);
             }
         });
         runtime.addInfoLogObserver(new Observer() {
-
             @Override
             public void update(Observable o, Object arg) {
                 System.out.print(arg);

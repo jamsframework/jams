@@ -266,7 +266,7 @@ public class JUICEFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
 
-                view.getModelDescriptor().setModelParameters((Element) modelProperties, JUICE.getMultiExHandler());
+                view.getModelDescriptor().setModelParameters((Element) modelProperties);
 
             }
         };
@@ -423,7 +423,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
+        setIconImages(JAMSTools.getJAMSIcons());
         setTitle(JUICE.APP_TITLE);
 
         loadModelDlg = new WorkerDlg(this, JAMS.i18n("Loading_Model"));

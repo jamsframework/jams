@@ -29,6 +29,7 @@ import jams.gui.WorkerDlg;
 import jams.gui.WorkspaceDlg;
 import jams.gui.tools.GUIHelper;
 import jams.io.XMLProcessor;
+import jams.tools.JAMSTools;
 import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
@@ -179,7 +180,7 @@ public class ExplorerFrame extends JFrame {
 
         openWSDlg = new WorkerDlg(this, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OPENING_WORKSPACE"));
 
-        setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
+        setIconImages(JAMSTools.getJAMSIcons());
         setTitle(JAMSExplorer.APP_TITLE);
 
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

@@ -49,7 +49,6 @@ import jams.data.DefaultDataFactory;
 import jams.gui.input.*;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ComponentField;
-import jams.meta.ComponentField.AttributeLinkException;
 import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
 import jams.tools.StringTools;
@@ -169,13 +168,12 @@ public class ComponentAttributePanel extends JPanel {
                     }
                     updateRepository();
                     updateAttributeLinkGUI();
-                    DefaultListModel model = (DefaultListModel) attributeList.getModel();
                     if (attributeList.getModel().getSize() > 0) {
                         int listIndex = attributeList.getNextMatch(name, 0, Position.Bias.Forward);
                         attributeList.scrollRectToVisible(attributeList.getCellBounds(listIndex, listIndex));
                     }
                 } catch (JAMSException ex) {
-                    JUICE.getExHandler().handle(ex);
+                    JUICE.getLogger().warning(ex.getHeader() + "\n" + ex.getMessage());
                 }
             }
         });
@@ -223,8 +221,8 @@ public class ComponentAttributePanel extends JPanel {
             try {
                 //@TODO: proper handling
                 field.linkToAttribute(context, attributeString);
-            } catch (AttributeLinkException ex) {
-                JUICE.getExHandler().handle(ex);
+            } catch (JAMSException ex) {
+                JUICE.getLogger().warning(ex.getHeader() + "\n" + ex.getMessage());
             }
             linkText.setText(field.getContext() + "." + field.getAttribute());
             tableModel.setValueAt(field.getContext() + "." + field.getAttribute(), selectedRow, 3);

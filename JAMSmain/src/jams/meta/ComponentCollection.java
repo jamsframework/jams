@@ -21,7 +21,10 @@
  */
 package jams.meta;
 
+import jams.JAMS;
+import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 /**
  * This class represents a collection of components which can either be
@@ -31,9 +34,11 @@ import java.util.HashMap;
 public class ComponentCollection {
 
     private HashMap<String, ComponentDescriptor> componentDescriptors;
+    protected Logger logger;
 
-    public ComponentCollection() {
+    public ComponentCollection(Logger logger) {
         componentDescriptors = new HashMap<String, ComponentDescriptor>();
+        this.logger = logger;
     }
 
     public String registerComponentDescriptor(String oldName, String newName, ComponentDescriptor cd) {
@@ -43,6 +48,11 @@ public class ComponentCollection {
             componentDescriptors.remove(oldName);
         }
         componentDescriptors.put(newNewName, cd);
+        
+        if (!newName.equals(newNewName)) {
+            logger.fine(MessageFormat.format(JAMS.i18n("Component_name_is_already_in_use._Renamed_component_to_"), newName, newNewName));
+        }        
+        
         return newNewName;
     }
 
@@ -62,4 +72,10 @@ public class ComponentCollection {
         return componentDescriptors.get(name);
     }
 
+    /**
+     * @return the logger
+     */
+    public Logger getLogger() {
+        return logger;
+    }
 }

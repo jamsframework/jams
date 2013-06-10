@@ -96,6 +96,17 @@ public class JAMSModel extends JAMSContext implements Model {
         runtime.println("", JAMS.STANDARD);
         runtime.println(JAMS.i18n("starting_simulation"), JAMS.STANDARD);
         runtime.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
+        
+        
+        // prepare the model's workspace
+        try {
+            if (workspace != null) {
+                workspace.init();
+            }
+        } catch (InvalidWorkspaceException iwe) {
+            runtime.sendHalt(iwe.getMessage());
+            return;
+        }        
 
         // check if workspace directory was specified
         if (workspaceDirectory.getValue() == null) {

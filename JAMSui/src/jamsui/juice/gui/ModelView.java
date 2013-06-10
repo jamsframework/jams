@@ -39,6 +39,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import jams.JAMS;
+import jams.JAMSException;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.tools.JAMSTools;
@@ -51,12 +52,12 @@ import jams.io.XMLProcessor;
 import jams.meta.ModelDescriptor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
-import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
 import jamsui.juice.*;
 import jamsui.juice.gui.tree.ModelTree;
 import java.awt.Desktop;
 import java.net.URI;
+import java.util.logging.Level;
 import org.w3c.dom.Document;
 import reg.JAMSExplorer;
 
@@ -83,7 +84,7 @@ public class ModelView {
     public static ViewList viewList = new ViewList();
     private JAMSRuntime runtime;
     private static JAMSExplorer theExplorer;
-    private ModelDescriptor modelDescriptor = new ModelDescriptor();
+    private ModelDescriptor modelDescriptor = new ModelDescriptor(JUICE.getLogger());
     private OutputDSDlg outputDSDlg;
 //    private PanelDlg launcherPanelDlg;
 
@@ -136,21 +137,12 @@ public class ModelView {
 
                         runtime.loadModel(modelDoc, defaultWorkspacePath);
 
-                        // if workspace has not been provided, check if the document has been
-                        // read from file and try to use parent directory instead
-//                        if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
-//                                && (getSavePath() != null)) {
-//                            String dir = getSavePath().getParent();
-//                            runtime.getModel().setWorkspacePath(dir);
-//                            runtime.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + dir);
-//                        }
-
                     } else {
                         runtime = null;
                     }
 
                 } catch (Exception e) {
-                    runtime.handle(e);
+                    JUICE.getLogger().log(Level.SEVERE, e.getMessage(), e);
                 }
             }
         };
@@ -316,13 +308,13 @@ public class ModelView {
 
                 //dump the runtime and clean up
                 runtime = null;
-                Runtime.getRuntime().gc();
+                java.lang.Runtime.getRuntime().gc();
             }
         };
         try {
             t.start();
         } catch (Exception e) {
-            runtime.handle(e);
+            JUICE.getLogger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -386,7 +378,7 @@ public class ModelView {
     public void loadParams(File paramsFile) {
         try {
             Document doc = ParameterProcessor.loadParams(getModelDoc(), paramsFile);
-            modelDescriptor = new ModelDescriptor();
+            modelDescriptor = new ModelDescriptor(JUICE.getLogger());
             this.setTree(new ModelTree(this, doc));
         } catch (Exception ex) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("File_") + paramsFile.getName() + JAMS.i18n("_could_not_be_loaded."), JAMS.i18n("File_open_error"));
@@ -482,8 +474,8 @@ public class ModelView {
 
             this.setInitialState();
 
-        } catch (FileNotFoundException fnfe) {
-            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("File_") + fileName + JAMS.i18n("_could_not_be_loaded."), JAMS.i18n("File_open_error"));
+        } catch (JAMSException jex) {
+            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("File_") + fileName + JAMS.i18n("_could_not_be_loaded.") + "\n" + jex.getMessage(), JAMS.i18n("File_open_error"));
         } catch (Exception e) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Unknown_error_during_Model_loading"), JAMS.i18n("Error_loading_model"));
             e.printStackTrace();

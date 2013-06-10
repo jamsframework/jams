@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -44,7 +45,7 @@ import org.w3c.dom.Document;
  */
 public class IOTest {
 
-    public static void main(String[] args) throws IOException, JAMSException {
+    public static void main(String[] args) throws IOException {
 
         SystemProperties properties = JAMSProperties.createProperties();
         properties.load("d:/jamsapplication/nsk.jap");
@@ -58,7 +59,7 @@ public class IOTest {
             public ModelNode createNode(ComponentDescriptor cd) {
                 return new ModelNode(cd);
             }
-        });
+        }, Logger.getLogger("test"));
 
         Document doc = XMLTools.getDocument("d:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam");
 
@@ -67,14 +68,7 @@ public class IOTest {
         ModelDescriptor md = null;
 
         try {
-            md = io.loadModel(doc, classLoader, true, new ExceptionHandler() {
-                public void handle(JAMSException ex) {
-                    ex.printStackTrace();
-                }
-
-                public void handle(List<JAMSException> exList) {
-                }
-            });
+            md = io.loadModelDescriptor(doc, classLoader, true);
         } catch (JAMSException jex) {
             System.out.println(jex);
         }

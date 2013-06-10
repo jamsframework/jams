@@ -67,7 +67,7 @@ modelDoc = XMLTools.getDocument(modelFile)
 runtime = new StandardRuntime(properties)
 
 // create a ModelDescriptor object, i.e. a representation of the XML for further tweaking etc.
-modelIO = ModelIO.getStandardModelIO()
+modelIO = ModelIO.getStandardModelIO(java.util.logging.Logger.getLogger("mylogger"))
 modelDescriptor = modelIO.loadModel(modelDoc, runtime.getClassLoader(), false, new ExHandler())
 
 // set the workspace explicitly if needed

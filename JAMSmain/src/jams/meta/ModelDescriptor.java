@@ -33,7 +33,6 @@ import jams.meta.ModelProperties.ModelProperty;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSLogger;
 import jams.runtime.JAMSRuntime;
-import jams.runtime.Logger;
 import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
 import jams.tools.XMLTools;
@@ -44,10 +43,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -66,7 +64,8 @@ public class ModelDescriptor extends ComponentCollection {
     private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "", modelName = "";
     private ModelNode rootNode;
 
-    public ModelDescriptor() {
+    public ModelDescriptor(Logger log) {
+        super(log);
         modelProperties = new ModelProperties();
     }
 
@@ -108,7 +107,7 @@ public class ModelDescriptor extends ComponentCollection {
         outputDataStores.remove(dataStore.getName());
     }
 
-    public void initPreprocessors(Node preprocessorNode, ExceptionHandler exHandler) {
+    public void initPreprocessors(Node preprocessorNode) {
 
         preprocessors = new ArrayList();
 
@@ -146,7 +145,7 @@ public class ModelDescriptor extends ComponentCollection {
         }
     }
 
-    public void initDatastores(Node dataStoresNode, ExceptionHandler exHandler) {
+    public void initDatastores(Node dataStoresNode) {
 
         outputDataStores = new HashMap<String, OutputDSDescriptor>();
 
@@ -163,7 +162,7 @@ public class ModelDescriptor extends ComponentCollection {
             ContextDescriptor context = (ContextDescriptor) getComponentDescriptor(e.getAttribute("context"));
 
             if (context == null) {
-                exHandler.handle(new JAMSException(MessageFormat.format(JAMS.i18n("Context_does_not_exist"), e.getAttribute("context")), JAMS.i18n("Error")));
+                logger.warning(MessageFormat.format(JAMS.i18n("Context_does_not_exist"), e.getAttribute("context")));
                 continue;
             }
 
@@ -182,8 +181,8 @@ public class ModelDescriptor extends ComponentCollection {
                 String attributeName = attributeElement.getAttribute("id");
                 ContextAttribute ca = context.getDynamicAttributes().get(attributeName);
                 if (ca == null) {
-                    exHandler.handle(new JAMSException(MessageFormat.format(JAMS.i18n("Attribute_does_not_exist_and_is_removed"),
-                            attributeName, od.getName()), JAMS.i18n("Error")));
+                    logger.warning(MessageFormat.format(JAMS.i18n("Attribute_does_not_exist_and_is_removed"),
+                            attributeName, od.getName()));
                 } else {
                     contextAttributes.add(ca);
                 }
@@ -204,7 +203,7 @@ public class ModelDescriptor extends ComponentCollection {
         return this.outputDataStores;
     }
 
-    public void setModelParameters(Element launcherNode, ExceptionHandler exHandler) {//throws JAMSException {
+    public void setModelParameters(Element launcherNode) {
         Node node;
 
         ArrayList<JAMSException> exceptions = new ArrayList<JAMSException>();
@@ -230,7 +229,7 @@ public class ModelDescriptor extends ComponentCollection {
                         mProp.addProperty(group, property);
                     } catch (JAMSException je) {
                         exceptions.add(je);
-                        exHandler.handle(je);
+                        logger.warning(je.getMessage());
                     }
                 }
                 if (node.getNodeName().equalsIgnoreCase("subgroup")) {
@@ -247,14 +246,13 @@ public class ModelDescriptor extends ComponentCollection {
                             mProp.addProperty(subgroup, property);
                         } catch (JAMSException je) {
                             exceptions.add(je);
-                            exHandler.handle(je);
+                            logger.warning(je.getMessage());
                         }
                     }
                 }
             }
         }
 
-        exHandler.handle(exceptions);
         return;
     }
 
@@ -264,7 +262,7 @@ public class ModelDescriptor extends ComponentCollection {
         theModelElement.setHelpComponent(helpComponent);
     }
 
-    private ModelProperty getPropertyFromElement(Element propertyElement, ModelProperties mProp) throws JAMSException {
+    private ModelProperty getPropertyFromElement(Element propertyElement, ModelProperties mProp) {
         ModelProperties.ModelProperty property = mProp.createProperty();
         property.component = getComponentDescriptor(propertyElement.getAttribute("component"));
 
@@ -450,56 +448,48 @@ public class ModelDescriptor extends ComponentCollection {
 //                    mpd.setEnabled(false);
 
                 } catch (Exception ex) {
-                    rt.handle(new JAMSException("Error while while preprocessing model", ex));
+                    throw(new JAMSException("Error while preprocessing model", ex));
                 }
             }
         }
     }
 
-    public static void main(String[] args) throws IOException, JAMSException {
-
-        SystemProperties properties = JAMSProperties.createProperties();
-        properties.load("e:/jamsapplication/nsk.jap");
-        String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
-
-        JAMSRuntime runtime = new StandardRuntime(properties);
-
-        ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new JAMSLogger());
-
-        ModelIO io = new ModelIO(new NodeFactory() {
-            public ModelNode createNode(ComponentDescriptor cd) {
-                return new ModelNode(cd);
-            }
-        });
-
-        Document doc = XMLTools.getDocument("e:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam");
-
-        // get the model and access some meta data
-
-        ModelDescriptor md = null;
-
-        ExceptionHandler exHandler = new ExceptionHandler() {
-            public void handle(JAMSException ex) {
-                ex.printStackTrace();
-            }
-
-            public void handle(List<JAMSException> exList) {
-            }
-        };
-
-        Logger log = new JAMSLogger();
-        log.addObserver(new Observer() {
-            @Override
-            public void update(Observable o, Object arg) {
-                System.out.print(arg);
-            }
-        });
-
-        md = io.loadModel(doc, classLoader, false, exHandler);
-
-        md.metaProcess(runtime);
-
-        XMLTools.writeXmlFile(io.getModelDocument(md), "e:/jamsapplication/JAMS-Gehlberg/j2k_concurrent.jam");
-
-    }
+//    public static void main(String[] args) throws IOException {
+//
+//        SystemProperties properties = JAMSProperties.createProperties();
+//        properties.load("e:/jamsapplication/nsk.jap");
+//        String[] libs = StringTools.toArray(properties.getProperty("libs", ""), ";");
+//
+//        JAMSRuntime runtime = new StandardRuntime(properties);
+//
+//        ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new JAMSLogger());
+//
+//        ModelIO io = new ModelIO(new NodeFactory() {
+//            public ModelNode createNode(ComponentDescriptor cd) {
+//                return new ModelNode(cd);
+//            }
+//        }, Logger.getLogger("test"));
+//
+//        Document doc = XMLTools.getDocument("e:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam");
+//
+//        // get the model and access some meta data
+//
+//        ModelDescriptor md = null;
+//
+//        ExceptionHandler exHandler = new ExceptionHandler() {
+//            public void handle(JAMSException ex) {
+//                ex.printStackTrace();
+//            }
+//
+//            public void handle(List<JAMSException> exList) {
+//            }
+//        };
+//
+//        md = io.loadModel(doc, classLoader, false);
+//
+//        md.metaProcess(runtime.getClassLoader(), runtime.getLogger());
+//
+//        XMLTools.writeXmlFile(io.getModelDocument(md), "e:/jamsapplication/JAMS-Gehlberg/j2k_concurrent.jam");
+//
+//    }
 }

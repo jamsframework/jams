@@ -38,6 +38,8 @@ import org.jfree.data.xy.*;
 import org.jfree.util.ShapeUtilities.*;
 
 import jams.data.*;
+import jams.gui.tools.GUIHelper;
+import jams.tools.JAMSTools;
 
 
 public class GraphProperties {
@@ -1239,9 +1241,7 @@ public class GraphProperties {
         
         public CustomizeRendererDlg(){
             super(parent, "Customize Series Paint", true);
-            URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
-            ImageIcon icon = new ImageIcon(url);
-            setIconImage(icon.getImage());
+            setIconImages(JAMSTools.getJAMSIcons());
             Point parentloc = parent.getLocation();
             setLocation(parentloc.x + 50, parentloc.y + 50);
             

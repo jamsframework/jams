@@ -4,6 +4,7 @@
  */
 package optas.metamodel;
 
+import jams.JAMSException;
 import jams.data.Attribute;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ComponentField;
@@ -12,19 +13,11 @@ import jams.meta.ContextDescriptor;
 import jams.meta.ModelDescriptor;
 import jams.meta.ModelNode;
 import jams.model.JAMSContext;
-import jams.tools.XMLTools;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
-import optas.optimizer.Direct;
 import optas.optimizer.OptimizerLibrary;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.OptimizerParameter;
 import optas.optimizer.management.SimpleOptimizationController;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  *
@@ -101,9 +94,7 @@ public class ModelModifier2 {
                     p.field = optimizerContext.getStaticAttributes().get(attributeName);
                 }
             }
-        } catch (ContextDescriptor.ContextAttributeException cae) {
-            cae.printStackTrace();
-        } catch (ComponentField.AttributeLinkException ale) {
+        } catch (JAMSException ale) {
             ale.printStackTrace();
         }
         String parameterNames = "";
@@ -127,7 +118,7 @@ public class ModelModifier2 {
                 }
                 try {
                     cf.linkToAttribute(ca.getContext(), ca.getName(), false);
-                } catch (ComponentField.AttributeLinkException ale) {
+                } catch (JAMSException ale) {
                     ale.printStackTrace();
                     return false;
                 }

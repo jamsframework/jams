@@ -69,7 +69,6 @@ public class JAMSNode extends ModelNode {
 
             ComponentDescriptor cd = (ComponentDescriptor) o;
             observer = new Observer() {
-
                 public void update(Observable o, Object arg) {
                     JAMSNode.this.tree.updateUI();
                 }
@@ -126,16 +125,11 @@ public class JAMSNode extends ModelNode {
     public JAMSNode clone(JAMSTree target) {
 
         JAMSNode clone = null;
-        try {
-            //@TODO: proper handling
-            ComponentDescriptor cd = ((ComponentDescriptor) this.getUserObject()).cloneNode();
-            clone = new JAMSNode(cd, this.getType(), target);
-            cd.register(target.getComponentCollection());
-        } catch (ComponentDescriptor.RenameException ex) {
-            Logger.getLogger(JAMSNode.class.getName()).log(Level.INFO, ex.getMessage());
-        } catch (JAMSException ex) {
-            Logger.getLogger(JAMSNode.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-        }
+
+        ComponentDescriptor cd = ((ComponentDescriptor) this.getUserObject()).cloneNode();
+        clone = new JAMSNode(cd, this.getType(), target);
+        cd.register(target.getComponentCollection());
+
         return clone;
     }
 }

@@ -5,7 +5,6 @@ Heiko Busch, Robert Riedel, Christin Michel
 Support:
 Peter Krause & FSU/DGHM Team      
 Olaf David & USDA/ARS Team
-Lucas Arruda Ramalho (Portuguese translation)
 
 Libraries:
 GeoTools (http://www.geotools.org)

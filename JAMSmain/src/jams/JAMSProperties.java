@@ -57,24 +57,21 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
      * @throws java.io.IOException
      */
     public void load(String fileName) throws IOException {
-        try {
-            properties.load(new FileInputStream(fileName));
-            defaultFilename = fileName;
-            convertToBoolean();
 
-            for (Object key : properties.keySet()) {
-                JAMSProperty property = propertyMap.get(key);
-                if (property == null) {
-                    property = new JAMSProperty((String) key);
-                    propertyMap.put((String) key, property);
-                }
-                property.setChanged();
-                property.notifyObservers();
+        properties.load(new FileInputStream(fileName));
+        defaultFilename = fileName;
+        convertToBoolean();
+
+        for (Object key : properties.keySet()) {
+            JAMSProperty property = propertyMap.get(key);
+            if (property == null) {
+                property = new JAMSProperty((String) key);
+                propertyMap.put((String) key, property);
             }
-
-        } catch (Exception ex) {
-            JAMSTools.handle(ex);
+            property.setChanged();
+            property.notifyObservers();
         }
+
     }
 
     /*

@@ -1,6 +1,6 @@
 package jamsui.juice.documentation;
 
-import jams.JAMS;
+import jams.JAMSException;
 import jams.JAMSProperties;
 import jams.JAMSVersion;
 import jams.data.Attribute;
@@ -459,7 +459,7 @@ public class DocumentationGenerator {
 
         try {
             languageIndependentComponentDescription = XMLTools.getDocument(languageIndependentComponentDescriptionFile.getAbsolutePath());
-        } catch (FileNotFoundException fnfe) {
+        } catch (JAMSException fnfe) {
             DocumentationWizard.log("warning: the documentation of " + componentName + " is incomplete");
             return null;
         }
@@ -532,7 +532,7 @@ public class DocumentationGenerator {
 
         try {
             languageDependentComponentDescription = XMLTools.getDocument(languageDependentComponentDescriptionFile.getAbsolutePath());
-        } catch (FileNotFoundException fnfe) {
+        } catch (JAMSException fnfe) {
             DocumentationWizard.log("warning: the documentation of " + componentName + " is incomplete");
             return;
         }

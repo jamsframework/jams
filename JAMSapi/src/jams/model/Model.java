@@ -34,33 +34,25 @@ import java.util.HashMap;
  */
 public interface Model extends Context {
 
-    String getAuthor();
+    public String getName();
 
-    String getDate();
+    public void setName(String name);
+
+    public JAMSRuntime getRuntime();
+
+    public Workspace getWorkspace();
+
+    public File getWorkspaceDirectory();
+
+    public void setProfiling(boolean profiling);
     
-    String getName();
-
-    HashMap<Component, ArrayList<Field>> getNullFields();
-
-    JAMSRuntime getRuntime();
-
-    Workspace getWorkspace();
-
-    File getWorkspaceDirectory();
-
-    void setAuthor(String author);
-
-    void setDate(String date);
+    public HashMap<Component, ArrayList<Field>> getNullFields();
     
-    void setName(String name);
+    public void setNullFields(HashMap<Component, ArrayList<Field>> nullFields);
 
-    void setProfiling(boolean profiling);
+    public String getWorkspacePath();
 
-    void setNullFields(HashMap<Component, ArrayList<Field>> nullFields);
-
-    void setWorkspacePath(String workspaceDirectory);
-
-    String getWorkspacePath();
+    public void setWorkspacePath(String workspaceDirectory);
 
     public void measureTime(long startTime, Component c);
 

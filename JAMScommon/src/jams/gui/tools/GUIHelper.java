@@ -54,6 +54,7 @@ public class GUIHelper {
 
     /**
      * Remove swing component from container
+     *
      * @param cont Container object
      * @param c Component object
      */
@@ -63,12 +64,13 @@ public class GUIHelper {
 
     /**
      * Add swing component to container using gridbag layout
+     *
      * @param cont Container object
      * @param gbl Gridbag layout object
      * @param c Component to be added
      * @param x X position
      * @param y Y position
-     * @param width Component width 
+     * @param width Component width
      * @param height Component height
      * @param weightx Component weight in x direction
      * @param weighty Component weight in y direction
@@ -92,12 +94,13 @@ public class GUIHelper {
 
     /**
      * Add swing component to container using gridbag layout
+     *
      * @param cont Container object
      * @param gbl Gridbag layout object
      * @param c Component to be added
      * @param x X position
      * @param y Y position
-     * @param width Component width 
+     * @param width Component width
      * @param height Component height
      * @param topInset Top inset
      * @param leftInset Left inset
@@ -126,12 +129,13 @@ public class GUIHelper {
 
     /**
      * Add swing component to container using gridbag layout
+     *
      * @param cont Container object
      * @param gbl Gridbag layout object
      * @param c Component to be added
      * @param x X position
      * @param y Y position
-     * @param width Component width 
+     * @param width Component width
      * @param height Component height
      * @param weightx Component weight in x direction
      * @param weighty Component weight in y direction
@@ -156,6 +160,7 @@ public class GUIHelper {
 
     /**
      * Show Yes-No-Cancel dialog
+     *
      * @param owner The parent component
      * @param message
      * @param title
@@ -171,6 +176,7 @@ public class GUIHelper {
 
     /**
      * Show Yes-No dialog
+     *
      * @param owner The parent component
      * @param message
      * @param title
@@ -187,6 +193,7 @@ public class GUIHelper {
 
     /**
      * Show info dialog
+     *
      * @param owner The parent component
      * @param message
      * @param title
@@ -197,6 +204,7 @@ public class GUIHelper {
 
     /**
      * Show info dialog
+     *
      * @param owner The parent component
      * @param message
      */
@@ -206,6 +214,7 @@ public class GUIHelper {
 
     /**
      * Show error dialog
+     *
      * @param owner The parent component
      * @param message
      * @param title
@@ -216,6 +225,7 @@ public class GUIHelper {
 
     /**
      * Show error dialog
+     *
      * @param owner The parent component
      * @param message
      */
@@ -225,6 +235,7 @@ public class GUIHelper {
 
     /**
      * Show input dialog
+     *
      * @param owner The parent component
      * @param message
      * @param initalValue
@@ -236,6 +247,7 @@ public class GUIHelper {
 
     /**
      * Show input dialog
+     *
      * @param owner The parent component
      * @param message The message to be shown
      * @param title The dialog window title
@@ -247,9 +259,10 @@ public class GUIHelper {
     }
 
     /**
-     * Create a new JFileChooser and support disabling of zipped folders 
-     * @param useShellFolder If true, the native file chooser dialog will be displayed,
-     * a JAVA version else
+     * Create a new JFileChooser and support disabling of zipped folders
+     *
+     * @param useShellFolder If true, the native file chooser dialog will be
+     * displayed, a JAVA version else
      * @return new JFileChooser
      */
     public static JFileChooser getJFileChooser(boolean useShellFolder) {
@@ -263,7 +276,6 @@ public class GUIHelper {
             }
         } else {
             return new JFileChooser(new File("."), new RestrictedFileSystemView()) {
-
                 @Override
                 protected void setup(FileSystemView view) {
                     putClientProperty("FileChooser.useShellFolder", Boolean.FALSE);
@@ -276,6 +288,7 @@ public class GUIHelper {
 
     /**
      * Create a new JFileChooser
+     *
      * @return new JFileChooser
      */
     public static JFileChooser getJFileChooser(FileFilter filter) {
@@ -291,6 +304,7 @@ public class GUIHelper {
 
     /**
      * Create a new JFileChooser
+     *
      * @return new JFileChooser
      */
     public static JFileChooser getJFileChooser() {
@@ -299,8 +313,10 @@ public class GUIHelper {
 
     /**
      * Open URL in systems default web browser on Windows, OSX and Unix/Linux.
-     * For Unix/Linux a number of different browsers are tested.
-     * Taken from BrowserLauncher2 project (http://sourceforge.net/projects/browserlaunch2).
+     * For Unix/Linux a number of different browsers are tested. Taken from
+     * BrowserLauncher2 project
+     * (http://sourceforge.net/projects/browserlaunch2).
+     *
      * @param url URL to be opened
      */
     public static void openURL(String url) {
@@ -340,7 +356,6 @@ public class GUIHelper {
 
     static public void setupLogHandler(Logger logger, final Component owner) {
         logger.addHandler(new Handler() {
-
             @Override
             public void publish(LogRecord record) {
                 String msg = record.getMessage();
@@ -368,12 +383,12 @@ public class GUIHelper {
             }
         });
     }
-    
+
     public static JMenuItem getRecentMenu(SystemProperties properties) {
-        
+
         JMenuItem recentMenu = new JMenuItem(JAMS.i18n("Recent_Files"));
-        
+
         return recentMenu;
-        
+
     }
 }

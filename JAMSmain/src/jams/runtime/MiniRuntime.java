@@ -24,7 +24,6 @@ package jams.runtime;
 import java.awt.BorderLayout;
 import java.util.HashMap;
 import java.util.Observer;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import jams.JAMS;
 import jams.data.DataFactory;
@@ -34,7 +33,9 @@ import jams.model.Component;
 import jams.model.GUIComponent;
 import jams.model.JAMSModel;
 import jams.model.SmallModelState;
+import jams.tools.JAMSTools;
 import jams.tools.StringTools;
+import java.util.logging.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -49,7 +50,7 @@ public class MiniRuntime implements JAMSRuntime {
     private JAMSLogger infoLog = new JAMSLogger();
     private DataFactory dataFactory = DefaultDataFactory.getDataFactory();
     /** 
-     * Creates a new instance of MiniRuntime. This Runtime can be used to
+     * Creates a new instance of MiniRuntime. This JAMSRuntime can be used to
      * test a single component without model, e.g. for debugging purposes.
      * @param component The component to be tested
      */
@@ -61,7 +62,7 @@ public class MiniRuntime implements JAMSRuntime {
             frame = new JFrame();
             frame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
             frame.setTitle("MiniRuntime");
-            frame.setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
+            frame.setIconImages(JAMSTools.getJAMSIcons());
             frame.setPreferredSize(new java.awt.Dimension(800, 600));
             frame.getContentPane().add(((GUIComponent) component).getPanel(), BorderLayout.CENTER);
             frame.pack();
@@ -250,5 +251,10 @@ public class MiniRuntime implements JAMSRuntime {
 
     public Document getModelDocument() {
         return null;
+    }
+
+    @Override
+    public Logger getLogger() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -22,24 +22,27 @@
 package jams.components.concurrency;
 
 import jams.model.Component;
+import java.util.concurrent.Callable;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-class RunnableComponent implements Runnable {
+class CallableComponent implements Callable {
 
     Component comp;
 
-    public RunnableComponent(Component comp) {
+    public CallableComponent(Component comp) {
         this.comp = comp;
     }
 
-    public void run() {
+    @Override
+    public Object call() throws Exception {
         try {
             comp.run();
         } catch (Exception e) {
             comp.getModel().getRuntime().handle(e, comp.getInstanceName());
-        }
+        }    
+        return null;
     }
 }

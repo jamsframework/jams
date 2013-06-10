@@ -5,10 +5,8 @@
 
 package jams.components.gui.spreadsheet;
 
-import java.net.URL;
-import javax.swing.ImageIcon;
+import jams.tools.JAMSTools;
 import javax.swing.JFrame;
-import javax.swing.JScrollPane;
 /**
  *
  * @author Developement
@@ -20,9 +18,7 @@ public class Spreadsheet_standalone extends JFrame{
     public Spreadsheet_standalone(){
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("JAMS JTS Viewer");
-        URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
-        ImageIcon icon = new ImageIcon(url);
-        setIconImage(icon.getImage());
+        setIconImages(JAMSTools.getJAMSIcons());
         
         setSize(680,480);
         

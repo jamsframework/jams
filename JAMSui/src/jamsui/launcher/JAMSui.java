@@ -35,7 +35,10 @@ import jams.model.JAMSFullModelState;
 import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
+import java.awt.GraphicsEnvironment;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -48,9 +51,11 @@ public class JAMSui {
     private static File baseDir = new File(System.getProperty("user.dir"));
     public static final String APP_TITLE = "JAMS";
     protected SystemProperties properties;
+    static final Logger logger = Logger.getLogger(JAMSui.class.getName());
 
     /**
      * JAMSui contructor
+     *
      * @param cmdLine A JAMSCmdLine object containing the command line arguments
      */
     public JAMSui(JAMSCmdLine cmdLine) {
@@ -61,7 +66,7 @@ public class JAMSui {
             try {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             } catch (Exception ex) {
-                handle(ex);
+                logger.log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
 
@@ -74,8 +79,7 @@ public class JAMSui {
             try {
                 properties.load(cmdLine.getConfigFileName());
             } catch (IOException ioe) {
-                System.out.println(JAMS.i18n("Error_while_loading_config_from") + cmdLine.getConfigFileName());
-                handle(ioe);
+                logger.log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + cmdLine.getConfigFileName());
             }
             baseDir = new File(cmdLine.getConfigFileName()).getParentFile();
         } else {
@@ -86,15 +90,14 @@ public class JAMSui {
                 try {
                     properties.load(defaultFile);
                 } catch (IOException ioe) {
-                    System.out.println(JAMS.i18n("Error_while_loading_config_from") + defaultFile);
-                    handle(ioe);
+                    logger.log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + defaultFile);
                 }
             }
         }
 
         JAMSTools.configureLocaleEncoding(properties);
 
-        if (cmdLine.isNogui()) {
+        if (cmdLine.isNogui() || GraphicsEnvironment.isHeadless()) {
             properties.setProperty(JAMSProperties.GUICONFIG_IDENTIFIER, "false");
             properties.setProperty(JAMSProperties.WINDOWENABLE_IDENTIFIER, "false");
             properties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "true");
@@ -103,7 +106,7 @@ public class JAMSui {
 
         boolean guiConfig = Boolean.parseBoolean(properties.getProperty(SystemProperties.GUICONFIG_IDENTIFIER, "false"));
         String modelFileName = cmdLine.getModelFileName();
-        
+
         String floatFormat = properties.getProperty(SystemProperties.FLOAT_FORMAT, "%f");
         JAMS.setFloatFormat(floatFormat);
 
@@ -114,7 +117,7 @@ public class JAMSui {
             if (guiConfig) {
                 startGUI();
             } else {
-                System.out.println(JAMS.i18n("You_must_provide_a_model_file_name_(see_JAMS_--help)_when_disabling_GUI_config!"));
+                logger.severe(JAMS.i18n("You_must_provide_a_model_file_name_(see_JAMS_--help)_when_disabling_GUI_config!"));
                 System.exit(-1);
             }
 
@@ -135,8 +138,8 @@ public class JAMSui {
                     }
                     startGUI(modelFileName, cmdLineParameterValues, props);
 
-                } catch (Exception e) {
-                    JAMSui.handle(e);
+                } catch (Exception ex) {
+                    logger.log(Level.SEVERE, ex.getMessage(), ex);
                 }
 
             } else {
@@ -144,14 +147,14 @@ public class JAMSui {
                 // if GUI is disabled and a model file provided, then run
                 // the model directly
 
-                String info = "";
-
                 //check if file exists
                 File file = new File(modelFileName);
                 if (!file.exists()) {
-                    System.out.println(JAMS.i18n("Model_file_") + modelFileName + JAMS.i18n("_could_not_be_found_-_exiting!"));
-                    return;
+                    logger.severe(JAMS.i18n("Model_file_") + modelFileName + JAMS.i18n("_could_not_be_found_-_exiting!"));
+                    System.exit(-1);
                 }
+
+                String info = "";
 
                 // do some search and replace on the input file and create new file if necessary
                 String newModelFilename = XMLProcessor.modelDocConverter(modelFileName);
@@ -160,7 +163,7 @@ public class JAMSui {
                     modelFileName = newModelFilename;
                 }
 
-                JAMSRuntime runtime = null;
+                jams.runtime.JAMSRuntime runtime = null;
                 try {
                     String xmlString = FileTools.fileToString(modelFileName);
                     String[] args = StringTools.toArray(cmdLineParameterValues, ";");
@@ -186,7 +189,6 @@ public class JAMSui {
                     runtime = new StandardRuntime(properties);
 
                     runtime.loadModel(modelDoc, defaultWorkspacePath);
-
                     // if workspace has not been provided, check if the document has been
                     // read from file and try to use parent directory instead
 //                    if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())
@@ -199,6 +201,7 @@ public class JAMSui {
                     if (!info.equals("")) {
                         runtime.println(info);
                     }
+
                     String snapshotFileName = cmdLine.getSnapshotFileName();
                     if (snapshotFileName != null) {
                         File snapshotFile = new File(snapshotFileName);
@@ -213,22 +216,25 @@ public class JAMSui {
                                 JAMSTools.handle(e);
                             }
                             // collect some garbage ;)
-                            Runtime.getRuntime().gc();
+                            java.lang.Runtime.getRuntime().gc();
+                            System.exit(0);
                         }
                     } else {
+
                         runtime.runModel();
+
+//                        System.exit(0);
                     }
 
                 } catch (IOException ioe) {
-                    System.out.println(JAMS.i18n("The_model_definition_file_") + modelFileName + JAMS.i18n("_could_not_be_loaded,_because:_") + ioe.toString());
+                    logger.severe(JAMS.i18n("The_model_definition_file_") + modelFileName + JAMS.i18n("_could_not_be_loaded,_because:_") + ioe.toString());
                 } catch (SAXException se) {
-                    System.out.println(JAMS.i18n("The_model_definition_file_") + modelFileName + JAMS.i18n("_contained_errors!"));
+                    logger.severe(JAMS.i18n("The_model_definition_file_") + modelFileName + JAMS.i18n("_contained_errors!"));
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     if (runtime != null) {
                         runtime.handle(ex);
                     } else {
-                        ex.printStackTrace();
+                        logger.log(Level.SEVERE, ex.getMessage(), ex);
                     }
                 }
             }
@@ -245,6 +251,7 @@ public class JAMSui {
 
     /**
      * JAMSui main method
+     *
      * @param args The command line arguments
      */
     public static void main(String[] args) {
@@ -254,27 +261,8 @@ public class JAMSui {
     }
 
     /**
-     * Exception handling method
-     * @param ex Exception to be handled
-     */
-    public static void handle(Throwable t) {
-        handle(t, true);
-    }
-
-    /**
-     * Exception handling method
-     * @param ex Exception to be handled
-     * @param proceed Proceed or not?
-     */
-    public static void handle(Throwable t, boolean proceed) {
-        t.printStackTrace();
-        if (!proceed) {
-            System.exit(-1);
-        }
-    }
-
-    /**
      * Get the JAMSui base directory
+     *
      * @return The JAMSui base directory
      */
     public static File getBaseDir() {

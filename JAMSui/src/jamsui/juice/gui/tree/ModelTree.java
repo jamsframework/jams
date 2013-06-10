@@ -80,7 +80,7 @@ public class ModelTree extends JAMSTree {
 //                cd.setNode(node);
                 return node;
             }
-        });
+        }, JUICE.getLogger());
         updateModelTree(modelDoc);
 
         addTreeSelectionListener(new TreeSelectionListener() {
@@ -359,7 +359,7 @@ public class ModelTree extends JAMSTree {
 
         if (modelDoc == null) {
             try {
-                ModelDescriptor md = modelIO.createModel(JUICE.getExHandler());
+                ModelDescriptor md = modelIO.createModel();
                 view.setModelDescriptor(md);
                 this.setComponentCollection(md);
                 rootNode = md.getRootNode();
@@ -370,7 +370,7 @@ public class ModelTree extends JAMSTree {
             }
         } else {
             try {
-                ModelDescriptor md = modelIO.loadModel(modelDoc, JUICE.getLoader(), true, JUICE.getExHandler());
+                ModelDescriptor md = modelIO.loadModelDescriptor(modelDoc, JUICE.getLoader(), true);
                 view.setModelDescriptor(md);
                 this.setComponentCollection(md);
                 rootNode = md.getRootNode();

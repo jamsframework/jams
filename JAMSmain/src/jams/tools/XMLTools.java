@@ -24,6 +24,7 @@
 package jams.tools;
 
 import jams.JAMS;
+import jams.JAMSException;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 import java.io.*;
@@ -51,7 +52,7 @@ public class XMLTools {
      * @return The XML document
      * @throws java.io.FileNotFoundException
      */
-    public static Document getDocument(String fileName) throws FileNotFoundException {
+    public static Document getDocument(String fileName) {
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -59,7 +60,7 @@ public class XMLTools {
         
         File file = new File(fileName);
         if (!file.exists()) {
-            throw new FileNotFoundException();
+            throw new JAMSException(JAMS.i18n("File_") + fileName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("File_open_error"));
         }
         
         try {
@@ -73,15 +74,15 @@ public class XMLTools {
                         
         } catch (SAXException sxe) {
             // Error generated during parsing
-            JAMSTools.handle(sxe);
+            throw new JAMSException(sxe.getMessage(), sxe);
             
         } catch (ParserConfigurationException pce) {
             // Parser with specified options can't be built
-            JAMSTools.handle(pce);
+            throw new JAMSException(pce.getMessage(), pce);
             
         } catch (IOException ioe) {
             // I/O error
-            JAMSTools.handle(ioe);
+            throw new JAMSException(ioe.getMessage(), ioe);
         }
         
         return document;

@@ -24,9 +24,7 @@ package jams.meta;
 import jams.JAMSException;
 import java.util.HashMap;
 import jams.JAMS;
-import jams.ExceptionHandler;
 import jams.data.DefaultDataFactory;
-import jams.meta.ComponentField.AttributeLinkException;
 import java.text.MessageFormat;
 import java.util.Map.Entry;
 
@@ -39,30 +37,29 @@ public class ContextDescriptor extends ComponentDescriptor {
     private HashMap<String, ContextAttribute> staticAttributes = new HashMap<String, ContextAttribute>();
     private HashMap<String, ContextAttribute> dynamicAttributes = new HashMap<String, ContextAttribute>();
 
-    public ContextDescriptor(String instanceName, Class clazz) throws NullClassException {
+    public ContextDescriptor(String instanceName, Class clazz) {
         super(instanceName, clazz);
     }
 
-    public ContextDescriptor(String instanceName, Class clazz, String versionID, ComponentCollection md, ExceptionHandler eh) throws NullClassException {
-        super(instanceName, clazz, versionID, md, eh);
+    public ContextDescriptor(String instanceName, Class clazz, String versionID, ComponentCollection md) {
+        super(instanceName, clazz, versionID, md);
     }
 
-    public ContextDescriptor(Class clazz, String versionID, ComponentCollection md, ExceptionHandler eh) throws NullClassException {
-        super(clazz, versionID, md, eh);
+    public ContextDescriptor(Class clazz, String versionID, ComponentCollection md) {
+        super(clazz, versionID, md);
     }
 
-//    public ContextDescriptor(Class clazz) throws JAMSException {
+//    public ContextDescriptor(Class clazz) {
 //        this(clazz.getSimpleName(), clazz);
 //    }
-    public ContextAttribute addDynamicAttribute(String name, Class type) throws JAMSException {
+    public ContextAttribute addDynamicAttribute(String name, Class type) {
 
         ContextAttribute ca = dynamicAttributes.get(name);
 
         // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
         if (ca != null) {
 
-            throw new ContextAttributeException(MessageFormat.format(JAMS.i18n("Context_attribute_does_already_exist"), name),
-                    JAMS.i18n("Error_adding_context_attribute"));
+            throw new JAMSException(JAMS.i18n("Error_adding_context_attribute") + "\n" + MessageFormat.format(JAMS.i18n("Context_attribute_does_already_exist"), name));
 
         } else {
             ca = new ContextAttribute(name, type, this);
@@ -72,15 +69,14 @@ public class ContextDescriptor extends ComponentDescriptor {
         return ca;
     }
 
-    public ContextAttribute addStaticAttribute(String name, Class type, String value) throws ContextAttributeException {
+    public ContextAttribute addStaticAttribute(String name, Class type, String value) {
 
         ContextAttribute ca = staticAttributes.get(name);
 
         // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
         if (ca != null) {
 
-            throw new ContextAttributeException(MessageFormat.format(JAMS.i18n("Context_attribute_does_already_exist"), name),
-                    JAMS.i18n("Error_adding_context_attribute"));
+            throw new JAMSException(JAMS.i18n("Error_adding_context_attribute") + "\n" + MessageFormat.format(JAMS.i18n("Context_attribute_does_already_exist"), name));
 
         } else {
             ca = new ContextAttribute(name, type, this);
@@ -92,13 +88,12 @@ public class ContextDescriptor extends ComponentDescriptor {
         return ca;
     }
 
-    public class ContextAttributeException extends JAMSException {
-
-        public ContextAttributeException(String message, String header) {
-            super(message, header);
-        }
-    }
-
+//    public class ContextAttributeException extends JAMSException {
+//
+//        public ContextAttributeException(String message, String header) {
+//            super(message, header);
+//        }
+//    }
     public void removeStaticAttribute(String name) {
         ContextAttribute ca = staticAttributes.get(name);
         staticAttributes.remove(name);
@@ -127,9 +122,9 @@ public class ContextDescriptor extends ComponentDescriptor {
         }
         return result;
     }
-    
+
     @Override
-    public ContextDescriptor cloneNode() throws AttributeLinkException, NullClassException {
+    public ContextDescriptor cloneNode() {
 
         ContextDescriptor copy = new ContextDescriptor(getInstanceName(), getClazz());
         for (String name : componentFields.keySet()) {

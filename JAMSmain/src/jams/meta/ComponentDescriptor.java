@@ -27,7 +27,6 @@ import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
 import jams.JAMS;
 import jams.JAMSException;
-import jams.ExceptionHandler;
 import jams.model.Context;
 import jams.model.JAMSComponentDescription;
 import jams.model.VersionComments;
@@ -53,7 +52,7 @@ public class ComponentDescriptor extends Observable {
     private ModelNode node;
     private boolean enabled = true;
 
-    public ComponentDescriptor(String instanceName, Class clazz) throws NullClassException {
+    public ComponentDescriptor(String instanceName, Class clazz) {
 
         if (clazz == null) {
             throw new NullClassException(JAMS.i18n("Could_not_find_class_for_component_") + instanceName + "_!", JAMS.i18n("Error"));
@@ -70,17 +69,17 @@ public class ComponentDescriptor extends Observable {
         init();
     }
 
-    public ComponentDescriptor(String instanceName, Class clazz, String versionID, ComponentCollection md, ExceptionHandler eh) throws NullClassException {
+    public ComponentDescriptor(String instanceName, Class clazz, String versionID, ComponentCollection md) {
         this(instanceName, clazz);
 
         if (versionID != null && !versionID.equals(this.version)) {
-            
-            String message = String.format(JAMS.i18n("ComponentVersionMismatch"), instanceName, this.version, versionID);
+
+            String message = MessageFormat.format(JAMS.i18n("ComponentVersionMismatch"), instanceName, this.version, versionID);
 
             // get the change comments
             VersionComments vc = (VersionComments) clazz.getAnnotation(VersionComments.class);
             if (vc != null) {
-                
+
                 for (Entry entry : vc.entries()) {
                     if (entry.version().compareTo(versionID) > 0) {
                         message += "\n" + "            - version " + entry.version() + ": " + entry.comment();
@@ -88,18 +87,14 @@ public class ComponentDescriptor extends Observable {
                 }
             }
 
-            eh.handle(new VersionMismatchException(message, JAMS.i18n("Notice")));
+            md.logger.warning(message);
         }
 
-        try {
-            register(md);
-        } catch (RenameException re) {
-            eh.handle(re);
-        }
+        register(md);
     }
 
-    public ComponentDescriptor(Class clazz, String versionID, ComponentCollection md, ExceptionHandler jeh) throws NullClassException {
-        this(clazz.getSimpleName(), clazz, versionID, md, jeh);
+    public ComponentDescriptor(Class clazz, String versionID, ComponentCollection md) {
+        this(clazz.getSimpleName(), clazz, versionID, md);
     }
 
     private void init() {
@@ -139,15 +134,15 @@ public class ComponentDescriptor extends Observable {
         }
     }
 
-    public void outputUnsetAttributes() {
-        for (ComponentField ad : getComponentFields().values()) {
-            if (ad.getAttribute() == null && ad.getContext() == null && ad.getValue() == null) {
-                Logger.getLogger(ComponentDescriptor.class.getName()).log(Level.INFO, JAMS.i18n("Attribute_") + ad.getName() + " (" + ad.getType() + JAMS.i18n(")_not_set_in_component_") + getInstanceName());
-            }
-        }
-    }
+//    public void outputUnsetAttributes() {
+//        for (ComponentField ad : getComponentFields().values()) {
+//            if (ad.getAttribute() == null && ad.getContext() == null && ad.getValue() == null) {
+//                logger.logger(Level.INFO, JAMS.i18n("Attribute_") + ad.getName() + " (" + ad.getType() + JAMS.i18n(")_not_set_in_component_") + getInstanceName());
+//            }
+//        }
+//    }
 
-    public ComponentDescriptor cloneNode() throws JAMSException {
+    public ComponentDescriptor cloneNode() {
 
         ComponentDescriptor copy = new ComponentDescriptor(getInstanceName(), getClazz());
         copy.setEnabled(this.isEnabled());
@@ -193,12 +188,12 @@ public class ComponentDescriptor extends Observable {
         this.componentRepository = null;
     }
 
-    public final void register(ComponentCollection md) throws RenameException {
+    public final void register(ComponentCollection md) {
         this.componentRepository = md;
         setInstanceName(this.instanceName);
     }
 
-    public void setInstanceName(String name) throws RenameException {
+    public void setInstanceName(String name) {
         String oldName = this.instanceName;
 
         this.instanceName = this.componentRepository.registerComponentDescriptor(oldName, name, this);
@@ -208,9 +203,6 @@ public class ComponentDescriptor extends Observable {
             this.notifyObservers();
         }
 
-        if (!this.instanceName.equals(name)) {
-            throw new RenameException(MessageFormat.format(JAMS.i18n("Component_name_is_already_in_use._Renamed_component_to_"), name, this.instanceName), JAMS.i18n("Invalid_value!"));
-        }
     }
 
     public boolean isEnabled() {
@@ -235,26 +227,10 @@ public class ComponentDescriptor extends Observable {
         return version;
     }
 
-    public class RenameException extends JAMSException {
-
-        public RenameException(String message, String header) {
-            super(message, header);
-            type = JAMSException.INFO_TYPE;
-        }
-    }
-
     public class NullClassException extends JAMSException {
 
         public NullClassException(String message, String header) {
             super(message, header);
-        }
-    }
-
-    public class VersionMismatchException extends JAMSException {
-
-        public VersionMismatchException(String message, String header) {
-            super(message, header);
-            type = JAMSException.INFO_TYPE;
         }
     }
 

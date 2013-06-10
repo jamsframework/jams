@@ -46,7 +46,7 @@ public class ContextAttribute {
         this.context = context;
     }
     
-    private void renameContextAttribute(String newName) throws JAMSException {
+    private void renameContextAttribute(String newName) {
         
         HashMap<String, ContextAttribute> attributes = getContext().getDynamicAttributes();
         
@@ -64,7 +64,7 @@ public class ContextAttribute {
         return name;
     }
     
-    public void setName(String name) throws JAMSException {
+    public void setName(String name) {
         if (!this.name.equals(name)) {
             renameContextAttribute(name);
         }

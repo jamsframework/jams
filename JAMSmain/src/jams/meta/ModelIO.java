@@ -23,18 +23,18 @@ package jams.meta;
 
 import jams.JAMS;
 import jams.JAMSException;
-import jams.ExceptionHandler;
 import jams.JAMSVersion;
 import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
 import jams.io.ParameterProcessor;
 import jams.meta.ComponentDescriptor.NullClassException;
-import jams.meta.ComponentField.AttributeLinkException;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelProperty;
 import jams.model.JAMSComponentDescription;
 import jams.tools.StringTools;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -53,55 +53,57 @@ public class ModelIO {
     private ClassLoader loader;
     private String modelName;
     private NodeFactory nodeFactory;
+    private Logger logger;
 
-    public ModelIO(NodeFactory nodeFactory) {
+    public ModelIO(NodeFactory nodeFactory, Logger logger) {
         this.nodeFactory = nodeFactory;
+        this.logger = logger;
     }
 
-    public static ModelIO getStandardModelIO() {
+    public static ModelIO getStandardModelIO(Logger logger) {
         return new ModelIO(new NodeFactory() {
             @Override
             public ModelNode createNode(ComponentDescriptor cd) {
                 return new ModelNode(cd);
             }
-        });
+        }, logger);
     }
 
 //    public ModelIO(ModelDescriptor md, JAMSClassLoader loader) {
 //        this.md = md;
 //        this.loader = loader;
 //    }
-    public ModelDescriptor createModel(ExceptionHandler exHandler) throws JAMSException {
+    public ModelDescriptor createModel() {
 
-        ModelDescriptor md = new ModelDescriptor();
-        ContextDescriptor cd = new ContextDescriptor(JAMS.i18n("New_Model"), modelClazz, null, md, exHandler);
+        ModelDescriptor md = new ModelDescriptor(logger);
+        ContextDescriptor cd = new ContextDescriptor(JAMS.i18n("New_Model"), modelClazz, null, md);
         ModelNode rootNode = nodeFactory.createNode(cd);
         rootNode.setType(ModelNode.MODEL_TYPE);
         md.setRootNode(rootNode);
 
-        md.initDatastores(null, exHandler);
+        md.initDatastores(null);
 
         return md;
     }
 
-    public ModelDescriptor loadModel(Document modelDoc, ClassLoader loader, boolean processEditors, ExceptionHandler exHandler) throws JAMSException {
+    public ModelDescriptor loadModelDescriptor(Document modelDoc, ClassLoader loader, boolean processEditors) {
 
         this.loader = loader;
 
         // do some preprocessing on the XML document to be backward compatible
         ParameterProcessor.preProcess(modelDoc);
 
-        ModelDescriptor md = getModelDescriptor(modelDoc, processEditors, exHandler);
+        ModelDescriptor md = getModelDescriptor(modelDoc, processEditors);
         return md;
 
     }
 
-    private ModelDescriptor getModelDescriptor(Document modelDoc, boolean processEditors, ExceptionHandler exHandler) throws NullClassException {
+    private ModelDescriptor getModelDescriptor(Document modelDoc, boolean processEditors) throws NullClassException {
 
         Node node;
         Element element, docRoot;
 
-        ModelDescriptor md = new ModelDescriptor();
+        ModelDescriptor md = new ModelDescriptor(logger);
 
         //get model name, description, author and date
 
@@ -118,7 +120,7 @@ public class ModelIO {
         }
 
         //create the tree's root node
-        ContextDescriptor cd = new ContextDescriptor(modelName, modelClazz, null, md, exHandler);
+        ContextDescriptor cd = new ContextDescriptor(modelName, modelClazz, null, md);
         ModelNode rootNode = nodeFactory.createNode(cd);
         rootNode.setType(ModelNode.MODEL_TYPE);
 
@@ -129,7 +131,7 @@ public class ModelIO {
 //        if (workspaceNode != null) {
 //            try {
 //                setVar(cd, (Element) workspaceNode, md, exHandler);
-//            } catch (NullFieldException ex) {
+//            } catch (AttributeConfigException ex) {
 //                exHandler.handle(ex);
 //            }
 //        }
@@ -143,28 +145,26 @@ public class ModelIO {
                 element = (Element) node;
 
                 try {
-                    rootNode.add(getSubTree(element, md, exHandler));
-                } catch (NoClassDefFoundError ncdfe) {
-                    exHandler.handle(new JAMSException(ncdfe.getMessage(), ncdfe));
-                } catch (ModelLoadException mle) {
-                    exHandler.handle(mle);
-                } catch (NullClassException nfe) {
-                    exHandler.handle(nfe);
+                    rootNode.add(getSubTree(element, md));
+                } catch (JAMSException mle) {
+                    logger.log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
                 }
 
             } else if (node.getNodeName().equals("attribute")) {
 
                 try {
                     addContextAttribute(cd, (Element) node);
-                } catch (JAMSException jex) {
-                    exHandler.handle(jex);
+                } catch (JAMSException mle) {
+                    logger.log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
                 }
 
             } else if (node.getNodeName().equals("var")) {
+
                 element = (Element) node;
                 if (element.getAttribute("name").equals("workspaceDirectory")) {
                     md.setWorkspacePath(element.getAttribute("value"));
                 }
+
             }
         }
 
@@ -176,53 +176,54 @@ public class ModelIO {
             //handle the launcher node
             Element launcherNode = (Element) docRoot.getElementsByTagName("launcher").item(0);
             if (launcherNode != null) {
-                md.setModelParameters(launcherNode, exHandler);
+                md.setModelParameters(launcherNode);
             }
         }
 
         //handle the datastores node
         Node dataStoreNode = docRoot.getElementsByTagName("datastores").item(0);
-        md.initDatastores(dataStoreNode, exHandler);
+        md.initDatastores(dataStoreNode);
 
         //handle the metaprocessors node
         Node metaProcessorNode = docRoot.getElementsByTagName("preprocessors").item(0);
-        md.initPreprocessors(metaProcessorNode, exHandler);
+        md.initPreprocessors(metaProcessorNode);
 
         return md;
     }
 
-    private ModelNode getSubTree(Element rootElement, ModelDescriptor md, ExceptionHandler exHandler) throws ModelLoadException, NullClassException {
+    private ModelNode getSubTree(Element rootElement, ModelDescriptor md) {
 
-        Class<?> clazz;
-        String componentName = "", className = "", version;
+        Class<?> clazz = null;
+        String componentName = "", className = "", version = "";
         ModelNode rootNode = null;
         boolean enabled = true;
 
+
+        componentName = rootElement.getAttribute("name");
+        className = rootElement.getAttribute("class");
+
+        if (rootElement.hasAttribute("version")) {
+            version = rootElement.getAttribute("version");
+        } else {
+            version = JAMSComponentDescription.DEFAULT_VERSION;
+        }
+
+        if (rootElement.hasAttribute("enabled")) {
+            enabled = Boolean.parseBoolean(rootElement.getAttribute("enabled"));
+        }
+
         try {
-
-            componentName = rootElement.getAttribute("name");
-            className = rootElement.getAttribute("class");
-
-            if (rootElement.hasAttribute("version")) {
-                version = rootElement.getAttribute("version");
-            } else {
-                version = JAMSComponentDescription.DEFAULT_VERSION;
-            }
-
-            if (rootElement.hasAttribute("enabled")) {
-                enabled = Boolean.parseBoolean(rootElement.getAttribute("enabled"));
-            }
 
             clazz = loader.loadClass(className);
 
         } catch (ClassNotFoundException cnfe) {
-            throw new ModelLoadException(JAMS.i18n("Could_not_load_component_")
+            throw new JAMSException(JAMS.i18n("Could_not_load_component_")
                     + componentName + "\" (" + className + "). "
-                    + JAMS.i18n("Please_fix_the_model_definition_file!"), JAMS.i18n("Error_loading_model"));
+                    + JAMS.i18n("Please_fix_the_model_definition_file!"), cnfe);
         } catch (NoClassDefFoundError ncdfe) {
-            throw new ModelLoadException(JAMS.i18n("Could_not_load_component_")
+            throw new JAMSException(JAMS.i18n("Could_not_load_component_")
                     + componentName + "\" (" + className + "). "
-                    + JAMS.i18n("Please_fix_the_model_definition_file!"), JAMS.i18n("Error_loading_model"));
+                    + JAMS.i18n("Please_fix_the_model_definition_file!"), ncdfe);
         }
 
         //ModelNode rootNode = new ModelNode(rootElement.getAttribute("name"));
@@ -231,7 +232,7 @@ public class ModelIO {
 
         if (type.equals("component")) {
 
-            ComponentDescriptor cd = new ComponentDescriptor(componentName, clazz, version, md, exHandler);
+            ComponentDescriptor cd = new ComponentDescriptor(componentName, clazz, version, md);
             cd.setEnabled(enabled);
             rootNode = nodeFactory.createNode(cd);
             rootNode.setType(ModelNode.COMPONENT_TYPE);
@@ -240,16 +241,17 @@ public class ModelIO {
             for (int index = 0; index < varChilds.getLength(); index++) {
 
                 try {
-                    setVar(cd, (Element) varChilds.item(index), md, exHandler);
-                } catch (NullFieldException ex) {
-                    exHandler.handle(ex);
-                }
 
+                    setVar(cd, (Element) varChilds.item(index), md);
+
+                } catch (JAMSException ex) {
+                    logger.log(Level.SEVERE, ex.getMessage(), ex.getWrappedException());
+                }
             }
 
         } else if (type.equals("contextcomponent")) {
 
-            ContextDescriptor cd = new ContextDescriptor(componentName, clazz, version, md, exHandler);
+            ContextDescriptor cd = new ContextDescriptor(componentName, clazz, version, md);
             cd.setEnabled(enabled);
             rootNode = nodeFactory.createNode(cd);
             rootNode.setType(ModelNode.CONTEXT_TYPE);
@@ -257,34 +259,25 @@ public class ModelIO {
             NodeList children = rootElement.getChildNodes();
             for (int index = 0; index < children.getLength(); index++) {
                 Node node = children.item(index);
-                if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
 
-                    try {
-                        ModelNode childNode = getSubTree((Element) children.item(index), md, exHandler);
-                        if (childNode != null) {
-                            rootNode.add(childNode);
-                        }
-                    } catch (ModelLoadException mle) {
-                        exHandler.handle(mle);
-                    } catch (NullClassException nfe) {
-                        exHandler.handle(nfe);
-                    }
+                try {
 
-                } else if (node.getNodeName().equals("var")) {
+                    if (node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
 
-                    try {
-                        setVar(cd, (Element) node, md, exHandler);
-                    } catch (NullFieldException ex) {
-                        exHandler.handle(ex);
-                    }
+                        rootNode.add(getSubTree((Element) children.item(index), md));
 
-                } else if (node.getNodeName().equals("attribute")) {
+                    } else if (node.getNodeName().equals("var")) {
 
-                    try {
+                        setVar(cd, (Element) node, md);
+
+                    } else if (node.getNodeName().equals("attribute")) {
+
                         addContextAttribute(cd, (Element) node);
-                    } catch (JAMSException ex) {
-                        exHandler.handle(ex);
+
                     }
+
+                } catch (JAMSException mle) {
+                    logger.log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
                 }
             }
         }
@@ -294,17 +287,19 @@ public class ModelIO {
         return rootNode;
     }
 
-    private void setVar(ComponentDescriptor cd, Element e, ModelDescriptor md, ExceptionHandler exHandler) throws NullFieldException {
+    private void setVar(ComponentDescriptor cd, Element e, ModelDescriptor md) {
 
         String fieldName = e.getAttribute("name");
         ComponentField field = cd.getComponentFields().get(fieldName);
 
         if (field == null) {
-            throw new NullFieldException(JAMS.i18n("Error_while_loading_component_") + cd.getInstanceName()
-                    + JAMS.i18n("_component_attribute_") + fieldName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Error_loading_model"));
+            throw new JAMSException(JAMS.i18n("Error_while_loading_component_") + cd.getInstanceName()
+                    + JAMS.i18n("_component_attribute_") + fieldName + JAMS.i18n("_does_not_exist!"));
         }
 
         if (e.hasAttribute("attribute")) {
+
+            String attribute = e.getAttribute("attribute");
 
             String contextName = e.getAttribute("context");
             if (contextName.equals("")) {
@@ -313,16 +308,12 @@ public class ModelIO {
 
             ContextDescriptor context = (ContextDescriptor) md.getComponentDescriptor(contextName);
             if (context == null) {
-                throw new NullFieldException(JAMS.i18n("Error_while_loading_component_") + cd.getInstanceName()
-                        + JAMS.i18n("_context_") + contextName + JAMS.i18n("_does_not_exist!"), JAMS.i18n("Error_loading_model"));
+                throw new JAMSException(JAMS.i18n("Error_while_loading_component_") + cd.getInstanceName()
+                        + JAMS.i18n("_context_") + contextName + JAMS.i18n("_does_not_exist!"));
             }
 
-            String attribute = e.getAttribute("attribute");
-            try {
-                field.linkToAttribute(context, attribute);
-            } catch (AttributeLinkException ex) {
-                exHandler.handle(ex);
-            }
+            field.linkToAttribute(context, attribute);
+
             //cd.linkComponentAttribute(name, view.getComponentDescriptor(context), attribute);
                 /*            }
              try {
@@ -331,8 +322,7 @@ public class ModelIO {
              context.getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, context));
              }*/
 
-        }
-        if (e.hasAttribute("value")) {
+        } else if (e.hasAttribute("value")) {
 
             field.setValue(e.getAttribute("value"));
 
@@ -340,7 +330,7 @@ public class ModelIO {
     }
 
     //add attribute that is defined by a context component
-    private void addContextAttribute(ContextDescriptor cd, Element e) throws JAMSException {
+    private void addContextAttribute(ContextDescriptor cd, Element e) {
 
         String attribute = e.getAttribute("name");
         String typeName = e.getAttribute("class");
@@ -350,7 +340,7 @@ public class ModelIO {
             type = Class.forName(typeName);
         } catch (ClassNotFoundException ex) {
             throw new JAMSException("Given type " + typeName + " for context attribute "
-                    + attribute + " in context " + cd.getInstanceName() + " does not exist!", JAMS.i18n("Error_loading_model"));
+                    + attribute + " in context " + cd.getInstanceName() + " does not exist!", ex);
         }
 
         // workaround for models that use the "old" API, i.e. JAMSData
@@ -370,7 +360,7 @@ public class ModelIO {
             // and do the above for every token
             String[] values = StringTools.toArray(attribute, ";");
             for (String value : values) {
-                System.out.println("check addContextAttribute for array types!");
+                logger.info("check addContextAttribute for array types!");
                 cd.addStaticAttribute(attribute, type, value);
 //                    cd.getDataRepository().addAttribute(new ContextAttribute(attribute, type, cd));
             }
@@ -586,7 +576,8 @@ public class ModelIO {
 
         for (ComponentField var : cd.getComponentFields().values()) {
 
-            if (!StringTools.isEmptyString(var.getValue()) || ((var.getContext() != null) && !var.getAttribute().equals(""))) {
+//            if (!StringTools.isEmptyString(var.getValue()) || ((var.getContext() != null) && !var.getAttribute().equals(""))) {
+            if ((var.getValue() != null) || ((var.getContext() != null) && !var.getAttribute().equals(""))) {
 
                 element = document.createElement("var");
                 element.setAttribute("name", var.getName());
@@ -594,7 +585,8 @@ public class ModelIO {
                     element.setAttribute("attribute", var.getAttribute());
                     element.setAttribute("context", var.getContext().getInstanceName());
                 }
-                if (!StringTools.isEmptyString(var.getValue())) {
+//                if (!StringTools.isEmptyString(var.getValue())) {
+                if (var.getValue() != null) {
                     element.setAttribute("value", var.getValue());
                 }
 
@@ -611,18 +603,20 @@ public class ModelIO {
 
         return rootElement;
     }
-
-    public class NullFieldException extends JAMSException {
-
-        public NullFieldException(String message, String header) {
-            super(message, header);
-        }
-    }
-
-    public class ModelLoadException extends JAMSException {
-
-        public ModelLoadException(String message, String header) {
-            super(message, header);
-        }
-    }
+//    public class AttributeConfigException extends JAMSException {
+//
+//        public AttributeConfigException(String message, String header) {
+//            super(message, header);
+//        }
+//    }
+//    public class ModelLoadException extends JAMSException {
+//
+//        public ModelLoadException(String message, Throwable wrappedException) {
+//            super(message, wrappedException);
+//        }
+//
+//        public ModelLoadException(String message) {
+//            super(message);
+//        }
+//    }
 }

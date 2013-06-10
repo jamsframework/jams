@@ -12,7 +12,7 @@ package jams.components.gui.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import java.net.URL;
+import jams.tools.JAMSTools;
 import java.util.HashMap;
 import java.util.Vector;
 import java.awt.event.*;
@@ -190,9 +190,7 @@ public class JXYConfigurator extends JFrame{
         this.parent = parent;
         //super(parent, "JAMS JTS Viewer");
         setTitle("JAMS XYPlot Viewer");
-        URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
-        ImageIcon icon = new ImageIcon(url);
-        setIconImage(icon.getImage());
+        setIconImages(JAMSTools.getJAMSIcons());
         
         setLayout(new FlowLayout());
         Point parentloc = parent.getLocation();
@@ -1987,9 +1985,7 @@ public class JXYConfigurator extends JFrame{
         
         public AddGraphDlg(){
             super(thisDlg, "Add Graph", true);
-            URL url = this.getClass().getResource("/jams/components/gui/resources/JAMSicon16.png");
-            ImageIcon icon = new ImageIcon(url);
-            setIconImage(icon.getImage());
+            setIconImages(JAMSTools.getJAMSIcons());
             Point parentloc = thisDlg.getLocation();
             setLocation(parentloc.x + 50, parentloc.y + 50);
             createPanel();

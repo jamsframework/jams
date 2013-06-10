@@ -21,6 +21,7 @@ import javax.swing.table.*;
 import java.io.*;
 import java.util.ArrayList;
 import jams.data.*;
+import jams.gui.tools.GUIHelper;
 import jams.io.JAMSTableDataArray;
 import jams.model.*;
 

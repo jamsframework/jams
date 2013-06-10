@@ -26,7 +26,7 @@ package jams;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class JAMSException extends Exception {
+public class JAMSException extends RuntimeException {
 
     public static final int INFO_TYPE = 0, ERROR_TYPE = 1;
     private String header;

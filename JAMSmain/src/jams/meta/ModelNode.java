@@ -22,7 +22,6 @@
 package jams.meta;
 
 import jams.JAMSException;
-import jams.meta.ComponentField.AttributeLinkException;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.logging.Level;
@@ -58,26 +57,22 @@ public class ModelNode extends DefaultMutableTreeNode {
     public ModelNode clone(ComponentCollection target, boolean deepCopy, Map<ContextDescriptor, ContextDescriptor> contextMap) {
 
         ModelNode nodeCopy = null;
-        try {
-            //@TODO: proper handling
-            ComponentDescriptor cd = (ComponentDescriptor) this.getUserObject();
-            ComponentDescriptor cdCopy = cd.cloneNode();
-            nodeCopy = new ModelNode(cdCopy);
-            nodeCopy.setType(this.getType());
+//        try {
+        //@TODO: proper handling
+        ComponentDescriptor cd = (ComponentDescriptor) this.getUserObject();
+        ComponentDescriptor cdCopy = cd.cloneNode();
+        nodeCopy = new ModelNode(cdCopy);
+        nodeCopy.setType(this.getType());
 
-            try {
-                cdCopy.register(target);
-            } catch (ComponentDescriptor.RenameException ex) {
-                Logger.getLogger(ModelNode.class.getName()).log(Level.INFO, ex.getMessage());
-            }
+        cdCopy.register(target);
 
-            if (cd instanceof ContextDescriptor) {
-                contextMap.put((ContextDescriptor) cd, (ContextDescriptor) cdCopy);
-            }
-
-        } catch (JAMSException ex) {
-            Logger.getLogger(ModelNode.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        if (cd instanceof ContextDescriptor) {
+            contextMap.put((ContextDescriptor) cd, (ContextDescriptor) cdCopy);
         }
+
+//        } catch (JAMSException ex) {
+//            Logger.getLogger(ModelNode.class.getName()).logger(Level.SEVERE, ex.getMessage(), ex);
+//        }
 
         if (deepCopy && (nodeCopy != null)) {
             for (Enumeration<ModelNode> e = this.children(); e.hasMoreElements();) {
@@ -92,8 +87,8 @@ public class ModelNode extends DefaultMutableTreeNode {
                         try {
                             ContextDescriptor newContext = contextMap.get(context);
                             field.linkToAttribute(newContext, field.getAttribute());
-                        } catch (AttributeLinkException ex) {
-                            Logger.getLogger(ModelNode.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (JAMSException ex) {
+                            childCd.getComponentRepository().logger.log(Level.SEVERE, ex.getMessage(), ex);
                         }
                     }
 

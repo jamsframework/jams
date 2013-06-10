@@ -20,6 +20,7 @@ import java.awt.event.ItemListener;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -405,4 +406,4 @@ public JDialog showDialog(JFrame parent) {
 
         return field;
     }
-}
+    }

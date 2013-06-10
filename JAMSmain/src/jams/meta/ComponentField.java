@@ -4,6 +4,7 @@ import jams.JAMS;
 import jams.JAMSException;
 import jams.data.DefaultDataFactory;
 import jams.tools.StringTools;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 public class ComponentField implements Comparable {
@@ -82,11 +83,11 @@ public class ComponentField implements Comparable {
         this.contextAttributes.remove(ca);
     }
 
-    public void linkToAttribute(ContextDescriptor context, String attributeName) throws AttributeLinkException {
+    public void linkToAttribute(ContextDescriptor context, String attributeName) {
         linkToAttribute(context, attributeName, true);
     }
     
-    public void linkToAttribute(ContextDescriptor context, String attributeName, boolean removeOldLink) throws AttributeLinkException {
+    public void linkToAttribute(ContextDescriptor context, String attributeName, boolean removeOldLink) {
         
         Class basicType;
         
@@ -104,7 +105,7 @@ public class ComponentField implements Comparable {
                 }
                 return;
             } else {
-                throw new AttributeLinkException("Semicolons are not allowed in attribute names!(" + attributeName + ")", JAMS.i18n("Error"));
+                throw new JAMSException(MessageFormat.format(JAMS.i18n("Semicolons_not_allowed_in_attribute_names"), parent.getInstanceName(), attributeName));
             }
         }
         if (this.type.isArray()) {
@@ -118,7 +119,7 @@ public class ComponentField implements Comparable {
         ContextAttribute attribute = context.getDynamicAttributes().get(attributeName);
         // check if already existing
         if ((attribute != null) && (attribute.getType() != basicType)) {
-            throw new AttributeLinkException("Attribute " + attributeName + " already exists in context " + context.getInstanceName() + " with different type " + attribute.getType(), JAMS.i18n("Error"));
+            throw new JAMSException(MessageFormat.format(JAMS.i18n("Attribute_already_exists_in_context_with_different_type"), attributeName, context.getInstanceName(), attribute.getType()));
         }
 
         if (attribute == null) {
@@ -134,13 +135,13 @@ public class ComponentField implements Comparable {
         attribute.getFields().add(this);
         this.contextAttributes.add(attribute);
     }
-    
-    public class AttributeLinkException extends JAMSException {
 
-        public AttributeLinkException(String message, String header) {
-            super(message, header);
-        }
-    }
+//    public class AttributeLinkException extends JAMSException {
+//
+//        public AttributeLinkException(String message, String header) {
+//            super(message, header);
+//        }
+//    }
 
     public void setValue(String value) {
         this.value = value;

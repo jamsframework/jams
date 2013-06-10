@@ -21,20 +21,24 @@
  */
 package jamsui.juice.gui;
 
-import jams.JAMSException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 
 /**
  *
@@ -49,25 +53,44 @@ public class NotificationDlg extends JDialog {
         super(owner);
         this.setLocationByPlatform(true);
         this.setTitle(title);
-        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         this.setLayout(new BorderLayout());
+
+        this.addComponentListener(new ComponentListener() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                textArea.setText("");
+            }
+        });
+
 
 //        this.add(new JLabel("Message"), BorderLayout.NORTH);
         this.add(new JScrollPane(textArea), BorderLayout.CENTER);
+        textArea.setLineWrap(true);
 
         JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 NotificationDlg.this.setVisible(false);
-                textArea.setText("");
             }
         });
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(okButton);
-        
+
         this.add(buttonPanel, BorderLayout.SOUTH);
         this.setPreferredSize(new Dimension(400, 500));
         this.pack();
@@ -75,41 +98,16 @@ public class NotificationDlg extends JDialog {
 
     public void addNotification(String text) {
 
-        append(Color.black, text + "\n\n");
+        textArea.append(text + "\n\n");
         setVisible(true);
 
     }
 
-    public void addNotification(JAMSException ex) {
+    public void addNotification(String type, String text) {
 
-        append(Color.red, ex.getHeader() + ":\n");
-        append(Color.black, ex.getMessage() + "\n\n");
+        textArea.append(type + ":\n");
+        textArea.append(text + "\n\n");
+        setVisible(true);
 
-        if (!isVisible()) {
-            setVisible(true);
-        }
-
-    }
-
-    private void append(Color c, String s) {
-        textArea.append(s);
-    }
-
-//    private void append(Color c, String s) {
-//        StyleContext sc = StyleContext.getDefaultStyleContext();
-//        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY,
-//                StyleConstants.Foreground, c);
-//
-//        int len = textPane.getDocument().getLength(); // same value as
-//        // getText().length();
-//        textPane.setCaretPosition(len); // place caret at the end (with no selection)
-//        textPane.setCharacterAttributes(aset, false);
-//        textPane.replaceSelection(s); // there is no selection, so inserts at caret
-//    }
-    
-    public static void main(String[] args) {
-        NotificationDlg dlg = new NotificationDlg(null, "test");
-        dlg.addNotification("TEST");
-        dlg.addNotification(new JAMSException("BLA", "ERROR"));
     }
 }

@@ -60,6 +60,7 @@ import jams.runtime.JAMSRuntime;
 import jams.gui.input.InputComponentFactory;
 import jams.model.JAMSFullModelState;
 import jams.model.Model;
+import jams.tools.JAMSTools;
 import java.awt.Frame;
 import java.io.File;
 import org.w3c.dom.DOMException;
@@ -185,7 +186,7 @@ public class JAMSLauncher extends JFrame {
                         runModel();
 
                         // collect some garbage ;)
-                        Runtime.getRuntime().gc();
+                        java.lang.Runtime.getRuntime().gc();
                     }
                 };
                 t.start();
@@ -210,7 +211,7 @@ public class JAMSLauncher extends JFrame {
         int height = Integer.parseInt(getProperties().getProperty(SystemProperties.GUICONFIGHEIGHT_IDENTIFIER, "400"));
         this.setPreferredSize(new Dimension(width, height));
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        this.setIconImage(new ImageIcon(ClassLoader.getSystemResource("resources/images/JAMSicon16.png")).getImage());
+        this.setIconImages(JAMSTools.getJAMSIcons());
         this.setTitle(BASE_TITLE);
 
         this.addWindowListener(new WindowListener() {
@@ -548,7 +549,7 @@ public class JAMSLauncher extends JFrame {
 
                 //dump the runtime and clean up
                 runtime = null;
-                Runtime.getRuntime().gc();
+                java.lang.Runtime.getRuntime().gc();
             }
         };
         t.start();
