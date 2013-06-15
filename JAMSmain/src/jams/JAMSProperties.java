@@ -21,7 +21,7 @@
  */
 package jams;
 
-import jams.tools.JAMSTools;
+import static jams.SystemProperties.MAX_RECENT_FILES;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Observable;
@@ -99,12 +99,12 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
      * @throws java.io.IOException
      */
     public void save(String fileName) throws IOException {
-        try {
-            properties.store(new FileOutputStream(fileName), JAMS.i18n("JAMS_configuration_file"));
-            defaultFilename = fileName;
-        } catch (Exception ex) {
-            JAMSTools.handle(ex);
-        }
+        properties.store(new FileOutputStream(fileName), JAMS.i18n("JAMS_configuration_file"));
+        defaultFilename = fileName;
+    }
+
+    public void save() throws IOException {
+        this.save(defaultFilename);
     }
 
     /**
@@ -190,7 +190,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
         if (theProperties == null) {
             Properties p = new Properties();
             p.setProperty(MODEL_IDENTIFIER, "");
-            p.setProperty(LIBS_IDENTIFIER, ".");
+            p.setProperty(LIBS_IDENTIFIER, ".;lib");
             p.setProperty(DEBUG_IDENTIFIER, "1");
             p.setProperty(VERBOSITY_IDENTIFIER, "false");
             p.setProperty(INFOLOG_IDENTIFIER, "");
@@ -208,28 +208,12 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
             p.setProperty(AUTO_PREPROCESSING, "true");
             p.setProperty(FLOAT_FORMAT, "%f");
             p.setProperty(MAX_RECENT_FILES, "5");
+            p.setProperty(MAX_LIB_CLASSES, "10000");
 
             theProperties = new JAMSProperties(p);
-            theProperties.setDefaultFilename(System.getProperty("user.dir") + File.separator + JAMS.DEFAULT_PARAMETER_FILENAME);
+            theProperties.defaultFilename = System.getProperty("user.dir") + File.separator + JAMS.DEFAULT_PARAMETER_FILENAME;
         }
 
         return theProperties;
-    }
-
-    /**
-     *
-     * @return The default file name for storing JAMS properties
-     */
-    public String getDefaultFilename() {
-        return defaultFilename;
-    }
-
-    /**
-     * Set the default file name for storing JAMS properties
-     *
-     * @param defaultFilename The default file name
-     */
-    public void setDefaultFilename(String defaultFilename) {
-        this.defaultFilename = defaultFilename;
     }
 }

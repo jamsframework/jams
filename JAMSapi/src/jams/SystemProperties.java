@@ -62,6 +62,7 @@ public interface SystemProperties {
     String FLOAT_FORMAT = "floatformat";
     String RECENT_FILES = "recentfiles";
     String MAX_RECENT_FILES = "maxrecentfiles";
+    String MAX_LIB_CLASSES = "maxlibclasses";
 
     /**
      * Adds an observer for some property
@@ -69,12 +70,6 @@ public interface SystemProperties {
      * @param obs The java.util.Observer object
      */
     void addObserver(String key, Observer obs);
-
-    /**
-     *
-     * @return The default file name for storing JAMS properties
-     */
-    String getDefaultFilename();
 
     /**
      * Gets a property value
@@ -106,11 +101,12 @@ public interface SystemProperties {
     void save(String fileName) throws IOException;
 
     /**
-     * Set the default file name for storing JAMS properties
-     * @param defaultFilename The default file name
+     * Saves properties to a file
+     * @param fileName The name of the file to save properties to
+     * @throws java.io.IOException
      */
-    void setDefaultFilename(String defaultFilename);
-
+    void save() throws IOException;
+    
     /**
      * Sets a property value
      * @param key The identifier for the property
