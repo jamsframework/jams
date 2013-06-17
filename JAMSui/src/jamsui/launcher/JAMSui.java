@@ -73,28 +73,27 @@ public class JAMSui {
         //create a JAMSui default set of property values
         properties = JAMSProperties.createProperties();
 
-        //try to load property values from file
+        String propertyFileName;
         if (cmdLine.getConfigFileName() != null) {
             //check for file provided at command line
-            try {
-                properties.load(cmdLine.getConfigFileName());
-            } catch (IOException ioe) {
-                logger.log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + cmdLine.getConfigFileName());
-            }
-            baseDir = new File(cmdLine.getConfigFileName()).getParentFile();
+            propertyFileName = cmdLine.getConfigFileName();
+            baseDir = new File(propertyFileName).getParentFile();
         } else {
             //check for default file
-            String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
-            File file = new File(defaultFile);
-            if (file.exists()) {
-                try {
-                    properties.load(defaultFile);
-                } catch (IOException ioe) {
-                    logger.log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + defaultFile);
-                }
-            }
+            propertyFileName = new File(baseDir, JAMS.DEFAULT_PARAMETER_FILENAME).getAbsolutePath();
         }
 
+        //try to load property values from file
+        try {
+            if (new File(propertyFileName).exists()) {
+                properties.load(propertyFileName);
+            } else {
+                properties.save();
+            }
+        } catch (IOException ioe) {
+            logger.log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + propertyFileName, ioe);
+        }
+        
         JAMSTools.configureLocaleEncoding(properties);
 
         if (cmdLine.isNogui() || GraphicsEnvironment.isHeadless()) {
@@ -105,7 +104,11 @@ public class JAMSui {
         }
 
         boolean guiConfig = Boolean.parseBoolean(properties.getProperty(SystemProperties.GUICONFIG_IDENTIFIER, "false"));
+
         String modelFileName = cmdLine.getModelFileName();
+        if (modelFileName != null) {
+            modelFileName = new File(modelFileName).getAbsolutePath();
+        }
 
         String floatFormat = properties.getProperty(SystemProperties.FLOAT_FORMAT, "%f");
         JAMS.setFloatFormat(floatFormat);
@@ -189,6 +192,7 @@ public class JAMSui {
                     runtime = new StandardRuntime(properties);
 
                     runtime.loadModel(modelDoc, defaultWorkspacePath);
+
                     // if workspace has not been provided, check if the document has been
                     // read from file and try to use parent directory instead
 //                    if (StringTools.isEmptyString(runtime.getModel().getWorkspacePath())

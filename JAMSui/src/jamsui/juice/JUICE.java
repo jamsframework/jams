@@ -147,7 +147,9 @@ public class JUICE {
 
         juiceFrame.setVisible(true);
 
-        libTree = new LibTree(new ComponentCollection(log));
+        int maxLibClasses = Integer.parseInt(getJamsProperties().getProperty(SystemProperties.MAX_LIB_CLASSES));
+        
+        libTree = new LibTree(new ComponentCollection(log), maxLibClasses);
 
         JUICE.updateLibs();
 
@@ -260,7 +262,14 @@ public class JUICE {
                     if (record.getLevel().intValue() > Level.WARNING.intValue()) {
                         GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), record.getMessage(), JAMS.i18n("Error"));
                     }
-                    notificationDlg.addNotification(JAMS.i18n(record.getLevel().toString()), record.getMessage());
+                    String msg = record.getMessage();
+                    String line[] = msg.split("\n");
+                    String level = JAMS.i18n(record.getLevel().toString());
+                    msg = level + ": " + line[0];
+                    for (int i = 1; i < line.length; i++) {
+                        msg += "\n" + String.format("%0" + level.length() + "d", 0).replace("0"," ") + line[i];
+                    }
+                    notificationDlg.addNotification(msg + "\n\n");
                 }
 
                 @Override

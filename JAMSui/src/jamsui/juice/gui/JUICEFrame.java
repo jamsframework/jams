@@ -984,12 +984,11 @@ public class JUICEFrame extends JFrame {
                 return;
             }
         }
-        if (ModelView.viewList.getViewList().size() == 0) {
+        if (ModelView.viewList.getViewList().isEmpty()) {
 
             // finally write property file to default location
             try {
-                String defaultFile = JUICE.getJamsProperties().getDefaultFilename();
-                JUICE.getJamsProperties().save(defaultFile);
+                JUICE.getJamsProperties().save();
             } catch (IOException ioe) {
                 JAMSTools.handle(ioe);
             }

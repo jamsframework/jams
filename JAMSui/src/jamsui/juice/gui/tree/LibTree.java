@@ -47,6 +47,7 @@ import jams.tools.StringTools;
 import jams.meta.ComponentCollection;
 import jams.meta.ContextDescriptor;
 import jamsui.juice.gui.ComponentInfoDlg;
+import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -61,17 +62,18 @@ public class LibTree extends JAMSTree {
     private JPopupMenu popup;
     private String[] libsArray;
     private int contextCount, componentCount;
+    private int i, maxClasses;
 
-    public LibTree(ComponentCollection componentCollection) {
+    public LibTree(ComponentCollection componentCollection, int maxClasses) {
         super(componentCollection);
 
         setEditable(false);
         new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY);
+        this.maxClasses = maxClasses;
 
         JMenuItem detailItem = new JMenuItem(JAMS.i18n("Show_Metadata..."));
         detailItem.setAccelerator(KeyStroke.getKeyStroke('M'));
         detailItem.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent evt) {
                 displayComponentDlg();
             }
@@ -80,7 +82,6 @@ public class LibTree extends JAMSTree {
         popup.add(detailItem);
 
         addMouseListener(new MouseAdapter() {
-
             public void mousePressed(MouseEvent evt) {
                 if (evt.getButton() == MouseEvent.BUTTON3) {
                     showPopup(evt);
@@ -152,6 +153,8 @@ public class LibTree extends JAMSTree {
         JAMSNode root = new JAMSNode(ROOT_NAME, JAMSNode.LIBRARY_TYPE, this);
         JAMSNode jarNode;
 
+        i = 1;
+        
         for (int i = 0; i < libsArray.length; i++) {
             File file = new File(libsArray[i]);
 
@@ -182,6 +185,10 @@ public class LibTree extends JAMSTree {
 
     private JAMSNode createJARNode(String jar, ClassLoader loader) {
 
+        if (i >= maxClasses) {
+            return null;
+        }
+        
         JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.ARCHIVE_TYPE, this);
         ArrayList<Class> components = new ArrayList<Class>();
         JAMSNode compNode;
@@ -205,6 +212,12 @@ public class LibTree extends JAMSTree {
                     classString = classString.replaceAll("/", ".");
 
                     try {
+
+                        if (i >= maxClasses) {
+                            GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), MessageFormat.format(JAMS.i18n("To_many_classes_error"), i), JAMS.i18n("Error_while_loading_archive"));
+                            break;
+                        }
+                        i++;
 
                         // try to load the class and check if it's a subclass of JAMSComponent
                         Class<?> clazz = loader.loadClass(classString);
@@ -264,7 +277,6 @@ public class LibTree extends JAMSTree {
                         }
 
                         no.addObserver(new Observer() {
-
                             public void update(Observable o, Object arg) {
                                 LibTree.this.updateUI();
                             }

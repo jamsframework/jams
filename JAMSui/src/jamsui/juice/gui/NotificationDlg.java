@@ -22,7 +22,6 @@
 package jamsui.juice.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -35,10 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
 
 /**
  *
@@ -74,11 +69,13 @@ public class NotificationDlg extends JDialog {
                 textArea.setText("");
             }
         });
-
+        
+        textArea.setEditable(false);
+        textArea.setFont(new java.awt.Font("Arial", 0, 10));        
+//        textArea.setLineWrap(true);
 
 //        this.add(new JLabel("Message"), BorderLayout.NORTH);
         this.add(new JScrollPane(textArea), BorderLayout.CENTER);
-        textArea.setLineWrap(true);
 
         JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
@@ -98,15 +95,7 @@ public class NotificationDlg extends JDialog {
 
     public void addNotification(String text) {
 
-        textArea.append(text + "\n\n");
-        setVisible(true);
-
-    }
-
-    public void addNotification(String type, String text) {
-
-        textArea.append(type + ":\n");
-        textArea.append(text + "\n\n");
+        textArea.append(text);
         setVisible(true);
 
     }

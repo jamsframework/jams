@@ -628,8 +628,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         // finally write property file to default location
         try {
-            String defaultFile = getProperties().getDefaultFilename();
-            getProperties().save(defaultFile);
+            getProperties().save();
         } catch (IOException ioe) {
             JAMSTools.handle(ioe);
         }
