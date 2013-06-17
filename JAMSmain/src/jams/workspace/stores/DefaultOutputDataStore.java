@@ -21,6 +21,9 @@
  */
 package jams.workspace.stores;
 
+import de.odysseus.el.util.SimpleContext;
+import de.odysseus.el.util.SimpleResolver;
+import jams.data.JAMSData;
 import jams.io.BufferedFileWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,12 +31,16 @@ import org.w3c.dom.NodeList;
 import jams.workspace.JAMSWorkspace;
 import java.io.File;
 import java.io.IOException;
-import java.util.regex.Pattern;
 import jams.model.Context;
 import jams.workspace.Workspace;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
+import javax.el.ELException;
+import javax.el.ExpressionFactory;
+import javax.el.ValueExpression;
 
 /**
  *
@@ -55,7 +62,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
     private int columnCounter;
     private boolean firstRow;
     private File outputFile;
-    
+
     public DefaultOutputDataStore(JAMSWorkspace ws, Document doc, String id) {
 
         this.id = id;
@@ -94,7 +101,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
         return id;
     }
 
-    public void setWorkspace(Workspace ws) throws IOException{
+    public void setWorkspace(Workspace ws) throws IOException {
         boolean wasOpen = this.writer == null ? false : true;
         this.close();
 
@@ -103,7 +110,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
         outputDirectory.mkdirs();
         outputFile = new File(outputDirectory.getPath() + File.separator + id + JAMSWorkspace.OUTPUT_FILE_ENDING);
 
-        if (wasOpen){
+        if (wasOpen) {
             open(true);
         }
     }
@@ -117,7 +124,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
         outputDirectory.mkdirs();
 
         outputFile = new File(outputDirectory.getPath() + File.separator + id + JAMSWorkspace.OUTPUT_FILE_ENDING);
-        writer = new BufferedFileWriter(new FileOutputStream(outputFile,append));
+        writer = new BufferedFileWriter(new FileOutputStream(outputFile, append));
     }
 
     public void write(Object o) throws IOException {
@@ -156,23 +163,23 @@ public class DefaultOutputDataStore implements OutputDataStore {
         }
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         long position = in.readLong();
-        if (this.writer!=null){
+        if (this.writer != null) {
             writer.close();
         }
         //this is not ok, because in this case we cannot move the workspace
         //directory .. 
-        writer = new BufferedFileWriter(new FileOutputStream(outputFile,true));
+        writer = new BufferedFileWriter(new FileOutputStream(outputFile, true));
         writer.setPosition(position);
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException{
+    private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         out.writeLong(writer.getPosition());
     }
-                    
+
     public DefaultFilter[] getFilters() {
         return filters;
     }
@@ -188,12 +195,30 @@ public class DefaultOutputDataStore implements OutputDataStore {
     public class DefaultFilter implements Filter {
 
         private String contextName, expression;
-        private Pattern pattern = null;
         private Context context = null;
+
+        ExpressionFactory factory = null;
+        SimpleContext exprContext = new SimpleContext(new SimpleResolver());
+        ValueExpression valueExpr = null;        
+        ValueExpression idExpr = null;
 
         public DefaultFilter(String contextName, String expression) {
             this.contextName = contextName;
             this.expression = expression;
+
+            java.util.Properties properties = new java.util.Properties();
+            properties.put("javax.el.cacheSize", "1000");
+            properties.put("javax.el.methodInvocations", "false");
+            properties.put("javax.el.nullProperties", "false");
+            properties.put("javax.el.varArgs", "false");
+            properties.put("javax.el.ignoreReturnType", "false");
+
+            factory = new de.odysseus.el.ExpressionFactoryImpl(properties);
+
+            exprContext = FilterFunctions.getContext();
+
+            valueExpr = factory.createValueExpression(exprContext, expression, boolean.class);
+            idExpr = factory.createValueExpression(exprContext, "${id}", double.class);           
         }
 
         public String getContextName() {
@@ -204,12 +229,10 @@ public class DefaultOutputDataStore implements OutputDataStore {
             return expression;
         }
 
-        public Pattern getPattern() {
-            return pattern;
-        }
-
-        public void setPattern(Pattern pattern) {
-            this.pattern = pattern;
+        public boolean isFiltered(String id) {
+            idExpr.setValue(exprContext, id);
+            boolean result = (Boolean) valueExpr.getValue(exprContext);
+            return result;
         }
 
         public Context getContext() {
@@ -218,6 +241,13 @@ public class DefaultOutputDataStore implements OutputDataStore {
 
         public void setContext(Context context) {
             this.context = context;
+            
+            Context searchContext = this.getContext();
+            while (searchContext != null) {
+                ValueExpression contextExpr = factory.createValueExpression(exprContext, "${"+searchContext.getInstanceName()+"}", Context.class);
+                contextExpr.setValue(exprContext, searchContext);
+                searchContext = searchContext.getContext();                
+            } 
         }
     }
 }
