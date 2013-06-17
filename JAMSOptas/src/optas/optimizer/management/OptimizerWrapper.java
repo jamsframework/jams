@@ -252,8 +252,8 @@ public abstract class OptimizerWrapper extends JAMSContext {
                 // check for filters on other contexts first
                 for (Filter filter : store.getFilters()) {
                     String s = filter.getContext().getTraceMark();
-                    Matcher matcher = filter.getPattern().matcher(s);
-                    if (!matcher.matches()) {
+                    //Matcher matcher = filter.getPattern().matcher(s);
+                    if (!filter.isFiltered(s)) {
                         return;
                     }
                 }

@@ -212,49 +212,49 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
         this.e1.setValue(calcE1.calc(m, s));
         value = calcE1.calcNormative(m, s);
         if (Double.isNaN(value))
-            this.e1_normalized.setValue(Double.POSITIVE_INFINITY);
+            this.e1_normalized.setValue(Double.MAX_VALUE);
         else
             this.e1_normalized.setValue(value);
 
         this.e2.setValue(calcE2.calc(m, s));
         value = calcE2.calcNormative(m, s);
         if (Double.isNaN(value))
-            this.e2_normalized.setValue(Double.POSITIVE_INFINITY);
+            this.e2_normalized.setValue(Double.MAX_VALUE);
         else
             this.e2_normalized.setValue(value);
 
         this.le1.setValue(calcLe1.calc(m, s));
         value = calcLe1.calcNormative(m, s);
-        if (Double.isNaN(value))
-            this.le1_normalized.setValue(Double.POSITIVE_INFINITY);
+        if (Double.isNaN(value) || Double.isInfinite(value))
+            this.le1_normalized.setValue(Double.MAX_VALUE);
         else
             this.le1_normalized.setValue(value);
 
         this.le2.setValue(calcLe2.calc(m, s));
         value = calcLe2.calcNormative(m, s);
-        if (Double.isNaN(value))
-            this.le2_normalized.setValue(Double.POSITIVE_INFINITY);
+        if (Double.isNaN(value) || Double.isInfinite(value))
+            this.le2_normalized.setValue(Double.MAX_VALUE);
         else
             this.le2_normalized.setValue(value);
 
         this.ave.setValue(calcAve.calc(m, s));
         value = calcAve.calcNormative(m, s);
-        if (Double.isNaN(value))
-            this.ave_normalized.setValue(Double.POSITIVE_INFINITY);
+        if (Double.isNaN(value) || Double.isInfinite(value))
+            this.ave_normalized.setValue(Double.MAX_VALUE);
         else
             this.ave_normalized.setValue(value);
 
         this.r2.setValue(calcR2.calc(m, s));
         value = calcR2.calcNormative(m, s);
-        if (Double.isNaN(value))
-            this.r2_normalized.setValue(Double.POSITIVE_INFINITY);
+        if (Double.isNaN(value) || Double.isInfinite(value))
+            this.r2_normalized.setValue(Double.MAX_VALUE);
         else
             this.r2_normalized.setValue(value);
 
         this.bias.setValue(calcPBias.calc(m, s));
         value = calcPBias.calcNormative(m, s);
-        if (Double.isNaN(value))
-            this.bias_normalized.setValue(Double.POSITIVE_INFINITY);
+        if (Double.isNaN(value) || Double.isInfinite(value))
+            this.bias_normalized.setValue(Double.MAX_VALUE);
         else
             this.bias_normalized.setValue(value);
         

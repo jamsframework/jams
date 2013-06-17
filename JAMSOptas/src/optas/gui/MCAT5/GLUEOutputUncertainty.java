@@ -65,7 +65,7 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
 
     double dataCount = 0;
 
-    String meanString, medianString;
+    String meanString, medianString, lowBound, upBound;
 
     public GLUEOutputUncertainty() {
         this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"), TimeSerie.class));
@@ -324,6 +324,7 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
     }
     
     boolean showAll = true;
+    @Override
     public void refresh() throws NoDataException {
         if (!this.isRequestFulfilled()) {
             return;
@@ -437,6 +438,8 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
             dataset4.add(d, mean);
             meanString += sdf.format(obs.getTime((int) i)) + "\t" + mean + "\n";
             medianString += sdf.format(obs.getTime((int) i)) + "\t" + median + "\n";
+            //System.out.println(obs.getTime((int) i) + "\t" + low_conf[i] + "\t" + high_conf[i]);            
+            System.out.println(sdf.format(obs.getTime((int) i)) + "\t" + low_conf[i] + "\t" + high_conf[i] + "\t" + mean);
             dataset5.add(d, median);
         }
 
