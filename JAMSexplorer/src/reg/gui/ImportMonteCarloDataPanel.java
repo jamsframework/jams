@@ -27,7 +27,6 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import jams.workspace.dsproc.DataStoreProcessor.AttributeData;
 import jams.workspace.dsproc.Processor;
-import java.io.IOException;
 import javax.swing.JOptionPane;
 import optas.Optas;
 import optas.hydro.data.DataCollection;
@@ -35,13 +34,6 @@ import optas.io.ImportMonteCarloData;
 import optas.io.ImportMonteCarloData.EnsembleType;
 import optas.io.ImportMonteCarloException;
 
-import ucar.ma2.Array;
-import ucar.ma2.ArrayChar;
-import ucar.ma2.ArrayDouble;
-import ucar.ma2.DataType;
-import ucar.ma2.Index;
-import ucar.ma2.InvalidRangeException;
-import ucar.nc2.NetcdfFileWriteable;
 
 /**
  *
@@ -180,7 +172,9 @@ public class ImportMonteCarloDataPanel extends JPanel {
                     maps[i] = new EnsembleTypeStringMap(options[i]);
                 }
                 typeSelection = new JComboBox(maps);
-                typeSelection.setSelectedItem(new EnsembleTypeStringMap(importer.getAttributeTypeDefault(a)));
+                if (importer.getAttributeTypeDefault(a) != null){
+                    typeSelection.setSelectedItem(new EnsembleTypeStringMap(importer.getAttributeTypeDefault(a)));
+                }
                 typeSelection.setPreferredSize(new Dimension(175, 25));
                 typeSelection.setMaximumSize(new Dimension(175, 25));
                 this.attributeComboBoxMap.put(a, typeSelection);
