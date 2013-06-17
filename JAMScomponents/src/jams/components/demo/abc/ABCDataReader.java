@@ -64,14 +64,18 @@ public class ABCDataReader extends JAMSComponent {
      */
     @Override
     public void init() {
-        try {
+        try {            
             if (fileName == null) {
                 getModel().getRuntime().sendHalt(JAMS.i18n("You_should_specify_a_file_for_ABCDataReader"));
-            } else if (!(new File(fileName.getValue())).isFile()) {
+                return;
+            } 
+            File file = new File(this.getModel().getWorkspaceDirectory(), fileName.getValue());
+            
+            if (!file.isFile()) {
                 getModel().getRuntime().sendHalt(JAMS.i18n("The_file") + " " + fileName.getValue() + " "
                         + JAMS.i18n("ABCDataReader_should_read_from_is_not_valid"));
             }
-            reader = new BufferedReader(new FileReader(this.fileName.getValue()));
+            reader = new BufferedReader(new FileReader(file));
             reader.readLine();
             reader.readLine();
         } catch (FileNotFoundException ex) {

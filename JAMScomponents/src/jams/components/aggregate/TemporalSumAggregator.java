@@ -42,7 +42,8 @@ public class TemporalSumAggregator extends JAMSComponent {
     description = "The value(s) to be aggregated")
     public Attribute.Double[] value;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "A weight to be used to calculate the weighted aggregate")
+    description = "A weight to be used to calculate the weighted aggregate",
+    defaultValue="1")
     public Attribute.Double weight;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
     description = "The resulting weighted aggregate(s) of the given values")

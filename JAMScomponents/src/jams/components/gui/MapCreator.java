@@ -25,7 +25,6 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import jams.data.Attribute;
 import jams.data.Attribute.Entity.NoSuchAttributeException;
-import jams.data.DefaultDataFactory;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -572,7 +571,6 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                 return style[0];
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());
-                System.exit(0);
             }
             return null;
         }

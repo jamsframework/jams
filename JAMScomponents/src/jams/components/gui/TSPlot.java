@@ -27,7 +27,6 @@ import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -79,71 +78,88 @@ public class TSPlot extends JAMSGUIComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Title string for plot. Default: component name")
     public Attribute.String plotTitle;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Static title strings for left graphs. Number of entries "
             + "must be identical to number of plottet values (valueLeft).",
-            defaultValue = "titleLeft1;titleLeft2")
+            defaultValue="titleLeft")
     public Attribute.StringArray titleLeft;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Dynamic addon title strings added after left static titles (titleLeft)")
     public Attribute.StringArray varTitleLeft;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Static title strings for right graphs",
             defaultValue = "titleRight")
     public Attribute.StringArray titleRight;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Colors for left graphs (yellow, orange, red, pink, "
             + "magenta, cyan, yellow, green, lightgray, gray, black). Number of "
             + "entries must be identical to number of plottet values (valueLeft).",
             defaultValue = "blue;red")
     public Attribute.StringArray colorLeft;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Colors for right graphs (yellow, orange, red, pink, "
             + "magenta, cyan, yellow, green, lightgray, gray, black). Number of "
             + "entries must be identical to number of plottet values (valueRight).",
             defaultValue = "red")
     public Attribute.StringArray colorRight;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Graph type for left y axis graphs",
             defaultValue = "0")
     public Attribute.Integer typeLeft;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Graph type for right y axis graphs",
             defaultValue = "0")
     public Attribute.Integer typeRight;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Title string for x axis",
             defaultValue = "Time")
     public Attribute.String xAxisTitle;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Title string for left y axis",
             defaultValue = "LeftTitle")
     public Attribute.String leftAxisTitle;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Title string for right y axis",
             defaultValue = "RightTitle")
     public Attribute.String rightAxisTitle;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             defaultValue = "0",
             description = "Paint inverted right y axis?")
     public Attribute.Boolean rightAxisInverted;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Date format",
             defaultValue = "dd-MM-yyyy")
     public Attribute.String dateFormat;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Current time")
     public Attribute.Calendar time;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Values to be plotted on left x-axis")
     public Attribute.Double[] valueLeft;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Values to be plotted on right x-axis")
     public Attribute.Double[] valueRight;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Value for \"No data\" (shouldn't be plotted)",
             defaultValue = "-9999")
     public Attribute.Double noDataValue;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Plot data, after cacheSize values have been collected",
             defaultValue = "1")
@@ -152,12 +168,11 @@ public class TSPlot extends JAMSGUIComponent {
     transient TimeSeriesCollection dataset1, dataset2;
     transient XYItemRenderer rightRenderer, leftRenderer;
     transient XYPlot plot;
-    transient JFreeChart chart;
-    transient JButton saveButton;
-    int i, graphCountLeft = 0, graphCountRight = 0;
+    transient JFreeChart chart;    
+    int graphCountLeft = 0, graphCountRight = 0;
+    
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
-    double noDataValue_;
-    int cacheSize_;
+    
     long[] timeStamps;
     double[] dataValuesLeft;
     double[] dataValuesRight;
@@ -177,13 +192,19 @@ public class TSPlot extends JAMSGUIComponent {
         colorTable.put("black", Color.black);
     }
 
+    @Override
     public JPanel getPanel() {
 
         dataset1 = new TimeSeriesCollection();
         dataset2 = new TimeSeriesCollection();
 
+        String title = getInstanceName();
+        if (this.plotTitle != null){
+            title = plotTitle.getValue();
+        }
+        
         chart = ChartFactory.createTimeSeriesChart(
-                getInstanceName(),
+                title,
                 xAxisTitle.getValue(),
                 leftAxisTitle.getValue(),
                 dataset1,
@@ -200,59 +221,47 @@ public class TSPlot extends JAMSGUIComponent {
         return panel;
     }
 
-    private XYItemRenderer getRenderer(int type) {
-        XYItemRenderer r;
+    private XYItemRenderer getRenderer(int type) {        
         switch (type) {
             case 0:
                 XYLineAndShapeRenderer lsr = new XYLineAndShapeRenderer();
                 lsr.setBaseShapesVisible(false);
-                r = lsr;
-                break;
-
+                return lsr;
             case 1:
-                r = new XYBarRenderer();
-                break;
+                return new XYBarRenderer();
 
             case 2:
-                r = new XYAreaRenderer();
-                break;
+                return new XYAreaRenderer();
 
             case 3:
                 lsr = new XYLineAndShapeRenderer();
                 lsr.setBaseShapesVisible(true);
-                r = lsr;
-                break;
+                return lsr;
 
             case 4:
                 XYDotRenderer dotR = new XYDotRenderer();
                 dotR.setDefaultEntityRadius(2);
-                r = dotR;
-                break;
+                return dotR;
 
             case 5:
-                r = new XYDifferenceRenderer();
-                break;
-
+                return new XYDifferenceRenderer();
+                
             case 6:
-                r = new XYStepRenderer();
-                break;
-
+                return new XYStepRenderer();
+                
             case 7:
-                r = new XYStepAreaRenderer();
-                break;
-
+                return new XYStepAreaRenderer();
+                
             default:
                 lsr = new XYLineAndShapeRenderer();
                 lsr.setBaseShapesVisible(false);
-                r = lsr;
+                return lsr;
         }
-        return r;
     }
 
     @Override
     public void init() {
 
-        noDataValue_ = noDataValue.getValue();
         if (dataset1 != null) {
             dataset1.removeAllSeries();
         }
@@ -271,16 +280,22 @@ public class TSPlot extends JAMSGUIComponent {
 
             if (valueLeft == null) {
                 getModel().getRuntime().sendErrorMsg(JAMS.i18n("no_value_for_time_series_plot"));
+                return;
             }
             graphCountLeft = valueLeft.length;
             tsLeft = new TimeSeries[graphCountLeft];
-            for (i = 0; i < graphCountLeft; i++) {
-                String legendEntry = titleLeft.getValue()[i];
-
-                if (this.varTitleLeft != null) {
-                    legendEntry = legendEntry + getModel().getRuntime().getDataHandles().get(varTitleLeft.getValue()[i]);
+            for (int i = 0; i < graphCountLeft; i++) {
+                String legendEntry = "";
+                if (titleLeft != null && titleLeft.getValue().length >= i){
+                    legendEntry = titleLeft.getValue()[i];
                 }
-                leftRenderer.setSeriesPaint(i, colorTable.get(colorLeft.getValue()[i]));
+                if (this.varTitleLeft != null && this.varTitleLeft.getValue().length > i) {
+                    legendEntry += varTitleLeft.getValue()[i];//getModel().getRuntime().getDataHandles().get(varTitleLeft.getValue()[i]);
+                }
+                if (colorLeft != null && colorLeft.getValue().length>i){
+                    leftRenderer.setSeriesPaint(i, colorTable.get(colorLeft.getValue()[i]));
+                }
+                
                 tsLeft[i] = new TimeSeries(legendEntry, Second.class);
                 dataset1.addSeries(tsLeft[i]);
             }
@@ -299,18 +314,23 @@ public class TSPlot extends JAMSGUIComponent {
 
                 graphCountRight = valueRight.length;
                 tsRight = new TimeSeries[graphCountRight];
-                for (i = 0; i < graphCountRight; i++) {
-                    rightRenderer.setSeriesPaint(i, colorTable.get(colorRight.getValue()[i]));
-                    tsRight[i] = new TimeSeries(titleRight.getValue()[i], Second.class);
+                for (int i = 0; i < graphCountRight; i++) {
+                    if (colorRight != null && colorRight.getValue().length >= i)
+                        rightRenderer.setSeriesPaint(i, colorTable.get(colorRight.getValue()[i]));
+                    String title = "";
+                    if (titleRight != null && titleRight.getValue().length > i){
+                        title = titleRight.getValue()[i];
+                    }
+                    tsRight[i] = new TimeSeries(title, Second.class);
                     dataset2.addSeries(tsRight[i]);
                 }
             }
         }
 
-        cacheSize_ = cacheSize.getValue();
-        timeStamps = new long[cacheSize_];
-        dataValuesRight = new double[cacheSize_ * graphCountRight];
-        dataValuesLeft = new double[cacheSize_ * graphCountLeft];
+        int cacheSize = this.cacheSize.getValue();
+        timeStamps = new long[cacheSize];
+        dataValuesRight = new double[cacheSize * graphCountRight];
+        dataValuesLeft = new double[cacheSize * graphCountLeft];
         count = 0;
     }
 
@@ -323,35 +343,31 @@ public class TSPlot extends JAMSGUIComponent {
         int offsetRight = count * graphCountRight;
         int offsetLeft = count * graphCountLeft;
 
-        for (i = 0; i < graphCountRight; i++) {
+        for (int i = 0; i < graphCountRight; i++) {
             double value = valueRight[i].getValue();
-            if (value == noDataValue_) {
+            if (value == noDataValue.getValue()) {
                 value = Double.NaN;
             }
             dataValuesRight[offsetRight + i] = value;
         }
 
-        for (i = 0; i < graphCountLeft; i++) {
+        for (int i = 0; i < graphCountLeft; i++) {
             double value = valueLeft[i].getValue();
-            if (value == noDataValue_) {
+            if (value == noDataValue.getValue()) {
                 value = Double.NaN;
             }
             dataValuesLeft[offsetLeft + i] = value;
         }
 
-        if (count == cacheSize_ - 1) {
+        if (++count == this.cacheSize.getValue()) {
             plotData();
             count = 0;
-        } else {
-            count++;
-        }
+        } 
     }
 
     private void plotData() {
         try {
-
-            for (int i = 0; i <= count; i++) {
-
+            for (int i = 0; i < count; i++) {
                 Second second = new Second(new Date(timeStamps[i]));
                 for (int j = 0; j < graphCountRight; j++) {
                     tsRight[j].add(second, dataValuesRight[i * graphCountRight + j]);

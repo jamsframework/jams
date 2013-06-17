@@ -554,7 +554,6 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
                 return style[0];
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e.getMessage());
-                System.exit(0);
             }
             return null;
         }

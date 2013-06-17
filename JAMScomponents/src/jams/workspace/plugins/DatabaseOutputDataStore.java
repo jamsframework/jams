@@ -21,6 +21,9 @@
  */
 package jams.workspace.plugins;
 
+import de.odysseus.el.util.SimpleContext;
+import de.odysseus.el.util.SimpleResolver;
+import jams.data.JAMSData;
 import jams.workspace.stores.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,8 +35,11 @@ import jams.model.Context;
 import jams.workspace.Workspace;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.el.ExpressionFactory;
+import javax.el.ValueExpression;
 
 /**
  *
@@ -240,8 +246,24 @@ public class DatabaseOutputDataStore implements OutputDataStore {
     public class DefaultFilter implements Filter {
 
         private String contextName, expression;
-        private Pattern pattern = null;
         private Context context = null;
+
+        private class Variable implements Serializable {
+
+            String name;
+            JAMSData data;
+            ValueExpression expr;
+
+            Variable(String name, JAMSData data, ValueExpression expr) {
+                this.name = name;
+                this.data = data;
+                this.expr = expr;
+            }
+        }
+        ExpressionFactory factory = null;
+        SimpleContext exprContext = new SimpleContext(new SimpleResolver());
+        ValueExpression valueExpr = null;        
+        ValueExpression idExpr = null;
 
         public DefaultFilter(String contextName, String expression) {
             this.contextName = contextName;
@@ -256,20 +278,25 @@ public class DatabaseOutputDataStore implements OutputDataStore {
             return expression;
         }
 
-        public Pattern getPattern() {
-            return pattern;
+        public boolean isFiltered(String id) {
+            idExpr.setValue(exprContext, id);
+            boolean result = (Boolean) valueExpr.getValue(exprContext);
+            return result;
         }
-
-        public void setPattern(Pattern pattern) {
-            this.pattern = pattern;
-        }
-
+        
         public Context getContext() {
             return context;
         }
 
         public void setContext(Context context) {
             this.context = context;
+            
+            Context searchContext = this.getContext();
+            while (searchContext != null) {
+                ValueExpression contextExpr = factory.createValueExpression(exprContext, "${"+searchContext.getInstanceName()+"}", Context.class);
+                contextExpr.setValue(exprContext, searchContext);
+                searchContext = searchContext.getContext();                
+            } 
         }
     }
 

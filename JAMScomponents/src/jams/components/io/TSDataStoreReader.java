@@ -60,13 +60,7 @@ public class TSDataStoreReader extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "Descriptive name of the dataset (equals datastore ID)")
     public Attribute.String dataSetName;
-
-    /*
-     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-     description = "The current time within the timeinterval")
-     public Attribute.Calendar time;
-     */
-    
+   
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "Array of double values received from the datastore. Order "
     + "according to datastore")
@@ -87,12 +81,7 @@ public class TSDataStoreReader extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "Regression coefficients")
     public Attribute.DoubleArray regCoeff;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Caching configuration: 0 - write cache, 1 - use cache, 2 - caching off",
-    defaultValue = "0")
-    public Attribute.Integer dataCaching;
-    
+      
     private TSDataStore store;
     private double[] doubles;
     private double[] elevationArray;
@@ -236,9 +225,7 @@ public class TSDataStoreReader extends JAMSComponent {
         }
 
         dataArray.setValue(doubles);
-        if (dataCaching.getValue() != 1) {
-            regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));
-        }
+        regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));
     }
 
     @Override
