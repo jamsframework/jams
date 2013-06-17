@@ -29,11 +29,11 @@ import java.util.*;
  */
 public class JAMSEntityCollection implements Attribute.EntityCollection {
 
-    private ArrayList<Attribute.Entity> entities = new ArrayList<Attribute.Entity>();
-    private Attribute.Entity[] entityArray;
-    private Attribute.Entity current;
-    private EntityEnumerator ee = null;
-    private HashMap<Long, Attribute.Entity> idMap;
+    protected ArrayList<Attribute.Entity> entities = new ArrayList<Attribute.Entity>();
+    protected Attribute.Entity[] entityArray;
+    protected Attribute.Entity current;
+    protected EntityEnumerator ee = null;
+    protected HashMap<Long, Attribute.Entity> idMap;
 
     @Override
     public Attribute.Entity[] getEntityArray() {
@@ -43,10 +43,11 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     @Override
     public String toString() {
         String result = "";
-        int i=0;
-        for (Attribute.Entity entity : entities ){
-            if (i++!=0)
+        int i = 0;
+        for (Attribute.Entity entity : entities) {
+            if (i++ != 0) {
                 result += "\n";
+            }
             result += entity.toString();
         }
         return result;
@@ -57,41 +58,40 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
 
 //        if (ee == null) {
 
-            ee = new EntityEnumerator() {
+        ee = new EntityEnumerator() {
+            Attribute.Entity[] entityArray = getEntityArray();
+            int index = 0;
 
-                Attribute.Entity[] entityArray = getEntityArray();
-                int index = 0;
+            @Override
+            public boolean hasNext() {
+                return (index + 1 < entityArray.length);
+            }
 
-                @Override
-                public boolean hasNext() {
-                    return (index + 1 < entityArray.length);
-                }
+            @Override
+            public boolean hasPrevious() {
+                return index > 0;
+            }
 
-                @Override
-                public boolean hasPrevious() {
-                    return index > 0;
-                }
+            @Override
+            public Attribute.Entity next() {
+                index++;
+                JAMSEntityCollection.this.current = entityArray[index];
+                return JAMSEntityCollection.this.current;
+            }
 
-                @Override
-                public Attribute.Entity next() {
-                    index++;
-                    JAMSEntityCollection.this.current = entityArray[index];
-                    return JAMSEntityCollection.this.current;
-                }
+            @Override
+            public Attribute.Entity previous() {
+                index--;
+                JAMSEntityCollection.this.current = entityArray[index];
+                return JAMSEntityCollection.this.current;
+            }
 
-                @Override
-                public Attribute.Entity previous() {
-                    index--;
-                    JAMSEntityCollection.this.current = entityArray[index];
-                    return JAMSEntityCollection.this.current;
-                }
-
-                @Override
-                public void reset() {
-                    index = 0;
-                    JAMSEntityCollection.this.current = entityArray[index];
-                }
-            };
+            @Override
+            public void reset() {
+                index = 0;
+                JAMSEntityCollection.this.current = entityArray[index];
+            }
+        };
 //        }
 
         return ee;
@@ -111,6 +111,12 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
         } else {
             this.current = null;
         }
+        //attention id changes after this point will do not have any effect
+        idMap = new HashMap<Long, Attribute.Entity>();
+        for (Attribute.Entity e : entities) {
+            idMap.put(e.getId(), e);
+        }
+
     }
 
     @Override
@@ -135,12 +141,8 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
 
     @Override
     public Attribute.Entity getEntity(long id) {
-        if (idMap == null) {
-             idMap = new HashMap<Long, Attribute.Entity>();
-             for (Attribute.Entity e : entities) {
-                 idMap.put(e.getId(), e);
-             }
-        }
+
+        //do it now or never .. (late initialization can cause problem with multiple iterations .. )        
         return idMap.get(id);
     }
 }

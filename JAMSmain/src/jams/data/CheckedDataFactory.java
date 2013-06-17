@@ -115,8 +115,8 @@ public class CheckedDataFactory extends DefaultDataFactory {
             interfaceLookup.put(Attribute.Document.class, JAMSDocument.class);
             interfaceLookup.put(Attribute.Double.class, JAMSDoubleChecked.class);
             interfaceLookup.put(Attribute.DoubleArray.class, JAMSDoubleArrayChecked.class);
-            interfaceLookup.put(Attribute.Entity.class, JAMSEntity.class);
-            interfaceLookup.put(Attribute.EntityCollection.class, JAMSEntityCollection.class);
+            interfaceLookup.put(Attribute.Entity.class, JAMSEntityChecked.class);
+            interfaceLookup.put(Attribute.EntityCollection.class, JAMSEntityCollectionChecked.class);
             interfaceLookup.put(Attribute.FileName.class, JAMSFileName.class);
             interfaceLookup.put(Attribute.Float.class, JAMSFloatChecked.class);
             interfaceLookup.put(Attribute.FloatArray.class, JAMSFloatArrayChecked.class);
