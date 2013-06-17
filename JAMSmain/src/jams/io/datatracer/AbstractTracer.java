@@ -83,7 +83,7 @@ public abstract class AbstractTracer implements DataTracer {
             Context superContext = context;
             while (superContext != null) {
                 if (superContext.getInstanceName().equals(filter.getContextName())) {
-                    filter.setPattern(Pattern.compile(filter.getExpression()));
+                    //filter.setPattern(Pattern.compile(filter.getExpression()));
                     filter.setContext(superContext);
                     break;
                 }
