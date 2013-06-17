@@ -118,7 +118,7 @@ public class ComponentField implements Comparable {
         }
         ContextAttribute attribute = context.getDynamicAttributes().get(attributeName);
         // check if already existing
-        if ((attribute != null) && (attribute.getType() != basicType)) {
+        if ((attribute != null) && (!basicType.isAssignableFrom(attribute.getType()))) {
             throw new JAMSException(MessageFormat.format(JAMS.i18n("Attribute_already_exists_in_context_with_different_type"), attributeName, context.getInstanceName(), attribute.getType()));
         }
 
