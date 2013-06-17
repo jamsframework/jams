@@ -32,7 +32,6 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.regex.Matcher;
 import jams.JAMS;
 import jams.tools.JAMSTools;
 import jams.data.*;
@@ -430,10 +429,8 @@ public class JAMSContext extends JAMSComponent implements Context {
                     for (Filter filter : store.getFilters()) {
                         if (filter.getContext() != JAMSContext.this) {
                             String s = filter.getContext().getTraceMark();
-                            Matcher matcher = filter.getPattern().matcher(s);
-                            if (!matcher.matches()) {
-                                return;
-                            }
+                            if (!filter.isFiltered(s))
+                                return;                            
                         }
                     }
 
@@ -467,9 +464,8 @@ public class JAMSContext extends JAMSComponent implements Context {
 
                     // take care of filters in this context
                     for (Filter filter : store.getFilters()) {
-                        if (filter.getContext() == JAMSContext.this) {
-                            Matcher matcher = filter.getPattern().matcher(traceMark);
-                            if (!matcher.matches()) {
+                        if (filter.getContext() == JAMSContext.this) {                            
+                            if (!filter.isFiltered(traceMark)) {
                                 return;
                             }
                         }
@@ -1114,6 +1110,17 @@ public class JAMSContext extends JAMSComponent implements Context {
         this.entities = entities;
     }
 
+    
+    /*public void createMemoryStatistics(){
+        HashMap<String, Long> memoryMap = new HashMap<String, Long>();
+        ArrayList<Attribute.Entity> entityList = new ArrayList<Attribute.Entity>();
+        for (Attribute.Entity e : entityList){
+            
+            memoryMap.put("Overhead", )
+            entityList.get(i).getKeys()
+        }
+    }*/
+    
     private void writeObject(ObjectOutputStream objOut) throws IOException {
         objOut.defaultWriteObject();
         objOut.writeBoolean(this.getModel().isProfiling());

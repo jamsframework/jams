@@ -60,16 +60,15 @@ public class JAMSTemporalContext extends JAMSContext {
     @Override
     protected DataTracer createDataTracer(OutputDataStore store) {
         return new AbstractTracer(this, store, JAMSLong.class) {
-
+            
             @Override
             public void trace() {
-
                 // check for filters on other contexts first
                 for (Filter filter : store.getFilters()) {
                     if (filter.getContext() != JAMSTemporalContext.this) {
-                        String s = filter.getContext().getTraceMark();
-                        Matcher matcher = filter.getPattern().matcher(s);
-                        if (!matcher.matches()) {
+                        String s = filter.getContext().getTraceMark();                        
+                        //Matcher matcher = filter.getPattern().matcher(s);
+                        if (!filter.isFiltered(s)) {
                             return;
                         }
                     }
@@ -80,8 +79,8 @@ public class JAMSTemporalContext extends JAMSContext {
                 // take care of filters in this context
                 for (Filter filter : store.getFilters()) {
                     if (filter.getContext() == JAMSTemporalContext.this) {
-                        Matcher matcher = filter.getPattern().matcher(traceMark);
-                        if (!matcher.matches()) {
+                        //Matcher matcher = filter.getPattern().matcher(traceMark);
+                        if (!filter.isFiltered(traceMark)) {
                             return;
                         }
                     }
