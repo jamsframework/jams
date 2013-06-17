@@ -37,11 +37,9 @@ public interface Filter extends Serializable {
     String getContextName();
 
     String getExpression();
-
-    Pattern getPattern();
+            
+    boolean isFiltered(String in);
 
     void setContext(Context context);
-
-    void setPattern(Pattern pattern);
-
+    
 }

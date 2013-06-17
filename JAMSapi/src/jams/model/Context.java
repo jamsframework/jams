@@ -84,7 +84,7 @@ public interface Context extends Component {
     ArrayList<Component> getComponents();
 
     HashMap<String, DataAccessor> getDataAccessorMap();
-
+    
     Attribute.EntityCollection getEntities();
 
     long getNumberOfIterations();
@@ -124,5 +124,5 @@ public interface Context extends Component {
 
     void updateComponentData(int index);
     
-    void resume();    
+    void resume();            
 }
