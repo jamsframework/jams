@@ -145,7 +145,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
             if (StringTools.isEmptyString(md.getWorkspacePath()) && (defaultWorkspacePath != null)) {
                 md.setWorkspacePath(defaultWorkspacePath);
-                this.println(JAMS.i18n("no_workspace_defined_use_loadpath") + defaultWorkspacePath, JAMS.VERBOSE);
+                this.println(JAMS.i18n("no_workspace_defined_use_loadpath") + defaultWorkspacePath, JAMS.STANDARD);
             }
 
             this.println("", JAMS.STANDARD);
@@ -529,8 +529,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                 try {
                     tabbedPane.addTab(comp.getInstanceName(), comp.getPanel());
                 } catch (Throwable t) {
-                    this.sendErrorMsg(JAMS.i18n("Could_not_load_component") + comp.getInstanceName()
-                            + JAMS.i18n("Proceed_anyway?"));
+                    this.sendErrorMsg(JAMS.i18n("Could_not_load_component") + comp.getInstanceName() + "\"");
                     this.handle(t, true);
                 }
             }

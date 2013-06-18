@@ -72,39 +72,22 @@ import org.w3c.dom.Element;
 public class JAMSRemoteLauncher extends JAMSFrame {
 
     protected static final String BASE_TITLE = "JAMS Remote Launcher";
-
     private static final String CONNECTED_BUTTON_TEXT = "Close Connection";
-
     private static final String CLOSED_BUTTON_TEXT = "Connect to Server";
-
     private static final int SERVER_PANEL_WIDTH = 200;
-
     private static final String SERVER_LIB_DIR = "libs";
-
     private static final String MODEL_FILE_NAME = "$model.jam";
-
     private JList list;
-
     private ListInput serverList;
-
     private JButton uploadButton, uploadLibsButton, downloadButton, connectButton, refreshButton, cleanWSButton, cleanAccountButton, updateLogsButton;
-
     private Client client = null;
-
     private JLabel conClientLabel, maxClientLabel, addressLabel, socketLabel;
-
     private JTextField baseDirLabel;
-
     private JTextField account, excludes;
-
     private JPasswordField password;
-
     private JComboBox workspaceSelector;
-
     private LogViewDlg serverInfoDlg = new LogViewDlg(this, 400, 400, "Server Info Log");
-
     private LogViewDlg serverErrorDlg = new LogViewDlg(this, 400, 400, "Server Error Log");
-
     private String baseDir;
 
     //private Map<Element, InputComponent> propertyInput;
@@ -121,12 +104,11 @@ public class JAMSRemoteLauncher extends JAMSFrame {
     private void adapt() {
 
         Dimension size = this.getSize();
-        this.setPreferredSize(new Dimension(size.width + SERVER_PANEL_WIDTH, size.height + 50));
+        this.setPreferredSize(new Dimension(size.width + SERVER_PANEL_WIDTH, size.height + 100));
 
         JMenu logsMenu = getLogsMenu();
         JMenuItem serverInfoLogItem = new JMenuItem("Server info log");
         serverInfoLogItem.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 serverInfoDlg.setVisible(true);
             }
@@ -135,7 +117,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
 
         JMenuItem serverErrorLogItem = new JMenuItem("Server error log");
         serverErrorLogItem.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 serverErrorDlg.setVisible(true);
             }
@@ -154,7 +135,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         serverList.setPreferredSize(new Dimension(100, 100));
 
         serverList.addListDataObserver(new Observer() {
-
             public void update(Observable o, Object arg) {
                 String servers = "";
                 for (Object server : serverList.getListData()) {
@@ -169,7 +149,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
 
         list = serverList.getListbox();
         list.addListSelectionListener(new ListSelectionListener() {
-
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting()) {
                     boolean enabled;
@@ -198,7 +177,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         account = new JTextField();
         account.setText(getProperties().getProperty(JAMSProperties.SERVER_ACCOUNT_IDENTIFIER));
         account.getDocument().addDocumentListener(new DocumentListener() {
-
             public void changedUpdate(DocumentEvent e) {
                 updateAccount();
             }
@@ -217,7 +195,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         password = new JPasswordField();
         password.setText(getProperties().getProperty(JAMSProperties.SERVER_PASSWORD_IDENTIFIER));
         password.getDocument().addDocumentListener(new DocumentListener() {
-
             public void changedUpdate(DocumentEvent e) {
                 updatePassword();
             }
@@ -236,7 +213,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         GUIHelper.addGBComponent(serverPanel, gbl, connectButton, 0, 15, 2, 1, 0, 0);
         connectButton.setEnabled(false);
         connectButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 if ((client != null) && (!client.isClosed())) {
                     close();
@@ -287,7 +263,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         GUIHelper.addGBComponent(infoPanel, gbl_info, refreshButton, 0, 6, 3, 1, 0, 0);
         refreshButton.setEnabled(false);
         refreshButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 refreshInfo();
             }
@@ -299,7 +274,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         }
         workspaceSelector.setPreferredSize(new Dimension(0, 20));
         workspaceSelector.addItemListener(new ItemListener() {
-
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     PropertyDescriptor pd = (PropertyDescriptor) e.getItem();
@@ -311,11 +285,10 @@ public class JAMSRemoteLauncher extends JAMSFrame {
 
         GUIHelper.addGBComponent(infoPanel, gbl_info, new JLabel("Excludes:"), 0, 10, 1, 1, 0, 0);
         excludes = new JTextField();
-        excludes.setToolTipText("Semicolon-separated list of filename suffixes defining " +
-                "files to be exluded from file transfer");
+        excludes.setToolTipText("Semicolon-separated list of filename suffixes defining "
+                + "files to be exluded from file transfer");
         excludes.setText(getProperties().getProperty(JAMSProperties.SERVER_EXCLUDES_IDENTIFIER, "cache;svn;xls"));
         excludes.getDocument().addDocumentListener(new DocumentListener() {
-
             public void changedUpdate(DocumentEvent e) {
                 updateExcludes();
             }
@@ -335,7 +308,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         GUIHelper.addGBComponent(infoPanel, gbl_info, uploadButton, 0, 15, 1, 1, 0, 0);
         uploadButton.setEnabled(false);
         uploadButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 uploadWorkspace();
             }
@@ -346,7 +318,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         GUIHelper.addGBComponent(infoPanel, gbl_info, downloadButton, 2, 15, 1, 1, 0, 0);
         downloadButton.setEnabled(false);
         downloadButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 downloadWorkspace();
             }
@@ -357,7 +328,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         GUIHelper.addGBComponent(infoPanel, gbl_info, uploadLibsButton, 0, 20, 3, 1, 0, 0);
         uploadLibsButton.setEnabled(false);
         uploadLibsButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 uploadLibs();
             }
@@ -368,7 +338,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         GUIHelper.addGBComponent(infoPanel, gbl_info, cleanWSButton, 0, 25, 1, 1, 0, 0);
         cleanWSButton.setEnabled(false);
         cleanWSButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 cleanWorkspace();
             }
@@ -379,7 +348,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         GUIHelper.addGBComponent(infoPanel, gbl_info, cleanAccountButton, 2, 25, 1, 1, 0, 0);
         cleanAccountButton.setEnabled(false);
         cleanAccountButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 cleanAccount();
             }
@@ -390,7 +358,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         GUIHelper.addGBComponent(infoPanel, gbl_info, updateLogsButton, 0, 28, 3, 1, 0, 0);
         updateLogsButton.setEnabled(false);
         updateLogsButton.addActionListener(new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 updateLogs();
             }
@@ -398,7 +365,7 @@ public class JAMSRemoteLauncher extends JAMSFrame {
 
 
         GUIHelper.addGBComponent(serverPanel, gbl, infoPanel, 0, 25, 2, 1, 0, 0);
-
+        
         this.add(new JScrollPane(serverPanel), BorderLayout.WEST);
 
         this.pack();
@@ -422,13 +389,11 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         client = new Client(host, port, account, password);
         // add info and error log output
         client.addInfoLogObserver(new Observer() {
-
             public void update(Observable obs, Object obj) {
                 JAMSRemoteLauncher.this.serverInfoDlg.appendText(obj.toString());
             }
         });
         client.addErrorLogObserver(new Observer() {
-
             public void update(Observable obs, Object obj) {
                 JAMSRemoteLauncher.this.serverErrorDlg.appendText(obj.toString());
                 GUIHelper.showErrorDlg(JAMSRemoteLauncher.this, obj.toString(), "Client error");
@@ -723,8 +688,8 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         try {
             client.pushFile(remoteModelFilename, localModelFilename);
         } catch (IOException ex) {
-            client.getErrorLog().print("Model definition file " + localModelFilename + " could not be" +
-                    "transfered to server!\n");
+            client.getErrorLog().print("Model definition file " + localModelFilename + " could not be"
+                    + "transfered to server!\n");
             getRunModelAction().setEnabled(true);
             return;
         }
@@ -737,8 +702,8 @@ public class JAMSRemoteLauncher extends JAMSFrame {
         try {
             int result = client.runJAMS(remoteWorkspace, SERVER_LIB_DIR, remoteModelFilename, debug);
             /*
-            getInfoDlg().appendText(result[0]);
-            getErrorDlg().appendText(result[1]);
+             getInfoDlg().appendText(result[0]);
+             getErrorDlg().appendText(result[1]);
              */
             client.getInfoLog().print("Remote execution finished\n");
 
@@ -756,7 +721,6 @@ public class JAMSRemoteLauncher extends JAMSFrame {
     class PropertyDescriptor {
 
         InputComponent input;
-
         Element property;
 
         public String toString() {

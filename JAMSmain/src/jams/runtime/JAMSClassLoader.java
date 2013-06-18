@@ -96,5 +96,5 @@ public class JAMSClassLoader extends URLClassLoader {
 
         JAMSClassLoader cl = new JAMSClassLoader(urlArray);
         return cl;
-    }
+    }    
 }

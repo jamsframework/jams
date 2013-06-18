@@ -217,11 +217,11 @@ public class ModelIO {
             clazz = loader.loadClass(className);
 
         } catch (ClassNotFoundException cnfe) {
-            throw new JAMSException(JAMS.i18n("Could_not_load_component_")
+            throw new JAMSException(JAMS.i18n("Could_not_load_component")
                     + componentName + "\" (" + className + "). "
                     + JAMS.i18n("Please_fix_the_model_definition_file!"), cnfe);
         } catch (NoClassDefFoundError ncdfe) {
-            throw new JAMSException(JAMS.i18n("Could_not_load_component_")
+            throw new JAMSException(JAMS.i18n("Could_not_load_component")
                     + componentName + "\" (" + className + "). "
                     + JAMS.i18n("Please_fix_the_model_definition_file!"), ncdfe);
         }

@@ -25,6 +25,7 @@ package jams.remote.client;
 import jams.remote.common.ByteStream;
 import jams.remote.common.Protocol;
 import jams.remote.server.Server;
+import jams.runtime.JAMSLogger;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,8 +34,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Observer;
 import java.util.StringTokenizer;
-import jams.tools.JAMSTools;
-import jams.runtime.JAMSLog;
 import jams.tools.StringTools;
 
 /**
@@ -46,8 +45,8 @@ public class Client {
     
     private byte[] buffer;
     private Socket socket;
-    private JAMSLog errorLog = new JAMSLog();
-    private JAMSLog infoLog = new JAMSLog();
+    private JAMSLogger errorLog = new JAMSLogger();
+    private JAMSLogger infoLog = new JAMSLogger();
     private String host, account, password;
     private int port;
     private OutputStream outStream;
@@ -476,11 +475,11 @@ public class Client {
         return error;
     }
 
-    public JAMSLog getErrorLog() {
+    public JAMSLogger getErrorLog() {
         return errorLog;
     }
     
-    public JAMSLog getInfoLog() {
+    public JAMSLogger getInfoLog() {
         return infoLog;
     }
     

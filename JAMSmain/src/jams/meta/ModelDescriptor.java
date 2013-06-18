@@ -430,6 +430,8 @@ public class ModelDescriptor extends ComponentCollection {
 
     public void metaProcess(JAMSRuntime rt) {
 
+        boolean metaProcessorActive = false;
+
         for (MetaProcessorDescriptor mpd : preprocessors) {
 
             if (mpd.isEnabled()) {
@@ -443,17 +445,27 @@ public class ModelDescriptor extends ComponentCollection {
                         mp.setValue(e.getKey(), e.getValue());
                     }
 
+                    if (!metaProcessorActive) {
+                        rt.println("");
+                        metaProcessorActive = true;
+                    }
+
                     rt.println("Running MetaProcessor " + clazz.getName() + " on " + mpd.getContext().getInstanceName());
                     mp.process(mpd.getContext(), this, rt);
+
 //                    mpd.setEnabled(false);
 
                 } catch (Exception ex) {
-                    throw(new JAMSException("Error while preprocessing model", ex));
+                    throw (new JAMSException("Error while preprocessing model", ex));
                 }
             }
         }
-    }
 
+        if (metaProcessorActive) {
+            rt.println("");
+        }
+
+    }
 //    public static void main(String[] args) throws IOException {
 //
 //        SystemProperties properties = JAMSProperties.createProperties();

@@ -353,7 +353,7 @@ public class ModelTree extends JAMSTree {
         }
     }
 
-    public void updateModelTree(Document modelDoc) {
+    public final void updateModelTree(Document modelDoc) {
 
         ModelNode rootNode = null;
 

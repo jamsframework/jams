@@ -260,7 +260,7 @@ public class JUICE {
                 @Override
                 public void publish(LogRecord record) {
                     if (record.getLevel().intValue() > Level.WARNING.intValue()) {
-                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), record.getMessage(), JAMS.i18n("Error"));
+//                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), record.getMessage(), JAMS.i18n("Error"));
                     }
                     String msg = record.getMessage();
                     String line[] = msg.split("\n");
