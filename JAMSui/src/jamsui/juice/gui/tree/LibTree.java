@@ -154,7 +154,7 @@ public class LibTree extends JAMSTree {
         JAMSNode jarNode;
 
         i = 1;
-        
+
         for (int i = 0; i < libsArray.length; i++) {
             File file = new File(libsArray[i]);
 
@@ -188,7 +188,7 @@ public class LibTree extends JAMSTree {
         if (i >= maxClasses) {
             return null;
         }
-        
+
         JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.ARCHIVE_TYPE, this);
         ArrayList<Class> components = new ArrayList<Class>();
         JAMSNode compNode;
@@ -228,21 +228,22 @@ public class LibTree extends JAMSTree {
 
                     } catch (ClassNotFoundException cnfe) {
 
-                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Error_while_loading_archive_") + jarName + "\"" + JAMS.i18n("_(class_") + classString
-                                + JAMS.i18n("_could_not_be_found)!"), JAMS.i18n("Error_while_loading_archive"));
-                        Logger.getLogger(LibTree.class.getName()).log(Level.SEVERE, null, cnfe);
+                        JUICE.getLogger().log(Level.SEVERE, JAMS.i18n("Error_while_loading_archive_") + jarName + "\"" + JAMS.i18n("_(class_") + classString
+                                + JAMS.i18n("_could_not_be_found)!"), cnfe);
 
 
                     } catch (NoClassDefFoundError ncdfe) {
                         // loading classes can cause a lot of NoClassDefFoundError
                         // exceptions, they are caught silently!
+                    } catch (UnsupportedClassVersionError ucve) {
+                        JUICE.getLogger().log(Level.SEVERE, MessageFormat.format(JAMS.i18n("ClassVersionErrorWhileLoadingComponentLib"), classString + " (" + jarName + ")") 
+                                + "\n" + ucve.getMessage(), ucve);
                     } catch (Throwable e) {
                         // other exception like e.g. java.lang.SecurityException
                         // won't be handled since they hopefully don't occur
                         // while loading JARs containing JAMS components
-                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Error_while_loading_archive_") + jarName + "\"" + JAMS.i18n("_(class_") + classString
-                                + JAMS.i18n("_could_not_be_loaded)!") + "\n" + e.getMessage(), JAMS.i18n("Error_while_loading_archive"));
-                        Logger.getLogger(LibTree.class.getName()).log(Level.SEVERE, null, e);
+                        JUICE.getLogger().log(Level.SEVERE, JAMS.i18n("Error_while_loading_archive_") + jarName + "\"" + JAMS.i18n("_(class_") + classString
+                                + JAMS.i18n("_could_not_be_loaded)!") + "\n" + e.getMessage(), e);
                     }
                 }
             }

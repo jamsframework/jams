@@ -32,6 +32,7 @@ import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelProperty;
 import jams.model.JAMSComponentDescription;
 import jams.tools.StringTools;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -224,6 +225,10 @@ public class ModelIO {
             throw new JAMSException(JAMS.i18n("Could_not_load_component")
                     + componentName + "\" (" + className + "). "
                     + JAMS.i18n("Please_fix_the_model_definition_file!"), ncdfe);
+        } catch (UnsupportedClassVersionError ucve) {
+            throw new JAMSException(MessageFormat.format(JAMS.i18n("ClassVersionErrorWhileLoadingComponentLib"), className), ucve);
+        } catch (Throwable t) {
+            throw new JAMSException(t.getMessage(), t);
         }
 
         //ModelNode rootNode = new ModelNode(rootElement.getAttribute("name"));
