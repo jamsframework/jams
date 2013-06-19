@@ -23,7 +23,6 @@ package jams.workspace.stores;
 
 import de.odysseus.el.util.SimpleContext;
 import de.odysseus.el.util.SimpleResolver;
-import jams.data.JAMSData;
 import jams.io.BufferedFileWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,9 +35,6 @@ import jams.workspace.Workspace;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.HashMap;
-import javax.el.ELException;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 

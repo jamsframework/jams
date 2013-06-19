@@ -30,7 +30,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import jams.workspace.JAMSWorkspace;
 import java.io.IOException;
-import java.util.regex.Pattern;
 import jams.model.Context;
 import jams.workspace.Workspace;
 import java.io.ObjectInputStream;

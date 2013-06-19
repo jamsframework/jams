@@ -909,7 +909,7 @@ public class JUICEFrame extends JFrame {
     public void saveModel(ModelView view) {
         if (view.getSavePath() != null) {
             if (!view.save()) {
-                GUIHelper.showErrorDlg(this, JAMS.i18n("Error_saving_model_to_") + view.getSavePath(), JAMS.i18n("Error"));
+                GUIHelper.showErrorDlg(this, JAMS.i18n("Error_saving_model_to_") + view.getSavePath() + "\"", JAMS.i18n("Error"));
                 view.setSavePath(null);
             } else {
                 view.setInitialState();

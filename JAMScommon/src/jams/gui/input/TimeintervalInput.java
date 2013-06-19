@@ -37,7 +37,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import jams.data.JAMSCalendar;
 import jams.data.JAMSTimeInterval;
 import java.awt.Color;
 import jams.JAMS;
