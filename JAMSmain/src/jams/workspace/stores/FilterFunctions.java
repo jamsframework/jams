@@ -8,24 +8,19 @@ import de.odysseus.el.util.SimpleContext;
 import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
 import jams.data.JAMSData;
-import jams.data.JAMSInteger;
 import jams.model.Context;
-import javax.smartcardio.ATR;
 
 /**
  *
  * @author christian
  */
 public class FilterFunctions {
-                                            
-    public static Long toLong(String in){
-        return Long.parseLong(in);
-    }
-    
-    public static int attrToInt (Attribute.Integer a){
-        return a.getValue();
-    }
-    
+                                                
+    /**
+     *
+     * @param a
+     * @return
+     */
     public static Object getValue (JAMSData a){
         if (a instanceof Attribute.Boolean){
             return ((Attribute.Boolean)a).getValue();
@@ -58,50 +53,107 @@ public class FilterFunctions {
         return null;
     }
                 
-    public static Attribute.Calendar toDate(String in){
+    /**
+     *
+     * @param in
+     * @return
+     */
+    public static Attribute.Calendar toCalendar(String in){
         Attribute.Calendar calendar = DefaultDataFactory.getDataFactory().createCalendar();
         calendar.setValue(in);
         return calendar;
     }
     
+    /**
+     *
+     * @param in
+     * @return
+     */
     public static Attribute.TimeInterval toTimeInterval(String in){
         Attribute.TimeInterval interval = DefaultDataFactory.getDataFactory().createTimeInterval();
         interval.setValue(in);
         return interval;
     }
     
+    /**
+     *
+     * @param in
+     * @return
+     */
     public static Attribute.Calendar start(Attribute.TimeInterval in){
         return in.getStart();
     }
     
+    /**
+     *
+     * @param in
+     * @return
+     */
     public static Attribute.Calendar end(Attribute.TimeInterval in){
         return in.getEnd();
     }
     
+    /**
+     *
+     * @param c
+     * @return
+     */
     public static int day(Attribute.Calendar c){        
         return c.get(Attribute.Calendar.DAY_OF_MONTH);
     }
     
+    /**
+     *
+     * @param c
+     * @return
+     */
     public static int month(Attribute.Calendar c){        
         return c.get(Attribute.Calendar.DAY_OF_MONTH);
     }
     
+    /**
+     *
+     * @param c
+     * @return
+     */
     public static int year(Attribute.Calendar c){        
         return c.get(Attribute.Calendar.DAY_OF_MONTH);
     }
     
+    /**
+     *
+     * @param c
+     * @return
+     */
     public static int lastDayInMonth(Attribute.Calendar c){        
         return c.getActualMaximum(Attribute.Calendar.DAY_OF_MONTH); 
     }
     
+    /**
+     *
+     * @param c
+     * @return
+     */
     public static boolean isLastDayInMonth(Attribute.Calendar c){        
         return c.getActualMaximum(Attribute.Calendar.DAY_OF_MONTH) == c.get(Attribute.Calendar.DAY_OF_MONTH); 
     }
     
-    public static JAMSData getAttribute(Context context, String name){        
-        return context.getAttributeMap().get(name);
+    /**
+     *
+     * @param context
+     * @param name
+     * @return
+     */
+    public static Object getAttribute(Context context, String name){        
+        return getValue(context.getAttributeMap().get(name));
     }
     
+    /**
+     *
+     * @param a
+     * @param b
+     * @return
+     */
     public static int longCompare(long a, long b){
         if (a<b)
             return -1;
@@ -110,6 +162,13 @@ public class FilterFunctions {
         return 0;
     }
     
+    /**
+     *
+     * @param c1
+     * @param c2
+     * @param accuracy
+     * @return
+     */
     public static int dateCompare(Attribute.Calendar c1, Attribute.Calendar c2, int accuracy){        
         Attribute.Calendar a = c1.clone();
         Attribute.Calendar b = c2.clone();
@@ -120,6 +179,10 @@ public class FilterFunctions {
     
     
            
+    /**
+     *
+     * @return
+     */
     public static SimpleContext getContext(){
         SimpleContext context = new SimpleContext();
          
@@ -131,13 +194,10 @@ public class FilterFunctions {
             context.setFunction("", "isLastDayInMonth", FilterFunctions.class.getMethod("isLastDayInMonth", Attribute.Calendar.class));           
             context.setFunction("", "dateCompare", FilterFunctions.class.getMethod("dateCompare", Attribute.Calendar.class, Attribute.Calendar.class, int.class));   
             
-            context.setFunction("", "toDate", FilterFunctions.class.getMethod("toDate", String.class)); 
+            context.setFunction("", "toCalendar", FilterFunctions.class.getMethod("toCalendar", String.class)); 
             context.setFunction("", "toTimeInterval", FilterFunctions.class.getMethod("toTimeInterval", String.class)); 
             context.setFunction("interval", "start", FilterFunctions.class.getMethod("start", Attribute.TimeInterval.class)); 
             context.setFunction("interval", "end", FilterFunctions.class.getMethod("end", Attribute.TimeInterval.class)); 
-            context.setFunction("", "toLong", FilterFunctions.class.getMethod("toLong", String.class));   
-            context.setFunction("", "attrToInt", FilterFunctions.class.getMethod("attrToInt", Attribute.Integer.class)); 
-            context.setFunction("", "getValue", FilterFunctions.class.getMethod("getValue", JAMSData.class)); 
             context.setFunction("", "getAttribute", FilterFunctions.class.getMethod("getAttribute", Context.class, String.class));     
             
         }catch(NoSuchMethodException nsme){

@@ -21,7 +21,13 @@
  */
 package jams;
 
+import jams.meta.HelpComponent;
 import java.awt.Font;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,6 +91,34 @@ public class JAMS {
             Logger.getLogger(JAMS.class.getName()).log(Level.INFO, "Could not find i18n key \"" + key + "\", using the key as result!", new JAMSException("Invalid resource key"));
             return key;
         }
+    }
+    
+    public static HelpComponent getHelpDocument(String key){                
+        String resourceName = "resources/help/i18n/" + key + "_" + Locale.getDefault().getLanguage() + ".html";
+        InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(resourceName);
+        if (stream == null){
+            resourceName = "resources/help/i18n/" + key + ".html";
+            stream = ClassLoader.getSystemClassLoader().getResourceAsStream(resourceName);
+            if (stream == null){
+                HelpComponent help = new HelpComponent();
+                help.setHelpText("Resource " + resourceName + " was not found.");
+                return help;
+            }
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        String result = "";
+        String line = null;
+        try{
+            while ((line = reader.readLine())!=null){
+                result += line;        
+            }
+            reader.close();
+        }catch(IOException ioe){
+            return null;
+        }
+        HelpComponent help = new HelpComponent();
+        help.setHelpText(result);
+        return help;
     }
 
     /**

@@ -27,6 +27,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import jams.JAMS;
+import jams.gui.HelpDlg;
+import jams.meta.HelpComponent;
 
 /**
  *
@@ -39,11 +41,12 @@ public class ListInput extends JPanel {
     static final int BUTTON_SIZE = 20;
     private static final Dimension BUTTON_DIMENSION = new Dimension(BUTTON_SIZE, BUTTON_SIZE);
     private JList listbox;
-    private JButton addButton, removeButton, upButton, downButton, editButton;
+    private JButton addButton, removeButton, upButton, downButton, editButton, helpButton;
     protected JScrollPane scrollPane;
     protected ListData listData = new ListData();
-    protected MouseListener editListener;
-
+    protected MouseListener editListener;    
+    protected HelpComponent help;
+    
     public ListInput() {
         this(true);
     }
@@ -53,7 +56,13 @@ public class ListInput extends JPanel {
     }
 
     public ListInput(boolean orderButtons, boolean editButtons) {
-
+        this(orderButtons, editButtons, null);
+    }
+    
+    public ListInput(boolean orderButtons, boolean editButtons, String helpResource) {
+        if (helpResource != null)
+            help = JAMS.getHelpDocument(helpResource);
+                        
         // create a panel to hold all other components
         BorderLayout layout = new BorderLayout();
         layout.setHgap(5);
@@ -162,8 +171,25 @@ public class ListInput extends JPanel {
             buttonPanel.add(upButton);
             buttonPanel.add(downButton);
         }
+        
+        if (help != null){
+            helpButton = new JButton("?");
+            helpButton.setMargin(new java.awt.Insets(0, 1, 1, 0));
+            helpButton.setPreferredSize(BUTTON_DIMENSION);
+            helpButton.setToolTipText(JAMS.i18n("Help"));
+            //helpButton.setIcon(UIManager.getIcon("OptionPane.questionIco"));
+            helpButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    HelpDlg helpDlg = new HelpDlg(null);                    
+                    helpDlg.load(help);                    
+                    helpDlg.setVisible(true);
+                }
+            });            
+            buttonPanel.add(helpButton);
+        }
+        
     }
-
+    
     protected void moveUp() {
         int index = listbox.getSelectedIndex();
         if (index > 0) {

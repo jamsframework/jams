@@ -179,9 +179,9 @@ public class OutputDSDlg extends JDialog {
 
         private OutputDSDescriptor ods;
         private DSDlg newDSDlg;
-
-        public FilterListInput() {
-            super(false);
+                
+        public FilterListInput() {                        
+            super(false, true, "FilterDialog");            
         }
 
         public void setValue(OutputDSDescriptor ods) {
