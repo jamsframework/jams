@@ -17,40 +17,20 @@
                 <equals arg1="${application.title}" arg2="jams-components"/>
                 <equals arg1="${application.title}" arg2="jams-main"/>
                 <equals arg1="${application.title}" arg2="jams-starter"/>
-                <equals arg1="${application.title}" arg2="j2000"/>
             </or>
             <then>
-                <if>
-                    <equals arg1="${application.title}" arg2="jams-api"/>
-                    <then>
-                        <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}${api.postfix}.jar"/>
-                    </then>
-                    <else>
-                        <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}${main.postfix}.jar"/>
-                    </else>
-                </if>
+                <copy file="${dist.jar}" tofile="${bin.dir}/${application.title}${main.postfix}.jar"/>
             </then>
         </if>
         <if>
-            <and>
-                <equals arg1="${application.title}" arg2="jams-starter"/>
-                <available file="dist/lib/jams-remote.jar" type="file"/>
-            </and>
+            <available file="dist/lib" type="dir"/>
             <then>
-                <copy file="dist/lib/jams-remote.jar" todir="${bin.dir}/lib"/>
+                <copy todir="${bin.dir}/lib">
+                    <fileset dir="dist/lib">
+                        <exclude name="**/*jams-components.jar"/>
+                    </fileset>
+                </copy>
             </then>
-            <else>
-                <if>
-                    <available file="dist/lib" type="dir"/>
-                    <then>
-                        <copy todir="${bin.dir}/lib">
-                            <fileset dir="dist/lib">
-                                <exclude name="**/*jams-components.jar"/>
-                            </fileset>
-                        </copy>
-                    </then>
-                </if>
-            </else>
         </if>
 
     </target>

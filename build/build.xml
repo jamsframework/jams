@@ -14,21 +14,17 @@
     <target name="doallwithclean" depends="clean, doall"/>
 
     <target name="buildproj">
-        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar">
-            <property name="no.dependencies" value="false"/>
-        </ant>
+        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar"/>
     </target>
 
     <target name="run">
         <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="run">
-            <property name="no.dependencies" value="false"/>
+            <property name="no.deps" value="true"/>
         </ant>
     </target>
 
     <target name="cleanproj">
-        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="clean">
-            <property name="no.dependencies" value="false"/>
-        </ant>
+        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="clean"/>
     </target>
 
     <target name="cleanlib">
@@ -76,7 +72,7 @@
     </target-->
 
     <target name="doJ2K">
-        <ant antfile="../../jamsmodels/nbprojects/J2K/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../../jamsmodels/nbprojects/J2K_base/nbbuild.xml" inheritall="false" target="jar"/>
         <echo>Created J2K</echo>
     </target>
 
@@ -91,9 +87,10 @@
         <property name="starterproj" value="jams-starter"/>
         <ant antfile="../nbprojects/${starterproj}/build.xml" inheritall="false" target="jar">
             <property name="config" value="JUICE"/>
+            <property name="no.deps" value="true"/>
         </ant>
         <property file="jams.properties"/>
-        <move file="../lib/${starterproj}${main.postfix}.jar" tofile="../lib/juice-starter${main.postfix}.jar"/>
+        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../lib/juice-starter${main.postfix}.jar"/>
         <echo>Created juicestarter</echo>
     </target>
 
@@ -101,9 +98,10 @@
         <property name="starterproj" value="jams-starter"/>
         <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar">
             <property name="config" value="JAMS_Launcher"/>
+            <property name="no.deps" value="true"/>
         </ant>
         <property file="jams.properties"/>
-        <move file="../lib/${starterproj}${main.postfix}.jar" tofile="../lib/jams-starter${main.postfix}.jar"/>
+        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../lib/jams-starter${main.postfix}.jar"/>
         <echo>Created jamsstarter</echo>
     </target>
 
@@ -111,9 +109,10 @@
         <property name="starterproj" value="jams-starter"/>
         <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar">
             <property name="config" value="JAMS_Remote"/>
+            <property name="no.deps" value="true"/>
         </ant>
         <property file="jams.properties"/>
-        <move file="../lib/${starterproj}${main.postfix}.jar" tofile="../lib/jamsremote-starter${main.postfix}.jar"/>
+        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../lib/jamsremote-starter${main.postfix}.jar"/>
         <echo>Created remotestarter</echo>
     </target>
 </project>
