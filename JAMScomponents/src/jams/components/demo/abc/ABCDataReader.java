@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 import jams.data.*;
 import jams.model.*;
-import jams.JAMS;
 import java.io.File;
 
 /**
@@ -66,14 +65,13 @@ public class ABCDataReader extends JAMSComponent {
     public void init() {
         try {            
             if (fileName == null) {
-                getModel().getRuntime().sendHalt(JAMS.i18n("You_should_specify_a_file_for_ABCDataReader"));
+                getModel().getRuntime().sendHalt("You should specify a file for ABCDataReader");
                 return;
             } 
             File file = new File(this.getModel().getWorkspaceDirectory(), fileName.getValue());
             
             if (!file.isFile()) {
-                getModel().getRuntime().sendHalt(JAMS.i18n("The_file") + " " + fileName.getValue() + " "
-                        + JAMS.i18n("ABCDataReader_should_read_from_is_not_valid"));
+                getModel().getRuntime().sendHalt("The  file " + fileName.getValue() + " is not existing. Aborting.");
             }
             reader = new BufferedReader(new FileReader(file));
             reader.readLine();
@@ -93,8 +91,8 @@ public class ABCDataReader extends JAMSComponent {
 
             line = reader.readLine();
             if (line == null) {
-                getModel().getRuntime().sendHalt(JAMS.i18n("There_is_no_more_data_in") + " "
-                        + this.fileName + JAMS.i18n("Check_your_data_file_or_timeInterval"));
+                getModel().getRuntime().sendHalt("There is no more data in" + " "
+                        + this.fileName + ". Check your data file or timeInterval");
                 return;
             }
             StringTokenizer st = new StringTokenizer(line);

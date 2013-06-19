@@ -1,5 +1,5 @@
 #JAMS-Konfigurationsdatei
-#Mon Jan 07 17:37:50 CET 2013
+#Wed Jun 19 14:34:43 CEST 2013
 infolog=
 libs=lib
 guiconfig=true
@@ -11,13 +11,18 @@ profiling=false
 defaultworkspace=true
 windowenable=true
 errordlg=true
+maxlibclasses=10000
 windowontop=false
 forcelocale=
 windowheight=600
 verbose=false
+maxrecentfiles=5
+recentfiles=
 debug=1
 guiconfigheight=600
 windowwidth=900
 guiconfigwidth=600
+preprocessing=true
 errorlog=
 helpbaseurl=
+floatformat=%f
