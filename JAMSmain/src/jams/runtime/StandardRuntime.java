@@ -132,12 +132,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
             this.println("", JAMS.STANDARD);
             this.println(JAMS.i18n("Loading_Model"), JAMS.STANDARD);
-            System.out.println("BLA");
+
             // create a ModelIO instance and load the model from XML into a 
             // ModelDescriptor object
             ModelIO modelIO = ModelIO.getStandardModelIO(this.getLogger());
             ModelDescriptor md = modelIO.loadModelDescriptor(modelDocument, this.getClassLoader(), false);
-                        System.out.println("BLA");
+
             boolean doAutoPreprocessing = Boolean.parseBoolean(properties.getProperty(JAMSProperties.AUTO_PREPROCESSING, "false"));
             if (doAutoPreprocessing) {
                 md.metaProcess(this);
