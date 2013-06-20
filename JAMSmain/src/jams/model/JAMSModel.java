@@ -24,6 +24,7 @@ package jams.model;
 import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
+import jams.data.JAMSData;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.stores.OutputDataStore;
 import java.io.File;
@@ -56,7 +57,7 @@ public class JAMSModel extends JAMSContext implements Model {
     transient private HashMap<Component, ArrayList<Field>> nullFields;
     private HashMap<Component, Long> execTime = new HashMap<Component, Long>();
     private boolean profiling = false;
-
+        
     public JAMSModel(JAMSRuntime runtime) {
         this.runtime = runtime;
     }
@@ -151,7 +152,7 @@ public class JAMSModel extends JAMSContext implements Model {
             printExecTimes();
         }
     }
-
+                    
     private void printExecTimes(Context context, String indent) {
 
         runtime.println(indent + context.getInstanceName() + "\t" + execTime.get(context));

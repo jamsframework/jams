@@ -4,6 +4,7 @@
  */
 package jams.workspace.plugins;
 
+import jams.JAMS;
 import jams.data.*;
 import jams.data.Attribute.Entity;
 import jams.data.Attribute.Entity.NoSuchAttributeException;
@@ -162,7 +163,11 @@ public class OMIInputDataReader extends JAMSComponent {
                 dg.date = J2KHeader.j2kSdf.parse(tokens[0]);
                 dg.values = new double[tokens.length-1];
                 for (int j=1;j<tokens.length;j++){
-                    dg.values[j-1] = Double.parseDouble(tokens[j]);
+                    double v = Double.parseDouble(tokens[j]);
+                    //transform external missing data value into internal missing data value
+                    if (v == this.missingDataValue.getValue())
+                        v = JAMS.getMissingDataValue();
+                    dg.values[j-1] = v;
                 }
                 datagramBuffer.push(dg);
             }

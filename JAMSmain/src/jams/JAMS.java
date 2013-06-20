@@ -55,6 +55,10 @@ public class JAMS {
      */
     public static final int VVERBOSE = 3;
     /**
+     * missingDataValue used inside JAMS
+     */
+    private static final double missingDataValue = Double.POSITIVE_INFINITY;
+    /**
      * Resource bundle containing all string literals for some localization
      */
     private static ResourceBundle resources = java.util.ResourceBundle.getBundle("resources/i18n/JAMSBundle");
@@ -163,5 +167,20 @@ public class JAMS {
         floatFormat = aFloatFormat;
     }
     
+    public static double getMissingDataValue(){
+        return missingDataValue;
+    }
     
+    public static Object getMissingDataValue(Class c){
+        if (c == double.class)
+            return new Double(getMissingDataValue());
+        else if (c == int.class)
+            return new Integer(Integer.MAX_VALUE);
+        else if (c == long.class)
+            return new Long(Long.MAX_VALUE);
+        else if (c == String.class)
+            return null;
+        else
+            return null;
+    }
 }

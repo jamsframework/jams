@@ -4,6 +4,7 @@
  */
 package optas.hydro.data;
 
+import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.Attribute.TimeInterval;
 import jams.data.DefaultDataFactory;
@@ -78,7 +79,7 @@ public class EfficiencyEnsemble extends SimpleEnsemble {
         if (filter != null) {
             this.filter = filter;
             for (int i = 0; i < K; i++) {
-                filterMap[i] = filter.isFiltered(obs.getTime(i)) || obs.getValue(i) == -9999;
+                filterMap[i] = filter.isFiltered(obs.getTime(i)) || obs.getValue(i) == JAMS.getMissingDataValue();
                 if (!filterMap[i]) {
                     kStar++;
                 }

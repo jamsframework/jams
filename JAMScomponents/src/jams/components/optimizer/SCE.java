@@ -22,6 +22,7 @@
 
 package jams.components.optimizer;
 
+import jams.JAMS;
 import jams.components.efficiencies.NashSutcliffe;
 import jams.components.efficiencies.VolumeError;
 import java.io.IOException;
@@ -461,7 +462,7 @@ title="Title",
         Vector<Double> preVector = new Vector<Double>();
         for(int i = 0; i < preArr.length; i++){
             //consider valid values only
-            if(preArr[i] > -9999 && obsArr[i] > -9999){
+            if(preArr[i] != JAMS.getMissingDataValue() && obsArr[i] != JAMS.getMissingDataValue()){
                 obsVector.add(obsArr[i]);
                 preVector.add(preArr[i]);
             }
@@ -490,8 +491,8 @@ title="Title",
             return (Math.abs(VolumeError.pbias(obsArr, preArr)));
         }
         else
-            return -9999;
-
+            return JAMS.getMissingDataValue();
+        
         /*if (MaximizeEff.getValue() == MINIMIZATION)
             return this.effValue.getValue();
         else if (MaximizeEff.getValue() == ABSMINIMIZATION)

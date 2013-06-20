@@ -22,6 +22,8 @@
 
 package jams.components.efficiencies;
 
+import jams.JAMS;
+
 /**
  *
  * @author S. Kralisch
@@ -42,7 +44,7 @@ public class Regression {
         double sumX = 0;
         double sumY = 0;
         double prod = 0;
-        double NODATA = -9999;
+        double NODATA = JAMS.getMissingDataValue();
         int nstat = xData.length;
         double[] regCoef = new double[3]; //(intercept, gradient, r²)
         int counter = 0;

@@ -22,8 +22,8 @@
 
 package optas.io;
 
+import jams.JAMS;
 import jams.data.*;
-import jams.model.*;
 import jams.workspace.stores.*;
 import java.util.*;
 import java.io.*;
@@ -191,7 +191,7 @@ public class TSDataReader{
             }catch(NumberFormatException nfe){
                 nfe.printStackTrace();
             }catch(ArrayIndexOutOfBoundsException aioobe){
-                doubleArray.add(Double.NaN);
+                doubleArray.add(JAMS.getMissingDataValue());
             }
         }
 

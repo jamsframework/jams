@@ -107,7 +107,7 @@ public class Efficiencies {
         double sum_td = 0;
         double sum_vd = 0;
         
-        if(td_size != vd_size)  return -9999;
+        if(td_size != vd_size)  return Double.NEGATIVE_INFINITY;
         else                    steps = td_size;
                
         /**summing up both data sets */

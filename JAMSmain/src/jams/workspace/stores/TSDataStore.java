@@ -381,7 +381,7 @@ public class TSDataStore extends TableDataStore {
 
                 if (outOfInterval) {
                     
-                    result.setData(i + 1, new DoubleValue(Double.NaN));
+                    result.setData(i + 1, new DoubleValue(JAMS.getMissingDataValue()));
                     
                 } else {
                     

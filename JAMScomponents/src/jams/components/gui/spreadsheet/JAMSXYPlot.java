@@ -439,32 +439,6 @@ public class JAMSXYPlot {
         }
         plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
         plot.setDomainAxis(0, xAxis);
-
     }
-    
-    
-
-//    public void plot(Attribute.Calendar time, double[] valueLeft, double[] valueRight) {
-//        try {
-//            for (i = 0; i < graphCountRight; i++) {
-//                double value = valueRight[i];
-//                if(value == -9999)
-//                    value = 0;
-//                //tsRight[i].add(new Hour(new Date(time.getTimeInMillis())), valueRight[i].getValue());
-//                tsRight[i].add(new Second(new Date(time.getTimeInMillis())), value);
-//            }
-//            for (i = 0; i < graphCountLeft; i++) {
-//                double value = valueLeft[i];
-//                if(value == -9999)
-//                    value = 0;
-//                tsLeft[i].add(new Second(new Date(time.getTimeInMillis())), value);
-//            }
-//        } catch (Exception e) {} //caused by bugs in JFreeChart
-//    }
-    
-    public void cleanup() {
-//        saveButton.setEnabled(true);
-    }
-    
 }
 

@@ -21,6 +21,7 @@
  */
 package jams.workspace.plugins;
 
+import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
 import jams.workspace.DataReader;
@@ -492,14 +493,14 @@ public class OpenSQL implements DataReader {
                             if (dataValid)
                                 value = new DoubleValue(dataResult.rs.getDouble(j + 1));
                             else
-                                value = new DoubleValue(-9999.0);
+                                value = new DoubleValue(JAMS.getMissingDataValue());
                             dataSet.setData(j, value);
                             break;
                         case LONG:
                             if (dataValid)
                                 value = new LongValue(dataResult.rs.getLong(j + 1));
                             else
-                                value = new LongValue(-9999);
+                                value = new LongValue((Long)JAMS.getMissingDataValue(long.class));
 
                             dataSet.setData(j, value);
                             break;
@@ -507,7 +508,7 @@ public class OpenSQL implements DataReader {
                             if (dataValid)
                                 value = new StringValue(dataResult.rs.getString(j + 1));
                             else
-                                value = new LongValue("-9999");
+                                value = new LongValue((Long)JAMS.getMissingDataValue(long.class));
                             dataSet.setData(j, value);
                             break;
                         case TIMESTAMP:

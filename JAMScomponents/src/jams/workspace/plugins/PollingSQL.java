@@ -21,6 +21,7 @@
  */
 package jams.workspace.plugins;
 
+import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
 import jams.workspace.DataReader;
@@ -245,13 +246,13 @@ public class PollingSQL implements DataReader {
         for (int j = 0; j < dataResult.numberOfColumns; j++) {
             switch (dataResult.type[j]) {
                 case DOUBLE:
-                    dataSet.setData(j, new DoubleValue(-9999.0));
+                    dataSet.setData(j, new DoubleValue(JAMS.getMissingDataValue()));
                     break;
                 case LONG:
-                    dataSet.setData(j, new LongValue(-9999L));
+                    dataSet.setData(j, new LongValue((Long)JAMS.getMissingDataValue(long.class)));
                     break;
                 case STRING:
-                    dataSet.setData(j, new StringValue("-9999"));
+                    dataSet.setData(j, new StringValue((String)JAMS.getMissingDataValue(String.class)));
                     break;
                 case TIMESTAMP:
                     Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
@@ -259,7 +260,7 @@ public class PollingSQL implements DataReader {
                     dataSet.setData(j, new CalendarValue(cal));
                     break;
                 default:
-                    dataSet.setData(j, new StringValue("-9999"));
+                    dataSet.setData(j, new StringValue((String)JAMS.getMissingDataValue(String.class)));
             }
         }
         return dataSet;

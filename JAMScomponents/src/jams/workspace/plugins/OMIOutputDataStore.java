@@ -4,19 +4,16 @@
  */
 package jams.workspace.plugins;
 
+import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.Attribute.Entity;
 import jams.data.Attribute.Entity.NoSuchAttributeException;
-import jams.data.Attribute.Double;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 import jams.tools.JAMSTools;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.util.Calendar;
@@ -307,13 +304,17 @@ public class OMIOutputDataStore extends JAMSComponent {
 
             for (Entity e : this.entities.getEntities()) {
                 value[i] = e.getDouble(this.entityAttribute.getValue());
+                if (value[i] == JAMS.getMissingDataValue())
+                    value[i] = missingDataValue.getValue();
                 i++;
             }
         }else{
             value = new double[this.attribute.length];
             for (int i=0;i<this.attribute.length;i++){
                 value[i] = attribute[i].getValue();
-            }
+                if (value[i] == JAMS.getMissingDataValue())
+                    value[i] = missingDataValue.getValue();
+            }            
         }
         try{
             this.sendData(date, value);

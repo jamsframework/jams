@@ -154,12 +154,7 @@ public class TSPlot extends JAMSGUIComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Values to be plotted on right x-axis")
     public Attribute.Double[] valueRight;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "Value for \"No data\" (shouldn't be plotted)",
-            defaultValue = "-9999")
-    public Attribute.Double noDataValue;
-    
+        
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Plot data, after cacheSize values have been collected",
             defaultValue = "1")
@@ -345,7 +340,7 @@ public class TSPlot extends JAMSGUIComponent {
 
         for (int i = 0; i < graphCountRight; i++) {
             double value = valueRight[i].getValue();
-            if (value == noDataValue.getValue()) {
+            if (value == JAMS.getMissingDataValue()) {
                 value = Double.NaN;
             }
             dataValuesRight[offsetRight + i] = value;
@@ -353,7 +348,7 @@ public class TSPlot extends JAMSGUIComponent {
 
         for (int i = 0; i < graphCountLeft; i++) {
             double value = valueLeft[i].getValue();
-            if (value == noDataValue.getValue()) {
+            if (value == JAMS.getMissingDataValue()) {
                 value = Double.NaN;
             }
             dataValuesLeft[offsetLeft + i] = value;

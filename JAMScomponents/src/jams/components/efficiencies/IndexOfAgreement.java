@@ -28,7 +28,7 @@ public class IndexOfAgreement {
      * its mean value.
      * @param testData the test Data set
      * @param verificationData the verification data set
-     * @return the calculated ioa or -9999 if an error occurs
+     * @return the calculated ioa or NegativeInfinity if an error occurs
      */    
     public static double calc_IOA(double[] prediction, double[] validation, double pow, Model model){
         double ioa;
@@ -36,7 +36,7 @@ public class IndexOfAgreement {
         int vd_size = validation.length;
         if(td_size != vd_size){
             model.getRuntime().println("Data sets in ioa does not match!");
-            return -99999;
+            return Double.NEGATIVE_INFINITY;
         }
         
         int steps = 0;
@@ -47,7 +47,7 @@ public class IndexOfAgreement {
         /** checking if both data arrays have the same number of elements*/
         if(td_size != vd_size){
             model.getRuntime().println("Test Data and Verification Data are not consistent!");
-            return -9999;
+            return Double.NEGATIVE_INFINITY;
         }
         else{
             steps = td_size;

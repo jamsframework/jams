@@ -1,11 +1,13 @@
 
 package optas.hydro.data;
 
+import jams.JAMS;
+
 public class Area extends DataSet {
     
-    private double latitude = -9999;
-    private double longitude = -9999;
-    private double elevation = -9999;
+    private double latitude = JAMS.getMissingDataValue();
+    private double longitude = JAMS.getMissingDataValue();
+    private double elevation = JAMS.getMissingDataValue();
     
     public Area(double latitude, double longitude, double elevation) {
         this.latitude = latitude;
