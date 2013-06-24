@@ -21,6 +21,7 @@
  */
 package jams.runtime;
 
+import java.io.Serializable;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -28,7 +29,7 @@ import java.util.Observer;
  *
  * @author Sven Kralisch
  */
-public class JAMSLogger extends Observable {
+public class JAMSLogger extends Observable implements Serializable {
 
     StringBuffer logString = new StringBuffer();
     String lastString;
