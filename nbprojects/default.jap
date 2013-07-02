@@ -1,7 +1,7 @@
 #JAMS-Konfigurationsdatei
 #Mon Jan 14 10:49:23 CET 2013
 infolog=
-libs=E\:\\JAMS\\lib;../../lib
+libs=../../lib
 guiconfig=true
 docbook-home=docbook/
 model=
