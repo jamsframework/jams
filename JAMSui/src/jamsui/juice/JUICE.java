@@ -21,13 +21,11 @@
  */
 package jamsui.juice;
 
-import jams.JAMSException;
 import jams.meta.ComponentCollection;
 import java.io.File;
 import java.util.*;
 import javax.swing.UIManager;
 import jams.JAMS;
-import jams.ExceptionHandler;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.tools.JAMSTools;
@@ -66,7 +64,6 @@ public class JUICE {
     private static JAMSCmdLine cmdLine;
     private static LibTree libTree;
     private static WorkerDlg loadLibsDlg;
-    private static ExceptionHandler exHandler, multiExHandler;
     private static NotificationDlg notificationDlg;
     private static Handler logHandler;
 
@@ -284,5 +281,9 @@ public class JUICE {
             log.setUseParentHandlers(false);
         }
         return log;
+    }
+    
+    public static void focusNotificationDlg() {
+        notificationDlg.requestFocus();
     }
 }

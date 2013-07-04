@@ -888,6 +888,7 @@ public class JUICEFrame extends JFrame {
             }
         });
         loadModelDlg.execute();
+        JUICE.focusNotificationDlg();
     }
 
     private void saveModelAs(ModelView view) {

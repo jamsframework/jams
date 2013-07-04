@@ -31,10 +31,12 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
@@ -104,6 +106,19 @@ public class NotificationDlg extends JDialog {
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(okButton);
 
+        JRootPane pane = getRootPane();
+        InputMap inputMap = pane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        inputMap.put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
+        inputMap.put(KeyStroke.getKeyStroke("ENTER"), "ENTER");
+        Action cancelAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                NotificationDlg.this.setVisible(false);
+            }
+        };
+        pane.getActionMap().put("ESCAPE", cancelAction);
+        pane.getActionMap().put("ENTER", cancelAction);
+
         this.add(buttonPanel, BorderLayout.SOUTH);
         this.setPreferredSize(new Dimension(400, 500));
         this.pack();
@@ -113,6 +128,7 @@ public class NotificationDlg extends JDialog {
 
         textArea.append(text);
         setVisible(true);
+        requestFocus();
 
     }
 }
