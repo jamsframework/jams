@@ -171,6 +171,9 @@ public class ModelDescriptor extends ComponentCollection {
                 String attributeName = attributeElement.getAttribute("id");
                 ContextAttribute ca = context.getDynamicAttributes().get(attributeName);
                 if (ca == null) {
+                    ca = context.getStaticAttributes().get(attributeName);
+                }
+                if (ca == null) {
                     logger.warning(MessageFormat.format(JAMS.i18n("Attribute_does_not_exist_and_is_removed"),
                             attributeName, od.getName()));
                 } else {

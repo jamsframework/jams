@@ -251,10 +251,9 @@ public class JAMSContext extends JAMSComponent implements Context {
             try {
 
                 clazz = Class.forName(attributeSpec.className);
-                JAMSData data = DefaultDataFactory.getDataFactory().createInstance(clazz);
+                JAMSData data = getDataObject(entityArray, clazz, attributeSpec.attributeName, DataAccessor.WRITE_ACCESS, null);
                 data.setValue(attributeSpec.value);
-                attributeMap.put(attributeSpec.attributeName, data);
-
+                
                 //add attributes to "handle map"
                 /*
                  String id = this.getInstanceName() + "." + attributeSpec.attributeName;
@@ -858,6 +857,8 @@ public class JAMSContext extends JAMSComponent implements Context {
                 da = new EntityCollectionAccessor(dataFactory, ea, dataObject, attributeName, accessType);
             } else if (JAMSCalendar.class.isAssignableFrom(clazz)) {
                 da = new CalendarAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+            } else if (JAMSTimeInterval.class.isAssignableFrom(clazz)) {
+                da = new TimeIntervalAccessor(dataFactory, ea, dataObject, attributeName, accessType);
             } else if (JAMSDocument.class.isAssignableFrom(clazz)) {
                 da = new DocumentAccessor(dataFactory, ea, dataObject, attributeName, accessType);
             } else if (JAMSGeometry.class.isAssignableFrom(clazz)) {

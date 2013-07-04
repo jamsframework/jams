@@ -230,13 +230,6 @@ public class JAMSModel extends JAMSContext implements Model {
         return workspaceDirectory.getValue();
     }
 
-    public OutputDataStore[] getOutputDataStores(String contextName) {
-        if (this.workspace == null) {
-            return new OutputDataStore[0];
-        }
-        return this.workspace.getOutputDataStores(contextName);
-    }
-
     public HashMap<Component, ArrayList<Field>> getNullFields() {
         return nullFields;
     }
