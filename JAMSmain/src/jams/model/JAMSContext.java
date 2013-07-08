@@ -588,7 +588,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
                     //initEntityData();
 
-                    if (getEntities().getEntities().size() == 0) {
+                    if (getEntities().getEntities().isEmpty()) {
                         return;
                     }                    
 

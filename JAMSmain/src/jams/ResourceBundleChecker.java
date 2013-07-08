@@ -174,7 +174,7 @@ public class ResourceBundleChecker {
     public static void main(String[] args) throws IOException {
 
         File sourcePaths[] = {
-            new File("../../../"),            
+            new File("../../"),            
         };
         System.out.println("For JAMS sources using path: " + sourcePaths[0].getAbsolutePath());
         
