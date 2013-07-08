@@ -266,6 +266,9 @@ public class JUICE {
                     for (int i = 1; i < line.length; i++) {
                         msg += "\n" + String.format("%0" + level.length() + "d", 0).replace("0"," ") + line[i];
                     }
+                    if (record.getLevel() == Level.SEVERE && record.getThrown() != null) {
+                        msg += "\n" + StringTools.getStackTraceString(record.getThrown().getStackTrace());
+                    }
                     notificationDlg.addNotification(msg + "\n\n");
                 }
 
