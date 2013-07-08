@@ -4,19 +4,15 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.Color;
-import java.util.ArrayList;
 import javax.swing.JPanel;
-import optas.gui.MCAT5.MCAT5Plot.NoDataException;
-import optas.hydro.data.DataSet;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import optas.hydro.data.SimpleEnsemble;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 
 /**
@@ -43,7 +39,7 @@ public class SimplePlot{
         plot.setRenderer(renderer);
         //setup chart
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"));
+        chart.setTitle(JAMS.i18n("DOTTY_PLOT"));
         chartPanel = new ChartPanel(chart, true);
 
         refresh();
@@ -68,7 +64,7 @@ public class SimplePlot{
         int n = xData.length;
 
         for (int j = 0; j < m; j++) {
-            XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_POINT"));
+            XYSeries dataset = new XYSeries(JAMS.i18n("DATA_POINT"));
 
             for (int i = 0; i < n; i++) {
                 dataset.add(xData[i],yData[j][i]);

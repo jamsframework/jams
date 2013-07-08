@@ -4,6 +4,7 @@
  */
 package optas.hydro.gui;
 
+import jams.JAMS;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -36,8 +37,8 @@ public class SimpleGlobalSensitivityAtPoint extends MCAT5Plot {
     public SimpleGlobalSensitivityAtPoint(int index) {
         timeIndex = index;
 
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"), TimeSerie.class));        
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"), Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));        
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
         init();
     }
 
@@ -51,7 +52,7 @@ public class SimpleGlobalSensitivityAtPoint extends MCAT5Plot {
         plot.setRenderer(renderer);
         //setup chart
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"));
+        chart.setTitle(JAMS.i18n("DOTTY_PLOT"));
         chartPanel = new ChartPanel(chart, true);
 
         try{

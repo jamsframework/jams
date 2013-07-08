@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -42,14 +43,14 @@ public class APosterioriPlot extends MCAT5Plot {
     int boxCount = 20;
 
     public APosterioriPlot() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"), Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
         init();
     }
 
     private void init() {
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("A_POSTERIO_PARAMETER_DISTRIBUTION"));
+        chart.setTitle(JAMS.i18n("A_POSTERIO_PARAMETER_DISTRIBUTION"));
         chartPanel = new ChartPanel(chart, true);
 
         mainPanel = new JPanel(new BorderLayout());
@@ -97,9 +98,9 @@ public class APosterioriPlot extends MCAT5Plot {
         System.out.println("Recommend parameter range:" + "[" + bounds[0] + "<" + bounds[1] + "]");
 
         plot.setDomainAxis(new NumberAxis(p1.getName()));
-        plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN_OF_EFFICIENCY")));
+        plot.setRangeAxis(new NumberAxis(JAMS.i18n("MEAN_OF_EFFICIENCY")));
 
-        XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN_OF_EFFICIENCY"));
+        XYSeries dataset = new XYSeries(JAMS.i18n("MEAN_OF_EFFICIENCY"));
         
         double min = p1.getMin();
         double max = p1.getMax();

@@ -13,8 +13,8 @@ import optas.hydro.data.DataCollection;
 import optas.hydro.data.Parameter;
 import optas.hydro.data.SimpleEnsemble;
 
-import optas.metamodel.Objective;
-import optas.metamodel.Optimization;
+import optas.gui.wizard.Objective;
+import optas.gui.wizard.Optimization;
 import optas.optimizer.Optimizer.AbstractFunction;
 import optas.optimizer.SCE;
 import optas.optimizer.SampleLimitException;
@@ -202,11 +202,11 @@ public class FindLargestEmptyRectangle{
     private void procedure() {
         SCE sce = new SCE();
         sce.setVerbose(false);
-        Optimization o = new Optimization();
+/*        Optimization o = new Optimization();
 
         Objective obj = new Objective();
         obj.setCustomName("Volume");
-        o.addObjective(obj);
+        o.addObjective(obj);*/
 
         double sceStartValue[] = new double[2*n];//this.determineStartvalue();//new double[2*n];//this.determineStartvalue();
         double sceLowerBound[] = new double[2 * n];

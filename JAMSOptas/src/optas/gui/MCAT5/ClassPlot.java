@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -41,18 +42,18 @@ public class ClassPlot extends MCAT5Plot {
     int GROUPS = 10;
 
     public ClassPlot() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"), TimeSerie.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
         init();
     }
 
     private void init() {
         plot.setRenderer(renderer);
-        plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
-        plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT")));
+        plot.setDomainAxis(new NumberAxis(JAMS.i18n("TIME")));
+        plot.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
 
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLASS_PLOT"));
+        chart.setTitle(JAMS.i18n("CLASS_PLOT"));
         ChartPanel chartPanel = new ChartPanel(chart, true);
 
         mainPanel = new JPanel(new BorderLayout());
@@ -119,10 +120,10 @@ public class ClassPlot extends MCAT5Plot {
         for (int i = 0; i < GROUPS; i++) {
             XYSeries dataset = new XYSeries("");
             if (i == 0) {
-                dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("HIGH_LIKELIHOOD"));
+                dataset = new XYSeries(JAMS.i18n("HIGH_LIKELIHOOD"));
             }
             if (i == GROUPS - 1) {
-                dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOW_LIKELIHOOD"));
+                dataset = new XYSeries(JAMS.i18n("LOW_LIKELIHOOD"));
             }
             int index = (int) ((n / (double) GROUPS) * i);
 

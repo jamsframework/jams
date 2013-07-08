@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -63,9 +64,9 @@ public class ParameterInterpolation extends MCAT5Plot {
             globalMax = Double.MIN_VALUE;
 
     public ParameterInterpolation() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"),TimeSerie.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"),Parameter.class,1,10));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED_TIMESERIE"),Measurement.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"),TimeSerie.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"),Parameter.class,1,10));
+        this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"),Measurement.class));
 
         init();
     }
@@ -79,8 +80,8 @@ public class ParameterInterpolation extends MCAT5Plot {
         renderer.setBaseShapesVisible(false);
 
         plot.setRenderer(renderer);
-        plot.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
-        plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT")));
+        plot.setDomainAxis(new NumberAxis(JAMS.i18n("TIME")));
+        plot.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
     }
 
     public void refresh() throws NoDataException{
@@ -187,8 +188,8 @@ public class ParameterInterpolation extends MCAT5Plot {
 
         XYSeriesCollection series = new XYSeriesCollection();
 
-        XYSeries dataset1 = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("HIGH_LIKELIHOOD"));
-        XYSeries dataset2 = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("HIGH_LIKELIHOOD"));
+        XYSeries dataset1 = new XYSeries(JAMS.i18n("HIGH_LIKELIHOOD"));
+        XYSeries dataset2 = new XYSeries(JAMS.i18n("HIGH_LIKELIHOOD"));
 
         for (int j = 0; j < timesteps; j++) {
             dataset1.add(j, obs.getValue(j));

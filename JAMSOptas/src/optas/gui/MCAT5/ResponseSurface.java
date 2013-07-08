@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -72,8 +73,8 @@ public class ResponseSurface extends MCAT5Plot {
     SimpleNeuralNetwork ANN = null;
     
     public ResponseSurface() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"),Efficiency.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"),Parameter.class,1,10));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"),Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"),Parameter.class,1,10));
 
         init();
     }

@@ -21,33 +21,6 @@
  */
 package optas;
 
-import jams.JAMS;
-import jams.JAMSException;
-import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public class Optas{
-    private static ResourceBundle resources = java.util.ResourceBundle.getBundle("optas/resources/OPTASBundle");
     
-    /**
-     * Return a localized string 
-     * @param key A resource key
-     * @return A localized string belonging to the resource key
-     */
-    public static String i18n(String key) {
-        if (getResources().containsKey(key)) {
-            return getResources().getString(key);
-        } else {
-            Logger.getLogger(JAMS.class.getName()).log(Level.INFO, "Could not find i18n key \"" + key + "\", using the key as result!", new JAMSException("Invalid resource key"));
-            return key;
-        }
-    }
-    
-    /**
-     * @return the resources
-     */
-    public static ResourceBundle getResources() {
-        return resources;
-    }
 }

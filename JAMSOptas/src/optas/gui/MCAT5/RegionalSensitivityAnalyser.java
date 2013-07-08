@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -43,19 +44,19 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
     int GROUPS = 10;
 
     public RegionalSensitivityAnalyser() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"), Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
 
         init();
     }
 
     private void init() {
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS"));
+        chart.setTitle(JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS"));
         chartPanel = new ChartPanel(chart, true);
 
         plot.setRenderer(renderer);
-        plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIKELIHOOD")));
+        plot.setRangeAxis(new NumberAxis(JAMS.i18n("LIKELIHOOD")));
 
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(chartPanel, BorderLayout.NORTH);

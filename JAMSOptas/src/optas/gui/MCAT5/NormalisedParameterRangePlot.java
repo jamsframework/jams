@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -30,8 +31,8 @@ public class NormalisedParameterRangePlot extends MCAT5Plot{
     ChartPanel chartPanel1 = null;
                     
     public NormalisedParameterRangePlot() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"),Parameter.class,1,10));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"),Efficiency.class,1,10));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"),Parameter.class,1,10));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"),Efficiency.class,1,10));
 
         init();
     }
@@ -40,11 +41,11 @@ public class NormalisedParameterRangePlot extends MCAT5Plot{
         renderer1.setPaint(Color.BLACK);                                                               
         plot1.setRenderer(0, renderer1);
         
-        plot1.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER")));
-        plot1.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NORMALISED_RANGE")));
+        plot1.setDomainAxis(new NumberAxis(JAMS.i18n("PARAMETER")));
+        plot1.setRangeAxis(new NumberAxis(JAMS.i18n("NORMALISED_RANGE")));
 
         JFreeChart chart1 = new JFreeChart(plot1);
-        chart1.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NORMALISED_PARAMETER_RANGE_PLOT"));
+        chart1.setTitle(JAMS.i18n("NORMALISED_PARAMETER_RANGE_PLOT"));
         chart1.removeLegend();
         chartPanel1 = new ChartPanel(chart1, true);
                         
@@ -120,8 +121,8 @@ public class NormalisedParameterRangePlot extends MCAT5Plot{
 
         double minMaxparetoOptimal[][] = getMinMaxParetoTS(params,eff);
                                                                  
-        XYSeries minTSDataset_pareto = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINIMAL_PARETO_OPTIMAL_VALUE"));
-        XYSeries maxTSDataset_pareto = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAXIMAL_PARETO_OPTIMAL_VALUE"));
+        XYSeries minTSDataset_pareto = new XYSeries(JAMS.i18n("MINIMAL_PARETO_OPTIMAL_VALUE"));
+        XYSeries maxTSDataset_pareto = new XYSeries(JAMS.i18n("MAXIMAL_PARETO_OPTIMAL_VALUE"));
 
         for (int i=0;i<params.length;i++){
             minTSDataset_pareto.add(i,minMaxparetoOptimal[0][i]);

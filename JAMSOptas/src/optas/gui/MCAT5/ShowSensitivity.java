@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import jams.gui.WorkerDlg;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -24,14 +25,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import optas.SA.UniversalSensitivityAnalyzer;
-import optas.SA.VarianceBasedSensitivityIndex.Measure;
 import optas.hydro.data.DataSet;
 import optas.hydro.data.Efficiency;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.Parameter;
 import optas.hydro.data.SimpleEnsemble;
 import optas.regression.SimpleInterpolation;
-import optas.regression.SimpleNeuralNetwork;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -72,8 +71,8 @@ public class ShowSensitivity extends MCAT5Plot {
     JFreeChart chart = null;
 
     public ShowSensitivity() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"), Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
 
         init();
     }

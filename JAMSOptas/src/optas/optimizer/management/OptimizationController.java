@@ -12,8 +12,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
-import optas.metamodel.Optimization;
-import optas.metamodel.Parameter;
+import optas.gui.wizard.Objective;
+import optas.gui.wizard.Optimization;
+import optas.gui.wizard.Parameter;
 import optas.optimizer.Optimizer;
 import optas.optimizer.Optimizer.AbstractFunction;
 import optas.optimizer.OptimizerLibrary;
@@ -98,19 +99,21 @@ public abstract class OptimizationController extends OptimizerWrapper {
             this.lowerBound = new double[n];
             this.upperBound = new double[n];
 
-            for (int i = 0; i < o.getParameter().size(); i++) {
-                Parameter p = o.getParameter().get(i);
+            int i=0;
+            for (Parameter p : o.getParameter()) {                
                 lowerBound[i] = p.getLowerBound();
                 upperBound[i] = p.getUpperBound();                
                 startValue_transposed[i] = p.getStartValue();
-                parameterNames[i] = o.getParameter().get(i).getChildName();
+                parameterNames[i] = p.getAttributeName();
+                i++;
             }
 
             m = o.getObjective().size();
             objectiveNames = new String[m];
 
-            for (int i = 0; i < m; i++) {
-                objectiveNames[i] = o.getObjective().get(i).toString();
+            i=0;
+            for (Objective obj : o.getObjective()) {         
+                objectiveNames[i++] = obj.toString();
             }
         }
 

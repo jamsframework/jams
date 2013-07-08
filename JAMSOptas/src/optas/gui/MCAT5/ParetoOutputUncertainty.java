@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -36,18 +37,18 @@ public class ParetoOutputUncertainty extends MCAT5Plot {
     String var_name = null;
         
     public ParetoOutputUncertainty() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"), TimeSerie.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class,1,10));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED_TIMESERIE"),Measurement.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class,1,10));
+        this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"),Measurement.class));
 
         init();
     }
 
     private void init(){
-        plot1.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
+        plot1.setDomainAxis(new NumberAxis(JAMS.i18n("TIME")));
 
         JFreeChart chart1 = new JFreeChart(plot1);
-        chart1.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARETO_OUTPUT_UNCERTAINTY"));
+        chart1.setTitle(JAMS.i18n("PARETO_OUTPUT_UNCERTAINTY"));
         //chart1.removeLegend();
         chartPanel1 = new ChartPanel(chart1, true);
         
@@ -144,11 +145,11 @@ public class ParetoOutputUncertainty extends MCAT5Plot {
 
         double minMaxOptimalTS[][] = getMinMaxParetoTS(ts,eff);
                         
-        XYSeries minTSDataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINIMAL_VALUE_IN_DATASET"));
-        XYSeries maxTSDataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAXIMAL_VALUE_IN_DATASET"));
+        XYSeries minTSDataset = new XYSeries(JAMS.i18n("MINIMAL_VALUE_IN_DATASET"));
+        XYSeries maxTSDataset = new XYSeries(JAMS.i18n("MAXIMAL_VALUE_IN_DATASET"));
         
-        XYSeries minTSDataset_pareto = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINIMAL_VALUE_IN_PARETO_SET"));
-        XYSeries maxTSDataset_pareto = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAXIMAL_VALUE_IN_PARETO_SET"));
+        XYSeries minTSDataset_pareto = new XYSeries(JAMS.i18n("MINIMAL_VALUE_IN_PARETO_SET"));
+        XYSeries maxTSDataset_pareto = new XYSeries(JAMS.i18n("MAXIMAL_VALUE_IN_PARETO_SET"));
                 
         XYSeries observation = new XYSeries(obs.name);
     

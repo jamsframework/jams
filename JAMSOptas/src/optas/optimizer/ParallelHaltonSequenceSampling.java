@@ -24,6 +24,7 @@ import optas.optimizer.parallel.ParallelJob;
 import optas.optimizer.parallel.ParallelTask;
 import optas.io.ImportMonteCarloData;
 import optas.io.ImportMonteCarloException;
+import optas.optimizer.management.StringOptimizerParameter;
 
 @SuppressWarnings("unchecked")
 @JAMSComponentDescription(
@@ -187,7 +188,19 @@ public class ParallelHaltonSequenceSampling extends Optimizer {
 
         desc.addParameter(new NumericOptimizerParameter("targetQuality",
                 "targetQuality", 0.8, -100.0, 1.0));
+        
+        desc.addParameter(new StringOptimizerParameter("excludeFiles",
+                "excludeFiles","(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log"));
 
+        desc.addParameter(new NumericOptimizerParameter("threadCount",
+                "threadCount", 8, 2, 100.0));
+        
+        desc.addParameter(new NumericOptimizerParameter("samplesPerIteration",
+                "samplesPerIteration", 192, 32, 1024.0));
+        
+        desc.addParameter(new NumericOptimizerParameter("minn",
+                "minn", 100, 0, Integer.MAX_VALUE));
+        
         return desc;
     }
 

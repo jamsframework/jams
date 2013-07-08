@@ -88,7 +88,6 @@ import optas.hydro.gui.SelectionDialog;
 import optas.hydro.gui.SimpleGlobalSensitivityAtPoint;
 import optas.hydro.gui.WeightChart;
 import optas.io.TSDataReader;
-import optas.metamodel.OptimizationDescriptionDocument;
 import org.w3c.dom.Document;
 
 /**
@@ -167,7 +166,7 @@ public class HydroAnalysisFrame extends JFrame {
                 break;
             }
         }*/
-        scheme[index].calcOptimizationScheme();
+//        scheme[index].calcOptimizationScheme();
         ((DefaultListModel) parameterGroups.getModel()).clear();
         int counter = 0;
         for (ParameterGroup p : scheme[index].solutionGroups) {
@@ -675,7 +674,7 @@ public class HydroAnalysisFrame extends JFrame {
                     return;
                 }
 
-                optas.gui.OptimizationWizard.createFrame((Document)null, null, myScheme.getOptimizationDocument());
+//                optas.gui.OptimizationWizard.createFrame((Document)null, null, myScheme.getOptimizationDocument());
             }
         });
 
@@ -688,7 +687,7 @@ public class HydroAnalysisFrame extends JFrame {
                     return;
                 }
 
-                OptimizationDescriptionDocument document = myScheme.getOptimizationDocument();
+//                OptimizationDescriptionDocument document = myScheme.getOptimizationDocument();
 
                 JFileChooser chooser = GUIHelper.getJFileChooser();
                 chooser.setFileFilter(new FileFilter() {
@@ -727,7 +726,7 @@ public class HydroAnalysisFrame extends JFrame {
                         XMLEncoder encoder = new XMLEncoder(
                                 new BufferedOutputStream(
                                 new FileOutputStream(chooser.getSelectedFile())));
-                        encoder.writeObject(document);
+                        //encoder.writeObject(document);
                         encoder.close();
                     } catch (IOException ioe) {
                         System.out.println("Could not save scheme:" + ioe.toString());

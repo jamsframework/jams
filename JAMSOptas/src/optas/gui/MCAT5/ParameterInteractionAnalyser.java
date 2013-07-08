@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import optas.tools.VerticalTableHeaderCellRenderer;
 import optas.tools.TableRowHeader;
 import jams.gui.WorkerDlg;
@@ -279,8 +280,8 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
     }
 
     public ParameterInteractionAnalyser() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"), Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
 
         init();
     }

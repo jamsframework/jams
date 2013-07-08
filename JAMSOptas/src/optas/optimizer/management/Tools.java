@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+import optas.gui.wizard.OPTASWizardException;
 
 /**
  *
@@ -96,7 +97,7 @@ public class Tools {
         return result;
     }
 
-    static public HashMap<String,OptimizerParameter> paramString2PropertyMap(String paramString) throws Exception {
+    static public HashMap<String,OptimizerParameter> paramString2PropertyMap(String paramString) throws OPTASWizardException {
         HashMap<String,OptimizerParameter> propertyList = new HashMap<String,OptimizerParameter>();
         if (paramString.isEmpty()) {
             return new HashMap<String,OptimizerParameter>();
@@ -105,7 +106,7 @@ public class Tools {
         for (int i = 0; i < params.length; i++) {
             String entry[] = params[i].split("=");
             if (entry.length != 2) {
-                throw new Exception("Invalid parameterization of SimpleOptimizationController. The Parameter in question is" + params[i]);
+                throw new OPTASWizardException("Invalid parameterization of SimpleOptimizationController. The Parameter in question is" + params[i]);
             } else {
                 if (entry[1].equals("true") || entry[1].equals("false")) {
                     propertyList.put(entry[0],new BooleanOptimizerParameter(entry[0], "unknown", Boolean.getBoolean(entry[1])));
@@ -134,7 +135,7 @@ public class Tools {
         return desc;
     }
 
-    static public OptimizerDescription getStandardOptimizerDesc(String paramString) throws Exception {
+    static public OptimizerDescription getStandardOptimizerDesc(String paramString) throws OPTASWizardException {
         OptimizerDescription desc = getStandardOptimizerDesc();
         desc.setPropertyMap(paramString2PropertyMap(paramString));
 

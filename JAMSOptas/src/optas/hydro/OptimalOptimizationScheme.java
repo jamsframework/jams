@@ -7,8 +7,6 @@ package optas.hydro;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import optas.hydro.data.SimpleEnsemble;
-import optas.hydro.data.TimeSerie;
 
 /**
  *
@@ -181,7 +179,6 @@ public class OptimalOptimizationScheme extends OptimizationScheme{
         }
     }
         
-    @Override
     public void calcOptimizationScheme() {
         initObjectPools();
         solutionGroups.clear();

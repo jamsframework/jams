@@ -14,6 +14,7 @@ import optas.optimizer.management.SampleFactory.SampleComperator;
 import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.ObjectiveAchievedException;
 import optas.optimizer.management.OptimizerDescription;
+import optas.optimizer.management.StringOptimizerParameter;
 import optas.optimizer.parallel.ParallelSequence;
 
 /**
@@ -48,6 +49,16 @@ public class NSGA2 extends Optimizer {
         desc.addParameter(new NumericOptimizerParameter("mutationDistributionIndex", "size of population", 20, 1, 500));
         desc.addParameter(new NumericOptimizerParameter("maxGeneration", "maximum number of generations", 1000, 1, 10000));
 
+        
+        desc.addParameter(new StringOptimizerParameter("excludeFiles",
+                "excludeFiles","(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log"));
+
+        desc.addParameter(new NumericOptimizerParameter("threadCount",
+                "threadCount", 8, 2, 100.0));
+        
+        desc.addParameter(new NumericOptimizerParameter("parallelExecution",
+                "parallelExecution", 0, 0, 1.0));
+                
         return desc;
     }
 
@@ -135,6 +146,14 @@ public class NSGA2 extends Optimizer {
         this.maxGeneration = (int) maxGeneration;
     }
 
+    public void setThreadCount(double threadCount) {
+        this.threadCount = (int) threadCount;
+    }
+
+    public double getThreadCount() {
+        return this.threadCount;
+    }
+    
     /**
      * @return the parallelExecution
      */

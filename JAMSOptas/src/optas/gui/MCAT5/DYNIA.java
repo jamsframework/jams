@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -56,7 +57,7 @@ public class DYNIA extends MCAT5Plot {
 
     public DYNIA() {
         JFreeChart chart1 = ChartFactory.createTimeSeriesChart(
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT_UNCERTAINTY_PLOT"),
+                JAMS.i18n("OUTPUT_UNCERTAINTY_PLOT"),
                 "time",
                 "discharge",
                 null,
@@ -66,23 +67,23 @@ public class DYNIA extends MCAT5Plot {
 
         plot = chart1.getXYPlot();
 
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"), TimeSerie.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"), Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED_TIMESERIE"), Measurement.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"), Measurement.class));
 
         init();
     }
 
     private void init() {
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DYNIA"));
+        chart.setTitle(JAMS.i18n("DYNIA"));
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
         renderer.setSeriesPaint(0, Color.BLACK);
         renderer.setBaseShapesVisible(false);
         plot.setRenderer(0, renderer);
 
-        plot.getDomainAxis().setLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME"));
+        plot.getDomainAxis().setLabel(JAMS.i18n("TIME"));
 
         plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
 
@@ -100,7 +101,7 @@ public class DYNIA extends MCAT5Plot {
 
         JPanel text = new JPanel();
         text.setLayout(new BoxLayout(text, BoxLayout.X_AXIS));
-        text.add(new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("WINDOW_SIZE")));
+        text.add(new JLabel(JAMS.i18n("WINDOW_SIZE")));
         text.add(winsize_box);
 
         chartPanel = new ChartPanel(chart, true);

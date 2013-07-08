@@ -6,6 +6,7 @@ package optas.hydro.calculations;
 
 import Jama.LUDecomposition;
 import Jama.Matrix;
+import jams.JAMS;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -61,7 +62,7 @@ public class SlopeCalculations {
 
         XYSeries dataset[] = new XYSeries[n];
         for (int i = 0; i < n; i++) {
-            dataset[i] = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_POINT"));
+            dataset[i] = new XYSeries(JAMS.i18n("DATA_POINT"));
             dataset[i].setDescription(param[i].getName());
         }
 
@@ -117,7 +118,7 @@ public class SlopeCalculations {
     }
 
     static public XYSeries[] calculateDerivative(EfficiencyEnsemble eff, DataCollection dc) {
-        /*XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_POINT"));
+        /*XYSeries dataset = new XYSeries(JAMS.i18n("DATA_POINT"));
 
         int n = eff.getSize();
         int k = 5;
@@ -170,7 +171,7 @@ public class SlopeCalculations {
     }
 
     static public XYSeries[] calculateDerivativesAtTime(SimpleEnsemble param[], TimeSerieEnsemble timeseries, int timeIndex, double range_min[], double range_max[]) {
-        /*XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_POINT"));
+        /*XYSeries dataset = new XYSeries(JAMS.i18n("DATA_POINT"));
 
         int n = param.getSize();
         int k = 5;

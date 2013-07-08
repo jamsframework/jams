@@ -51,12 +51,7 @@ public abstract class OptimizerWrapper extends JAMSContext {
     update = JAMSVarDescription.UpdateType.INIT,
     description = "List of parameter value bounaries corresponding to parameter identifiers")
     public JAMSString boundaries;
-
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    update = JAMSVarDescription.UpdateType.RUN,
-    description = "maximum numer of function evaluations",
-    defaultValue = "1000")
-    public Attribute.Integer maxn;
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.RUN,
     description = "current iteration")
@@ -278,9 +273,9 @@ public abstract class OptimizerWrapper extends JAMSContext {
     }
 
     public Sample getSample(double[] x) throws SampleLimitException, ObjectiveAchievedException {
-        if (iterationCounter.getValue() >= this.maxn.getValue()) {
+        /*if (iterationCounter.getValue() >= this.maxn.getValue()) {
             throw new SampleLimitException("maximum sample count reached");
-        }
+        }*/
         Sample s = factory.getSample(x, funct(x));
 
         return s;
@@ -330,7 +325,8 @@ public abstract class OptimizerWrapper extends JAMSContext {
 
     @Override
     public long getNumberOfIterations(){
-        return this.maxn.getValue();
+        //return this.maxn.getValue();
+        return Integer.MAX_VALUE;
     }
     @Override
     public void run() {

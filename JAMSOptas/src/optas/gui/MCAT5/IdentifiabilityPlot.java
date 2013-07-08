@@ -5,6 +5,7 @@
 package optas.gui.MCAT5;
 
 
+import jams.JAMS;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -45,15 +46,15 @@ public class IdentifiabilityPlot extends MCAT5Plot{
     int boxCount = 10;
 
     public IdentifiabilityPlot() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"),Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"),Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"),Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"),Efficiency.class));
         init();
     }
 
     private void init() {
         JFreeChart chart = new JFreeChart(plot);
         chart.removeLegend();
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("IDENTIFYABLITY_PLOT"));
+        chart.setTitle(JAMS.i18n("IDENTIFYABLITY_PLOT"));
         chartPanel = new ChartPanel(chart, true);
 
         XYLineAndShapeRenderer gradient_renderer = new XYLineAndShapeRenderer();
@@ -100,10 +101,10 @@ public class IdentifiabilityPlot extends MCAT5Plot{
 
 
         plot.setDomainAxis(new NumberAxis(p1.getName()));
-        plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUMULATIVE_DISTRIBUTION")));
+        plot.setRangeAxis(new NumberAxis(JAMS.i18n("CUMULATIVE_DISTRIBUTION")));
 
         XYSeries dataset_box[] = new XYSeries[boxCount];
-        XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUMULATIVE_DISTRIBUTION"));
+        XYSeries dataset = new XYSeries(JAMS.i18n("CUMULATIVE_DISTRIBUTION"));
         for (int i = 0; i < boxCount; i++) {
             dataset_box[i] = new XYSeries("");
         }

@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -68,9 +69,9 @@ public class BaysianUncertainty extends MCAT5Plot {
     String meanString, medianString;
 
     public BaysianUncertainty() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"), TimeSerie.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED_TIMESERIE"), Measurement.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"), Measurement.class));
 
         init();
     }
@@ -132,7 +133,7 @@ public class BaysianUncertainty extends MCAT5Plot {
 
     private void init() {
         JFreeChart chart1 = ChartFactory.createTimeSeriesChart(
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT_UNCERTAINTY_PLOT"),
+                JAMS.i18n("OUTPUT_UNCERTAINTY_PLOT"),
                 "time",
                 "discharge",
                 null,
@@ -174,16 +175,16 @@ public class BaysianUncertainty extends MCAT5Plot {
         plot1.setRenderer(1, renderer_mean);
         plot1.setRenderer(2, renderer_median);
 
-        plot1.getDomainAxis().setLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME"));
+        plot1.getDomainAxis().setLabel(JAMS.i18n("TIME"));
         DateAxis axis = (DateAxis) plot1.getDomainAxis();
         axis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
 
-        plot1.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT")));
+        plot1.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
 
 
 
         JFreeChart chart2 = new JFreeChart(plot2);
-        chart1.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT_UNCERTAINTY_PLOT"));
+        chart1.setTitle(JAMS.i18n("OUTPUT_UNCERTAINTY_PLOT"));
         chart2.setTitle("");
         chart2.removeLegend();
 
@@ -337,12 +338,12 @@ public class BaysianUncertainty extends MCAT5Plot {
         EfficiencyEnsemble eff = (EfficiencyEnsemble) p[1].get(0);
         Measurement obs = (Measurement) p[2].get(0);
 
-        TimeSeries dataset1 = new TimeSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LOWER_CONFIDENCE_BOUND"));
-        TimeSeries dataset2 = new TimeSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("UPPER_CONFIDENCE_BOUND"));
+        TimeSeries dataset1 = new TimeSeries(JAMS.i18n("LOWER_CONFIDENCE_BOUND"));
+        TimeSeries dataset2 = new TimeSeries(JAMS.i18n("UPPER_CONFIDENCE_BOUND"));
         TimeSeries dataset3 = new TimeSeries(obs.name);
 
-        TimeSeries dataset4 = new TimeSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN"));
-        TimeSeries dataset5 = new TimeSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEDIAN"));
+        TimeSeries dataset4 = new TimeSeries(JAMS.i18n("MEAN"));
+        TimeSeries dataset5 = new TimeSeries(JAMS.i18n("MEDIAN"));
 
         int T = ts.getTimesteps();
 

@@ -4,25 +4,13 @@
  */
 package optas.hydro;
 
-import jams.data.Attribute.Calendar;
-import jams.data.Attribute.TimeInterval;
-import jams.data.DefaultDataFactory;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.TimeZone;
-import java.util.TreeSet;
-import optas.efficiencies.UniversalEfficiencyCalculator;
 import optas.hydro.data.SimpleEnsemble;
 import optas.hydro.data.TimeSerie;
-import optas.metamodel.Objective;
-import optas.metamodel.Optimization;
-import optas.metamodel.OptimizationDescriptionDocument;
-import optas.optimizer.management.BooleanOptimizerParameter;
-import optas.optimizer.management.NumericOptimizerParameter;
-import optas.optimizer.management.OptimizerParameter;
 import optas.tools.ObservableProgress;
 
 /**
@@ -175,7 +163,7 @@ public abstract class OptimizationScheme extends ObservableProgress{
         return result;
     }
 
-    public OptimizationDescriptionDocument getOptimizationDocument() {
+    /*public OptimizationDescriptionDocument getOptimizationDocument() {
         OptimizationDescriptionDocument doc = new OptimizationDescriptionDocument();
 
         for (int i = 0; i < this.solutionGroups.size(); i++) {
@@ -278,5 +266,5 @@ public abstract class OptimizationScheme extends ObservableProgress{
 
     public void calcOptimizationScheme(){
         solutionGroups.clear();
-    }
+    }*/
 }

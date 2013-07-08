@@ -168,7 +168,7 @@ public class TimeSerie extends DataSet{
     }
     @Override
     public String toString() {
-        return name;// + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_TIMESTEPS:") + timeLength;
+        return name;// + JAMS.i18n("_TIMESTEPS:") + timeLength;
     }
 
     public static TimeSerie createFromJ2KTSDataStore(J2KTSDataStore store, int index, String name){

@@ -4,6 +4,7 @@
  */
 package optas.SA;
 
+import jams.JAMS;
 import optas.gui.MCAT5.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -25,7 +26,6 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.Range;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.data.xy.XYBarDataset;
 import optas.hydro.data.Efficiency;
 import optas.hydro.data.EfficiencyEnsemble;
 import optas.hydro.data.Parameter;
@@ -44,14 +44,14 @@ public class APosterioriPlot extends MCAT5Plot {
     int boxCount = 20;
 
     public APosterioriPlot() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"), Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
         init();
     }
 
     private void init() {
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("A_POSTERIO_PARAMETER_DISTRIBUTION"));
+        chart.setTitle(JAMS.i18n("A_POSTERIO_PARAMETER_DISTRIBUTION"));
         chartPanel = new ChartPanel(chart, true);
 
         mainPanel = new JPanel(new BorderLayout());
@@ -118,12 +118,12 @@ public class APosterioriPlot extends MCAT5Plot {
         System.out.println("Recommend parameter range:" + "[" + bounds[0] + "<" + bounds[1] + "]");
 
         plot.setDomainAxis(new NumberAxis(p1.getName()));
-        plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN_OF_EFFICIENCY")));
+        plot.setRangeAxis(new NumberAxis(JAMS.i18n("MEAN_OF_EFFICIENCY")));
 
         double min = p1.getMin();
         double max = p1.getMax();
         
-        /*XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN_OF_EFFICIENCY"));
+        /*XYSeries dataset = new XYSeries(JAMS.i18n("MEAN_OF_EFFICIENCY"));
         
         double min = p1.getMin();
         double max = p1.getMax();
@@ -134,7 +134,7 @@ public class APosterioriPlot extends MCAT5Plot {
         }*/
 
         //plot.setDataset(0, new XYBarDataset(new XYSeriesCollection(dataset), ((max - min) / (double) boxCount)));
-        XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_POINT"));
+        XYSeries dataset = new XYSeries(JAMS.i18n("DATA_POINT"));
 
         int n = e[u].getSize();
 
@@ -151,7 +151,7 @@ public class APosterioriPlot extends MCAT5Plot {
         plot.setRenderer(renderer);
         //setup chart
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"));
+        chart.setTitle(JAMS.i18n("DOTTY_PLOT"));
         chartPanel = new ChartPanel(chart, true);
 
         /*XYBarRenderer renderer = new XYBarRenderer(0.33 / (double) boxCount);

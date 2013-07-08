@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -39,8 +40,8 @@ public class GLUEVariableUncertainty extends MCAT5Plot {
     final int GROUPS = 10;
     
     public GLUEVariableUncertainty() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ENSEMBLE_SIMULATED_VARIABLE"), StateVariable.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("ENSEMBLE_SIMULATED_VARIABLE"), StateVariable.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
 
         init();
     }
@@ -58,8 +59,8 @@ public class GLUEVariableUncertainty extends MCAT5Plot {
                 
         JFreeChart chart1 = new JFreeChart(plot1);
         JFreeChart chart2 = new JFreeChart(plot2);
-        chart1.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUMULATIVE_DENSITY_PLOT"));
-        chart2.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DENSITY_PLOT"));
+        chart1.setTitle(JAMS.i18n("CUMULATIVE_DENSITY_PLOT"));
+        chart2.setTitle(JAMS.i18n("DENSITY_PLOT"));
                 
         chart2.removeLegend();
         chartPanel1 = new ChartPanel(chart1, true);
@@ -86,9 +87,9 @@ public class GLUEVariableUncertainty extends MCAT5Plot {
         plot2.setDomainAxis(new NumberAxis(var.name));
         plot2.setRangeAxis(new NumberAxis(""));
 
-        XYSeries dataset1 = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUMULATIVE_DENSITY"));
-        XYSeries dataset2 = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_DESCRIPTION"));
-        XYSeries dataset3 = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("0.95_CONFIDENCE_INTERVAL"));
+        XYSeries dataset1 = new XYSeries(JAMS.i18n("CUMULATIVE_DENSITY"));
+        XYSeries dataset2 = new XYSeries(JAMS.i18n("NO_DESCRIPTION"));
+        XYSeries dataset3 = new XYSeries(JAMS.i18n("0.95_CONFIDENCE_INTERVAL"));
         
         double bin_sum[] = new double[GROUPS];
         int bin_count[] = new int[GROUPS];

@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.gui.ObserverWorkerDlg;
 import jams.gui.tools.GUIHelper;
@@ -62,7 +63,6 @@ import optas.hydro.data.SimpleEnsemble;
 import optas.hydro.data.TimeSerie;
 import optas.hydro.data.TimeSerieEnsemble;
 import optas.hydro.gui.WeightChart;
-import optas.metamodel.OptimizationDescriptionDocument;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -108,9 +108,9 @@ public class TemporalAnalysis1 extends MCAT5Plot {
     JPanel mainPanel = null;
 
     public TemporalAnalysis1() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"), TimeSerie.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED_TIMESERIE"), Measurement.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"), Measurement.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
 
         optimizationSchemes.setModel(new DefaultComboBoxModel(new Object[]{
                     new GreedyOptimizationScheme(),
@@ -490,7 +490,7 @@ public class TemporalAnalysis1 extends MCAT5Plot {
             @Override
             public void run() {
                 try {
-                    scheme.calcOptimizationScheme();
+                    //scheme.calcOptimizationScheme();
                     ComboBoxModel model = new DefaultComboBoxModel(scheme.getSolutionGroups().toArray());
                     synchronized (parameterGroups) {
                         parameterGroups.setModel(model);
@@ -505,7 +505,7 @@ public class TemporalAnalysis1 extends MCAT5Plot {
     }
 
     private void exportOptimizationScheme(OptimizationScheme scheme) {
-        OptimizationDescriptionDocument document = scheme.getOptimizationDocument();
+//        OptimizationDescriptionDocument document = scheme.getOptimizationDocument();
 
         JFileChooser chooser = GUIHelper.getJFileChooser();
         chooser.setFileFilter(new FileFilter() {
@@ -544,7 +544,7 @@ public class TemporalAnalysis1 extends MCAT5Plot {
                 XMLEncoder encoder = new XMLEncoder(
                         new BufferedOutputStream(
                         new FileOutputStream(chooser.getSelectedFile())));
-                encoder.writeObject(document);
+                //encoder.writeObject(document);
                 encoder.close();
             } catch (IOException ioe) {
                 JOptionPane.showMessageDialog(null, "Optimization scheme was not saved!\n" + ioe.toString());

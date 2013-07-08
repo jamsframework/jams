@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -39,7 +40,7 @@ public class DottyPlot extends MCAT5Plot {
         plot.setRenderer(renderer);
         //setup chart
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"));
+        chart.setTitle(JAMS.i18n("DOTTY_PLOT"));
         chartPanel = new ChartPanel(chart, true);
 
         try {
@@ -50,8 +51,8 @@ public class DottyPlot extends MCAT5Plot {
     }
 
     public DottyPlot() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"), Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
 
         init();
     }
@@ -72,7 +73,7 @@ public class DottyPlot extends MCAT5Plot {
         plot.setDomainAxis(new NumberAxis(p1.getName()));
         plot.setRangeAxis(new NumberAxis(p2.getName()));
 
-        XYSeries dataset = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_POINT"));
+        XYSeries dataset = new XYSeries(JAMS.i18n("DATA_POINT"));
 
         int n = p1.getSize();
 

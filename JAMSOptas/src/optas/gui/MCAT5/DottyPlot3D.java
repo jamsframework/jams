@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -16,7 +17,6 @@ import org.jfree.chart.plot.XYPlot;
 import optas.hydro.data.Efficiency;
 import optas.hydro.data.Parameter;
 import optas.hydro.data.SimpleEnsemble;
-import org.jfree.chart.renderer.GrayPaintScale;
 import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
@@ -46,7 +46,7 @@ public class DottyPlot3D extends MCAT5Plot {
         plot.setRenderer(bg_renderer);
         //setup chart
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"));
+        chart.setTitle(JAMS.i18n("DOTTY_PLOT"));
         chartPanel = new ChartPanel(chart, true);
 
         try {
@@ -57,9 +57,9 @@ public class DottyPlot3D extends MCAT5Plot {
     }
 
     public DottyPlot3D() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER")+"1", Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER")+"2", Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER")+"1", Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER")+"2", Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
 
         init();
     }

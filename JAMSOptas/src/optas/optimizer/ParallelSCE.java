@@ -47,7 +47,7 @@ import optas.optimizer.management.SampleFactory.SampleSO;
 import optas.optimizer.management.SampleFactory.SampleSOComperator;
 import optas.optimizer.management.ObjectiveAchievedException;
 import optas.optimizer.management.OptimizerDescription;
-import optas.optimizer.management.SampleFactory;
+import optas.optimizer.management.StringOptimizerParameter;
 import optas.optimizer.parallel.ParallelExecution;
 import optas.optimizer.parallel.ParallelSequence;
 
@@ -577,6 +577,10 @@ public class ParallelSCE extends Optimizer {
         desc.addParameter(new NumericOptimizerParameter(
                 "kstop", JAMS.i18n("kStop"),
                 10, 1, 100));
+        
+        desc.addParameter(new StringOptimizerParameter(
+                "excludeFiles", JAMS.i18n("exclude_files_list"),
+                "(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log"));
 
         return desc;
     }

@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -37,19 +38,19 @@ public class BestPredictionPlot extends MCAT5Plot{
     EfficiencyDataSet eff[] = null;*/
                 
     public BestPredictionPlot() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"),TimeSerie.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED_TIMESERIE"),Measurement.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"),Efficiency.class,1,10));
+        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"),TimeSerie.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"),Measurement.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"),Efficiency.class,1,10));
         
         init();
     }
 
     private void init(){
-        plot1.setDomainAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME")));
-        plot1.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT")));
+        plot1.setDomainAxis(new NumberAxis(JAMS.i18n("TIME")));
+        plot1.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
 
         JFreeChart chart1 = new JFreeChart(plot1);
-        chart1.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BEST_PREDICTION_PLOT"));
+        chart1.setTitle(JAMS.i18n("BEST_PREDICTION_PLOT"));
         chartPanel1 = new ChartPanel(chart1, true);
 
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
@@ -102,7 +103,7 @@ public class BestPredictionPlot extends MCAT5Plot{
                     bestTSDataset[i].add(j,ts.get(j, argmin));
             }
         }
-        bestTSDataset[eff.size()] = new XYSeries(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED"));
+        bestTSDataset[eff.size()] = new XYSeries(JAMS.i18n("OBSERVED"));
         for (int j=0;j<time_length;j++){            
             bestTSDataset[eff.size()].add(j,obs.getValue(j));
         }                      

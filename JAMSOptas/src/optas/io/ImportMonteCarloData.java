@@ -4,6 +4,7 @@
  */
 package optas.io;
 
+import jams.JAMS;
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
 import jams.data.DefaultDataFactory;
@@ -28,7 +29,6 @@ import jams.workspace.dsproc.Processor;
 import jams.workspace.dsproc.SimpleSerieProcessor;
 import jams.workspace.dsproc.TimeSpaceProcessor;
 import java.util.EnumMap;
-import optas.Optas;
 import optas.hydro.data.DataCollection;
 import optas.hydro.data.DataSet.MismatchException;
 import optas.hydro.data.Measurement;
@@ -164,13 +164,13 @@ public class ImportMonteCarloData implements Serializable {
     final EnsembleType timeserieTypes[] = {EnsembleType.Ignore, EnsembleType.Measurement};
             
     
-    /*String  parameterString = Optas.i18n("Parameter"),
-            stateVariableString = Optas.i18n("State-Variable"),
-            measurementString = Optas.i18n("Measurement"),
-            efficiencyStringNeg = Optas.i18n("NegEfficiency"),
-            efficiencyStringPos = Optas.i18n("PosEfficiency"),
-            timeseriesString = Optas.i18n("Timeserie-Ensemble"),
-            unknownString = Optas.i18n("UNKNOWN");
+    /*String  parameterString = JAMS.i18n("Parameter"),
+            stateVariableString = JAMS.i18n("State-Variable"),
+            measurementString = JAMS.i18n("Measurement"),
+            efficiencyStringNeg = JAMS.i18n("NegEfficiency"),
+            efficiencyStringPos = JAMS.i18n("PosEfficiency"),
+            timeseriesString = JAMS.i18n("Timeserie-Ensemble"),
+            unknownString = JAMS.i18n("UNKNOWN");
     String  emptyString = "";*/
     
     DataCollection ensemble = null;
@@ -238,13 +238,13 @@ public class ImportMonteCarloData implements Serializable {
             dsdb.createDB();
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            throw new ImportMonteCarloException(Optas.i18n("Could_not_load_data_store_") + file, ioe);
+            throw new ImportMonteCarloException(JAMS.i18n("Could_not_load_data_store_") + file, ioe);
         } catch (SQLException ioe) {
             ioe.printStackTrace();
-            throw new ImportMonteCarloException(Optas.i18n("Could_not_create_database"), ioe);
+            throw new ImportMonteCarloException(JAMS.i18n("Could_not_create_database"), ioe);
         } catch (ClassNotFoundException ioe) {
             ioe.printStackTrace();
-            throw new ImportMonteCarloException(Optas.i18n("Could_not_load_data_store_"), ioe);
+            throw new ImportMonteCarloException(JAMS.i18n("Could_not_load_data_store_"), ioe);
         }
         
         switch (DataStoreProcessor.getDataStoreType(file)) {
@@ -324,18 +324,18 @@ public class ImportMonteCarloData implements Serializable {
                 }
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
-                throw new ImportMonteCarloException(Optas.i18n("Could_not_build_ensemble_"), sqle);
+                throw new ImportMonteCarloException(JAMS.i18n("Could_not_build_ensemble_"), sqle);
             } catch (IOException ioe) {
                 ioe.printStackTrace();
-                throw new ImportMonteCarloException(Optas.i18n("Could_not_build_ensemble_"), ioe);
+                throw new ImportMonteCarloException(JAMS.i18n("Could_not_build_ensemble_"), ioe);
             } catch (MismatchException me) {
                 me.printStackTrace();
-                throw new ImportMonteCarloException(Optas.i18n("Could_not_build_ensemble_"), me);
+                throw new ImportMonteCarloException(JAMS.i18n("Could_not_build_ensemble_"), me);
             } catch (ClassCastException cce) {
-                throw new ImportMonteCarloException(Optas.i18n("Could_not_build_ensemble_"), cce);
+                throw new ImportMonteCarloException(JAMS.i18n("Could_not_build_ensemble_"), cce);
             } catch (Throwable t) {
                 t.printStackTrace();
-                throw new ImportMonteCarloException(Optas.i18n("Could_not_build_ensemble_"), t);
+                throw new ImportMonteCarloException(JAMS.i18n("Could_not_build_ensemble_"), t);
             }
             try {
                 if (timeSerieDatasetClasses.containsKey(dataSetClassName)) {
@@ -381,7 +381,7 @@ public class ImportMonteCarloData implements Serializable {
                             } else {
                                 for (int i = 0; i < ts.getTimeDomain().getNumberOfTimesteps(); i++) {
                                     if (ts.getValue(i) != ts2.getValue(i)) {
-                                        throw new MismatchException(Optas.i18n("timeserie_ensemble_could_not_be_used_as_measurement"));
+                                        throw new MismatchException(JAMS.i18n("timeserie_ensemble_could_not_be_used_as_measurement"));
                                     }
                                 }
                             }
@@ -392,18 +392,18 @@ public class ImportMonteCarloData implements Serializable {
                 }
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
-                throw new ImportMonteCarloException(Optas.i18n("Could_not_build_ensemble_"), sqle);
+                throw new ImportMonteCarloException(JAMS.i18n("Could_not_build_ensemble_"), sqle);
             } catch (IOException ioe) {
                 ioe.printStackTrace();
-                throw new ImportMonteCarloException(Optas.i18n("Could_not_build_ensemble_"), ioe);
+                throw new ImportMonteCarloException(JAMS.i18n("Could_not_build_ensemble_"), ioe);
             } catch (MismatchException me) {
                 me.printStackTrace();
-                throw new ImportMonteCarloException(Optas.i18n("Could_not_build_ensemble_"), me);
+                throw new ImportMonteCarloException(JAMS.i18n("Could_not_build_ensemble_"), me);
             } catch (ClassCastException cce) {
-                throw new ImportMonteCarloException(Optas.i18n("Could_not_build_ensemble_"), cce);
+                throw new ImportMonteCarloException(JAMS.i18n("Could_not_build_ensemble_"), cce);
             } catch (Throwable t) {
                 t.printStackTrace();
-                throw new ImportMonteCarloException(Optas.i18n("Could_not_build_ensemble_"), t);
+                throw new ImportMonteCarloException(JAMS.i18n("Could_not_build_ensemble_"), t);
             }
         }
         return ensemble;
@@ -453,7 +453,7 @@ public class ImportMonteCarloData implements Serializable {
                 }
             } catch (IOException ioe) {
                 ioe.printStackTrace();
-                throw new ImportMonteCarloException(Optas.i18n("Could_not_read_file_") + file.toString(), ioe);
+                throw new ImportMonteCarloException(JAMS.i18n("Could_not_read_file_") + file.toString(), ioe);
             }
             return true;
         }

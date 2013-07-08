@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.gui.ObserverWorkerDlg;
 import jams.gui.tools.GUIHelper;
@@ -13,8 +14,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -28,17 +27,13 @@ import java.util.Date;
 import java.util.Set;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -68,7 +63,6 @@ import optas.hydro.data.TimeFilterFactory;
 import optas.hydro.data.TimeSerie;
 import optas.hydro.data.TimeSerieEnsemble;
 import optas.hydro.gui.WeightChart;
-import optas.metamodel.OptimizationDescriptionDocument;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
@@ -141,9 +135,9 @@ public class TemporalAnalysisGUI extends MCAT5Plot {
     final GroupConfigurator groupConfigurator = new GroupConfigurator();
 
     public TemporalAnalysisGUI() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SIMULATED_TIMESERIE"), TimeSerie.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OBSERVED_TIMESERIE"), Measurement.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"), Measurement.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
         
         calcGreedy1SchemeBn.addActionListener(new ActionListener() {
             @Override
@@ -754,7 +748,7 @@ public class TemporalAnalysisGUI extends MCAT5Plot {
             @Override
             public void run() {
                 try {
-                    scheme.calcOptimizationScheme();                    
+//                    scheme.calcOptimizationScheme();                    
                     synchronized (groupConfigurator) {
                         groupConfigurator.setSolutionGroup(scheme.getSolutionGroups());
                     }
@@ -768,7 +762,7 @@ public class TemporalAnalysisGUI extends MCAT5Plot {
     }
 
     private void exportOptimizationScheme(OptimizationScheme scheme) {
-        OptimizationDescriptionDocument document = scheme.getOptimizationDocument();
+        //OptimizationDescriptionDocument document = scheme.getOptimizationDocument();
 
         JFileChooser chooser = GUIHelper.getJFileChooser();
         chooser.setFileFilter(new FileFilter() {
@@ -807,7 +801,7 @@ public class TemporalAnalysisGUI extends MCAT5Plot {
                 XMLEncoder encoder = new XMLEncoder(
                         new BufferedOutputStream(
                         new FileOutputStream(chooser.getSelectedFile())));
-                encoder.writeObject(document);
+                //encoder.writeObject(document);
                 encoder.close();
             } catch (IOException ioe) {
                 JOptionPane.showMessageDialog(null, "Optimization scheme was not saved!\n" + ioe.toString());

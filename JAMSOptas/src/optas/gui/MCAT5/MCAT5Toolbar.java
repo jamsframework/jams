@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -63,7 +64,7 @@ public class MCAT5Toolbar extends JToolBar {
 
         @Override
         public String toString() {
-            return name + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_TIMESTEPS:") + timeLength;
+            return name + JAMS.i18n("_TIMESTEPS:") + timeLength;
         }
     };
 
@@ -88,7 +89,7 @@ public class MCAT5Toolbar extends JToolBar {
 
         @Override
         public String toString() {
-            return name + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_TIMESTEPS:") + timeLength;
+            return name + JAMS.i18n("_TIMESTEPS:") + timeLength;
         }
     };
 
@@ -139,7 +140,7 @@ public class MCAT5Toolbar extends JToolBar {
 
         public MonteCarloData() {
             numberOfRuns = -1;
-            name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DEFAULT");
+            name = JAMS.i18n("DEFAULT");
             observations = new ArrayList<ObservationDataSet>();
             simulations = new ArrayList<SimulationDataSet>();
             ts_simulations = new ArrayList<SimulationTimeSeriesDataSet>();
@@ -151,12 +152,12 @@ public class MCAT5Toolbar extends JToolBar {
             p.timeLength = p.set.length;
             for (int i = 0; i < ts_simulations.size(); i++) {
                 if (ts_simulations.get(i).timeLength != p.timeLength) {
-                    return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_OBSERVATION_WAS_NOT_ADDED");
+                    return JAMS.i18n("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_OBSERVATION_WAS_NOT_ADDED");
                 }
             }
             for (int i = 0; i < observations.size(); i++) {
                 if (observations.get(i).timeLength != p.timeLength) {
-                    return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_OBSERVATION_WAS_NOT_ADDED");
+                    return JAMS.i18n("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_OBSERVATION_WAS_NOT_ADDED");
                 }
             }
             observations.add(p);
@@ -172,7 +173,7 @@ public class MCAT5Toolbar extends JToolBar {
                 this.numberOfRuns = p.set.length;
             }
             if (p.set.length != this.numberOfRuns) {
-                return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_SERIES_WITH_DIFFERENT_LENGTH,_SIMULATED_DATA_SET_WAS_NOT_ADDED");
+                return JAMS.i18n("THERE_ARE_SERIES_WITH_DIFFERENT_LENGTH,_SIMULATED_DATA_SET_WAS_NOT_ADDED");
             }
             p.parent = this;
             simulations.add(p);
@@ -192,17 +193,17 @@ public class MCAT5Toolbar extends JToolBar {
             }
             for (int i = 0; i < ts_simulations.size(); i++) {
                 if (ts_simulations.get(i).timeLength != p.timeLength) {
-                    return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_SIMULATION_TIME_SERIES_WERE_NOT_ADDED");
+                    return JAMS.i18n("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_SIMULATION_TIME_SERIES_WERE_NOT_ADDED");
                 }
             }
             for (int i = 0; i < observations.size(); i++) {
                 if (observations.get(i).timeLength != p.timeLength) {
-                    return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_SIMULATION_TIME_SERIES_WERE_NOT_ADDED");
+                    return JAMS.i18n("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_SIMULATION_TIME_SERIES_WERE_NOT_ADDED");
                 }
             }
             for (int i = 0; i < p.timeLength; i++) {
                 if (p.set[i].set.length != numberOfRuns) {
-                    return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_SIMULATION_TIME_SERIES_WERE_NOT_ADDED");
+                    return JAMS.i18n("THERE_ARE_TIMESERIES_WITH_DIFFERENT_LENGTH,_SIMULATION_TIME_SERIES_WERE_NOT_ADDED");
                 }
                 p.set[i].parent = this;
             }
@@ -220,7 +221,7 @@ public class MCAT5Toolbar extends JToolBar {
                 this.numberOfRuns = p.set.length;
             }
             if (p.set.length != numberOfRuns) {
-                return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NUMBER_OF_PARAMETER_SETS_DOES_NOT_FIT_NUMBER_OF_MONTO_CARLO_RUNS");
+                return JAMS.i18n("NUMBER_OF_PARAMETER_SETS_DOES_NOT_FIT_NUMBER_OF_MONTO_CARLO_RUNS");
             }
             p.parent = this;
             parameters.add(p);
@@ -236,7 +237,7 @@ public class MCAT5Toolbar extends JToolBar {
                 this.numberOfRuns = p.set.length;
             }
             if (p.set.length != numberOfRuns) {
-                return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NUMBER_OF_MODEL_RUNS_DOES_NOT_MATCH");
+                return JAMS.i18n("NUMBER_OF_MODEL_RUNS_DOES_NOT_MATCH");
             }
             p.parent = this;
             efficiencies.add(p);
@@ -249,7 +250,7 @@ public class MCAT5Toolbar extends JToolBar {
 
         @Override
         public String toString() {
-            return java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTE_CARLO_SIMULATION");
+            return JAMS.i18n("MONTE_CARLO_SIMULATION");
         }
     }
 
@@ -287,8 +288,8 @@ public class MCAT5Toolbar extends JToolBar {
         
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CREATE_DOTTY_PLOT"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
+                JAMS.i18n("CREATE_DOTTY_PLOT"),
+                JAMS.i18n("DOTTY_PLOT"),
                 DottyPlot.class));
 
         /*registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
@@ -298,72 +299,72 @@ public class MCAT5Toolbar extends JToolBar {
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
                 "Temporal Analyzer",
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
+                JAMS.i18n("DOTTY_PLOT"),
                 TemporalAnalysisGUI.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
                 "Interaction Analyzer",
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DOTTY_PLOT"),
+                JAMS.i18n("DOTTY_PLOT"),
                 ParameterInteractionAnalyser.class));
 */
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/sensitivity.png")),
                 "Sensitivityanalyzer",
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Sensitivity_Analysis"),
+                JAMS.i18n("Sensitivity_Analysis"),
                 ShowSensitivity.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/aposterioriplot.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CREATE_A_POSTERIORI_DISTRIBUTION_PLOT"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("A_POSTERIO_PARAMETER_DISTRIBUTION"),
+                JAMS.i18n("CREATE_A_POSTERIORI_DISTRIBUTION_PLOT"),
+                JAMS.i18n("A_POSTERIO_PARAMETER_DISTRIBUTION"),
                 APosterioriPlot.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/identifiabilityplot.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("IDENTIFIABILITY_PLOT"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("IDENTIFIABILITY_PLOT"),
+                JAMS.i18n("IDENTIFIABILITY_PLOT"),
+                JAMS.i18n("IDENTIFIABILITY_PLOT"),
                 IdentifiabilityPlot.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/bestpredictionplot.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BEST_PREDICTION_PLOT"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BEST_PREDICTION_PLOT"),
+                JAMS.i18n("BEST_PREDICTION_PLOT"),
+                JAMS.i18n("BEST_PREDICTION_PLOT"),
                 BestPredictionPlot.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/classplot.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLASS_PLOT"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLASS_PLOT"),
+                JAMS.i18n("CLASS_PLOT"),
+                JAMS.i18n("CLASS_PLOT"),
                 ClassPlot.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dyniaplot.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DYNIA"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DYNIA"),
+                JAMS.i18n("DYNIA"),
+                JAMS.i18n("DYNIA"),
                 DYNIA.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/ParetoOutPlot.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARETO_OUTPUT_UNCERTAINITY"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARETO_OUTPUT_UNCERTAINITY"),
+                JAMS.i18n("PARETO_OUTPUT_UNCERTAINITY"),
+                JAMS.i18n("PARETO_OUTPUT_UNCERTAINITY"),
                 ParetoOutputUncertainty.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/GLUEOutPlot.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GLUE_OUTPUT_UNCERTAINITY"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OUTPUT_UNCERTAINTY_PLOT"),
+                JAMS.i18n("GLUE_OUTPUT_UNCERTAINITY"),
+                JAMS.i18n("OUTPUT_UNCERTAINTY_PLOT"),
                 GLUEOutputUncertainty.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/GLUEVarPlot.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GLUE_VARIABLE_UNCERTAINITY"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUMULATIVE_DENSITY_PLOT"),
+                JAMS.i18n("GLUE_VARIABLE_UNCERTAINITY"),
+                JAMS.i18n("CUMULATIVE_DENSITY_PLOT"),
                 GLUEVariableUncertainty.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/normalisedparameter.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NORMALIZED_PARAMETER_RANGE_PLOT"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NORMALISED_PARAMETER_RANGE_PLOT"),
+                JAMS.i18n("NORMALIZED_PARAMETER_RANGE_PLOT"),
+                JAMS.i18n("NORMALISED_PARAMETER_RANGE_PLOT"),
                 NormalisedParameterRangePlot.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS"),
+                JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS"),
+                JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS"),
                 RegionalSensitivityAnalyser.class));
 
         registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS_II"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS_II"),
+                JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS_II"),
+                JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS_II"),
                 RegionalSensitivityAnalyser2.class));
 
         /*registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),

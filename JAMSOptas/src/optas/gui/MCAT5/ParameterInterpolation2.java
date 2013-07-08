@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -79,9 +80,9 @@ public class ParameterInterpolation2 extends MCAT5Plot {
     JLabel maxLabel = new JLabel(" ");
 
     public ParameterInterpolation2() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER")+"1",Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER")+"2",Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"),Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER")+"1",Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER")+"2",Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"),Efficiency.class));
 
         init();
     }

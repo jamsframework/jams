@@ -21,7 +21,7 @@ public class StringOptimizerParameter extends OptimizerParameter {
     }
     
       public String getString() {
-        return value;
+        return this.getName() + "=" + value;
     }
 
     /**

@@ -4,6 +4,7 @@
  */
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,17 +38,17 @@ public class RegionalSensitivityAnalyser2 extends MCAT5Plot{
     final int GROUPS = 10;
       
     public RegionalSensitivityAnalyser2() {
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PARAMETER"), Parameter.class));
-        this.addRequest(new SimpleRequest(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("Efficiency"), Efficiency.class,1,10));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class,1,10));
 
         init();
     }
 
     private void init(){
-        plot.setRangeAxis(new NumberAxis(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIKELIHOOD")));
+        plot.setRangeAxis(new NumberAxis(JAMS.i18n("LIKELIHOOD")));
 
         JFreeChart chart = new JFreeChart(plot);
-        chart.setTitle(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REGIONAL_SENSITIVITY_ANALYSIS_II"));
+        chart.setTitle(JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS_II"));
         chartPanel = new ChartPanel(chart, true);
         try{
             refresh();
