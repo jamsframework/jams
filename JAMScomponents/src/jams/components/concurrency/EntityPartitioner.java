@@ -36,42 +36,52 @@ import java.util.List;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 @JAMSComponentDescription(title = "EntityPartitioner",
-author = "Sven Kralisch",
-description = "Creates a partitioning of entities in an entity collection"
-+ " in such a way that entities within one partition are not"
-+ " interdependent. The maximum number of partitions can be configured"
-+ " by a component attribute.",
-date = "2012-01-30",
-version = "1.0_0")
+        author = "Sven Kralisch",
+        description = "Creates a partitioning of entities in an entity collection"
+        + " in such a way that entities within one partition are not"
+        + " interdependent. The maximum number of partitions can be configured"
+        + " by a component attribute.",
+        date = "2013-07-04",
+        version = "1.1_0")
 public class EntityPartitioner extends JAMSComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Input entity collection")
+            description = "Input entity collection")
     public Attribute.EntityCollection inEntities;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Resulting entity collections, length of this array defines the number of partitions")
+            description = "Resulting entity collections, length of this array defines the number of partitions")
     public Attribute.EntityCollection[] outEntities;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Name of the attribute describing the HRU to HRU relation in the input file",
-    defaultValue = "to_poly")
+            description = "Name of the attribute describing the HRU to HRU relation in the input file",
+            defaultValue = "to_poly")
     public Attribute.String associationAttribute;
     private HashMap<Attribute.Entity, List<Attribute.Entity>> linkMap = new HashMap<Attribute.Entity, List<Attribute.Entity>>();
 
     @Override
     public void init() {
 
-        // create a partitioning, i.e. a list of all sublists
-        ArrayList<ArrayList<Attribute.Entity>> alList = createDepthPartitioning(inEntities, associationAttribute.getValue());
+        ArrayList<Attribute.Entity>[] listArray;
 
-        // distribute the sublists over the targeted number of entity collections
-        ArrayList<Attribute.Entity>[] listArray = distributeEntities(alList, outEntities.length);
-        
+        if (associationAttribute.getValue().equals("")) {
+            // do plain partitioning
+            
+            listArray = distributeEntities(outEntities.length);
+            
+        } else {
+            // do topology based partitioning
+            
+            // create a partitioning, i.e. a list of all sublists
+            ArrayList<ArrayList<Attribute.Entity>> alList = createDepthPartitioning(inEntities, associationAttribute.getValue());
+            // distribute the sublists over the targeted number of entity collections
+            listArray = distributeEntities(alList, outEntities.length);
+        }
+
         getModel().getRuntime().println("");
         getModel().getRuntime().println("Partitioning of " + inEntities.getValue().size() + " entities resulted in " + listArray.length + " partitions:");
-        
+
         // assign entity partitions to component attribute
         for (int i = 0; i < outEntities.length; i++) {
-            getModel().getRuntime().println(String.format("    partition %02d: %d entities" , i, listArray[i].size()));
+            getModel().getRuntime().println(String.format("    partition %02d: %d entities", i, listArray[i].size()));
             outEntities[i].setValue(listArray[i]);
         }
         getModel().getRuntime().println("");
@@ -123,7 +133,6 @@ public class EntityPartitioner extends JAMSComponent {
 
         // sort the array list according to the number of elements in the subtrees
         Collections.sort(alList, new Comparator<ArrayList<Attribute.Entity>>() {
-
             @Override
             public int compare(ArrayList<Entity> o1, ArrayList<Entity> o2) {
                 return o1.size() - o2.size();
@@ -133,6 +142,22 @@ public class EntityPartitioner extends JAMSComponent {
         return alList;
     }
 
+    private ArrayList<Attribute.Entity>[] distributeEntities(int numberOfLists) {
+        
+        ArrayList<Attribute.Entity> listArray[] = new ArrayList[numberOfLists];
+        for (int i = 0; i < listArray.length; i++) {
+            listArray[i] = new ArrayList<Attribute.Entity>();
+        }
+        
+        int i = 0;
+        for (Attribute.Entity e : inEntities.getEntities()) {
+            listArray[i % numberOfLists].add(e);
+            i++;
+        }
+        
+        return listArray;
+    }
+    
     private ArrayList<Attribute.Entity>[] distributeEntities(ArrayList<ArrayList<Attribute.Entity>> alList, int numberOfLists) {
 
         ArrayList<Attribute.Entity> listArray[] = new ArrayList[numberOfLists];

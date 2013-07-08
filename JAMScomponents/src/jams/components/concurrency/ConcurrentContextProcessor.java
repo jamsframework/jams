@@ -39,6 +39,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -49,6 +51,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
     private int nthreads = 1;
     private List<String> excludeComponents;
     private String partitionerClassName = "jams.components.concurrency.EntityPartitioner";
+    private Map<String, String> partitionerParams = new HashMap();
 
     @Override
     public void setValue(String key, String value) {
@@ -64,6 +67,10 @@ public class ConcurrentContextProcessor implements MetaProcessor {
             partitionerClassName = value;
         }
 
+        if (key.startsWith("partitioner_param_")) {
+            String paramName = key.substring(18);
+            partitionerParams.put(paramName, value);
+        }
     }
 
     /**
@@ -130,6 +137,15 @@ public class ConcurrentContextProcessor implements MetaProcessor {
             newAttributeName += ";" + entitiesAttributeName + "_" + (i + 1);
         }
         outEntities.linkToAttribute(cContainer, newAttributeName);
+        
+        for (Entry<String, String> param : partitionerParams.entrySet()) {
+            ComponentField paramField = partitioner.getComponentFields().get(param.getKey());
+            if (paramField != null) {
+            paramField.setValue(param.getValue());
+            } else {
+                rt.getLogger().info(MessageFormat.format(JAMS.i18n("Tried to set parameter \"{0}\" but it could not be found!"), param.getKey()));
+            }
+        }
 
         // create new node for the partioner component and 
         // insert it into the container (in front of the controller)
