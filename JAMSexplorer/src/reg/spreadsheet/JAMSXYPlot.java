@@ -22,6 +22,7 @@
 
 package reg.spreadsheet;
 
+import jams.JAMS;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -84,17 +85,17 @@ public class JAMSXYPlot {
     
     public JAMSXYPlot() {
         
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
+        colorTable.put(JAMS.i18n("YELLOW"), Color.yellow);
+        colorTable.put(JAMS.i18n("ORANGE"), Color.orange);
+        colorTable.put(JAMS.i18n("RED"), Color.red);
+        colorTable.put(JAMS.i18n("PINK"), Color.pink);
+        colorTable.put(JAMS.i18n("MAGENTA"), Color.magenta);
+        colorTable.put(JAMS.i18n("CYAN"), Color.cyan);
+        colorTable.put(JAMS.i18n("BLUE"), Color.blue);
+        colorTable.put(JAMS.i18n("GREEN"), Color.green);
+        colorTable.put(JAMS.i18n("GRAY"), Color.gray);
+        colorTable.put(JAMS.i18n("LIGHTGRAY"), Color.lightGray);
+        colorTable.put(JAMS.i18n("BLACK"), Color.black);
         
         setDefaultValues();
         
@@ -104,17 +105,17 @@ public class JAMSXYPlot {
         
         this.propVector = propVector;
         
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YELLOW"), Color.yellow);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ORANGE"), Color.orange);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RED"), Color.red);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PINK"), Color.pink);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MAGENTA"), Color.magenta);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CYAN"), Color.cyan);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLUE"), Color.blue);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GREEN"), Color.green);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("GRAY"), Color.gray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LIGHTGRAY"), Color.lightGray);
-        colorTable.put(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BLACK"), Color.black);
+        colorTable.put(JAMS.i18n("YELLOW"), Color.yellow);
+        colorTable.put(JAMS.i18n("ORANGE"), Color.orange);
+        colorTable.put(JAMS.i18n("RED"), Color.red);
+        colorTable.put(JAMS.i18n("PINK"), Color.pink);
+        colorTable.put(JAMS.i18n("MAGENTA"), Color.magenta);
+        colorTable.put(JAMS.i18n("CYAN"), Color.cyan);
+        colorTable.put(JAMS.i18n("BLUE"), Color.blue);
+        colorTable.put(JAMS.i18n("GREEN"), Color.green);
+        colorTable.put(JAMS.i18n("GRAY"), Color.gray);
+        colorTable.put(JAMS.i18n("LIGHTGRAY"), Color.lightGray);
+        colorTable.put(JAMS.i18n("BLACK"), Color.black);
         
         setDefaultValues();
         
@@ -122,10 +123,10 @@ public class JAMSXYPlot {
     
     public void setDefaultValues(){
 
-            String xAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("X_AXIS_TITLE");
-            String leftAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE");
-            String rightAxisTitle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RIGHT_AXIS_TITLE");
-            String title = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("XYPLOT_ALPHA");
+            String xAxisTitle = JAMS.i18n("X_AXIS_TITLE");
+            String leftAxisTitle = JAMS.i18n("LEFT_AXIS_TITLE");
+            String rightAxisTitle = JAMS.i18n("RIGHT_AXIS_TITLE");
+            String title = JAMS.i18n("XYPLOT_ALPHA");
     }
     public ChartPanel getChartPanel(){
         //createPlot();
@@ -233,9 +234,9 @@ public class JAMSXYPlot {
     public void createPlot() {
 
         chart = ChartFactory.createXYLineChart(
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CHART_TITLE"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CHART_AXIS_TITLE_DEFAULT1"),
-                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CHART_AXIS_TITLE_DEFAULT2"),
+                JAMS.i18n("CHART_TITLE"),
+                JAMS.i18n("CHART_AXIS_TITLE_DEFAULT1"),
+                JAMS.i18n("CHART_AXIS_TITLE_DEFAULT2"),
                 dataLeft,
                 org.jfree.chart.plot.PlotOrientation.VERTICAL,
                 true,
@@ -347,7 +348,7 @@ public class JAMSXYPlot {
         //ValueAxis xAxis = plot.getDomainAxis();
         
         axisLEFT.setInverted(false);
-        axisLEFT.setLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LEFT_AXIS_TITLE"));
+        axisLEFT.setLabel(JAMS.i18n("LEFT_AXIS_TITLE"));
         xAxis.setLabel(xAxisTitle);
         
         leftRenderer = getRenderer(0);

@@ -21,6 +21,7 @@
  */
 package reg.tree;
 
+import jams.JAMS;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.J2KTSDataStore;
 import java.awt.event.ActionEvent;
@@ -50,7 +51,7 @@ import reg.gui.ImportMonteCarloDataPanel;
  */
 public class DSTree extends JAMSTree {
 
-    private static final String ROOT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATENSPEICHER"), INPUT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EINGABEDATEN"), OUTPUT_NAME = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AUSGABEDATEN");
+    private static final String ROOT_NAME = JAMS.i18n("DATENSPEICHER"), INPUT_NAME = JAMS.i18n("EINGABEDATEN"), OUTPUT_NAME = JAMS.i18n("AUSGABEDATEN");
 
     private JPopupMenu popupDS;    
     private JPopupMenu popupDir;
@@ -59,7 +60,7 @@ public class DSTree extends JAMSTree {
 
     private JAMSExplorer explorer;
 
-    JMenuItem addToEnsembleItem = new JMenuItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_TO_ENSEMBLE"));
+    JMenuItem addToEnsembleItem = new JMenuItem(JAMS.i18n("ADD_TO_ENSEMBLE"));
 
     public DSTree(JAMSExplorer explorer) {
         super();
@@ -67,7 +68,7 @@ public class DSTree extends JAMSTree {
         this.explorer = explorer;
         setEditable(false);
 
-        JMenuItem detailItem = new JMenuItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ZEIGE_DATEN"));
+        JMenuItem detailItem = new JMenuItem(JAMS.i18n("ZEIGE_DATEN"));
         //detailItem.setAccelerator(KeyStroke.getKeyStroke('D'));
         detailItem.addActionListener(new ActionListener() {
 
@@ -76,7 +77,7 @@ public class DSTree extends JAMSTree {
             }
         });
 
-        JMenuItem deleteFileItem = new JMenuItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DELETE"));
+        JMenuItem deleteFileItem = new JMenuItem(JAMS.i18n("DELETE"));
         deleteFileItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         deleteFileItem.addActionListener(new ActionListener() {
 
@@ -86,7 +87,7 @@ public class DSTree extends JAMSTree {
             }
         });
 
-        JMenuItem deleteDirItem = new JMenuItem(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DELETE"));
+        JMenuItem deleteDirItem = new JMenuItem(JAMS.i18n("DELETE"));
         deleteDirItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         deleteDirItem.addActionListener(new ActionListener() {
 

@@ -7,12 +7,12 @@ package reg.spreadsheet;
 //import com.sun.image.codec.jpeg.JPEGCodec;
 //import com.sun.image.codec.jpeg.JPEGEncodeParam;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
+import jams.JAMS;
 import jams.data.DefaultDataFactory;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
 import jams.JAMSFileFilter;
 import jams.data.Attribute;
-import jams.tools.JAMSTools;
 import jams.workspace.DataSet;
 import jams.workspace.DataValue;
 import jams.workspace.JAMSWorkspace;
@@ -51,7 +51,6 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
 import reg.JAMSExplorer;
-import jams.workspace.dsproc.SimpleSerieProcessor;
 
 /**
  *
@@ -228,15 +227,15 @@ public class STPConfigurator extends JFrame {
         optionpanel.setLayout(ogbl);
 
 
-        plotbutton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT"));
-        epsButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EPS_EXPORT"));
-        settitleButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SET_TITLE"));
-        addbutton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ADD_PLOT"));
-        removebutton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("REMOVE_PLOT"));
+        plotbutton = new JButton(JAMS.i18n("PLOT"));
+        epsButton = new JButton(JAMS.i18n("EPS_EXPORT"));
+        settitleButton = new JButton(JAMS.i18n("SET_TITLE"));
+        addbutton = new JButton(JAMS.i18n("ADD_PLOT"));
+        removebutton = new JButton(JAMS.i18n("REMOVE_PLOT"));
         titleField = new JTextField();
         titleField.setSize(50, 10);
-        titleField.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STACKED_TIME_PLOT"));
-        edTitleLabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SET_TITLE:_"));
+        titleField.setText(JAMS.i18n("STACKED_TIME_PLOT"));
+        edTitleLabel = new JLabel(JAMS.i18n("SET_TITLE:_"));
 
         // PROGRAMME //
         buildOptionPanel();
@@ -346,9 +345,9 @@ public class STPConfigurator extends JFrame {
 //        optionpanel.add(settitleButton);
 //        optionpanel.add(new JLabel("  "));
 
-        GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("WEIGHT")), 0, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TEMPLATE")), 1, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_AXIS")), 3, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(JAMS.i18n("WEIGHT")), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(JAMS.i18n("TEMPLATE")), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(JAMS.i18n("TIME_AXIS")), 3, 0, 1, 1, 0, 0);
         GUIHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots + 1, 1, 1, 0, 0);
         GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots + 1, 1, 1, 0, 0);
         GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots + 2, 1, 1, 0, 0);
@@ -420,8 +419,8 @@ public class STPConfigurator extends JFrame {
             //removebutton.addActionListener(removeAction);
 //            dataset = getAccessibleIDs();
 
-            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TEMPLATE")), 0, 0, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_AXIS")), 2, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(JAMS.i18n("TEMPLATE")), 0, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(JAMS.i18n("TIME_AXIS")), 2, 0, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots + 1, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots + 1, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots + 2, 1, 1, 0, 0);
@@ -490,8 +489,8 @@ public class STPConfigurator extends JFrame {
             //removebutton.addActionListener(removeAction);
 //            dataset = getAccessibleIDs();
 
-            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TEMPLATE")), 0, 0, 1, 1, 0, 0);
-            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_AXIS")), 2, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(JAMS.i18n("TEMPLATE")), 0, 0, 1, 1, 0, 0);
+            GUIHelper.addGBComponent(optionpanel, ogbl, new JLabel(JAMS.i18n("TIME_AXIS")), 2, 0, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionpanel, ogbl, addbutton, 0, numberOfPlots + 1, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionpanel, ogbl, removebutton, 1, numberOfPlots + 1, 1, 1, 0, 0);
             GUIHelper.addGBComponent(optionpanel, ogbl, edTitleLabel, 0, numberOfPlots + 2, 1, 1, 0, 0);
@@ -901,7 +900,7 @@ public class STPConfigurator extends JFrame {
 //
 
         } catch (Exception eee) {
-            GUIHelper.showErrorDlg(this, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_NOT_FOUND:_") + file.getName(), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR!"));
+            GUIHelper.showErrorDlg(this, JAMS.i18n("FILE_NOT_FOUND:_") + file.getName(), JAMS.i18n("ERROR!"));
 //            eee.printStackTrace();
         }
 
@@ -1455,7 +1454,7 @@ public class STPConfigurator extends JFrame {
             }
         };
 
-        WorkerDlg dlg = new WorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CREATING_PLOT..."));
+        WorkerDlg dlg = new WorkerDlg(parent, JAMS.i18n("CREATING_PLOT..."));
 //        Point parentloc = parent.getLocation();
 //        dlg.setLocation(parentloc.x + 30, parentloc.y + 30);
 //        dlg.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 2,
@@ -1530,7 +1529,7 @@ public class STPConfigurator extends JFrame {
                             stackedplot.saveAsEPS(file);
                         }
                     };
-                    WorkerDlg dlg = new WorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EPS_EXPORT"));
+                    WorkerDlg dlg = new WorkerDlg(parent, JAMS.i18n("EPS_EXPORT"));
 
                     dlg.setTask(r);
                     dlg.execute();

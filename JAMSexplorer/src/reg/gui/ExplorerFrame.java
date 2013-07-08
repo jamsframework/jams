@@ -113,7 +113,7 @@ public class ExplorerFrame extends JFrame {
 
         createListener();
 
-        exitAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLOSE")) {
+        exitAction = new AbstractAction(JAMS.i18n("CLOSE")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,7 +121,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        openWSAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OPEN_WORKSPACE...")) {
+        openWSAction = new AbstractAction(JAMS.i18n("OPEN_WORKSPACE...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -129,7 +129,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        editWSAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EDIT_WORKSPACE...")) {
+        editWSAction = new AbstractAction(JAMS.i18n("EDIT_WORKSPACE...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -137,7 +137,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
 
-        editPrefsAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("EDIT_PREFERENCES...")) {
+        editPrefsAction = new AbstractAction(JAMS.i18n("EDIT_PREFERENCES...")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -149,7 +149,7 @@ public class ExplorerFrame extends JFrame {
             }
         };
         
-        importDataAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("IMPORT_DATA")) {
+        importDataAction = new AbstractAction(JAMS.i18n("IMPORT_DATA")) {
 
             public void actionPerformed(ActionEvent e) {
                 importData();
@@ -157,7 +157,7 @@ public class ExplorerFrame extends JFrame {
         };
 
 
-        openSTPAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STACKED_TIME_PLOT")) {
+        openSTPAction = new AbstractAction(JAMS.i18n("STACKED_TIME_PLOT")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -166,7 +166,7 @@ public class ExplorerFrame extends JFrame {
         };
 
 
-        reloadWSAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RELOAD_WORKSPACE")) {
+        reloadWSAction = new AbstractAction(JAMS.i18n("RELOAD_WORKSPACE")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -178,7 +178,7 @@ public class ExplorerFrame extends JFrame {
 
         propertyDlg = new PropertyDlg(this, explorer.getProperties());
 
-        openWSDlg = new WorkerDlg(this, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("OPENING_WORKSPACE"));
+        openWSDlg = new WorkerDlg(this, JAMS.i18n("OPENING_WORKSPACE"));
 
         setIconImages(JAMSTools.getJAMSIcons());
         setTitle(JAMSExplorer.APP_TITLE);
@@ -255,10 +255,10 @@ public class ExplorerFrame extends JFrame {
 
         JMenuBar mainMenu = new JMenuBar();
 
-        JMenu fileMenu = new JMenu(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE"));
+        JMenu fileMenu = new JMenu(JAMS.i18n("FILE"));
         mainMenu.add(fileMenu);
 
-        JMenu prefsMenu = new JMenu(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PREFERENCES"));
+        JMenu prefsMenu = new JMenu(JAMS.i18n("PREFERENCES"));
         mainMenu.add(prefsMenu);
 
         JMenuItem editWSItem = new JMenuItem(editWSAction);
@@ -269,7 +269,7 @@ public class ExplorerFrame extends JFrame {
             prefsMenu.add(editPrefsItem);
         }
 
-        JMenu plotMenu = new JMenu(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLOT"));
+        JMenu plotMenu = new JMenu(JAMS.i18n("PLOT"));
         mainMenu.add(plotMenu);
 
         JMenuItem openWSItem = new JMenuItem(openWSAction);
@@ -291,7 +291,7 @@ public class ExplorerFrame extends JFrame {
         //<editor-fold defaultstate="collapsed" desc="Ensembles Menu">
         JMenu ensemblesMenu = new JMenu("Ensembles");
         {
-            JMenuItem newEnsembleItem = new JMenuItem(new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NEW_ENSEMBLE")) {
+            JMenuItem newEnsembleItem = new JMenuItem(new AbstractAction(JAMS.i18n("NEW_ENSEMBLE")) {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -304,11 +304,11 @@ public class ExplorerFrame extends JFrame {
             newEnsembleItem.setEnabled(true);
             ensemblesMenu.add(newEnsembleItem);
            
-            saveEnsembleItem = new JMenuItem(new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SAVE_ENSEMBLE")) {
+            saveEnsembleItem = new JMenuItem(new AbstractAction(JAMS.i18n("SAVE_ENSEMBLE")) {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String name = JOptionPane.showInputDialog(rootPane, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLEASE_ENTER_A_FILENAME"));
+                    String name = JOptionPane.showInputDialog(rootPane, JAMS.i18n("PLEASE_ENTER_A_FILENAME"));
                     Component pane = ExplorerFrame.this.getTPane().getSelectedComponent();
                     if (!(pane instanceof DataCollectionView))
                         return;
@@ -490,7 +490,7 @@ public class ExplorerFrame extends JFrame {
     protected void importData(){
         if (remoteClient==null){
             if (this.explorer.getWorkspace()==null){
-                JOptionPane.showMessageDialog(remoteClient, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLEASE_OPEN_A_WORKSPACE_FIRST"));
+                JOptionPane.showMessageDialog(remoteClient, JAMS.i18n("PLEASE_OPEN_A_WORKSPACE_FIRST"));
             }
             remoteClient = new RemoteDataRetrival(new File(this.explorer.getWorkspace().getOutputDataDirectory().getParentFile() + "/download/"));
         }

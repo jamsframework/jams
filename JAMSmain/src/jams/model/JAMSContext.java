@@ -308,8 +308,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                     if (getModel().getNullFields() != null) {
                         ArrayList<Field> nullFields = getModel().getNullFields().get(accessSpec.getComponent());
                         nullFields.remove(field);
-                    }
-
+                    }                    
                 } else {
 
                     /* 

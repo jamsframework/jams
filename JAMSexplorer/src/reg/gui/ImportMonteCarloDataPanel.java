@@ -4,6 +4,7 @@
  */
 package reg.gui;
 
+import jams.JAMS;
 import jams.gui.WorkerDlg;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -28,7 +29,6 @@ import javax.swing.SwingConstants;
 import jams.workspace.dsproc.DataStoreProcessor.AttributeData;
 import jams.workspace.dsproc.Processor;
 import javax.swing.JOptionPane;
-import optas.Optas;
 import optas.hydro.data.DataCollection;
 import optas.io.ImportMonteCarloData;
 import optas.io.ImportMonteCarloData.EnsembleType;
@@ -49,7 +49,7 @@ public class ImportMonteCarloDataPanel extends JPanel {
     Dimension defaultDatasetTable = new Dimension(500, 200);
     Dimension defaultWindowSize = new Dimension(550, 290);
     JPanel dataPanel = null;
-    JComboBox mergeModeBox = new JComboBox(new String[]{Optas.i18n("Attach_Mode"), Optas.i18n("Unify_Mode")});
+    JComboBox mergeModeBox = new JComboBox(new String[]{JAMS.i18n("Attach_Mode"), JAMS.i18n("Unify_Mode")});
     ArrayList<ActionListener> listenerList = new ArrayList<ActionListener>();
     HashMap<AttributeData, JComboBox> attributeComboBoxMap = new HashMap<AttributeData, JComboBox>();
     JFrame owner;
@@ -74,17 +74,17 @@ public class ImportMonteCarloDataPanel extends JPanel {
         public String toString() {
             switch (t) {
                 case Parameter:
-                    return Optas.i18n("Parameter");
+                    return JAMS.i18n("Parameter");
                 case PosEfficiency:
-                    return Optas.i18n("Efficiency(Positive)");
+                    return JAMS.i18n("Efficiency(Positive)");
                 case NegEfficiency:
-                    return Optas.i18n("Efficiency(Negative)");
+                    return JAMS.i18n("Efficiency(Negative)");
                 case Measurement:
-                    return Optas.i18n("Measurement");
+                    return JAMS.i18n("Measurement");
                 case Timeserie:
-                    return Optas.i18n("Timeserie-Ensemble");
+                    return JAMS.i18n("Timeserie-Ensemble");
                 case StateVariable:
-                    return Optas.i18n("State-Variable");
+                    return JAMS.i18n("State-Variable");
                 case Ignore:
                     return "";
             }
@@ -130,11 +130,11 @@ public class ImportMonteCarloDataPanel extends JPanel {
     }
 
     private void showError(ImportMonteCarloException imce) {
-        JOptionPane.showMessageDialog(dataPanel, imce.toString(), Optas.i18n("An_error_occured..."), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(dataPanel, imce.toString(), JAMS.i18n("An_error_occured..."), JOptionPane.ERROR_MESSAGE);
     }
 
     public JDialog getDialog() {
-        ownerDlg = new JDialog(this.owner, Optas.i18n("Import_Ensemble_Data"));
+        ownerDlg = new JDialog(this.owner, JAMS.i18n("Import_Ensemble_Data"));
         ownerDlg.add(this);
         ownerDlg.setPreferredSize(defaultWindowSize);
         ownerDlg.setMinimumSize(defaultWindowSize);
@@ -262,11 +262,11 @@ public class ImportMonteCarloDataPanel extends JPanel {
         mergeModeBox.setSelectedIndex(1);
         buttonBar.add(mergeModeBox);
 
-        JButton okButton = new JButton(Optas.i18n("OK"));
+        JButton okButton = new JButton(JAMS.i18n("OK"));
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                WorkerDlg progress = new WorkerDlg(ImportMonteCarloDataPanel.this.owner, Optas.i18n("Import_Data"));
+                WorkerDlg progress = new WorkerDlg(ImportMonteCarloDataPanel.this.owner, JAMS.i18n("Import_Data"));
                 progress.setInderminate(true);
                 progress.setTask(new Runnable() {
                     @Override
@@ -302,7 +302,7 @@ public class ImportMonteCarloDataPanel extends JPanel {
                             }
                         } catch (Throwable t) {
                             t.printStackTrace();
-                            showError(new ImportMonteCarloException(Optas.i18n("An_error_occured_while_building_the_final_ensemble"), t));
+                            showError(new ImportMonteCarloException(JAMS.i18n("An_error_occured_while_building_the_final_ensemble"), t));
                         }
                     }
                 });
@@ -311,7 +311,7 @@ public class ImportMonteCarloDataPanel extends JPanel {
         });
 
         buttonBar.add(okButton);
-        buttonBar.add(new JButton(Optas.i18n("CANCEL")) {
+        buttonBar.add(new JButton(JAMS.i18n("CANCEL")) {
             {
                 addActionListener(new ActionListener() {
                     @Override

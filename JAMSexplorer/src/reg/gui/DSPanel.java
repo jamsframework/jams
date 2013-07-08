@@ -21,6 +21,7 @@
  */
 package reg.gui;
 
+import jams.JAMS;
 import jams.gui.tools.GUIHelper;
 import java.awt.Frame;
 import java.io.File;
@@ -48,7 +49,7 @@ public abstract class DSPanel extends JPanel {
 
     public void setParent(Frame parent) {
         this.parent = parent;
-        workerDlg = new CancelableWorkerDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PROCESSING_DATA"));
+        workerDlg = new CancelableWorkerDlg(parent, JAMS.i18n("PROCESSING_DATA"));
         workerDlg.setProgress(0);
         workerDlg.setProgressMax(100);
     }
@@ -89,8 +90,8 @@ public abstract class DSPanel extends JPanel {
             if (attrib.getAggregationType() != DataStoreProcessor.AttributeData.AGGREGATION_SUM) {
 
                 if (attribCombo.getSelectedIndex() == 0) {
-                    GUIHelper.showInfoDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE_\"") +
-                            attrib.getName() + "\".", java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
+                    GUIHelper.showInfoDlg(parent, JAMS.i18n("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE_\"") +
+                            attrib.getName() + "\".", JAMS.i18n("INFO"));
                     continue;
                 }
 

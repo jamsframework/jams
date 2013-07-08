@@ -5,7 +5,7 @@
 
 package reg.spreadsheet;
 
-import java.awt.Color;
+import jams.JAMS;
 
 /**
  *
@@ -21,22 +21,22 @@ public class SpreadsheetConstants {
 
     /* DIALOG INFO MESSAGES */
 
-    public final static String INFO_MSG_SAVETEMP = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLEASE_CHOOSE_A_TEMPLATE_FILENAME");
-    public final static String INFO_MSG_SAVEDAT =  java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("PLEASE_CHOOSE_A_FILENAME");
+    public final static String INFO_MSG_SAVETEMP = JAMS.i18n("PLEASE_CHOOSE_A_TEMPLATE_FILENAME");
+    public final static String INFO_MSG_SAVEDAT =  JAMS.i18n("PLEASE_CHOOSE_A_FILENAME");
 
     /* DIALOG TITLES */
 
-    public final static String DLG_TITLE_CUSTOMIZE = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CUSTOMIZE_RENDERER");
+    public final static String DLG_TITLE_CUSTOMIZE = JAMS.i18n("CUSTOMIZE_RENDERER");
     public final static String DLG_TITLE_JTSCONFIGURATOR ="JTS Viewer";
     public final static String DLG_TITLE_JXYSCONFIGURATOR ="XYPlot Viewer";
 
     /* DIALOG ERROR MESSAGES */
 
-    public final static String STP_ERR_NOTEMPFOUND = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_TEMPLATE_FILES_FOUND_IN_THE_WORKSPACE_DIRECTORY!_") +
-                    java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("USE_THE_'SAVE_TEMPLATE'_OPTION_IN_THE_TIME_PLOT_CONFIGURATOR!");
-    public final static String SPREADSHEET_ERR_TSMISSING = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_SERIES_MISSING!");
+    public final static String STP_ERR_NOTEMPFOUND = JAMS.i18n("NO_TEMPLATE_FILES_FOUND_IN_THE_WORKSPACE_DIRECTORY!_") +
+                    JAMS.i18n("USE_THE_'SAVE_TEMPLATE'_OPTION_IN_THE_TIME_PLOT_CONFIGURATOR!");
+    public final static String SPREADSHEET_ERR_TSMISSING = JAMS.i18n("TIME_SERIES_MISSING!");
 
-    public final static String JXY_ERR_NODATATEMPLATE = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_TEMPLATE_FOR_DATAPLOT._USE_AT_LEAST_2_COLUMNS");
+    public final static String JXY_ERR_NODATATEMPLATE = JAMS.i18n("NO_TEMPLATE_FOR_DATAPLOT._USE_AT_LEAST_2_COLUMNS");
 
     /* GUI ELEMENT COLORS */
 

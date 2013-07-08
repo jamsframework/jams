@@ -27,7 +27,6 @@
  */
 package jamsui.juice.gui;
 
-import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
 import java.io.File;
@@ -50,9 +49,11 @@ import jamsui.juice.*;
 import jamsui.juice.documentation.DocumentationWizard;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.juice.gui.tree.ModelTree;
-import optas.gui.OptimizationWizard;
-import optas.gui.OptimizationWizard.OptimizationWizardFrame;
-import optas.gui.OptimizerConfiguration;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.util.logging.Logger;
+import optas.gui.wizard.OptimizerConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -70,7 +71,7 @@ public class JUICEFrame extends JFrame {
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
     private JMenu windowMenu, modelMenu, recentMenu;
-    private JMenuItem OptimizationWizardItem, addOptimizerItem;
+    private JMenuItem OptimizationWizardItem;
     private JLabel statusLabel;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Info_Log"));
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Error_Log"));
@@ -91,8 +92,7 @@ public class JUICEFrame extends JFrame {
     private Action searchAction;
     private Action copyModelGUIAction;
     private Action pasteModelGUIAction;
-    private Action OptimizationWizardGUIAction;
-    private Action addOptimizerAction;
+    private Action OptimizationWizardAction;
     private Action GenerateDocumentationGUIAction;
     private Action loadModelParamAction;
     private Action saveModelParamAction;
@@ -271,57 +271,35 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        addOptimizerAction = new AbstractAction(JAMS.i18n("Configure_Optimizer")) {
+        OptimizationWizardAction = new AbstractAction(JAMS.i18n("Configure_Optimizer")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final ModelView view = getCurrentView();
-                OptimizerConfiguration conf = new OptimizerConfiguration(view.getModelDescriptor());
+                try {
+                    
+                    OptimizerConfiguration conf = new OptimizerConfiguration(view.getModelDescriptor(),
+                            Logger.getLogger(JUICE.class.getName()));
 
-                conf.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        OptimizerConfiguration wizard = (OptimizerConfiguration) e.getSource();
-                        ModelDescriptor newModelDoc = wizard.getModelDescriptor();
-                        view.setModelDescriptor(newModelDoc);
-                        view.loadModel(view.getModelDoc());
-                        /*if (newModelDoc != null) { 
-                         ModelView mView = new ModelView(modelPanel);
-                         mView.setTree(new ModelTree(mView, null));
-                         mView.setInitialState();
-                         mView.getFrame().setVisible(true);
-                         mView.getFrame().requestFocus();
-                            
-                         } */
-                    }
-                });
+                    conf.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
 
-                conf.showDialog(JUICEFrame.this);
-            }
-        };
-        OptimizationWizardGUIAction = new AbstractAction(JAMS.i18n("Optimization_Wizard")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ModelView view = getCurrentView();
-                OptimizationWizardFrame frame = optas.gui.OptimizationWizard.createFrame(view.getModelDoc(), JUICE.getJamsProperties(), null);
-                if (view.getSavePath() == null) {
-                    GUIHelper.showInfoDlg(frame, JAMS.i18n("Save_model_first"));
-                    return;
-                }
-                frame.getWizard().setWorkspace(view.getSavePath().getParent());
+                            OptimizerConfiguration wizard = (OptimizerConfiguration) e.getSource();
+                            ModelDescriptor newModelDoc = wizard.getModelDescriptor();
+                            view.setModelDescriptor(newModelDoc);
+                            view.loadModel(view.getModelDoc());
 
-                frame.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        OptimizationWizard wizard = (OptimizationWizard) e.getSource();
-                        Document newModelDoc = wizard.getNewModel();
-                        if (newModelDoc != null) {
-                            JUICEFrame.this.newModel(newModelDoc);
                         }
-                    }
-                });
-                frame.setVisible(true);
+                    });
+
+                    conf.showDialog(JUICEFrame.this);
+                } catch (Throwable ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(JUICEFrame.this, "Unable to run optimization wizard!\n" + ex.toString());
+                }
             }
         };
-
+        
         GenerateDocumentationGUIAction = new AbstractAction(JAMS.i18n("Generate_Docu")) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -707,13 +685,10 @@ public class JUICEFrame extends JFrame {
         modelMenu.add(pasteModelParameterItem);
 
         modelMenu.add(new JSeparator());
-        OptimizationWizardItem = new JMenuItem(OptimizationWizardGUIAction);
-        OptimizationWizardGUIAction.setEnabled(false);
+        OptimizationWizardItem = new JMenuItem(OptimizationWizardAction);
+        OptimizationWizardAction.setEnabled(false);
         modelMenu.add(OptimizationWizardItem);
 
-        addOptimizerItem = new JMenuItem(addOptimizerAction);
-        addOptimizerAction.setEnabled(false);
-        modelMenu.add(addOptimizerItem);
 
         JMenuItem GenerateDocumentationItem = new JMenuItem(GenerateDocumentationGUIAction);
         GenerateDocumentationGUIAction.setEnabled(true);
@@ -793,8 +768,7 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.explorerAction.setEnabled(true);
                     JUICEFrame.this.copyModelGUIAction.setEnabled(true);
                     JUICEFrame.this.saveAsModelAction.setEnabled(true);
-                    JUICEFrame.this.OptimizationWizardGUIAction.setEnabled(true);
-                    JUICEFrame.this.addOptimizerItem.setEnabled(true);
+                    JUICEFrame.this.OptimizationWizardAction.setEnabled(true);                    
                 } else {
                     JUICEFrame.this.modelMenu.setEnabled(false);
                     JUICEFrame.this.outputDSAction.setEnabled(false);

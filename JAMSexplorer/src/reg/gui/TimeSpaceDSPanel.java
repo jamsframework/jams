@@ -21,6 +21,7 @@
  */
 package reg.gui;
 
+import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
 import java.awt.Dimension;
@@ -82,49 +83,49 @@ public class TimeSpaceDSPanel extends DSPanel {
     private GridBagLayout aggregationLayout;
     private HashMap<String, AttribRadioButton> defaultWeightingMap = new HashMap<String, AttribRadioButton>();
     private Action[] actions = {
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_STEP")) {
+        new AbstractAction(JAMS.i18n("TIME_STEP")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showTimeStep();
             }
         },
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TEMP._MEAN")) {
+        new AbstractAction(JAMS.i18n("TEMP._MEAN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showTempMean();
             }
         },
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SPATIAL_ENTITY")) {
+        new AbstractAction(JAMS.i18n("SPATIAL_ENTITY")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showSpatEntity();
             }
         },
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SPATIAL_MEAN")) {
+        new AbstractAction(JAMS.i18n("SPATIAL_MEAN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showSpatEntity();
             }
         },
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CROSSPRODUCT")) {
+        new AbstractAction(JAMS.i18n("CROSSPRODUCT")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showCrossProduct();
             }
         },
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTHLY_MEAN")) {
+        new AbstractAction(JAMS.i18n("MONTHLY_MEAN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showMonthlyMean();
             }
         },
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YEARLY_MEAN")) {
+        new AbstractAction(JAMS.i18n("YEARLY_MEAN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -133,21 +134,21 @@ public class TimeSpaceDSPanel extends DSPanel {
         }
     };
     private Action timePoint = actions[0], timeMean = actions[1], spacePoint = actions[2], spaceMean = actions[3], crossProduct = actions[4], monthMean = actions[5], yearMean = actions[6];
-    private Action cacheReset = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RESET_CACHES")) {
+    private Action cacheReset = new AbstractAction(JAMS.i18n("RESET_CACHES")) {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             resetCaches();
         }
     };
-    private Action indexReset = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RELOAD_INDEX")) {
+    private Action indexReset = new AbstractAction(JAMS.i18n("RELOAD_INDEX")) {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             resetIndex();
         }
     };
-    private Action freeTempMean = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TEMP._MEAN_(FILTER)")) {
+    private Action freeTempMean = new AbstractAction(JAMS.i18n("TEMP._MEAN_(FILTER)")) {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -264,7 +265,7 @@ public class TimeSpaceDSPanel extends DSPanel {
             }
         });
 
-        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ATTRIBUTE/AGGREGATION:")), 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(JAMS.i18n("ATTRIBUTE/AGGREGATION:")), 0, 10, 1, 1, 0, 0);
 
         aggregationLayout = new GridBagLayout();
         aggregationPanel = new JPanel();
@@ -273,9 +274,9 @@ public class TimeSpaceDSPanel extends DSPanel {
         aggregationScroll.setPreferredSize(LIST_DIMENSION);
 
         GUIHelper.addGBComponent(outerPanel, mainLayout, aggregationScroll, 0, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_STEPS:")), 10, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(JAMS.i18n("TIME_STEPS:")), 10, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(outerPanel, mainLayout, timeListScroll, 10, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ENTITIY_IDS:")), 20, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(JAMS.i18n("ENTITIY_IDS:")), 20, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(outerPanel, mainLayout, entityListScroll, 20, 20, 1, 1, 0, 0);
 
         JPanel buttonPanelA = new JPanel();
@@ -296,10 +297,10 @@ public class TimeSpaceDSPanel extends DSPanel {
 //        filterPanel.setPreferredSize(new Dimension(LIST_DIMENSION.width, LIST_DIMENSION.height - 150));
         filterPanel.setBorder(BorderFactory.createEtchedBorder());
 
-        GUIHelper.addGBComponent(filterPanel, filterPanelLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_FILTER:")), 0, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(filterPanel, filterPanelLayout, new JLabel(JAMS.i18n("TIME_FILTER:")), 0, 0, 1, 1, 0, 0);
         timeField = new JTextField();
         timeField.setEnabled(false);
-        timeField.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATE_EXPRESSION_IN_SQL_SYNTAX,_E.G._1992-11-%_FOR_ALL_NOVEMBER_VALUES_IN_1992"));
+        timeField.setToolTipText(JAMS.i18n("DATE_EXPRESSION_IN_SQL_SYNTAX,_E.G._1992-11-%_FOR_ALL_NOVEMBER_VALUES_IN_1992"));
 //        timeField.setPreferredSize(new Dimension(ACTION_BUTTON_DIM.width - 20, timeField.getPreferredSize().height));
         timeField.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -332,9 +333,9 @@ public class TimeSpaceDSPanel extends DSPanel {
         GUIHelper.addGBComponent(outerPanel, mainLayout, buttonPanelA, 40, 20, 1, 1, 0, 0);
         
 /*        
-        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTHS:")), 60, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(JAMS.i18n("MONTHS:")), 60, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(outerPanel, mainLayout, monthListScroll, 60, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YEARS:")), 70, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(outerPanel, mainLayout, new JLabel(JAMS.i18n("YEARS:")), 70, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(outerPanel, mainLayout, yearListScroll, 70, 20, 1, 1, 0, 0);
 
         JPanel buttonPanelB = new JPanel();
@@ -532,13 +533,13 @@ public class TimeSpaceDSPanel extends DSPanel {
         // defining their aggregation weight
         JLabel label;
 
-        label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA_ATTRIBUTE"));
+        label = new JLabel(JAMS.i18n("AREA_ATTRIBUTE"));
         label.setHorizontalAlignment(SwingConstants.LEFT);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 5, 0, 1, 1, 0, 0);
 
         ArrayList<DataStoreProcessor.AttributeData> attribs = getProc().getDataStoreProcessor().getAttributes();
 
-//        label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AGGREGATION_WEIGHT"));
+//        label = new JLabel(JAMS.i18n("AGGREGATION_WEIGHT"));
 //        label.setHorizontalAlignment(SwingConstants.CENTER);
 //        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 3, 2, 1, 0, 0);
 
@@ -585,7 +586,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                     AttribCheckBox thisCheck = (AttribCheckBox) e.getSource();
                     if (!thisCheck.isSelected() && attribCombo.getSelectedItem().toString().equals(thisCheck.getText())) {
                         attribCombo.setSelectedIndex(0);
-                        GUIHelper.showInfoDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA_ATTRIBUTE_HAS_BEEN_RESET!"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
+                        GUIHelper.showInfoDlg(parent, JAMS.i18n("AREA_ATTRIBUTE_HAS_BEEN_RESET!"), JAMS.i18n("INFO"));
                     }
                     thisCheck.attrib.setSelected(thisCheck.isSelected());
                 }
@@ -630,7 +631,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                     if ((attribCombo.getSelectedIndex() == 0) && (thisButton.processingType != DataStoreProcessor.AttributeData.WEIGHTING_NONE)) {
                         AttribRadioButton defaultButton = defaultWeightingMap.get(thisButton.attrib.getName());
 
-                        GUIHelper.showInfoDlg(parent, String.format(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE"), thisButton.attrib.getName()));
+                        GUIHelper.showInfoDlg(parent, String.format(JAMS.i18n("NO_AREA_ATTRIBUTE_HAS_BEEN_CHOSEN!_SKIPPING_WEIGHTED_AGGREGATION_FOR_ATTRIBUTE"), thisButton.attrib.getName()));
                         if (defaultButton != null) {
                             defaultButton.setSelected(true);
                         }
@@ -666,7 +667,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         }
 
         String[] attribNames = new String[attribs.size() + 1];
-        attribNames[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("[CHOOSE]");
+        attribNames[0] = JAMS.i18n("[CHOOSE]");
         i = 1;
         for (DataStoreProcessor.AttributeData attrib : attribs) {
             attribNames[i++] = attrib.getName();
@@ -689,7 +690,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         });
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, 0, 5, 1, 0, 0);
 
-        GroupCheckBox allOnOffCheck = new GroupCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ALL_ON/OFF"), allChecks);
+        GroupCheckBox allOnOffCheck = new GroupCheckBox(JAMS.i18n("ALL_ON/OFF"), allChecks);
         allOnOffCheck.setSelected(DataStoreProcessor.AttributeData.SELECTION_DEFAULT);
 
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, allOnOffCheck, 5, 5, 1, 1, 0, 0);

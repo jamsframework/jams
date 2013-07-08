@@ -22,11 +22,18 @@
 package jams;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.String;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  *
@@ -82,8 +89,95 @@ public class ResourceBundleChecker {
         }
     }
 
+    private static ArrayList<String> check4UnusedKeys(String res, File sourcePaths[]) throws IOException {
+        ArrayList<String> resKeys = getKeySet(res);
+        
+        TreeSet<String> usedKeys = new TreeSet<String>();
+        
+        for (File f : sourcePaths){
+            if (!f.exists()){
+                System.out.println("Path is non-existing: " + f.getAbsolutePath());
+            }
+            usedKeys.addAll(collectUsedKeys(resKeys,f));
+        }
+        
+        resKeys.removeAll(usedKeys);
+        for (String key : resKeys){
+            System.out.println("Unused key in " + res + ": " + key);
+        }
+        
+        return resKeys;
+    }
+    
+    private static void cleanUp(String res, File sourcePaths[]) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(res)));
+
+        String line;
+        TreeMap<String,String> resSet = new TreeMap<String,String>();
+
+        while ((line = br.readLine()) != null) {
+
+            StringTokenizer tok = new StringTokenizer(line, "=");
+            if (tok.countTokens() >= 2) {
+                String key = tok.nextToken();
+                String value = tok.nextToken();
+                if (resSet.containsKey(key)){
+                    if (resSet.get(key).compareTo(value) != 0){
+                        System.out.println("Clean up failed in: " + res + " conflict for key " + key + "\n value1: " + value + "\n value2: " + resSet.get(key));
+                    }
+                }
+                resSet.put(key,value);
+            }
+        }
+        br.close();
+        
+        ArrayList<String> unusedKeys = check4UnusedKeys(res,sourcePaths);
+        for (String key : unusedKeys){
+            resSet.remove(key);
+        }
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(res.replace("/", ".") +".cleanup"));
+        for (String s : resSet.keySet()){
+            writer.write(s + "=" + resSet.get(s) + "\n");
+        }
+        writer.close();
+    }
+    
+    private static TreeSet<String> collectUsedKeys(ArrayList<String> resKeys, File sourcePath) throws IOException {        
+        TreeSet<String> usedKeys = new TreeSet<String>();
+        
+        for (File f : sourcePath.listFiles()){
+            if (f.isDirectory()){
+                usedKeys.addAll(collectUsedKeys(resKeys, f));
+            }
+            if (f.isFile() && f.getName().endsWith(".java")){
+                BufferedReader reader = new BufferedReader(new FileReader(f));
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains("\"")) {
+                        for (String key : resKeys) {
+                            //line = line.replace("\\", "");
+                            String key2 = key.replace("\\", "");
+                            if (line.contains("\"" + key2 + "\")")) {
+                                usedKeys.add(key);
+                            }
+                        }
+                    }
+                }
+                reader.close();
+            }
+        }
+        return usedKeys;
+    }
+            
+    
     public static void main(String[] args) throws IOException {
 
+        File sourcePaths[] = {
+            new File("../../../"),            
+        };
+        System.out.println("For JAMS sources using path: " + sourcePaths[0].getAbsolutePath());
+        
         compareBundles("resources/i18n/JAMSBundle.properties", "resources/i18n/JAMSBundle_pt.properties");
         compareBundles("resources/i18n/JAMSBundle_pt.properties", "resources/i18n/JAMSBundle.properties");
         compareBundles("resources/i18n/JAMSBundle.properties", "resources/i18n/JAMSBundle_de.properties");
@@ -91,5 +185,13 @@ public class ResourceBundleChecker {
         check4Duplicates("resources/i18n/JAMSBundle.properties");
         check4Duplicates("resources/i18n/JAMSBundle_pt.properties");
         check4Duplicates("resources/i18n/JAMSBundle_de.properties");
+        /*check4UnusedKeys("resources/i18n/JAMSBundle_pt.properties", sourcePaths);  
+        check4UnusedKeys("resources/i18n/JAMSBundle.properties", sourcePaths);
+        check4UnusedKeys("resources/i18n/JAMSBundle_de.properties", sourcePaths);*/
+        
+        cleanUp("resources/i18n/JAMSBundle.properties", sourcePaths);
+        cleanUp("resources/i18n/JAMSBundle_de.properties", sourcePaths);
+        cleanUp("resources/i18n/JAMSBundle_pt.properties", sourcePaths);
+        cleanUp("resources/i18n/JAMSBundle_vn.properties", sourcePaths);
     }
 }

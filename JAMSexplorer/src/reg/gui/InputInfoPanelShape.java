@@ -21,6 +21,7 @@
  */
 package reg.gui;
 
+import jams.JAMS;
 import jams.gui.tools.GUIHelper;
 import jams.workspace.stores.ShapeFileDataStore;
 import jams.workspace.stores.StandardInputDataStore;
@@ -36,12 +37,12 @@ public class InputInfoPanelShape extends InputInfoPanelSimple {
 
     public InputInfoPanelShape() {
         super(5);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NAME:")), 1, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TYP:")), 1, 1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATEI:")), 1, 2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("URI:")), 1, 3, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ID-FELD:")), 1, 4, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("KOMMENTAR:")), 1, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("NAME:")), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("TYP:")), 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("DATEI:")), 1, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("URI:")), 1, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("ID-FELD:")), 1, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("KOMMENTAR:")), 1, 5, 1, 1, 0, 0);
     }
 
     @Override

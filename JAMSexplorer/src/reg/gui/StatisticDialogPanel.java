@@ -11,6 +11,7 @@
 
 package reg.gui;
 
+import jams.JAMS;
 import java.util.HashMap;
 import java.util.Set;
 import javax.swing.table.DefaultTableModel;
@@ -104,7 +105,7 @@ public class StatisticDialogPanel extends javax.swing.JDialog {
         Object[][] statisticResult = null;
         HashMap<String, Double> oneResult = null;
         String[] header = new String[numberOfFields + 1];
-        header[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("KENNZIFFER");
+        header[0] = JAMS.i18n("KENNZIFFER");
 
         String fieldName;
         double[] colData;

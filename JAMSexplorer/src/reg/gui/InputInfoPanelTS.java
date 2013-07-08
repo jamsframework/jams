@@ -21,6 +21,7 @@
  */
 package reg.gui;
 
+import jams.JAMS;
 import jams.gui.tools.GUIHelper;
 import jams.workspace.stores.StandardInputDataStore;
 import jams.workspace.stores.TSDataStore;
@@ -40,20 +41,20 @@ public class InputInfoPanelTS extends InputInfoPanelSimple {
     public InputInfoPanelTS() {
         super(6);
 
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NAME:")), 1, 0, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TYP:")), 1, 1, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("BEGINN:")), 1, 2, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ENDE:")), 1, 3, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SCHRITTWEITE:")), 1, 4, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("LÜCKENWERT:")), 1, 5, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("KOMMENTAR:")), 1, 6, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("NAME:")), 1, 0, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("TYP:")), 1, 1, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("BEGINN:")), 1, 2, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("ENDE:")), 1, 3, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("SCHRITTWEITE:")), 1, 4, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("LÜCKENWERT:")), 1, 5, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("KOMMENTAR:")), 1, 6, 1, 1, 0, 0);
 
-        indexMap.put(Calendar.YEAR, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("JAHR(E)"));
-        indexMap.put(Calendar.MONTH, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONAT(E)"));
-        indexMap.put(Calendar.DAY_OF_YEAR, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TAG(E)"));
-        indexMap.put(Calendar.HOUR_OF_DAY, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STUNDE(N)"));
-        indexMap.put(Calendar.MINUTE, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MINUTE(N)"));
-        indexMap.put(Calendar.SECOND, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SEKUNDE(N)"));
+        indexMap.put(Calendar.YEAR, JAMS.i18n("JAHR(E)"));
+        indexMap.put(Calendar.MONTH, JAMS.i18n("MONAT(E)"));
+        indexMap.put(Calendar.DAY_OF_YEAR, JAMS.i18n("TAG(E)"));
+        indexMap.put(Calendar.HOUR_OF_DAY, JAMS.i18n("STUNDE(N)"));
+        indexMap.put(Calendar.MINUTE, JAMS.i18n("MINUTE(N)"));
+        indexMap.put(Calendar.SECOND, JAMS.i18n("SEKUNDE(N)"));
 
     }
 

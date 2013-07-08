@@ -11,6 +11,7 @@
  */
 package reg.spreadsheet;
 
+import jams.JAMS;
 import jams.JAMSFileFilter;
 import java.util.Vector;
 import java.awt.event.*;
@@ -63,22 +64,22 @@ public class JAMSSpreadSheet extends JPanel {
     private JScrollPane scrollpane = new JScrollPane();
     private boolean output_sheet = false;    //private JScrollPane scrollpane2;
     /* Buttons */
-    private String name = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DEFAULT");
-    private JButton savebutton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SAVE_DATA"));
+    private String name = JAMS.i18n("DEFAULT");
+    private JButton savebutton = new JButton(JAMS.i18n("SAVE_DATA"));
 //    private JButton loadbutton = new JButton("Import Data");
-    private JButton statButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STATISTIK"));
-    private JButton plotButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TIME_PLOT"));
-    private JButton dataplotButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATA_PLOT"));
-    private JButton closeButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CLOSE_TAB"));
-    private JCheckBox useTemplateButton = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("USE_TEMPLATE"));
-    private JCheckBox useTransposedButton = new JCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("USE_TRANSPOSED"));
-    private JButton stpButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("STACKED_TIME_PLOT"));
+    private JButton statButton = new JButton(JAMS.i18n("STATISTIK"));
+    private JButton plotButton = new JButton(JAMS.i18n("TIME_PLOT"));
+    private JButton dataplotButton = new JButton(JAMS.i18n("DATA_PLOT"));
+    private JButton closeButton = new JButton(JAMS.i18n("CLOSE_TAB"));
+    private JCheckBox useTemplateButton = new JCheckBox(JAMS.i18n("USE_TEMPLATE"));
+    private JCheckBox useTransposedButton = new JCheckBox(JAMS.i18n("USE_TRANSPOSED"));
+    private JButton stpButton = new JButton(JAMS.i18n("STACKED_TIME_PLOT"));
     private JComboBox shapeSelector = new JComboBox();
 
     /* Labels */
     private JLabel headerlabel = new JLabel();
     private JLabel titleLabel = new JLabel(title);
-    private JLabel calclabel = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CALCLABEL"));
+    private JLabel calclabel = new JLabel(JAMS.i18n("CALCLABEL"));
     /* Table and TableModel */
     private JAMSTableModel tmodel;
     private JTableHeader tableHeader;
@@ -87,14 +88,14 @@ public class JAMSSpreadSheet extends JPanel {
     JTable table;
     /* ComboBox */
     /* String array contains words of the ComboBox */
-    private String[] calclist = {java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SUM____"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN___")};
+    private String[] calclist = {JAMS.i18n("SUM____"), JAMS.i18n("MEAN___")};
     JComboBox calculations = new JComboBox(calclist);
     private int kindofcalc = 0;
     private JFileChooser epsFileChooser, templateChooser, datChooser, savefileChooser;
     private JAMSExplorer explorer;
 
     /* Messages */
-    final String ERR_MSG_CTS = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("NO_TIME_SERIES_LOADED");
+    final String ERR_MSG_CTS = JAMS.i18n("NO_TIME_SERIES_LOADED");
     public static final DataFlavor FLAVOR = DataFlavor.stringFlavor;
 
     public class TableDataTransferable implements Transferable {
@@ -250,10 +251,10 @@ public class JAMSSpreadSheet extends JPanel {
             kindofcalc = calculations.getSelectedIndex();
 
             if (kindofcalc == 0) {
-                calclabel.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SUM:_") + calcsum());
+                calclabel.setText(JAMS.i18n("SUM:_") + calcsum());
             }
             if (kindofcalc == 1) {
-                calclabel.setText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN:_") + calcmean());
+                calclabel.setText(JAMS.i18n("MEAN:_") + calcmean());
                 //label.setText("MEAN");
             }
         }
@@ -279,8 +280,8 @@ public class JAMSSpreadSheet extends JPanel {
                         if (isOutputSheet()) {
                             File file = new File(getOutputDSDir(), filename);
                             if (file.exists()) {
-                                String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_") + file + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
-                                int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
+                                String fileexists = JAMS.i18n("THE_FILE_") + file + JAMS.i18n("_ALREADY_EXISTS._OVERWRITE?");
+                                int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, JAMS.i18n("FILE_ALREADY_EXISTS"));
                                 if (result != GUIHelper.YES_OPTION) {
                                     return;
                                 }
@@ -289,8 +290,8 @@ public class JAMSSpreadSheet extends JPanel {
                         } else {
                             File file = new File(explorer.getWorkspace().getDirectory().toString() + "/explorer", filename);
                             if (file.exists()) {
-                                String fileexists = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("THE_FILE_") + file + java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("_ALREADY_EXISTS._OVERWRITE?");
-                                int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_ALREADY_EXISTS"));
+                                String fileexists = JAMS.i18n("THE_FILE_") + file + JAMS.i18n("_ALREADY_EXISTS._OVERWRITE?");
+                                int result = GUIHelper.showYesNoDlg(parent_frame, fileexists, JAMS.i18n("FILE_ALREADY_EXISTS"));
                                 if (result != GUIHelper.YES_OPTION) {
                                     return;
                                 }
@@ -328,7 +329,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         }
         String[] headers_with_time = new String[write_headers.length + 1];
-        headers_with_time[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ID");
+        headers_with_time[0] = JAMS.i18n("ID");
         java.lang.System.arraycopy(write_headers, 0, headers_with_time, 1, write_headers.length);
 //        System.out.println(headers_with_time[0]+headers_with_time[1]);
         return write_headers;
@@ -608,7 +609,7 @@ public class JAMSSpreadSheet extends JPanel {
                                     timeval.setValue(actual_string, "yyyy-MM-dd hh:mm");
 
                                 } catch (ParseException pe) {
-                                    GUIHelper.showErrorDlg(this, SpreadsheetConstants.SPREADSHEET_ERR_TSMISSING, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
+                                    GUIHelper.showErrorDlg(this, SpreadsheetConstants.SPREADSHEET_ERR_TSMISSING, JAMS.i18n("ERROR"));
                                     breakpoint = true;
                                     break;
                                     //pe.printStackTrace();
@@ -674,7 +675,7 @@ public class JAMSSpreadSheet extends JPanel {
             updateGUI();
 
         } catch (Exception eee) {
-            GUIHelper.showErrorDlg(this, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILE_NOT_FOUND!"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR!"));
+            GUIHelper.showErrorDlg(this, JAMS.i18n("FILE_NOT_FOUND!"), JAMS.i18n("ERROR!"));
         }
     }
 
@@ -802,7 +803,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         String[] attribtuteIDs = m.getAttributeIDs();
         String[] headers = new String[attribtuteIDs.length + 1];
-        headers[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ID");
+        headers[0] = JAMS.i18n("ID");
         for (int i = 1; i < headers.length; i++) {
             headers[i] = attribtuteIDs[i - 1];
         }
@@ -920,7 +921,7 @@ public class JAMSSpreadSheet extends JPanel {
             jts = new JTSConfigurator((JFrame) explorer.getExplorerFrame(), this, explorer);
         } else {
 
-            GUIHelper.showErrorDlg(this, ERR_MSG_CTS, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
+            GUIHelper.showErrorDlg(this, ERR_MSG_CTS, JAMS.i18n("ERROR"));
         }
         //ctstabs.addGraph(table);
         //ctsIsOpen = true;
@@ -937,7 +938,7 @@ public class JAMSSpreadSheet extends JPanel {
                 jts = new JTSConfigurator((JFrame) explorer.getExplorerFrame(), this, null, explorer);
             }
         } else {
-            GUIHelper.showErrorDlg(this, ERR_MSG_CTS, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
+            GUIHelper.showErrorDlg(this, ERR_MSG_CTS, JAMS.i18n("ERROR"));
         }
         //ctstabs.addGraph(table);
         //ctsIsOpen = true;
@@ -1135,7 +1136,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         }
     };
-    Action joinMapAction = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AUF_KARTE_ZEIGEN")) {
+    Action joinMapAction = new AbstractAction(JAMS.i18n("AUF_KARTE_ZEIGEN")) {
         public void actionPerformed(ActionEvent e) {
 
             String selectedShape = (String) shapeSelector.getSelectedItem();
@@ -1163,7 +1164,7 @@ public class JAMSSpreadSheet extends JPanel {
             int[] columns = table.getSelectedColumns();
             if (columns.length == 0) {
                 Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No columns selected.");
-                GUIHelper.showErrorDlg(null, ERR_MSG_CTS, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
+                GUIHelper.showErrorDlg(null, ERR_MSG_CTS, JAMS.i18n("ERROR"));
                 return;
             }
             String[] headers = getSelectedColumnNames();
@@ -1185,7 +1186,7 @@ public class JAMSSpreadSheet extends JPanel {
             try {
                 viewer.addData(dataTransfer);
             } catch (Exception ex) {
-                GUIHelper.showErrorDlg(JAMSSpreadSheet.this, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR_WHILE_TRYING_TO_DISPLAY_MAP!"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR!"));
+                GUIHelper.showErrorDlg(JAMSSpreadSheet.this, JAMS.i18n("ERROR_WHILE_TRYING_TO_DISPLAY_MAP!"), JAMS.i18n("ERROR!"));
             }
         }
     };

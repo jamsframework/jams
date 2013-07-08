@@ -21,6 +21,7 @@
  */
 package reg.gui;
 
+import jams.JAMS;
 import jams.gui.tools.GUIHelper;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -32,7 +33,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -74,28 +74,28 @@ public class SimpleDSPanel extends DSPanel {
     private JPanel aggregationPanel;
     private GridBagLayout aggregationLayout;    
     private Action[] actions = {
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("SHOW_DATA")) {
+        new AbstractAction(JAMS.i18n("SHOW_DATA")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showData();
             }
         },
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MEAN")) {
+        new AbstractAction(JAMS.i18n("MEAN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showMean();
             }
         },
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTHLY_MEAN")) {
+        new AbstractAction(JAMS.i18n("MONTHLY_MEAN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 showMonthlyMean();
             }
         },
-        new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YEARLY_MEAN")) {
+        new AbstractAction(JAMS.i18n("YEARLY_MEAN")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -104,21 +104,21 @@ public class SimpleDSPanel extends DSPanel {
         }
     };
     private Action showData = actions[0], mean = actions[1],  monthMean = actions[2],  yearMean = actions[3];
-    private Action cacheReset = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RESET_CACHES")) {
+    private Action cacheReset = new AbstractAction(JAMS.i18n("RESET_CACHES")) {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             resetCaches();
         }
     };
-    private Action indexReset = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("RELOAD_INDEX")) {
+    private Action indexReset = new AbstractAction(JAMS.i18n("RELOAD_INDEX")) {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             resetIndex();
         }
     };
-    private Action freeTempMean = new AbstractAction(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("TEMP._MEAN_(FILTER)")) {
+    private Action freeTempMean = new AbstractAction(JAMS.i18n("TEMP._MEAN_(FILTER)")) {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -198,7 +198,7 @@ public class SimpleDSPanel extends DSPanel {
             }
         });
         
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ATTRIBUTE/AGGREGATION:")), 0, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("ATTRIBUTE/AGGREGATION:")), 0, 10, 1, 1, 0, 0);
 
         aggregationLayout = new GridBagLayout();
         aggregationPanel = new JPanel();
@@ -207,7 +207,7 @@ public class SimpleDSPanel extends DSPanel {
         aggregationScroll.setPreferredSize(new Dimension(LIST_DIMENSION.width + 100, LIST_DIMENSION.height));
 
         GUIHelper.addGBComponent(this, mainLayout, aggregationScroll, 0, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("IDS:")), 10, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("IDS:")), 10, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, timeListScroll, 10, 20, 1, 1, 0, 0);
 
         JPanel buttonPanelA = new JPanel();
@@ -225,10 +225,10 @@ public class SimpleDSPanel extends DSPanel {
         filterPanel.setPreferredSize(new Dimension(LIST_DIMENSION.width, LIST_DIMENSION.height - 150));
         filterPanel.setBorder(BorderFactory.createEtchedBorder());
 
-        filterPanel.add(new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("FILTER:")));
+        filterPanel.add(new JLabel(JAMS.i18n("FILTER:")));
         timeField = new JTextField();
         timeField.setEnabled(false);
-        timeField.setToolTipText(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("DATE_EXPRESSION_IN_SQL_SYNTAX,_E.G._1992-11-%_FOR_ALL_NOVEMBER_VALUES_IN_1992"));
+        timeField.setToolTipText(JAMS.i18n("DATE_EXPRESSION_IN_SQL_SYNTAX,_E.G._1992-11-%_FOR_ALL_NOVEMBER_VALUES_IN_1992"));
         timeField.setPreferredSize(new Dimension(ACTION_BUTTON_DIM.width - 20, timeField.getPreferredSize().height));
         timeField.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -259,9 +259,9 @@ public class SimpleDSPanel extends DSPanel {
 
         GUIHelper.addGBComponent(this, mainLayout, buttonPanelA, 40, 20, 1, 1, 0, 0);
         /*
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("MONTHS:")), 60, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("MONTHS:")), 60, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, monthListScroll, 60, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("YEARS:")), 70, 10, 1, 1, 0, 0);
+        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("YEARS:")), 70, 10, 1, 1, 0, 0);
         GUIHelper.addGBComponent(this, mainLayout, yearListScroll, 70, 20, 1, 1, 0, 0);
 
         JPanel buttonPanelB = new JPanel();
@@ -396,13 +396,13 @@ public class SimpleDSPanel extends DSPanel {
         // defining their aggregation weight
         JLabel label;
 
-        label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA_ATTRIBUTE"));
+        label = new JLabel(JAMS.i18n("AREA_ATTRIBUTE"));
         label.setHorizontalAlignment(SwingConstants.LEFT);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 5, 0, 1, 1, 0, 0);
 
         ArrayList<DataStoreProcessor.AttributeData> attribs = getProc().getDataStoreProcessor().getAttributes();
 
-        label = new JLabel(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AGGREGATION_WEIGHT"));
+        label = new JLabel(JAMS.i18n("AGGREGATION_WEIGHT"));
         label.setHorizontalAlignment(SwingConstants.CENTER);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 3, 3, 1, 0, 0);
         label = new JLabel("1");
@@ -428,7 +428,7 @@ public class SimpleDSPanel extends DSPanel {
                     AttribCheckBox thisCheck = (AttribCheckBox) e.getSource();
                     if (!thisCheck.isSelected() && attribCombo.getSelectedItem().toString().equals(thisCheck.getText())) {
                         attribCombo.setSelectedIndex(0);
-                        GUIHelper.showInfoDlg(parent, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AREA_ATTRIBUTE_HAS_BEEN_RESET!"), java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
+                        GUIHelper.showInfoDlg(parent, JAMS.i18n("AREA_ATTRIBUTE_HAS_BEEN_RESET!"), JAMS.i18n("INFO"));
                     }
                     thisCheck.attrib.setSelected(thisCheck.isSelected());
                 }
@@ -475,7 +475,7 @@ public class SimpleDSPanel extends DSPanel {
         }
 
         String[] attribNames = new String[attribs.size() + 1];
-        attribNames[0] = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("[CHOOSE]");
+        attribNames[0] = JAMS.i18n("[CHOOSE]");
         i = 1;
         for (DataStoreProcessor.AttributeData attrib : attribs) {
             attribNames[i++] = attrib.getName();
@@ -492,7 +492,7 @@ public class SimpleDSPanel extends DSPanel {
         });
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, attribCombo, 10, 0, 5, 1, 0, 0);
 
-        GroupCheckBox allOnOffCheck = new GroupCheckBox(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ALL_ON/OFF"), allChecks);
+        GroupCheckBox allOnOffCheck = new GroupCheckBox(JAMS.i18n("ALL_ON/OFF"), allChecks);
         allOnOffCheck.setSelected(DataStoreProcessor.AttributeData.SELECTION_DEFAULT);
 
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, allOnOffCheck, 5, 3, 1, 1, 0, 0);

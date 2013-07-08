@@ -104,7 +104,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private HashMap<String, Integer> idMap;
     transient private SmallModelState state = new JAMSSmallModelState();
     private DataFactory dataFactory = DefaultDataFactory.getDataFactory();
-    protected final Logger runtimeLogger = Logger.getLogger(this.toString());
+    transient protected Logger runtimeLogger = Logger.getLogger(this.toString());
 
     public StandardRuntime(SystemProperties properties) {
         this.properties = properties;
@@ -913,5 +913,15 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     @Override
     public Logger getLogger() {
         return runtimeLogger;
+    }
+    
+    private void writeObject(ObjectOutputStream objOut) throws IOException {
+        objOut.defaultWriteObject();        
+    }
+
+    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+
+        runtimeLogger = Logger.getLogger(this.toString());
     }
 }

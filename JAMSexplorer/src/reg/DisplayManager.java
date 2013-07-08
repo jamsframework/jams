@@ -21,6 +21,7 @@
  */
 package reg;
 
+import jams.JAMS;
 import jams.gui.tools.GUIHelper;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
@@ -39,7 +40,6 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import optas.hydro.data.DataCollection;
 import reg.gui.DataCollectionView;
 import reg.gui.InputDSInfoPanel;
@@ -135,9 +135,9 @@ public class DisplayManager implements Observer {
                         spreadSheet.loadTSDS((TSDataStore) store, explorer.getWorkspace().getInputDirectory());
                     } catch (Throwable e) {
                         GUIHelper.showErrorDlg(explorer.getExplorerFrame(), 
-                                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("AN_ERROR_OCCURED_WHILE_TRYING_TO_READ_FROM_DATASTORE_") 
+                                JAMS.i18n("AN_ERROR_OCCURED_WHILE_TRYING_TO_READ_FROM_DATASTORE_") 
                                 + store.getID() + "\"\n" + e.toString() + "\n" + StringTools.getStackTraceString(e.getStackTrace()),
-                                java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
+                                JAMS.i18n("ERROR"));
                     }
 
                 }

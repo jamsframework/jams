@@ -21,6 +21,7 @@
  */
 package reg.gui;
 
+import jams.JAMS;
 import jams.gui.WorkerDlg;
 import java.awt.BorderLayout;
 import java.awt.Frame;
@@ -40,7 +41,7 @@ public class CancelableWorkerDlg extends WorkerDlg {
     public CancelableWorkerDlg(Frame owner, String title) {
         super(owner, title);
 
-        JButton cancelButton = new JButton(java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("CANCEL"));
+        JButton cancelButton = new JButton(JAMS.i18n("CANCEL"));
         cancelButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

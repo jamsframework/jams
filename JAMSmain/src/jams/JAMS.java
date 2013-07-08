@@ -92,7 +92,7 @@ public class JAMS {
         if (getResources().containsKey(key)) {
             return getResources().getString(key);
         } else {
-            Logger.getLogger(JAMS.class.getName()).log(Level.INFO, "Could not find i18n key \"" + key + "\", using the key as result!", new JAMSException("Invalid resource key"));
+            Logger.getLogger(JAMS.class.getName()).log(Level.INFO, "Could not find i18n key \"" + key + "\", using the key as result!");
             return key;
         }
     }
