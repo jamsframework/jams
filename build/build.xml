@@ -73,6 +73,7 @@
 
     <target name="doJ2K">
         <ant antfile="../../jamsmodels/nbprojects/J2K_base/nbbuild.xml" inheritall="false" target="jar"/>
+        <ant antfile="../../jamsmodels/nbprojects/J2K_ext/nbbuild.xml" inheritall="false" target="jar"/>
         <echo>Created J2K</echo>
     </target>
 
