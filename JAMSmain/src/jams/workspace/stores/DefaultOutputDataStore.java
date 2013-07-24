@@ -193,11 +193,11 @@ public class DefaultOutputDataStore implements OutputDataStore {
         private String contextName, expression;
         private Context context = null;
 
-        ExpressionFactory factory = null;
-        SimpleContext exprContext = new SimpleContext(new SimpleResolver());
-        ValueExpression valueExpr = null;        
-        ValueExpression idExpr = null;
-
+        transient ExpressionFactory factory = null;
+        transient SimpleContext exprContext = new SimpleContext(new SimpleResolver());
+        transient ValueExpression valueExpr = null;        
+        transient ValueExpression idExpr = null;
+        
         public DefaultFilter(String contextName, String expression) {
             this.contextName = contextName;
             this.expression = expression;
@@ -244,6 +244,22 @@ public class DefaultOutputDataStore implements OutputDataStore {
                 contextExpr.setValue(exprContext, searchContext);
                 searchContext = searchContext.getContext();                
             } 
+        }
+        
+        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+            in.defaultReadObject();
+        
+            java.util.Properties properties = new java.util.Properties();
+            properties.put("javax.el.cacheSize", "1000");
+            properties.put("javax.el.methodInvocations", "false");
+            properties.put("javax.el.nullProperties", "false");
+            properties.put("javax.el.varArgs", "false");
+            properties.put("javax.el.ignoreReturnType", "false");
+                        
+            exprContext = FilterFunctions.getContext();
+            factory = new de.odysseus.el.ExpressionFactoryImpl(properties);
+            valueExpr = factory.createValueExpression(exprContext, expression, boolean.class);
+            idExpr = factory.createValueExpression(exprContext, "${id}", double.class);  
         }
     }
 }

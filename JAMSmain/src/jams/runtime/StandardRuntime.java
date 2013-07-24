@@ -106,8 +106,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private DataFactory dataFactory = DefaultDataFactory.getDataFactory();
     transient protected Logger runtimeLogger = Logger.getLogger(this.toString());
 
+    private String runtimeID = null;
+    
     public StandardRuntime(SystemProperties properties) {
         this.properties = properties;
+        runtimeID = this.toString();
         init(true);
     }
 
@@ -126,8 +129,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         // start the loading process
         long start = System.currentTimeMillis();
 
-        // load the model
-
+        initLogging();
+        // load the model        
         try {
 
             this.println("", JAMS.STANDARD);
@@ -189,7 +192,72 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         runState = JAMSRuntime.STATE_RUN;
 
     }
+    //initialize logs .. this is necessary, because JAMSLogger is not serializable and must be reinitalized after deserialization
+    private void initLogging() {
+        // set the debug (i.e. output verbosity) level
+        this.setDebugLevel(Integer.parseInt(properties.getProperty(SystemProperties.DEBUG_IDENTIFIER, "1")));
 
+        // add log observers for output to system.out if needed
+        boolean verbose = Boolean.parseBoolean(properties.getProperty(SystemProperties.VERBOSITY_IDENTIFIER, "1"));
+        if (verbose) {
+
+            // add info and error log output
+            this.addInfoLogObserver(new Observer() {
+
+                @Override
+                public void update(Observable obs, Object obj) {
+                    System.out.print(obj);
+                }
+            });
+            this.addErrorLogObserver(new Observer() {
+
+                @Override
+                public void update(Observable obs, Object obj) {
+                    System.out.print(obj);
+                }
+            });
+        }
+
+        boolean errorDlg = Boolean.parseBoolean(properties.getProperty(SystemProperties.ERRORDLG_IDENTIFIER, "0"));
+        if (errorDlg) {
+
+            // add error log output via JDialog
+            this.addErrorLogObserver(new Observer() {
+
+                @Override
+                public void update(Observable obs, Object obj) {
+
+                    Object[] options = {JAMS.i18n("OK"), JAMS.i18n("OK,_skip_other_messages")};
+                    int result = JOptionPane.showOptionDialog(frame, obj.toString(), JAMS.i18n("Model_execution_error"),
+                            JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+
+                    if (result == 1) {
+                        StandardRuntime.this.deleteErrorLogObserver(this);
+                    }
+
+                }
+            });
+        }
+
+        try {
+            String infoLogFile = properties.getProperty(SystemProperties.INFOLOG_IDENTIFIER);
+            if (!StringTools.isEmptyString(infoLogFile)) {
+                infoStream = new PrintStream(infoLogFile);
+            }
+        } catch (FileNotFoundException fnfe) {
+            this.handle(fnfe);
+        }
+
+        try {
+            String errorLogFile = properties.getProperty(SystemProperties.ERRORLOG_IDENTIFIER);
+            if (!StringTools.isEmptyString(errorLogFile)) {
+                errorStream = new PrintStream(errorLogFile);
+            }
+        } catch (FileNotFoundException fnfe) {
+            this.handle(fnfe);
+        }
+    }
+    
 //    public void loadModelDescriptor(ModelDescriptor md, String defaultWorkspacePath) {
 //
 //        ModelIO modelIO = ModelIO.getStandardModelIO(runtimeLogger);
@@ -301,68 +369,13 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             this.println(line, JAMS.STANDARD);
         }
 
-        // set the debug (i.e. output verbosity) level
-        this.setDebugLevel(Integer.parseInt(properties.getProperty(SystemProperties.DEBUG_IDENTIFIER, "1")));
-
+        initLogging();
+        
         boolean debugMode = Boolean.parseBoolean(this.properties.getProperty(SystemProperties.DEBUG_MODE));
         if (debugMode) {
             dataFactory = CheckedDataFactory.getDataFactory();
         } else {
             dataFactory = DefaultDataFactory.getDataFactory();
-        }
-
-        // add runtimeLogger observers for output to system.out if needed
-        boolean verbose = Boolean.parseBoolean(properties.getProperty(SystemProperties.VERBOSITY_IDENTIFIER, "true"));
-        if (verbose) {
-
-            // add info and error runtimeLogger output
-            this.addInfoLogObserver(new Observer() {
-                @Override
-                public void update(Observable obs, Object obj) {
-                    System.out.print(obj);
-                }
-            });
-            this.addErrorLogObserver(new Observer() {
-                @Override
-                public void update(Observable obs, Object obj) {
-                    System.out.print(obj);
-                }
-            });
-        }
-
-        boolean errorDlg = Boolean.parseBoolean(properties.getProperty(SystemProperties.ERRORDLG_IDENTIFIER, "0"));
-        if (errorDlg) {
-
-            // add error runtimeLogger output via JDialog
-            this.addErrorLogObserver(new Observer() {
-                @Override
-                public void update(Observable obs, Object obj) {
-                    Object[] options = {JAMS.i18n("OK"), JAMS.i18n("OK,_skip_other_messages")};
-                    int result = JOptionPane.showOptionDialog(frame, obj.toString(), JAMS.i18n("Model_execution_error"),
-                            JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-                    if (result == 1) {
-                        StandardRuntime.this.deleteErrorLogObserver(this);
-                    }
-                }
-            });
-        }
-
-        try {
-            String infoLogFile = properties.getProperty(SystemProperties.INFOLOG_IDENTIFIER);
-            if (!StringTools.isEmptyString(infoLogFile)) {
-                infoStream = new PrintStream(infoLogFile);
-            }
-        } catch (FileNotFoundException fnfe) {
-            this.handle(fnfe);
-        }
-
-        try {
-            String errorLogFile = properties.getProperty(SystemProperties.ERRORLOG_IDENTIFIER);
-            if (!StringTools.isEmptyString(errorLogFile)) {
-                errorStream = new PrintStream(errorLogFile);
-            }
-        } catch (FileNotFoundException fnfe) {
-            this.handle(fnfe);
         }
     }
 
@@ -456,7 +469,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         if (this.getState() == JAMSRuntime.STATE_RUN) {
-            model.run();
+            model.run(); 
         }
 
         if (this.getState() == JAMSRuntime.STATE_RUN) {
@@ -921,7 +934,13 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
+        
+        runtimeLogger = Logger.getLogger(runtimeID);
+        
+        deleteErrorLogObservers();
+        deleteInfoLogObservers();
+        this.initLogging();
 
-        runtimeLogger = Logger.getLogger(this.toString());
+        classLoader = JAMSClassLoader.createClassLoader(StringTools.toArray(properties.getProperty("libs", ""), ";"), this.infoLog);
     }
 }

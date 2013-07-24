@@ -47,7 +47,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import optas.gui.HydrographChart;
+import optas.gui.wizard.HydrographChart;
 import optas.hydro.GreedyOptimizationScheme;
 import optas.hydro.OptimalOptimizationScheme;
 import optas.hydro.OptimizationScheme;

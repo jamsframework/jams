@@ -5,13 +5,8 @@
 
 package optas.gui.wizard;
 
-import jams.data.Attribute.TimeInterval;
 import java.util.ArrayList;
 
-import optas.efficiencies.UniversalEfficiencyCalculator;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  *

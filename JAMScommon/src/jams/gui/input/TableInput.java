@@ -41,7 +41,7 @@ public class TableInput extends JPanel {
     static final int BUTTON_SIZE = 20;
     private static final Dimension BUTTON_DIMENSION = new Dimension(BUTTON_SIZE, BUTTON_SIZE);
     private JTable table;
-    private JButton addButton, removeButton, upButton, downButton, editButton;
+    protected JButton addButton, removeButton, upButton, downButton, editButton;
     protected JScrollPane scrollPane;
     protected TableData tableData = new TableData();
     protected MouseListener editListener;
@@ -289,6 +289,7 @@ public class TableInput extends JPanel {
         if (selection >= 0) {
             // remove this item from the list and refresh
             tableData.removeElementAt(selection);
+
             scrollPane.revalidate();
             scrollPane.repaint();
 
@@ -296,7 +297,10 @@ public class TableInput extends JPanel {
             if (selection >= tableData.getValue().size()) {
                 selection = tableData.getValue().size() - 1;
             }
-            getTable().setColumnSelectionInterval(selection, selection);
+            if (selection == -1)
+                getTable().getSelectionModel().clearSelection();
+            else
+                getTable().setRowSelectionInterval(selection, selection);
         }
     }
 

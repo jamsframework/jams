@@ -22,6 +22,7 @@
 package jams.data;
 
 import java.util.Calendar;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 /**
@@ -36,7 +37,7 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
     protected int timeUnitCount = 1;
     private long timestepCount = -1;
 
-    public JAMSTimeInterval() {
+    public JAMSTimeInterval() {        
     }
 
     public JAMSTimeInterval(Attribute.Calendar start, Attribute.Calendar end, int timeUnit, int timeUnitCount) {
@@ -60,7 +61,11 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
             end.setValue(endDate + " " + endTime);
             timeUnit = Integer.parseInt(unit);
             timeUnitCount = Integer.parseInt(count);
-        } catch (Exception ex) {
+        } catch (NoSuchElementException nsee) {
+            System.out.println("Unable to parse time interval " + value);
+            
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 

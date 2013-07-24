@@ -83,7 +83,7 @@ import optas.hydro.data.SimpleEnsemble;
 import optas.hydro.data.TimeSerie;
 import optas.hydro.data.TimeSerieEnsemble;
 import optas.hydro.gui.GllobalSensitivityEfficiencyComparison;
-import optas.gui.HydrographChart;
+import optas.gui.wizard.HydrographChart;
 import optas.hydro.gui.SelectionDialog;
 import optas.hydro.gui.SimpleGlobalSensitivityAtPoint;
 import optas.hydro.gui.WeightChart;
@@ -251,7 +251,15 @@ public class HydroAnalysisFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int result = j2kFile_chooser.showOpenDialog(HydroAnalysisFrame.this);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    TSDataReader reader = new TSDataReader(j2kFile_chooser.getSelectedFile());
+                    TSDataReader reader = null;
+                
+                    try{
+                        reader = new TSDataReader(j2kFile_chooser.getSelectedFile());
+                    }catch(IOException ioe){
+                        JOptionPane.showMessageDialog(null, ioe.toString());
+                        ioe.printStackTrace();
+                        return;
+                    }
                     ArrayList<Object> attr = reader.getNames();
                     SelectionDialog selectionDialog = new SelectionDialog(null, new TreeSet<Object>(attr));
 

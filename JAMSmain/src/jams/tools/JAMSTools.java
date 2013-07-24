@@ -283,7 +283,7 @@ public class JAMSTools {
      * @param p a JAMS properties object
      * @param fileName the file name to be added
      */
-    public static void addToRecentFiles(SystemProperties p, String fileName) {
+    public static void addToRecentFiles(SystemProperties p, String key, String fileName) {
 
         File f = new File(fileName);
         if (f.exists()) {
@@ -297,7 +297,7 @@ public class JAMSTools {
         int maxFiles = Integer.parseInt(p.getProperty(SystemProperties.MAX_RECENT_FILES));
 
         List<String> recentFileNames = new ArrayList();
-        String s = p.getProperty(SystemProperties.RECENT_FILES);
+        String s = p.getProperty(key);
         if (s != null) {
             String[] recentArray = s.split("\\|");
             recentFileNames.addAll(Arrays.asList(recentArray));
@@ -315,7 +315,7 @@ public class JAMSTools {
         for (String recentFileName : recentFileNames) {
             resultString += "|" + recentFileName;
         }
-        p.setProperty(SystemProperties.RECENT_FILES, resultString);
+        p.setProperty(key, resultString);
     }
 
     /**
@@ -324,9 +324,9 @@ public class JAMSTools {
      * @param p a JAMS properties object
      * @return an array containing the names of recently opened files
      */
-    public static String[] getRecentFiles(SystemProperties p) {
+    public static String[] getRecentFiles(SystemProperties p, String key) {
 
-        String s = p.getProperty(SystemProperties.RECENT_FILES);
+        String s = p.getProperty(key);
 
         if (s != null) {
             return s.split("\\|");

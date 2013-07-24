@@ -21,25 +21,32 @@
  */
 package jams.workspace.stores;
 
-import jams.data.JAMSCalendar;
 import jams.workspace.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import jams.workspace.datatypes.CalendarValue;
 import jams.JAMS;
+import jams.JAMSProperties;
 import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
 import jams.io.SerializableBufferedReader;
+import jams.runtime.JAMSRuntime;
+import jams.runtime.StandardRuntime;
 import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.datatypes.LongValue;
 import jams.workspace.datatypes.ObjectValue;
 import jams.workspace.datatypes.StringValue;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 
 /**
  *
@@ -476,6 +483,137 @@ public class TSDataStore extends TableDataStore {
                 ioe.printStackTrace();
             }
         }
+    }
+    
+    private static void convertTSDataStoreToJ2KFile(Workspace ws, String id){
+        InputDataStore store = ws.getInputDataStore(id);
+        //writing j2k file
+        File outputFile = new File(ws.getLocalDumpDirectory(), id+".dat");
+        File xmlDescFile = new File(ws.getLocalDumpDirectory(), id+".xml");
+        if (outputFile.exists()){
+            System.out.println("Output file allready existing!");
+            return;
+        }
+        if (!(store instanceof TSDataStore)){
+            System.out.println("Store is not a TSDataStore!");
+            return;
+        }
+            
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.YYYY hh:mm");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        
+        TSDataStore tsStore = (TSDataStore)store;        
+        DataSetDefinition dsd = store.getDataSetDefinition();
+        BufferedWriter writer = null;
+        BufferedWriter xmlWriter = null;
+        try{
+            writer = new BufferedWriter(new FileWriter(outputFile));
+            xmlWriter = new BufferedWriter(new FileWriter(xmlDescFile));
+            
+            writer.write("@dataValueAttribs\n");
+            writer.write(tsStore.getDisplayName() + "\t" + Double.MIN_VALUE + "\t" + Double.MAX_VALUE + "\t?\n");
+            writer.write("@dataSetAttribs\n");    
+            writer.write("missingDataVal\t"+tsStore.getMissingDataValue()+"\n");    
+            writer.write("dataStart\t"+dateFormat.format(tsStore.getStartDate().getTime())+"\n");    
+            writer.write("dataEnd\t"+dateFormat.format(tsStore.getEndDate().getTime())+"\n");    
+            if (tsStore.getTimeUnit()==6)
+                writer.write("tres\td\n");    
+            if (tsStore.getTimeUnit()==2)
+                writer.write("tres\tm\n");    
+            if (tsStore.getTimeUnit()==1)
+                writer.write("tres\ty\n");    
+            if (tsStore.getTimeUnit()==11)
+                writer.write("tres\th\n");    
+            writer.write("@statAttribVal\n");    
+            String stationNames = "name";
+            String stationIDs   = "ID";
+            String stationElevation = "elevation";
+            String stationX           = "x";
+            String stationY           = "y";
+            String dataColumn         = "dataColumn";
+            
+            ArrayList<Object> xList = dsd.getAttributeValues("X");
+            ArrayList<Object> yList = dsd.getAttributeValues("Y");
+            ArrayList<Object> elevList = dsd.getAttributeValues("ELEVATION");
+            ArrayList<Object> nameList = dsd.getAttributeValues("NAME");
+            ArrayList<Object> idList = dsd.getAttributeValues("ID");
+            
+            for (int i=0;i<dsd.getColumnCount();i++){
+                stationNames += "\t" + nameList.get(i);
+                stationIDs += "\t" + idList.get(i);
+                stationElevation += "\t" + elevList.get(i);
+                stationX += "\t" + xList.get(i);
+                stationY += "\t" + yList.get(i);
+                dataColumn += "\t" + (i+1);
+            }
+            writer.write(stationNames + "\n");
+            writer.write(stationIDs + "\n");
+            writer.write(stationElevation + "\n");
+            writer.write(stationX + "\n");
+            writer.write(stationY + "\n");
+            writer.write(dataColumn + "\n");
+            
+            writer.write("@dataVal\n");    
+            
+            DefaultDataSet dds = null;
+            while ((dds = tsStore.getNext())!=null){
+                String line = "";
+                for (int i=0;i<dds.getData().length;i++){
+                    if (i==0){
+                        line += dateFormat.format(dds.getData()[i].getCalendar().getTime()) + "\t";                        
+                    }else{
+                        line += dds.getData()[i].getObject() + "\t";
+                    }
+                }
+                line += "\n";
+                writer.write(line);
+            }
+            xmlWriter.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>\n" +
+                            "<j2ktsdatastore>\n"+                            
+                            "<parsetime value=\"false\" />\n"+
+                            "<dumptimeformat value=\"yyyy-MM-dd HH:mm\" />"+
+                            "<charset value=\"ISO-8859-1\" />"+
+                            "</j2ktsdatastore>");
+        }catch(IOException ioe){
+            System.out.println("Error while writing file!");
+            return;
+        }finally{
+            try{
+                writer.close();
+                xmlWriter.close();
+            }catch(IOException ioe){
+                
+            }
+        }
+    }
+    
+    //convert dump into j2k file
+    public static void main(String[] args) {
+        if (args.length < 1){
+            System.out.println("Usage dump2j2kFile workspaceDir [id]");
+        }
+        File workspaceDirectory = new File(args[0]);        
+        if (!workspaceDirectory.exists()){
+            System.out.println("Error: directory " + workspaceDirectory.getAbsolutePath() + " does not exist!");
+            return;
+        }
+        JAMSRuntime runtime = new StandardRuntime(JAMSProperties.createProperties());
+        Workspace ws = new JAMSWorkspace(workspaceDirectory, runtime, false);
+        try{
+            ws.init();
+        }catch(InvalidWorkspaceException iwe){
+            System.out.println("Invalid workspace!\n" + iwe.toString());
+        }
+        if (args.length>1){
+            String id = args[1];
+            convertTSDataStoreToJ2KFile(ws, id);
+        }else{
+            Set<String> inputDataStores = ws.getInputDataStoreIDs();
+            for (String id : inputDataStores){
+                convertTSDataStoreToJ2KFile(ws, id);
+            }
+        }
+        
     }
 }
 

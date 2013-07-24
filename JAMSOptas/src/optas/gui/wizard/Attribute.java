@@ -70,4 +70,11 @@ public class Attribute implements Serializable, Comparable {
     public int compareTo(Object o){
         return this.toString().compareToIgnoreCase(o.toString());
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if (o == null || !Attribute.class.isAssignableFrom(o.getClass()))
+            return false;
+        return this.toString().compareToIgnoreCase(o.toString()) == 0;
+    }
 }

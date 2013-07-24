@@ -45,7 +45,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import optas.gui.HydrographChart;
+import optas.gui.wizard.HydrographChart;
 import optas.hydro.OptimizationScheme;
 import optas.SA.VarianceBasedTemporalSensitivityAnalysis;
 import optas.hydro.GreedyOptimizationScheme;
@@ -235,7 +235,7 @@ public class TemporalAnalysisGUI extends MCAT5Plot {
                     groupConfigurator.setDominanceInfo((double)Tdom/(double)Ttotal);
                 }else{
                     int k = conf.getGroupConfiguration().size();
-                    TemporalAnalysisGUI.this.hydrographChart.clearFilter();
+                    TemporalAnalysisGUI.this.hydrographChart.clearTimeFilter();
                     //int index = conf.getSelectedGroup();
                     for (int j = 0; j < k; j++) {
                         int[] dominatedTimeSteps = currentScheme.dominatedTimeStepsForGroup.get(j);
@@ -246,7 +246,7 @@ public class TemporalAnalysisGUI extends MCAT5Plot {
                         }
 
                         TimeFilter f = TimeFilterFactory.getSelectiveTimeFilter(dates);
-                        TemporalAnalysisGUI.this.hydrographChart.addFilter(f);
+                        TemporalAnalysisGUI.this.hydrographChart.addTimeFilter(f);
                     }
                     int Tdom = currentScheme.getDominatedTimeSteps(conf.getSelectedGroup()).length;
                     int Ttotal = TemporalAnalysisGUI.this.ts.getTimesteps();

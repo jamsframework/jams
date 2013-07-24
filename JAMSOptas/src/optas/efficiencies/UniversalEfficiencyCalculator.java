@@ -4,6 +4,7 @@
  */
 package optas.efficiencies;
 
+import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
@@ -162,8 +163,10 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     }
 
     private void considerData(){
-        measurementList.add(measurement.getValue());
-        simulationList.add(simulation.getValue());
+        if (measurement.getValue() != JAMS.getMissingDataValue()){
+            measurementList.add(measurement.getValue());
+            simulationList.add(simulation.getValue());
+        }
     }
     @Override
     public void run(){

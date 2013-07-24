@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package optas.gui;
+package optas.gui.wizard;
 
 import jams.gui.input.TableInput;
 import java.awt.Dimension;
@@ -57,78 +57,7 @@ public class ObjectiveConstructorDialog extends JDialog{
 
     HydrographChart chart = new HydrographChart();
 
-    class TimeFilterTableInput extends TableInput {
-
-        public TimeFilterTableInput() {
-            super(new String[]{"enabled","inverted", "additive", "filter"}, new Class[]{Boolean.class,Boolean.class,Boolean.class, String.class}, new boolean[]{true, true, true, false}, true);
-
-            getTable().setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-
-            int vColIndex = 0;
-            TableColumn col = getTable().getColumnModel().getColumn(vColIndex);
-            int width = 150;
-            col.setPreferredWidth(width);
-            col = getTable().getColumnModel().getColumn(1);
-            col.setPreferredWidth(300);
-            
-            ((AbstractTableModel) this.getTable().getModel()).addTableModelListener(new TableModelListener() {
-
-                public void tableChanged(TableModelEvent e) {
-                    for (Object row[] : tableData.getValue()) {
-                        if (row[0] instanceof Boolean) {
-                            ((TimeFilter) row[3]).setEnabled((Boolean) row[0]);
-                        }
-                        if (row[1] instanceof Boolean) {
-                            ((TimeFilter) row[3]).setInverted((Boolean) row[1]);
-                        }
-                        if (row[2] instanceof Boolean) {
-                            ((TimeFilter) row[3]).setAdditive((Boolean) row[2]);
-                        }
-                    }
-                    ObjectiveConstructorDialog.this.chart.clearFilter();
-                    ObjectiveConstructorDialog.this.chart.addFilter(constructCombinedTimeFilter());
-                }
-            });
-
-            setPreferredSize(new Dimension(450, 200));
-        }
-
-        @Override
-        protected void editItem() {
-            //get the current selection
-            int selection = getTable().getSelectedRow();
-            Object selectedData = tableData.getElementAt(selection)[3];
-
-            if (selectedData instanceof TimeFilter){
-                if (getSelectedMeasurement() == null)
-                    return;
-                tfd = new TimeFilterDialog(getSelectedMeasurement());
-                tfd.init(getSelectedMeasurement(), (TimeFilter)selectedData);
-                tfd.setVisible(true);
-            }
-        }
-
-        @Override
-        protected void addItem() {
-            if (getSelectedMeasurement() == null)
-                return;
-            tfd = new TimeFilterDialog(getSelectedMeasurement());
-            tfd.init(getSelectedMeasurement(), null);
-            tfd.setVisible(true);
-            if (tfd.getApproval()){                
-                TimeFilter filter = tfd.getFilter();
-                // add this item to the list and refresh
-                if (filter != null) {
-                    this.tableData.addElement(new Object[]{new Boolean(filter.isEnabled()),new Boolean(filter.isInverted()),new Boolean(filter.isAdditive()), filter});
-                    this.setTableData(tableData.getValue());
-                    scrollPane.revalidate();
-                    scrollPane.repaint();
-                }
-                ObjectiveConstructorDialog.this.chart.clearFilter();
-                ObjectiveConstructorDialog.this.chart.addFilter(constructCombinedTimeFilter());
-            }
-        }
-    }
+    
 
     private Measurement getSelectedMeasurement() {
         Object o = ObjectiveConstructorDialog.this.msDataBox.getSelectedItem();
@@ -139,15 +68,7 @@ public class ObjectiveConstructorDialog extends JDialog{
         Measurement m = (Measurement) dc.getDataSet(o.toString());
         return m;
     }
-    private TimeFilter constructCombinedTimeFilter(){
-        TimeFilter filters[] = new TimeFilter[filterList.getTable().getRowCount()];
-        int i=0;
-        for (Object[] o : filterList.getTableData()){
-            filters[i++] = (TimeFilter)o[3];
-        }
-        return TimeFilterFactory.getCombinedTimeFilter(filters);
-    }
-
+    
     public ObjectiveConstructorDialog(DataCollection dc){        
         this.dc = dc;
         init();
@@ -232,7 +153,20 @@ public class ObjectiveConstructorDialog extends JDialog{
         ChartPanel chartPanel = new ChartPanel(chart.getChart(), true);
         mainPanel.add(chartPanel,c);
 
-        filterList = new TimeFilterTableInput();
+        filterList = new TimeFilterTableInput(getSelectedMeasurement());
+        filterList.addChangeListener(new TimeFilterTableInput.TimeFilterTableInputListener() {
+
+            @Override
+            public void tableChanged(TimeFilterTableInput tfti) {
+                chart.setTimeFilters(filterList.getTimeFilters());                
+            }
+
+            @Override
+            public void itemChanged(TimeFilterTableInput tfti) {
+                chart.setTimeFilters(filterList.getTimeFilters());
+            }
+        });
+        
         c.gridx = 0;
         c.gridy = yCounter;
         c.gridwidth = 2;
@@ -257,7 +191,7 @@ public class ObjectiveConstructorDialog extends JDialog{
                         result = new EfficiencyEnsemble("blubb",
                         (Measurement)dc.getDataSet((String)msDataBox.getSelectedItem()),
                         (TimeSerieEnsemble)dc.getDataSet((String)simDataBox.getSelectedItem()),
-                        (Method)methodList.getSelectedItem(), ObjectiveConstructorDialog.this.constructCombinedTimeFilter());
+                        (Method)methodList.getSelectedItem(), filterList.getTimeFilters().combine());
                         result.exportTimeFilter(jfc.getSelectedFile(), ObjectiveConstructorDialog.this.chart.hydrograph.getTimeDomain());
                     }
             }
@@ -277,7 +211,7 @@ public class ObjectiveConstructorDialog extends JDialog{
                 result = new EfficiencyEnsemble(strName, 
                         (Measurement)dc.getDataSet((String)msDataBox.getSelectedItem()),
                         (TimeSerieEnsemble)dc.getDataSet((String)simDataBox.getSelectedItem()),
-                        (Method)methodList.getSelectedItem(), ObjectiveConstructorDialog.this.constructCombinedTimeFilter());
+                        (Method)methodList.getSelectedItem(), filterList.getTimeFilters().combine());
                 isApproved = true;
                 ObjectiveConstructorDialog.this.setVisible(false);
                 }

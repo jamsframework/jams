@@ -73,27 +73,40 @@ public class ModelAnalyzer {
         return map;        
     }
 
-    private Set<Attribute> getAttributeList(int mode) {
+    private Set<Attribute> getContextAttributeList() {
+        HashMap<String, ComponentDescriptor> map = md.getComponentDescriptors();
+        Set<Attribute> list = new TreeSet<Attribute>();
+        for (ComponentDescriptor cd : map.values()){
+            for (ComponentField cf : cd.getComponentFields().values()){
+                for (ContextAttribute ca : cf.getContextAttributes()){
+                    list.add(new Attribute(ca));
+                }
+            }
+        }
+        return list;
+    }
+    private Set<Attribute> getParameterList() {
         HashMap<String, ComponentDescriptor> map = md.getComponentDescriptors();
         Set<Attribute> list = new TreeSet<Attribute>();
         for (ComponentDescriptor cd : map.values()){
             //parameter are either component values
-            for (ComponentField field : cd.getComponentFields().values()){
+            for (ComponentField field : cd.getComponentFields().values()) {
                 String value = field.getValue();
-               
-                if (!jams.data.Attribute.Double.class.isAssignableFrom(field.getType()))
+
+                if (!jams.data.Attribute.Double.class.isAssignableFrom(field.getType())) {
                     continue;
-                
-                if (mode == COLLECT_READATTRIBUTES){
-                    if (field.getAccessType() != DataAccessor.READ_ACCESS)                        
-                        continue;
-                     if (value == null)
-                        continue;
-                     
-                     list.add(new Attribute(field));
-                }else if (field.getAccessType() != DataAccessor.READ_ACCESS){
-                    list.add(new Attribute(field));    
                 }
+
+
+                if (field.getAccessType() != DataAccessor.READ_ACCESS) {
+                    continue;
+                }
+                if (value == null) {
+                    continue;
+                }
+
+                list.add(new Attribute(field));
+
             }
             //or context attributes
             if (cd instanceof ContextDescriptor){
@@ -112,7 +125,7 @@ public class ModelAnalyzer {
             return result;
         result = new TreeSet<Parameter>();
 
-        Set<Attribute> parameterList = getAttributeList(COLLECT_READATTRIBUTES);        
+        Set<Attribute> parameterList = getParameterList();        
         
         HashMap<String, Range> defaultRangeMap = getDefaultRangeMap();
         Iterator<Attribute> iter1 = parameterList.iterator();
@@ -147,7 +160,7 @@ public class ModelAnalyzer {
 
     public SortedSet<Objective> getObjectives() {
         SortedSet<Objective> result = new TreeSet<Objective>();
-        Set<Attribute> objectiveList = getAttributeList(COLLECT_WRITEATTTRIBUTES);
+        Set<Attribute> objectiveList = getContextAttributeList();
         Iterator<Attribute> iter1 = objectiveList.iterator();
         while (iter1.hasNext()) {
             result.add(new Objective(iter1.next()));

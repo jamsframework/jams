@@ -134,7 +134,7 @@ public class JUICE {
             for (StackTraceElement ste : st) {
                 s += "        at " + ste.toString() + "\n";
             }
-            System.out.println(JAMS.i18n("JUICE_Error"));
+            System.out.println(JAMS.i18n("JUICE_Error") + "\n" + t.toString() + "\n" + s);
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("An_error_occured_during_JUICE_execution") + t.toString() + "\n" + s, JAMS.i18n("JUICE_Error"));
         }
     }

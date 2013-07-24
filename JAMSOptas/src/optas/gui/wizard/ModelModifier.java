@@ -4,8 +4,10 @@
  */
 package optas.gui.wizard;
 
+import jams.JAMS;
 import jams.JAMSException;
 import jams.data.Attribute;
+import jams.data.Attribute.TimeInterval;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ComponentField;
 import jams.meta.ContextAttribute;
@@ -22,6 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.tree.TreeNode;
+import optas.efficiencies.UniversalEfficiencyCalculator;
 import optas.optimizer.OptimizerLibrary;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.OptimizerParameter;
@@ -222,6 +225,175 @@ public class ModelModifier {
         return true;
     }
 
+    public void updateObjectiveCalculators(ObjectiveDescription[] odList) throws OPTASWizardException{
+        for (ObjectiveDescription od : odList){
+            if (od == null)
+                continue;
+            //first have a look if it is allready 
+            String name = od.getName();
+            
+            ComponentDescriptor measurementContext = md.getComponentDescriptor(od.getMeasurementAttribute().getParentName());
+            ComponentDescriptor simulationContext = md.getComponentDescriptor(od.getMeasurementAttribute().getParentName());
+            
+            if (simulationContext != measurementContext){
+                throw new OPTASWizardException(JAMS.i18n("Error_during_objective_configuration_context_of_measurement_attribute_does_not_fit_context_of_simulation_attribute(%1 vs. %2)")
+                        .replace("%1",measurementContext.getInstanceName()).replace("%2",simulationContext.getInstanceName()));
+            }
+            if (!(measurementContext instanceof ContextDescriptor)){
+                throw new OPTASWizardException(JAMS.i18n("Error_during_objective_configuration:Componente_%1_is_not_a_context!").replace("%1", measurementContext.getInstanceName()));
+            }
+            ContextDescriptor context = (ContextDescriptor)measurementContext;
+            ContextDescriptor modelContext = (ContextDescriptor)md.getComponentDescriptor(md.getModelName());
+
+            ComponentDescriptor cd = md.getComponentDescriptor(name);
+            //objective calculator allready available
+            boolean allreadyExisting = false;
+
+            if (cd != null){
+                //check if this context can be used
+                if (UniversalEfficiencyCalculator.class.isAssignableFrom(cd.getClazz())){
+                    if (context.getComponentRepository().getComponentDescriptors().containsValue(cd)){
+                        allreadyExisting = true;
+                        HashMap<String,ComponentField> fields = cd.getComponentFields();
+                        fields.get("measurementAttributeName").setValue("measurement");
+                        fields.get("measurement").linkToAttribute(context, od.getMeasurementAttribute().getAttributeName(), true);
+                        
+                        fields.get("simulationAttributeName").setValue("measurement");
+                        fields.get("simulation").linkToAttribute(context, od.getMeasurementAttribute().getAttributeName(), true);
+                        
+                        if (fields.get("e1").getContextAttributes().isEmpty()){
+                            fields.get("e1").linkToAttribute(modelContext, name + "_e1");
+                        }
+                        if (fields.get("e2").getContextAttributes().isEmpty()){
+                            fields.get("e2").linkToAttribute(modelContext, name + "_e2");
+                        }
+                        if (fields.get("le1").getContextAttributes().isEmpty()){
+                            fields.get("le1").linkToAttribute(modelContext, name + "_e1");
+                        }
+                        if (fields.get("le2").getContextAttributes().isEmpty()){
+                            fields.get("le2").linkToAttribute(modelContext, name + "_e2");
+                        } 
+                        if (fields.get("ave").getContextAttributes().isEmpty()){
+                            fields.get("ave").linkToAttribute(modelContext, name + "_ave");
+                        }
+                        if (fields.get("r2").getContextAttributes().isEmpty()){
+                            fields.get("r2").linkToAttribute(modelContext, name + "_r2");
+                        }
+                        if (fields.get("bias").getContextAttributes().isEmpty()){
+                            fields.get("bias").linkToAttribute(modelContext, name + "_bias");
+                        }
+                        
+                        if (fields.get("e1_normalized").getContextAttributes().isEmpty()){
+                            fields.get("e1_normalized").linkToAttribute(modelContext, name + "_e1_normalized");
+                        }
+                        if (fields.get("e2_normalized").getContextAttributes().isEmpty()){
+                            fields.get("e2_normalized").linkToAttribute(modelContext, name + "_e2_normalized");
+                        }
+                        if (fields.get("le1_normalized").getContextAttributes().isEmpty()){
+                            fields.get("le1_normalized").linkToAttribute(modelContext, name + "_le1_normalized");
+                        }
+                        if (fields.get("le2_normalized").getContextAttributes().isEmpty()){
+                            fields.get("le2_normalized").linkToAttribute(modelContext, name + "_le2_normalized");
+                        } 
+                        if (fields.get("ave_normalized").getContextAttributes().isEmpty()){
+                            fields.get("ave_normalized").linkToAttribute(modelContext, name + "_ave_normalized");
+                        }
+                        if (fields.get("r2_normalized").getContextAttributes().isEmpty()){
+                            fields.get("r2_normalized").linkToAttribute(modelContext, name + "_r2_normalized");
+                        }
+                        if (fields.get("bias_normalized").getContextAttributes().isEmpty()){
+                            fields.get("bias_normalized").linkToAttribute(modelContext, name + "_bias_normalized");
+                        }
+                        //apply filters if there are any
+                        if (od.getTimeFilters().get().size() > 0) {
+                            String timeIntervalString = "";
+                            TimeInterval timeIntervals[] = od.getTimeFilters().toTimeIntervals(od.getModelTimeInterval());
+                            for (TimeInterval I : timeIntervals) {
+                                timeIntervalString += I.toString() + ";";
+                            }
+                            fields.get("timeInterval").setValue(timeIntervalString);
+                        }else{
+                            //otherwise it is not necessary to set any interval.
+                            //then the whole period is used
+                        }
+                        if (od.getTimeAttribute() != null){
+                            ComponentDescriptor timeComponent = md.getComponentDescriptor(od.getTimeAttribute().getParentName());
+                            if (timeComponent == null || !(timeComponent instanceof ContextDescriptor)){
+                                throw new OPTASWizardException(JAMS.i18n("Error_during_objective_configuration:Componente_%1_is_not_a_context!").replace("%1", timeComponent.getInstanceName()));
+                            }
+                            ContextDescriptor timeContext = (ContextDescriptor)timeComponent;
+                            String timeAttributeName = od.getTimeAttribute().getAttributeName();
+                            if (!timeContext.getComponentFields().containsKey(timeAttributeName)){
+                                throw new OPTASWizardException(JAMS.i18n("Error_during_objective_configuration:Context_%1_does_not_contain_time_attribute!").replace("%1", timeContext.getInstanceName()));
+                            }
+                            fields.get("time").linkToAttribute(timeContext, timeAttributeName, true);
+                        }
+                    }
+                }
+            }
+            //create a new component with the required attributes
+            if (!allreadyExisting) {
+                String originalName = name;
+                int counter = 1;
+                while (md.getComponentDescriptor(name)!=null){
+                    name = originalName + counter++;
+                }
+                od.setName(name);
+                ComponentDescriptor objectiveComponent = new ComponentDescriptor(name, UniversalEfficiencyCalculator.class);
+                
+                HashMap<String, ComponentField> fields = objectiveComponent.getComponentFields();
+                fields.get("measurementAttributeName").setValue("measurement");
+                fields.get("measurement").linkToAttribute(context, od.getMeasurementAttribute().getAttributeName(), true);
+
+                fields.get("simulationAttributeName").setValue("measurement");
+                fields.get("simulation").linkToAttribute(context, od.getMeasurementAttribute().getAttributeName(), true);
+
+                fields.get("e1").linkToAttribute(modelContext, name + "_e1");
+                fields.get("e2").linkToAttribute(modelContext, name + "_e2");
+                fields.get("le1").linkToAttribute(modelContext, name + "_le1");
+                fields.get("le2").linkToAttribute(modelContext, name + "_le2");
+                fields.get("ave").linkToAttribute(modelContext, name + "_ave");
+                fields.get("r2").linkToAttribute(modelContext, name + "_r2");
+                fields.get("bias").linkToAttribute(modelContext, name + "_bias");
+                fields.get("e1_normalized").linkToAttribute(modelContext, name + "_e1_normalized");
+                fields.get("e2_normalized").linkToAttribute(modelContext, name + "_e2_normalized");
+                fields.get("le1_normalized").linkToAttribute(modelContext, name + "_le1_normalized");
+                fields.get("le2_normalized").linkToAttribute(modelContext, name + "_le2_normalized");
+                fields.get("ave_normalized").linkToAttribute(modelContext, name + "_ave_normalized");
+                fields.get("r2_normalized").linkToAttribute(modelContext, name + "_r2_normalized");
+                fields.get("bias_normalized").linkToAttribute(modelContext, name + "_bias_normalized");
+                                
+                //apply filters if there are any
+                if (od.getTimeFilters().get().size() > 0) {
+                    String timeIntervalString = "";
+                    TimeInterval timeIntervals[] = od.getTimeFilters().toTimeIntervals(od.getModelTimeInterval());
+                    for (TimeInterval I : timeIntervals) {
+                        timeIntervalString += I.toString() + ";";
+                    }
+                    fields.get("timeInterval").setValue(timeIntervalString);
+                } else {
+                    //otherwise it is not necessary to set any interval.
+                    //then the whole period is used
+                }
+                if (od.getTimeAttribute() != null) {
+                    ComponentDescriptor timeComponent = md.getComponentDescriptor(od.getTimeAttribute().getParentName());
+                    if (timeComponent == null || !(timeComponent instanceof ContextDescriptor)) {
+                        throw new OPTASWizardException(JAMS.i18n("Error_during_objective_configuration:Componente_%1_is_not_a_context!").replace("%1", timeComponent.getInstanceName()));
+                    }
+                    ContextDescriptor timeContext = (ContextDescriptor) timeComponent;
+                    String timeAttributeName = od.getTimeAttribute().getAttributeName();
+                    if (!timeContext.getComponentFields().containsKey(timeAttributeName)) {
+                        throw new OPTASWizardException(JAMS.i18n("Error_during_objective_configuration:Context_%1_does_not_contain_time_attribute!").replace("%1", timeContext.getInstanceName()));
+                    }
+                    fields.get("time").linkToAttribute(timeContext, timeAttributeName, true);
+                }
+                ModelNode objectiveNode = new ModelNode(objectiveComponent);
+                objectiveNode.setType(ModelNode.COMPONENT_TYPE);
+                context.getNode().insert(objectiveNode, context.getNode().getChildCount()-1);
+            }
+        }
+    }
+    
     public OptimizerDescription addOptimizationContext() {
         try {
             ModelNode rootNode = md.getRootNode();

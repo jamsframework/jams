@@ -4,6 +4,7 @@
  */
 package optas.gui.wizard;
 
+import jams.JAMS;
 import jams.meta.ComponentField;
 import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
@@ -195,24 +196,25 @@ public class Optimization implements Serializable {
         if (optimizerContext == null)
             return false;
         if (!optimizerContext.getClazz().isAssignableFrom(SimpleOptimizationController.class)){
-            Logger.getGlobal().log(Level.WARNING, "There is allready an optimization component inside the model. But it is not a SimpleOptimizationController and cannot be used by the optimization wizard!");
+            Logger.getGlobal().log(Level.WARNING, JAMS.i18n("The_model_allready_contains_an_optimization_controller_which_is_not_compatible_with_SimpleOptimizationController!"));
             return false;
         }
         
         ComponentField classNameField = optimizerContext.getComponentFields().get("optimizationClassName");
         if (classNameField == null){
-            Logger.getGlobal().log(Level.WARNING, "There is allready an optimization component inside the model. But the optimizer class field is not existing.");            
+            Logger.getGlobal().log(Level.WARNING, JAMS.i18n("There_is_allready_an_optimization_component_inside_the_model._But_the_optimizer_class_field_is_not_existing."));
             return false;
         }
         String className = classNameField.getValue();
         if (className == null){
-            Logger.getGlobal().log(Level.WARNING, "There is allready an optimization component inside the model. But the optimizer class was not set. Using SCE instead!");            
+            Logger.getGlobal().log(Level.WARNING, JAMS.i18n("There_is_allready_an_optimization_component_in_the_model._But_the_optimizer_class_was_not_set._Using_SCE_instead!"));
             className = SCE.class.getCanonicalName();
         }
         Optimizer optimizer = OptimizerLibrary.getOptimizer(className);
         if (optimizer == null){
-            Logger.getGlobal().log(Level.WARNING, "Unable to load optimization component " + className + " .Please check your optimizer configuration!");                        
-            throw new OPTASWizardException("Unable to load optimization component " + className + " .Please check your optimizer configuration!");
+            String errorMsg = JAMS.i18n("Unable_to_load_optimization_component") + className + JAMS.i18n(".Please_check_your_optimizer_configuration!");
+            Logger.getGlobal().log(Level.WARNING, errorMsg);                        
+            throw new OPTASWizardException(errorMsg);
         }
         this.setOptimizerDescription(optimizer.getDescription());
         
@@ -239,7 +241,7 @@ public class Optimization implements Serializable {
         ComponentField startValuesField = optimizerContext.getComponentFields().get("startValues");
         
         if (parameterIDfield == null || rangesField == null){
-            Logger.getGlobal().log(Level.WARNING, "parameterIDs or boundaries were not found.");            
+            Logger.getGlobal().log(Level.WARNING, JAMS.i18n("The_optimization_controller_does_not_contain_either_parameter_ranges_or_parameter_ids!"));
             return false;
         }
         
@@ -250,7 +252,7 @@ public class Optimization implements Serializable {
 
             int n = parameterIDs.length;
             if (ranges.length != n) {
-                Logger.getGlobal().log(Level.SEVERE, "Error number of parameters does not fit number of boundaries. Setting default range of 0<1 for missing parameters!");
+                Logger.getGlobal().log(Level.SEVERE, JAMS.i18n("Error:_Number_of_parameters_is_not_equal_to_number_of_boundaries._Setting_default_range_of_0_1_for_missing_parameters!"));
                 if (ranges.length < n){
                     int k = ranges.length;
                     ranges = Arrays.copyOf(ranges, n);
@@ -276,10 +278,10 @@ public class Optimization implements Serializable {
                     ca = optimizerContext.getDynamicAttributes().get(parameterID);
                     optimizerContext.addStaticAttribute(parameterID, jams.data.Attribute.Double.class,"0.0");                    
                     if (ca == null){
-                        Logger.getGlobal().log(Level.SEVERE, "Parameter " + parameterID + " was not found in optimizerContext. Adding parameter and setting value to zero!");                        
+                        Logger.getGlobal().log(Level.SEVERE, JAMS.i18n("parameter") + " " + parameterID + JAMS.i18n("_was_not_found_in_optimizerContext._Adding_parameter_and_setting_value_to_zero!"));                        
                         ca = optimizerContext.getStaticAttributes().get(parameterID); 
                     }else{
-                        Logger.getGlobal().log(Level.SEVERE, "Parameter " + parameterID + " is not static in optimizer context. Adding static reference and setting value to zero!");
+                        Logger.getGlobal().log(Level.SEVERE, JAMS.i18n("parameter") + " " + parameterID + JAMS.i18n("_is_not_static_in_optimizer_context._Adding_static_reference_and_setting_value_to_zero!"));
                     }
                 }
                 Range range = null;
@@ -309,7 +311,7 @@ public class Optimization implements Serializable {
         }
         ComponentField objectiveField = optimizerContext.getComponentFields().get("effValue");
         if (objectiveField == null){
-            Logger.getGlobal().log(Level.SEVERE, "effValue field was not found! Stopping execution.");
+            Logger.getGlobal().log(Level.SEVERE, JAMS.i18n("Optimization_controller_does_not_contain_an_effValue_field!"));
             return false;
         }
         

@@ -61,6 +61,7 @@ public interface SystemProperties {
     String AUTO_PREPROCESSING = "preprocessing";
     String FLOAT_FORMAT = "floatformat";
     String RECENT_FILES = "recentfiles";
+    String RECENT_TIMESERIES_OF_OBJECTIVE_CONFIGURATION = "objectiveconfiguration_recent_timeseries";
     String MAX_RECENT_FILES = "maxrecentfiles";
     String MAX_LIB_CLASSES = "maxlibclasses";
 

@@ -52,7 +52,8 @@ import optas.optimizer.management.StringOptimizerParameter;
  * @author christian
  */
 public class OptimizerConfiguration extends JPanel {
-
+    final int TOTAL_WIDTH = 800;
+    final int TOTAL_HEIGHT = 550;
     OptimizerDescription availableOptimizer[] = null;
     Set<Parameter> availableParameters = null;
     Set<Objective> availableObjectives = null;
@@ -99,7 +100,7 @@ public class OptimizerConfiguration extends JPanel {
     
     JTable objectiveTable = new JTable() {
         {
-            setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            setAutoResizeMode(JTable.AUTO_RESIZE_OFF);            
         }
         @Override
         public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
@@ -122,7 +123,7 @@ public class OptimizerConfiguration extends JPanel {
         }
     };
     
-    Dimension prefSize = new Dimension(768, 768);
+    Dimension prefSize = new Dimension(TOTAL_WIDTH, TOTAL_HEIGHT);
     HashSet<ActionListener> listeners = new HashSet<ActionListener>();
 
 
@@ -136,7 +137,19 @@ public class OptimizerConfiguration extends JPanel {
         updateOptimizerPanel();
         
         parameterTable.setModel(new ParameterTableModel(optimizationScheme.getParameter(), optimizationScheme.getModelParameters()));
-        objectiveTable.setModel(new ObjectiveTableModel(optimizationScheme.getObjective(), optimizationScheme.getModelObjectives()));
+        parameterTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        parameterTable.getColumnModel().getColumn(1).setPreferredWidth(115);
+        parameterTable.getColumnModel().getColumn(2).setPreferredWidth(120);
+        parameterTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+        parameterTable.getColumnModel().getColumn(4).setPreferredWidth(50);
+        parameterTable.getColumnModel().getColumn(5).setPreferredWidth(50);
+        parameterTable.getTableHeader().setPreferredSize(new Dimension(parameterTable.getTableHeader().getPreferredSize().width,40));
+        parameterTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        objectiveTable.setModel(new ObjectiveTableModel(optimizationScheme.getObjective(), optimizationScheme.getModelObjectives()));        
+        objectiveTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        objectiveTable.getColumnModel().getColumn(1).setPreferredWidth(115);
+        objectiveTable.getColumnModel().getColumn(2).setPreferredWidth(120);
+        objectiveTable.getTableHeader().setPreferredSize(new Dimension(objectiveTable.getTableHeader().getPreferredSize().width,40));
     }
 
     public void addActionListener(ActionListener listener) {
@@ -173,18 +186,18 @@ public class OptimizerConfiguration extends JPanel {
         });
         activeOptimizer = availableOptimizer[0];
         optimizationScheme.setOptimizerDescription(activeOptimizer);
-        scrollPaneOptimizerSpecificationPanel.setPreferredSize(new Dimension(768, 200));
+        scrollPaneOptimizerSpecificationPanel.setPreferredSize(new Dimension(TOTAL_WIDTH, 200));
 
         //create parameter panel
         parameterConfigurationPanel = new JPanel(new GridBagLayout());       
         JScrollPane scrollPaneParameterConfiguration = new JScrollPane(parameterTable);
-        scrollPaneParameterConfiguration.setPreferredSize(new Dimension(440, 250));
+        scrollPaneParameterConfiguration.setPreferredSize(new Dimension(350, 250));
         scrollPaneParameterConfiguration.setBorder(BorderFactory.createTitledBorder(
                 JAMS.i18n("Parameter_Configuration")));
         
         objectiveConfigurationPanel = new JPanel(new GridBagLayout());
         JScrollPane scrollPaneObjectiveConfiguration = new JScrollPane(objectiveTable);
-        scrollPaneObjectiveConfiguration.setPreferredSize(new Dimension(440, 250));
+        scrollPaneObjectiveConfiguration.setPreferredSize(new Dimension(200, 250));
         scrollPaneObjectiveConfiguration.setBorder(BorderFactory.createTitledBorder(
                 JAMS.i18n("Objective_Configuration")));
                
@@ -195,19 +208,21 @@ public class OptimizerConfiguration extends JPanel {
                 .addComponent(selectOptimizer)
                 .addComponent(scrollPaneOptimizerSpecificationPanel)
                 .addGroup(mainLayout.createSequentialGroup()                
-                .addComponent(scrollPaneParameterConfiguration))
-                .addGroup(mainLayout.createSequentialGroup()                
+                .addComponent(scrollPaneParameterConfiguration)
                 .addComponent(scrollPaneObjectiveConfiguration)));
+                //.addGroup(mainLayout.createSequentialGroup()                
+                
 
         mainLayout.setVerticalGroup(mainLayout.createSequentialGroup()
                 .addComponent(selectOptimizer)
                 .addComponent(scrollPaneOptimizerSpecificationPanel)
                 .addGap(20)
                 .addGroup(mainLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                .addComponent(scrollPaneParameterConfiguration))
-                .addGap(20)
-                .addGroup(mainLayout.createParallelGroup(GroupLayout.Alignment.CENTER)                
+                .addComponent(scrollPaneParameterConfiguration)
                 .addComponent(scrollPaneObjectiveConfiguration)));
+                //.addGap(20)
+                //.addGroup(mainLayout.createParallelGroup(GroupLayout.Alignment.CENTER)                
+                
 
         this.revalidate();
     }
@@ -296,7 +311,7 @@ public class OptimizerConfiguration extends JPanel {
 
     class ParameterTableModel extends AbstractTableModel {
 
-        private String[] columnNames = new String[]{"selected", "name", "component", "lower bound", "upper bound", "start value"};
+        private String[] columnNames = new String[]{JAMS.i18n("selected"), JAMS.i18n("Name"), JAMS.i18n("component"), "<HTML>"+JAMS.i18n("lower_bound").replace(" ", "<br>")+"</HTML>", "<HTML>"+JAMS.i18n("upper_bound").replace(" ", "<br>")+"</HTML>", "<HTML>"+JAMS.i18n("start_value").replace(" ", "<br>")+"</HTML>"};
         private Parameter dataObjects[] = null;
 
         ParameterTableModel(Set<Parameter> selectedParameters, Set<Parameter> modelParameters) {           
@@ -395,7 +410,7 @@ public class OptimizerConfiguration extends JPanel {
     
     class ObjectiveTableModel extends AbstractTableModel {
 
-        private String[] columnNames = new String[]{"selected", "name", "component"};
+        private String[] columnNames = new String[]{JAMS.i18n("selected"), JAMS.i18n("Name"), JAMS.i18n("component")};
         private Objective dataObjects[] = null;
 
         ObjectiveTableModel(Set<Objective> selectedObjectives, Set<Objective> modelObjectives) {           

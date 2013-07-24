@@ -8,6 +8,7 @@ import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
+import java.text.DecimalFormat;
 import optas.gui.wizard.OPTASWizardException;
 import optas.gui.wizard.Objective;
 import optas.gui.wizard.Optimization;
@@ -45,8 +46,10 @@ public class SimpleOptimizationController extends OptimizationController {
                 Objective obj = new Objective(this.efficiencyNames[i]);
                 optimization.addObjective(obj);
             }
+            DecimalFormat df =   new DecimalFormat  ( "0000" );
+            
             for (int i = 0; i < this.n; i++) {
-                Parameter p = new Parameter("param_" + i);
+                Parameter p = new Parameter("param_" + df.format(i));
                 p.setLowerBound(this.lowBound[i]);
                 p.setUpperBound(this.upBound[i]);
                 double x0i[] = new double[x0.length];

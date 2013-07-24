@@ -37,7 +37,7 @@ public class JAMSLogger extends Observable implements Serializable {
 
     public void setBufferSize(int newBufferSize) {
         bufferSize = newBufferSize;
-        trimBuffer();
+        trimBuffer(); 
     }
 
     public int getBufferSize() {

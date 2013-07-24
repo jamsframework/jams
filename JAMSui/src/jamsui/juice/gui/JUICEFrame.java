@@ -53,6 +53,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.logging.Logger;
+import optas.gui.wizard.ObjectiveConfiguration;
 import optas.gui.wizard.OptimizerConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -71,7 +72,7 @@ public class JUICEFrame extends JFrame {
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
     private JMenu windowMenu, modelMenu, recentMenu;
-    private JMenuItem OptimizationWizardItem;
+    private JMenuItem OptimizationWizardItem, ObjectiveWizardItem;
     private JLabel statusLabel;
     private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Info_Log"));
     private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Error_Log"));
@@ -93,6 +94,7 @@ public class JUICEFrame extends JFrame {
     private Action copyModelGUIAction;
     private Action pasteModelGUIAction;
     private Action OptimizationWizardAction;
+    private Action ObjectiveWizardAction;
     private Action GenerateDocumentationGUIAction;
     private Action loadModelParamAction;
     private Action saveModelParamAction;
@@ -296,6 +298,34 @@ public class JUICEFrame extends JFrame {
                 } catch (Throwable ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(JUICEFrame.this, "Unable to run optimization wizard!\n" + ex.toString());
+                }
+            }
+        };
+        
+        ObjectiveWizardAction = new AbstractAction(JAMS.i18n("Configure_Efficiencies")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final ModelView view = getCurrentView();
+                try {
+                    
+                    ObjectiveConfiguration conf = new ObjectiveConfiguration(view.getModelDescriptor(),
+                            Logger.getLogger(JUICE.class.getName()));
+
+                    conf.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            ObjectiveConfiguration wizard = (ObjectiveConfiguration) e.getSource();
+                            ModelDescriptor newModelDoc = wizard.getModelDescriptor();
+                            view.setModelDescriptor(newModelDoc);
+                            view.loadModel(view.getModelDoc());
+
+                        }
+                    });
+
+                    conf.showDialog(JUICEFrame.this);
+                } catch (Throwable ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(JUICEFrame.this, "Unable to run objective wizard!\n" + ex.toString());
                 }
             }
         };
@@ -689,7 +719,10 @@ public class JUICEFrame extends JFrame {
         OptimizationWizardAction.setEnabled(false);
         modelMenu.add(OptimizationWizardItem);
 
-
+        ObjectiveWizardItem = new JMenuItem(ObjectiveWizardAction);
+        ObjectiveWizardAction.setEnabled(false);
+        modelMenu.add(ObjectiveWizardItem);
+                
         JMenuItem GenerateDocumentationItem = new JMenuItem(GenerateDocumentationGUIAction);
         GenerateDocumentationGUIAction.setEnabled(true);
         modelMenu.add(GenerateDocumentationItem);
@@ -769,6 +802,7 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.copyModelGUIAction.setEnabled(true);
                     JUICEFrame.this.saveAsModelAction.setEnabled(true);
                     JUICEFrame.this.OptimizationWizardAction.setEnabled(true);                    
+                    JUICEFrame.this.ObjectiveWizardAction.setEnabled(true);                    
                 } else {
                     JUICEFrame.this.modelMenu.setEnabled(false);
                     JUICEFrame.this.outputDSAction.setEnabled(false);
@@ -857,7 +891,7 @@ public class JUICEFrame extends JFrame {
                 mView.loadModel(path);
                 mView.getFrame().setVisible(true);
                 mView.getFrame().requestFocus();
-                JAMSTools.addToRecentFiles(JUICE.getJamsProperties(), path);
+                JAMSTools.addToRecentFiles(JUICE.getJamsProperties(), SystemProperties.RECENT_FILES, path);
                 updateRecentMenu();
             }
         });
@@ -976,7 +1010,7 @@ public class JUICEFrame extends JFrame {
 
     private void updateRecentMenu() {
         recentMenu.removeAll();
-        String[] recentFiles = JAMSTools.getRecentFiles(JUICE.getJamsProperties());
+        String[] recentFiles = JAMSTools.getRecentFiles(JUICE.getJamsProperties(), SystemProperties.RECENT_FILES);
         for (String fileName : recentFiles) {
             Action openAction = new AbstractAction(fileName) {
                 @Override

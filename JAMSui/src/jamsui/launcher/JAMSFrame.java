@@ -166,7 +166,7 @@ public class JAMSFrame extends JAMSLauncher {
         explorerAction.setEnabled(true);
         getRunModelAction().setEnabled(true);
 
-        JAMSTools.addToRecentFiles(getProperties(), fileName);
+        JAMSTools.addToRecentFiles(getProperties(), SystemProperties.RECENT_FILES, fileName);
         updateRecentMenu();
 
         //GUIHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
@@ -779,7 +779,7 @@ public class JAMSFrame extends JAMSLauncher {
 
     private void updateRecentMenu() {
         recentMenu.removeAll();
-        String[] recentFiles = JAMSTools.getRecentFiles(getProperties());
+        String[] recentFiles = JAMSTools.getRecentFiles(getProperties(), SystemProperties.RECENT_FILES);
         for (String fileName : recentFiles) {
             Action openAction = new AbstractAction(fileName) {
                 @Override

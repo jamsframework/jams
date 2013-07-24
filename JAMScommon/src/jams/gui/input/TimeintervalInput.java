@@ -143,16 +143,30 @@ public class TimeintervalInput extends JPanel implements InputComponent {
     }
 
     public String getValue() {
+        Attribute.TimeInterval ti = getTimeInterval();
+        if (ti != null)
+            return ti.toString();
+        else
+            return null;
+    }
+
+    public Attribute.TimeInterval getTimeInterval() {
         Attribute.TimeInterval ti = new JAMSTimeInterval();
         ti.setStart(startDate.getCalendarValue());
         ti.setEnd(endDate.getCalendarValue());
-        ti.setTimeUnit(fieldMap.get(timeUnit.getSelectedIndex()));
-        ti.setTimeUnitCount(Integer.parseInt(tuCount.getText()));
+        if (timeUnit.getSelectedIndex()!=-1){
+            ti.setTimeUnit(fieldMap.get(timeUnit.getSelectedIndex()));        
+        }
+        if (tuCount.getText().compareTo("")!=0)
+            ti.setTimeUnitCount(Integer.parseInt(tuCount.getText()));
+        if (ti.getStart()==null)
+            return null;
+        if (ti.getEnd()==null)
+            return null;
         if (!ti.getStart().before(ti.getEnd())) {
             return null;
-        } else {
-            return ti.toString();
         }
+        return ti;
     }
 
     public void setValue(String value) {

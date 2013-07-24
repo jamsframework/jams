@@ -9,6 +9,8 @@ import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
 import jams.data.JAMSData;
 import jams.model.Context;
+import java.util.GregorianCalendar;
+import sun.util.calendar.Gregorian;
 
 /**
  *
@@ -98,7 +100,7 @@ public class FilterFunctions {
      * @param c
      * @return
      */
-    public static int day(Attribute.Calendar c){        
+    public static int day(Attribute.Calendar c){    
         return c.get(Attribute.Calendar.DAY_OF_MONTH);
     }
     
@@ -108,7 +110,7 @@ public class FilterFunctions {
      * @return
      */
     public static int month(Attribute.Calendar c){        
-        return c.get(Attribute.Calendar.DAY_OF_MONTH);
+        return c.get(Attribute.Calendar.MONTH)+1;
     }
     
     /**
@@ -117,7 +119,7 @@ public class FilterFunctions {
      * @return
      */
     public static int year(Attribute.Calendar c){        
-        return c.get(Attribute.Calendar.DAY_OF_MONTH);
+        return c.get(Attribute.Calendar.YEAR);
     }
     
     /**
@@ -145,7 +147,7 @@ public class FilterFunctions {
      * @return
      */
     public static Object getAttribute(Context context, String name){        
-        return getValue(context.getAttributeMap().get(name));
+        return getValue(context.getAttributeMap().get(name)); 
     }
     
     /**
@@ -205,4 +207,5 @@ public class FilterFunctions {
         }
         return context;
     }
+
 }

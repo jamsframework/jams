@@ -5,6 +5,7 @@
 
 package optas.hydro.data;
 
+import jams.JAMS;
 import jams.data.Attribute.TimeInterval;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +61,7 @@ public class TimeFilterFactory {
 
         @Override
         public String toString(){
-            return "Yearly filter, years [" + Arrays.toString(getYears()) + "]";
+            return JAMS.i18n("Years") + ": " + Arrays.toString(getYears());
         }
     }
 
@@ -92,7 +93,7 @@ public class TimeFilterFactory {
         }
         @Override
         public String toString(){
-            return "Monthly filter, months [" + Arrays.toString(getMonths()) + "]";
+            return JAMS.i18n("Months") +": " + Arrays.toString(getMonths());
         }
     }
 
@@ -102,8 +103,19 @@ public class TimeFilterFactory {
         private RangeTimeFilter(TimeInterval range){
             this.range = range;
         }
+        
+        public TimeInterval getRange(){
+            return range;
+        }
+        @Override
         public boolean isFiltered(Date date) {
-            return !(date.after(range.getStart().getTime()) && date.before(range.getEnd().getTime()));
+            return date.before(range.getStart().getTime()) || date.after(range.getEnd().getTime());
+        }
+        
+        @Override
+        public String toString(){
+            String s = JAMS.i18n("from") + " " + range.getStart().toString() + " " + JAMS.i18n("to") + " " + range.getEnd().toString();
+            return s;
         }
     }
 
@@ -132,6 +144,12 @@ public class TimeFilterFactory {
             int day = date.getDay();
             return day >= startDay && day <= endDay;
         }
+        
+        @Override
+        public String toString(){
+            String s = JAMS.i18n("from_day") + " " + startDay + " " + JAMS.i18n("to") + " " + endDay;            
+            return s;
+        }
     }
 
     static public class CombinedTimeFilter extends TimeFilter{        
@@ -140,6 +158,7 @@ public class TimeFilterFactory {
         CombinedTimeFilter(TimeFilter[] filter){
             this.filter = filter;            
         }
+        @Override
         public boolean isFiltered(Date date) {
             boolean isFiltered = true;
             for (TimeFilter f : filter){
@@ -155,6 +174,15 @@ public class TimeFilterFactory {
             }
 
             return isFiltered;
+        }
+        
+        @Override
+        public String toString(){
+            String s = JAMS.i18n("combined_filter") + "\n";
+            for (TimeFilter f : filter){
+                s += f + "\n";
+            }
+            return s;
         }
     }
 
@@ -206,6 +234,14 @@ public class TimeFilterFactory {
             }
         }
 
+        public Date getFirstDate(){
+            return map.firstKey();
+        }
+        
+        public Date getLastDate(){
+            return map.lastKey();
+        }
+        
         public boolean isFiltered(Date date) {
             return map.floorEntry(date).getValue();
         }
@@ -247,7 +283,7 @@ public class TimeFilterFactory {
 
         @Override
         public String toString(){
-            return "Hydrograph event filter with window-size " + windowSize + " filtered for " + type;
+            return JAMS.i18n("Hydrograph_event_filter_with_window_size:") + windowSize + " " + JAMS.i18n("filtered_for:") + type;
         }
     }
 
@@ -299,7 +335,7 @@ public class TimeFilterFactory {
         }
         @Override
         public String toString(){
-            return "Baseflowfilter of "+this.m.name+"("+this.method+"t=" + this.threshold + ")";
+            return JAMS.i18n("Baseflowfilter_of")+ " " + this.m.name+"("+this.method+"t=" + this.threshold + ")";
         }
     }
     

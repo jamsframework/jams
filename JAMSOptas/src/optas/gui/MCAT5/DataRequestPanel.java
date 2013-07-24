@@ -28,7 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import optas.gui.MCAT5.MCAT5Plot.NoDataException;
 import optas.gui.MCAT5.MCAT5Plot.SimpleRequest;
-import optas.gui.ObjectiveConstructorDialog;
+import optas.gui.wizard.ObjectiveConstructorDialog;
 import optas.hydro.data.DataCollection;
 import optas.hydro.data.DataSet;
 import optas.hydro.data.Efficiency;
