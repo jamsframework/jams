@@ -319,7 +319,7 @@ public class ObjectiveConfiguration extends JPanel{
         }        
         if (tsr != null) {
             //TODO errorhandling!!!!                    
-            TimeSerie ts = tsr.getData(-1);
+            TimeSerie ts = tsr.getData(0);
             modelTimeIntervalInput.setValue(ts.getTimeDomain().getValue());
             if (ts != null) {
                 ObjectiveConfiguration.this.hydroChart.setHydrograph(ts);                

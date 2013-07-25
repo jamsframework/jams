@@ -213,11 +213,25 @@ public class TSDataReader{
         store = new GenericDataReader(this.dataFileName.getAbsolutePath(), false, headerLineCount+1);
 
         ArrayList<Double> doubleArray = new ArrayList<Double>();
-
+        int firstColumn = -1;
         while(store.hasNext()){
             JAMSTableDataArray tableData = store.getNext();            
-            try{
-                doubleArray.add(Double.parseDouble(tableData.getValues()[column+2]));
+            try{                   
+                if (firstColumn == -1){
+                    boolean didWork = false;                    
+                    while(!didWork){
+                        try{
+                            doubleArray.add(Double.parseDouble(tableData.getValues()[firstColumn+column]));
+                            didWork = true;
+                        }catch(Throwable e){
+                            firstColumn++;
+                            if (firstColumn >= tableData.getValues().length)
+                                return null;
+                        }
+                    }
+                }else{
+                    doubleArray.add(Double.parseDouble(tableData.getValues()[firstColumn+column]));
+                }
             }catch(NumberFormatException nfe){
                 nfe.printStackTrace();
             }catch(ArrayIndexOutOfBoundsException aioobe){
