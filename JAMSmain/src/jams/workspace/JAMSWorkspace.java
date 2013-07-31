@@ -105,6 +105,7 @@ public class JAMSWorkspace implements Workspace {
         this.inputDataStores.clear();
         this.outputDataStores.clear();
 
+        
         this.checkValidity(readonly);
         this.loadConfig();
         this.updateDataStores();
@@ -153,6 +154,14 @@ public class JAMSWorkspace implements Workspace {
             }
         } catch (IOException ioe) {
             runtime.handle(ioe);
+        }
+
+        if (this.isPersistent()) {
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
+        } else {
+            this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
         }
     }
 
@@ -252,15 +261,7 @@ public class JAMSWorkspace implements Workspace {
         this.localInputDirectory = localInDir;
         this.localDumpDirectory = localDumpDir;
         this.tmpDirectory = tmpDir;
-        this.explorerDirectory = explorerDir;
-
-        if (this.isPersistent()) {
-            Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-            this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
-        } else {
-            this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
-        }
+        this.explorerDirectory = explorerDir;       
     }
 
     private String getStoreID(File file) {
