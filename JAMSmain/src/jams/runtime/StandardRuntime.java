@@ -129,7 +129,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         // start the loading process
         long start = System.currentTimeMillis();
 
-        initLogging();
+        //initLogging();
         // load the model        
         try {
 
