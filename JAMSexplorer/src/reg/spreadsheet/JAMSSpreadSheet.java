@@ -737,7 +737,7 @@ public class JAMSSpreadSheet extends JPanel {
     public void setOutputDSDir(File outputDSDir) {
         this.outputDSDir = outputDSDir;
     }
-//TODO: this function should not be applied. Instead it is much better to do this rounding during rendering of the Spreadsheet
+
     private void formatDoubleArray(double[] rowBuffer) {
         // shorten double values to four decimal digits
         for (int i = 0; i < rowBuffer.length; i++) {
@@ -889,7 +889,7 @@ public class JAMSSpreadSheet extends JPanel {
 
             rowBuffer = new double[colNumber];
             for (i = 1; i < rowData.length; i++) {
-                if ((rowData[i] instanceof DoubleValue) && rowData[i].getDouble() != JAMS.getMissingDataValue()) {
+                if ((rowData[i] instanceof DoubleValue) && !rowData[i].getString().equals(store.getMissingDataValue())) {
                     rowBuffer[i - 1] = ((DoubleValue) rowData[i]).getDouble();
                 } else {
                     rowBuffer[i - 1] = Double.NaN;
