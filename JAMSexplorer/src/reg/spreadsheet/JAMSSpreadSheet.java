@@ -889,7 +889,7 @@ public class JAMSSpreadSheet extends JPanel {
 
             rowBuffer = new double[colNumber];
             for (i = 1; i < rowData.length; i++) {
-                if ((rowData[i] instanceof DoubleValue) && !rowData[i].getString().equals(store.getMissingDataValue())) {
+                if ((rowData[i] instanceof DoubleValue) && rowData[i].getDouble() != JAMS.getMissingDataValue()) {
                     rowBuffer[i - 1] = ((DoubleValue) rowData[i]).getDouble();
                 } else {
                     rowBuffer[i - 1] = Double.NaN;
