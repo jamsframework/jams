@@ -22,6 +22,7 @@
  */
 package jams.workspace.dsproc;
 
+import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.io.BufferedFileReader;
 import java.io.File;
@@ -761,6 +762,10 @@ public class DataStoreProcessor {
                 }
                 if (selected[i]) {
                     cols[j] = Double.parseDouble(token);
+                    //TODO: review this decision .. 
+                    if (cols[j] == JAMS.getMissingDataValue()){
+                        cols[j] = Double.NaN;
+                    }
                     j++;
                 }
             }
