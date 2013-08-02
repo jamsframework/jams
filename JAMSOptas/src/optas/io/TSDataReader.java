@@ -31,7 +31,7 @@ import jams.io.GenericDataReader;
 import jams.io.JAMSTableDataArray;
 import jams.io.JAMSTableDataStore;
 import java.util.ArrayList;
-import javax.imageio.IIOException;
+import optas.gui.wizard.OPTASWizardException;
 import optas.hydro.data.DataSet.MismatchException;
 import optas.hydro.data.TimeSerie;
 
@@ -208,7 +208,7 @@ public class TSDataReader{
         endTime = parseJ2KTime(end);
     }
 
-    public TimeSerie getData(int column){
+    public TimeSerie getData(int column) throws OPTASWizardException{
 
         store = new GenericDataReader(this.dataFileName.getAbsolutePath(), false, headerLineCount+1);
 
@@ -225,8 +225,9 @@ public class TSDataReader{
                             didWork = true;
                         }catch(Throwable e){
                             firstColumn++;
-                            if (firstColumn >= tableData.getValues().length)
-                                return null;
+                            if (firstColumn >= tableData.getValues().length){
+                                throw new OPTASWizardException("J2K input file cannot be read! Invalid format!");
+                            }
                         }
                     }
                 }else{
@@ -265,11 +266,10 @@ public class TSDataReader{
             t = new TimeSerie(data, interval, "observation", null);
         }catch(MismatchException m){
             m.printStackTrace();
+            throw new OPTASWizardException("J2K input file is not valid!\n" + m.toString());            
         }
         store.close();
         return t;
-
-
     }
 
     private static Attribute.Calendar parseJ2KTime(String timeString) {

@@ -270,7 +270,8 @@ public class HydroAnalysisFrame extends JFrame {
                             break;
                         }
                     }
-                    chart.setHydrograph(reader.getData(index));
+                    //TODO
+                    //chart.setHydrograph(reader.getData(index));
                 }
             }
         });

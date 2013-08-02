@@ -319,7 +319,12 @@ public class ObjectiveConfiguration extends JPanel{
         }        
         if (tsr != null) {
             //TODO errorhandling!!!!                    
-            TimeSerie ts = tsr.getData(0);
+            TimeSerie ts = null;
+            try{
+                ts = tsr.getData(0);
+            }catch(OPTASWizardException owe){
+                JOptionPane.showMessageDialog(ObjectiveConfiguration.this.dialog, owe.toString());
+            }
             modelTimeIntervalInput.setValue(ts.getTimeDomain().getValue());
             if (ts != null) {
                 ObjectiveConfiguration.this.hydroChart.setHydrograph(ts);                

@@ -28,93 +28,93 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description",
     defaultValue="unknown")
-    public Attribute.String measurementAttributeName;
+    public Attribute.String[] measurementAttributeName;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
     description = "file name of optimization process description")
-    public Attribute.Double measurement;
+    public Attribute.Double[] measurement;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description",
     defaultValue="unknown")
-    public Attribute.String simulationAttributeName;
+    public Attribute.String[] simulationAttributeName;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
     description = "file name of optimization process description")
-    public Attribute.Double simulation;
+    public Attribute.Double[] simulation;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double e1;
+    public Attribute.Double[] e1;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double e2;
+    public Attribute.Double[] e2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double le1;
+    public Attribute.Double[] le1;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double le2;
+    public Attribute.Double[] le2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double ave;
+    public Attribute.Double[] ave;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double r2;
+    public Attribute.Double[] r2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double bias;
+    public Attribute.Double[] bias;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double e1_normalized;
+    public Attribute.Double[] e1_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double e2_normalized;
+    public Attribute.Double[] e2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double le1_normalized;
+    public Attribute.Double[] le1_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double le2_normalized;
+    public Attribute.Double[] le2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double ave_normalized;
+    public Attribute.Double[] ave_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double r2_normalized;
+    public Attribute.Double[] r2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
-    public Attribute.Double bias_normalized;
+    public Attribute.Double[] bias_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
@@ -133,7 +133,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
         "Root Mean Square Error", "Nash Sutcliffe (e1)", "Nash Sutcliffe (e2)",
         "log Nash Sutcliffe (le1)", "log Nash Sutcliffe (le2)", "Average Volume Error", "r2", "relative bias"};
 
-    ArrayList<Double> measurementList, simulationList;
+    ArrayList<Double> measurementList[], simulationList[];
     ArrayList<TimeInterval> timeIntervalList;
     EfficiencyCalculator calcE1 = new NashSutcliffe(1.0),
                          calcE2 = new NashSutcliffe(2.0),
@@ -143,13 +143,22 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
                          calcR2 = new CorrelationError(),
                          calcPBias = new VolumeError(VolumeErrorType.Relative);
 
+    int m = 0;
     boolean firstIteration = true;
     HashSet<Long> timeStepCache = new HashSet<Long>();
 
     @Override
     public void init(){
-        measurementList = new ArrayList<Double>();
-        simulationList  = new ArrayList<Double>();
+        if (measurement.length != simulation.length){
+            getModel().getRuntime().sendHalt("Error: Number of measurement and simulation attributes in " + this.getInstanceName() + " does not fit!");
+        }
+        m = measurement.length;
+        measurementList = new ArrayList[m];
+        simulationList  = new ArrayList[m];
+        for (int i=0;i<m;i++){
+            measurementList[i] = new ArrayList<Double>();
+            simulationList[i] = new ArrayList<Double>();
+        }
 
         timeIntervalList = new ArrayList<Attribute.TimeInterval>();
         StringTokenizer tok = new StringTokenizer(timeInterval.getValue(),";");
@@ -163,9 +172,11 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     }
 
     private void considerData(){
-        if (measurement.getValue() != JAMS.getMissingDataValue()){
-            measurementList.add(measurement.getValue());
-            simulationList.add(simulation.getValue());
+        for (int i = 0; i < m; i++) {
+            if (measurement[i].getValue() != JAMS.getMissingDataValue()) {
+                measurementList[i].add(measurement[i].getValue());
+                simulationList[i].add(simulation[i].getValue());
+            }
         }
     }
     @Override
@@ -204,80 +215,90 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     public void cleanup(){
         firstIteration = false;
 
-        double m[] = new double[measurementList.size()],
-               s[] = new double[simulationList.size()];
-        for (int i=0;i<measurementList.size();i++){
-            m[i] = measurementList.get(i);
-            s[i] = simulationList.get(i);
+        this.getModel().getRuntime().println("--------------------------------------------------------");
+        this.getModel().getRuntime().println("*******UniversalEfficiencyCalculator:" + this.getInstanceName());        
+        this.getModel().getRuntime().println("*******Timesteps  :" + this.timeIntervalList.size());
+        for (int i = 0; i < Math.min(5, timeIntervalList.size()); i++) {
+                this.getModel().getRuntime().println("*******(" + i + ")        :" + this.timeIntervalList.get(i));
+            }
+            if (timeIntervalList.size() > 5) {
+                this.getModel().getRuntime().println("********          :...");
+            }
+        for (int k=0;k<m;k++){
+            double m[] = new double[measurementList[k].size()],
+                    s[] = new double[simulationList[k].size()];
+            for (int i = 0; i < measurementList[k].size(); i++) {
+                m[i] = measurementList[k].get(i);
+                s[i] = simulationList[k].get(i);
+            }
+            double value = 0;
+
+            this.e1[k].setValue(calcE1.calc(m, s));
+            value = calcE1.calcNormative(m, s);
+            if (Double.isNaN(value)) {
+                this.e1_normalized[k].setValue(Double.MAX_VALUE);
+            } else {
+                this.e1_normalized[k].setValue(value);
+            }
+
+            this.e2[k].setValue(calcE2.calc(m, s));
+            value = calcE2.calcNormative(m, s);
+            if (Double.isNaN(value)) {
+                this.e2_normalized[k].setValue(Double.MAX_VALUE);
+            } else {
+                this.e2_normalized[k].setValue(value);
+            }
+
+            this.le1[k].setValue(calcLe1.calc(m, s));
+            value = calcLe1.calcNormative(m, s);
+            if (Double.isNaN(value) || Double.isInfinite(value)) {
+                this.le1_normalized[k].setValue(Double.MAX_VALUE);
+            } else {
+                this.le1_normalized[k].setValue(value);
+            }
+
+            this.le2[k].setValue(calcLe2.calc(m, s));
+            value = calcLe2.calcNormative(m, s);
+            if (Double.isNaN(value) || Double.isInfinite(value)) {
+                this.le2_normalized[k].setValue(Double.MAX_VALUE);
+            } else {
+                this.le2_normalized[k].setValue(value);
+            }
+
+            this.ave[k].setValue(calcAve.calc(m, s));
+            value = calcAve.calcNormative(m, s);
+            if (Double.isNaN(value) || Double.isInfinite(value)) {
+                this.ave_normalized[k].setValue(Double.MAX_VALUE);
+            } else {
+                this.ave_normalized[k].setValue(value);
+            }
+
+            this.r2[k].setValue(calcR2.calc(m, s));
+            value = calcR2.calcNormative(m, s);
+            if (Double.isNaN(value) || Double.isInfinite(value)) {
+                this.r2_normalized[k].setValue(Double.MAX_VALUE);
+            } else {
+                this.r2_normalized[k].setValue(value);
+            }
+
+            this.bias[k].setValue(calcPBias.calc(m, s));
+            value = calcPBias.calcNormative(m, s);
+            if (Double.isNaN(value) || Double.isInfinite(value)) {
+                this.bias_normalized[k].setValue(Double.MAX_VALUE);
+            } else {
+                this.bias_normalized[k].setValue(value);
+            }
+            
+            this.getModel().getRuntime().println("*******Measurement:" + this.measurementAttributeName);
+            this.getModel().getRuntime().println("*******Simulation :" + this.simulationAttributeName);
+            this.getModel().getRuntime().println("*******E1:    " + round(this.e1[k].getValue()) + "  (" + round(this.e1_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******E2:    " + round(this.e2[k].getValue()) + "  (" + round(this.e2_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******le1:   " + round(this.le1[k].getValue()) + "  (" + round(this.le1_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******le2:   " + round(this.le2[k].getValue()) + "  (" + round(this.le2_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******AVE:   " + round(this.ave[k].getValue()) + "  (" + round(this.ave_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******R2:    " + round(this.r2[k].getValue()) + "  (" + round(this.r2_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******Bias:  " + round(this.bias[k].getValue()) + "  (" + round(this.bias_normalized[k].getValue()) + ")");
         }
-        double value=0;
-
-        this.e1.setValue(calcE1.calc(m, s));
-        value = calcE1.calcNormative(m, s);
-        if (Double.isNaN(value))
-            this.e1_normalized.setValue(Double.MAX_VALUE);
-        else
-            this.e1_normalized.setValue(value);
-
-        this.e2.setValue(calcE2.calc(m, s));
-        value = calcE2.calcNormative(m, s);
-        if (Double.isNaN(value))
-            this.e2_normalized.setValue(Double.MAX_VALUE);
-        else
-            this.e2_normalized.setValue(value);
-
-        this.le1.setValue(calcLe1.calc(m, s));
-        value = calcLe1.calcNormative(m, s);
-        if (Double.isNaN(value) || Double.isInfinite(value))
-            this.le1_normalized.setValue(Double.MAX_VALUE);
-        else
-            this.le1_normalized.setValue(value);
-
-        this.le2.setValue(calcLe2.calc(m, s));
-        value = calcLe2.calcNormative(m, s);
-        if (Double.isNaN(value) || Double.isInfinite(value))
-            this.le2_normalized.setValue(Double.MAX_VALUE);
-        else
-            this.le2_normalized.setValue(value);
-
-        this.ave.setValue(calcAve.calc(m, s));
-        value = calcAve.calcNormative(m, s);
-        if (Double.isNaN(value) || Double.isInfinite(value))
-            this.ave_normalized.setValue(Double.MAX_VALUE);
-        else
-            this.ave_normalized.setValue(value);
-
-        this.r2.setValue(calcR2.calc(m, s));
-        value = calcR2.calcNormative(m, s);
-        if (Double.isNaN(value) || Double.isInfinite(value))
-            this.r2_normalized.setValue(Double.MAX_VALUE);
-        else
-            this.r2_normalized.setValue(value);
-
-        this.bias.setValue(calcPBias.calc(m, s));
-        value = calcPBias.calcNormative(m, s);
-        if (Double.isNaN(value) || Double.isInfinite(value))
-            this.bias_normalized.setValue(Double.MAX_VALUE);
-        else
-            this.bias_normalized.setValue(value);
-        
-        this.getModel().getRuntime().println("------------------------------------");
-        this.getModel().getRuntime().println("*******UniversalEfficiencyCalculator");        
-        this.getModel().getRuntime().println("*******Measurement:"+this.measurementAttributeName);
-        this.getModel().getRuntime().println("*******Simulation :"+this.simulationAttributeName);
-        this.getModel().getRuntime().println("*******Timesteps  :"+this.timeIntervalList.size());
-        for (int i=0;i<Math.min(5, timeIntervalList.size());i++){
-            this.getModel().getRuntime().println("*******("+i+")        :"+this.timeIntervalList.get(i));
-        }
-        if (timeIntervalList.size()>5){
-            this.getModel().getRuntime().println("********          :...");
-        }
-        this.getModel().getRuntime().println("*******Method     "+"E1    "+round(this.e1.getValue())  + "  ("+ round(this.e1_normalized.getValue()) + ")");
-        this.getModel().getRuntime().println("*******Method     "+"E2    "+round(this.e2.getValue())  + "  ("+round(this.e2_normalized.getValue()) + ")");
-        this.getModel().getRuntime().println("*******Method     "+"le1   "+round(this.le1.getValue()) + "  ("+round(this.le1_normalized.getValue()) + ")");
-        this.getModel().getRuntime().println("*******Method     "+"le2   "+round(this.le2.getValue()) + "  ("+round(this.le2_normalized.getValue()) + ")");
-        this.getModel().getRuntime().println("*******Method     "+"AVE   "+round(this.ave.getValue()) + "  ("+round(this.ave_normalized.getValue()) + ")");
-        this.getModel().getRuntime().println("*******Method     "+"R2    "+round(this.r2.getValue())  + "  ("+round(this.r2_normalized.getValue()) + ")");
-        this.getModel().getRuntime().println("*******Method     "+"Bias  "+round(this.bias.getValue())+ "  ("+round(this.bias_normalized.getValue()) + ")");
+        this.getModel().getRuntime().println("--------------------------------------------------------");
     }
 }
