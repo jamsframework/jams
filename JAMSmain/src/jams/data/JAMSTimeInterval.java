@@ -24,6 +24,8 @@ package jams.data;
 import java.util.Calendar;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -62,10 +64,9 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
             timeUnit = Integer.parseInt(unit);
             timeUnitCount = Integer.parseInt(count);
         } catch (NoSuchElementException nsee) {
-            System.out.println("Unable to parse time interval " + value);
-            
+            Logger.getLogger(JAMSTimeInterval.class.getName()).log(Level.WARNING, "Unable to parse time interval " + value, nsee);            
         } catch (Exception e){
-            e.printStackTrace();
+            Logger.getLogger(JAMSTimeInterval.class.getName()).log(Level.WARNING, "Errror while setting time interval " + value, e);
         }
     }
 

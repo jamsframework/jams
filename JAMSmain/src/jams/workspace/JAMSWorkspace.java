@@ -104,10 +104,9 @@ public class JAMSWorkspace implements Workspace {
         this.contextStores.clear();
         this.inputDataStores.clear();
         this.outputDataStores.clear();
-
         
-        this.checkValidity(readonly);
         this.loadConfig();
+        this.checkValidity(readonly);
         this.updateDataStores();
 
         Set<DataStore> rmCandidates = new HashSet<DataStore>();
@@ -144,7 +143,7 @@ public class JAMSWorkspace implements Workspace {
             properties.setProperty("persistent", "false");
             properties.setProperty("defaultmodel", "model.jam");
 
-            File file = new File(directory.getPath() + File.separator + CONFIG_FILE_NAME);
+            File file = new File(directory, CONFIG_FILE_NAME);
             if (file.exists()) {
                 BufferedInputStream is = new BufferedInputStream(new FileInputStream(file));
                 properties.load(is);
@@ -154,14 +153,6 @@ public class JAMSWorkspace implements Workspace {
             }
         } catch (IOException ioe) {
             runtime.handle(ioe);
-        }
-
-        if (this.isPersistent()) {
-            Calendar cal = Calendar.getInstance();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-            this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
-        } else {
-            this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
         }
     }
 
@@ -210,7 +201,7 @@ public class JAMSWorkspace implements Workspace {
      * missing directories will be created), otherwise not
      * @throws jams.workspace.JAMSWorkspace.InvalidWorkspaceException
      */
-    public void checkValidity(boolean readonly) throws InvalidWorkspaceException {
+    private void checkValidity(boolean readonly) throws InvalidWorkspaceException {
 
         if (!directory.isDirectory()) {
             throw new InvalidWorkspaceException(JAMS.i18n("Error_during_model_setup:_")
@@ -262,6 +253,14 @@ public class JAMSWorkspace implements Workspace {
         this.localDumpDirectory = localDumpDir;
         this.tmpDirectory = tmpDir;
         this.explorerDirectory = explorerDir;       
+        
+        if (this.isPersistent()) {
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            this.outputDataDirectory = new File(this.outputDirectory, sdf.format(cal.getTime()));
+        } else {
+            this.outputDataDirectory = new File(this.outputDirectory, "current");
+        }                
     }
 
     private String getStoreID(File file) {

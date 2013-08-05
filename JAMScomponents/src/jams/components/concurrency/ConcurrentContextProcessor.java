@@ -173,6 +173,11 @@ public class ConcurrentContextProcessor implements MetaProcessor {
         while (nodeEnum.hasMoreElements()) {
             ModelNode n = nodeEnum.nextElement();
             ComponentDescriptor cd = (ComponentDescriptor) n.getUserObject();
+//            for (ComponentField cf : cd.getComponentFields().values()) {
+//                if (cf.getAccessType() != ComponentField.READ_ACCESS && !cf.getContext().getInstanceName().equals(context.getInstanceName())) {
+//                    
+//                }
+//            }
             if (excludeComponents.contains(cd.getInstanceName())) {
                 serialNodeList.add(n);
             }

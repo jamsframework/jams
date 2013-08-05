@@ -9,8 +9,6 @@ import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
 import jams.data.JAMSData;
 import jams.model.Context;
-import java.util.GregorianCalendar;
-import sun.util.calendar.Gregorian;
 
 /**
  *

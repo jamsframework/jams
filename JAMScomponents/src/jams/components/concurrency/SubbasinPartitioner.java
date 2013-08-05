@@ -22,7 +22,6 @@
 package jams.components.concurrency;
 
 import jams.data.*;
-import jams.data.Attribute.Entity;
 import jams.data.Attribute.Entity.NoSuchAttributeException;
 import jams.model.*;
 import java.util.ArrayList;

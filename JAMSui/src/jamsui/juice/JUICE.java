@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.*;
 import javax.swing.UIManager;
 import jams.JAMS;
+import jams.JAMSException;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.tools.JAMSTools;
@@ -259,14 +260,14 @@ public class JUICE {
                     if (record.getLevel().intValue() > Level.WARNING.intValue()) {
 //                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), record.getMessage(), JAMS.i18n("Error"));
                     }
-                    String msg = record.getMessage();
-                    String line[] = msg.split("\n");
+                    String line[] = record.getMessage().split("\n");
                     String level = JAMS.i18n(record.getLevel().toString());
-                    msg = level + ": " + line[0];
+                    String msg = level + ": " + line[0];
                     for (int i = 1; i < line.length; i++) {
                         msg += "\n" + String.format("%0" + level.length() + "d", 0).replace("0"," ") + line[i];
                     }
-                    if (record.getLevel() == Level.SEVERE && record.getThrown() != null) {
+                    if (record.getLevel() == Level.SEVERE && record.getThrown() != null && !(record.getThrown() instanceof JAMSException)) {
+                        msg += "\n" + record.getThrown().toString();
                         msg += "\n" + StringTools.getStackTraceString(record.getThrown().getStackTrace());
                     }
                     notificationDlg.addNotification(msg + "\n\n");

@@ -60,14 +60,6 @@ public interface Workspace extends Serializable {
     String SPREADSHEET_FILE_ENDING = ".sdat";
 
     /**
-     * Checks if this workspace is valid
-     * @param readonly If readonly is false, the workspace can be fixed (e.g.
-     * missing directories will be created), otherwise not
-     * @throws jams.workspace.JAMSWorkspace.InvalidWorkspaceException
-     */
-    void checkValidity(boolean readonly) throws InvalidWorkspaceException;
-
-    /**
      * Closes the workspace, i.e. closes all datastores
      */
     void close();
