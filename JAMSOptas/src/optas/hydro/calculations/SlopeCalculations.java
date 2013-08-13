@@ -12,12 +12,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import org.jfree.data.xy.XYSeries;
-import optas.hydro.data.DataCollection;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.Parameter;
-import optas.hydro.data.SimpleEnsemble;
-import optas.hydro.data.TimeSerie;
-import optas.hydro.data.TimeSerieEnsemble;
+import optas.data.DataCollection;
+import optas.data.EfficiencyEnsemble;
+import optas.data.Parameter;
+import optas.data.SimpleEnsemble;
+import optas.data.TimeSerie;
+import optas.data.TimeSerieEnsemble;
 import optas.tools.Resources;
 
 /**

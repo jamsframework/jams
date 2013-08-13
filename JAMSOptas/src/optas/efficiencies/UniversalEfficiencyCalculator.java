@@ -115,6 +115,11 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     update = JAMSVarDescription.UpdateType.INIT,
     description = "file name of optimization process description")
     public Attribute.Double[] bias_normalized;
+    
+    /*@JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description")
+    public Attribute.Double[] log_likelihood;*/
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
@@ -141,7 +146,8 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
                          calcLe2= new LogarithmicNashSutcliffe(2.0),
                          calcAve= new VolumeError(VolumeErrorType.Absolute),
                          calcR2 = new CorrelationError(),
-                         calcPBias = new VolumeError(VolumeErrorType.Relative);
+                         calcPBias = new VolumeError(VolumeErrorType.Relative),
+                         calcLogLikelihood = new LogLikelihood();
 
     int m = 0;
     boolean firstIteration = true;
@@ -183,6 +189,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     public void run(){
         if (time==null || timeInterval.getValue().equals("")){
             considerData();
+            return;
         }
         if (firstIteration) {
             for (TimeInterval t : timeIntervalList) {
@@ -288,6 +295,8 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             } else {
                 this.bias_normalized[k].setValue(value);
             }
+            
+            //this.log_likelihood[k].setValue(calcLogLikelihood.calc(m, s));
             
             this.getModel().getRuntime().println("*******Measurement:" + this.measurementAttributeName);
             this.getModel().getRuntime().println("*******Simulation :" + this.simulationAttributeName);

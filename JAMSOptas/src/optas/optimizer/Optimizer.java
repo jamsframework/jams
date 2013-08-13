@@ -8,6 +8,8 @@
  */
 package optas.optimizer;
 
+import jams.JAMS;
+import optas.core.SampleLimitException;
 import jams.model.Model;
 import optas.optimizer.management.StringOptimizerParameter;
 import optas.optimizer.management.OptimizerDescription;
@@ -22,9 +24,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
+import optas.core.AbstractFunction;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.SampleFactory.SampleSO;
-import optas.optimizer.management.ObjectiveAchievedException;
+import optas.core.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory;
 import optas.optimizer.management.Statistics;
 
@@ -57,21 +60,15 @@ public abstract class Optimizer implements Serializable, Comparable{
 
     transient protected SampleFactory factory = new SampleFactory();
 
-    public static abstract class AbstractFunction implements Serializable{
-
-        public abstract double[] f(double x[]) throws SampleLimitException, ObjectiveAchievedException;
-
-        public abstract void logging(String msg);
-    }
-
     @Override
     public int compareTo(Object o){
         return this.toString().compareTo(o.toString());
     }
     
     protected void log(String msg) {
-        if (verbose)
-            function.logging(msg);
+        if (verbose){
+            function.log(msg);
+        }
     }
 
     public void injectSamples(Collection<? extends Sample> list) throws SampleLimitException, ObjectiveAchievedException{
@@ -129,11 +126,22 @@ public abstract class Optimizer implements Serializable, Comparable{
         if (sampleCount++ >= getMaxn()) {
             throw new SampleLimitException();
         }
-        return function.f(x);
+        return function.evaluate(x);
     }
 
     public void setFunction(AbstractFunction function) {
         this.function = function;
+        this.parameterNames = function.getInputFactorNames();
+        this.objNames = function.getOutputFactorNames();
+        this.n = function.getInputDimension();
+        this.m = function.getOutputDimension();
+        this.lowBound = new double[n];
+        this.upBound  = new double[n];
+        
+        for (int i=0;i<n;i++){
+            lowBound[i] = function.getRange()[i][0];
+            upBound[i] = function.getRange()[i][1];
+        }
     }
 
 
@@ -157,7 +165,7 @@ public abstract class Optimizer implements Serializable, Comparable{
         x0 = new double[][]{startValue};
     }
 
-    public void setInputDimension(int n) {
+    /*public void setInputDimension(int n) {
         this.n = n;
     }
 
@@ -176,7 +184,7 @@ public abstract class Optimizer implements Serializable, Comparable{
 
     public void setObjectiveNames(String names[]) {
         this.objNames = names;
-    }
+    }*/
 
     private Field getField(Class o, String name) {
         try {
@@ -359,9 +367,9 @@ public abstract class Optimizer implements Serializable, Comparable{
         try {
             procedure();
         } catch (SampleLimitException sle) {
-            log("Optimization finished because of the number of allowed samples is reached!");
+            log(JAMS.i18n("Optimization_finished_because_of_the_number_of_allowed_samples_is_reached"));
         } catch (ObjectiveAchievedException oae) {
-            log("Optimization finished because the objective was archieved!");
+            log(JAMS.i18n("Optimization_finished_because_the_objective_was_archieved!"));
         }
         printSamples();
 

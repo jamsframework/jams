@@ -1,5 +1,11 @@
 package optas.io;
 
+import optas.data.SimpleEnsemble;
+import optas.data.Measurement;
+import optas.data.DataSet;
+import optas.data.EfficiencyEnsemble;
+import optas.data.DataCollection;
+import optas.data.TimeSerieEnsemble;
 import jams.data.Attribute.TimeInterval;
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import optas.hydro.data.DataSet.MismatchException;
-import optas.hydro.data.*;
+import optas.data.DataSet.MismatchException;
 import ucar.ma2.*;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;

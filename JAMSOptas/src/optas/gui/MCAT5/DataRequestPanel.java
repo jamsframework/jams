@@ -29,11 +29,11 @@ import javax.swing.SwingUtilities;
 import optas.gui.MCAT5.MCAT5Plot.NoDataException;
 import optas.gui.MCAT5.MCAT5Plot.SimpleRequest;
 import optas.gui.wizard.ObjectiveConstructorDialog;
-import optas.hydro.data.DataCollection;
-import optas.hydro.data.DataSet;
-import optas.hydro.data.Efficiency;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.TimeSerieEnsemble;
+import optas.data.DataCollection;
+import optas.data.DataSet;
+import optas.data.Efficiency;
+import optas.data.EfficiencyEnsemble;
+import optas.data.TimeSerieEnsemble;
 
 
 /**
@@ -56,10 +56,15 @@ public final class DataRequestPanel extends JPanel{
         RequestGUI(SimpleRequest r) throws NoDataException{
             this.request = r;
             boxes = new ArrayList<JComboBox>();
-            while(boxes.size()<r.min)
+            while(boxes.size()<r.min){
                 if (!addBox()){
                     throw new NoDataException(r);
                 }
+            }
+            //try if possible, when r.min = 0;
+            if (r.min == 0 && r.max > 0){
+                addBox();
+            }
         }
 
         public void removeLastBox(){
@@ -69,7 +74,7 @@ public final class DataRequestPanel extends JPanel{
         public boolean addBox() {
             JComboBox box = new JComboBox();
             box.setPreferredSize(new Dimension(150, 30));            
-            if (data.getDatasets(request.clazz).isEmpty()) {
+            if (data.getDatasets(request.clazz).isEmpty() && request.min>0) {
                 return false;
             }
 

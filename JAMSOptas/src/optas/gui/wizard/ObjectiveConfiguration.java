@@ -9,6 +9,7 @@ import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.gui.input.ValueChangeListener;
 import jams.meta.ComponentDescriptor;
+import jams.meta.ContextDescriptor;
 import jams.meta.ModelDescriptor;
 import jams.tools.JAMSTools;
 import java.awt.BorderLayout;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -36,9 +39,9 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import optas.data.TimeFilter;
+import optas.data.TimeSerie;
 import optas.efficiencies.UniversalEfficiencyCalculator;
-import optas.hydro.data.TimeFilter;
-import optas.hydro.data.TimeSerie;
 import optas.io.TSDataReader;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -52,7 +55,8 @@ import org.jfree.chart.entity.XYItemEntity;
 public class ObjectiveConfiguration extends JPanel{
     final Dimension preferredDimension = new Dimension(1220,700);
     
-    JComboBox measurementList = new JComboBox(),
+    JComboBox contextList     = new JComboBox(),
+              measurementList = new JComboBox(),
               simulationList = new JComboBox(),              
               objectivesList = new JComboBox();
                                      
@@ -148,6 +152,28 @@ public class ObjectiveConfiguration extends JPanel{
                     
                     filterList.clear();                    
                     //hydroChart.setTimeFilters(filterList.getTimeFilters()); //unnöitg
+                }
+            }
+        });
+        
+        contextList.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String context = (String) contextList.getSelectedItem();
+                if (context != null) {
+                    ModelAnalyzer analyzer = new ModelAnalyzer(ObjectiveConfiguration.this.md);
+                    Set<Objective> allAttributes = analyzer.getObjectives();
+                    TreeSet<Objective> attributesInContext = new TreeSet<Objective>();
+                    for (Objective o : allAttributes) {
+                        if (o.getParentName().equals(context)) {
+                            attributesInContext.add(o);
+                        }
+                    }
+                    DefaultComboBoxModel measurementModel = new DefaultComboBoxModel(attributesInContext.toArray(new Attribute[0]));
+                    DefaultComboBoxModel simulationModel = new DefaultComboBoxModel(attributesInContext.toArray(new Attribute[0]));
+                    measurementList.setModel(measurementModel);
+                    simulationList.setModel(simulationModel);
                 }
             }
         });
@@ -292,9 +318,18 @@ public class ObjectiveConfiguration extends JPanel{
             ModelAnalyzer analyzer = new ModelAnalyzer(md);
             DefaultComboBoxModel measurementModel = new DefaultComboBoxModel(analyzer.getObjectives().toArray(new Attribute[0]));
             DefaultComboBoxModel simulationModel = new DefaultComboBoxModel(analyzer.getObjectives().toArray(new Attribute[0]));
-                                    
-            this.measurementList.setModel(measurementModel);
-            this.simulationList.setModel(simulationModel);
+            DefaultComboBoxModel contextModel = new DefaultComboBoxModel();
+            for (ComponentDescriptor c : md.getComponentDescriptors().values()){
+                if (c instanceof ContextDescriptor){
+                    contextModel.addElement(c.getInstanceName());
+                }
+            }
+            
+            
+            /*this.measurementList.setModel(measurementModel);
+            this.simulationList.setModel(simulationModel);*/
+            this.contextList.setModel(contextModel);
+            this.contextList.setSelectedIndex(-1);
             
             modelTimeIntervalInput.setValue("1900-11-01 00:00 2100-11-01 00:00 6 1");
             modelTimeIntervalInput.addValueChangeListener(new ValueChangeListener() {
@@ -382,11 +417,13 @@ public class ObjectiveConfiguration extends JPanel{
         objectivesList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Name")));
         measurementList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Measured_Property")));
         simulationList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Simulated_Property")));        
-
+        contextList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Context")));        
+        
         objectivesList.setMaximumSize(new Dimension(200, 40));
         objectivesList.setEditable(true);
         measurementList.setMaximumSize(new Dimension(200, 40));
-        simulationList.setMaximumSize(new Dimension(200, 40));        
+        simulationList.setMaximumSize(new Dimension(200, 40));  
+        contextList.setMaximumSize(new Dimension(200, 40));  
         recentTimeSeries.setMaximumSize(new Dimension(200, 25));        
         
         modelTimeIntervalInput.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Model_time_interval")));
@@ -428,6 +465,8 @@ public class ObjectiveConfiguration extends JPanel{
                     .addGroup(layout2.createParallelGroup()  
                     .addComponent(objectivesList)                    
                     .addGap(5)
+                    .addComponent(contextList)       
+                    .addGap(5)
                     .addComponent(simulationList)                    
                     .addGap(5)
                     .addComponent(measurementList)       
@@ -441,11 +480,13 @@ public class ObjectiveConfiguration extends JPanel{
                 .addGroup(layout2.createParallelGroup(GroupLayout.Alignment.CENTER)      
                     .addGroup(layout2.createSequentialGroup()  
                     .addComponent(objectivesList)
-                    .addGap(10)                    
+                    .addGap(10)    
+                    .addComponent(contextList)  
+                    .addGap(10)  
                     .addComponent(simulationList)
                     .addGap(10)                   
                     .addComponent(measurementList)
-                    .addGap(10)
+                    .addGap(10)  
                 )
                     .addComponent(modelTimeIntervalInput)
                 )

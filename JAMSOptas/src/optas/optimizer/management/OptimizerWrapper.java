@@ -8,6 +8,7 @@
  */
 package optas.optimizer.management;
 
+import optas.core.ObjectiveAchievedException;
 import java.util.StringTokenizer;
 import jams.data.*;
 import jams.dataaccess.DataAccessor;
@@ -23,7 +24,7 @@ import java.util.NoSuchElementException;
 
 import java.util.regex.Matcher;
 import optas.optimizer.management.SampleFactory.Sample;
-import optas.optimizer.SampleLimitException;
+import optas.core.SampleLimitException;
 
 /**
  *
@@ -76,7 +77,7 @@ public abstract class OptimizerWrapper extends JAMSContext {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
     description = "known optimal value",
-    defaultValue = "0")
+    defaultValue = "-Infinity")
     public Attribute.DoubleArray target;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,

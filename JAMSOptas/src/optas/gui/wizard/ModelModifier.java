@@ -233,7 +233,7 @@ public class ModelModifier {
             String name = od.getName();
             
             ComponentDescriptor measurementContext = md.getComponentDescriptor(od.getMeasurementAttribute().getParentName());
-            ComponentDescriptor simulationContext = md.getComponentDescriptor(od.getMeasurementAttribute().getParentName());
+            ComponentDescriptor simulationContext = md.getComponentDescriptor(od.getSimulationAttribute().getParentName());
             
             if (simulationContext != measurementContext){
                 throw new OPTASWizardException(JAMS.i18n("Error_during_objective_configuration_context_of_measurement_attribute_does_not_fit_context_of_simulation_attribute(%1 vs. %2)")
@@ -258,8 +258,8 @@ public class ModelModifier {
                         fields.get("measurementAttributeName").setValue("measurement");
                         fields.get("measurement").linkToAttribute(context, od.getMeasurementAttribute().getAttributeName(), true);
                         
-                        fields.get("simulationAttributeName").setValue("measurement");
-                        fields.get("simulation").linkToAttribute(context, od.getMeasurementAttribute().getAttributeName(), true);
+                        fields.get("simulationAttributeName").setValue("simulation");
+                        fields.get("simulation").linkToAttribute(context, od.getSimulationAttribute().getAttributeName(), true);
                         
                         if (fields.get("e1").getContextAttributes().isEmpty()){
                             fields.get("e1").linkToAttribute(modelContext, name + "_e1");
@@ -345,8 +345,8 @@ public class ModelModifier {
                 fields.get("measurementAttributeName").setValue("measurement");
                 fields.get("measurement").linkToAttribute(context, od.getMeasurementAttribute().getAttributeName(), true);
 
-                fields.get("simulationAttributeName").setValue("measurement");
-                fields.get("simulation").linkToAttribute(context, od.getMeasurementAttribute().getAttributeName(), true);
+                fields.get("simulationAttributeName").setValue("simulation");
+                fields.get("simulation").linkToAttribute(context, od.getSimulationAttribute().getAttributeName(), true);
 
                 fields.get("e1").linkToAttribute(modelContext, name + "_e1");
                 fields.get("e2").linkToAttribute(modelContext, name + "_e2");

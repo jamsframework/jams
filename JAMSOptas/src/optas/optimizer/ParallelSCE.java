@@ -21,6 +21,7 @@
  */
 package optas.optimizer;
 
+import optas.core.SampleLimitException;
 import Jama.Matrix;
 
 import java.util.Arrays;
@@ -37,15 +38,15 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import optas.hydro.data.DataCollection;
-import optas.optimizer.DirectSearchMethods.ImplicitFiltering;
-import optas.optimizer.DirectSearchMethods.MDS;
-import optas.optimizer.DirectSearchMethods.NelderMead;
-import optas.optimizer.DirectSearchMethods.PatternSearch;
+import optas.data.DataCollection;
+import optas.optimizer.directsearch.ImplicitFiltering;
+import optas.optimizer.directsearch.MDS;
+import optas.optimizer.directsearch.NelderMead;
+import optas.optimizer.directsearch.PatternSearch;
 import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.SampleFactory.SampleSO;
 import optas.optimizer.management.SampleFactory.SampleSOComperator;
-import optas.optimizer.management.ObjectiveAchievedException;
+import optas.core.ObjectiveAchievedException;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.StringOptimizerParameter;
 import optas.optimizer.parallel.ParallelExecution;

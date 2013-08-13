@@ -9,12 +9,13 @@
 
 package optas.optimizer;
 
+import optas.core.SampleLimitException;
 import java.util.ArrayList;
 import java.util.Stack;
 import jams.model.JAMSComponentDescription;
 import jams.JAMS;
 import optas.optimizer.management.SampleFactory.SampleSO;
-import optas.optimizer.management.ObjectiveAchievedException;
+import optas.core.ObjectiveAchievedException;
 
 import optas.optimizer.management.OptimizerDescription;
 
@@ -354,6 +355,7 @@ public class BranchAndBound extends optas.optimizer.Optimizer {
         }
     }
     
+    @Override
     protected void procedure() throws SampleLimitException, ObjectiveAchievedException{        
         ArrayList<SampleSO> Q = new ArrayList<SampleSO>();
         ArrayList<HyperCube> cubes = new ArrayList<HyperCube>();

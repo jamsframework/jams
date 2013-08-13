@@ -23,8 +23,8 @@
 package jams.workspace.dsproc;
 
 import jams.data.Attribute;
-import jams.data.JAMSCalendar;
 import jams.data.DefaultDataFactory;
+import jams.data.JAMSCalendar;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -33,10 +33,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,7 +53,7 @@ public class TimeSpaceProcessor extends Processor {
         this(new DataStoreProcessor(file));
     }
 
-    public TimeSpaceProcessor(DataStoreProcessor dsdb) {
+    public TimeSpaceProcessor(AbstractDataStoreProcessor dsdb) {
         this.dsdb = dsdb;
         this.contexts = dsdb.getContexts();
         dFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -174,7 +172,6 @@ public class TimeSpaceProcessor extends Processor {
     private synchronized DataMatrix getTemporalData(Attribute.Calendar date) throws SQLException, IOException {
        
         String filterString = date.toString(dFormat);
-        
         
         setTimeFilter(filterString);
         ResultSet rs = getData();

@@ -23,6 +23,7 @@ package reg.gui;
 
 import jams.JAMS;
 import jams.gui.tools.GUIHelper;
+import jams.workspace.dsproc.AbstractDataStoreProcessor;
 import java.awt.Frame;
 import java.io.File;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ import reg.spreadsheet.JAMSSpreadSheet;
  */
 public abstract class DSPanel extends JPanel {
 
-    protected DataStoreProcessor dsdb;
+    protected AbstractDataStoreProcessor dsdb;
     protected JAMSSpreadSheet outputSpreadSheet;
     protected Frame parent;
     protected CancelableWorkerDlg workerDlg;
@@ -79,9 +80,9 @@ public abstract class DSPanel extends JPanel {
         double area = 0;
         double[][] data = m.getArray();
 
-        ArrayList<DataStoreProcessor.AttributeData> attribs = dsdb.getAttributes();
+        ArrayList<AbstractDataStoreProcessor.AttributeData> attribs = dsdb.getAttributes();
         int j = 0;
-        for (DataStoreProcessor.AttributeData attrib : attribs) {
+        for (AbstractDataStoreProcessor.AttributeData attrib : attribs) {
 
             if (!attrib.isSelected()) {
                 continue;
@@ -103,7 +104,7 @@ public abstract class DSPanel extends JPanel {
                     String weightAttribName = attribCombo.getSelectedItem().toString();
 
                     int attribIndex = 0;
-                    for (DataStoreProcessor.AttributeData attrib2 : attribs) {
+                    for (AbstractDataStoreProcessor.AttributeData attrib2 : attribs) {
                         if (attrib2.getName().equals(weightAttribName)) {
                             break;
                         }

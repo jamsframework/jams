@@ -5,7 +5,7 @@
 
 package optas.gui.MCAT5;
 
-import optas.hydro.data.DataCollection;
+import optas.data.DataCollection;
 
 /**
  *

@@ -7,8 +7,8 @@ package optas.hydro.gui;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import optas.hydro.data.SimpleEnsemble;
-import optas.hydro.data.TimeSerie;
+import optas.data.SimpleEnsemble;
+import optas.data.TimeSerie;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;

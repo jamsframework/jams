@@ -21,6 +21,7 @@
  */
 package optas.optimizer;
 
+import optas.core.SampleLimitException;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.NumericOptimizerParameter;
 import Jama.Matrix;
@@ -31,13 +32,13 @@ import jams.JAMS;
 import jams.model.*;
 import java.util.Arrays.*;
 import java.util.StringTokenizer;
-import optas.optimizer.DirectSearchMethods.ImplicitFiltering;
-import optas.optimizer.DirectSearchMethods.MDS;
-import optas.optimizer.DirectSearchMethods.NelderMead;
-import optas.optimizer.DirectSearchMethods.PatternSearch;
+import optas.optimizer.directsearch.ImplicitFiltering;
+import optas.optimizer.directsearch.MDS;
+import optas.optimizer.directsearch.NelderMead;
+import optas.optimizer.directsearch.PatternSearch;
 import optas.optimizer.management.SampleFactory.SampleSO;
 import optas.optimizer.management.SampleFactory.SampleSOComperator;
-import optas.optimizer.management.ObjectiveAchievedException;
+import optas.core.ObjectiveAchievedException;
 
 /**
  *
@@ -179,21 +180,6 @@ public class SCE extends Optimizer {
         return -1;
     }
 
-    /*class SCEFunctionEvaluator extends AbstractFunction {
-        SCE myOptimizer = null;
-
-        SCEFunctionEvaluator(SCE mySCE) {
-            myOptimizer = mySCE;
-        }
-
-        public void logging(String s){
-
-        }
-
-        public double[] f(double x[])  throws SampleLimitException, ObjectiveAchievedException {
-            return myOptimizer.getSample(x).F();
-        }
-    }*/
 
     //this method is superseeded by the pattern search algorithms, but its not a bad idea to keep this meothd
     //s forms the simplex

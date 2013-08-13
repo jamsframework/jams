@@ -33,15 +33,15 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import optas.hydro.data.DataCollection;
-import optas.hydro.data.TimeFilter;
-import optas.hydro.data.TimeFilterFactory;
-import optas.hydro.data.TimeFilterFactory.BaseFlowTimeFilter;
-import optas.hydro.data.TimeFilterFactory.EventFilter;
-import optas.hydro.data.TimeFilterFactory.MonthlyTimeFilter;
-import optas.hydro.data.TimeFilterFactory.RangeTimeFilter;
-import optas.hydro.data.TimeFilterFactory.YearlyTimeFilter;
-import optas.hydro.data.TimeSerie;
+import optas.data.DataCollection;
+import optas.data.TimeFilter;
+import optas.data.TimeFilterFactory;
+import optas.data.TimeFilterFactory.BaseFlowTimeFilter;
+import optas.data.TimeFilterFactory.EventFilter;
+import optas.data.TimeFilterFactory.MonthlyTimeFilter;
+import optas.data.TimeFilterFactory.RangeTimeFilter;
+import optas.data.TimeFilterFactory.YearlyTimeFilter;
+import optas.data.TimeSerie;
 import org.jfree.chart.ChartPanel;
 
 /**

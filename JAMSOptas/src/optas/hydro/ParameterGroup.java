@@ -4,7 +4,7 @@
  */
 package optas.hydro;
 
-import optas.hydro.data.SimpleEnsemble;
+import optas.data.SimpleEnsemble;
 
 /**
  *

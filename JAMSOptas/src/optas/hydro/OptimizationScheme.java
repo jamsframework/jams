@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.TimeZone;
-import optas.hydro.data.SimpleEnsemble;
-import optas.hydro.data.TimeSerie;
+import optas.data.SimpleEnsemble;
+import optas.data.TimeSerie;
 import optas.tools.ObservableProgress;
 
 /**

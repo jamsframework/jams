@@ -13,9 +13,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
-import optas.hydro.data.TimeFilter;
-import optas.hydro.data.TimeFilterCollection;
-import optas.hydro.data.TimeSerie;
+import optas.data.TimeFilter;
+import optas.data.TimeFilterCollection;
+import optas.data.TimeSerie;
 
 /**
  *

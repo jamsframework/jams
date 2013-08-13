@@ -27,13 +27,13 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import optas.hydro.data.DataCollection;
+import optas.data.DataCollection;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import optas.hydro.data.Efficiency;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.Parameter;
-import optas.hydro.data.SimpleEnsemble;
+import optas.data.Efficiency;
+import optas.data.EfficiencyEnsemble;
+import optas.data.Parameter;
+import optas.data.SimpleEnsemble;
 import optas.regression.SimpleInterpolation;
 import optas.regression.SimpleNeuralNetwork;
 import org.jfree.chart.plot.XYPlot;
@@ -263,7 +263,7 @@ public class ResponseSurface extends MCAT5Plot {
             dc = this.getDataSource();
 
             Set<String> xSet = this.getDataSource().getDatasets(Parameter.class);
-            ArrayList<optas.hydro.data.DataSet> p[] = getData(new int[]{0});
+            ArrayList<optas.data.DataSet> p[] = getData(new int[]{0});
             y = (EfficiencyEnsemble) p[1].get(0);
 
             x = new SimpleEnsemble[xSet.size()];

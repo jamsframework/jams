@@ -32,11 +32,11 @@ import javax.swing.border.Border;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import optas.SA.UniversalSensitivityAnalyzer;
-import optas.hydro.data.DataSet;
-import optas.hydro.data.Efficiency;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.Parameter;
-import optas.hydro.data.SimpleEnsemble;
+import optas.data.DataSet;
+import optas.data.Efficiency;
+import optas.data.EfficiencyEnsemble;
+import optas.data.Parameter;
+import optas.data.SimpleEnsemble;
 import optas.regression.SimpleInterpolation;
 
 /**
@@ -389,7 +389,7 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
 
         uniSA = new UniversalSensitivityAnalyzer();
         uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.FOSI2);
-        uniSA.setUseANNRegression(true);
+        uniSA.setUsingRegression(true);
         uniSA.setParameterNormalizationMethod(SimpleInterpolation.NormalizationMethod.Linear);
         uniSA.setObjectiveNormalizationMethod(SimpleInterpolation.NormalizationMethod.Linear);
 

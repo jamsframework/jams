@@ -32,8 +32,8 @@ import jams.io.JAMSTableDataArray;
 import jams.io.JAMSTableDataStore;
 import java.util.ArrayList;
 import optas.gui.wizard.OPTASWizardException;
-import optas.hydro.data.DataSet.MismatchException;
-import optas.hydro.data.TimeSerie;
+import optas.data.DataSet.MismatchException;
+import optas.data.TimeSerie;
 
 /**
  *

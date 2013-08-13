@@ -9,16 +9,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
-import optas.hydro.data.DataCollection;
-import optas.hydro.data.Parameter;
-import optas.hydro.data.SimpleEnsemble;
+import optas.core.AbstractFunction;
+import optas.data.DataCollection;
+import optas.data.Parameter;
+import optas.data.SimpleEnsemble;
 
-import optas.gui.wizard.Objective;
-import optas.gui.wizard.Optimization;
-import optas.optimizer.Optimizer.AbstractFunction;
 import optas.optimizer.SCE;
-import optas.optimizer.SampleLimitException;
-import optas.optimizer.management.ObjectiveAchievedException;
+import optas.core.SampleLimitException;
+import optas.core.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory.Sample;
 
 /**
@@ -202,43 +200,31 @@ public class FindLargestEmptyRectangle{
     private void procedure() {
         SCE sce = new SCE();
         sce.setVerbose(false);
-/*        Optimization o = new Optimization();
-
-        Objective obj = new Objective();
-        obj.setCustomName("Volume");
-        o.addObjective(obj);*/
 
         double sceStartValue[] = new double[2*n];//this.determineStartvalue();//new double[2*n];//this.determineStartvalue();
-        double sceLowerBound[] = new double[2 * n];
-        double sceUpperBound[] = new double[2 * n];
-        String sceParamName[] = new String[2 * n];
         Arrays.fill(sceStartValue,1.0);
-        for (int i = 0; i < 2 * n; i++) {
-            if (i < n) {
-                sceLowerBound[i] =0;//(lowerBound[i]);// 0;//(lowerBound[i]);
-                sceUpperBound[i] =1;//(upperBound[i]);// 1;//(upperBound[i]);
-                sceParamName[i] = ("li_" + i);
-            } else {
-                sceLowerBound[i] = (0.0);
-                sceUpperBound[i] = 1.0;//(upperBound[i - n] - lowerBound[i - n]);//1.0;//(upperBound[i - n] - lowerBound[i - n]);
-                sceParamName[i] = ("wi_" + (i - n));
-            }
-        }
-
+        
         System.out.println("Lower Bound is:" + Arrays.toString(this.lowerBound));
         System.out.println("Upper Bound is:" + Arrays.toString(this.upperBound));
         System.out.println("Start value lb:" + Arrays.toString(expand(sceStartValue)[0]));
         System.out.println("Start value ub:" + Arrays.toString(expand(sceStartValue)[1]));
         System.out.println("Volume of startvalue is:" + volume(expand(sceStartValue)[0],expand(sceStartValue)[1]));
         System.out.println("Penalty of startvalue is:" + constraintPenalty(expand(sceStartValue)[0],expand(sceStartValue)[1]));
-        sce.setBoundaries(sceLowerBound, sceUpperBound);
         sce.setMaxn(200000);
         sce.setStartValue(sceStartValue);
 
         sce.setFunction(new AbstractFunction() {
 
+            public int getInputDimension(){
+                return 2*n;
+            }
+            
+            public int getOutputDimension(){
+                return 1;
+            }
+            
             @Override
-            public double[] f(double[] x) throws SampleLimitException, ObjectiveAchievedException {
+            public double[] evaluate(double[] x) throws SampleLimitException, ObjectiveAchievedException {
                 double t[][] = expand(x);
                 double l[] = t[0];
                 double u[] = t[1];
@@ -246,13 +232,28 @@ public class FindLargestEmptyRectangle{
             }
 
             @Override
-            public void logging(String msg) {
+            public void log(String msg) {
                 System.out.println(msg);
             }
+            
+            public String[] getParameterNames(){
+                String names[] = new String[2*n];
+                for (int i=0;i<n;i++){
+                    names[2*i+0] = "li_" + i;
+                    names[2*i+1] = "wi_" + i;
+                }
+                return names;
+            }            
+            @Override
+            public double[][] getRange(){
+                double range[][] = new double[2*n][2];
+                for (int i=0;i<2*n;i++){
+                    range[i][0] = 0.0;
+                    range[i][1] = 1.0;
+                }
+                return range;
+            }
         });
-        sce.setParameterNames(sceParamName);
-        sce.setOutputDimension(1);
-        sce.setInputDimension(2 * n);
         sce.setDebugMode(false);
         sce.setVerbose(false);
         sce.kstop = 500;

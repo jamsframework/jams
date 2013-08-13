@@ -11,9 +11,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JPanel;
-import optas.hydro.data.DataCollection;
-import optas.hydro.data.DataSet;
-import optas.hydro.data.Ensemble;
+import optas.data.DataCollection;
+import optas.data.DataSet;
+import optas.data.Ensemble;
 
 
 

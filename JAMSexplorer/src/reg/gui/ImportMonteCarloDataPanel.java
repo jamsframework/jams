@@ -6,6 +6,7 @@ package reg.gui;
 
 import jams.JAMS;
 import jams.gui.WorkerDlg;
+import jams.workspace.dsproc.AbstractDataStoreProcessor.AttributeData;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -26,10 +27,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-import jams.workspace.dsproc.DataStoreProcessor.AttributeData;
 import jams.workspace.dsproc.Processor;
 import javax.swing.JOptionPane;
-import optas.hydro.data.DataCollection;
+import optas.data.DataCollection;
 import optas.io.ImportMonteCarloData;
 import optas.io.ImportMonteCarloData.EnsembleType;
 import optas.io.ImportMonteCarloException;
@@ -172,8 +172,8 @@ public class ImportMonteCarloDataPanel extends JPanel {
                     maps[i] = new EnsembleTypeStringMap(options[i]);
                 }
                 typeSelection = new JComboBox(maps);
-                if (importer.getAttributeTypeDefault(a) != null){
-                    typeSelection.setSelectedItem(new EnsembleTypeStringMap(importer.getAttributeTypeDefault(a)));
+                if (importer.getDefaultAttributeType(a) != null){
+                    typeSelection.setSelectedItem(new EnsembleTypeStringMap(importer.getDefaultAttributeType(a)));
                 }
                 typeSelection.setPreferredSize(new Dimension(175, 25));
                 typeSelection.setMaximumSize(new Dimension(175, 25));
@@ -300,6 +300,7 @@ public class ImportMonteCarloDataPanel extends JPanel {
                             for (ActionListener listener : listenerList) {
                                 listener.actionPerformed(new ActionEvent(ImportMonteCarloDataPanel.this, ActionEvent.ACTION_PERFORMED, "cmd"));
                             }
+                            importer.finish();
                         } catch (Throwable t) {
                             t.printStackTrace();
                             showError(new ImportMonteCarloException(JAMS.i18n("An_error_occured_while_building_the_final_ensemble"), t));

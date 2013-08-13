@@ -17,12 +17,12 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import optas.hydro.data.DataSet;
-import optas.hydro.data.Efficiency;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.Measurement;
-import optas.hydro.data.TimeSerie;
-import optas.hydro.data.TimeSerieEnsemble;
+import optas.data.DataSet;
+import optas.data.Efficiency;
+import optas.data.EfficiencyEnsemble;
+import optas.data.Measurement;
+import optas.data.TimeSerie;
+import optas.data.TimeSerieEnsemble;
 
 
 /**

@@ -41,7 +41,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
-import optas.hydro.data.DataCollection;
+import optas.data.DataCollection;
 import reg.JAMSExplorer;
 import reg.gui.ImportMonteCarloDataPanel;
 
@@ -202,7 +202,7 @@ public class DSTree extends JAMSTree {
         if (!isNodeSuitableForEnsemble(node)){
             JOptionPane.showMessageDialog(popupDS, "this element cannot be added to an ensemble");
         }
-        optas.hydro.data.DataCollection collection = explorer.getDisplayManager().getCurrentDataCollection();
+        optas.data.DataCollection collection = explorer.getDisplayManager().getCurrentDataCollection();
         if (collection==null){
             JOptionPane.showMessageDialog(popupDS, "there is no data collection selected");
         }

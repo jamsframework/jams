@@ -23,8 +23,8 @@
 package jams.workspace.dsproc;
 
 import jams.data.Attribute;
-import jams.data.JAMSCalendar;
 import jams.data.DefaultDataFactory;
+import jams.data.JAMSCalendar;
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -52,7 +52,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
         this(new DataStoreProcessor(file));
     }
 
-    public EnsembleTimeSeriesProcessor(DataStoreProcessor dsdb) {
+    public EnsembleTimeSeriesProcessor(AbstractDataStoreProcessor dsdb) {
         this.dsdb = dsdb;
         this.contexts = dsdb.getContexts();
         if (dsdb.isEnsembleTimeSeriesDatastore()) {

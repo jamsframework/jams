@@ -31,7 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import optas.hydro.data.DataCollection;
+import optas.data.DataCollection;
 import jams.workspace.dsproc.DataStoreProcessor;
 import reg.gui.ExplorerFrame;
 import reg.gui.ImportMonteCarloDataPanel;
@@ -69,8 +69,6 @@ public class OutputPanelFactory {
 
     public static Component getOutputDSPanel(JAMSExplorer explorer, File file, String id) throws FileNotFoundException, IOException {
         if (file.getAbsolutePath().endsWith("cdat")){
-            //DataCollectionViewController controller = new DataCollectionViewController(collection);
-            //return new DataCollectionView(  explorer.getExplorerFrame(), file, null);
             DataCollection collection = DataCollection.createFromFile(file);
             if (collection == null){
                 JOptionPane.showMessageDialog(explorer.getExplorerFrame(), "failed to load data collection from file: " + file.getName());
@@ -80,6 +78,17 @@ public class OutputPanelFactory {
             //tPane.addTab("New Ensemble", controller.getView());
             return controller.getView();
         }
+        
+        if (file.getAbsolutePath().endsWith(".csv")){
+            if (DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.DataStoreType.TimeDataSerie ||
+                DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.DataStoreType.DataSerie1D){
+                DataCollectionViewController controller = OutputPanelFactory.constructDataCollection(explorer.getExplorerFrame(), null, file);
+                return controller.getView();
+            }else {
+                return new OutputDSPanel(explorer, file, id);
+            }
+        }
+        
         BufferedFileReader reader = new BufferedFileReader(new FileInputStream(file));
         String line = reader.readLine();
         reader.close();
@@ -89,13 +98,15 @@ public class OutputPanelFactory {
         }
 
         if (line.startsWith("@context")) {
-            if (DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.EnsembleTimeSeriesDataStore ||
-                DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.SimpleEnsembleDataStore){
+            return new OutputDSPanel(explorer, file, id);
+        }
+        /*    if (DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.DataStoreType.TimeDataSerie ||
+                DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.DataStoreType.DataSerie1D){
                 DataCollectionViewController controller = OutputPanelFactory.constructDataCollection(explorer.getExplorerFrame(), null, file);
                 return controller.getView();
             }else
                 return new OutputDSPanel(explorer, file, id);
-        }
+        }*/
 
         if (line.startsWith(SpreadsheetConstants.LOAD_HEADERS)) {
 

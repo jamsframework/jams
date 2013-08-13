@@ -6,16 +6,17 @@
 package optas.optimizer;
 
 
+import optas.core.SampleLimitException;
 import java.util.Arrays;
 import jams.JAMS;
 
 import jams.io.SerializableBufferedWriter;
 import jams.model.JAMSComponentDescription;
-import optas.hydro.data.DataCollection;
+import optas.data.DataCollection;
 import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.SampleFactory.SampleSO;
 import optas.optimizer.management.SampleFactory.SampleSOComperator;
-import optas.optimizer.management.ObjectiveAchievedException;
+import optas.core.ObjectiveAchievedException;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.parallel.ParallelSequence;
 import optas.optimizer.parallel.ParallelSequence.OutputData;

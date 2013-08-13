@@ -54,7 +54,7 @@ public class SimpleSerieProcessor extends Processor {
         return timeSerie;
     }
     
-    public SimpleSerieProcessor(DataStoreProcessor dsdb) {
+    public SimpleSerieProcessor(AbstractDataStoreProcessor dsdb) {
         this.dsdb = dsdb;
         this.contexts = dsdb.getContexts();
         if (dsdb.isSimpleDataSerieDatastore() || dsdb.isSimpleTimeSerieDatastore() ) {                        
@@ -192,7 +192,7 @@ public class SimpleSerieProcessor extends Processor {
         int n = rs.getColumnDimension();
         double aggregate[][] = new double[1][n];
         for (int i=0;i<obj.length;i++){
-            if (obj[i].toString().matches(filter)){
+            if (obj[i].toString().matches(filter)){ //TODO: wrong, because in the UI a regex is asked for!
                 for (int j=0;j<n;j++){
                     aggregate[0][j] += rs.getRow(i)[j];
                 }

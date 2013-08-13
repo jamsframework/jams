@@ -5,11 +5,12 @@
 
 package optas.optimizer.management;
 
+import optas.core.ObjectiveAchievedException;
 import jams.data.Attribute;
 import java.util.Arrays;
 import optas.optimizer.NelderMead;
 import optas.optimizer.ParallelNelderMead;
-import optas.optimizer.SampleLimitException;
+import optas.core.SampleLimitException;
 import optas.optimizer.management.OptimizationController.OptimizationConfiguration;
 import optas.optimizer.management.SampleFactory.Sample;
 

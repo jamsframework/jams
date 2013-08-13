@@ -27,14 +27,14 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
-import optas.hydro.data.DataCollection;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.EfficiencyEnsemble.Method;
-import optas.hydro.data.Measurement;
-import optas.hydro.data.TimeFilter;
-import optas.hydro.data.TimeFilterFactory;
-import optas.hydro.data.TimeSerie;
-import optas.hydro.data.TimeSerieEnsemble;
+import optas.data.DataCollection;
+import optas.data.EfficiencyEnsemble;
+import optas.data.EfficiencyEnsemble.Method;
+import optas.data.Measurement;
+import optas.data.TimeFilter;
+import optas.data.TimeFilterFactory;
+import optas.data.TimeSerie;
+import optas.data.TimeSerieEnsemble;
 import org.jfree.chart.ChartPanel;
 
 /**

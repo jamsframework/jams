@@ -23,6 +23,7 @@ package reg.gui;
 
 import jams.JAMS;
 import jams.gui.tools.GUIHelper;
+import jams.workspace.dsproc.AbstractDataStoreProcessor;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -58,6 +59,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import jams.workspace.dsproc.DataMatrix;
 import jams.workspace.dsproc.DataStoreProcessor;
+import jams.workspace.dsproc.DataStoreProcessorOMS;
 import jams.workspace.dsproc.SimpleSerieProcessor;
 
 /**
@@ -764,12 +766,14 @@ public class SimpleDSPanel extends DSPanel {
         }*/
     }
 
+    @Override
     public void createProc(File file) {
 
         workerDlg.setTitle(workerDlg.getTitle() + " [" + file.getName() + "]");
-        dsdb = new DataStoreProcessor(file);
+        dsdb = AbstractDataStoreProcessor.getProcessor(file);
         dsdb.addImportProgressObserver(new Observer() {
 
+            @Override
             public void update(Observable o, Object arg) {
                 workerDlg.setProgress(Integer.parseInt(arg.toString()));
             }

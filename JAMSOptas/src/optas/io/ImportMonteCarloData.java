@@ -5,151 +5,44 @@
 package optas.io;
 
 import jams.JAMS;
+import jams.JAMSProperties;
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
 import jams.data.DefaultDataFactory;
+import jams.workspace.dsproc.AbstractDataStoreProcessor;
+import jams.workspace.dsproc.AbstractDataStoreProcessor.AttributeData;
+import jams.workspace.dsproc.AbstractDataStoreProcessor.ContextData;
 import jams.workspace.dsproc.DataMatrix;
-import jams.workspace.dsproc.DataStoreProcessor;
-import java.io.BufferedReader;
+import jams.workspace.dsproc.EnsembleTimeSeriesProcessor;
+import jams.workspace.dsproc.Processor;
+import jams.workspace.dsproc.SimpleSerieProcessor;
+import jams.workspace.dsproc.TimeSpaceProcessor;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import jams.workspace.dsproc.DataStoreProcessor.AttributeData;
-import jams.workspace.dsproc.DataStoreProcessor.ContextData;
-import jams.workspace.dsproc.EnsembleTimeSeriesProcessor;
-import jams.workspace.dsproc.Processor;
-import jams.workspace.dsproc.SimpleSerieProcessor;
-import jams.workspace.dsproc.TimeSpaceProcessor;
-import java.util.EnumMap;
-import optas.hydro.data.DataCollection;
-import optas.hydro.data.DataSet.MismatchException;
-import optas.hydro.data.Measurement;
-import optas.hydro.data.Modelrun;
-import optas.hydro.data.NegativeEfficiency;
-import optas.hydro.data.Parameter;
-import optas.hydro.data.PositiveEfficiency;
-import optas.hydro.data.SimpleDataSet;
-import optas.hydro.data.StateVariable;
-import optas.hydro.data.TimeSerie;
+import optas.data.DataCollection;
+import optas.data.DataSet.MismatchException;
+import optas.data.Measurement;
+import optas.data.Modelrun;
+import optas.data.NegativeEfficiency;
+import optas.data.Parameter;
+import optas.data.PositiveEfficiency;
+import optas.data.SimpleDataSet;
+import optas.data.StateVariable;
+import optas.data.TimeSerie;
 
 /**
  *
  * @author chris
  */
 public class ImportMonteCarloData implements Serializable {
-
-    String defaultTypes = 
-              "ACAdaptation=Parameter;"
-            + "basQTanks=Parameter;"
-            + "basQk=Parameter;"
-            + "ddf=Parameter;"            
-            + "dirQTanks=Parameter;"
-            + "dirQk=Parameter;"
-            + "FCAdaptation=Parameter;"
-            + "initRG1=Parameter;"
-            + "initRG2=Parameter;"
-            + "maxPercAdaptation=Parameter;"            
-            + "linETRed=Parameter;"
-            + "latVertDist=Parameter;"
-            + "k=Parameter;"
-            + "petMult=Parameter;"
-            + "t_thres=Parameter;"
-            + "precipAdj=Parameter;"
-            + "obsQ=Measurement;"
-            + "totQcmb=Timeserie;"
-            + "soilDiffMPSLPS=Parameter;"
-            + "snow_trs=Parameter;"
-            + "snow_trans=Parameter;"
-            + "soilMaxInfWinter=Parameter;"
-            + "soilOutLPS=Parameter;"
-            + "gwRG2Fact=Parameter;"
-            + "soilConcRD1=Parameter;"
-            + "soilConcRD2=Parameter;"
-            + "soilConcRD1flood=Parameter;"
-            + "ccf_factor=Parameter;"
-            + "r_factor=Parameter;"
-            + "soilPolRed=Parameter;"
-            + "gwRG1RG2dist=Parameter;"
-            + "baseTemp=Parameter;"
-            + "a_rain=Parameter;"
-            + "precipCorrection=Parameter;"
-            + "soilImpLT80=Parameter;"
-            + "soilImpGT80=Parameter;"
-            + "soilLinRed=Parameter;"
-            + "flowRouteTA=Parameter;"
-            + "gwRG1Fact=Parameter;"
-            + "gwCapRise=Parameter;"
-            + "gwCapRiseAdaptation=Parameter;"
-            + "gwK=Parameter;"
-            + "g_factor=Parameter;"
-            + "soilMaxDPS=Parameter;"
-            + "soilDistMPSLPS=Parameter;"
-            + "a_snow=Parameter;"
-            + "soilMaxPerc=Parameter;"
-            + "t_factor=Parameter;"
-            + "soilMaxInfSummer=Parameter;"
-            + "soilMaxInfSnow=Parameter;"
-            + "soilLatVertLPS=Parameter;"
-            + "snowCritDens=Parameter;"
-            + "ioa1=PosEfficiency;"
-            + "ioa2=PosEfficiency;"
-            + "e1=PosEfficiency;"
-            + "e2=PosEfficiency;"
-            + "le1=PosEfficiency;"
-            + "le2=PosEfficiency;"
-            + "grad=PosEfficiency;"
-            + "rmse=NegEfficiency;"
-            + "pbias=NegEfficiency;"
-            + "dsgrad=NegEfficiency;"
-            + "r2=Efficiency(Positive);"
-            + "rsq=PosEfficiency;"
-            + "catchmentSimRunoff_qm=Timeserie;"
-            + "totQ=Timeserie;"            
-            + "totQcbm=Timeserie;"            
-            + "catchmentObsRunoff=Measurement;"
-            + "e1_normalized=NegEfficiency;"
-            + "e2_normalized=NegEfficiency;"
-            + "le1_normalized=NegEfficiency;"
-            + "le2_normalized=NegEfficiency;"            
-            + "norm_le2_lowflow=NegEfficiency;"
-            + "norm_e2_peaks=NegEfficiency;"
-            + "bias_normalized=NegEfficiency;"
-            + "norm_e1_recession=NegEfficiency;"
-            + "ave_normalized=NegEfficiency;"
-            + "x1=Parameter;"
-            + "x2=Parameter;"
-            + "norm_bias_cold=NegEfficiency;"
-            + "norm_bias_hot=NegEfficiency;"
-            + "norm_bias_summer=NegEfficiency;"
-            + "norm_bias_total=NegEfficiency;"
-            + "norm_e1_cold=NegEfficiency;"
-            + "norm_e1_hot=NegEfficiency;"
-            + "norm_e1_summer=NegEfficiency;"
-            + "norm_e1_total=NegEfficiency;"
-            + "norm_e2_cold=NegEfficiency;"
-            + "norm_e2_hot=NegEfficiency;"
-            + "norm_e2_summer=NegEfficiency;"
-            + "norm_e2_total=NegEfficiency;"
-            + "norm_le2_cold=NegEfficiency;"
-            + "norm_le2_hot=NegEfficiency;"
-            + "norm_le2_summer=NegEfficiency;"
-            + "norm_le2_total=NegEfficiency;"
-            + "norm_e1_summer=NegEfficiency;"
-            + "norm_e1_summer=NegEfficiency;"
-            + "norm_bias=NegEfficiency;"
-            + "norm_e1=NegEfficiency;"
-            + "norm_e2=NegEfficiency;"
-            + "norm_le2=NegEfficiency;";
-    
-
 
     ArrayList<Processor> fileProcessors = new ArrayList<Processor>();
     HashMap<AttributeData, Processor> attributeDataMap = new HashMap<AttributeData, Processor>();
@@ -163,16 +56,6 @@ public class ImportMonteCarloData implements Serializable {
     final EnsembleType ensembleTimeserieTypes[] = {EnsembleType.Ignore, EnsembleType.Timeserie, EnsembleType.Measurement};
     final EnsembleType timeserieTypes[] = {EnsembleType.Ignore, EnsembleType.Measurement};
             
-    
-    /*String  parameterString = JAMS.i18n("Parameter"),
-            stateVariableString = JAMS.i18n("State-Variable"),
-            measurementString = JAMS.i18n("Measurement"),
-            efficiencyStringNeg = JAMS.i18n("NegEfficiency"),
-            efficiencyStringPos = JAMS.i18n("PosEfficiency"),
-            timeseriesString = JAMS.i18n("Timeserie-Ensemble"),
-            unknownString = JAMS.i18n("UNKNOWN");
-    String  emptyString = "";*/
-    
     DataCollection ensemble = null;
     final TreeMap<String, EnsembleType> defaultAttributeTypes = new TreeMap<String, EnsembleType>();
     boolean isValid = false;
@@ -191,38 +74,35 @@ public class ImportMonteCarloData implements Serializable {
         timeSerieDatasetClasses.put(EnsembleType.Timeserie, TimeSerie.class);
         timeSerieDatasetClasses.put(EnsembleType.Measurement, Measurement.class);
 
-        StringTokenizer tok = new StringTokenizer(defaultTypes, ";");
-        int n = tok.countTokens();
-        for (int i = 0; i < n; i++) {
-            String token = tok.nextToken();
-            String keyValuePair[] = token.split("=");
-            try{
-                this.defaultAttributeTypes.put(keyValuePair[0], EnsembleType.valueOf(keyValuePair[1]));
-            }catch(IllegalArgumentException iae){
-                this.defaultAttributeTypes.put(keyValuePair[0], EnsembleType.Unknown);
+        JAMSProperties prop = JAMSProperties.createProperties();
+
+        for (EnsembleType e : EnsembleType.values()){
+            String value = prop.getProperty(e.toString());
+            if (value != null){
+                String parameterAttributes[] = value.split(";");        
+                for (String parameterAttribute : parameterAttributes){
+                    defaultAttributeTypes.put(parameterAttribute, e);
+                }
             }
         }
     }
 
     public EnsembleType[] getValidProcessingOptions(Processor p) {                
-        switch (DataStoreProcessor.getDataStoreType(p.getDataStoreProcessor().getFile())) {
-            case DataStoreProcessor.EnsembleTimeSeriesDataStore:
+        switch (AbstractDataStoreProcessor.getDataStoreType(p.getDataStoreProcessor().getFile())) {
+            case TimeDataSerie:
                 return ensembleTimeserieTypes;
-            case DataStoreProcessor.SimpleEnsembleDataStore:
+            case DataSerie1D:
                 return ensembleVariableTypes;
-            case DataStoreProcessor.SimpleDataSerieDataStore:
-                return ensembleVariableTypes;
-            case DataStoreProcessor.SimpleTimeSerieDataStore:
+            case Timeserie:
                 return timeserieTypes;
         }
         return null;
     }
 
     public boolean addFile(File file) throws ImportMonteCarloException {
-        if (isEmptyFile(file)) {
-            return isValid = false;
+        if (!loadDataStore(file)){
+            return isValid=false;
         }
-        loadDataStore(file);
         updateDataTable();
         return isValid = true;
     }
@@ -231,9 +111,12 @@ public class ImportMonteCarloData implements Serializable {
         return this.attributeDataMap.get(a);
     }
 
-    private void loadDataStore(File file) throws ImportMonteCarloException {
-        Processor proc = null;
-        DataStoreProcessor dsdb = new DataStoreProcessor(file);
+    private boolean loadDataStore(File file) throws ImportMonteCarloException {
+        Processor proc;
+        AbstractDataStoreProcessor dsdb = AbstractDataStoreProcessor.getProcessor(file);
+        if (dsdb.isEmpty()) {
+            return false;
+        }
         try {
             dsdb.createDB();
         } catch (IOException ioe) {
@@ -247,28 +130,26 @@ public class ImportMonteCarloData implements Serializable {
             throw new ImportMonteCarloException(JAMS.i18n("Could_not_load_data_store_"), ioe);
         }
         
-        switch (DataStoreProcessor.getDataStoreType(file)) {
-            case DataStoreProcessor.UnsupportedDataStore:
-                return;
-            case DataStoreProcessor.EnsembleTimeSeriesDataStore:
+        switch (AbstractDataStoreProcessor.getDataStoreType(file)) {
+            case Unsupported:
+                return false;
+            case TimeDataSerie:
                 proc = new EnsembleTimeSeriesProcessor(dsdb);
                 break;
-            case DataStoreProcessor.TimeSpaceDataStore:
+            case SpatioTemporal:
                 proc = new TimeSpaceProcessor(dsdb);
                 break;
-            case DataStoreProcessor.SimpleEnsembleDataStore:
+            case DataSerie1D:
                 proc = new SimpleSerieProcessor(dsdb);
                 break;
-            case DataStoreProcessor.SimpleDataSerieDataStore:
-                proc = new SimpleSerieProcessor(dsdb);
-                break;
-            case DataStoreProcessor.SimpleTimeSerieDataStore:
+            case Timeserie:
                 proc = new SimpleSerieProcessor(dsdb);
                 break;
             default:
-                return;
+                return false;
         }
         fileProcessors.add(proc);
+        return true;
     }
     static int badIDCounter = 1000000;
 
@@ -280,6 +161,17 @@ public class ImportMonteCarloData implements Serializable {
             EnsembleType dataSetClassName = this.typeMap.get(a);
             Processor p = this.attributeDataMap.get(a);
 
+            //make defaults!!
+            if (dataSetClassName == null){
+                if (p instanceof SimpleSerieProcessor){                
+                    dataSetClassName = EnsembleType.StateVariable;
+                }else if (p instanceof EnsembleTimeSeriesProcessor){
+                    dataSetClassName = EnsembleType.Timeserie;
+                }else{
+                    //never know??
+                }
+            }
+            
             for (ContextData c : p.getDataStoreProcessor().getContexts()) {
                 if (c.getType().startsWith("jams.components.optimizer") || c.getType().contains("optas")) {
                     if (samplerClass == null) {
@@ -409,7 +301,7 @@ public class ImportMonteCarloData implements Serializable {
         return ensemble;
     }
 
-    public EnsembleType getAttributeTypeDefault(AttributeData a) {
+    public EnsembleType getDefaultAttributeType(AttributeData a) {
         EnsembleType type = (EnsembleType)this.defaultAttributeTypes.get(a.getName());
         //best guess
         if (type == null){
@@ -428,7 +320,7 @@ public class ImportMonteCarloData implements Serializable {
         return this.attributeDataMap.isEmpty();
     }
 
-    private boolean isEmptyFile(File file) throws ImportMonteCarloException {
+    /*private boolean isEmptyFile(File file) throws ImportMonteCarloException {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(file));
@@ -457,7 +349,7 @@ public class ImportMonteCarloData implements Serializable {
             }
             return true;
         }
-    }
+    }*/
     
     TreeSet<String> ensembleIDs = new TreeSet<String>();
     TreeSet<String> ensembleTimesteps = new TreeSet<String>();
@@ -503,29 +395,56 @@ public class ImportMonteCarloData implements Serializable {
         HashMap<Processor, EnsembleType[]> processorTypeMap = new HashMap<Processor, EnsembleType[]>();
 
         for (Processor p : fileProcessors) {
-            switch (DataStoreProcessor.getDataStoreType(p.getDataStoreProcessor().getFile())) {
-                case DataStoreProcessor.EnsembleTimeSeriesDataStore:
+            switch (AbstractDataStoreProcessor.getDataStoreType(p.getDataStoreProcessor().getFile())) {
+                case TimeDataSerie:
                     processorTypeMap.put(p, ensembleTimeserieTypes);
                     break;
-                case DataStoreProcessor.SimpleEnsembleDataStore:
+                case DataSerie1D:
                     processorTypeMap.put(p, ensembleVariableTypes);
                     break;
-                case DataStoreProcessor.SimpleDataSerieDataStore:
-                    processorTypeMap.put(p, ensembleVariableTypes);
-                    break;
-                case DataStoreProcessor.SimpleTimeSerieDataStore:
+                case Timeserie:
                     processorTypeMap.put(p, timeserieTypes);
                     break;
             }
 
             for (AttributeData a : p.getDataStoreProcessor().getAttributes()) {
                 attributeDataMap.put(a, p);
-                this.typeMap.put(a, (EnsembleType)getAttributeTypeDefault(a));
+                this.typeMap.put(a, (EnsembleType)getDefaultAttributeType(a));
             }
         }
     }
 
     public void finish() {
+        for (AttributeData a : this.typeMap.keySet()){
+            defaultAttributeTypes.put(a.getName(),typeMap.get(a));
+        }
+
+        HashMap<EnsembleType, ArrayList<String>> reverseMapping = new HashMap<EnsembleType, ArrayList<String>>();
+        for (String s : defaultAttributeTypes.keySet() ){
+            EnsembleType type = defaultAttributeTypes.get(s);
+            if (reverseMapping.containsKey(type)){
+                reverseMapping.get(type).add(s);
+            }else{
+                ArrayList<String> list = new ArrayList<String>();
+                list.add(s);
+                reverseMapping.put(type, list);
+            }
+        }
+        
+        JAMSProperties prop = JAMSProperties.createProperties();
+        for (EnsembleType e : reverseMapping.keySet()){
+            
+            String valueString = "";
+            for (String value : reverseMapping.get(e)){
+                valueString += value + ";";
+            }
+            prop.setProperty(e.toString(), valueString);
+        }
+        try{
+            prop.save();
+        }catch(IOException ioe){
+            ioe.printStackTrace();
+        }
         try {
             for (Processor p : fileProcessors) {
                 p.close();
@@ -537,10 +456,5 @@ public class ImportMonteCarloData implements Serializable {
         this.typeMap = null;
         this.ensemble = null;
         this.ensembleIDs = null;
-    }
-
-    public static void main(String[] args) throws ImportMonteCarloException {
-        //ImportMonteCarloData imcd = new ImportMonteCarloData(new File("C:/Arbeit/optimization_wizard_optimizer.dat"));
-        //System.out.println(imcd.getEnsemble());
     }
 }

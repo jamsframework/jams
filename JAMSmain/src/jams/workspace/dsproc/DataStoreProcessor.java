@@ -25,9 +25,11 @@ package jams.workspace.dsproc;
 import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.io.BufferedFileReader;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -39,7 +41,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
-import java.util.Observable;
 import java.util.Observer;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -49,7 +50,7 @@ import java.util.logging.Logger;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class DataStoreProcessor {
+public class DataStoreProcessor extends AbstractDataStoreProcessor{
 
     public static final HashMap<String, String> TYPE_MAP = getTypeMap();
     public static final String DB_USER = "jamsuser", DB_PASSWORD = "";
@@ -64,15 +65,10 @@ public class DataStoreProcessor {
     private Statement stmt;
     private ImportProgressObservable importProgressObservable = new ImportProgressObservable();
     private boolean cancelCreateIndex = false;
-    public static final int UnsupportedDataStore = 0;
-    public static final int TimeSpaceDataStore = 1;
-    public static final int EnsembleTimeSeriesDataStore = 2;
-    public static final int SimpleDataSerieDataStore = 3;
-    public static final int SimpleTimeSerieDataStore = 4;
-    public static final int SimpleEnsembleDataStore = 5;
     private PreparedStatement pIndexInsertStmt;
 
     public DataStoreProcessor(File dsFile) {
+        super(dsFile);
         this.dsFile = dsFile;
 
         try {
@@ -87,32 +83,64 @@ public class DataStoreProcessor {
 
     }
 
-    public static int getDataStoreType(File file) {
+    @Override
+    public boolean isEmpty() {
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(dsFile));
+            String line = null;
+            boolean isDataStart = false;
+            int dataCounter = 0;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("@data")) {
+                    isDataStart = true;
+                } else if (isDataStart) {
+                    dataCounter++;
+                }
+            }
+            reader.close();
+            return dataCounter <= 1;
+
+        } catch (IOException fnfe) {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                return true;
+                //throw new IOException(JAMS.i18n("Could_not_read_file_") + file.toString(), ioe);
+            }
+            return true;
+        }
+    }
+    public static DataStoreType getDataStoreType(File file) {
         DataStoreProcessor dsdb = new DataStoreProcessor(file);
 
         try {
             //if (!dsdb.existsH2DB()) {
             if (dsdb.isTimeSpaceDatastore()) {
-                return TimeSpaceDataStore;
+                return DataStoreType.SpatioTemporal;
             }
             if (dsdb.isSimpleDataSerieDatastore()) {
-                return SimpleDataSerieDataStore;
+                return DataStoreType.DataSerie1D;
             }
             if (dsdb.isSimpleTimeSerieDatastore()) {
-                return SimpleTimeSerieDataStore;
+                return DataStoreType.Timeserie;
             }
             if (dsdb.isEnsembleTimeSeriesDatastore()) {
-                return EnsembleTimeSeriesDataStore;
+                return DataStoreType.TimeDataSerie;
             }
-            if (dsdb.isSimpleEnsembleDatastore()) {
+            /*if (dsdb.isSimpleEnsembleDatastore()) {
                 return SimpleEnsembleDataStore;
-            }
-            return UnsupportedDataStore;
+            }*/
+            return DataStoreType.Unsupported;
             //}
         } catch (Exception e) {
             Logger.getLogger(DataStoreProcessor.class.getName()).log(Level.SEVERE, null, e);
         }
-        return UnsupportedDataStore;
+        return DataStoreType.Unsupported;
     }
 
     public synchronized void createDB() throws IOException, SQLException, ClassNotFoundException {
@@ -584,7 +612,7 @@ public class DataStoreProcessor {
         return true;
     }
 
-    public synchronized boolean isSimpleEnsembleDatastore(){
+    /*public synchronized boolean isSimpleEnsembleDatastore(){
         ArrayList<DataStoreProcessor.ContextData> cntxt = getContexts();
         if (cntxt.size() != 1) {
             return false;
@@ -596,7 +624,7 @@ public class DataStoreProcessor {
 
         this.contexts = cntxt;
         return true;
-    }
+    }*/
 
     /**
      * Check if this is a datastore that contains no further inner contexts
@@ -624,54 +652,13 @@ public class DataStoreProcessor {
             return false;
         }
 
-        if (cntxt.get(0).getType().contains("optas.optimizer") ||
+        /*if (cntxt.get(0).getType().contains("optas.optimizer") ||
             cntxt.get(0).getType().contains("jams.components.optimizer")) {
             return false;
-        }
+        }*/
 
         this.contexts = cntxt;
         return true;
-    }
-
-    public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
-
-//        DataStoreProcessor dsdb = new DataStoreProcessor(new File("E:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop.dat"));
-        
-//        DataStoreProcessor dsdb = new DataStoreProcessor(new File("C:\\Users\\nsk\\Desktop\\jams\\data\\j2k_gehlberg\\output\\current\\HRULoop.dat"));
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File("D:\\jamsmodeldata\\J2K_Yzeron\\j2k_yzeron_h\\output\\20121128_114833\\HRULoop.dat"));
-        dsdb.addImportProgressObserver(new Observer() {
-
-            @Override
-            public void update(Observable o, Object arg) {
-                System.out.println("Progress: " + arg);
-            }
-        });
-
-        dsdb.createDB();
-//        dsdb.createIndex();
-
-        JAMSCalendar cal = new JAMSCalendar();
-        String query = "SELECT TimeLoopID, position FROM index WHERE (position>38001964 AND position<38104316) OR (position>134824233 AND position<134953847)";
-//        String query = "SELECT TimeLoopID, position FROM index LIMIT 10000";
-        
-        Statement stmt = dsdb.conn.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
-        while (rs.next()) {
-            long timeloopid = rs.getTimestamp("TimeLoopID", cal).getTime();
-            cal.setTimeInMillis(timeloopid);
-            System.out.println("###########" + cal + " - " + timeloopid + " - " + rs.getInt("position"));
-        }
-        
-//###########1997-03-30 01:30 - 859685400000 - 38036072
-//###########1997-03-30 03:30 - 859692600000 - 38053131
-//###########1997-03-30 03:30 - 859692600000 - 38070199        
-        
-//        DataMatrix m = dsdb.getData(56139387);
-//////        DataMatrix m = dsdb.getData(836);
-////        m.print(5, 3);
-//        for (Object o : m.getIds()) {
-//            System.out.println(o);
-//        }
     }
 
     /**
@@ -788,154 +775,5 @@ public class DataStoreProcessor {
         return attribs.toArray(new String[attribs.size()]);
     }
 
-    public class ContextData {
-
-        private String type;
-        private String name;
-        private String idType;
-        private int size;
-
-        public ContextData(String type, String name, String size, String idType) {
-            this.type = type;
-            this.name = name;
-            this.size = Integer.parseInt(size);
-
-            if (idType == null) {
-                if (type.equals("jams.model.JAMSTemporalContext")) {
-                    this.idType = "JAMSCalendar";
-                } else if (type.equals("jams.model.JAMSSpatialContext")) {
-                    this.idType = "JAMSLong";
-                } else if (type.contains("jams.components.optimizer") || type.contains("optas.optimizer") || type.contains("dump")) {
-                    this.idType = "JAMSLong";
-                } else {
-                    this.idType = "JAMSLong";
-                }
-            }
-        }
-
-        /**
-         * @return the type
-         */
-        public String getType() {
-            return type;
-        }
-
-        /**
-         * @return the name
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * @return the idType
-         */
-        public String getIdType() {
-            return idType;
-        }
-
-        /**
-         * @return the size
-         */
-        public int getSize() {
-            return size;
-        }
-    }
-
-    public class FilterData {
-
-        private String regex;
-        private String contextName;
-
-        public FilterData(String regex, String contextName) {
-            this.regex = regex;
-            this.contextName = contextName;
-        }
-
-        /**
-         * @return the regex
-         */
-        public String getRegex() {
-            return regex;
-        }
-
-        /**
-         * @return the contextName
-         */
-        public String getContextName() {
-            return contextName;
-        }
-    }
-
-    public class AttributeData implements Comparable {
-
-        public static final boolean SELECTION_DEFAULT = false;
-        public static final int AGGREGATION_SUM = 1;
-        public static final int AGGREGATION_MEAN = 2;
-        public static final int WEIGHTING_NONE = 1;
-        public static final int WEIGHTING_TIMES_AREA = 2;
-        public static final int WEIGHTING_DIV_AREA = 3;
-        private String type;
-        private String name;
-        private boolean selected;
-        private int aggregationType = AGGREGATION_MEAN;
-        private int weightingType = WEIGHTING_NONE;
-
-        public AttributeData(String type, String name) {
-            this.type = type;
-            this.name = name;
-            this.selected = SELECTION_DEFAULT;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public boolean isSelected() {
-            return selected;
-        }
-
-        public void setSelected(boolean selected) {
-            synchronized (DataStoreProcessor.this) {
-                this.selected = selected;
-            }
-        }
-
-        public int getAggregationType() {
-            return aggregationType;
-        }
-
-        public int getWeightingType() {
-            return weightingType;
-        }
-
-        public void setAggregationType(int aggregationType) {
-            synchronized (DataStoreProcessor.this) {
-                this.aggregationType = aggregationType;
-            }
-        }
-
-        public void setWeightingType(int weightingType) {
-            synchronized (DataStoreProcessor.this) {
-                this.weightingType = weightingType;
-            }
-        }
-
-        @Override
-        public int compareTo(Object obj) {
-            return (this.getName().compareTo(((AttributeData) obj).getName()));
-        }
-    }
-
-    private class ImportProgressObservable extends Observable {
-
-        private void setProgress(int progress) {
-            this.setChanged();
-            this.notifyObservers(progress);
-        }
-    }
+    
 }

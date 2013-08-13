@@ -8,7 +8,7 @@ package optas.regression;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import optas.hydro.data.SimpleEnsemble;
+import optas.data.SimpleEnsemble;
 import optas.tools.ObservableProgress;
 
 /**

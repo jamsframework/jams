@@ -62,17 +62,7 @@ public class JAMSFileFilter {
         public String getDescription() {
             return JAMS.i18n("XML_FILE_(*.xml)");
         }
-    };
-    private static FileFilter serializationFilter = new FileFilter() {
-        @Override
-        public boolean accept(File f) {
-            return f.isDirectory() || f.getName().toLowerCase().endsWith(".ser");
-        }
-        @Override
-        public String getDescription() {
-            return JAMS.i18n("Serialization_(ser)");
-        }
-    };
+    };    
     private static FileFilter jarFilter = new FileFilter() {
         @Override
         public boolean accept(File f) {
@@ -119,7 +109,8 @@ public class JAMSFileFilter {
     private static FileFilter datFilter = new FileFilter() {
         @Override
         public boolean accept(File f) {
-            return f.isDirectory() || f.getName().toLowerCase().endsWith(".dat");
+            return f.isDirectory() || f.getName().toLowerCase().endsWith(".dat") || 
+                    f.getName().toLowerCase().endsWith(".csv");
         }
         @Override
         public String getDescription() {
@@ -161,13 +152,6 @@ public class JAMSFileFilter {
         }
     };
 
-    /**
-     *
-     * @return The filter ser files
-     */
-    public static FileFilter getSerFilter() {
-        return serializationFilter;
-    }
     /**
      *
      * @return The filter for EPS files

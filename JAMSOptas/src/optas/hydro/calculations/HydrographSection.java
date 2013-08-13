@@ -5,7 +5,7 @@
 package optas.hydro.calculations;
 
 import java.util.ArrayList;
-import optas.hydro.data.TimeSerie;
+import optas.data.TimeSerie;
 
 /**
  *

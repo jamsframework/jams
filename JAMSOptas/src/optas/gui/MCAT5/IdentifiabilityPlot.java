@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import optas.hydro.data.DataSet;
+import optas.data.DataSet;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -27,10 +27,10 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYBarDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import optas.hydro.data.Efficiency;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.Parameter;
-import optas.hydro.data.SimpleEnsemble;
+import optas.data.Efficiency;
+import optas.data.EfficiencyEnsemble;
+import optas.data.Parameter;
+import optas.data.SimpleEnsemble;
 
 
 /**

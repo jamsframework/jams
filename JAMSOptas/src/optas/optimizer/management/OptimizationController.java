@@ -5,6 +5,7 @@
 
 package optas.optimizer.management;
 
+import optas.core.ObjectiveAchievedException;
 import jams.data.Attribute;
 import jams.model.JAMSVarDescription;
 import java.io.BufferedWriter;
@@ -12,13 +13,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import optas.core.AbstractFunction;
 import optas.gui.wizard.Objective;
 import optas.gui.wizard.Optimization;
 import optas.gui.wizard.Parameter;
 import optas.optimizer.Optimizer;
-import optas.optimizer.Optimizer.AbstractFunction;
 import optas.optimizer.OptimizerLibrary;
-import optas.optimizer.SampleLimitException;
+import optas.core.SampleLimitException;
 import optas.optimizer.management.SampleFactory.Sample;
 
 /**
@@ -119,11 +120,11 @@ public abstract class OptimizationController extends OptimizerWrapper {
 
         public void log(String msg) {
             if (evaluate != null)
-                this.evaluate.logging(msg);
+                this.evaluate.log(msg);
         }
 
         public double[] evaluate(double[] x) throws ObjectiveAchievedException, SampleLimitException {
-            return this.evaluate.f(x);
+            return this.evaluate.evaluate(x);
         }
 
         public double[] getLowerBound() {
@@ -149,11 +150,11 @@ public abstract class OptimizationController extends OptimizerWrapper {
         }
 
         protected void setOptimizerParameter(Optimizer optimizer, Optimization o) {
-            optimizer.setBoundaries(lowerBound, upperBound);
+            /*optimizer.setBoundaries(lowerBound, upperBound);
             optimizer.setInputDimension(n);
             optimizer.setOutputDimension(m);
             optimizer.setParameterNames(parameterNames);
-            optimizer.setObjectiveNames(objectiveNames);
+            optimizer.setObjectiveNames(objectiveNames);*/
             optimizer.setWorkspace(getModel().getWorkspace().getDirectory());
 
             int c = 100000;
@@ -180,11 +181,43 @@ public abstract class OptimizationController extends OptimizerWrapper {
             }
 
             this.evaluate = new AbstractFunction(){
-                public void logging(String msg) {
+                @Override
+                public void log(String msg) {
                     OptimizationController.this.getModel().getRuntime().println(msg);
                 }
 
-                public double[] f(double[] x) throws ObjectiveAchievedException, SampleLimitException {
+                @Override
+                public String[] getOutputFactorNames(){
+                    return objectiveNames;
+                }
+                
+                @Override
+                public String[] getInputFactorNames(){
+                    return parameterNames;
+                }
+                
+                @Override
+                public int getInputDimension(){
+                    return n;
+                }
+                
+                @Override
+                public int getOutputDimension(){
+                    return m;
+                }
+                
+                @Override
+                public double[][] getRange(){
+                    double range[][] = new double[n][2];
+                    for (int i=0;i<n;i++){
+                        range[i][0] = lowBound[i];
+                        range[i][1] = upBound[i];
+                    }
+                    return range;
+                }
+                
+                @Override
+                public double[] evaluate(double[] x) throws SampleLimitException, ObjectiveAchievedException {
                     Sample s = OptimizationController.this.getSample(x);
 
                     return s.F();

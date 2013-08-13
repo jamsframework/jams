@@ -4,15 +4,16 @@
  */
 package optas.optimizer;
 
+import optas.core.SampleLimitException;
 import jams.JAMS;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import optas.hydro.data.DataCollection;
+import optas.data.DataCollection;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.SampleFactory.SampleComperator;
 import optas.optimizer.management.NumericOptimizerParameter;
-import optas.optimizer.management.ObjectiveAchievedException;
+import optas.core.ObjectiveAchievedException;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.StringOptimizerParameter;
 import optas.optimizer.parallel.ParallelSequence;
@@ -933,50 +934,5 @@ public class NSGA2 extends Optimizer {
                 collection.dump(getModel().getWorkspace().getOutputDataDirectory());
             }
         }
-    }
-
-    public static void main(String arg[]) {
-        NSGA2 nsga = new NSGA2();
-
-        class TestFunction extends AbstractFunction {
-
-            public void logging(String str) {
-                System.out.println(str);
-            }
-
-            public double[] f(double x[]) {
-                double y[] = new double[2];
-                y[0] = -Math.pow((x[1] - (5.1 / (4 * Math.PI * Math.PI)) * x[0] * x[0] + 5 * x[0] / Math.PI - 6), 2.0) + 10 * (1 - 1 / (8 * Math.PI)) * Math.cos(x[0]) + 10;
-                y[1] = -Math.pow(x[0] + 2 * x[1] - 7, 2.0) + Math.pow(2 * x[0] + x[1] - 5, 2.0);
-                return y;
-            }
-        }
-        /*
-         nsga.GoalFunction = new TestFunction();
-         nsga.boundaries = (JAMSString)JAMSDataFactory.getDataFactory().createString();
-         nsga.boundaries.setValue("[0.0>1.0];[0.0>1.0]");
-         nsga.parameterIDs = new JAMSDouble[2];
-
-         nsga.setCrossoverDistributionIndex(JAMSDataFactory.getDataFactory().createDouble());
-         nsga.getCrossoverDistributionIndex().setValue(10.0);
-         nsga.setCrossoverProbability(JAMSDataFactory.getDataFactory().createDouble());
-         nsga.getCrossoverProbability().setValue(0.5);
-         nsga.enable = (JAMSBoolean)JAMSDataFactory.getDataFactory().createBoolean();
-         nsga.enable.setValue(true);
-         nsga.setMaxGeneration(JAMSDataFactory.getDataFactory().createInteger());
-         nsga.getMaxGeneration().setValue(10);
-         nsga.mode = (JAMSString)JAMSDataFactory.getDataFactory().createString();
-         nsga.mode.setValue("1;1");
-         nsga.effMethodName = (JAMSString)JAMSDataFactory.getDataFactory().createString();
-         nsga.effMethodName.setValue("f1;f2");
-         nsga.setMutationDistributionIndex(JAMSDataFactory.getDataFactory().createDouble());
-         nsga.getMutationDistributionIndex().setValue(10);
-         nsga.setMutationProbability(JAMSDataFactory.getDataFactory().createDouble());
-         nsga.getMutationProbability().setValue(0.5);
-         nsga.setPopulationSize(JAMSDataFactory.getDataFactory().createInteger());
-         nsga.getPopulationSize().setValue(20);
-
-         nsga.init();
-         nsga.run();*/
     }
 }

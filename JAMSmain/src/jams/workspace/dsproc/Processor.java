@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  */
 public abstract class Processor {
 
-    protected DataStoreProcessor dsdb;
+    protected AbstractDataStoreProcessor dsdb;
     protected Connection conn;
     protected ArrayList<DataStoreProcessor.ContextData> contexts;
     protected ProcessingProgressObservable processingProgressObservable = new ProcessingProgressObservable();
@@ -30,10 +30,10 @@ public abstract class Processor {
     /**
      * @return the h2ds
      */
-    public DataStoreProcessor getDataStoreProcessor() {
+    public AbstractDataStoreProcessor getDataStoreProcessor() {
         return dsdb;
     }
-
+    
     public void close() throws SQLException {
         processingProgressObservable = null;
         conn.close();

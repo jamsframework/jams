@@ -10,10 +10,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
-import optas.SA.VarianceBasedTemporalSensitivityAnalysis;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.SimpleEnsemble;
-import optas.hydro.data.TimeSerie;
+import optas.SA.SobolsMethodTemporal;
+import optas.data.EfficiencyEnsemble;
+import optas.data.SimpleEnsemble;
+import optas.data.TimeSerie;
 import optas.tools.ObservableProgress;
 
 /**
@@ -22,7 +22,7 @@ import optas.tools.ObservableProgress;
  */
 public class VarianceBasedGreedyOptimizationScheme extends OptimizationScheme{
 
-    VarianceBasedTemporalSensitivityAnalysis VBTSA;
+    SobolsMethodTemporal VBTSA;
 
     double tau = 0.7;
     double minDominatedTimesteps = 0.2;
@@ -36,7 +36,7 @@ public class VarianceBasedGreedyOptimizationScheme extends OptimizationScheme{
 
     }
 
-    public void setData(VarianceBasedTemporalSensitivityAnalysis VBTSA, SimpleEnsemble p[], EfficiencyEnsemble eff, TimeSerie ts){
+    public void setData(SobolsMethodTemporal VBTSA, SimpleEnsemble p[], EfficiencyEnsemble eff, TimeSerie ts){
         this.n = p.length;
         this.T = ts.getTimesteps();
         this.VBTSA = VBTSA;

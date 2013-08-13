@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import optas.hydro.data.SimpleEnsemble;
+import optas.data.SimpleEnsemble;
 import org.encog.engine.network.activation.ActivationLinear;
 import org.encog.engine.network.activation.ActivationSigmoid;
 import org.encog.neural.data.basic.BasicNeuralDataSet;

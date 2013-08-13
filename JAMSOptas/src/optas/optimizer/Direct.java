@@ -9,12 +9,13 @@
 package optas.optimizer;
 
 //muss noch überarbeitet und integriert werden .. .
+import optas.core.SampleLimitException;
 import optas.optimizer.management.OptimizerDescription;
 import java.util.ArrayList;
 import jams.JAMS;
-import java.util.Comparator;
+import optas.core.AbstractFunction;
 import optas.optimizer.management.SampleFactory.SampleSO;
-import optas.optimizer.management.ObjectiveAchievedException;
+import optas.core.ObjectiveAchievedException;
 
 public class Direct extends optas.optimizer.Optimizer {
 
@@ -335,7 +336,7 @@ public class Direct extends optas.optimizer.Optimizer {
         return Math.exp(-exp);
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         Direct o = new Direct();
         o.setBoundaries(new double[]{-3,-1}, new double[]{3,3});
         o.setMaxn(5000);
@@ -366,5 +367,5 @@ public class Direct extends optas.optimizer.Optimizer {
             }
         });
         o.optimize();
-    }
+    }*/
 }

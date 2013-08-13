@@ -21,14 +21,13 @@
  */
 package reg.gui;
 
+import jams.workspace.dsproc.AbstractDataStoreProcessor;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import reg.DataCollectionViewController;
 import reg.JAMSExplorer;
-import reg.OutputPanelFactory;
 import jams.workspace.dsproc.DataStoreProcessor;
 import reg.spreadsheet.JAMSSpreadSheet;
 
@@ -53,25 +52,20 @@ public class OutputDSPanel extends JPanel {
 
         DSPanel tsp = null;
         // create the controller panel
-        switch (DataStoreProcessor.getDataStoreType(file)) {
-            case DataStoreProcessor.UnsupportedDataStore:
+        switch (AbstractDataStoreProcessor.getDataStoreType(file)) {
+            case Unsupported:
                 Logger.getLogger(OutputDSPanel.class.getName()).log(Level.WARNING, "Unsupported datastore");
                 break;
-
-            case DataStoreProcessor.SimpleEnsembleDataStore:
+            case TimeDataSerie:
+                tsp = new EnsembleTimeSeriesPanel();
                 break;
-            case DataStoreProcessor.EnsembleTimeSeriesDataStore:
-
-                //tsp = new EnsembleTimeSeriesPanel();
-                break;
-
-            case DataStoreProcessor.TimeSpaceDataStore:
+            case SpatioTemporal:
                 tsp = new TimeSpaceDSPanel();
                 break;
-            case DataStoreProcessor.SimpleDataSerieDataStore:
+            case DataSerie1D:
                 tsp = new SimpleDSPanel();
                 break;
-            case DataStoreProcessor.SimpleTimeSerieDataStore:
+            case Timeserie:
                 tsp = new SimpleDSPanel();
                 break;
             default:

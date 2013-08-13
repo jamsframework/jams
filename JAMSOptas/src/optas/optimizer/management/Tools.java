@@ -129,7 +129,7 @@ public class Tools {
         desc.setShortName("unknown optimizer");
         desc.setId(1);
         desc.setAssessNonUniqueness(new BooleanOptimizerParameter("AssessNonUniqueness", "?", false));
-        desc.setOptimizerClassName(optas.optimizer.ParallelPostSampling.class.getName());
+        desc.setOptimizerClassName(optas.optimizer.experimental.ParallelPostSampling.class.getName());
         desc.setMultiObjective(false);
 
         return desc;

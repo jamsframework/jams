@@ -19,12 +19,12 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import optas.gui.MCAT5.MCAT5Plot.SimpleRequest;
-import optas.hydro.data.DataSet;
-import optas.hydro.data.Efficiency;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.Measurement;
-import optas.hydro.data.TimeSerie;
-import optas.hydro.data.TimeSerieEnsemble;
+import optas.data.DataSet;
+import optas.data.Efficiency;
+import optas.data.EfficiencyEnsemble;
+import optas.data.Measurement;
+import optas.data.TimeSerie;
+import optas.data.TimeSerieEnsemble;
 
 /**
  *
@@ -111,7 +111,7 @@ public class ParetoOutputUncertainty extends MCAT5Plot {
         for (int i=0;i<data.getSize();i++){
             double actualEffSet[] = new double[eff.length];
             for (int j=0;j<eff.length;j++)
-                actualEffSet[j] = eff[j].getValue(new Integer(i));
+                actualEffSet[j] = eff[j].getValue(eff[j].getId(i));
             if (isParetoOptimal(actualEffSet,eff)){
                 for (int t=0;t<data.getTimesteps();t++){
                     minMaxOptimalTS[0][t] = Math.min(minMaxOptimalTS[0][t],data.get(t, data.getId(i)) );

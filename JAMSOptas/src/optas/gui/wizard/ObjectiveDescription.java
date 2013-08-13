@@ -9,9 +9,9 @@ import jams.meta.ComponentField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import optas.efficiencies.UniversalEfficiencyCalculator;
-import optas.hydro.data.TimeFilter;
-import optas.hydro.data.TimeFilterCollection;
-import optas.hydro.data.TimeFilterFactory;
+import optas.data.TimeFilter;
+import optas.data.TimeFilterCollection;
+import optas.data.TimeFilterFactory;
 
 /**
  *

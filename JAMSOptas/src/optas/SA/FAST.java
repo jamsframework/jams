@@ -5,8 +5,6 @@
 
 package optas.SA;
 
-import Jama.LUDecomposition;
-import Jama.Matrix;
 import java.util.Random;
 
 /**
@@ -42,15 +40,14 @@ public class FAST extends SensitivityAnalyzer{
     }
 
     @Override
-    public void init(){
-        super.init();
-        
-        sensitivityIndex =new double[n];
+    public void calculate(){
+        super.calculate();
 
-        if (this.measure == Measure.FirstOrder)
+        if (this.measure == Measure.FirstOrder){
             calcFirstOrderSensitivity();
-        else
+        }else{
             calcTotalVariance();
+        }
     }
 
     private double[] X(double s){
@@ -81,7 +78,7 @@ public class FAST extends SensitivityAnalyzer{
                     double sk = Math.PI * k / (2 * q + 1);
 
                     double Xsk[] = X(sk);
-                    double y = this.getInterpolation(this.transformFromUnitCube(Xsk));
+                    double y = this.evaluateModel(Xsk);//this.getInterpolation(this.transformFromUnitCube(Xsk));
 
                     Aj[m] += y * Math.cos(omega[j] * m * sk);
                     Bj[m] += y * Math.sin(omega[j] * m * sk);
@@ -114,7 +111,7 @@ public class FAST extends SensitivityAnalyzer{
                     double sk = Math.PI * k / (2 * q + 1);
 
                     double Xsk[] = X(sk);
-                    double y = this.getInterpolation(this.transformFromUnitCube(Xsk));
+                    double y = this.evaluateModel(Xsk);//this.getInterpolation(this.transformFromUnitCube(Xsk));
 
                     Aj[m] += y*y * Math.cos(omega[j] * m * sk);
                     Bj[m] += y * Math.cos(omega[j] * m * sk);

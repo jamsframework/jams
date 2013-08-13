@@ -30,25 +30,27 @@ public class OptimizerLibrary {
         optimizerPool.add(new optas.optimizer.SCE());
         optimizerPool.add(new optas.optimizer.ParallelSCE());
         optimizerPool.add(new optas.optimizer.BranchAndBound());
+        optimizerPool.add(new optas.optimizer.DREAM());
+        
         //optimizerPool.add(new optas.optimizer.GPSearch());
         //optimizerPool.add(new optas.optimizer.GutmannMethod());
-        optimizerPool.add(new optas.optimizer.LatinHyperCubeSampler());
+        optimizerPool.add(new optas.sampler.LatinHyperCubeSampler());
         optimizerPool.add(new optas.optimizer.MOCOM());
         //optimizerPool.add(new optas.optimizer.MultiPointRandomSampler());
         optimizerPool.add(new optas.optimizer.NSGA2());
         optimizerPool.add(new optas.optimizer.NelderMead());
         //optimizerPool.add(new optas.optimizer.ParticleSwarm());
-        optimizerPool.add(new optas.optimizer.RandomSampler());
+        optimizerPool.add(new optas.sampler.RandomSampler());
         //optimizerPool.add(new optas.optimizer.SCEM_UA());
-        optimizerPool.add(new optas.optimizer.HaltonSequenceSampling());
-        optimizerPool.add(new optas.optimizer.ParallelHaltonSequenceSampling());
+        optimizerPool.add(new optas.sampler.HaltonSequenceSampling());
+        optimizerPool.add(new optas.sampler.ParallelHaltonSequenceSampling());
         return optimizerPool;
     }
     static public Optimizer getDefaultOptimizer(){
         return new optas.optimizer.Direct();
     }
 
-    static protected OptimizerDescription getDefaultOptimizerDescription(String shortName, String className, int id, boolean multiObj) {
+    static public OptimizerDescription getDefaultOptimizerDescription(String shortName, String className, int id, boolean multiObj) {
         OptimizerDescription defDesc = new OptimizerDescription(shortName, id, multiObj);
         defDesc.setOptimizerClassName(className);
         defDesc.addParameter(new NumericOptimizerParameter(

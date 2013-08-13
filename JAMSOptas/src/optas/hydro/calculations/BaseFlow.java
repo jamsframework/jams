@@ -6,8 +6,8 @@
 package optas.hydro.calculations;
 
 import java.util.ArrayList;
-import optas.hydro.data.DataSet.MismatchException;
-import optas.hydro.data.TimeSerie;
+import optas.data.DataSet.MismatchException;
+import optas.data.TimeSerie;
 
 /**
  *

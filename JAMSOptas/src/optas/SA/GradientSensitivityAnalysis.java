@@ -14,40 +14,30 @@ import java.util.Random;
  * @author chris
  */
 public class GradientSensitivityAnalysis extends SensitivityAnalyzer{
+    
     @Override
-    public void init(){
-        super.init();
+    public void calculate() {
+        super.calculate();
         
-        calcRegression();
-    }
-
-    private void calcRegression() {
         int K = 2 * n;
 
         Matrix X = new Matrix(K, n + 1);
         Matrix Y = new Matrix(K, 1);
         double x0[] = new double[n];
+        double x1[] = new double[n];
 
         //linear regression according to gradient estimation schemes of Brekelmans et al. 2005
-        double range[] = new double[n];
-        
         final double deltah = 0.01;
         Random rnd  = new Random();
         double error_avg = 0;
-
-        for (int j=0;j<n;j++){
-            range[j] = this.getParameterRange()[j][1]-this.getParameterRange()[j][0];
-        }
-
-        for (int i = 0; i < L; i++) {
-            int id_i = this.x[0].getId(i);
-
-            double value_0 = 0;
+       
+        for (int i = 0; i < sampleSize; i++) {            
+            double value_0;
 
             for (int k = 0; k < n; k++) {
-                x0[k] = this.x[k].getValue(id_i);
+                x0[k] = rnd.nextDouble();//this.x[k].getValue(id_i);
             }
-            value_0 = this.getInterpolation(x0);
+            value_0 = this.evaluateModel(x0);
 
             //do sampling
             for (int j=0;j<K;j++){                
@@ -55,16 +45,16 @@ public class GradientSensitivityAnalysis extends SensitivityAnalyzer{
 
                 for (int k = 0; k < n; k++) {
                     if (rnd.nextBoolean()){
-                        x0[k] = this.x[k].getValue(id_i)+deltah*range[k];
+                        x1[k] = x0[k]+deltah;
                         X.set(j, k, deltah);
                     }
                     else{
-                        x0[k] = this.x[k].getValue(id_i)-deltah*range[k];
+                        x1[k] = x0[k]-deltah;
                         X.set(j, k, -deltah);
                     }
                 }
                 
-                double value = this.getInterpolation(x0);
+                double value = this.evaluateModel(x0);
 
                 Y.set(j, 0, value);
             }
@@ -78,7 +68,7 @@ public class GradientSensitivityAnalysis extends SensitivityAnalyzer{
                 //sensitivityIndex[j] +=  Math.abs(beta.get(j, 0));
             }
         }
-        error_avg /= L;
+        error_avg /= sampleSize;
         for (int j=0;j<n;j++){
                 //sensitivityIndex[j] = Math.max(Math.abs(sensitivityIndex[j]), beta.get(j, 0));
                 //sensitivityIndex[j] /=  L;

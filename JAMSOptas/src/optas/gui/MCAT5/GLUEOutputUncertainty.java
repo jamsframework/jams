@@ -36,12 +36,12 @@ import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import optas.gui.MCAT5.MCAT5Plot.SimpleRequest;
-import optas.hydro.data.DataSet;
-import optas.hydro.data.Efficiency;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.Measurement;
-import optas.hydro.data.TimeSerie;
-import optas.hydro.data.TimeSerieEnsemble;
+import optas.data.DataSet;
+import optas.data.Efficiency;
+import optas.data.EfficiencyEnsemble;
+import optas.data.Measurement;
+import optas.data.TimeSerie;
+import optas.data.TimeSerieEnsemble;
 
 /**
  *
@@ -71,7 +71,7 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
     public GLUEOutputUncertainty() {
         this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
         this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
-        this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"), Measurement.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"), Measurement.class, 0, 1));
 
         init();
     }
@@ -181,8 +181,6 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
 
         plot1.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
 
-
-
         JFreeChart chart2 = new JFreeChart(plot2);
         chart1.setTitle(JAMS.i18n("OUTPUT_UNCERTAINTY_PLOT"));
         chart2.setTitle("");
@@ -198,6 +196,7 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         this.thresholdField = new JTextField("0.0", 5);
         thresholdField.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 getThreshold();
             }
@@ -214,6 +213,7 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         this.exportMeanButton = new JButton("copy mean to clipboard");
         exportMeanButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 StringSelection ss = new StringSelection(meanString);
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
@@ -223,6 +223,7 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         this.exportMedianButton = new JButton("copy median to clipboard");
         exportMedianButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 StringSelection ss = new StringSelection(medianString);
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
@@ -336,19 +337,35 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         ArrayList<DataSet> p[] = getData(new int[]{0, 1, 2});
+
         TimeSerieEnsemble ts = (TimeSerieEnsemble) p[0].get(0);
         EfficiencyEnsemble eff = (EfficiencyEnsemble) p[1].get(0);
-        Measurement obs = (Measurement) p[2].get(0);
-
+        Measurement obs = null;
+        if (p[2].size()>0){
+            obs = (Measurement) p[2].get(0);
+        }
+        
+        int T = ts.getTimesteps();
+        int N = ts.getSize();
+        
         TimeSeries dataset1 = new TimeSeries(JAMS.i18n("LOWER_CONFIDENCE_BOUND"));
         TimeSeries dataset2 = new TimeSeries(JAMS.i18n("UPPER_CONFIDENCE_BOUND"));
-        TimeSeries dataset3 = new TimeSeries(obs.name);
-
+        if (obs!=null){
+            TimeSeries dataset3 = new TimeSeries(obs.name);
+            for (int i=0;i<T;i++){
+                Day d = new Day(obs.getTime((int) i));
+                dataset3.add(d, obs.getValue(i));
+            }
+            TimeSeriesCollection obs_runoff = new TimeSeriesCollection();
+            obs_runoff.addSeries(dataset3);
+            plot1.setDataset(0, obs_runoff);
+        }else{
+            plot1.setDataset(0, null);
+        }
         TimeSeries dataset4 = new TimeSeries(JAMS.i18n("MEAN"));
         TimeSeries dataset5 = new TimeSeries(JAMS.i18n("MEDIAN"));
                 
-        int T = ts.getTimesteps();
-        int N = ts.getSize();
+
 
         if (showAll) {
             TimeSeries dataset_full[] = new TimeSeries[N];
@@ -357,7 +374,7 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
                 dataset_full[i] = new TimeSeries("data_" + i);
                 int id = ts.getId(i);
                 for (int j = 0; j < T; j++) {
-                    Day d = new Day(obs.getTime((int) j));
+                    Day d = new Day(ts.getDate((int) j));
                     dataset_full[i].add(d, ts.get(j, id));
                 }
                 ensemble_full.addSeries(dataset_full[i]);
@@ -431,36 +448,31 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
                 high_conf[i] = tmp;
             }
 
-            Day d = new Day(obs.getTime((int) i));
+            Day d = new Day(ts.getDate((int) i));
 
             dataset1.add(d, low_conf[i]);
             dataset2.add(d, high_conf[i]);
-            dataset3.add(d, obs.getValue(i));
+
+
             dataset4.add(d, mean);
-            meanString += sdf.format(obs.getTime((int) i)) + "\t" + mean + "\n";
-            medianString += sdf.format(obs.getTime((int) i)) + "\t" + median + "\n";
-            //System.out.println(obs.getTime((int) i) + "\t" + low_conf[i] + "\t" + high_conf[i]);            
-            System.out.println(sdf.format(obs.getTime((int) i)) + "\t" + low_conf[i] + "\t" + high_conf[i] + "\t" + mean);
+            meanString += sdf.format(ts.getDate((int) i)) + "\t" + mean + "\n";
+            medianString += sdf.format(ts.getDate((int) i)) + "\t" + median + "\n";         
+            System.out.println(sdf.format(ts.getDate((int) i)) + "\t" + low_conf[i] + "\t" + high_conf[i] + "\t" + mean);
             dataset5.add(d, median);
         }
 
         TimeSeriesCollection interval = new TimeSeriesCollection();
         interval.addSeries(dataset1);
         interval.addSeries(dataset2);
-
-        TimeSeriesCollection obs_runoff = new TimeSeriesCollection();
-        obs_runoff.addSeries(dataset3);
-
+        
         TimeSeriesCollection mean_ensemble = new TimeSeriesCollection();
         mean_ensemble.addSeries(dataset4);
         
         TimeSeriesCollection median_ensemble = new TimeSeriesCollection();
         median_ensemble.addSeries(dataset5);
-
-        plot1.setDataset(0, obs_runoff);
+        
         plot1.setDataset(3, interval);        
         if (!showAll) {
-        plot1.setDataset(0, obs_runoff);
         plot1.setDataset(3, interval);        
             if (this.isShowMean) {
                 plot1.setDataset(1, mean_ensemble);

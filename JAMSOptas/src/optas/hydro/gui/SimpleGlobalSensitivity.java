@@ -11,9 +11,9 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import optas.gui.MCAT5.DottyPlot;
 import optas.hydro.calculations.SlopeCalculations;
-import optas.hydro.data.DataSet;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.SimpleEnsemble;
+import optas.data.DataSet;
+import optas.data.EfficiencyEnsemble;
+import optas.data.SimpleEnsemble;
 
 
 

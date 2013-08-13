@@ -40,7 +40,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
-import optas.hydro.data.DataCollection;
+import optas.data.DataCollection;
 import reg.gui.DataCollectionView;
 import reg.gui.InputDSInfoPanel;
 import reg.gui.TSPanel;

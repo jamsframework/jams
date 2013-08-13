@@ -22,13 +22,14 @@
 package optas.optimizer;
 
 
+import optas.core.SampleLimitException;
 import jams.model.*;
 import Jama.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.NumericOptimizerParameter;
-import optas.optimizer.management.ObjectiveAchievedException;
+import optas.core.ObjectiveAchievedException;
 import optas.optimizer.management.OptimizerDescription;
 
 /**

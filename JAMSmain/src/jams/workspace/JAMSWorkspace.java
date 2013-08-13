@@ -23,7 +23,6 @@ package jams.workspace;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import jams.workspace.stores.TableDataStore;
 import jams.workspace.stores.TSDataStore;
@@ -61,10 +60,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Properties;
+import java.util.TreeSet;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -73,6 +72,7 @@ public class JAMSWorkspace implements Workspace {
     private static final String CONFIG_FILE_NAME = "config.txt", CONFIG_FILE_COMMENT = "JAMS workspace configuration", CONTEXT_ATTRIBUTE_NAME = "context";
     public static final String INPUT_DIR_NAME = "input", OUTPUT_DIR_NAME = "output", TEMP_DIR_NAME = "tmp", DUMP_DIR_NAME = "dump", LOCAL_INDIR_NAME = "local", EXPLORER_DIR_NAME = "explorer";
     public static final String SUFFIX_XML = "xml";
+    
     private HashMap<String, Document> inputDataStores = new HashMap<String, Document>();
     private HashMap<String, Document> outputDataStores = new HashMap<String, Document>();
     private HashMap<String, Document> registeredInputDataStores = new HashMap<String, Document>();
@@ -107,6 +107,7 @@ public class JAMSWorkspace implements Workspace {
         
         this.loadConfig();
         this.checkValidity(readonly);
+        //this.loadConfig();
         this.updateDataStores();
 
         Set<DataStore> rmCandidates = new HashSet<DataStore>();
@@ -137,19 +138,30 @@ public class JAMSWorkspace implements Workspace {
     @Override
     public void loadConfig() {
         try {
-
             properties.setProperty("description", "");
             properties.setProperty("title", "");
             properties.setProperty("persistent", "false");
             properties.setProperty("defaultmodel", "model.jam");
-
+            properties.setProperty("INPUT_DIR_NAME", INPUT_DIR_NAME);
+            properties.setProperty("OUTPUT_DIR_NAME", OUTPUT_DIR_NAME);
+            properties.setProperty("TEMP_DIR_NAME", TEMP_DIR_NAME);
+            properties.setProperty("LOCAL_INDIR_NAME", LOCAL_INDIR_NAME);          
+            properties.setProperty("DUMP_DIR_NAME", DUMP_DIR_NAME);          
+            properties.setProperty("EXPLORER_DIR_NAME", EXPLORER_DIR_NAME);          
+                        
             File file = new File(directory, CONFIG_FILE_NAME);
             if (file.exists()) {
                 BufferedInputStream is = new BufferedInputStream(new FileInputStream(file));
                 properties.load(is);
+                is.close();
             } else {
                 BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(file));
                 properties.store(os, CONFIG_FILE_COMMENT);
+                os.close();
+            }
+            
+            if (properties.containsKey("readonly")){
+                this.readonly = Boolean.parseBoolean(properties.getProperty("readonly"));
             }
         } catch (IOException ioe) {
             runtime.handle(ioe);
@@ -202,7 +214,7 @@ public class JAMSWorkspace implements Workspace {
      * @throws jams.workspace.JAMSWorkspace.InvalidWorkspaceException
      */
     private void checkValidity(boolean readonly) throws InvalidWorkspaceException {
-
+        this.readonly = readonly;
         if (!directory.isDirectory()) {
             throw new InvalidWorkspaceException(JAMS.i18n("Error_during_model_setup:_")
                     + directory.toString() + JAMS.i18n("_is_not_a_directory"));
@@ -214,16 +226,18 @@ public class JAMSWorkspace implements Workspace {
 //                    + directory.toString() + JAMS.i18n("_does_not_contain_config_file"));
 //        }
 
-        File inDir = new File(directory, INPUT_DIR_NAME);
-        File outDir = new File(directory, OUTPUT_DIR_NAME);
-        File tmpDir = new File(directory, TEMP_DIR_NAME);
-        File localInDir = new File(inDir, LOCAL_INDIR_NAME);
-        File localDumpDir = new File(localInDir, DUMP_DIR_NAME);
-        File explorerDir = new File(directory, EXPLORER_DIR_NAME);
+        this.loadConfig();
+        
+        File inDir = new File(directory, properties.getProperty("INPUT_DIR_NAME"));
+        File outDir = new File(directory, properties.getProperty("OUTPUT_DIR_NAME"));
+        File tmpDir = new File(directory, properties.getProperty("TEMP_DIR_NAME"));
+        File localInDir = new File(inDir, properties.getProperty("LOCAL_INDIR_NAME"));
+        File localDumpDir = new File(localInDir, properties.getProperty("DUMP_DIR_NAME"));
+        File explorerDir = new File(directory, properties.getProperty("EXPLORER_DIR_NAME"));
 
         File[] allDirs = {inDir, outDir, localInDir, localDumpDir, explorerDir};
 
-        if (readonly) {
+        if (this.readonly) {
             for (File dir : allDirs) {
                 if (!dir.exists()) {
                     throw new InvalidWorkspaceException(JAMS.i18n("Error_during_model_setup:_")
@@ -246,7 +260,7 @@ public class JAMSWorkspace implements Workspace {
                         + directory.toString() + JAMS.i18n("_is_not_a_valid_workspace!"));
             }
         }
-
+                
         this.inputDirectory = inDir;
         this.outputDirectory = outDir;
         this.localInputDirectory = localInDir;
@@ -254,13 +268,14 @@ public class JAMSWorkspace implements Workspace {
         this.tmpDirectory = tmpDir;
         this.explorerDirectory = explorerDir;       
         
+        //setup output directory
         if (this.isPersistent()) {
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-            this.outputDataDirectory = new File(this.outputDirectory, sdf.format(cal.getTime()));
+            this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
         } else {
-            this.outputDataDirectory = new File(this.outputDirectory, "current");
-        }                
+            this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
+        }
     }
 
     private String getStoreID(File file) {
@@ -800,7 +815,28 @@ public class JAMSWorkspace implements Workspace {
                 }
             }
         };
-        return outputDirectory.listFiles(filter);
+        TreeSet<File> files = new TreeSet<File>();        
+        File list[] = outputDirectory.listFiles(filter);
+        for (File f : list){
+            files.add(f);
+        }
+        
+        boolean change = true;
+        while (change) {
+            change = false;
+            for (File f : list) {
+                if (f.isDirectory()) {
+                    File newlist[] = f.listFiles(filter);
+                    for (File newFile : newlist){
+                        if (!files.contains(newFile)){
+                            files.add(newFile);       
+                            change = true;
+                        }
+                    }
+                }
+            }
+        }
+        return files.toArray(new File[0]);
     }
 
     /**
@@ -812,7 +848,11 @@ public class JAMSWorkspace implements Workspace {
         FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                if (pathname.isFile() && (pathname.getName().endsWith(OUTPUT_FILE_ENDING) || pathname.getName().endsWith(SPREADSHEET_FILE_ENDING) || pathname.getName().endsWith(DATACOLLECTION_FILE_ENDING))) {
+                if (pathname.isFile() && (
+                        pathname.getName().endsWith(OUTPUT_FILE_ENDING) || 
+                        pathname.getName().endsWith(SPREADSHEET_FILE_ENDING) || 
+                        pathname.getName().endsWith(DATACOLLECTION_FILE_ENDING)) || 
+                        pathname.getName().endsWith(".csv")) {
                     return true;
                 } else {
                     return false;

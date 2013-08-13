@@ -3,6 +3,13 @@
 
 package optas.io;
 
+import optas.data.TimeSerie;
+import optas.data.SimpleEnsemble;
+import optas.data.Measurement;
+import optas.data.DataSet;
+import optas.data.EfficiencyEnsemble;
+import optas.data.DataCollection;
+import optas.data.TimeSerieEnsemble;
 import jams.data.Attribute;
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
@@ -10,8 +17,7 @@ import jams.data.DefaultDataFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import optas.hydro.data.*;
-import optas.hydro.data.DataSet.MismatchException;
+import optas.data.DataSet.MismatchException;
 import ucar.ma2.Array;
 import ucar.ma2.Index;
 import ucar.nc2.NetcdfFile;

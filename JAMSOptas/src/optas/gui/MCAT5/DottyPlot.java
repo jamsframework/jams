@@ -9,7 +9,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import optas.hydro.data.DataSet;
+import optas.data.DataSet;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -17,9 +17,8 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import optas.hydro.data.Efficiency;
-import optas.hydro.data.Parameter;
-import optas.hydro.data.SimpleEnsemble;
+import optas.data.SimpleEnsemble;
+import optas.data.StateVariable;
 
 /**
  *
@@ -51,8 +50,8 @@ public class DottyPlot extends MCAT5Plot {
     }
 
     public DottyPlot() {
-        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
-        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), StateVariable.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), StateVariable.class));
 
         init();
     }

@@ -5,9 +5,9 @@
 
 package optas.regression;
 
-import optas.hydro.data.SimpleEnsemble;
-import optas.hydro.data.TimeSerie;
-import optas.hydro.data.TimeSerieEnsemble;
+import optas.data.SimpleEnsemble;
+import optas.data.TimeSerie;
+import optas.data.TimeSerieEnsemble;
 
 /**
  *

@@ -25,7 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import optas.hydro.ParameterGroup;
-import optas.hydro.data.SimpleEnsemble;
+import optas.data.SimpleEnsemble;
 
 /**
  *

@@ -7,10 +7,10 @@ package optas.SA;
 
 import java.util.Arrays;
 import java.util.TreeSet;
-import optas.hydro.data.EfficiencyEnsemble;
-import optas.hydro.data.Measurement;
-import optas.hydro.data.SimpleEnsemble;
-import optas.hydro.data.TimeSerieEnsemble;
+import optas.data.EfficiencyEnsemble;
+import optas.data.Measurement;
+import optas.data.SimpleEnsemble;
+import optas.data.TimeSerieEnsemble;
 import optas.regression.SimpleInterpolation.NormalizationMethod;
 import optas.tools.ObservableProgress;
 
@@ -30,7 +30,8 @@ public class TemporalSensitivityAnalysis extends ObservableProgress{
     int T = 0;
     int size = 0;
     int n = 0;
-
+    int windowSize = 1;
+    
     double range[][] = null;
 
     boolean isInit = false;
@@ -112,7 +113,7 @@ public class TemporalSensitivityAnalysis extends ObservableProgress{
         TimeSerieEnsemble tsCut;
 
         Integer[] ids = o.sort();
-
+//filter?!
         Integer[] new_ids = Arrays.copyOfRange(ids, 0, (int)(0.95*ids.length));
 
         Integer[] idsO = o.getIds(),idsP = parameter[0].getIds(),idsTS=ts.getIds();
@@ -162,10 +163,10 @@ public class TemporalSensitivityAnalysis extends ObservableProgress{
         tsCut = (TimeSerieEnsemble)ts.clone();
         tsCut.retainIds(new_ids);
         
-        return (temporalSensitivityIndex = calcTemporalSensitivity(parameterCut, oCut, tsCut));
+        return (temporalSensitivityIndex = calcTemporalSensitivity(parameterCut, tsCut));
     }
 
-    private double[][] calcTemporalSensitivity(SimpleEnsemble parameter[], EfficiencyEnsemble o, TimeSerieEnsemble ts ){
+    private double[][] calcTemporalSensitivity(SimpleEnsemble parameter[], TimeSerieEnsemble ts ){
         log("Calculating Temporal Sensitivity Index");
         if (isCalculated)
             return temporalSensitivityIndex;
@@ -177,24 +178,35 @@ public class TemporalSensitivityAnalysis extends ObservableProgress{
         SA.setObjectiveNormalizationMethod(NormalizationMethod.Linear);
         SA.setParameterNormalizationMethod(NormalizationMethod.Linear);
         SA.setSampleCount(2000);
-        SA.setUseANNRegression(false);
+        SA.setUsingRegression(false);
         
         double sensitivity[][] = new double[n][T];
 
         for (int i=0;i<T;i++){
-            double observationT = obs.getValue(i);
-            SimpleEnsemble s = ts.get(i);
-            s.calcPlus(-observationT);
-            s.calcAbs();
-
-            EfficiencyEnsemble e = new EfficiencyEnsemble(s, false);
+            SimpleEnsemble sumOfWindow = null;
+            
+            for (int j=i-windowSize;j<i+windowSize;j++){
+                int k=Math.min(Math.max(0, j), T-1);
+                
+                SimpleEnsemble s = ts.get(k);
+                double observationT = obs.getValue(k);                
+                s.calcPlus(-observationT);
+                s.calcAbs();
+                if (sumOfWindow == null){
+                    sumOfWindow = s;                 
+                }else{
+                    sumOfWindow.calcPlus(s);
+                }
+            }
+            
+            EfficiencyEnsemble e = new EfficiencyEnsemble(sumOfWindow, false);
 
             SA.setup(parameter, e);
-            double result[][] = SA.getSensitivity();
+            double result[] = SA.getSensitivity();
             double sum = 0;
             for (int j=0;j<n;j++){
-                sensitivity[j][i] = result[j][1];
-                sum += result[j][1];
+                sensitivity[j][i] = result[j];
+                sum += result[j];
             }
             for (int j=0;j<n;j++){
                 sensitivity[j][i] /= sum;

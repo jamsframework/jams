@@ -5,6 +5,7 @@
 
 package optas.optimizer.parallel;
 
+import optas.core.SampleLimitException;
 import optas.optimizer.*;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSModel;
@@ -12,8 +13,8 @@ import jams.runtime.StandardRuntime;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import optas.hydro.data.DataCollection;
-import optas.optimizer.management.ObjectiveAchievedException;
+import optas.data.DataCollection;
+import optas.core.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.SampleFactory.SampleSO;
 import optas.io.ImportMonteCarloData;
