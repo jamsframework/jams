@@ -396,11 +396,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         // create additional dialogs
         this.propertyDlg = new PropertyDlg(this, getProperties());
-
-        jfcSer = GUIHelper.getJFileChooser(JAMSFileFilter.getSerFilter());
-        jfcSer.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfcSer.setCurrentDirectory(JAMSui.getBaseDir());
-
+        
         jfcProps = GUIHelper.getJFileChooser(JAMSFileFilter.getPropertyFilter());
         jfcProps.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfcProps.setCurrentDirectory(JAMSui.getBaseDir());
