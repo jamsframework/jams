@@ -6,12 +6,16 @@
 package optas.gui.wizard;
 
 import jams.JAMS;
+import jams.gui.WorkerDlg;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import javax.swing.SwingUtilities;
 import optas.data.TimeFilter;
 import optas.data.TimeFilterCollection;
+import optas.data.TimeFilterFactory;
 import optas.data.TimeSerie;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
@@ -51,6 +55,8 @@ public class HydrographChart {
     TimeFilterCollection filters = new TimeFilterCollection();
     TimeFilter selectedTimeFilter = null;
         
+    ChartPanel panel = null;
+    
     public HydrographChart(){
                         
          chart = ChartFactory.createTimeSeriesChart(
@@ -81,24 +87,30 @@ public class HydrographChart {
 
         Color list1[] = new Color[10];        
         for (int i=0;i<10;i++){
-            if (i%3==0){
+            if (i%4==0){
                 list1[i] = Color.red;                
-            }else if (i%3==1){
-                list1[i] = Color.white;                
-            }else if (i%3==2){
-                list1[i] = Color.green;                
+            }else if (i%4==1){
+                list1[i] = new Color(1.0f,1.0f,1.0f,0.0f);         
+            }else if (i%4==2){
+                list1[i] = new Color(0.0f,1.0f,0.0f);                 
+            }else if (i%4==3){
+                list1[i] = Color.MAGENTA;
             }
         }
         
         for (int i=0;i<10;i++){
             filterRenderer1.setSeriesFillPaint(i,list1[i]);
-            filterRenderer1.setSeriesPaint(i,list1[i]);            
+            filterRenderer1.setSeriesPaint(i,list1[i]);  
+            if (i%4 == 2){
+                filterRenderer1.setSeriesOutlineStroke(i, new BasicStroke(20.0f));
+                filterRenderer1.setSeriesStroke(i, new BasicStroke(20.0f));
+            }
         }
         
         filterRenderer1.setBaseSeriesVisible(true);
         filterRenderer1.setOutlinePaint(null);
         filterRenderer1.setStroke(new BasicStroke(0.0f));
-                                                
+                        
         chart.getXYPlot().setRenderer(1, filterRenderer1);                
                 
         chart.getXYPlot().mapDatasetToRangeAxis(1, 1);
@@ -120,17 +132,25 @@ public class HydrographChart {
         for (int i = 0; i < T; i++) {
             for (int j = 0; j < n; j++) {
                 if (filter[j][i]==0){
-                    tableDataset.add(obs.getTime(i).getTime(), 1.0/n, Integer.toString(3*j),false);
-                    tableDataset.add(obs.getTime(i).getTime(), 0, Integer.toString(3*j+1),false);
-                    tableDataset.add(obs.getTime(i).getTime(), 0, Integer.toString(3*j+2),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 1.0/n, Integer.toString(4*j),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 0, Integer.toString(4*j+1),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 0, Integer.toString(4*j+2),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 0, Integer.toString(4*j+3),false);
                 }else if (filter[j][i]==1){
-                    tableDataset.add(obs.getTime(i).getTime(), 0.0, Integer.toString(3*j),false);
-                    tableDataset.add(obs.getTime(i).getTime(), 1.0/n, Integer.toString(3*j+1),false);
-                    tableDataset.add(obs.getTime(i).getTime(), 0, Integer.toString(3*j+2),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 0.0, Integer.toString(4*j),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 1.0/n, Integer.toString(4*j+1),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 0, Integer.toString(4*j+2),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 0, Integer.toString(4*j+3),false);
+                }else if (filter[j][i]==2){
+                    tableDataset.add(obs.getTime(i).getTime(), 0.0, Integer.toString(4*j),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 0.0, Integer.toString(4*j+1),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 1.0/n, Integer.toString(4*j+2),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 0.0, Integer.toString(4*j+3),false);
                 }else{
-                    tableDataset.add(obs.getTime(i).getTime(), 0.0, Integer.toString(3*j),false);
-                    tableDataset.add(obs.getTime(i).getTime(), 0.0, Integer.toString(3*j+1),false);
-                    tableDataset.add(obs.getTime(i).getTime(), 1.0/n, Integer.toString(3*j+2),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 0.0, Integer.toString(4*j),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 0.0, Integer.toString(4*j+1),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 0.0, Integer.toString(4*j+2),false);
+                    tableDataset.add(obs.getTime(i).getTime(), 1.0/n, Integer.toString(4*j+3),false);
                 }
             }
         }        
@@ -145,8 +165,10 @@ public class HydrographChart {
     }
 
     public void setHydrograph(TimeSerie hydrograph) {
-        this.hydrograph = hydrograph;        
-        update();
+        if (this.hydrograph!=hydrograph){
+            this.hydrograph = hydrograph;        
+            update();
+        }
     }
 
     public void clearTimeFilter(){
@@ -160,11 +182,27 @@ public class HydrographChart {
     }
     
     public void setTimeFilters(TimeFilterCollection timeFilters){
-        clearTimeFilter();
-        addTimeFilters(timeFilters);        
+        boolean isTheSame = true;
+        if (timeFilters.size() == this.filters.size()){
+            for (int i=0;i<timeFilters.size();i++){
+                if (timeFilters.get(i) != this.filters.get(i)){
+                    isTheSame = false;
+                }
+            }
+        }else {
+            isTheSame = false;
+        }
+        
+        if (!isTheSame){
+            clearTimeFilter();
+            addTimeFilters(timeFilters);
+        }
     }
     
     public void addTimeFilters(TimeFilterCollection timeFilters){
+        if (timeFilters.size()==0) {
+            return;
+        }
         for (TimeFilter f : timeFilters.get()){
             this.filters.add(f);
         }
@@ -182,77 +220,132 @@ public class HydrographChart {
     public JFreeChart getChart(){
         return chart;
     }
+    
+    public ChartPanel getChartPanel(){
+        return (panel = new ChartPanel(chart, true));
+    }
 
     public XYPlot getXYPlot(){
         return chart.getXYPlot();
     }
     
-    public void setSelectedTimeFilter(TimeFilter f){        
+    public void setSelectedTimeFilter(TimeFilter f){  
+        if (selectedTimeFilter == f)
+            return;
+        
         if (selectedTimeFilter==null || f==null || f.toString().compareTo(selectedTimeFilter.toString())!=0){        
             selectedTimeFilter = f;
-            update();
+            if (f instanceof TimeFilterFactory.RangeTimeFilter) {
+                update();
+            }
         }
     }
     
-    public void update(){
-        //update peaks
-        datasetHydrograph.removeAllSeries();
+    public void update(){       
 
-        int dsCount = chart.getXYPlot().getDatasetCount();
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                //update peaks
+                datasetHydrograph.removeAllSeries();
 
-        for (int i = 0; i < dsCount; i++) {
-            chart.getXYPlot().setDataset(i, null);
-        }
+                int dsCount = chart.getXYPlot().getDatasetCount();
+                
+                for (int i = 0; i < dsCount; i++) {
+                    chart.getXYPlot().setDataset(i, null);
+                }
 
-        System.out.println("Hydrograph Update!!");
-        TimeSeries seriesHydrograph = new TimeSeries("hydrograph");
-        
-        if (hydrograph == null)
-            return;
-        
-        long n = hydrograph.getTimeDomain().getNumberOfTimesteps();
-        
-        long lastNonFiltered = 0;        
-        double filtered[][] = null;
-        
-        if (this.filterMode == FilterMode.SINGLE_ROW){
-            filtered = new double[1][(int)n];
-        }else{
-            filtered = new double[filters.size()][(int)n];
-        }
-        
-        TimeFilter combinedFilter = filters.combine();
-        
-        for (int i = 0; i < n; i++) {
-            if ( hydrograph.getValue((int) i) == JAMS.getMissingDataValue()){
-                seriesHydrograph.add(new Day(hydrograph.getTime((int) i)), Double.NaN);
-            }else{
-                seriesHydrograph.add(new Day(hydrograph.getTime((int) i)), hydrograph.getValue((int) i));
-            }
-            
-            if (filterMode != FilterMode.SINGLE_ROW) {
-                for (int j = 0; j < filters.size(); j++) {
-                    if (filters.get(j) == null || filters.get(j).isFiltered(hydrograph.getTime((int) i))) {
-                        filtered[j][(int) i] = 1.0;
-                        lastNonFiltered = i;
-                    } else if (i - lastNonFiltered == 1) {
-                        filtered[j][(int) i] = 0.0;
+                if (hydrograph == null) {
+                    return;
+                }
+                                
+                System.out.println("Hydrograph Update!!");
+                TimeSeries seriesHydrograph = new TimeSeries("hydrograph");
+                
+                long n = hydrograph.getTimeDomain().getNumberOfTimesteps();
+
+                long lastNonFiltered = 0;
+                double filtered[][] = null;
+
+                if (filterMode == FilterMode.SINGLE_ROW) {
+                    filtered = new double[1][(int) n];
+                } else {
+                    filtered = new double[filters.size()][(int) n];
+                }
+
+                TimeFilter localSelection = null;
+                if (selectedTimeFilter instanceof TimeFilterFactory.RangeTimeFilter) {
+                    localSelection = selectedTimeFilter;
+                }
+
+                TimeFilter combinedFilter = filters.combine();
+                TimeFilterCollection filtersWithoutSelection = new TimeFilterCollection();
+                for (TimeFilter tf : filters.get()) {
+                    if (tf != localSelection) {
+                        filtersWithoutSelection.add(tf);
                     }
                 }
-            }else{
-                filtered[0][i] = 1.0;                
-                if (!combinedFilter.isFiltered(hydrograph.getTime(i))){
-                    filtered[0][i] = 0.0;
-                }         
-                if ( (selectedTimeFilter!=null && !selectedTimeFilter.isFiltered(hydrograph.getTime(i)))){
-                    filtered[0][i] = 2.0;
-                }                
+                TimeFilter combinedFilter2 = filtersWithoutSelection.combine();
+
+                for (int i = 0; i < n; i++) {
+                    if (hydrograph.getValue((int) i) == JAMS.getMissingDataValue()) {
+                        seriesHydrograph.add(new Day(hydrograph.getTime((int) i)), Double.NaN);
+                    } else {
+                        seriesHydrograph.add(new Day(hydrograph.getTime((int) i)), hydrograph.getValue((int) i));
+                    }
+
+                    if (filterMode != FilterMode.SINGLE_ROW) {
+                        for (int j = 0; j < filters.size(); j++) {
+                            if (filters.get(j) == null || filters.get(j).isFiltered(hydrograph.getTime((int) i))) {
+                                filtered[j][(int) i] = 1.0;
+                                lastNonFiltered = i;
+                            } else if (i - lastNonFiltered == 1) {
+                                filtered[j][(int) i] = 0.0;
+                            }
+                        }
+                    } else {
+                        //I. rot -> es wird gefiltert und es wird nicht von der selektion gefiltert
+                        //II. grün -> es wird nur von der selektion gefiltert
+                        //III. overlay -> es wird nicht nur von der selektion gefiltert
+
+                        filtered[0][i] = 1.0;
+                        //es wird gefiltert und es wird auch ohne selektion gefiltert -> III
+                        if (!combinedFilter.isFiltered(hydrograph.getTime(i)) && !combinedFilter2.isFiltered(hydrograph.getTime(i))) {
+                            if (localSelection == null || localSelection.isFiltered(hydrograph.getTime(i))) {
+                                filtered[0][i] = 0.0;
+                            } else {
+                                filtered[0][i] = 3.0;
+                            }
+                            //es wird gefiltert und es wird ohne selektion nicht gefiltert -> II.
+                        } else if (!combinedFilter.isFiltered(hydrograph.getTime(i)) && combinedFilter2.isFiltered(hydrograph.getTime(i))) {
+                            filtered[0][i] = 2.0;
+                        }
+
+                    }
+                }
+
+                datasetHydrograph.addSeries(seriesHydrograph);
+
+                chart.getXYPlot().setDataset(0, datasetHydrograph);
+                chart.getXYPlot().setDataset(1, buildCategoryDataset(filtered, hydrograph));
             }
+        };
+        if (hydrograph == null) {
+            datasetHydrograph.removeAllSeries();
+
+            int dsCount = chart.getXYPlot().getDatasetCount();
+
+            for (int i = 0; i < dsCount; i++) {
+                chart.getXYPlot().setDataset(i, null);
+            }
+        }else if (panel != null && !panel.isShowing()){
+            SwingUtilities.invokeLater(r);
+        }else{
+            WorkerDlg progress = new WorkerDlg(null, "Updating plot");
+            progress.setInderminate(true);
+            progress.setTask(r);
+            progress.execute();
         }
-                
-        datasetHydrograph.addSeries(seriesHydrograph);
         
-        chart.getXYPlot().setDataset(0, datasetHydrograph);
-        chart.getXYPlot().setDataset(1, buildCategoryDataset(filtered, hydrograph));             
     }
 }

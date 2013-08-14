@@ -216,8 +216,8 @@ public class Optimization implements Serializable {
             Logger.getGlobal().log(Level.WARNING, errorMsg);                        
             throw new OPTASWizardException(errorMsg);
         }
-        this.setOptimizerDescription(optimizer.getDescription());
-        
+        OptimizerDescription desc = optimizer.getDescription();
+                
         ComponentField setupField = optimizerContext.getComponentFields().get("parameterization");
         if (setupField!=null && setupField.getValue()!=null){
             String setupList[] = setupField.getValue().split(";");
@@ -230,12 +230,13 @@ public class Optimization implements Serializable {
                 if (entry.length != 2) {
                     continue;
                 }
-                OptimizerParameter op = getOptimizerDescription().getPropertyMap().get(name);
+                OptimizerParameter op = desc.getPropertyMap().get(name);
                 if (op != null) {
                     op.setString(value);
                 }
             }
         }
+        this.setOptimizerDescription(desc);
         ComponentField parameterIDfield = optimizerContext.getComponentFields().get("parameterIDs");
         ComponentField rangesField = optimizerContext.getComponentFields().get("boundaries");
         ComponentField startValuesField = optimizerContext.getComponentFields().get("startValues");

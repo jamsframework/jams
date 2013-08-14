@@ -435,7 +435,7 @@ public class ModelModifier {
                 ContextAttribute ca = (ContextAttribute)a.field;
                 boolean containsAttribute = false;
                 for (ContextAttribute outputCa : outputDSList){
-                    if (outputCa.getName() == ca.getName()){
+                    if (outputCa.getName().equals(ca.getName())){
                         containsAttribute = true;
                         break;
                     }

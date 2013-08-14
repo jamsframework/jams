@@ -6,12 +6,19 @@ package optas.gui.wizard;
 
 import jams.JAMS;
 import jams.gui.input.TableInput;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Insets;
+import java.lang.Object;
 import java.util.ArrayList;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JTable;
+import javax.swing.border.Border;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import optas.data.TimeFilter;
 import optas.data.TimeFilterCollection;
@@ -34,15 +41,55 @@ class TimeFilterTableInput extends TableInput {
             abstract public void itemChanged(TimeFilterTableInput tfti);
         }
                 
+        public class AndOrRenderer extends JButton
+            implements TableCellRenderer {
+
+        Border unselectedBorder = null;
+        Border selectedBorder = null;
+        boolean isBordered = true;
+
+        public AndOrRenderer(boolean isBordered) {
+            this.isBordered = isBordered;
+            setOpaque(true); //MUST do this for background to show up.
+        }
+
+        public Component getTableCellRendererComponent(
+                JTable table, Object andor,
+                boolean isSelected, boolean hasFocus,
+                int row, int column) {
+            Boolean newValue = (Boolean)andor;
+            this.setMargin(new Insets(1, 1, 1, 1));
+            if (newValue)
+                setText("AND");
+            else
+                setText("OR");
+            if (isBordered) {
+                if (isSelected) {
+                    if (selectedBorder == null) {
+                        selectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5,
+                                table.getSelectionBackground());
+                    }
+                    setBorder(selectedBorder);
+                } else {
+                    if (unselectedBorder == null) {
+                        unselectedBorder = BorderFactory.createMatteBorder(2, 5, 2, 5,
+                                table.getBackground());
+                    }
+                    setBorder(unselectedBorder);
+                }
+            }
+
+            return this;
+        }
+    }
         public TimeFilterTableInput(TimeSerie timeserie) {
-            super(new String[]{JAMS.i18n("enabled"),JAMS.i18n("inverted"), JAMS.i18n("additive"), JAMS.i18n("description")}, new Class[]{Boolean.class,Boolean.class,Boolean.class, String.class}, new boolean[]{true, true, true, false}, true);
+            super(new String[]{JAMS.i18n("enabled"),JAMS.i18n("inverted"), JAMS.i18n("log_operation"), JAMS.i18n("description")}, new Class[]{Boolean.class,Boolean.class,Boolean.class, String.class}, new boolean[]{true, true, true, false}, true);
 
             this.timeserie = timeserie;
             
             getTable().setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-            int vColIndex = 0;
-            TableColumn col = getTable().getColumnModel().getColumn(vColIndex);
+            TableColumn col;
             int width = 75;
             col = getTable().getColumnModel().getColumn(0);
             col.setPreferredWidth(width);
@@ -50,8 +97,11 @@ class TimeFilterTableInput extends TableInput {
             col.setPreferredWidth(width);
             col = getTable().getColumnModel().getColumn(2);
             col.setPreferredWidth(width);
+            col.setCellRenderer(new AndOrRenderer(true));
             col = getTable().getColumnModel().getColumn(3);
             col.setPreferredWidth(4*width);
+            
+            getTable().setRowHeight(25);
             
             ((AbstractTableModel) this.getTable().getModel()).addTableModelListener(new TableModelListener() {
 
@@ -69,7 +119,7 @@ class TimeFilterTableInput extends TableInput {
                         }
                     }
                     for (TimeFilterTableInputListener tftiListener : listeners){
-                        tftiListener.tableChanged(TimeFilterTableInput.this);
+                        tftiListener.tableChanged(TimeFilterTableInput.this); //1
                     }
                 }
             });
@@ -140,8 +190,7 @@ class TimeFilterTableInput extends TableInput {
                 
         @Override
         protected void addItem() {            
-            tfd = new TimeFilterDialog(timeserie);
-            tfd.init(timeserie, null);
+            tfd = new TimeFilterDialog(timeserie);//1,2,3
             tfd.setVisible(true);
             if (tfd.getApproval()){                
                 TimeFilter filter = tfd.getFilter();                

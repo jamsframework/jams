@@ -134,7 +134,7 @@ public class TableInput extends JPanel {
         addButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent event) {
-                addItem();
+                addItem(); //1,2,3
             }
         });
 

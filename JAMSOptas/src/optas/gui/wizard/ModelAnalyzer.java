@@ -79,6 +79,9 @@ public class ModelAnalyzer {
         for (ComponentDescriptor cd : map.values()){
             for (ComponentField cf : cd.getComponentFields().values()){
                 for (ContextAttribute ca : cf.getContextAttributes()){
+                    if (!jams.data.Attribute.Double.class.isAssignableFrom(ca.getType())) {
+                        continue;
+                    }
                     list.add(new Attribute(ca));
                 }
             }
@@ -112,6 +115,9 @@ public class ModelAnalyzer {
             if (cd instanceof ContextDescriptor){
                 ContextDescriptor contextDesc = (ContextDescriptor)cd;
                 for (ContextAttribute ca : contextDesc.getStaticAttributes().values()){
+                    if (!jams.data.Attribute.Double.class.isAssignableFrom(ca.getType())) {
+                        continue;
+                    }
                     list.add(new Attribute(ca));
                 }
             }

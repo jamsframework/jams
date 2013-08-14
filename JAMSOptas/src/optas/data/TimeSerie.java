@@ -5,6 +5,7 @@
 
 package optas.data;
 
+import jams.JAMS;
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
 import jams.data.DefaultDataFactory;
@@ -99,7 +100,7 @@ public class TimeSerie extends DataSet{
         double min = Double.POSITIVE_INFINITY;
         int index = -1;
         for (int i=0;i<timeLength;i++){
-            if (set[i]<min){
+            if (set[i] != JAMS.getMissingDataValue() && set[i]<min){
                 min = set[i];
                 index = i;
             }
@@ -113,7 +114,7 @@ public class TimeSerie extends DataSet{
         double max = Double.NEGATIVE_INFINITY;
         int index = -1;
         for (int i=0;i<timeLength;i++){
-            if (set[i]>max){
+            if (set[i] != JAMS.getMissingDataValue() && set[i]>max){
                 max = set[i];
                 index = i;
             }

@@ -6,19 +6,18 @@
 package optas.sampler;
 
 
-import optas.core.SampleLimitException;
+import jams.JAMS;
 import jams.io.SerializableBufferedWriter;
 import jams.model.JAMSComponentDescription;
-import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
-import optas.optimizer.management.BooleanOptimizerParameter;
-import optas.optimizer.management.NumericOptimizerParameter;
-import optas.optimizer.management.SampleFactory.Sample;
 import optas.core.ObjectiveAchievedException;
+import optas.core.SampleLimitException;
 import optas.optimizer.Optimizer;
 import optas.optimizer.OptimizerLibrary;
+import optas.optimizer.management.BooleanOptimizerParameter;
+import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.OptimizerDescription;
+import optas.optimizer.management.SampleFactory.Sample;
 
 @SuppressWarnings("unchecked")
 @JAMSComponentDescription(
@@ -99,9 +98,13 @@ public class HaltonSequenceSampling extends Optimizer{
 
     public Sample[] initialSimplex = null;
 
+    @Override
     public OptimizerDescription getDescription() {
         OptimizerDescription desc = OptimizerLibrary.getDefaultOptimizerDescription(HaltonSequenceSampling.class.getSimpleName(), HaltonSequenceSampling.class.getName(), 500, false);
 
+        desc.addParameter(new NumericOptimizerParameter("minn",
+                JAMS.i18n("minimum_number_of_samples"), 0.8, -100.0, 1.0));
+        
         desc.addParameter(new NumericOptimizerParameter("offset",
                 "offset", 0, 0, Integer.MAX_VALUE));
 
@@ -209,7 +212,7 @@ public class HaltonSequenceSampling extends Optimizer{
             if (i % 100 == 0 && i > 0 && analyzeQuality){
                 this.log("Estimating Quality of sampling (prior optimization) with " + this.getStatistics().size() + " samples");
                 double quality = this.factory.getStatistics().calcQuality();
-                this.log("Average Quality based on E2 is: " + quality);                
+                this.log("Average quality based on E2 is: " + quality);                
                 this.log("Target quality is " + targetQuality);
                 this.log("Mean time per execution is " + meanTime);
                 if(remainingTime > 86400){

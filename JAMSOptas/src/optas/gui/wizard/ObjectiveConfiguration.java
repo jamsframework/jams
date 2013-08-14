@@ -83,6 +83,28 @@ public class ObjectiveConfiguration extends JPanel{
     
     JFileChooser timeseriesFileChooser = new JFileChooser();
     
+    private ActionListener measurementListUpdateListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ( measurementList.getSelectedItem() instanceof Attribute ){
+                    ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();
+                    od.setMeasurementAttribute((Attribute)measurementList.getSelectedItem());
+                }                
+            }
+        };
+    
+    private ActionListener simulationListUpdateListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ( simulationList.getSelectedItem() instanceof Attribute ){
+                    ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();
+                    od.setSimulationAttribute((Attribute)simulationList.getSelectedItem());
+                }                
+            }
+        };
+    
     public ObjectiveConfiguration(ModelDescriptor md, Logger logger){
         this.md = md;
         //load default property file, if its not existing, never mind as it is only used for the recent files entry
@@ -95,7 +117,7 @@ public class ObjectiveConfiguration extends JPanel{
                 //not serious
             }
         }
-                
+        
         updateRecentTimeseriesList(null);
         
         initGUI();
@@ -134,12 +156,12 @@ public class ObjectiveConfiguration extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {                                
                 if ( objectivesList.getSelectedItem() instanceof ObjectiveDescription ){
-                    ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();                    
+                    ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();    
+                    contextList.setSelectedItem(od.getMeasurementAttribute().getParentName());
                     measurementList.setSelectedItem(od.getMeasurementAttribute());
                     simulationList.setSelectedItem(od.getSimulationAttribute());
                     
                     filterList.setTimeFilters(od.getTimeFilters());                                        
-                    //hydroChart.setTimeFilters(filterList.getTimeFilters()); //unnöitg
                 }
                 if ( objectivesList.getSelectedItem() instanceof String ){
                     String s = (String)objectivesList.getSelectedItem();
@@ -151,7 +173,6 @@ public class ObjectiveConfiguration extends JPanel{
                     simulationList.setSelectedIndex(-1);
                     
                     filterList.clear();                    
-                    //hydroChart.setTimeFilters(filterList.getTimeFilters()); //unnöitg
                 }
             }
         });
@@ -173,33 +194,24 @@ public class ObjectiveConfiguration extends JPanel{
                     DefaultComboBoxModel measurementModel = new DefaultComboBoxModel(attributesInContext.toArray(new Attribute[0]));
                     DefaultComboBoxModel simulationModel = new DefaultComboBoxModel(attributesInContext.toArray(new Attribute[0]));
                     measurementList.setModel(measurementModel);
-                    simulationList.setModel(simulationModel);
+                    simulationList.setModel(simulationModel);      
+                    for (ActionListener l : measurementList.getActionListeners()){
+                        measurementList.removeActionListener(l);
+                    }
+                    for (ActionListener l : simulationList.getActionListeners()){
+                        simulationList.removeActionListener(l);
+                    }
+                    simulationList.addActionListener(simulationListUpdateListener);
+                    simulationList.setSelectedIndex(-1);                    
+                    measurementList.addActionListener(measurementListUpdateListener);
+                    measurementList.setSelectedIndex(-1);
                 }
             }
         });
         
-        measurementList.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if ( measurementList.getSelectedItem() instanceof Attribute ){
-                    ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();
-                    od.setMeasurementAttribute((Attribute)measurementList.getSelectedItem());
-                }                
-            }
-        });
-        
-        simulationList.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if ( simulationList.getSelectedItem() instanceof Attribute ){
-                    ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();
-                    od.setSimulationAttribute((Attribute)simulationList.getSelectedItem());
-                }                
-            }
-        });
-        
+        measurementList.addActionListener(measurementListUpdateListener);
+        simulationList.addActionListener(simulationListUpdateListener);
+                
         loadTimeSerie.addActionListener(new ActionListener() {
 
             @Override
@@ -218,7 +230,7 @@ public class ObjectiveConfiguration extends JPanel{
             public void tableChanged(TimeFilterTableInput tfti) {                                
                 ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();
                 od.setTimeFilters(filterList.getTimeFilters());
-                hydroChart.setTimeFilters(filterList.getTimeFilters());                
+                hydroChart.setTimeFilters(filterList.getTimeFilters()); //1                
             }
 
             @Override
@@ -325,9 +337,6 @@ public class ObjectiveConfiguration extends JPanel{
                 }
             }
             
-            
-            /*this.measurementList.setModel(measurementModel);
-            this.simulationList.setModel(simulationModel);*/
             this.contextList.setModel(contextModel);
             this.contextList.setSelectedIndex(-1);
             
@@ -362,8 +371,8 @@ public class ObjectiveConfiguration extends JPanel{
             }
             modelTimeIntervalInput.setValue(ts.getTimeDomain().getValue());
             if (ts != null) {
-                ObjectiveConfiguration.this.hydroChart.setHydrograph(ts);                
                 hydroChart.setTimeFilters(filterList.getTimeFilters());
+                ObjectiveConfiguration.this.hydroChart.setHydrograph(ts);                
                 
                 JAMSTools.addToRecentFiles(systemProperties, SystemProperties.RECENT_TIMESERIES_OF_OBJECTIVE_CONFIGURATION, f.getAbsolutePath());
                 try {
@@ -427,6 +436,7 @@ public class ObjectiveConfiguration extends JPanel{
         recentTimeSeries.setMaximumSize(new Dimension(200, 25));        
         
         modelTimeIntervalInput.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Model_time_interval")));
+        modelTimeIntervalInput.setEnabled(false);
         
         JScrollPane scrollbar = new JScrollPane(filterList);
                 

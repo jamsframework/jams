@@ -5,7 +5,6 @@
 
 package optas.gui.wizard;
 
-import jams.gui.input.TableInput;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,18 +20,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 import optas.data.DataCollection;
 import optas.data.EfficiencyEnsemble;
 import optas.data.EfficiencyEnsemble.Method;
 import optas.data.Measurement;
-import optas.data.TimeFilter;
-import optas.data.TimeFilterFactory;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
 import org.jfree.chart.ChartPanel;

@@ -190,8 +190,9 @@ public class TimeFilterFactory {
     static public class EventFilter extends TimeFilter{
         public enum EventType{Peak, Recession, RaisingEdge}
 
+        public static int DEFAULT_WINDOWSIZE=10;
         TimeSerie m;        
-        int windowSize;
+        int windowSize = DEFAULT_WINDOWSIZE;
         EventType type;
         TreeMap<Date,Boolean> map = new TreeMap<Date, Boolean>();
         double qualityThreshold = 0.0;
@@ -203,6 +204,7 @@ public class TimeFilterFactory {
             this.type = type;
             list = HydrographEvent.findEvents(m, windowSize);
             updateFilter();
+            this.windowSize = windowSize;
         }
 
         private void updateFilter(){
@@ -242,6 +244,7 @@ public class TimeFilterFactory {
             return map.lastKey();
         }
         
+        @Override
         public boolean isFiltered(Date date) {
             return map.floorEntry(date).getValue();
         }
@@ -283,7 +286,7 @@ public class TimeFilterFactory {
 
         @Override
         public String toString(){
-            return JAMS.i18n("Hydrograph_event_filter_with_window_size:") + windowSize + " " + JAMS.i18n("filtered_for:") + type;
+            return JAMS.i18n("Hydrograph_event_filter_with_window_size:") + " " + windowSize + " " + JAMS.i18n("filtered_for:") + " " + type;
         }
     }
 

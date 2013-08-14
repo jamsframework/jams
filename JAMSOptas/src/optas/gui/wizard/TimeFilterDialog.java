@@ -33,6 +33,8 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import optas.data.DataCollection;
 import optas.data.TimeFilter;
 import optas.data.TimeFilterFactory;
@@ -81,10 +83,11 @@ public class TimeFilterDialog extends JDialog{
     JTextField baseFlowRunoffQuantity = new JTextField(10);
     JRadioButton baseFlowFixedEstimation = new JRadioButton(JAMS.i18n("constant_threshold"));
     JRadioButton baseFlowLocalMiniumEstimation = new JRadioButton(JAMS.i18n("Local_minimum"));
-    HydrographChart hydrographBaseFlow = null;
     
+    HydrographChart hydrographBaseFlow = null;    
     HydrographChart eventFilterHydrograph = null;    
     HydrographChart rangeFilterHydrograph = null;
+    
     JButton updateBn = new JButton(JAMS.i18n("update"));
     
     final static String raisingEdgeString = JAMS.i18n("raising_limb"),
@@ -94,6 +97,7 @@ public class TimeFilterDialog extends JDialog{
     JComboBox hydroEventTypeBox = new JComboBox(new String[]{raisingEdgeString, peakString, fallingEdgeString});
     JTextField windowSizeField = new JTextField(10);
     JSlider qualitySlider = new JSlider();
+    JLabel timeperiodLabel = new JLabel();
     JTextField qualitySliderValue = new JTextField(10);
 
     jams.gui.input.CalendarInput rangeFilterStartDateInput = new CalendarInput();
@@ -105,7 +109,7 @@ public class TimeFilterDialog extends JDialog{
 
     public TimeFilterDialog(TimeSerie timeserie){
         this.timeserie = timeserie;
-        init(timeserie,null);
+        init(timeserie,null); //1,2,3
     }
 
     static public boolean isApplicable(DataCollection dc){
@@ -227,12 +231,13 @@ public class TimeFilterDialog extends JDialog{
     }
     
     private TimeFilter constructHydroEventFilter(){
-        int windowSize = 10;
+        int windowSize;
 
         try{
             windowSize = Integer.parseInt(windowSizeField.getText());
         }catch(NumberFormatException pe){
             JOptionPane.showMessageDialog(rootPane, JAMS.i18n("Please_enter_a_valid_window_size"));
+            windowSize = EventFilter.DEFAULT_WINDOWSIZE;
         }
 
         //this.hydrographHydroEvent.setGroundwaterWindowSize(windowSize);
@@ -246,8 +251,9 @@ public class TimeFilterDialog extends JDialog{
             filter = TimeFilterFactory.getEventFilter(timeserie, TimeFilterFactory.EventFilter.EventType.Peak, windowSize);
         }
 
-        if (filter==null)
+        if (filter==null) {
             return null;
+        }
 
         filter.setQualityThreshold(qualitySlider.getValue()/100.0);
 
@@ -258,6 +264,7 @@ public class TimeFilterDialog extends JDialog{
     }
 
     ActionListener updateHydroEventListener = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {                                    
             eventFilterHydrograph.clearTimeFilter();
             eventFilterHydrograph.addTimeFilter(constructHydroEventFilter());
@@ -268,8 +275,9 @@ public class TimeFilterDialog extends JDialog{
         jams.data.Attribute.Calendar cStart = rangeFilterStartDateInput.getCalendarValue();
         jams.data.Attribute.Calendar cEnd = rangeFilterEndDateInput.getCalendarValue();
         
-        if (cStart == null || cEnd == null)
+        if (cStart == null || cEnd == null) {
             return null;
+        }
         jams.data.Attribute.TimeInterval I = DefaultDataFactory.getDataFactory().createTimeInterval();
         I.setValue(timeserie.getTimeDomain().getValue());
         I.setStart(cStart);
@@ -282,8 +290,7 @@ public class TimeFilterDialog extends JDialog{
         JPanel filterPanel = new JPanel(new BorderLayout());
         filterPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), JAMS.i18n("Define_range_filter")));
         
-        rangeFilterHydrograph = new HydrographChart();
-        rangeFilterHydrograph.setHydrograph(m);
+        rangeFilterHydrograph = new HydrographChart();        
         
         JPanel northPanel = new JPanel(new FlowLayout());
         JPanel confPanel = new JPanel(new FlowLayout());
@@ -297,7 +304,8 @@ public class TimeFilterDialog extends JDialog{
         
         filterPanel.add(northPanel, BorderLayout.NORTH);
 
-        ChartPanel chartPanel = new ChartPanel(rangeFilterHydrograph.getChart(), true);
+        ChartPanel chartPanel = rangeFilterHydrograph.getChartPanel();
+
         filterPanel.add(chartPanel, BorderLayout.CENTER);
 
         filterPanel.add(new JButton(JAMS.i18n("Ok")) {
@@ -347,6 +355,8 @@ public class TimeFilterDialog extends JDialog{
             rangeFilterEndDateInput.setValue(f.getRange().getEnd());
         }
         
+        rangeFilterHydrograph.setHydrograph(m);//do at last to avoid unnecessary redraws
+        
         return filterPanel;
     }
 
@@ -355,13 +365,19 @@ public class TimeFilterDialog extends JDialog{
         filterPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), JAMS.i18n("Select_hydrograph_event_filter")));
 
         eventFilterHydrograph = new HydrographChart();
-        eventFilterHydrograph.setHydrograph(m);
-
+        
         JPanel northPanel = new JPanel(new FlowLayout());
 
         JPanel confPanel = new JPanel(new FlowLayout());
-        confPanel.add(new JLabel(JAMS.i18n("Select_window_size")));
-        windowSizeField.setText("50");
+        String windowSizeString = JAMS.i18n("Select_window_size") + " " + JAMS.i18n("in") + " ";
+        switch (m.getTimeDomain().getTimeUnit()){
+            case 1: windowSizeString += JAMS.i18n("years"); break;
+            case 2: windowSizeString += JAMS.i18n("months"); break;
+            case 6: windowSizeString += JAMS.i18n("days"); break;
+            case 11: windowSizeString += JAMS.i18n("hours"); break;
+        }
+        confPanel.add(new JLabel(windowSizeString));
+        windowSizeField.setText(Integer.toString(EventFilter.DEFAULT_WINDOWSIZE));
         confPanel.add(windowSizeField);
         confPanel.add(new JLabel(JAMS.i18n("Select_type_of_event")));
         confPanel.add(hydroEventTypeBox);
@@ -377,7 +393,7 @@ public class TimeFilterDialog extends JDialog{
 
         filterPanel.add(northPanel, BorderLayout.NORTH);
 
-        ChartPanel chartPanel = new ChartPanel(eventFilterHydrograph.getChart(), true);
+        ChartPanel chartPanel = eventFilterHydrograph.getChartPanel();
         filterPanel.add(chartPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
@@ -429,6 +445,8 @@ public class TimeFilterDialog extends JDialog{
             this.qualitySlider.setMaximum((int)(filter.getMaxQuality()*100.0));
         }
        
+        eventFilterHydrograph.setHydrograph(m);//2
+        
         return filterPanel;
     }
 
@@ -448,7 +466,7 @@ public class TimeFilterDialog extends JDialog{
     }
 
     ActionListener updateBaseFlowListener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) { ((JRadioButton)e.getSource()).isSelected(); 
             hydrographBaseFlow.clearTimeFilter();
             hydrographBaseFlow.addTimeFilter(constructBaseFlowFilter());
         }
@@ -459,8 +477,7 @@ public class TimeFilterDialog extends JDialog{
         filterPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), JAMS.i18n("Select_baseflow_filter")));
 
         hydrographBaseFlow = new HydrographChart();
-        hydrographBaseFlow.setHydrograph(m);
-
+        
         ButtonGroup methodButtonGroup = new ButtonGroup();
         methodButtonGroup.add(baseFlowFixedEstimation);
         methodButtonGroup.add(baseFlowLocalMiniumEstimation);
@@ -478,7 +495,7 @@ public class TimeFilterDialog extends JDialog{
 
         filterPanel.add(northPanel, BorderLayout.NORTH);
 
-        ChartPanel chartPanel = new ChartPanel(hydrographBaseFlow.getChart(), true);
+        ChartPanel chartPanel = hydrographBaseFlow.getChartPanel();
         filterPanel.add(chartPanel, BorderLayout.CENTER);
         
         filterPanel.add(new JButton(JAMS.i18n("OK")) {
@@ -486,6 +503,7 @@ public class TimeFilterDialog extends JDialog{
             {
                 addActionListener(new ActionListener() {
 
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         TimeFilterDialog.this.filter = constructBaseFlowFilter();
                         TimeFilterDialog.this.isApproved = true;
@@ -495,9 +513,14 @@ public class TimeFilterDialog extends JDialog{
             }
         }, BorderLayout.SOUTH);
 
+        for (ActionListener l : baseFlowFixedEstimation.getActionListeners()){
+            baseFlowFixedEstimation.removeActionListener(l);
+        }
+        for (ActionListener l : baseFlowLocalMiniumEstimation.getActionListeners()){
+            baseFlowLocalMiniumEstimation.removeActionListener(l);
+        }
         baseFlowFixedEstimation.addActionListener(updateBaseFlowListener);
         baseFlowLocalMiniumEstimation.addActionListener(updateBaseFlowListener);
-        baseFlowFixedEstimation.addActionListener(updateBaseFlowListener);
 
         if (filter != null){
             BaseFlowTimeFilter baseFlowFilter = (BaseFlowTimeFilter)filter;
@@ -508,16 +531,21 @@ public class TimeFilterDialog extends JDialog{
             else
                 this.baseFlowLocalMiniumEstimation.setSelected(true);
 
+        }else{
+            double value = m.getMin() + 0.1*(m.getMax()-m.getMin());
+            baseFlowRunoffQuantity.setText(Double.toString(value));
         }
 
+        hydrographBaseFlow.setHydrograph(m); //1
+        
         return filterPanel;
     }
 
     public void init(TimeSerie serie, TimeFilter filter){
         this.filter = filter;
-
+        
         JTabbedPane pane = new JTabbedPane();
-
+        
         //yearly filter
         if (filter instanceof YearlyTimeFilter || filter == null) {
             YearlyTimeFilter yearlyFilter = null;
@@ -543,7 +571,7 @@ public class TimeFilterDialog extends JDialog{
                 baseFlowFilter = (BaseFlowTimeFilter)filter;
             }
 
-            pane.addTab(JAMS.i18n("Baseflow_Filter"), constructBaseFlowTimeFilterPanel(serie, baseFlowFilter));
+            pane.addTab(JAMS.i18n("Baseflow_Filter"), constructBaseFlowTimeFilterPanel(serie, baseFlowFilter)); //1
         }
 
         if (filter instanceof EventFilter || filter == null) {
@@ -552,7 +580,7 @@ public class TimeFilterDialog extends JDialog{
                 eventFilter = (EventFilter)filter;
             }
 
-            pane.addTab(JAMS.i18n("Hydrograph_Event_Filter"), constructHydroEventFilterPanel(serie, eventFilter));
+            pane.addTab(JAMS.i18n("Hydrograph_Event_Filter"), constructHydroEventFilterPanel(serie, eventFilter));//2
         }
         
         if (filter instanceof TimeFilterFactory.RangeTimeFilter || filter == null) {
@@ -561,7 +589,7 @@ public class TimeFilterDialog extends JDialog{
                 rangeFilter = (TimeFilterFactory.RangeTimeFilter)filter;
             }
 
-            pane.addTab(JAMS.i18n("Interval_Filter"), constructRangeFilterPanel(serie, rangeFilter));
+            pane.addTab(JAMS.i18n("Interval_Filter"), constructRangeFilterPanel(serie, rangeFilter));//3
         }
         
         JPanel mainPanel = new JPanel(new BorderLayout());

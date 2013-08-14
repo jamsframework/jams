@@ -25,4 +25,4 @@ guiconfigwidth=600
 preprocessing=true
 errorlog=
 helpbaseurl=
-floatformat=%f
+floatformat=%.3f

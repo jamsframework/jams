@@ -149,7 +149,7 @@ public class OptimizerConfiguration extends JPanel {
         objectiveTable.getColumnModel().getColumn(0).setPreferredWidth(50);
         objectiveTable.getColumnModel().getColumn(1).setPreferredWidth(115);
         objectiveTable.getColumnModel().getColumn(2).setPreferredWidth(120);
-        objectiveTable.getTableHeader().setPreferredSize(new Dimension(objectiveTable.getTableHeader().getPreferredSize().width,40));
+        objectiveTable.getTableHeader().setPreferredSize(new Dimension(objectiveTable.getTableHeader().getPreferredSize().width,40));                
     }
 
     public void addActionListener(ActionListener listener) {
@@ -183,9 +183,7 @@ public class OptimizerConfiguration extends JPanel {
                     });
                 }
             }
-        });
-        activeOptimizer = availableOptimizer[0];
-        optimizationScheme.setOptimizerDescription(activeOptimizer);
+        });        
         scrollPaneOptimizerSpecificationPanel.setPreferredSize(new Dimension(TOTAL_WIDTH, 200));
 
         //create parameter panel
@@ -531,7 +529,12 @@ public class OptimizerConfiguration extends JPanel {
         availableOptimizer = new OptimizerDescription[set.size()];
         int c = 0;
         for (Optimizer o : set) {
-            availableOptimizer[c++] = o.getDescription();
+            if (optimizationScheme.getOptimizerDescription().getOptimizerClassName().equals(o.getDescription().getOptimizerClassName())){
+                availableOptimizer[c++] = optimizationScheme.getOptimizerDescription();
+                activeOptimizer = optimizationScheme.getOptimizerDescription();
+            }else{
+                availableOptimizer[c++] = o.getDescription();
+            }
         }
 
         availableParameters = this.optimizationScheme.getModelParameters();
@@ -588,11 +591,12 @@ public class OptimizerConfiguration extends JPanel {
     }
     
     private boolean isValidConfiguration(){
-        if (this.optimizationScheme.getParameter().size()==0)
+        if (this.optimizationScheme.getParameter().isEmpty())
             return false;
-        if (this.optimizationScheme.getObjective().size()==0)
+        if (this.optimizationScheme.getObjective().isEmpty())
             return false;
-        
+        if (activeOptimizer == null)
+            return false;
         for (Parameter p : this.optimizationScheme.getParameter()){
             if (p.getLowerBound() >= p.getUpperBound())
                 return false;

@@ -109,7 +109,7 @@ public class Tools {
                 throw new OPTASWizardException("Invalid parameterization of SimpleOptimizationController. The Parameter in question is" + params[i]);
             } else {
                 if (entry[1].equals("true") || entry[1].equals("false")) {
-                    propertyList.put(entry[0],new BooleanOptimizerParameter(entry[0], "unknown", Boolean.getBoolean(entry[1])));
+                    propertyList.put(entry[0],new BooleanOptimizerParameter(entry[0], "unknown", Boolean.parseBoolean(entry[1])));
                 } else {
                     try {
                         double value = Double.parseDouble(entry[1]);
