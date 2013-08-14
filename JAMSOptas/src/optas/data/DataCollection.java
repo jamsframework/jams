@@ -541,7 +541,10 @@ public class DataCollection extends DataSet implements Serializable{
         for (String setname : datasets.keySet()){
             if (clazz.getName().contains("TimeSerie")){  // workaround because we want neg and pos efficiencies to be efficiencies but we wont get a measurement when we want a timeseries ensemble arg
                                                             // solution would be to ask for timeserieensembles and simpleensemnles ... 
-                if (clazz.isAssignableFrom(getDatasetClass(setname))){
+                /*if (clazz.isAssignableFrom(getDatasetClass(setname))){
+                    sets.add(setname);
+                }*/
+                if (clazz.equals(getDatasetClass(setname))){
                     sets.add(setname);
                 }
             }else if (clazz.isAssignableFrom(getDatasetClass(setname)))
