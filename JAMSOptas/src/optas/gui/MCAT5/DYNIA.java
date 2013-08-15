@@ -209,7 +209,15 @@ public class DYNIA extends MCAT5Plot {
         XYBlockRenderer bg_renderer = new XYBlockRenderer();
         bg_renderer.setPaintScale(new GrayPaintScale(0, 1));
         bg_renderer.setBlockHeight((maxParam - minParam) / BOX_COUNT);
-        bg_renderer.setBlockWidth(1.00);
+        if (obs.getTimeDomain().getTimeUnit() == 6){
+            bg_renderer.setBlockWidth(84000*1000);
+        }else if (obs.getTimeDomain().getTimeUnit() == 2){
+            bg_renderer.setBlockWidth(84000*31.00*1000);
+        }else if (obs.getTimeDomain().getTimeUnit() == 1){
+            bg_renderer.setBlockWidth(84000*365.00*1000);
+        }else if (obs.getTimeDomain().getTimeUnit() == 11){
+            bg_renderer.setBlockWidth(3600*1000);
+        }
         bg_renderer.setBlockAnchor(RectangleAnchor.BOTTOM_LEFT);
         DefaultXYZDataset xyz_dataset = new DefaultXYZDataset();
         xyz_dataset.addSeries(0, pixel_map);
