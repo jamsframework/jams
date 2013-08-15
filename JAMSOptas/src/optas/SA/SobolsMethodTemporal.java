@@ -119,12 +119,12 @@ public class SobolsMethodTemporal extends TemporalSensitivityAnalysis{
             }
         });
 
-        sampler.setAnalyzeQuality(false);
+        //sampler.setAnalyzeQuality(false);
         //sampler.setBoundaries(getLowBound(), getUpBound());
         sampler.setDebugMode(false);
         //sampler.setInputDimension(n);
         sampler.setMaxn(size);
-        sampler.setOffset(0);
+        //sampler.setOffset(0);
         //sampler.setOutputDimension(T);
         sampler.optimize();
 

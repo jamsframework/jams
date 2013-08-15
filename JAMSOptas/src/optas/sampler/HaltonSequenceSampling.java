@@ -103,16 +103,16 @@ public class HaltonSequenceSampling extends Optimizer{
         OptimizerDescription desc = OptimizerLibrary.getDefaultOptimizerDescription(HaltonSequenceSampling.class.getSimpleName(), HaltonSequenceSampling.class.getName(), 500, false);
 
         desc.addParameter(new NumericOptimizerParameter("minn",
-                JAMS.i18n("minimum_number_of_samples"), 0.8, -100.0, 1.0));
+                JAMS.i18n("minimum_number_of_samples"), 500, 0, Double.POSITIVE_INFINITY));
         
         desc.addParameter(new NumericOptimizerParameter("offset",
-                "offset", 0, 0, Integer.MAX_VALUE));
+                JAMS.i18n("offset"), 0, 0, Integer.MAX_VALUE));
 
         desc.addParameter(new BooleanOptimizerParameter("analyzeQuality",
-                "analyzeQuality", false));
+                JAMS.i18n("analyzeQuality"), false));
 
         desc.addParameter(new NumericOptimizerParameter("targetQuality",
-                "targetQuality", 0.8, -100.0, 1.0));
+                JAMS.i18n("targetQuality"), 0.8, -100.0, 1.0));
         
         return desc;
     }

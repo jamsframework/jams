@@ -52,8 +52,8 @@ public class ParallelNelderMead extends Optimizer{
     public OptimizerDescription getDescription(){
         OptimizerDescription desc = OptimizerLibrary.getDefaultOptimizerDescription(ParallelNelderMead.class.getSimpleName(), ParallelNelderMead.class.getName(), 250, false);
 
-        desc.addParameter(new NumericOptimizerParameter("max_restart_count","Number of restarts",5,0,1000));
-        desc.addParameter(new NumericOptimizerParameter("epsilon","stopping criterion minimal geometric range",0.01,0,1));
+        desc.addParameter(new NumericOptimizerParameter("max_restart_count",JAMS.i18n("Number_of_restarts"),5,0,1000));
+        desc.addParameter(new NumericOptimizerParameter("epsilon",JAMS.i18n("stopping_criterion_minimal_geometric_range"),0.01,0,1));
         return desc;
     }
 

@@ -6,17 +6,16 @@
 package optas.sampler;
 
 
-import optas.core.SampleLimitException;
+import jams.JAMS;
 import jams.io.SerializableBufferedWriter;
 import jams.model.JAMSComponentDescription;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import optas.optimizer.management.BooleanOptimizerParameter;
-import optas.optimizer.management.NumericOptimizerParameter;
 import optas.core.ObjectiveAchievedException;
+import optas.core.SampleLimitException;
 import optas.optimizer.Optimizer;
 import optas.optimizer.OptimizerLibrary;
+import optas.optimizer.management.BooleanOptimizerParameter;
+import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.SampleFactory.Sample;
 import umontreal.iro.lecuyer.hups.PointSetIterator;
@@ -32,7 +31,7 @@ public class SobolsSequenceSampling extends Optimizer{
     SerializableBufferedWriter writer = null;
 
 
-    public double offset = 0;
+    /*public double offset = 0;
     public  boolean analyzeQuality = true;
     public  double targetQuality = 0.8;
     public double minn = 0;
@@ -66,14 +65,14 @@ public class SobolsSequenceSampling extends Optimizer{
 
     public double getTargetQuality(){
         return this.targetQuality;
-    }
+    }*/
 
     public Sample[] initialSimplex = null;
 
     public OptimizerDescription getDescription() {
         OptimizerDescription desc = OptimizerLibrary.getDefaultOptimizerDescription(SobolsSequenceSampling.class.getSimpleName(), SobolsSequenceSampling.class.getName(), 500, false);
 
-        desc.addParameter(new NumericOptimizerParameter("offset",
+        /*desc.addParameter(new NumericOptimizerParameter("offset",
                 "offset", 0, 0, Integer.MAX_VALUE));
 
         desc.addParameter(new BooleanOptimizerParameter("analyzeQuality",
@@ -81,6 +80,9 @@ public class SobolsSequenceSampling extends Optimizer{
 
         desc.addParameter(new NumericOptimizerParameter("targetQuality",
                 "targetQuality", 0.8, -100.0, 1.0));
+        
+        desc.addParameter(new NumericOptimizerParameter("minn",
+                JAMS.i18n("minimum_number_of_samples"), 512, 0, Double.POSITIVE_INFINITY));*/
         
         return desc;
     }

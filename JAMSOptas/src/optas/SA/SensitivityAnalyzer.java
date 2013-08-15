@@ -64,12 +64,12 @@ public abstract class SensitivityAnalyzer {
         if (model instanceof AbstractFunction) {
             SobolsSequenceSampling sampler = new SobolsSequenceSampling();
             sampler.setFunction((AbstractFunction) model);
-            sampler.setAnalyzeQuality(false);
+            //sampler.setAnalyzeQuality(false);
             //sampler.setBoundaries(getLowBound(), getUpBound());
             sampler.setDebugMode(false);
             //sampler.setInputDimension(n);
             sampler.setMaxn(sampleSize);
-            sampler.setOffset(0);
+            //sampler.setOffset(0);
             //sampler.setOutputDimension(1);
             sampler.optimize();
             return sampler.getSamples();

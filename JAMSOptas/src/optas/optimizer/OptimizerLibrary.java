@@ -5,6 +5,7 @@
 
 package optas.optimizer;
 
+import jams.JAMS;
 import jams.runtime.JAMSRuntime;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.NumericOptimizerParameter;
@@ -41,7 +42,7 @@ public class OptimizerLibrary {
         optimizerPool.add(new optas.optimizer.NelderMead());
         //optimizerPool.add(new optas.optimizer.ParticleSwarm());
         optimizerPool.add(new optas.sampler.RandomSampler());
-        //optimizerPool.add(new optas.optimizer.SCEM_UA());
+        optimizerPool.add(new optas.sampler.SobolsSequenceSampling());
         optimizerPool.add(new optas.sampler.HaltonSequenceSampling());
         optimizerPool.add(new optas.sampler.ParallelHaltonSequenceSampling());
         return optimizerPool;
@@ -54,7 +55,7 @@ public class OptimizerLibrary {
         OptimizerDescription defDesc = new OptimizerDescription(shortName, id, multiObj);
         defDesc.setOptimizerClassName(className);
         defDesc.addParameter(new NumericOptimizerParameter(
-                "maxn", "maximum_number_of_iterations",
+                "maxn", JAMS.i18n("maximum_number_of_iterations"),
                 500, 1, 100000));
         
         return defDesc;

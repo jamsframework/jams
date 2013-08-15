@@ -207,8 +207,7 @@ public class OptimizerConfiguration extends JPanel {
                 .addComponent(scrollPaneOptimizerSpecificationPanel)
                 .addGroup(mainLayout.createSequentialGroup()                
                 .addComponent(scrollPaneParameterConfiguration)
-                .addComponent(scrollPaneObjectiveConfiguration)));
-                //.addGroup(mainLayout.createSequentialGroup()                
+                .addComponent(scrollPaneObjectiveConfiguration)));           
                 
 
         mainLayout.setVerticalGroup(mainLayout.createSequentialGroup()
@@ -217,9 +216,7 @@ public class OptimizerConfiguration extends JPanel {
                 .addGap(20)
                 .addGroup(mainLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addComponent(scrollPaneParameterConfiguration)
-                .addComponent(scrollPaneObjectiveConfiguration)));
-                //.addGap(20)
-                //.addGroup(mainLayout.createParallelGroup(GroupLayout.Alignment.CENTER)                
+                .addComponent(scrollPaneObjectiveConfiguration)));        
                 
 
         this.revalidate();

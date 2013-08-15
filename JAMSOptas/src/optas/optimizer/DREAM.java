@@ -188,7 +188,7 @@ public class DREAM extends Optimizer {
                 JAMS.i18n("number_of_Monte_Carlo_Markov_Chains._May_be_choosen_as_n"), 3, 2, 100));
         
         desc.addParameter(new NumericOptimizerParameter("nCr",
-                JAMS.i18n("Crossover values used to generate proposals (geometric series)."), 3, 1, 100));
+                JAMS.i18n("Crossover_values_used_to_generate_proposals_(geometric_series)"), 3, 1, 100));
         
         desc.addParameter(new NumericOptimizerParameter("DEpairs",
                 JAMS.i18n("Pairs_of_differential_evolution"), 1, 1, 100));
@@ -200,13 +200,13 @@ public class DREAM extends Optimizer {
                 JAMS.i18n("Uncertainty_Parameter_Of_Objective_Function"), 0.1, 0, 1000));
         
         desc.addParameter(new NumericOptimizerParameter("MCMCsteps",
-                JAMS.i18n("number of steps in sem."), 10, 1, 1000));
+                JAMS.i18n("number_of_steps_in_sem"), 10, 1, 1000));
         
         desc.addParameter(new NumericOptimizerParameter("MCMCeps",
-                JAMS.i18n("Random error for ergodicity."), 2e-1, 0, 10));
+                JAMS.i18n("Random_error_for_ergodicity"), 2e-1, 0, 10));
         
         desc.addParameter(new BooleanOptimizerParameter("transformObjectiveIntoLogLikelihood",
-                JAMS.i18n("Transform Objective Into Log Likelihood!"), true));
+                JAMS.i18n("Transform_Objective_Into_Log_Likelihood"), true));
         
         return desc;
     }

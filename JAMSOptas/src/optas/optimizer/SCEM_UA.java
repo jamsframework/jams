@@ -25,6 +25,7 @@ package optas.optimizer;
 import optas.core.SampleLimitException;
 import jams.model.*;
 import Jama.*;
+import jams.JAMS;
 import java.util.ArrayList;
 import java.util.Comparator;
 import optas.optimizer.management.SampleFactory.Sample;
@@ -46,8 +47,8 @@ public class SCEM_UA extends Optimizer {
     public OptimizerDescription getDescription() {
         OptimizerDescription desc = OptimizerLibrary.getDefaultOptimizerDescription(SCEM_UA.class.getSimpleName(), SCEM_UA.class.getName(), 500, false);
 
-        desc.addParameter(new NumericOptimizerParameter("population", "size of population", 500, 0, 100000));
-        desc.addParameter(new NumericOptimizerParameter("complexes", "number of complexes", 3, 1, 100));
+        desc.addParameter(new NumericOptimizerParameter("population", JAMS.i18n("size_of_population"), 500, 0, 100000));
+        desc.addParameter(new NumericOptimizerParameter("complexes", JAMS.i18n("number_of_complexes"), 3, 1, 100));
 
         return desc;
     }

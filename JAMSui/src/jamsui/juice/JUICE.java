@@ -21,30 +21,30 @@
  */
 package jamsui.juice;
 
-import jams.meta.ComponentCollection;
-import java.io.File;
-import java.util.*;
-import javax.swing.UIManager;
 import jams.JAMS;
 import jams.JAMSException;
 import jams.JAMSProperties;
 import jams.SystemProperties;
-import jams.tools.JAMSTools;
-import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
+import jams.gui.tools.GUIHelper;
+import jams.meta.ComponentCollection;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.JAMSLogger;
+import jams.tools.JAMSTools;
 import jams.tools.StringTools;
+import jamsui.cmdline.JAMSCmdLine;
 import jamsui.juice.gui.JUICEFrame;
 import jamsui.juice.gui.ModelView;
-import jamsui.juice.gui.tree.LibTree;
-import jamsui.cmdline.JAMSCmdLine;
 import jamsui.juice.gui.NotificationDlg;
+import jamsui.juice.gui.tree.LibTree;
+import java.io.File;
+import java.util.*;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 /**
  *

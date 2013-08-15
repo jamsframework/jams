@@ -129,6 +129,7 @@ public class OutputDSDlg extends JDialog {
         okButton = new JButton(JAMS.i18n("OK"));
         okButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
             }
@@ -674,6 +675,18 @@ public class OutputDSDlg extends JDialog {
                 }
             });
 
+            objectList.addListSelectionListener(new ListSelectionListener() {
+
+                @Override
+                public void valueChanged(ListSelectionEvent e) {
+                    if (!e.getValueIsAdjusting()){
+                        Object o = objectList.getSelectedValue();
+                        if (o!=null){
+                            nameText.setText(o.toString());
+                        }
+                    }
+                }
+            });
             JPanel buttonPanel = new JPanel();
             buttonPanel.add(okButton);
             buttonPanel.add(cancelButton);

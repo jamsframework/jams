@@ -44,7 +44,7 @@ public class MOCOM extends Optimizer {
     public OptimizerDescription getDescription() {
         OptimizerDescription desc = OptimizerLibrary.getDefaultOptimizerDescription(MOCOM.class.getSimpleName(), MOCOM.class.getName(), 500, false);
 
-        desc.addParameter(new NumericOptimizerParameter("populationSize", "size of population", 500, 0, 100000));
+        desc.addParameter(new NumericOptimizerParameter("populationSize", JAMS.i18n("size_of_population"), 500, 0, 100000));
 
         return desc;
     }

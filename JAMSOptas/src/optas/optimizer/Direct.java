@@ -9,16 +9,16 @@
 package optas.optimizer;
 
 //muss noch überarbeitet und integriert werden .. .
+import jams.JAMS;
+import java.util.ArrayList;
+import optas.core.ObjectiveAchievedException;
 import optas.core.SampleLimitException;
 import optas.optimizer.management.OptimizerDescription;
-import java.util.ArrayList;
-import jams.JAMS;
-import optas.core.AbstractFunction;
 import optas.optimizer.management.SampleFactory.SampleSO;
-import optas.core.ObjectiveAchievedException;
 
 public class Direct extends optas.optimizer.Optimizer {
 
+    @Override
     public OptimizerDescription getDescription() {
         return OptimizerLibrary.getDefaultOptimizerDescription(Direct.class.getSimpleName(), Direct.class.getName(), 500, false);
     }

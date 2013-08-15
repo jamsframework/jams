@@ -40,25 +40,26 @@ public class NSGA2 extends Optimizer {
     CustomRand generator = null;
     transient DataCollection collection = null;
 
+    @Override
     public OptimizerDescription getDescription() {
         OptimizerDescription desc = OptimizerLibrary.getDefaultOptimizerDescription(NSGA2.class.getSimpleName(), NSGA2.class.getName(), 500, false);
 
-        desc.addParameter(new NumericOptimizerParameter("populationSize", "size of population", 30, 1, 100000));
-        desc.addParameter(new NumericOptimizerParameter("crossoverProbability", "propability for crossover", 0.9, 0, 1));
-        desc.addParameter(new NumericOptimizerParameter("mutationProbability", "propability for mutations", 1.0, 0.5, 1));
-        desc.addParameter(new NumericOptimizerParameter("crossoverDistributionIndex", "distribution index for crossover", 20, 1, 100));
-        desc.addParameter(new NumericOptimizerParameter("mutationDistributionIndex", "size of population", 20, 1, 500));
-        desc.addParameter(new NumericOptimizerParameter("maxGeneration", "maximum number of generations", 1000, 1, 10000));
+        desc.addParameter(new NumericOptimizerParameter("populationSize", JAMS.i18n("size_of_population"), 30, 1, 100000));
+        desc.addParameter(new NumericOptimizerParameter("crossoverProbability", JAMS.i18n("propability_for_crossover"), 0.9, 0, 1));
+        desc.addParameter(new NumericOptimizerParameter("mutationProbability", JAMS.i18n("propability_for_mutations"), 1.0, 0.5, 1));
+        desc.addParameter(new NumericOptimizerParameter("crossoverDistributionIndex", JAMS.i18n("distribution_index_for_crossover"), 20, 1, 100));
+        desc.addParameter(new NumericOptimizerParameter("mutationDistributionIndex", JAMS.i18n("distribution_index_for_mutation"), 20, 1, 500));
+        desc.addParameter(new NumericOptimizerParameter("maxGeneration", JAMS.i18n("maximum_number_of_generations"), 1000, 1, 10000));
 
         
         desc.addParameter(new StringOptimizerParameter("excludeFiles",
-                "excludeFiles","(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log"));
+                JAMS.i18n("exclude_files_list"),"(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log"));
 
         desc.addParameter(new NumericOptimizerParameter("threadCount",
-                "threadCount", 8, 2, 100.0));
+                JAMS.i18n("threadCount"), 8, 2, 100.0));
         
         desc.addParameter(new NumericOptimizerParameter("parallelExecution",
-                "parallelExecution", 0, 0, 1.0));
+                JAMS.i18n("parallelExecution"), 0, 0, 1.0));
                 
         return desc;
     }
