@@ -6,8 +6,9 @@ package optas.gui.MCAT5;
 
 import jams.JAMS;
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
+import javax.swing.GroupLayout;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -65,14 +66,21 @@ public class GLUEVariableUncertainty extends MCAT5Plot {
         chart2.removeLegend();
         chartPanel1 = new ChartPanel(chart1, true);
         chartPanel2 = new ChartPanel(chart2, true);
-                        
-        try{
-            refresh();
-        }catch(NoDataException e1){
-            JOptionPane.showMessageDialog(chartPanel1, "Failed to show dataset. The data is incommensurate!");
-        }
+               
+        chartPanel1.setMinimumDrawWidth( 0 );
+        chartPanel1.setMinimumDrawHeight( 0 );
+        chartPanel1.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel1.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+ 
+        chartPanel2.setMinimumDrawWidth( 0 );
+        chartPanel2.setMinimumDrawHeight( 0 );
+        chartPanel2.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel2.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
+        redraw();
     }
           
+    @Override
     public void refresh() throws NoDataException{
         if (!this.isRequestFulfilled()){
             return;
@@ -97,12 +105,12 @@ public class GLUEVariableUncertainty extends MCAT5Plot {
 
         EfficiencyEnsemble likelihood = eff.CalculateLikelihood();
         Integer sortedIds[] = var.sort();
-        //double sorted_data[][] = sortbyEff(likelihood,this.var.set);
+
         
         double sum = 0;        
         double conf = 0.05;
         int n = var.getSize();
-
+        double lastValue = -100000000000.0, newvalue;
         for (int i=0;i<n;i++){
             if (sum < conf && sum+likelihood.getValue(sortedIds[i]) > conf){
                 dataset3.add(var.getValue(sortedIds[i]),sum);
@@ -110,7 +118,12 @@ public class GLUEVariableUncertainty extends MCAT5Plot {
             if (sum < 1.0-conf && sum+likelihood.getValue(sortedIds[i]) > 1.0-conf){
                 dataset3.add(var.getValue(sortedIds[i]),sum);
             }
-            dataset1.add(var.getValue(sortedIds[i]),sum+=likelihood.getValue(sortedIds[i]));
+            newvalue = var.getValue(sortedIds[i]);
+            if (lastValue == newvalue){
+                newvalue += 0.00000001;
+            }
+            lastValue = newvalue;
+            dataset1.add(newvalue,sum+=likelihood.getValue(sortedIds[i]));            
         }
                 
         double min = var.getValue(sortedIds[0]);
@@ -147,10 +160,16 @@ public class GLUEVariableUncertainty extends MCAT5Plot {
 
     public JPanel getPanel(){
         return new JPanel(){
-            {
-                this.setLayout(new BorderLayout());
-                this.add(chartPanel1,BorderLayout.EAST);
-                this.add(chartPanel2,BorderLayout.WEST);
+            {                
+                GroupLayout gl = new GroupLayout(this);                
+                this.setLayout(gl);
+                gl.setHorizontalGroup(gl.createSequentialGroup()
+                        .addComponent(chartPanel1)
+                        .addComponent(chartPanel2));
+                
+                gl.setVerticalGroup(gl.createParallelGroup()
+                        .addComponent(chartPanel1)
+                        .addComponent(chartPanel2));
             }
         };
     }

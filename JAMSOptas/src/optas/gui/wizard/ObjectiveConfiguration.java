@@ -7,6 +7,7 @@ package optas.gui.wizard;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
+import jams.gui.input.TextInput;
 import jams.gui.input.ValueChangeListener;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ContextDescriptor;
@@ -80,6 +81,7 @@ public class ObjectiveConfiguration extends JPanel{
     ModelDescriptor md = null;
     
     JDialog dialog = null;
+    JButton addObjective = new JButton("+"), rmObjective = new JButton("-"), editObjective = new JButton("..");
     
     JFileChooser timeseriesFileChooser = new JFileChooser();
     
@@ -104,7 +106,7 @@ public class ObjectiveConfiguration extends JPanel{
                 }                
             }
         };
-    
+            
     public ObjectiveConfiguration(ModelDescriptor md, Logger logger){
         this.md = md;
         //load default property file, if its not existing, never mind as it is only used for the recent files entry
@@ -121,6 +123,48 @@ public class ObjectiveConfiguration extends JPanel{
         updateRecentTimeseriesList(null);
         
         initGUI();
+        
+        addObjective.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = JOptionPane.showInputDialog(JAMS.i18n("Specify name for new objective"), "unnamed");
+                if (name != null){                    
+                    ObjectiveDescription od = new ObjectiveDescription(name);
+                    ((DefaultComboBoxModel)objectivesList.getModel()).addElement(od);
+                    objectivesList.getModel().setSelectedItem(od);
+                    measurementList.setSelectedIndex(-1);
+                    simulationList.setSelectedIndex(-1);                    
+                    filterList.clear();   
+                    updateButtonStates();
+                }
+                
+            }
+        });
+        
+        rmObjective.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                objectivesList.removeItem(objectivesList.getSelectedItem());
+                updateButtonStates();
+            }
+        });
+
+        editObjective.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();
+                String name = JOptionPane.showInputDialog(JAMS.i18n("Specify new name for objective"), od.getName());
+                if (name != null){
+                    od.setName(name);
+                }
+                objectivesList.invalidate();
+                objectivesList.repaint();
+                updateButtonStates();
+            }
+        });
         
         okButton.addActionListener(new ActionListener() {
 
@@ -146,8 +190,10 @@ public class ObjectiveConfiguration extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {                                
                 File f = new File((String)recentTimeSeries.getSelectedItem());
-                if (f.exists())
+                if (f.exists()){
                     loadTimeseries(f);
+                    updateButtonStates();
+                }
             }
         });
         
@@ -156,23 +202,18 @@ public class ObjectiveConfiguration extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {                                
                 if ( objectivesList.getSelectedItem() instanceof ObjectiveDescription ){
-                    ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();    
-                    contextList.setSelectedItem(od.getMeasurementAttribute().getParentName());
-                    measurementList.setSelectedItem(od.getMeasurementAttribute());
-                    simulationList.setSelectedItem(od.getSimulationAttribute());
-                    
-                    filterList.setTimeFilters(od.getTimeFilters());                                        
-                }
-                if ( objectivesList.getSelectedItem() instanceof String ){
-                    String s = (String)objectivesList.getSelectedItem();
-                    ObjectiveDescription od = new ObjectiveDescription(s);
-                    ((DefaultComboBoxModel)objectivesList.getModel()).removeElement(s);
-                    ((DefaultComboBoxModel)objectivesList.getModel()).addElement(od);
-                    objectivesList.getModel().setSelectedItem(od);
-                    measurementList.setSelectedIndex(-1);
-                    simulationList.setSelectedIndex(-1);
-                    
-                    filterList.clear();                    
+                    ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();  
+                    if (od.getMeasurementAttribute() != null){
+                        contextList.setSelectedItem(od.getMeasurementAttribute().getParentName());
+                        measurementList.setSelectedItem(od.getMeasurementAttribute());
+                        simulationList.setSelectedItem(od.getSimulationAttribute());
+                    }else{
+                        contextList.setSelectedIndex(-1);
+                        measurementList.setSelectedIndex(-1);
+                        simulationList.setSelectedIndex(-1);
+                    }
+                    filterList.setTimeFilters(od.getTimeFilters());   
+                    updateButtonStates();
                 }
             }
         });
@@ -205,6 +246,7 @@ public class ObjectiveConfiguration extends JPanel{
                     simulationList.setSelectedIndex(-1);                    
                     measurementList.addActionListener(measurementListUpdateListener);
                     measurementList.setSelectedIndex(-1);
+                    updateButtonStates();
                 }
             }
         });
@@ -220,6 +262,7 @@ public class ObjectiveConfiguration extends JPanel{
                 if (result == JFileChooser.APPROVE_OPTION){
                     File f = timeseriesFileChooser.getSelectedFile();   
                     loadTimeseries(f);
+                    updateButtonStates();
                 }
             }
         });
@@ -327,9 +370,6 @@ public class ObjectiveConfiguration extends JPanel{
             }            
             objectivesList.setModel(objectives);                
             objectivesList.setSelectedIndex(0);
-            ModelAnalyzer analyzer = new ModelAnalyzer(md);
-            DefaultComboBoxModel measurementModel = new DefaultComboBoxModel(analyzer.getObjectives().toArray(new Attribute[0]));
-            DefaultComboBoxModel simulationModel = new DefaultComboBoxModel(analyzer.getObjectives().toArray(new Attribute[0]));
             DefaultComboBoxModel contextModel = new DefaultComboBoxModel();
             for (ComponentDescriptor c : md.getComponentDescriptors().values()){
                 if (c instanceof ContextDescriptor){
@@ -351,6 +391,35 @@ public class ObjectiveConfiguration extends JPanel{
                     }
                 }
             });
+        }
+        updateButtonStates();
+    }
+    
+    private void updateButtonStates(){
+        if (objectivesList.getSelectedItem() == null){
+            rmObjective.setEnabled(false);
+            editObjective.setEnabled(false);
+            contextList.setEnabled(false);
+            filterList.setEnabled(false);
+        }else{
+            rmObjective.setEnabled(true);
+            editObjective.setEnabled(true);
+            contextList.setEnabled(true);
+            filterList.setEnabled(true);
+        }
+        
+        if (contextList.getSelectedIndex() != -1 && contextList.isEnabled() == true){
+            measurementList.setEnabled(true);
+            simulationList.setEnabled(true);
+        }else{
+            measurementList.setEnabled(false);
+            simulationList.setEnabled(false);
+        }
+        
+        if (this.filterList.timeserie == null){
+            filterList.setEnabled(false);
+        }else{
+            filterList.setEnabled(true);
         }
     }
                
@@ -381,8 +450,7 @@ public class ObjectiveConfiguration extends JPanel{
                 }
                 updateRecentTimeseriesList(f);
             }
-            filterList.setTimeSeries(ts);
-            filterList.setEnabled(true);            
+            filterList.setTimeSeries(ts);        
         }
     }
                 
@@ -390,10 +458,12 @@ public class ObjectiveConfiguration extends JPanel{
         DefaultComboBoxModel recentTimeSeriesModel = new DefaultComboBoxModel(JAMSTools.getRecentFiles(systemProperties, SystemProperties.RECENT_TIMESERIES_OF_OBJECTIVE_CONFIGURATION));
         recentTimeSeriesModel.insertElementAt("",0);
         recentTimeSeries.setModel(recentTimeSeriesModel);
-        if (lastFile == null)
+        if (lastFile == null) {
             recentTimeSeries.setSelectedIndex(0);
-        else
+        }
+        else {
             recentTimeSeries.setSelectedItem(lastFile.getAbsolutePath());
+        }
             
     }
     
@@ -423,13 +493,13 @@ public class ObjectiveConfiguration extends JPanel{
         
         hydroChart.setFilterMode(HydrographChart.FilterMode.SINGLE_ROW);
                             
-        objectivesList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Name")));
+        objectivesList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Objectives")));
         measurementList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Measured_Property")));
         simulationList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Simulated_Property")));        
         contextList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Context")));        
         
         objectivesList.setMaximumSize(new Dimension(200, 40));
-        objectivesList.setEditable(true);
+        objectivesList.setEditable(false);
         measurementList.setMaximumSize(new Dimension(200, 40));
         simulationList.setMaximumSize(new Dimension(200, 40));  
         contextList.setMaximumSize(new Dimension(200, 40));  
@@ -470,35 +540,51 @@ public class ObjectiveConfiguration extends JPanel{
         GroupLayout layout2 = new GroupLayout(generalInformationPanel);
         generalInformationPanel.setLayout(layout2);
         
-        layout2.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+        layout2.setHorizontalGroup(layout2.createParallelGroup()
                 .addGroup(layout2.createSequentialGroup()  
-                    .addGroup(layout2.createParallelGroup()  
-                    .addComponent(objectivesList)                    
-                    .addGap(5)
-                    .addComponent(contextList)       
-                    .addGap(5)
-                    .addComponent(simulationList)                    
-                    .addGap(5)
-                    .addComponent(measurementList)       
-                    .addGap(5)
+                    .addGroup(layout2.createParallelGroup()
+                        .addComponent(objectivesList)
+                        .addGap(5)
+                        .addComponent(contextList)
+                        .addGap(5)
+                        .addComponent(simulationList)
+                        .addGap(5)
+                        .addComponent(measurementList)
+                        .addGap(5)
+                    )    
+                    .addGroup(layout2.createParallelGroup()
+                        .addGroup(layout2.createSequentialGroup()  
+                            .addComponent(addObjective)
+                            .addComponent(rmObjective)
+                            .addComponent(editObjective)
+                        )
+                        .addComponent(modelTimeIntervalInput)
+                    )
                 )
-                    .addComponent(modelTimeIntervalInput)
-                )                
             );
         
         layout2.setVerticalGroup(layout2.createSequentialGroup()
-                .addGroup(layout2.createParallelGroup(GroupLayout.Alignment.CENTER)      
-                    .addGroup(layout2.createSequentialGroup()  
-                    .addComponent(objectivesList)
-                    .addGap(10)    
-                    .addComponent(contextList)  
-                    .addGap(10)  
-                    .addComponent(simulationList)
-                    .addGap(10)                   
-                    .addComponent(measurementList)
-                    .addGap(10)  
-                )
-                    .addComponent(modelTimeIntervalInput)
+                .addGroup(layout2.createParallelGroup(GroupLayout.Alignment.CENTER)  
+                    .addGroup(layout2.createSequentialGroup()
+                        .addComponent(objectivesList)
+                        .addGap(5)
+                        .addComponent(contextList)
+                        .addGap(5)
+                        .addComponent(simulationList)
+                        .addGap(5)
+                        .addComponent(measurementList)
+                        .addGap(5)
+                    )    
+                    .addGroup(layout2.createSequentialGroup()
+                        .addGap(15)
+                        .addGroup(layout2.createParallelGroup(GroupLayout.Alignment.CENTER)  
+                            .addComponent(addObjective)
+                            .addComponent(rmObjective)
+                            .addComponent(editObjective)
+                        )
+                        .addGap(10)
+                        .addComponent(modelTimeIntervalInput)
+                    )
                 )
             );
         

@@ -41,12 +41,12 @@ public class DottyPlot extends MCAT5Plot {
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle(JAMS.i18n("DOTTY_PLOT"));
         chartPanel = new ChartPanel(chart, true);
-
-        try {
-            refresh();
-        } catch (NoDataException e) {
-            JOptionPane.showMessageDialog(chartPanel, "Failed to show dataset. The data is incommensurate!");
-        }
+        chartPanel.setMinimumDrawWidth( 0 );
+        chartPanel.setMinimumDrawHeight( 0 );
+        chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
+        redraw();
     }
 
     public DottyPlot() {
@@ -56,6 +56,7 @@ public class DottyPlot extends MCAT5Plot {
         init();
     }
 
+    @Override
     public JPanel getPanel() {
         return this.chartPanel;
     }

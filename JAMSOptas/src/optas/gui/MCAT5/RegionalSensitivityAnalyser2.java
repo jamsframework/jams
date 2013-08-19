@@ -50,11 +50,12 @@ public class RegionalSensitivityAnalyser2 extends MCAT5Plot{
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle(JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS_II"));
         chartPanel = new ChartPanel(chart, true);
-        try{
-            refresh();
-        }catch(NoDataException e1){
-            JOptionPane.showMessageDialog(chartPanel, "Failed to show dataset. The data is incommensurate!");
-        }
+        chartPanel.setMinimumDrawWidth( 0 );
+        chartPanel.setMinimumDrawHeight( 0 );
+        chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
+        redraw();
     }
         
     public double[][] sortbyEff(double data[],double likelihood[]) {

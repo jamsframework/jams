@@ -88,7 +88,6 @@ import optas.hydro.gui.SelectionDialog;
 import optas.hydro.gui.SimpleGlobalSensitivityAtPoint;
 import optas.hydro.gui.WeightChart;
 import optas.io.TSDataReader;
-import org.w3c.dom.Document;
 
 /**
  *

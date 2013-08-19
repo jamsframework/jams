@@ -536,7 +536,11 @@ public class DataCollection extends DataSet implements Serializable{
         result.addAll(datasets.keySet());        
         return result;
     }
+    
     public Set<String> getDatasets(Class clazz){
+        return getDatasets(clazz,false);
+    }
+    public Set<String> getDatasets(Class clazz, boolean exactMatch){
         TreeSet<String> sets = new TreeSet<String>();
         for (String setname : datasets.keySet()){
             if (clazz.getName().contains("TimeSerie")){  // workaround because we want neg and pos efficiencies to be efficiencies but we wont get a measurement when we want a timeseries ensemble arg
@@ -547,8 +551,10 @@ public class DataCollection extends DataSet implements Serializable{
                 if (clazz.equals(getDatasetClass(setname))){
                     sets.add(setname);
                 }
-            }else if (clazz.isAssignableFrom(getDatasetClass(setname)))
+            }else if ((!exactMatch && clazz.isAssignableFrom(getDatasetClass(setname))) || 
+                      (exactMatch && clazz == (getDatasetClass(setname))) ){
                 sets.add(setname);
+            }
         }
         return sets;
     }

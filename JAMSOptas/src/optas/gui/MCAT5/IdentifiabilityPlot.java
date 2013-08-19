@@ -9,12 +9,16 @@ import jams.JAMS;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import optas.data.DataSet;
@@ -42,7 +46,7 @@ public class IdentifiabilityPlot extends MCAT5Plot{
     XYPlot plot = new XYPlot();    
     ChartPanel chartPanel = null;
     JPanel mainPanel;
-
+    JTextField groupCount = new JTextField(2);
     int boxCount = 10;
 
     public IdentifiabilityPlot() {
@@ -57,38 +61,57 @@ public class IdentifiabilityPlot extends MCAT5Plot{
         chart.setTitle(JAMS.i18n("IDENTIFYABLITY_PLOT"));
         chartPanel = new ChartPanel(chart, true);
 
+        chartPanel.setMinimumDrawWidth( 0 );
+        chartPanel.setMinimumDrawHeight( 0 );
+        chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
         XYLineAndShapeRenderer gradient_renderer = new XYLineAndShapeRenderer();
         gradient_renderer.setSeriesPaint(0, Color.BLACK);
         gradient_renderer.setBaseShapesVisible(false);
         plot.setRenderer(0, gradient_renderer);
 
-        mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(chartPanel, BorderLayout.NORTH);
-
-        JPanel sliderPanel = new JPanel(new BorderLayout());
-        sliderPanel.setMaximumSize(new Dimension(500, 100));
-        sliderPanel.setPreferredSize(new Dimension(500, 100));
-        sliderPanel.setMinimumSize(new Dimension(500, 100));
+        JPanel sliderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        sliderPanel.setMaximumSize(new Dimension(250, 60));
+        sliderPanel.setPreferredSize(new Dimension(250, 60));
+        sliderPanel.setMinimumSize(new Dimension(250, 60));
 
         JSlider slider = new JSlider();
-        slider.setMinimum(1);
+        slider.setMinimum(2);
         slider.setMaximum(30);
         slider.setValue(boxCount);
+        groupCount.setText(Integer.toString(boxCount));
+        groupCount.setEnabled(false);
+        
         slider.addChangeListener(new ChangeListener() {
 
+            @Override
             public void stateChanged(ChangeEvent e) {
                 JSlider slider = (JSlider) e.getSource();
                 IdentifiabilityPlot.this.boxCount = slider.getValue();
-                try {
-                    refresh();
-                } catch (NoDataException e1) {
-                    JOptionPane.showMessageDialog(chartPanel, "Failed to show dataset. The data is incommensurate!");
-                }
+                groupCount.setText(Integer.toString(boxCount));
+                redraw();
             }
         });
-        sliderPanel.add(new JLabel("number of boxes"), BorderLayout.WEST);
-        sliderPanel.add(slider, BorderLayout.EAST);
-        mainPanel.add(sliderPanel, BorderLayout.SOUTH);
+        sliderPanel.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("number_of_groups")));
+        sliderPanel.add(slider);
+        sliderPanel.add(groupCount);        
+        groupCount.setMaximumSize(new Dimension(60, 60));
+        mainPanel = new JPanel();
+        GroupLayout layout = new GroupLayout(mainPanel);
+        mainPanel.setLayout(layout);
+        
+        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                .addComponent(chartPanel)
+                .addComponent(sliderPanel)
+                );
+        
+        layout.setVerticalGroup(layout.createSequentialGroup()
+                .addComponent(chartPanel)
+                .addComponent(sliderPanel)
+                );
+        
+        redraw();
     }
         
     public void refresh() throws NoDataException {

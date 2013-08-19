@@ -58,17 +58,18 @@ public class SensitivityToolbox extends MCAT5Plot {
     JComboBox objectiveNormalizationMethod = new JComboBox(SimpleInterpolation.NormalizationMethod.values());
     String rsaString = "Regional Sensitivity Analysis",
             mgeString = "Maximum Gradient Estimation",
-            eemString = "Elementary Effects Method",
-            eem2String = "Elementary Effects Method (not absolute)",
-            eem3String = "Elementary Effects Method (Variance)",
-            fosiString = "First Order Sensitivity by FAST",
-            fosiString2 = "First Order Sensitivity by Satelli(2008)(-)",
-            tosiString = "Total Sensitivity Index by Satelli(2008)(-)",
+            eemString = "Morris Method",
+            eem2String = "Morris Method (not absolute)",
+            eem3String = "Morris Method (Variance)",
+            fosiString = "FAST (First Order)",
+            fosiString2 = "Sobol (First Order)",
+            tosiString = "Sobol (Total)",
             interactionString = "Interaction Analysis",
             linearRegString = "Linear Regression";
     JComboBox sensitivityMethod = new JComboBox(new String[]{rsaString, mgeString, eemString, eem2String, eem3String, fosiString, fosiString2, tosiString, interactionString, linearRegString});
     CategoryDataset dataset1 = null, dataset2 = null;
     JFreeChart chart = null;
+    JButton recalcButton = null;
 
     public SensitivityToolbox() {
         this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
@@ -125,6 +126,7 @@ public class SensitivityToolbox extends MCAT5Plot {
                     parameterNormalizationMethod.setEnabled(true);
                     objectiveNormalizationMethod.setEnabled(true);
                     sensitivityMethod.setModel(new DefaultComboBoxModel(new String[]{rsaString, mgeString, eem2String, eem3String, eemString, fosiString, fosiString2, tosiString, interactionString, linearRegString}));
+                    recalcButton.setEnabled(true);
                 } else {
                     sampleCountFieldRegression.setEditable(false);
                     regressionMethod.setEnabled(false);
@@ -133,17 +135,16 @@ public class SensitivityToolbox extends MCAT5Plot {
                     parameterNormalizationMethod.setEnabled(false);
                     objectiveNormalizationMethod.setEnabled(false);
                     sensitivityMethod.setModel(new DefaultComboBoxModel(new String[]{rsaString, linearRegString}));
+                    recalcButton.setEnabled(false);
                 }
 
                 WorkerDlg progress = new WorkerDlg(null, "Updating plot");
                 progress.setInderminate(true);
                 progress.setTask(new Runnable() {
 
+                    @Override
                     public void run() {
-                        try {
-                            SensitivityToolbox.this.refresh();
-                        } catch (NoDataException nde) {
-                        }
+                        redraw();
                     }
                 });
                 progress.execute();
@@ -217,24 +218,25 @@ public class SensitivityToolbox extends MCAT5Plot {
         c.gridwidth = 2;
         c.fill = c.NONE;
         c.anchor = c.CENTER;
-        southPanel.add(new JButton(new AbstractAction("Recalculate Regression") {
+        recalcButton = new JButton(new AbstractAction("Recalculate Regression") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 WorkerDlg progress = new WorkerDlg(null, "Updating plot");
                 progress.setInderminate(true);
                 progress.setTask(new Runnable() {
 
+                    @Override
                     public void run() {
-                        try {
-                            SensitivityToolbox.this.refresh();
-                        } catch (NoDataException nde) {
-                        }
+                        redraw();
                     }
                 });
-                if (!((JButton)e.getSource()).isSelected())
+                if (!((JButton)e.getSource()).isSelected()) {
                     progress.execute();
+                }
             }
-        }), c);
+        });
+        southPanel.add(recalcButton, c);
 
         chart = ChartFactory.createStackedBarChart(
                 "Sensitivity of Parameters", // chart title
@@ -252,6 +254,11 @@ public class SensitivityToolbox extends MCAT5Plot {
         // get a reference to the plot for further customisation...
         chart.getCategoryPlot().setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
         ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setMinimumDrawWidth( 0 );
+        chartPanel.setMinimumDrawHeight( 0 );
+        chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
         centerPanel.add(chartPanel);
 
         panel.add(centerPanel, BorderLayout.CENTER);
@@ -302,6 +309,7 @@ public class SensitivityToolbox extends MCAT5Plot {
         }else if (sensitivityMethod.getSelectedItem().equals(linearRegString)) {
             uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.LinearRegression);
         }
+                
         uniSA.setUsingRegression(useANNRegression.isSelected());
         uniSA.setParameterNormalizationMethod((SimpleInterpolation.NormalizationMethod) this.parameterNormalizationMethod.getSelectedItem());
         uniSA.setObjectiveNormalizationMethod((SimpleInterpolation.NormalizationMethod) this.objectiveNormalizationMethod.getSelectedItem());

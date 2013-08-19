@@ -115,6 +115,11 @@ public class ParameterInterpolation extends MCAT5Plot {
         chart.setTitle("Interpolation");
         chartPanel = new ChartPanel(chart, true);
 
+        chartPanel.setMinimumDrawWidth( 0 );
+        chartPanel.setMinimumDrawHeight( 0 );
+        chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
         panel = new JPanel(new BorderLayout());
         panel.add(chartPanel,BorderLayout.WEST);
 
@@ -128,13 +133,10 @@ public class ParameterInterpolation extends MCAT5Plot {
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         slider.addChangeListener(new ChangeListener(){
+            @Override
            public void stateChanged(ChangeEvent evt){
                point[currentIndex] = (((paramMax-paramMin)*(double)slider.getValue())/(double)RESOLUTION)+paramMin;
-                try {
-                    refresh();
-                } catch (NoDataException e) {
-                    JOptionPane.showMessageDialog(chartPanel, "Failed to show dataset. The data is incommensurate!");
-                }
+               redraw();
             }
         });
         adjustmentPanel.add(slider, BorderLayout.CENTER);
@@ -165,11 +167,7 @@ public class ParameterInterpolation extends MCAT5Plot {
                     slider.setValue( (int)Math.round((point[currentIndex]-paramMin)/(paramMax-paramMin)*(double)RESOLUTION));
                     slider.setEnabled(true);
                     doInterpolation(currentIndex);
-                    try{
-                        refresh();
-                    }catch(NoDataException nde){
-                        JOptionPane.showConfirmDialog(chartPanel, "failed to show data");
-                    }
+                    redraw();
                 }else{
                     slider.setEnabled(false);
                 }

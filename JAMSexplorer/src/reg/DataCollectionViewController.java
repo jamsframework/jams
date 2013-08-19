@@ -45,17 +45,17 @@ public class DataCollectionViewController implements DataCollectionViewDelegate 
 
         for (Class c : classes) {
             //the order is crucial
-            if (Measurement.class.isAssignableFrom(c)) {
+            if (Measurement.class.isAssignableFrom(c)) { //order is crucial here
                 types.add(DataType.MEASUREMENT);
             }else if(TimeSerie.class.isAssignableFrom(c)) {
                 types.add(DataType.TIME_SERIES);
             } else if (Efficiency.class.isAssignableFrom(c)) {
                 types.add(DataType.OBJECTIVE);
-            } else if (StateVariable.class.isAssignableFrom(c)) {
-                types.add(DataType.VARIABLE);
             } else if (Parameter.class.isAssignableFrom(c)) {
                 types.add(DataType.PARAMETER);
-            }
+            } else if (StateVariable.class.isAssignableFrom(c)) {
+                types.add(DataType.VARIABLE);
+            } 
         }
         return types.toArray(new DataType[types.size()]);
     }
@@ -65,9 +65,9 @@ public class DataCollectionViewController implements DataCollectionViewDelegate 
         switch (type) {
             case TIME_SERIES:   return collection.getDatasets(TimeSerie.class).toArray(new String[0]);
             case MEASUREMENT:   return collection.getDatasets(Measurement.class).toArray(new String[0]);
-            case OBJECTIVE:     return collection.getDatasets(Efficiency.class).toArray(new String[0]);
-            case VARIABLE:      return collection.getDatasets(StateVariable.class).toArray(new String[0]);
+            case OBJECTIVE:     return collection.getDatasets(Efficiency.class).toArray(new String[0]);            
             case PARAMETER:     return collection.getDatasets(Parameter.class).toArray(new String[0]);
+            case VARIABLE:      return collection.getDatasets(StateVariable.class).toArray(new String[0]);
             default:            return new String[0];
         }
     }

@@ -49,11 +49,7 @@ public class DottyPlot3D extends MCAT5Plot {
         chart.setTitle(JAMS.i18n("DOTTY_PLOT"));
         chartPanel = new ChartPanel(chart, true);
 
-        try {
-            refresh();
-        } catch (NoDataException e) {
-            JOptionPane.showMessageDialog(chartPanel, "Failed to show dataset. The data is incommensurate!");
-        }
+        redraw();
     }
 
     public DottyPlot3D() {

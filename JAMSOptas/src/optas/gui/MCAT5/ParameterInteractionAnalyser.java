@@ -299,10 +299,7 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
 
                     @Override
                     public void run() {
-                        try {
-                            ParameterInteractionAnalyser.this.refresh();
-                        } catch (NoDataException nde) {
-                        }
+                        ParameterInteractionAnalyser.this.redraw();
                     }
                 });
                 if (!((JButton)e.getSource()).isSelected())

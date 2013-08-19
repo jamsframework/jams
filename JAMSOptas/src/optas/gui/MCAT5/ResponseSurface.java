@@ -216,11 +216,7 @@ public class ResponseSurface extends MCAT5Plot {
                     JOptionPane.showMessageDialog(chartPanel, "ParseException");
                     return;
                 }
-                try {
-                    refresh();
-                } catch (NoDataException e1) {
-                    JOptionPane.showMessageDialog(chartPanel, "Failed to show dataset. The data is incommensurate!");
-                }
+                redraw();
             }
         });
 
@@ -250,7 +246,11 @@ public class ResponseSurface extends MCAT5Plot {
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle("Response Surface");
         chartPanel = new ChartPanel(chart, true);
-
+        chartPanel.setMinimumDrawWidth( 0 );
+        chartPanel.setMinimumDrawHeight( 0 );
+        chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
         panel = new JPanel(new BorderLayout());
         panel.add(chartPanel,BorderLayout.WEST);
     }

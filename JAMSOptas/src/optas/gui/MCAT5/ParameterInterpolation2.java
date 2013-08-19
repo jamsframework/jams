@@ -104,6 +104,11 @@ public class ParameterInterpolation2 extends MCAT5Plot {
         chart.setTitle("Interpolation");
         chartPanel = new ChartPanel(chart, true);
 
+        chartPanel.setMinimumDrawWidth( 0 );
+        chartPanel.setMinimumDrawHeight( 0 );
+        chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
         panel.add(chartPanel,BorderLayout.CENTER);
 
         JPanel adjustmentPanel = new JPanel(new BorderLayout());
@@ -194,11 +199,7 @@ public class ParameterInterpolation2 extends MCAT5Plot {
 
         panel.add(adjustmentPanel,BorderLayout.EAST);
 
-        try {
-            refresh();
-        } catch (NoDataException e) {
-            JOptionPane.showMessageDialog(chartPanel, "Failed to show dataset. The data is incommensurate!");
-        }
+        redraw();
     }
 
     public void updatePlot(){

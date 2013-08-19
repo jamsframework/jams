@@ -6,10 +6,12 @@
 package optas.gui.MCAT5;
 
 
+import jams.JAMS;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import optas.data.DataCollection;
 import optas.data.DataSet;
@@ -22,6 +24,9 @@ import optas.data.Ensemble;
  * @author chris
  */
 public abstract class MCAT5Plot {
+    final int MAXIMUM_WIDTH = 2000;
+    final int MAXIMUM_HEIGHT = 2000;
+    
     public static class NoDataException extends Exception{
         public SimpleRequest r;
         public String error;
@@ -81,6 +86,13 @@ public abstract class MCAT5Plot {
     private DataCollection data = null;
 
     public abstract void refresh() throws NoDataException;
+    public void redraw(){
+        try {
+            refresh();
+        } catch (NoDataException e) {
+            JOptionPane.showMessageDialog(getPanel(), JAMS.i18n("Failed_to_show_dataset_The_data_is_incommensurate!"));
+        }
+    }
     public abstract JPanel getPanel();
 
     protected void addRequest(SimpleRequest r){

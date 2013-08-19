@@ -29,6 +29,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerListModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -711,67 +712,76 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
+                Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
 
-                    /* create chart window */
-                    Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
-                    String itemName = (String) item;
-                    JDialog chartWindow = new JDialog((JFrame) getRootPane().getParent(), itemName);
-                    chartWindow.setSize(800, 600);
-                    chartWindow.setLocation(100, 100);
+                            /* create chart window */
+                            Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
+                            String itemName = (String) item;
+                            JDialog chartWindow = new JDialog((JFrame) getRootPane().getParent(), itemName);
+                            chartWindow.setSize(800, 600);
+                            chartWindow.setLocation(100, 100);
 
-                    /* create chart */
-                    JFreeChart chart = null;
-                    if (delegate.hasTimeInterval(item)) {
-
-                        TimeSeriesCollection collection = new TimeSeriesCollection();
-
-                        int numberOfCols = tableModel.getColumnCount();
-                        int[] rows = table.getSelectedRows();
-                        for (int row : rows) {
-                            TimeSeries series = new TimeSeries("time series #" + row, Day.class);
-                            int i;
-                            for (i = 1; i < numberOfCols; i++) {
-                                Date date = DateFormat.getDateInstance().parse(tableModel.getColumnName(i));
-                                series.add(new Day(date), (Double) tableModel.getValueAt(row, i));
+                            /* create chart */
+                            JFreeChart chart = null;
+                            if (delegate.hasTimeInterval(item)) {
+                                
+                                TimeSeriesCollection collection = new TimeSeriesCollection();
+                                
+                                int numberOfCols = tableModel.getColumnCount();
+                                int[] rows = table.getSelectedRows();
+                                for (int row : rows) {
+                                    TimeSeries series = new TimeSeries("time series #" + row, Day.class);
+                                    int i;
+                                    for (i = 1; i < numberOfCols; i++) {
+                                        Date date = DateFormat.getDateInstance().parse(tableModel.getColumnName(i));
+                                        series.add(new Day(date), (Double) tableModel.getValueAt(row, i));
+                                    }
+                                    collection.addSeries(series);
+                                }
+                                chart = ChartFactory.createTimeSeriesChart(itemName, null, null, collection, false, false, false);
+                            } else {
+                                
+                                DefaultXYDataset dataset = new DefaultXYDataset();
+                                
+                                int[] rows = null;
+                                if (table.getSelectedRow() == -1) {
+                                    rows = new int[tableModel.getRowCount()];
+                                    int i;
+                                    for (i = 0; i < rows.length; i++) {
+                                        rows[i] = i;
+                                    }
+                                } else {
+                                    rows = table.getSelectedRows();
+                                }
+                                double data[][] = new double[2][rows.length];
+                                int index = 0;
+                                for (int row : rows) {
+                                    Object o = tableModel.getValueAt(row, 0);
+                                    if (o != null) {
+                                        int id = (Integer) tableModel.getValueAt(row, 0);
+                                        double value = (Double) tableModel.getValueAt(row, 1);
+                                        data[0][index] = id;
+                                        data[1][index] = value;
+                                        index++;
+                                    }
+                                }
+                                dataset.addSeries(itemName, data);
+                                chart = ChartFactory.createScatterPlot(itemName, null, null, dataset, PlotOrientation.VERTICAL, false, false, false);
                             }
-                            collection.addSeries(series);
-                        }
-                        chart = ChartFactory.createTimeSeriesChart(itemName, null, null, collection, false, false, false);
-                    } else {
 
-                        DefaultXYDataset dataset = new DefaultXYDataset();
-
-                        int[] rows = null;
-                        if (table.getSelectedRow() == -1) {
-                            rows = new int[tableModel.getRowCount()];
-                            int i;
-                            for (i = 0; i < rows.length; i++) {
-                                rows[i] = i;
-                            }
-                        } else {
-                            rows = table.getSelectedRows();
+                            /* setup chart view and show window */
+                            ChartPanel chartPanel = new ChartPanel(chart);
+                            chartWindow.getContentPane().add(chartPanel);
+                            chartWindow.setVisible(true);
+                        } catch (ParseException ex) {
+                            ex.printStackTrace();
                         }
-                        double data[][] = new double[2][rows.length];
-                        int index = 0;
-                        for (int row : rows) {
-                            int id = (Integer) tableModel.getValueAt(row, 0);
-                            double value = (Double) tableModel.getValueAt(row, 1);
-                            data[0][index] = id;
-                            data[1][index] = value;
-                            index++;
-                        }
-                        dataset.addSeries(itemName, data);
-                        chart = ChartFactory.createScatterPlot(itemName, null, null, dataset, PlotOrientation.VERTICAL, false, false, false);
                     }
-
-                    /* setup chart view and show window */
-                    ChartPanel chartPanel = new ChartPanel(chart);
-                    chartWindow.getContentPane().add(chartPanel);
-                    chartWindow.setVisible(true);
-                } catch (ParseException ex) {
-                    ex.printStackTrace();
-                }
+                };
+                SwingUtilities.invokeLater(r);
             }
         });
 
@@ -930,17 +940,24 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
         mcat5Toolbar.setSize(new Dimension(250, 300));
 
         layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(mcat5Toolbar)
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(mcat5Toolbar)
+                    .addGap(0, 1000, 100000)
+                    .addComponent(closeButton)
+                )
                 .addGroup(layout.createSequentialGroup()
                     .addComponent(ensembleListScrollPane)
                     .addComponent(dataSetListScrollPane)
                     .addGap(25)
                     .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(closeButton)
-                        .addComponent(sumTSData)
-                        .addComponent(deleteAttribute)
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(displayPanel)
+                            .addComponent(displayDataButton)
+                            //.addComponent(closeButton)
+                            .addComponent(sumTSData)
+                            .addComponent(deleteAttribute)
+                            )
+                        .addGroup(layout.createSequentialGroup()
+                            //.addComponent(displayPanel)
                             .addComponent(filterPanel)
                             )
                         )
@@ -950,16 +967,22 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                     .addComponent(showGraphButton));
 
         layout.setVerticalGroup(layout.createSequentialGroup()
-                .addComponent(mcat5Toolbar)
+                .addGroup(layout.createParallelGroup()
+                    .addComponent(mcat5Toolbar)
+                    .addComponent(closeButton)
+                )
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                     .addComponent(ensembleListScrollPane)
                     .addComponent(dataSetListScrollPane)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(closeButton)
-                        .addComponent(sumTSData)
-                        .addComponent(deleteAttribute)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                            .addComponent(displayDataButton)
+                            //.addComponent(closeButton)
+                            .addComponent(sumTSData)
+                            .addComponent(deleteAttribute)
+                        )
                         .addGroup(layout.createParallelGroup()
-                            .addComponent(displayPanel)
+                            //.addComponent(displayPanel)
                             .addComponent(filterPanel)
                             )
                         )
@@ -980,8 +1003,6 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 .addComponent(finalDateLabel)
                 .addComponent(finalDatePicker)
                 .addGap(25)
-                //.addComponent(extractDatePicker)
-                //.addComponent(extractButton)
                 );
 
         layout.setVerticalGroup(layout.createSequentialGroup()
@@ -990,8 +1011,6 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 .addGap(10)
                 .addComponent(finalDateLabel)
                 .addComponent(finalDatePicker)
-                //.addComponent(extractDatePicker)
-                //.addComponent(extractButton)
                 );
 
         layout = new GroupLayout(simIDPanel);
@@ -1133,19 +1152,16 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
         Object item = delegate.getItemForIdentifier(identifier);
         final Ensemble ensemble = (Ensemble) item;
 
-        /* calculate offset and number of timesteps for selected interval */
-        final long offset;
-        final long numberOfSteps;
-        if (maximumInterval != null) {
-            java.util.Calendar startCal = (java.util.Calendar) maximumInterval.getStart();
-            startCal.set(java.util.Calendar.HOUR, 0);
-            startCal.set(java.util.Calendar.MINUTE, 0);
-            offset = (startDatePicker.getDateInMillis() - startCal.getTimeInMillis()) / 1000 / 60 / 60 / 24;
-            numberOfSteps = (finalDatePicker.getDateInMillis() - startDatePicker.getDateInMillis()) / 1000 / 60 / 60 / 24 + 1;
-        } else {
-            offset = -1;
-            numberOfSteps = -1;
+        long tmp = 0;
+        if (ensemble instanceof TimeSerieEnsemble){
+            tmp = ((TimeSerieEnsemble) ensemble).getTimesteps();
+        
         }
+        
+        /* calculate offset and number of timesteps for selected interval */
+        final long offset=0;
+        final long numberOfSteps = tmp;
+        
 
         tableModel = new AbstractTableModel() {
 
@@ -1156,10 +1172,10 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                         case 0:
                             return "Simulation ID";
                         default:
-                            java.util.Calendar cal = java.util.Calendar.getInstance();
+                            /*java.util.Calendar cal = java.util.Calendar.getInstance();
                             cal.setTime(startDatePicker.getDate());
-                            cal.add(java.util.Calendar.DAY_OF_MONTH, column - 1);
-                            return new SimpleDateFormat("dd.MM.yyyy").format(cal.getTime());
+                            cal.add(java.util.Calendar.DAY_OF_MONTH, column - 1);*/
+                            return new SimpleDateFormat("dd.MM.yyyy").format(((TimeSerieEnsemble)ensemble).getDate(column-1));
                     }
                 } else {
                     switch (column) {
@@ -1175,9 +1191,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
 
             @Override
             public int getRowCount() {
-                int fromID = (Integer) fromIDSpinner.getValue();
-                int toID = (Integer) toIDSpinner.getValue();
-                return Math.min(toID - fromID + 1, ensemble.getSize());
+                return ensemble.getIds().length;
             }
 
             @Override
@@ -1193,21 +1207,23 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 int simIDOffset = (Integer) fromIDSpinner.getValue();
-                if (ensemble.getSize()<=rowIndex + simIDOffset)
+
+                if (ensemble.getSize()<=rowIndex + simIDOffset){
                     return null;
+                }
                 if (ensemble instanceof TimeSerieEnsemble) {
                     switch (columnIndex) {
                         case 0:
-                            return ((TimeSerieEnsemble) ensemble).getId(rowIndex + simIDOffset);
+                            return ((TimeSerieEnsemble) ensemble).getId(rowIndex);
                         default:
-                            return ((TimeSerieEnsemble) ensemble).get(columnIndex - 1 + (int) offset, ((TimeSerieEnsemble) ensemble).getId(rowIndex + simIDOffset));
+                            return ((TimeSerieEnsemble) ensemble).get(columnIndex - 1 + (int) offset, ((TimeSerieEnsemble) ensemble).getId(rowIndex));
                     }
                 } else {
                     switch (columnIndex) {
                         case 0:
-                            return ((SimpleEnsemble) ensemble).getId(rowIndex + simIDOffset);
+                            return ((SimpleEnsemble) ensemble).getId(rowIndex);
                         case 1:
-                            return ((SimpleEnsemble) ensemble).getValue(((SimpleEnsemble) ensemble).getId(rowIndex + simIDOffset));
+                            return ((SimpleEnsemble) ensemble).getValue(((SimpleEnsemble) ensemble).getId(rowIndex));
                         default:
                             return 0;
                     }

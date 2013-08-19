@@ -55,11 +55,7 @@ public class SimpleGlobalSensitivityAtPoint extends MCAT5Plot {
         chart.setTitle(JAMS.i18n("DOTTY_PLOT"));
         chartPanel = new ChartPanel(chart, true);
 
-        try{
-            refresh();
-        }catch(NoDataException e){
-            JOptionPane.showMessageDialog(chartPanel, "Failed to show dataset. The data is incommensurate!");
-        }
+        redraw();
     }
     
     @Override

@@ -78,30 +78,18 @@ public class BaysianUncertainty extends MCAT5Plot {
 
     public void setShowMean(boolean isShowMean) {
         this.isShowMean = isShowMean;
-        try {
-            refresh();
-        } catch (NoDataException nde) {
-            nde.printStackTrace();
-        }
+        redraw();
     }
 
     public void setShowMedian(boolean isShowMedian) {
         this.isShowMedian = isShowMedian;
-        try {
-            refresh();
-        } catch (NoDataException nde) {
-            nde.printStackTrace();
-        }
+        redraw();
     }
 
     private double getThreshold() {
         try {
             threshold = Double.parseDouble(thresholdField.getText());            
-            try {
-                refresh();
-            } catch (NoDataException nde) {
-                nde.printStackTrace();
-            }
+            redraw();
         } catch (NumberFormatException nfe) {
             System.out.println(nfe.toString());
             nfe.printStackTrace();
@@ -119,11 +107,7 @@ public class BaysianUncertainty extends MCAT5Plot {
                 percentil = 1.0;
                 percentilField.setText("1.0");
             }
-            try {
-                refresh();
-            } catch (NoDataException nde) {
-                nde.printStackTrace();
-            }
+            redraw();
         } catch (NumberFormatException nfe) {
             System.out.println(nfe.toString());
             nfe.printStackTrace();
@@ -190,6 +174,11 @@ public class BaysianUncertainty extends MCAT5Plot {
 
         chartPanel1 = new ChartPanel(chart1, true);
 
+        chartPanel1.setMinimumDrawWidth( 0 );
+        chartPanel1.setMinimumDrawHeight( 0 );
+        chartPanel1.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel1.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
         mainPanel = new JPanel(new BorderLayout());
         JPanel panel2 = new JPanel(new FlowLayout());
 
@@ -267,11 +256,7 @@ public class BaysianUncertainty extends MCAT5Plot {
 
         mainPanel.add(panel3, BorderLayout.SOUTH);
 
-        try {
-            refresh();
-        } catch (NoDataException e1) {
-            JOptionPane.showMessageDialog(mainPanel, "Failed to show dataset. The data is incommensurate!");
-        }
+        redraw();
 
         if (plot1.getRangeAxis() != null) {
             plot1.getRangeAxis().setAutoRange(true);

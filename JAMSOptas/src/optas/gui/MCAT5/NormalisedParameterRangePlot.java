@@ -48,12 +48,13 @@ public class NormalisedParameterRangePlot extends MCAT5Plot{
         chart1.setTitle(JAMS.i18n("NORMALISED_PARAMETER_RANGE_PLOT"));
         chart1.removeLegend();
         chartPanel1 = new ChartPanel(chart1, true);
-                        
-        try{
-            refresh();
-        }catch(NoDataException e){
-            JOptionPane.showMessageDialog(chartPanel1, "Failed to show dataset. The data is incommensurate!");
-        }
+                      
+        chartPanel1.setMinimumDrawWidth( 0 );
+        chartPanel1.setMinimumDrawHeight( 0 );
+        chartPanel1.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel1.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
+        redraw();
     }
         
     boolean isParetoOptimal(double eff_actual[],EfficiencyEnsemble eff_set[]){

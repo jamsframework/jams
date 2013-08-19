@@ -222,7 +222,14 @@ public class HydrographChart {
     }
     
     public ChartPanel getChartPanel(){
-        return (panel = new ChartPanel(chart, true));
+        if (panel == null){
+            panel = new ChartPanel(chart, true);
+            panel.setMinimumDrawWidth( 0 );
+            panel.setMinimumDrawHeight( 0 );
+            panel.setMaximumDrawWidth( 2000 );
+            panel.setMaximumDrawHeight( 2000 );
+        }
+        return panel;
     }
 
     public XYPlot getXYPlot(){
@@ -242,7 +249,6 @@ public class HydrographChart {
     }
     
     public void update(){       
-
         Runnable r = new Runnable() {
             @Override
             public void run() {

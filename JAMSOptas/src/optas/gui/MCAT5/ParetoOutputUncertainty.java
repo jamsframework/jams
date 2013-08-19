@@ -16,7 +16,6 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import optas.gui.MCAT5.MCAT5Plot.SimpleRequest;
 import optas.data.DataSet;
@@ -25,6 +24,10 @@ import optas.data.EfficiencyEnsemble;
 import optas.data.Measurement;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
 
 /**
  *
@@ -45,12 +48,16 @@ public class ParetoOutputUncertainty extends MCAT5Plot {
     }
 
     private void init(){
-        plot1.setDomainAxis(new NumberAxis(JAMS.i18n("TIME")));
+        plot1.setDomainAxis(new DateAxis(JAMS.i18n("TIME")));
 
         JFreeChart chart1 = new JFreeChart(plot1);
         chart1.setTitle(JAMS.i18n("PARETO_OUTPUT_UNCERTAINTY"));
-        //chart1.removeLegend();
+
         chartPanel1 = new ChartPanel(chart1, true);
+        chartPanel1.setMinimumDrawWidth( 0 );
+        chartPanel1.setMinimumDrawHeight( 0 );
+        chartPanel1.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel1.setMaximumDrawHeight( MAXIMUM_HEIGHT );
         
         XYDifferenceRenderer renderer1 = new XYDifferenceRenderer(Color.LIGHT_GRAY,Color.LIGHT_GRAY,false);
         XYDifferenceRenderer renderer2 = new XYDifferenceRenderer(Color.CYAN,Color.CYAN,false);
@@ -70,11 +77,7 @@ public class ParetoOutputUncertainty extends MCAT5Plot {
         plot1.setRenderer(1, renderer2);
         plot1.setRenderer(2, renderer1);
         
-        try{
-            refresh();
-        }catch(NoDataException e1){
-            JOptionPane.showMessageDialog(chartPanel1, "Failed to show dataset. The data is incommensurate!");
-        }
+        redraw();
     }
         
     boolean isParetoOptimal(double eff_actual[],EfficiencyEnsemble eff_set[]){
@@ -145,26 +148,27 @@ public class ParetoOutputUncertainty extends MCAT5Plot {
 
         double minMaxOptimalTS[][] = getMinMaxParetoTS(ts,eff);
                         
-        XYSeries minTSDataset = new XYSeries(JAMS.i18n("MINIMAL_VALUE_IN_DATASET"));
-        XYSeries maxTSDataset = new XYSeries(JAMS.i18n("MAXIMAL_VALUE_IN_DATASET"));
+        TimeSeries minTSDataset = new TimeSeries(JAMS.i18n("MINIMAL_VALUE_IN_DATASET"));
+        TimeSeries maxTSDataset = new TimeSeries(JAMS.i18n("MAXIMAL_VALUE_IN_DATASET"));
         
-        XYSeries minTSDataset_pareto = new XYSeries(JAMS.i18n("MINIMAL_VALUE_IN_PARETO_SET"));
-        XYSeries maxTSDataset_pareto = new XYSeries(JAMS.i18n("MAXIMAL_VALUE_IN_PARETO_SET"));
+        TimeSeries minTSDataset_pareto = new TimeSeries(JAMS.i18n("MINIMAL_VALUE_IN_PARETO_SET"));
+        TimeSeries maxTSDataset_pareto = new TimeSeries(JAMS.i18n("MAXIMAL_VALUE_IN_PARETO_SET"));
                 
-        XYSeries observation = new XYSeries(obs.name);
+        TimeSeries observation = new TimeSeries(obs.name);
     
         for (int i=0;i<time_length;i++){
-            minTSDataset.add(i,minTS.getValue(i));
-            maxTSDataset.add(i,maxTS.getValue(i));
+            Day d = new Day(ts.getDate((int) i));
+            minTSDataset.add(d,minTS.getValue(i));
+            maxTSDataset.add(d,maxTS.getValue(i));
             
-            minTSDataset_pareto.add(i,minMaxOptimalTS[0][i]);
-            maxTSDataset_pareto.add(i,minMaxOptimalTS[1][i]);
+            minTSDataset_pareto.add(d,minMaxOptimalTS[0][i]);
+            maxTSDataset_pareto.add(d,minMaxOptimalTS[1][i]);
             
-            observation.add(i,obs.getValue(i));
+            observation.add(d,obs.getValue(i));
         }
         
-        XYSeriesCollection dataInterval = new XYSeriesCollection();
-        XYSeriesCollection dataInterval_pareto = new XYSeriesCollection();
+        TimeSeriesCollection dataInterval = new TimeSeriesCollection();
+        TimeSeriesCollection dataInterval_pareto = new TimeSeriesCollection();
         
         dataInterval.addSeries(minTSDataset);
         dataInterval.addSeries(maxTSDataset);
@@ -174,10 +178,14 @@ public class ParetoOutputUncertainty extends MCAT5Plot {
                                         
         plot1.setDataset(2, dataInterval);
         plot1.setDataset(1, dataInterval_pareto);
-        plot1.setDataset(0, new XYSeriesCollection(observation));
+        plot1.setDataset(0, new TimeSeriesCollection(observation));
         
-        if (plot1.getRangeAxis() != null)   plot1.getRangeAxis().setAutoRange(true);
-        if (plot1.getDomainAxis() != null)  plot1.getDomainAxis().setAutoRange(true);
+        if (plot1.getRangeAxis() != null) {
+            plot1.getRangeAxis().setAutoRange(true);
+        }
+        if (plot1.getDomainAxis() != null) {
+            plot1.getDomainAxis().setAutoRange(true);
+        }
     }
 
     public JPanel getPanel() {

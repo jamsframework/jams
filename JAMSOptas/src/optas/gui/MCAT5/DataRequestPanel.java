@@ -5,6 +5,7 @@
 
 package optas.gui.MCAT5;
 
+import jams.JAMS;
 import jams.gui.WorkerDlg;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -12,7 +13,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -33,7 +34,6 @@ import optas.data.DataCollection;
 import optas.data.DataSet;
 import optas.data.Efficiency;
 import optas.data.EfficiencyEnsemble;
-import optas.data.TimeSerieEnsemble;
 
 
 /**
@@ -67,8 +67,8 @@ public final class DataRequestPanel extends JPanel{
             }
         }
 
-        public void removeLastBox(){
-            boxes.remove(boxes.size()-1);
+        public void removeLastBox() {
+            boxes.remove(boxes.size() - 1);            
         }
 
         public boolean addBox() {
@@ -102,15 +102,7 @@ public final class DataRequestPanel extends JPanel{
                             box.setSelectedItem(box);
                         }
                     }
-                    WorkerDlg progress = new WorkerDlg(null, "Updating plot");
-                    progress.setInderminate(true);
-                    progress.setTask(new Runnable() {
-
-                        public void run() {
-                            updatePlot();
-                        }
-                    });
-                    progress.execute();
+                    updatePlot();
                 }
             });
             box.putClientProperty("request", request);
@@ -228,26 +220,35 @@ public final class DataRequestPanel extends JPanel{
         this.updateUI();
     }
 
-    public void updatePlot(){
-        for (RequestGUI rGUI : this.requests){            
-            ArrayList<DataSet> list = new ArrayList<DataSet>();
-            for (JComboBox box : rGUI.boxes){
-                DataSet e = null;
-                if (box.getSelectedItem() instanceof String){
-                    e = data.getDataSet((String)box.getSelectedItem());
-                    list.add(e);
-                } else
-                    list.add((DataSet)box.getSelectedItem());
+    public void updatePlot() {
+        WorkerDlg progress = new WorkerDlg(JFrame.getFrames()[0], "Updating plot");
+        progress.setInderminate(true);
+        progress.setTask(new Runnable() {
+            public void run() {
+                for (RequestGUI rGUI : requests) {
+                    ArrayList<DataSet> list = new ArrayList<DataSet>();
+                    for (JComboBox box : rGUI.boxes) {
+                        DataSet e = null;
+                        if (box.getSelectedItem() instanceof String) {
+                            e = data.getDataSet((String) box.getSelectedItem());
+                            list.add(e);
+                        } else {
+                            list.add((DataSet) box.getSelectedItem());
+                        }
 
+                    }
+                    plot.setData(rGUI.request.name, list);
+                }
+                try {
+                    plot.refresh();
+                    invalidate();
+                    updateUI();
+                } catch (NoDataException nde) {
+                    JOptionPane.showMessageDialog(dataPanel, JAMS.i18n("Failed_to_show_dataset_The_data_is_incommensurate!"));
+                }
             }
-            this.plot.setData(rGUI.request.name, list);
-        }
-        try{
-            this.plot.refresh();
-            this.invalidate();
-            this.updateUI();
-        }catch(NoDataException nde){
-            JOptionPane.showMessageDialog(dataPanel, "failed to show data. The data is incommensurate!");
-        }
+        });
+        progress.execute();
+
     }
 }

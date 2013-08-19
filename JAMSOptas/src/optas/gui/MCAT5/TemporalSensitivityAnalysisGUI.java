@@ -301,7 +301,17 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
 
         ChartPanel weightChartPanel = new ChartPanel(weightChart.getChart(), true);
 
+        weightChartPanel.setMinimumDrawWidth( 0 );
+        weightChartPanel.setMinimumDrawHeight( 0 );
+        weightChartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        weightChartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
         ChartPanel chartPanel = new ChartPanel(chart.getChart(), true);
+        chartPanel.setMinimumDrawWidth( 0 );
+        chartPanel.setMinimumDrawHeight( 0 );
+        chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
         chartPanel.addChartMouseListener(new ChartMouseListener() {
 
             public void chartMouseClicked(ChartMouseEvent event) {
@@ -340,7 +350,11 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
         });
 
         ChartPanel hydrographChartPanel = new ChartPanel(chart.getChart(), true);
-        
+        hydrographChartPanel.setMinimumDrawWidth( 0 );
+        hydrographChartPanel.setMinimumDrawHeight( 0 );
+        hydrographChartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
+        hydrographChartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+                
         JScrollPane parameterTablePane = new JScrollPane(parameterTable);
 
 
@@ -382,6 +396,7 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
                     .addComponent(sideBar));
     }
 
+    @Override
     public JPanel getPanel() {
         return mainPanel;
     }
