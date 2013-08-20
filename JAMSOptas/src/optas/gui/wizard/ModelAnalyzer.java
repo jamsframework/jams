@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import optas.efficiencies.UniversalEfficiencyCalculator;
 import optas.gui.wizard.Parameter.Range;
 
 /**
@@ -73,7 +74,7 @@ public class ModelAnalyzer {
         return map;        
     }
 
-    private Set<Attribute> getContextAttributeList() {
+    private Set<Attribute> getContextAttributeList(boolean effOnly) {
         HashMap<String, ComponentDescriptor> map = md.getComponentDescriptors();
         Set<Attribute> list = new TreeSet<Attribute>();
         for (ComponentDescriptor cd : map.values()){
@@ -82,7 +83,18 @@ public class ModelAnalyzer {
                     if (!jams.data.Attribute.Double.class.isAssignableFrom(ca.getType())) {
                         continue;
                     }
-                    list.add(new Attribute(ca));
+                    boolean consider = !effOnly;
+                    if (effOnly) {
+                        for (ComponentField cf2 : ca.getFields()) {
+                            if (UniversalEfficiencyCalculator.class.isAssignableFrom(cf2.getParent().getClazz())) {
+                                consider = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (consider){
+                        list.add(new Attribute(ca));
+                    }
                 }
             }
         }
@@ -164,12 +176,25 @@ public class ModelAnalyzer {
         return result;
     }
 
-    public SortedSet<Objective> getObjectives() {
+    public SortedSet<Objective> getAttributesWithWriteAccess() {
         SortedSet<Objective> result = new TreeSet<Objective>();
-        Set<Attribute> objectiveList = getContextAttributeList();
+        Set<Attribute> objectiveList = getContextAttributeList(false);
         Iterator<Attribute> iter1 = objectiveList.iterator();
         while (iter1.hasNext()) {
-            result.add(new Objective(iter1.next()));
+            Objective o = new Objective(iter1.next());
+            result.add(new Objective(o));                  
+        }
+        return result;
+    } 
+    public SortedSet<Objective> getObjectives() {
+        SortedSet<Objective> result = new TreeSet<Objective>();
+        Set<Attribute> objectiveList = getContextAttributeList(true);
+        Iterator<Attribute> iter1 = objectiveList.iterator();
+        while (iter1.hasNext()) {
+            Objective o = new Objective(iter1.next());
+            if (o.getAttributeName().contains("normalized")){
+                result.add(new Objective(o));                    
+            }            
         }
         return result;
     }    

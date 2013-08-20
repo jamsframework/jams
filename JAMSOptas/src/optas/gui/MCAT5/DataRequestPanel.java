@@ -11,6 +11,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -221,10 +222,13 @@ public final class DataRequestPanel extends JPanel{
     }
 
     public void updatePlot() {
-        WorkerDlg progress = new WorkerDlg(JFrame.getFrames()[0], "Updating plot");
+        Frame parent = JFrame.getFrames().length > 0 ? JFrame.getFrames()[0] : null;
+        
+        WorkerDlg progress = new WorkerDlg(parent, "Updating plot");
         progress.setInderminate(true);
         progress.setTask(new Runnable() {
             public void run() {
+                try{
                 for (RequestGUI rGUI : requests) {
                     ArrayList<DataSet> list = new ArrayList<DataSet>();
                     for (JComboBox box : rGUI.boxes) {
@@ -245,6 +249,9 @@ public final class DataRequestPanel extends JPanel{
                     updateUI();
                 } catch (NoDataException nde) {
                     JOptionPane.showMessageDialog(dataPanel, JAMS.i18n("Failed_to_show_dataset_The_data_is_incommensurate!"));
+                }
+                }catch(Throwable t){
+                    t.printStackTrace();
                 }
             }
         });

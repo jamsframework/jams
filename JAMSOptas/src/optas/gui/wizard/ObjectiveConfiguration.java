@@ -7,7 +7,6 @@ package optas.gui.wizard;
 import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
-import jams.gui.input.TextInput;
 import jams.gui.input.ValueChangeListener;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ContextDescriptor;
@@ -225,7 +224,7 @@ public class ObjectiveConfiguration extends JPanel{
                 String context = (String) contextList.getSelectedItem();
                 if (context != null) {
                     ModelAnalyzer analyzer = new ModelAnalyzer(ObjectiveConfiguration.this.md);
-                    Set<Objective> allAttributes = analyzer.getObjectives();
+                    Set<Objective> allAttributes = analyzer.getAttributesWithWriteAccess();
                     TreeSet<Objective> attributesInContext = new TreeSet<Objective>();
                     for (Objective o : allAttributes) {
                         if (o.getParentName().equals(context)) {

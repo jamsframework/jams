@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
 import optas.optimizer.Optimizer;
 import optas.optimizer.management.OptimizerDescription;
@@ -239,7 +240,7 @@ public class Optimization implements Serializable {
         this.setOptimizerDescription(desc);
         ComponentField parameterIDfield = optimizerContext.getComponentFields().get("parameterIDs");
         ComponentField rangesField = optimizerContext.getComponentFields().get("boundaries");
-        ComponentField startValuesField = optimizerContext.getComponentFields().get("startValues");
+        ComponentField startValuesField = optimizerContext.getComponentFields().get("startValue");
         
         if (parameterIDfield == null || rangesField == null){
             Logger.getGlobal().log(Level.WARNING, JAMS.i18n("The_optimization_controller_does_not_contain_either_parameter_ranges_or_parameter_ids!"));
@@ -264,12 +265,39 @@ public class Optimization implements Serializable {
                     ranges = Arrays.copyOf(ranges, n);
                 }
             }
-
-            if (startValuesField == null) {
-                startvalues = new String[n];
-            } else {
-                startvalues = startValuesField.getValue().split(";");
+            
+            startvalues = new String[n];
+            if (startValuesField != null) {
+                int counter = 0;
+                StringTokenizer tokStartValue = new StringTokenizer(startValuesField.getValue(), ";");
+                ArrayList<double[]> x0List = new ArrayList<double[]>();
+                while (tokStartValue.hasMoreTokens()) {
+                    String param = tokStartValue.nextToken();
+                    param = param.replace("[", "");
+                    param = param.replace("]", "");
+                    StringTokenizer subTokenizer = new StringTokenizer(param, ",");
+                    double x0i[] = new double[subTokenizer.countTokens()];
+                    int subCounter = 0;
+                    if (x0i.length != n) {
+                        Logger.getGlobal().log(Level.SEVERE, (JAMS.i18n("Component") + " " + JAMS.i18n("startvalue_too_many_parameter")));
+                    }
+                    while (subTokenizer.hasMoreTokens()) {
+                        try {
+                            x0i[subCounter] = Double.valueOf(subTokenizer.nextToken()).doubleValue();
+                            subCounter++;
+                        } catch (NumberFormatException e) {
+                            Logger.getGlobal().log(Level.SEVERE, JAMS.i18n("unparseable_number") + param);
+                        }
+                    }
+                    x0List.add(x0i);
+                    counter++;
+                }
+                for (int i = 0; i < n; i++) {
+                    if (x0List.size()>0 && x0List.get(0).length==n)
+                        startvalues[i] = Double.toString(x0List.get(0)[i]);
+                }
             }
+            
             for (int i = 0; i < n; i++) {
                 String parameterID = parameterIDs[i];
                 String rangeString = ranges[i];

@@ -81,7 +81,12 @@ public class OptimizerConfiguration extends JPanel {
             
             if (getSelectedRow() != row) {
                 if ((Boolean) model.getValueAt(row, 0)) {
-                    if ((Double) model.getValueAt(row, 3) >= (Double) model.getValueAt(row, 4)){
+                    if (
+                       ((Double) model.getValueAt(row, 3) >= (Double) model.getValueAt(row, 4)) || 
+                       (model.getValueAt(row, 5) != null && 
+                       ((Double)model.getValueAt(row, 5) < (Double)model.getValueAt(row, 3) || 
+                        (Double)model.getValueAt(row, 5) > (Double)model.getValueAt(row, 4) ))
+                      ){
                         c.setBackground(Color.RED);
                     }else{
                         c.setBackground(Color.GREEN);
@@ -345,7 +350,12 @@ public class OptimizerConfiguration extends JPanel {
                 case 2: return dataObjects[row].getParentName(); 
                 case 3: return dataObjects[row].getLowerBound(); 
                 case 4: return dataObjects[row].getUpperBound(); 
-                case 5: return dataObjects[row].getStartValue(); 
+                case 5: {
+                    if (dataObjects[row].getStartValue() != null && dataObjects[row].getStartValue().length>0)
+                        return dataObjects[row].getStartValue()[0];
+                    else
+                        return null;
+                } 
                 default: return null;
             }            
         }
@@ -596,6 +606,9 @@ public class OptimizerConfiguration extends JPanel {
             return false;
         for (Parameter p : this.optimizationScheme.getParameter()){
             if (p.getLowerBound() >= p.getUpperBound())
+                return false;
+            if (p.getStartValue() != null && p.getStartValue().length>0 && 
+                    (p.getStartValue()[0] < p.getLowerBound() || p.getStartValue()[0] > p.getUpperBound()) )
                 return false;
         }
         return true;

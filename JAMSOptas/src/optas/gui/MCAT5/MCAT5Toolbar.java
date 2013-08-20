@@ -174,6 +174,11 @@ public class MCAT5Toolbar extends JToolBar {
                 JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS_II"),
                 RegionalSensitivityAnalyser2.class));
 
+        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
+                JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS_II"),
+                JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS_II"),
+                MultiObjectiveDecisionSupport.class));
+                
         /*registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
                 "Experimental I",
                 "Experimental I",

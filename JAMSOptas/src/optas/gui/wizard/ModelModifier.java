@@ -190,7 +190,7 @@ public class ModelModifier {
         }
         String parameterNames = "";
         String boundaries = "";
-        String startvalues = "";
+        String startvalues = "[";
         ComponentField cf = optimizerContext.getComponentFields().get("parameterIDs");
         cf.unlinkFromAttribute();
         for (Parameter p : pList) {
@@ -199,11 +199,15 @@ public class ModelModifier {
                 parameterNames += ca.getName() + ";";
                 boundaries += "[" + p.getLowerBound() + ">" + p.getUpperBound() + "];";
                 String startvalue = null;
-                if (p.getStartValue() != null) {
-                    startvalue = p.getStartValue().toString();
+                if (p.getStartValue() != null && p.getStartValue().length>0) {
+                    startvalue = Double.toString(p.getStartValue()[0]);
                 }
                 if (startvalue != null && startvalues != null) {
-                    startvalues += "[" + startvalue + "];";
+                    if (startvalues.length()>1){
+                        startvalues += "," + startvalue;
+                    }else{
+                        startvalues += startvalue;
+                    }
                 } else {
                     startvalues = null;
                 }
@@ -215,12 +219,15 @@ public class ModelModifier {
                 }
             }
         }
+        if (startvalues!=null){
+            startvalues+="]";
+        }
         optimizerContext.setComponentAttribute_("parameterNames", parameterNames);
         optimizerContext.setComponentAttribute_("boundaries", boundaries);
         if (startvalues == null) {
-            optimizerContext.setComponentAttribute_("startvalue", "");
+            optimizerContext.setComponentAttribute_("startValue", "");
         } else {
-            optimizerContext.setComponentAttribute_("startvalue", startvalues);
+            optimizerContext.setComponentAttribute_("startValue", startvalues);
         }
         return true;
     }

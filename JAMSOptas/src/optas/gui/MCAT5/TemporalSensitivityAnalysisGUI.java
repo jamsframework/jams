@@ -9,6 +9,7 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -30,7 +32,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import optas.gui.wizard.HydrographChart;
 import optas.SA.TemporalSensitivityAnalysis;
 import optas.data.DataCollection;
 import optas.data.DataSet;
@@ -41,6 +42,7 @@ import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
+import optas.gui.wizard.HydrographChart;
 import optas.hydro.gui.WeightChart;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -58,13 +60,13 @@ import org.jfree.data.time.TimeSeriesCollection;
  */
 public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
 
-    int MAX_WEIGHTS = 40;
+    int MAX_WEIGHTS = 37;
 
     public static Color[] getDifferentColors(int n) {
-        Color[] cols = new Color[n];
+        Color[] cols = new Color[153];
 
         for (int i = 0; i < n; i++) {
-            cols[i] = Color.getHSBColor((float) i / n, 1.0f, 1.0f);
+            cols[i] = Color.getHSBColor((float) ((float)((i*n) % 153)) / 152.0f, 1.0f, 1.0f);
         }
         return cols;
     }
@@ -82,6 +84,12 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
     TemporalSensitivityAnalysis temporalAnalysis = null;
     JPanel mainPanel = null;
 
+    JCheckBox selectAll = new JCheckBox("selectAll");
+    JCheckBox selectNone = new JCheckBox("selectNone");
+    
+    JCheckBox enableAll = new JCheckBox("enableAll");
+    JCheckBox enableNone = new JCheckBox("enableNone");
+    
     public TemporalSensitivityAnalysisGUI() {
         this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
         this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"), Measurement.class));
@@ -102,6 +110,7 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
             setOpaque(true); //MUST do this for background to show up.
         }
 
+        @Override
         public Component getTableCellRendererComponent(
                 JTable table, Object color,
                 boolean isSelected, boolean hasFocus,
@@ -154,6 +163,7 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
                     null); //no CANCEL button handler
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (EDIT.equals(e.getActionCommand())) {
                 //The user has clicked the cell, so
@@ -267,6 +277,10 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
                 TemporalSensitivityAnalysisGUI.this.standardColorList[row] = (Color)value;
             else
                 data[row][col] = value;
+            selectAll.setSelected(false);
+            selectNone.setSelected(false);
+            enableAll.setSelected(false);
+            enableNone.setSelected(false);
             fireTableCellUpdated(row, col);
         }
     }
@@ -277,6 +291,7 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
 
         chart.getXYPlot().getDomainAxis().addChangeListener(new AxisChangeListener() {
 
+            @Override
             public void axisChanged(AxisChangeEvent e) {
                 weightChart.getXYPlot().setDomainAxis(chart.getXYPlot().getDomainAxis());
             }
@@ -284,8 +299,57 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
 
         weightChart.getXYPlot().getDomainAxis().addChangeListener(new AxisChangeListener() {
 
+            @Override
             public void axisChanged(AxisChangeEvent e) {
                 chart.getXYPlot().setDomainAxis(weightChart.getXYPlot().getDomainAxis());
+            }
+        });
+        
+        selectAll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (selectAll.isEnabled()){
+                    int n = TemporalSensitivityAnalysisGUI.this.parameterTable.getModel().getRowCount();
+                    for (int i=0;i<n;i++){
+                        TemporalSensitivityAnalysisGUI.this.parameterTable.getModel().setValueAt(Boolean.TRUE, i, 0);
+                    }
+                }
+            }
+        });
+        
+        selectNone.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (selectAll.isEnabled()){
+                    int n = TemporalSensitivityAnalysisGUI.this.parameterTable.getModel().getRowCount();
+                    for (int i=0;i<n;i++){
+                        TemporalSensitivityAnalysisGUI.this.parameterTable.getModel().setValueAt(Boolean.FALSE, i, 0);
+                    }
+                }
+            }
+        });
+        
+        enableAll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (selectAll.isEnabled()){
+                    int n = TemporalSensitivityAnalysisGUI.this.parameterTable.getModel().getRowCount();
+                    for (int i=0;i<n;i++){
+                        TemporalSensitivityAnalysisGUI.this.parameterTable.getModel().setValueAt(Boolean.TRUE, i, 2);
+                    }
+                }
+            }
+        });
+        
+        enableNone.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (selectAll.isEnabled()){
+                    int n = TemporalSensitivityAnalysisGUI.this.parameterTable.getModel().getRowCount();
+                    for (int i=0;i<n;i++){
+                        TemporalSensitivityAnalysisGUI.this.parameterTable.getModel().setValueAt(Boolean.FALSE, i, 2);
+                    }
+                }
             }
         });
 
@@ -314,6 +378,7 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
         
         chartPanel.addChartMouseListener(new ChartMouseListener() {
 
+            @Override
             public void chartMouseClicked(ChartMouseEvent event) {
                 ChartEntity e = event.getEntity();
                 if (e != null && e instanceof XYItemEntity) {
@@ -345,6 +410,7 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
 
             }
 
+            @Override
             public void chartMouseMoved(ChartMouseEvent event) {
             }
         });
@@ -355,8 +421,16 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
         hydrographChartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
         hydrographChartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
                 
-        JScrollPane parameterTablePane = new JScrollPane(parameterTable);
+        parameterTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        parameterTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        parameterTable.getColumnModel().getColumn(1).setPreferredWidth(170);
+        parameterTable.getColumnModel().getColumn(2).setPreferredWidth(50);
+        parameterTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+        //parameterTable.setPreferredSize(new Dimension(300, 600));
 
+        
+        JScrollPane parameterTablePane = new JScrollPane(parameterTable);
+        parameterTablePane.setPreferredSize(new Dimension(300, 500));
 
         JPanel sideBar = new JPanel();
         GroupLayout sideLayout = new GroupLayout(sideBar);
@@ -366,13 +440,28 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
         sideLayout.setHorizontalGroup(
                 sideLayout.createParallelGroup()
                 .addComponent(parameterTablePane)
+                .addGroup(
+                        sideLayout.createSequentialGroup()
+                            .addComponent(enableAll)
+                            .addComponent(enableNone)
+                            .addComponent(selectAll)
+                            .addComponent(selectNone)
+                    )
                 .addComponent(infoLabel)            
                 );
         
         sideLayout.setVerticalGroup(
                 sideLayout.createSequentialGroup()
-                    .addComponent(parameterTablePane)
+                    .addComponent(parameterTablePane, 0, GroupLayout.DEFAULT_SIZE, 5000)
+                    .addGroup(
+                        sideLayout.createParallelGroup()
+                            .addComponent(enableAll)
+                            .addComponent(enableNone)
+                            .addComponent(selectAll)
+                            .addComponent(selectNone)
+                    )
                     .addComponent(infoLabel)
+                    .addGap(0, 0, 5000)
                 );
 
         mainPanel = new JPanel();
@@ -424,10 +513,27 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
         parameterTable.getColumnModel().getColumn(3).setCellRenderer(new ColorRenderer(true));
         parameterTable.getModel().addTableModelListener(new TableModelListener() {
 
+            @Override
             public void tableChanged(TableModelEvent e) {
                 weightChart.update(temporalAnalysis.calculate(), null, p, obs, getEnableList(), getShowList(), standardColorList);
             }
         });
+        
+        parameterTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+                
+        parameterTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        parameterTable.getColumnModel().getColumn(1).setPreferredWidth(200);
+        parameterTable.getColumnModel().getColumn(2).setPreferredWidth(50);
+        parameterTable.getColumnModel().getColumn(3).setPreferredWidth(50);
+   
+        parameterTable.getColumnModel().getColumn(0).setMaxWidth(50);       
+        parameterTable.getColumnModel().getColumn(2).setMaxWidth(50);
+        parameterTable.getColumnModel().getColumn(3).setMaxWidth(50);
+        
+        //parameterTable.setPreferredSize(new Dimension(300, 600));
+        //parameterTable.setMaximumSize(new Dimension(300, 600));
+        //parameterTable.setMinimumSize(new Dimension(300, 600));
+        
         this.temporalAnalysis = new TemporalSensitivityAnalysis(p, e, ts, obs);
         this.temporalAnalysis.calculate();
 

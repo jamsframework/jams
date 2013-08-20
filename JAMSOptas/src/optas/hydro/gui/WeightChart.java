@@ -78,18 +78,24 @@ public class WeightChart {
         double sum[] = new double[T];
 
         CategoryTableXYDataset tableDataset = new CategoryTableXYDataset();
+        double maxSum = 0;
         for (int i = 0; i < T; i++) {
             for (int j = 0; j < n; j++) {
                 if (enableList[j]){
                     sum[i] += weights[j][i];
                 }
             }
+            maxSum = Math.max(maxSum,sum[i]);
+        }
+        for (int i = 0; i < T; i++) {
             for (int j = 0; j < n; j++) {
                 if (showList[j]){
-                    if (weights[j][i] / sum[i] < 0.025)
+                    if (weights[j][i] / sum[i] < 0.025 && weights[j][i] / maxSum < 0.025) {
                         tableDataset.add(obs.getTime(i).getTime(), 0, p[j].toString(),false);
-                    else
+                    }
+                    else {
                         tableDataset.add(obs.getTime(i).getTime(), weights[j][i] / sum[i], p[j].toString(),false);
+                    }
                 }
             }
         }
@@ -111,8 +117,9 @@ public class WeightChart {
         Color list[] = new Color[enableList.length];
         int index = 0;
         for (int i=0;i<showList.length;i++){
-            if (showList[i])
+            if (showList[i]) {
                 list[index++] = colorList[i];
+            }
         }
 
         qualityRenderer.setBaseFillPaint(new Color(255, 255, 255));
