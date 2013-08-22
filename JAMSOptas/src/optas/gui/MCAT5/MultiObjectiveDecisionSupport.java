@@ -39,7 +39,7 @@ import optas.data.Measurement;
 import optas.data.SimpleEnsemble;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
-import org.jfree.chart.plot.SpiderWebPlot;
+import optas.tools.PatchedSpiderWebPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
@@ -51,7 +51,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
     final int MAX_OBJCOUNT = 10;
     
     XYPlot hydroChart = new XYPlot();
-    SpiderWebPlot spiderPlot = new SpiderWebPlot();
+    PatchedSpiderWebPlot spiderPlot = new PatchedSpiderWebPlot();
             
     ChartPanel chartPanel1 = null;
     ChartPanel chartPanel2 = null;
@@ -263,6 +263,12 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
       categoryDataset.addValue(100, "Fully developed level (100%)", "Implementing useful strategies");
 
       this.spiderPlot.setDataset(categoryDataset);
+	  spiderPlot.setAxisTickVisible(true);
+	  spiderPlot.setNumberOfTicks(3);
+	  spiderPlot.setOrigin(0, 20d);
+	  spiderPlot.setMaxValue(0, 100d);
+	  spiderPlot.setOrigin(1, 0d);
+	  spiderPlot.setMaxValue(1, 100d);
     }
 
     @Override
@@ -279,7 +285,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
     }
     
     public static void main(String[] args) {
-        DataCollection dc = DataCollection.createFromFile(new File("E:/Vortraege und Paper/J2000 Training/2013-05-17-ABC-Gehlberg/Worktask 1/output/current/fullEnsemble.cdat"));
+        DataCollection dc = DataCollection.createFromFile(new File("D:\\fullEnsemble.cdat"));
 
         try {
             DataRequestPanel d = new DataRequestPanel(new MultiObjectiveDecisionSupport(), dc);
