@@ -13,6 +13,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Random;
 import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -36,9 +37,13 @@ import optas.gui.MCAT5.MCAT5Plot.SimpleRequest;
 import optas.data.DataSet;
 import optas.data.Efficiency;
 import optas.data.Measurement;
+import optas.data.RankingTable;
 import optas.data.SimpleEnsemble;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
+import optas.optimizer.management.SampleFactory;
+import optas.optimizer.management.SampleFactory.Sample;
+import optas.optimizer.management.Statistics;
 import optas.tools.PatchedSpiderWebPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -185,7 +190,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
         hydroChart.setDataset(1, sim_runoff);
     }
     
-    
+    		Random rand = new Random(System.currentTimeMillis());
     @Override
     public void refresh() throws NoDataException {
         if (!this.isRequestFulfilled()) {
@@ -196,8 +201,33 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
         ArrayList<DataSet> p[] = getData(new int[]{0, 1, 2});
 
         ts = (TimeSerieEnsemble) p[0].get(0);
+                        
+        Measurement obs = null;
+        if (p[2].size()>0){
+            obs = (Measurement) p[2].get(0);
+        }
         
-        Set<String> xSet = this.getDataSource().getDatasets(Efficiency.class);
+        int T = ts.getTimesteps();
+                                        
+        if (obs!=null){        
+            TimeSeries dataset1 = new TimeSeries(JAMS.i18n("Measurement"));
+            for (int i=0;i<T;i++){
+                Day d = new Day(obs.getTime((int) i));
+                dataset1.add(d, obs.getValue(i));
+            }
+            TimeSeriesCollection obs_runoff = new TimeSeriesCollection();
+            obs_runoff.addSeries(dataset1);
+            hydroChart.setDataset(0, obs_runoff);
+        }else{
+            hydroChart.setDataset(0, null);
+        }
+        
+        updateSimulation(0);
+		updateSpiderPlot(7);
+    }
+	
+	private void updateSpiderPlot(int n) {
+		Set<String> xSet = this.getDataSource().getDatasets(Efficiency.class);
         SimpleEnsemble y[] = new SimpleEnsemble[xSet.size()];
         int counter = 0;
         for (String name : xSet) {
@@ -225,51 +255,50 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
                 objSliders[i].setPaintLabels(false);
             }            
         }
-                        
-        Measurement obs = null;
-        if (p[2].size()>0){
-            obs = (Measurement) p[2].get(0);
-        }
-        
-        int T = ts.getTimesteps();
-                                        
-        if (obs!=null){        
-            TimeSeries dataset1 = new TimeSeries(JAMS.i18n("Measurement"));
-            for (int i=0;i<T;i++){
-                Day d = new Day(obs.getTime((int) i));
-                dataset1.add(d, obs.getValue(i));
-            }
-            TimeSeriesCollection obs_runoff = new TimeSeriesCollection();
-            obs_runoff.addSeries(dataset1);
-            hydroChart.setDataset(0, obs_runoff);
-        }else{
-            hydroChart.setDataset(0, null);
-        }
-        
-        updateSimulation(0);
-        
-        DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
+		
+		SampleFactory factory = new SampleFactory();
+		this.getDataSource().constructSample(factory);
+		Statistics stats = factory.getStatistics();
+		ArrayList<Sample> paretoFront = stats.getParetoFront();
+		RankingTable rt = new RankingTable(paretoFront);
+//		System.out.println(rt);
+		rt.computeRankings();
+//		System.out.println(rt);
+		DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
+		
+		double[] mins = new double[y.length];
+		double[] maxs = new double[y.length];
+		int sampleNumber = 1;
+		for(Sample sample : paretoFront) {
+			for(int i = 0; i < sample.F().length; i++) {
+				double eff = sample.F()[i];
+				mins[i] = Math.min(mins[i], eff);
+				maxs[i] = Math.max(maxs[i], eff);
+				categoryDataset.addValue(eff, "Sample " + sampleNumber, y[i].name);
+			}
+			sampleNumber++;
+		}
 
-      categoryDataset.addValue(34.343, "Your own profile", "Fostering a common vision");
-      categoryDataset.addValue(23.232, "Your own profile", "Trusting in \nteam members' \ndecisions and \nsuggestions");
-      categoryDataset.addValue(98.732, "Your own profile", "Motivation");
-      categoryDataset.addValue(98.231, "Your own profile", "Openness to innovations");
-      categoryDataset.addValue(23.123, "Your own profile", "Implementing useful strategies");
+//		categoryDataset.addValue(rand.nextDouble() * 100, "Your own profile", "Fostering a common vision");
+//		categoryDataset.addValue(rand.nextDouble() * 100, "Your own profile", "Trusting in \nteam members' \ndecisions and \nsuggestions");
+//		categoryDataset.addValue(rand.nextDouble() * 100, "Your own profile", "Motivation");
+//		categoryDataset.addValue(rand.nextDouble() * 100, "Your own profile", "Openness to innovations");
+//		categoryDataset.addValue(rand.nextDouble() * 100, "Your own profile", "Implementing useful strategies");
+//
+//		categoryDataset.addValue(100, "Fully developed level (100%)", "Fostering a common vision");
+//		categoryDataset.addValue(100, "Fully developed level (100%)", "Trusting in \nteam members' \ndecisions and \nsuggestions");
+//		categoryDataset.addValue(100, "Fully developed level (100%)", "Motivation");
+//		categoryDataset.addValue(100, "Fully developed level (100%)", "Openness to innovations");
+//		categoryDataset.addValue(100, "Fully developed level (100%)", "Implementing useful strategies");
 
-      categoryDataset.addValue(100, "Fully developed level (100%)", "Fostering a common vision");
-      categoryDataset.addValue(100, "Fully developed level (100%)", "Trusting in \nteam members' \ndecisions and \nsuggestions");
-      categoryDataset.addValue(100, "Fully developed level (100%)", "Motivation");
-      categoryDataset.addValue(100, "Fully developed level (100%)", "Openness to innovations");
-      categoryDataset.addValue(100, "Fully developed level (100%)", "Implementing useful strategies");
-
-      this.spiderPlot.setDataset(categoryDataset);
-	  spiderPlot.setAxisTickVisible(true);
-	  spiderPlot.setNumberOfTicks(3);
-	  spiderPlot.setOrigin(0, 20d);
-	  spiderPlot.setMaxValue(0, 100d);
-	  spiderPlot.setOrigin(1, 0d);
-	  spiderPlot.setMaxValue(1, 100d);
-    }
+		this.spiderPlot.setDataset(categoryDataset);
+		spiderPlot.setAxisTickVisible(true);
+		spiderPlot.setNumberOfTicks(3);
+		for(int i = 0; i < y.length; i++) {
+			spiderPlot.setOrigin(i, .9 * mins[i]);
+			spiderPlot.setMaxValue(i, 1.1 * maxs[i]);
+		}
+	}
 
     @Override
     public JPanel getPanel() {

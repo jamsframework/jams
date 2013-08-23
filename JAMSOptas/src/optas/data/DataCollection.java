@@ -869,7 +869,7 @@ public class DataCollection extends DataSet implements Serializable{
 
         int N = this.getSimulationCount();
         for (int i=0;i<N;i++){
-            int id = simpleEnsembles.get(0).getId(0);
+            int id = simpleEnsembles.get(0).getId(i);
             double x[] = new double[n];
             double y[] = new double[m];
 
@@ -877,7 +877,7 @@ public class DataCollection extends DataSet implements Serializable{
                 x[j] = simpleEnsembles.get(j).getValue(id);
             }
             for (int j=0;j<m;j++){
-                y[j] = simpleEnsembles.get(j).getValue(id);
+                y[j] = effEnsembles.get(j).getValue(id);
             }
             f.getSample(x, y);
         }

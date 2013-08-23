@@ -61,6 +61,10 @@ public class SimpleEnsemble extends Ensemble{
     public void setValue(Integer id, double value){
         this.value[this.getIndex(id)] = value;
     }
+	
+	public double[] getValues() {
+		return Arrays.copyOf(value, value.length);
+	}
     /*public void setValue(int index, double value){
         this.value[index] = value;
     }*/
