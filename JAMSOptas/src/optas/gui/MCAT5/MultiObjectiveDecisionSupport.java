@@ -8,20 +8,26 @@ import jams.JAMS;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
-import java.util.Random;
 import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import optas.data.DataCollection;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -45,6 +51,11 @@ import optas.optimizer.management.SampleFactory;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.Statistics;
 import optas.tools.PatchedSpiderWebPlot;
+import optas.tools.Tools;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
+import org.jfree.chart.entity.CategoryItemEntity;
+import org.jfree.chart.entity.JFreeChartEntity;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
@@ -61,11 +72,22 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
     ChartPanel chartPanel1 = null;
     ChartPanel chartPanel2 = null;
     
-    JSlider objSliders[] = new JSlider[10];
+    JSlider objSliders[] = new JSlider[10];    
     JPanel mainPanel = null;
+    JTextField alphaField = new JTextField(5);
+    JButton exportDataset = new JButton("Export");
+    ArrayList<Sample> candidates = new ArrayList<Sample>();
     
     TimeSerieEnsemble ts = null;
+    ArrayList<Sample> paretoFront = null;
+    RankingTable rt = null;
+    SimpleEnsemble y[] = null;
+    int N,m = 0;
+    double alpha = 0.1;
+    int selectedId = 0;
     
+    boolean datasetValid = false;
+    boolean onAdjustment = false;
     public MultiObjectiveDecisionSupport() {
         this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
         this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
@@ -112,7 +134,11 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
         axis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
 
         hydroChart.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
-              
+        
+        
+        //TODO make spiderplot nice
+        spiderPlot.setBaseSeriesOutlineStroke(new BasicStroke(2.0f));
+                        
         chartPanel1 = new ChartPanel(chart1, true);
         chartPanel1.setMinimumDrawWidth( 0 );
         chartPanel1.setMinimumDrawHeight( 0 );
@@ -131,33 +157,109 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
         chartPanel2.setMaximumDrawWidth( MAXIMUM_WIDTH );
         chartPanel2.setMaximumDrawHeight( MAXIMUM_HEIGHT );
         
+        chart2.setTitle("");
+        chartPanel2.addChartMouseListener(new ChartMouseListener() {
+
+            @Override
+            public void chartMouseClicked(ChartMouseEvent cme) {  
+                if (cme.getTrigger().getButton() != 1){
+                    return;
+                }
+                if (cme.getTrigger().getClickCount() != 1){
+                    return;
+                }
+
+                if (cme.getEntity() instanceof CategoryItemEntity){
+                    CategoryItemEntity entity = ((CategoryItemEntity)cme.getEntity());
+                    Sample selectedCandidate = null;
+                    for (int i=0;i<candidates.size();i++){
+                        if (entity.getRowKey().compareTo("Sample " + i)==0){
+                            selectedCandidate = candidates.get(i);
+                            setStandardColors();
+                            spiderPlot.setSeriesPaint(i, Color.red);
+                            break;
+                        }
+                    }
+                    
+                    int id = -1;
+                    for (int j = 0; j < N; j++) {
+                        boolean equals = true;
+                        for (int k = 0; k < m; k++) {
+                            if (selectedCandidate.F()[k] != y[k].getValue(y[k].getId(j))) {
+                                equals = false;
+                            }
+                        }
+                        if (equals) {                            
+                            updateSimulation(j);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void chartMouseMoved(ChartMouseEvent cme) {
+                return;//do nothing
+            }
+        });
+        
+        alphaField.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                rt.setAlpha(alpha);
+                redraw();
+            }
+        });
+        
+        exportDataset.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //TODO: export or show set of parameters ..
+            }
+        });
+        
         for (int i=0;i<MAX_OBJCOUNT;i++){
             objSliders[i] = new JSlider();
         }
+        
         mainPanel = new JPanel();
         
         GroupLayout layout = new GroupLayout(mainPanel);
         mainPanel.setLayout(layout);
-                        
+        JLabel alphaLabel = new JLabel("alpha: ");
         GroupLayout.ParallelGroup group1 = layout.createParallelGroup();
         group1.addComponent(chartPanel2,100,200,500);
+        group1.addGroup(layout.createSequentialGroup()
+                    .addGap(5,5,5)
+                    .addComponent(alphaLabel)
+                    .addComponent(alphaField,30,50,70)
+                    .addGap(5,5,100)
+                    .addComponent(exportDataset)
+                );
         for (int i=0;i<MAX_OBJCOUNT;i++){
             group1.addComponent(objSliders[i],100,200,500);
         }
         
         GroupLayout.SequentialGroup group2 = layout.createSequentialGroup();
         group2.addComponent(chartPanel2,200,300,500);
+        group2.addGroup(layout.createParallelGroup()
+                    .addComponent(alphaLabel,15,20,25)
+                    .addComponent(alphaField,15,20,25)
+                    .addComponent(exportDataset,15,20,25)
+                );
         for (int i=0;i<MAX_OBJCOUNT;i++){
             group2.addComponent(objSliders[i],30,50,80);
         }
         
         layout.setHorizontalGroup(layout.createSequentialGroup()
-                .addComponent(chartPanel1,500,500,5000)
+                .addComponent(chartPanel1,500,500,5000)                
                 .addGroup(group1)
                 );
         
         layout.setVerticalGroup(layout.createParallelGroup()
-                .addComponent(chartPanel1,500,500,5000)
+                .addComponent(chartPanel1,500,500,5000)                
                 .addGroup(group2)
                 );
         
@@ -169,8 +271,86 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
         if (hydroChart.getDomainAxis() != null) {
             hydroChart.getDomainAxis().setAutoRange(true);
         }
+        
+        for (int i=0;i<objSliders.length;i++){
+            objSliders[i].addChangeListener(new ChangeListener() {
+
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    if (onAdjustment)
+                        return;
+                    
+                    onAdjustment = true;                    
+                    JSlider actSlider = (JSlider)e.getSource();
+                    
+                    int allValues = 0;
+                    for (JSlider slider : objSliders){
+                        allValues += slider.getValue();
+                    }
+                    double correction[] = new double[objSliders.length];
+                    for (int i=0;i<objSliders.length;i++){
+                        if (objSliders[i] != actSlider){
+                            correction[i] = (100.0 - allValues)/(objSliders.length-1.);
+                        }else
+                            correction[i] = 0;
+                    }
+                    double redistribution = allValues;                    
+                    while (Math.abs(redistribution) > 0.5){      
+                        int c = 0;
+                        for (int i=0;i<objSliders.length;i++){
+                            if (correction[i]>0){
+                                if (objSliders[i].getValue()+correction[i]<objSliders[i].getMaximum()){
+                                    objSliders[i].setValue((int)(objSliders[i].getValue()+correction[i]));
+                                    c++;
+                                }else{
+                                    correction[i]+=(objSliders[i].getValue()-objSliders[i].getMaximum());
+                                    objSliders[i].setValue(objSliders[i].getMaximum());
+                                }
+                            }else{
+                                if (objSliders[i].getValue()+correction[i]>objSliders[i].getMinimum()){
+                                    objSliders[i].setValue((int)(objSliders[i].getValue()+correction[i]));
+                                    c++;
+                                }else{
+                                    correction[i]+=(objSliders[i].getValue()-objSliders[i].getMinimum());
+                                    objSliders[i].setValue(objSliders[i].getMinimum());                                    
+                                }
+                            }
+                        }
+                        redistribution = 0;
+                        for (int i=0;i<objSliders.length;i++){
+                            redistribution+=correction[i];
+                        }
+                        for (int i=0;i<objSliders.length;i++){
+                            if (objSliders[i] == actSlider) {
+                                continue;
+                            }
+                            if (correction[i]!=0){
+                                correction[i] = 0;
+                                continue;
+                            }
+                            correction[i]=redistribution/(double)c;
+                        }
+                    }
+                    
+                    updateSpiderPlot();
+                    
+                    onAdjustment = false;
+                }
+            });
+        }
     }
 
+    private void setStandardColors(){
+        spiderPlot.setSeriesPaint(0, Color.blue);
+        spiderPlot.setSeriesPaint(1, Color.GREEN);
+        spiderPlot.setSeriesPaint(2, Color.orange);
+        spiderPlot.setSeriesPaint(3, Color.magenta);
+        spiderPlot.setSeriesPaint(4, Color.PINK);
+        spiderPlot.setSeriesPaint(5, Color.yellow);
+
+        spiderPlot.setSeriesPaint(m, Color.BLACK);
+    }
+    
     private void updateSimulation(int index){
         if (ts == null) {
             return;
@@ -189,116 +369,162 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
         sim_runoff.addSeries(dataset2);
         hydroChart.setDataset(1, sim_runoff);
     }
-    
-    		Random rand = new Random(System.currentTimeMillis());
+        		
     @Override
     public void refresh() throws NoDataException {
         if (!this.isRequestFulfilled()) {
             return;
         }
-
+        alpha = Tools.readField(alphaField, 0.1);
+        
+        initDataSet();
+        
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         ArrayList<DataSet> p[] = getData(new int[]{0, 1, 2});
 
         ts = (TimeSerieEnsemble) p[0].get(0);
-                        
+
         Measurement obs = null;
-        if (p[2].size()>0){
+        if (p[2].size() > 0) {
             obs = (Measurement) p[2].get(0);
         }
-        
+
         int T = ts.getTimesteps();
-                                        
-        if (obs!=null){        
+
+        if (obs != null) {
             TimeSeries dataset1 = new TimeSeries(JAMS.i18n("Measurement"));
-            for (int i=0;i<T;i++){
+            for (int i = 0; i < T; i++) {
                 Day d = new Day(obs.getTime((int) i));
                 dataset1.add(d, obs.getValue(i));
             }
             TimeSeriesCollection obs_runoff = new TimeSeriesCollection();
             obs_runoff.addSeries(dataset1);
             hydroChart.setDataset(0, obs_runoff);
-        }else{
+        } else {
             hydroChart.setDataset(0, null);
         }
-        
+
         updateSimulation(0);
-		updateSpiderPlot(7);
+        updateSpiderPlot();
     }
-	
-	private void updateSpiderPlot(int n) {
-		Set<String> xSet = this.getDataSource().getDatasets(Efficiency.class);
-        SimpleEnsemble y[] = new SimpleEnsemble[xSet.size()];
+    
+    private void initDataSet(){
+        Set<String> xSet = this.getDataSource().getDatasets(Efficiency.class);
+        y = new SimpleEnsemble[xSet.size()];
         int counter = 0;
         for (String name : xSet) {
             y[counter++] = this.getDataSource().getSimpleEnsemble(name);
         }
+        N = this.getDataSource().getSimulationCount();
+        m = y.length;
         
-        int m = y.length;
         DecimalFormat format = new DecimalFormat("#.###"); //TODO
-        for (int i=0;i<MAX_OBJCOUNT;i++){
+        for (int i = 0; i < MAX_OBJCOUNT; i++) {
             if (i < m) {
                 objSliders[i].setVisible(true);
                 objSliders[i].setMinimum(0);
-                objSliders[i].setMaximum(100);                
+                objSliders[i].setMaximum(100);
                 Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-                for (int j=0;j<101;j+=25){
-                    double value = ((double)j / 100.);
+                for (int j = 0; j < 101; j += 25) {
+                    double value = ((double) j / 100.);
                     labelTable.put(new Integer(j), new JLabel(format.format(value)));
                 }
                 objSliders[i].setLabelTable(labelTable);
                 objSliders[i].setPaintLabels(true);
                 objSliders[i].setBorder(BorderFactory.createTitledBorder(y[i].getName()));
-            }
-            else {
+            } else {
                 objSliders[i].setVisible(false);
                 objSliders[i].setPaintLabels(false);
-            }            
+            }
         }
-		
-		SampleFactory factory = new SampleFactory();
-		this.getDataSource().constructSample(factory);
-		Statistics stats = factory.getStatistics();
-		ArrayList<Sample> paretoFront = stats.getParetoFront();
-		RankingTable rt = new RankingTable(paretoFront);
-//		System.out.println(rt);
-		rt.computeRankings();
-//		System.out.println(rt);
-		DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
-		
-		double[] mins = new double[y.length];
-		double[] maxs = new double[y.length];
-		int sampleNumber = 1;
-		for(Sample sample : paretoFront) {
-			for(int i = 0; i < sample.F().length; i++) {
-				double eff = sample.F()[i];
-				mins[i] = Math.min(mins[i], eff);
-				maxs[i] = Math.max(maxs[i], eff);
-				categoryDataset.addValue(eff, "Sample " + sampleNumber, y[i].name);
-			}
-			sampleNumber++;
-		}
 
-//		categoryDataset.addValue(rand.nextDouble() * 100, "Your own profile", "Fostering a common vision");
-//		categoryDataset.addValue(rand.nextDouble() * 100, "Your own profile", "Trusting in \nteam members' \ndecisions and \nsuggestions");
-//		categoryDataset.addValue(rand.nextDouble() * 100, "Your own profile", "Motivation");
-//		categoryDataset.addValue(rand.nextDouble() * 100, "Your own profile", "Openness to innovations");
-//		categoryDataset.addValue(rand.nextDouble() * 100, "Your own profile", "Implementing useful strategies");
-//
-//		categoryDataset.addValue(100, "Fully developed level (100%)", "Fostering a common vision");
-//		categoryDataset.addValue(100, "Fully developed level (100%)", "Trusting in \nteam members' \ndecisions and \nsuggestions");
-//		categoryDataset.addValue(100, "Fully developed level (100%)", "Motivation");
-//		categoryDataset.addValue(100, "Fully developed level (100%)", "Openness to innovations");
-//		categoryDataset.addValue(100, "Fully developed level (100%)", "Implementing useful strategies");
+        SampleFactory factory = new SampleFactory();
+        this.getDataSource().constructSample(factory);
+        Statistics stats = factory.getStatistics();
+        paretoFront = stats.getParetoFront();
+        rt = new RankingTable(paretoFront);
+        rt.setAlpha(alpha);
+        rt.computeRankings();
+        
+        objSliders[0].setValue(0);
+        
+        if (selectedId == -1){
+            selectedId = this.ts.getId(0);
+        }
+        
+        setStandardColors();
+        
+        datasetValid = true;
+    }
+	
+    private void updateSpiderPlot() {
+        if (!datasetValid)
+            return;
+        //calculate sample based on weights
+        double w[] = new double[this.objSliders.length];
+        for (int i=0;i<w.length;i++) {
+            w[i] = 0.01 * (double)this.objSliders[i].getValue();
+        } 
+        
+        
+        double bestScore = Double.MAX_VALUE;
+        Sample bestSample = null;
+        for (Sample s : paretoFront){
+            double score = 0;
+            for (int i=0;i<s.F().length;i++){
+                score += w[i]*s.F()[i];
+            }
+            if (score < bestScore){
+                bestSample = s;
+                bestScore = score;
+            }
+                
+        }
 
-		this.spiderPlot.setDataset(categoryDataset);
-		spiderPlot.setAxisTickVisible(true);
-		spiderPlot.setNumberOfTicks(3);
-		for(int i = 0; i < y.length; i++) {
-			spiderPlot.setOrigin(i, .9 * mins[i]);
-			spiderPlot.setMaxValue(i, 1.1 * maxs[i]);
-		}
-	}
+        candidates = new ArrayList<Sample>();
+        candidates.addAll(Arrays.asList(rt.getCandidates()));
+        candidates.add(bestSample);
+        
+        DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
+                
+        double[] mins = new double[y.length];
+        double[] maxs = new double[y.length];
+        int sampleNumber = 0;
+        for (Sample sample : candidates) {
+            for (int i = 0; i < sample.F().length; i++) {
+                double eff = sample.F()[i];
+                //eff is also negativeff i.e lower eff value means better
+                mins[i] = Math.min(mins[i], -eff);
+                maxs[i] = Math.max(maxs[i], -eff);
+                
+                //TODO invert labels of axes, such that eff instead of -eff is shown
+                categoryDataset.addValue(-eff, "Sample " + sampleNumber, y[i].name);
+            }
+            sampleNumber++;
+        }
+        
+        this.spiderPlot.setDataset(categoryDataset);
+        
+        spiderPlot.setAxisTickVisible(true);
+        spiderPlot.setNumberOfTicks(3);
+        spiderPlot.setWebFilled(false);
+                
+        for (int i = 0; i < y.length; i++) {
+            if (mins[i] > 0.0) {
+                spiderPlot.setOrigin(i, .9 * mins[i]);
+            }
+            else {
+                spiderPlot.setOrigin(i, 1.1 * mins[i]);
+            }
+            
+            if (maxs[i] > 0.0) {
+                spiderPlot.setMaxValue(i, 1.1 * maxs[i]);
+            }
+            else {
+                spiderPlot.setMaxValue(i, 0.9 * maxs[i]);
+            }
+        }
+    }
 
     @Override
     public JPanel getPanel() {
@@ -314,7 +540,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
     }
     
     public static void main(String[] args) {
-        DataCollection dc = DataCollection.createFromFile(new File("D:\\fullEnsemble.cdat"));
+        DataCollection dc = DataCollection.createFromFile(new File("E:\\ModelData\\Testgebiete\\J2000\\Gehlberg\\output\\20130824_003244\\2013_08_21_sa_small2.cdat"));
 
         try {
             DataRequestPanel d = new DataRequestPanel(new MultiObjectiveDecisionSupport(), dc);

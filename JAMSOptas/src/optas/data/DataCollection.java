@@ -877,7 +877,10 @@ public class DataCollection extends DataSet implements Serializable{
                 x[j] = simpleEnsembles.get(j).getValue(id);
             }
             for (int j=0;j<m;j++){
-                y[j] = effEnsembles.get(j).getValue(id);
+                if (effEnsembles.get(j).isPostiveBest)
+                    y[j] = -effEnsembles.get(j).getValue(id);
+                else
+                    y[j] = effEnsembles.get(j).getValue(id);
             }
             f.getSample(x, y);
         }

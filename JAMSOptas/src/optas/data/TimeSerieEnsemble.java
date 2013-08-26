@@ -144,6 +144,14 @@ public class TimeSerieEnsemble extends Ensemble {
         return this.value[index];
     }
 
+    public TimeSerie getTimeSerie(Integer id){
+        try {
+            return new TimeSerie(getValue(id), this.getTimesteps(), "max of " + this.name, this.parent);
+        }catch(MismatchException me){
+            return null;
+        }
+    }
+    
     public TimeSerie getMax() {
         double[] max = new double[getTimesteps()];
 

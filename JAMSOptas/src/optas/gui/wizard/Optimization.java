@@ -30,8 +30,8 @@ import optas.optimizer.SCE;
  * @author chris
  */
 public class Optimization implements Serializable {
-    private ModelModifier modifier;    
-    private ModelAnalyzer analyser;
+    transient private ModelModifier modifier;    
+    transient private ModelAnalyzer analyser;
     
     private OptimizerDescription optimizerDescription;
     private Set<Parameter> parameter = new TreeSet<Parameter>();

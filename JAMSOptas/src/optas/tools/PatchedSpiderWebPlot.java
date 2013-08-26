@@ -1580,6 +1580,117 @@ public class PatchedSpiderWebPlot extends Plot implements Cloneable, Serializabl
 		}
 	}
 
+        /*public int getSeriesToPoint(int x, int y){
+            Polygon polygon = new Polygon();
+
+            int catCount = this.dataset.getRowCount();
+            
+
+		// plot the data...
+		for(int cat = 0; cat < catCount; cat++) {
+
+			
+
+			if(dataValue != null) 
+				
+
+				// Finds our starting angle from the centre for this axis
+
+				double angle = getStartAngle()
+						+ (getDirection().getFactor() * cat * 360 / catCount);
+
+				// The following angle calc will ensure there isn't a top
+				// vertical axis - this may be useful if you don't want any
+				// given criteria to 'appear' move important than the
+				// others..
+				// + (getDirection().getFactor()
+				// * (cat + 0.5) * 360 / catCount);
+
+				// find the point at the appropriate distance end point
+				// along the axis/angle identified above and add it to the
+				// polygon
+
+				double _maxValue = getMaxValue(cat).doubleValue();
+				double _origin = getOrigin(cat).doubleValue();
+				double lowerBound = Math.min(_origin, _maxValue);
+				double upperBound = Math.max(_origin, _maxValue);
+				boolean lesser = value < lowerBound;
+				boolean greater = value > upperBound;
+				if((lesser || greater) && !drawOutOfRangePoints) {
+					continue;
+				}
+				if(lesser) {
+					value = lowerBound;
+				}
+				if(greater) {
+					value = upperBound;
+				}
+				double length = _maxValue == _origin ? 0 : (value - lowerBound) / (upperBound - lowerBound);
+				if(_maxValue < _origin) { // inversed
+					length = 1 - length;
+				}
+				Point2D point = getWebPoint(plotArea, angle, length);
+				polygon.addPoint((int) point.getX(), (int) point.getY());
+
+				Paint paint = getSeriesPaint(series);
+				Paint outlinePaint = getSeriesOutlinePaint(series);
+
+				double px = point.getX();
+				double py = point.getY();
+				g2.setPaint(paint);
+				if(lesser || greater) {
+					// user crosshair for out-of-range data points distinguish
+					g2.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
+					double delta = 3;
+					g2.draw(new Line2D.Double(px - delta, py, px + delta, py));
+					g2.draw(new Line2D.Double(px, py - delta, px, py + delta));
+				} else {
+					// put an elipse at the point being plotted..
+					Ellipse2D head = new Ellipse2D.Double(
+							px - headW / 2, py - headH / 2,
+							headW, headH);
+					g2.fill(head);
+					g2.setStroke(getHeadOutlineStroke(series));
+					g2.setPaint(outlinePaint);
+					g2.draw(head);
+				}
+
+				if(entities != null) {
+					int row = 0;
+					int col = 0;
+					if(this.dataExtractOrder == TableOrder.BY_ROW) {
+						row = series;
+						col = cat;
+					} else {
+						row = cat;
+						col = series;
+					}
+					String tip = null;
+					if(this.toolTipGenerator != null) {
+						tip = this.toolTipGenerator.generateToolTip(
+								this.dataset, row, col);
+					}
+
+					String url = null;
+					if(this.urlGenerator != null) {
+						url = this.urlGenerator.generateURL(this.dataset,
+								row, col);
+					}
+
+					Shape area = new Rectangle(
+							(int) (point.getX() - headW),
+							(int) (point.getY() - headH),
+							(int) (headW * 2), (int) (headH * 2));
+					CategoryItemEntity entity = new CategoryItemEntity(
+							area, tip, url, this.dataset,
+							this.dataset.getRowKey(row),
+							this.dataset.getColumnKey(col));
+					entities.add(entity);
+				}
+			
+		}
+        }*/
+        
 	/**
 	 * Draws a radar plot polygon.
 	 *

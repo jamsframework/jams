@@ -118,8 +118,9 @@ public final class DataRequestPanel extends JPanel{
         this.plot = plot;
         this.data = data;
         plot.setDataSource(data);
-        if (data==null)
+        if (data==null) {
             throw new NoDataException("datacollection not provided!");
+        }
         ArrayList<SimpleRequest> request = plot.getRequiredData();
 
         if (request.isEmpty()){

@@ -4,11 +4,13 @@
  */
 package optas.core;
 
+import java.io.Serializable;
+
 /**
  *
  * @author christian
  */
-    abstract public class AbstractModel{
+    abstract public class AbstractModel implements Serializable{
         
         abstract public int getInputDimension();
         abstract public int getOutputDimension();
