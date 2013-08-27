@@ -64,75 +64,47 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 @SuppressWarnings({"unchecked"})
 public class MultiObjectiveDecisionSupport extends MCAT5Plot {
-    final int MAX_OBJCOUNT = 10;
-    
-    XYPlot hydroChart = new XYPlot();
-    PatchedSpiderWebPlot spiderPlot = new PatchedSpiderWebPlot();
-            
-    ChartPanel chartPanel1 = null;
-    ChartPanel chartPanel2 = null;
-    
-    JSlider objSliders[] = new JSlider[10];    
-    JPanel mainPanel = null;
-    JTextField alphaField = new JTextField(5);
-    JButton exportDataset = new JButton("Export");
-    ArrayList<Sample> candidates = new ArrayList<Sample>();
-    
-    TimeSerieEnsemble ts = null;
-    ArrayList<Sample> paretoFront = null;
-    RankingTable rt = null;
-    SimpleEnsemble y[] = null;
-    int N,m = 0;
-    double alpha = 0.1;
-    int selectedId = 0;
-    
-    boolean datasetValid = false;
-    boolean onAdjustment = false;
-    public MultiObjectiveDecisionSupport() {
-        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
-        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
-        this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"), Measurement.class, 0, 1));
+	final int MAX_OBJCOUNT = 10;
+	XYPlot hydroChart = new XYPlot();
+	PatchedSpiderWebPlot spiderPlot = new PatchedSpiderWebPlot();
+	ChartPanel chartPanel1 = null;
+	ChartPanel chartPanel2 = null;
+	JSlider objSliders[] = new JSlider[10];
+	JPanel mainPanel = null;
+	JTextField alphaField = new JTextField(5);
+	JButton exportDataset = new JButton("Export");
+	ArrayList<Sample> candidates = new ArrayList<Sample>();
+	TimeSerieEnsemble ts = null;
+	ArrayList<Sample> paretoFront = null;
+	RankingTable rt = null;
+	SimpleEnsemble y[] = null;
+	int N, m = 0;
+	double alpha = 0.1;
+	int selectedId = 0;
+	boolean datasetValid = false;
+	boolean onAdjustment = false;
 
-        init();
-    }
+	public MultiObjectiveDecisionSupport() {
+		this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
+		this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
+		this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"), Measurement.class, 0, 1));
 
-    
-    private void init() {
-        JFreeChart chart1 = ChartFactory.createTimeSeriesChart(
-                JAMS.i18n("Visual comparison of hydrographs"),
-                "time",
-                "discharge",
-                null,
-                true,
-                true,
-                false);
+		init();
+	}
 
-        hydroChart = chart1.getXYPlot();
-        
-        XYLineAndShapeRenderer hydroRenderer1 = new XYLineAndShapeRenderer();
-                        
-        hydroRenderer1.setBaseLinesVisible(true);
-        hydroRenderer1.setBaseShapesVisible(false);
-        hydroRenderer1.setSeriesOutlinePaint(0,Color.BLUE);
-        hydroRenderer1.setSeriesPaint(0,Color.BLUE);        
-        hydroRenderer1.setStroke(new BasicStroke(2));
-          
-        XYLineAndShapeRenderer hydroRenderer2 = new XYLineAndShapeRenderer();
-                        
-        hydroRenderer2.setBaseLinesVisible(true);
-        hydroRenderer2.setBaseShapesVisible(false);
-        hydroRenderer2.setSeriesOutlinePaint(0,Color.RED);
-        hydroRenderer2.setSeriesPaint(0,Color.RED);        
-        hydroRenderer2.setStroke(new BasicStroke(2));
-        
-        hydroChart.setRenderer(0,hydroRenderer1);
-        hydroChart.setRenderer(1,hydroRenderer2);
-        
-        
-        hydroChart.getDomainAxis().setLabel(JAMS.i18n("TIME"));
-        DateAxis axis = (DateAxis) hydroChart.getDomainAxis();
-        axis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
+	private void init() {
+		JFreeChart chart1 = ChartFactory.createTimeSeriesChart(
+				JAMS.i18n("Visual comparison of hydrographs"),
+				"time",
+				"discharge",
+				null,
+				true,
+				true,
+				false);
         hydroChart.setDomainGridlinePaint(Color.black);
+<<<<<<< .mine
+		hydroChart = chart1.getXYPlot();
+=======
         hydroChart.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
         
         
@@ -151,408 +123,449 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
         JFreeChart chart2 = new JFreeChart(spiderPlot);        
         chart2.setTitle("Possible solutions");
         chart2.removeLegend();
+>>>>>>> .r2695
 
-        chartPanel2 = new ChartPanel(chart2, true);
-        chartPanel2.setMinimumDrawWidth( 0 );
-        chartPanel2.setMinimumDrawHeight( 0 );
-        chartPanel2.setMaximumDrawWidth( MAXIMUM_WIDTH );
-        chartPanel2.setMaximumDrawHeight( MAXIMUM_HEIGHT );
-        
-        chart2.setTitle("");
-        chartPanel2.addChartMouseListener(new ChartMouseListener() {
+		XYLineAndShapeRenderer hydroRenderer1 = new XYLineAndShapeRenderer();
 
-            @Override
-            public void chartMouseClicked(ChartMouseEvent cme) {  
-                if (cme.getTrigger().getButton() != 1){
-                    return;
-                }
-                if (cme.getTrigger().getClickCount() != 1){
-                    return;
-                }
+		hydroRenderer1.setBaseLinesVisible(true);
+		hydroRenderer1.setBaseShapesVisible(false);
+		hydroRenderer1.setSeriesOutlinePaint(0, Color.BLUE);
+		hydroRenderer1.setSeriesPaint(0, Color.BLUE);
+		hydroRenderer1.setStroke(new BasicStroke(2));
 
-                if (cme.getEntity() instanceof CategoryItemEntity){
-                    CategoryItemEntity entity = ((CategoryItemEntity)cme.getEntity());
-                    Sample selectedCandidate = null;
-                    for (int i=0;i<candidates.size();i++){
-                        if (entity.getRowKey().compareTo("Sample " + i)==0){
-                            selectedCandidate = candidates.get(i);
-                            setStandardColors();
-                            spiderPlot.setSeriesPaint(i, Color.red);
-                            break;
-                        }
-                    }
-                    
-                    int id = -1;
-                    for (int j = 0; j < N; j++) {
-                        boolean equals = true;
-                        for (int k = 0; k < m; k++) {
-                            if (selectedCandidate.F()[k] != y[k].getValue(y[k].getId(j))) {
-                                equals = false;
-                            }
-                        }
-                        if (equals) {                            
-                            updateSimulation(j);
-                            break;
-                        }
-                    }
-                }
-            }
+		XYLineAndShapeRenderer hydroRenderer2 = new XYLineAndShapeRenderer();
 
-            @Override
-            public void chartMouseMoved(ChartMouseEvent cme) {
-                return;//do nothing
-            }
-        });
-        
-        alphaField.addActionListener(new ActionListener() {
+		hydroRenderer2.setBaseLinesVisible(true);
+		hydroRenderer2.setBaseShapesVisible(false);
+		hydroRenderer2.setSeriesOutlinePaint(0, Color.RED);
+		hydroRenderer2.setSeriesPaint(0, Color.RED);
+		hydroRenderer2.setStroke(new BasicStroke(2));
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                rt.setAlpha(alpha);
-                redraw();
-            }
-        });
-        
-        exportDataset.addActionListener(new ActionListener() {
+		hydroChart.setRenderer(0, hydroRenderer1);
+		hydroChart.setRenderer(1, hydroRenderer2);
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //TODO: export or show set of parameters ..
-            }
-        });
-        
-        for (int i=0;i<MAX_OBJCOUNT;i++){
-            objSliders[i] = new JSlider();
-        }
-        
-        mainPanel = new JPanel();
-        
-        GroupLayout layout = new GroupLayout(mainPanel);
-        mainPanel.setLayout(layout);
-        JLabel alphaLabel = new JLabel("alpha: ");
-        GroupLayout.ParallelGroup group1 = layout.createParallelGroup();
-        group1.addComponent(chartPanel2,100,200,500);
-        group1.addGroup(layout.createSequentialGroup()
-                    .addGap(5,5,5)
-                    .addComponent(alphaLabel)
-                    .addComponent(alphaField,30,50,70)
-                    .addGap(5,5,100)
-                    .addComponent(exportDataset)
-                );
-        for (int i=0;i<MAX_OBJCOUNT;i++){
-            group1.addComponent(objSliders[i],100,200,500);
-        }
-        
-        GroupLayout.SequentialGroup group2 = layout.createSequentialGroup();
-        group2.addComponent(chartPanel2,200,300,500);
-        group2.addGroup(layout.createParallelGroup()
-                    .addComponent(alphaLabel,15,20,25)
-                    .addComponent(alphaField,15,20,25)
-                    .addComponent(exportDataset,15,20,25)
-                );
-        for (int i=0;i<MAX_OBJCOUNT;i++){
-            group2.addComponent(objSliders[i],30,50,80);
-        }
-        
-        layout.setHorizontalGroup(layout.createSequentialGroup()
-                .addComponent(chartPanel1,500,500,5000)                
-                .addGroup(group1)
-                );
-        
-        layout.setVerticalGroup(layout.createParallelGroup()
-                .addComponent(chartPanel1,500,500,5000)                
-                .addGroup(group2)
-                );
-        
-        redraw();
 
-        if (hydroChart.getRangeAxis() != null) {
-            hydroChart.getRangeAxis().setAutoRange(true);
-        }
-        if (hydroChart.getDomainAxis() != null) {
-            hydroChart.getDomainAxis().setAutoRange(true);
-        }
-        
-        for (int i=0;i<objSliders.length;i++){
-            objSliders[i].addChangeListener(new ChangeListener() {
+		hydroChart.getDomainAxis().setLabel(JAMS.i18n("TIME"));
+		DateAxis axis = (DateAxis) hydroChart.getDomainAxis();
+		axis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
 
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    if (onAdjustment)
-                        return;
-                    
-                    onAdjustment = true;                    
-                    JSlider actSlider = (JSlider)e.getSource();
-                    
-                    int allValues = 0;
-                    for (JSlider slider : objSliders){
-                        allValues += slider.getValue();
-                    }
-                    double correction[] = new double[objSliders.length];
-                    for (int i=0;i<objSliders.length;i++){
-                        if (objSliders[i] != actSlider){
-                            correction[i] = (100.0 - allValues)/(objSliders.length-1.);
-                        }else
-                            correction[i] = 0;
-                    }
-                    double redistribution = allValues;                    
-                    while (Math.abs(redistribution) > 0.5){      
-                        int c = 0;
-                        for (int i=0;i<objSliders.length;i++){
-                            if (correction[i]>0){
-                                if (objSliders[i].getValue()+correction[i]<objSliders[i].getMaximum()){
-                                    objSliders[i].setValue((int)(objSliders[i].getValue()+correction[i]));
-                                    c++;
-                                }else{
-                                    correction[i]+=(objSliders[i].getValue()-objSliders[i].getMaximum());
-                                    objSliders[i].setValue(objSliders[i].getMaximum());
-                                }
-                            }else{
-                                if (objSliders[i].getValue()+correction[i]>objSliders[i].getMinimum()){
-                                    objSliders[i].setValue((int)(objSliders[i].getValue()+correction[i]));
-                                    c++;
-                                }else{
-                                    correction[i]+=(objSliders[i].getValue()-objSliders[i].getMinimum());
-                                    objSliders[i].setValue(objSliders[i].getMinimum());                                    
-                                }
-                            }
-                        }
-                        redistribution = 0;
-                        for (int i=0;i<objSliders.length;i++){
-                            redistribution+=correction[i];
-                        }
-                        for (int i=0;i<objSliders.length;i++){
-                            if (objSliders[i] == actSlider) {
-                                continue;
-                            }
-                            if (correction[i]!=0){
-                                correction[i] = 0;
-                                continue;
-                            }
-                            correction[i]=redistribution/(double)c;
-                        }
-                    }
-                    
-                    updateSpiderPlot();
-                    
-                    onAdjustment = false;
-                }
-            });
-        }
-    }
+		hydroChart.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
 
-    private void setStandardColors(){
-        spiderPlot.setSeriesPaint(0, Color.blue);
-        spiderPlot.setSeriesPaint(1, Color.GREEN);
-        spiderPlot.setSeriesPaint(2, Color.orange);
-        spiderPlot.setSeriesPaint(3, Color.magenta);
-        spiderPlot.setSeriesPaint(4, Color.PINK);
-        spiderPlot.setSeriesPaint(5, Color.yellow);
 
-        spiderPlot.setSeriesPaint(m, Color.BLACK);
-    }
-    
-    private void updateSimulation(int index){
-        if (ts == null) {
-            return;
-        }
-        
-        TimeSeries dataset2 = new TimeSeries(JAMS.i18n("Simulation"));
-        int T = ts.getTimesteps();
-        double timeseries[] = ts.getValue(ts.getId(index));
-        
-        for (int i = 0; i < T; i++) {
-            Day d = new Day(ts.getDate((int) i));
-            dataset2.add(d, timeseries[i]);
-        }
-        
-        TimeSeriesCollection sim_runoff = new TimeSeriesCollection();
-        sim_runoff.addSeries(dataset2);
-        hydroChart.setDataset(1, sim_runoff);
-    }
-        		
-    @Override
-    public void refresh() throws NoDataException {
-        if (!this.isRequestFulfilled()) {
-            return;
-        }
-        alpha = Tools.readField(alphaField, 0.1);
-        
-        initDataSet();
-        
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        ArrayList<DataSet> p[] = getData(new int[]{0, 1, 2});
+		//TODO make spiderplot nice
+		spiderPlot.setBaseSeriesOutlineStroke(new BasicStroke(2.0f));
 
-        ts = (TimeSerieEnsemble) p[0].get(0);
+		chartPanel1 = new ChartPanel(chart1, true);
+		chartPanel1.setMinimumDrawWidth(0);
+		chartPanel1.setMinimumDrawHeight(0);
+		chartPanel1.setMaximumDrawWidth(MAXIMUM_WIDTH);
+		chartPanel1.setMaximumDrawHeight(MAXIMUM_HEIGHT);
+		chart1.setTitle(JAMS.i18n("OUTPUT_UNCERTAINTY_PLOT"));
 
-        Measurement obs = null;
-        if (p[2].size() > 0) {
-            obs = (Measurement) p[2].get(0);
-        }
 
-        int T = ts.getTimesteps();
+		JFreeChart chart2 = new JFreeChart(spiderPlot);
+		chart2.setTitle("Possible solutions");
+		chart2.removeLegend();
 
-        if (obs != null) {
-            TimeSeries dataset1 = new TimeSeries(JAMS.i18n("Measurement"));
-            for (int i = 0; i < T; i++) {
-                Day d = new Day(obs.getTime((int) i));
-                dataset1.add(d, obs.getValue(i));
-            }
-            TimeSeriesCollection obs_runoff = new TimeSeriesCollection();
-            obs_runoff.addSeries(dataset1);
-            hydroChart.setDataset(0, obs_runoff);
-        } else {
-            hydroChart.setDataset(0, null);
-        }
+		chartPanel2 = new ChartPanel(chart2, true);
+		chartPanel2.setMinimumDrawWidth(0);
+		chartPanel2.setMinimumDrawHeight(0);
+		chartPanel2.setMaximumDrawWidth(MAXIMUM_WIDTH);
+		chartPanel2.setMaximumDrawHeight(MAXIMUM_HEIGHT);
 
-        updateSimulation(0);
-        updateSpiderPlot();
-    }
-    
-    private void initDataSet(){
-        Set<String> xSet = this.getDataSource().getDatasets(Efficiency.class);
-        y = new SimpleEnsemble[xSet.size()];
-        int counter = 0;
-        for (String name : xSet) {
-            y[counter++] = this.getDataSource().getSimpleEnsemble(name);
-        }
-        N = this.getDataSource().getSimulationCount();
-        m = y.length;
-        
-        DecimalFormat format = new DecimalFormat("#.###"); //TODO
-        for (int i = 0; i < MAX_OBJCOUNT; i++) {
-            if (i < m) {
-                objSliders[i].setVisible(true);
-                objSliders[i].setMinimum(0);
-                objSliders[i].setMaximum(100);
-                Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-                for (int j = 0; j < 101; j += 25) {
-                    double value = ((double) j / 100.);
-                    labelTable.put(new Integer(j), new JLabel(format.format(value)));
-                }
-                objSliders[i].setLabelTable(labelTable);
-                objSliders[i].setPaintLabels(true);
-                objSliders[i].setBorder(BorderFactory.createTitledBorder(y[i].getName()));
-            } else {
-                objSliders[i].setVisible(false);
-                objSliders[i].setPaintLabels(false);
-            }
-        }
+		chart2.setTitle("");
+		chartPanel2.addChartMouseListener(new ChartMouseListener() {
+			@Override
+			public void chartMouseClicked(ChartMouseEvent cme) {
+				if(cme.getTrigger().getButton() != 1) {
+					return;
+				}
+				if(cme.getTrigger().getClickCount() != 1) {
+					return;
+				}
 
-        SampleFactory factory = new SampleFactory();
-        this.getDataSource().constructSample(factory);
-        Statistics stats = factory.getStatistics();
-        paretoFront = stats.getParetoFront();
-        rt = new RankingTable(paretoFront);
-        rt.setAlpha(alpha);
-        rt.computeRankings();
-        
-        objSliders[0].setValue(0);
-        
-        if (selectedId == -1){
-            selectedId = this.ts.getId(0);
-        }
-        
-        setStandardColors();
-        
-        datasetValid = true;
-    }
-	
-    private void updateSpiderPlot() {
-        if (!datasetValid)
-            return;
-        //calculate sample based on weights
-        double w[] = new double[this.objSliders.length];
-        for (int i=0;i<w.length;i++) {
-            w[i] = 0.01 * (double)this.objSliders[i].getValue();
-        } 
-        
-        
-        double bestScore = Double.MAX_VALUE;
-        Sample bestSample = null;
-        for (Sample s : paretoFront){
-            double score = 0;
-            for (int i=0;i<s.F().length;i++){
-                score += w[i]*s.F()[i];
-            }
-            if (score < bestScore){
-                bestSample = s;
-                bestScore = score;
-            }
-                
-        }
+				if(cme.getEntity() instanceof CategoryItemEntity) {
+					CategoryItemEntity entity = ((CategoryItemEntity) cme.getEntity());
+					Sample selectedCandidate = null;
+					for(int i = 0; i < candidates.size(); i++) {
+						if(entity.getRowKey().compareTo("Sample " + i) == 0) {
+							selectedCandidate = candidates.get(i);
+							setStandardColors();
+							spiderPlot.setSeriesPaint(i, Color.red);
+							break;
+						}
+					}
 
-        candidates = new ArrayList<Sample>();
-        candidates.addAll(Arrays.asList(rt.getCandidates()));
-        candidates.add(bestSample);
-        
-        DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
-                
-        double[] mins = new double[y.length];
-        double[] maxs = new double[y.length];
-        int sampleNumber = 0;
-        for (Sample sample : candidates) {
-            for (int i = 0; i < sample.F().length; i++) {
-                double eff = sample.F()[i];
-                //eff is also negativeff i.e lower eff value means better
-                mins[i] = Math.min(mins[i], -eff);
-                maxs[i] = Math.max(maxs[i], -eff);
-                
-                //TODO invert labels of axes, such that eff instead of -eff is shown
-                categoryDataset.addValue(-eff, "Sample " + sampleNumber, y[i].name);
-            }
-            sampleNumber++;
-        }
-        
-        this.spiderPlot.setDataset(categoryDataset);
-        
-        spiderPlot.setAxisTickVisible(true);
-        spiderPlot.setNumberOfTicks(3);
-        spiderPlot.setWebFilled(false);
-                
-        for (int i = 0; i < y.length; i++) {
-            if (mins[i] > 0.0) {
-                spiderPlot.setOrigin(i, .9 * mins[i]);
-            }
-            else {
-                spiderPlot.setOrigin(i, 1.1 * mins[i]);
-            }
-            
-            if (maxs[i] > 0.0) {
-                spiderPlot.setMaxValue(i, 1.1 * maxs[i]);
-            }
-            else {
-                spiderPlot.setMaxValue(i, 0.9 * maxs[i]);
-            }
-        }
-    }
+					int id = -1;
+					for(int j = 0; j < N; j++) {
+						boolean equals = true;
+						for(int k = 0; k < m; k++) {
+							if(selectedCandidate.F()[k] != y[k].getValue(y[k].getId(j))) {
+								equals = false;
+							}
+						}
+						if(equals) {
+							updateSimulation(j);
+							break;
+						}
+					}
+				}
+			}
 
-    @Override
-    public JPanel getPanel() {
-        return mainPanel;
-    }
+			@Override
+			public void chartMouseMoved(ChartMouseEvent cme) {
+				return;//do nothing
+			}
+		});
 
-    public JPanel getPanel1() {
-        return mainPanel;
-    }
+		alphaField.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				rt.setAlpha(alpha);
+				redraw();
+			}
+		});
 
-    public JPanel getPanel2() {
-        return chartPanel2;
-    }
-    
-    public static void main(String[] args) {
-        DataCollection dc = DataCollection.createFromFile(new File("E:\\ModelData\\Testgebiete\\J2000\\Gehlberg\\output\\20130824_003244\\2013_08_21_sa_small2.cdat"));
+		exportDataset.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//TODO: export or show set of parameters ..
+			}
+		});
 
-        try {
-            DataRequestPanel d = new DataRequestPanel(new MultiObjectiveDecisionSupport(), dc);
-            JFrame plotWindow = new JFrame("test");
-            plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-            plotWindow.setLayout(new BorderLayout());
-            plotWindow.setVisible(true);
-            plotWindow.setSize(800, 700);
-            plotWindow.add(d, BorderLayout.CENTER);
-        } catch (NoDataException nde) {
-        }
-                    
-    }
+		for(int i = 0; i < MAX_OBJCOUNT; i++) {
+			objSliders[i] = new JSlider();
+		}
+
+		mainPanel = new JPanel();
+
+		GroupLayout layout = new GroupLayout(mainPanel);
+		mainPanel.setLayout(layout);
+		JLabel alphaLabel = new JLabel("alpha: ");
+		GroupLayout.ParallelGroup group1 = layout.createParallelGroup();
+		group1.addComponent(chartPanel2, 100, 200, 500);
+		group1.addGroup(layout.createSequentialGroup()
+				.addGap(5, 5, 5)
+				.addComponent(alphaLabel)
+				.addComponent(alphaField, 30, 50, 70)
+				.addGap(5, 5, 100)
+				.addComponent(exportDataset));
+		for(int i = 0; i < MAX_OBJCOUNT; i++) {
+			group1.addComponent(objSliders[i], 100, 200, 500);
+		}
+
+		GroupLayout.SequentialGroup group2 = layout.createSequentialGroup();
+		group2.addComponent(chartPanel2, 200, 300, 500);
+		group2.addGroup(layout.createParallelGroup()
+				.addComponent(alphaLabel, 15, 20, 25)
+				.addComponent(alphaField, 15, 20, 25)
+				.addComponent(exportDataset, 15, 20, 25));
+		for(int i = 0; i < MAX_OBJCOUNT; i++) {
+			group2.addComponent(objSliders[i], 30, 50, 80);
+		}
+
+		layout.setHorizontalGroup(layout.createSequentialGroup()
+				.addComponent(chartPanel1, 500, 500, 5000)
+				.addGroup(group1));
+
+		layout.setVerticalGroup(layout.createParallelGroup()
+				.addComponent(chartPanel1, 500, 500, 5000)
+				.addGroup(group2));
+
+		redraw();
+
+		if(hydroChart.getRangeAxis() != null) {
+			hydroChart.getRangeAxis().setAutoRange(true);
+		}
+		if(hydroChart.getDomainAxis() != null) {
+			hydroChart.getDomainAxis().setAutoRange(true);
+		}
+
+		for(int i = 0; i < objSliders.length; i++) {
+			objSliders[i].addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					if(onAdjustment) {
+						return;
+					}
+
+					onAdjustment = true;
+					JSlider actSlider = (JSlider) e.getSource();
+
+					int allValues = 0;
+					for(JSlider slider : objSliders) {
+						allValues += slider.getValue();
+					}
+					double correction[] = new double[objSliders.length];
+					for(int i = 0; i < objSliders.length; i++) {
+						if(objSliders[i] != actSlider) {
+							correction[i] = (100.0 - allValues) / (objSliders.length - 1.);
+						} else {
+							correction[i] = 0;
+						}
+					}
+					double redistribution = allValues;
+					while(Math.abs(redistribution) > 0.5) {
+						int c = 0;
+						for(int i = 0; i < objSliders.length; i++) {
+							if(correction[i] > 0) {
+								if(objSliders[i].getValue() + correction[i] < objSliders[i].getMaximum()) {
+									objSliders[i].setValue((int) (objSliders[i].getValue() + correction[i]));
+									c++;
+								} else {
+									correction[i] += (objSliders[i].getValue() - objSliders[i].getMaximum());
+									objSliders[i].setValue(objSliders[i].getMaximum());
+								}
+							} else {
+								if(objSliders[i].getValue() + correction[i] > objSliders[i].getMinimum()) {
+									objSliders[i].setValue((int) (objSliders[i].getValue() + correction[i]));
+									c++;
+								} else {
+									correction[i] += (objSliders[i].getValue() - objSliders[i].getMinimum());
+									objSliders[i].setValue(objSliders[i].getMinimum());
+								}
+							}
+						}
+						redistribution = 0;
+						for(int i = 0; i < objSliders.length; i++) {
+							redistribution += correction[i];
+						}
+						for(int i = 0; i < objSliders.length; i++) {
+							if(objSliders[i] == actSlider) {
+								continue;
+							}
+							if(correction[i] != 0) {
+								correction[i] = 0;
+								continue;
+							}
+							correction[i] = redistribution / (double) c;
+						}
+					}
+
+					updateSpiderPlot();
+
+					onAdjustment = false;
+				}
+			});
+		}
+	}
+
+	private void setStandardColors() {
+		spiderPlot.setSeriesPaint(0, Color.blue);
+		spiderPlot.setSeriesPaint(1, Color.GREEN);
+		spiderPlot.setSeriesPaint(2, Color.orange);
+		spiderPlot.setSeriesPaint(3, Color.magenta);
+		spiderPlot.setSeriesPaint(4, Color.PINK);
+		spiderPlot.setSeriesPaint(5, Color.yellow);
+
+		spiderPlot.setSeriesPaint(m, Color.BLACK);
+	}
+
+	private void updateSimulation(int index) {
+		if(ts == null) {
+			return;
+		}
+
+		TimeSeries dataset2 = new TimeSeries(JAMS.i18n("Simulation"));
+		int T = ts.getTimesteps();
+		double timeseries[] = ts.getValue(ts.getId(index));
+
+		for(int i = 0; i < T; i++) {
+			Day d = new Day(ts.getDate((int) i));
+			dataset2.add(d, timeseries[i]);
+		}
+
+		TimeSeriesCollection sim_runoff = new TimeSeriesCollection();
+		sim_runoff.addSeries(dataset2);
+		hydroChart.setDataset(1, sim_runoff);
+	}
+
+	@Override
+	public void refresh() throws NoDataException {
+		if(!this.isRequestFulfilled()) {
+			return;
+		}
+		alpha = Tools.readField(alphaField, 0.1);
+
+		initDataSet();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		ArrayList<DataSet> p[] = getData(new int[]{0, 1, 2});
+
+		ts = (TimeSerieEnsemble) p[0].get(0);
+
+		Measurement obs = null;
+		if(p[2].size() > 0) {
+			obs = (Measurement) p[2].get(0);
+		}
+
+		int T = ts.getTimesteps();
+
+		if(obs != null) {
+			TimeSeries dataset1 = new TimeSeries(JAMS.i18n("Measurement"));
+			for(int i = 0; i < T; i++) {
+				Day d = new Day(obs.getTime((int) i));
+				dataset1.add(d, obs.getValue(i));
+			}
+			TimeSeriesCollection obs_runoff = new TimeSeriesCollection();
+			obs_runoff.addSeries(dataset1);
+			hydroChart.setDataset(0, obs_runoff);
+		} else {
+			hydroChart.setDataset(0, null);
+		}
+
+		updateSimulation(0);
+		updateSpiderPlot();
+	}
+
+	private void initDataSet() {
+		Set<String> xSet = this.getDataSource().getDatasets(Efficiency.class);
+		y = new SimpleEnsemble[xSet.size()];
+		int counter = 0;
+		for(String name : xSet) {
+			y[counter++] = this.getDataSource().getSimpleEnsemble(name);
+		}
+		N = this.getDataSource().getSimulationCount();
+		m = y.length;
+
+		DecimalFormat format = new DecimalFormat("#.###"); //TODO
+		for(int i = 0; i < MAX_OBJCOUNT; i++) {
+			if(i < m) {
+				objSliders[i].setVisible(true);
+				objSliders[i].setMinimum(0);
+				objSliders[i].setMaximum(100);
+				Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+				for(int j = 0; j < 101; j += 25) {
+					double value = ((double) j / 100.);
+					labelTable.put(new Integer(j), new JLabel(format.format(value)));
+				}
+				objSliders[i].setLabelTable(labelTable);
+				objSliders[i].setPaintLabels(true);
+				objSliders[i].setBorder(BorderFactory.createTitledBorder(y[i].getName()));
+			} else {
+				objSliders[i].setVisible(false);
+				objSliders[i].setPaintLabels(false);
+			}
+		}
+
+		SampleFactory factory = new SampleFactory();
+		this.getDataSource().constructSample(factory);
+		Statistics stats = factory.getStatistics();
+		paretoFront = stats.getParetoFront();
+		rt = new RankingTable(paretoFront);
+		rt.setAlpha(alpha);
+		rt.computeRankings();
+
+		objSliders[0].setValue(0);
+
+		if(selectedId == -1) {
+			selectedId = this.ts.getId(0);
+		}
+
+		setStandardColors();
+
+		datasetValid = true;
+	}
+
+	private void updateSpiderPlot() {
+		if(!datasetValid) {
+			return;
+		}
+		//calculate sample based on weights
+		double w[] = new double[this.objSliders.length];
+		for(int i = 0; i < w.length; i++) {
+			w[i] = 0.01 * (double) this.objSliders[i].getValue();
+		}
+
+
+		double bestScore = Double.MAX_VALUE;
+		Sample bestSample = null;
+		for(Sample s : paretoFront) {
+			double score = 0;
+			for(int i = 0; i < s.F().length; i++) {
+				score += w[i] * s.F()[i];
+			}
+			if(score < bestScore) {
+				bestSample = s;
+				bestScore = score;
+			}
+
+		}
+
+		candidates = new ArrayList<Sample>();
+		candidates.addAll(Arrays.asList(rt.getCandidates()));
+		candidates.add(bestSample);
+
+		DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
+
+		double[] mins = new double[y.length];
+		double[] maxs = new double[y.length];
+		for(int i = 0; i < y.length; i++) {
+			mins[i] = Double.POSITIVE_INFINITY;
+			maxs[i] = Double.NEGATIVE_INFINITY;
+		}
+		int sampleNumber = 0;
+		for(Sample sample : candidates) {
+			for(int i = 0; i < sample.F().length; i++) {
+				double neff = -sample.F()[i];
+				//eff is also negativeff i.e lower eff value means better
+				mins[i] = Math.min(mins[i], neff);
+				maxs[i] = Math.max(maxs[i], neff);
+
+				//TODO invert labels of axes, such that eff instead of -eff is shown
+				categoryDataset.addValue(neff, "Sample " + sampleNumber, y[i].name);
+			}
+			sampleNumber++;
+		}
+
+		this.spiderPlot.setDataset(categoryDataset);
+
+		spiderPlot.setDataInverted(true);
+		spiderPlot.setAxisTickVisible(true);
+		spiderPlot.setNumberOfTicks(3);
+		spiderPlot.setWebFilled(false);
+
+		for(int i = 0; i < y.length; i++) {
+			if(mins[i] > 0.0) {
+				spiderPlot.setOrigin(i, .9 * mins[i]);
+			} else {
+				spiderPlot.setOrigin(i, 1.1 * mins[i]);
+			}
+
+			if(maxs[i] > 0.0) {
+				spiderPlot.setMaxValue(i, 1.1 * maxs[i]);
+			} else {
+				spiderPlot.setMaxValue(i, 0.9 * maxs[i]);
+			}
+		}
+	}
+
+	@Override
+	public JPanel getPanel() {
+		return mainPanel;
+	}
+
+	public JPanel getPanel1() {
+		return mainPanel;
+	}
+
+	public JPanel getPanel2() {
+		return chartPanel2;
+	}
+
+	public static void main(String[] args) {
+		DataCollection dc = DataCollection.createFromFile(new File("D:\\2013_08_21_sa_small2.cdat"));
+
+		try {
+			DataRequestPanel d = new DataRequestPanel(new MultiObjectiveDecisionSupport(), dc);
+			JFrame plotWindow = new JFrame("test");
+			plotWindow.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			plotWindow.setLayout(new BorderLayout());
+			plotWindow.setVisible(true);
+			plotWindow.setSize(800, 700);
+			plotWindow.add(d, BorderLayout.CENTER);
+		} catch(NoDataException nde) {
+		}
+
+	}
 }
