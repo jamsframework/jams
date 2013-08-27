@@ -55,7 +55,6 @@ import optas.tools.Tools;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.entity.CategoryItemEntity;
-import org.jfree.chart.entity.JFreeChartEntity;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 /**
@@ -101,29 +100,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
 				true,
 				true,
 				false);
-        hydroChart.setDomainGridlinePaint(Color.black);
-<<<<<<< .mine
 		hydroChart = chart1.getXYPlot();
-=======
-        hydroChart.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
-        
-        
-        //TODO make spiderplot nice
-        spiderPlot.setBaseSeriesOutlineStroke(new BasicStroke(2.0f));
-                        
-        chartPanel1 = new ChartPanel(chart1, true);
-        chartPanel1.setMinimumDrawWidth( 0 );
-        chartPanel1.setMinimumDrawHeight( 0 );
-        chartPanel1.setMaximumDrawWidth( MAXIMUM_WIDTH );
-        chartPanel1.setMaximumDrawHeight( MAXIMUM_HEIGHT );
-        chart1.setTitle(JAMS.i18n("OUTPUT_UNCERTAINTY_PLOT"));
-        chartPanel1.getChart().getPlot().setBackgroundPaint(Color.white);
-
-        
-        JFreeChart chart2 = new JFreeChart(spiderPlot);        
-        chart2.setTitle("Possible solutions");
-        chart2.removeLegend();
->>>>>>> .r2695
 
 		XYLineAndShapeRenderer hydroRenderer1 = new XYLineAndShapeRenderer();
 
@@ -148,7 +125,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
 		hydroChart.getDomainAxis().setLabel(JAMS.i18n("TIME"));
 		DateAxis axis = (DateAxis) hydroChart.getDomainAxis();
 		axis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
-
+		hydroChart.setDomainGridlinePaint(Color.black);
 		hydroChart.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
 
 
@@ -161,6 +138,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
 		chartPanel1.setMaximumDrawWidth(MAXIMUM_WIDTH);
 		chartPanel1.setMaximumDrawHeight(MAXIMUM_HEIGHT);
 		chart1.setTitle(JAMS.i18n("OUTPUT_UNCERTAINTY_PLOT"));
+		chartPanel1.getChart().getPlot().setBackgroundPaint(Color.white);
 
 
 		JFreeChart chart2 = new JFreeChart(spiderPlot);
