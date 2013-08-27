@@ -298,6 +298,9 @@ public class GPOutputUncertainty extends MCAT5Plot {
 
         hydrograph = chart1.getXYPlot();
 
+        chart1.getPlot().setBackgroundPaint(Color.white);
+        chart1.getXYPlot().setDomainGridlinePaint(Color.black);
+        
         XYDifferenceRenderer renderer_uncert = new XYDifferenceRenderer(Color.LIGHT_GRAY, Color.LIGHT_GRAY, false);
         XYLineAndShapeRenderer renderer_obs = new XYLineAndShapeRenderer();
         XYLineAndShapeRenderer renderer_sim = new XYLineAndShapeRenderer();

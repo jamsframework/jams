@@ -65,6 +65,9 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(chartPanel, BorderLayout.NORTH);
 
+        chart.getPlot().setBackgroundPaint(Color.white);
+        chart.getXYPlot().setDomainGridlinePaint(Color.black);
+        
         JPanel sliderPanel = new JPanel(new BorderLayout());
         sliderPanel.setMaximumSize(new Dimension(300, 100));
         sliderPanel.setPreferredSize(new Dimension(300, 100));

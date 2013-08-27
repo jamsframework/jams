@@ -330,7 +330,7 @@ public class ModelModifier {
                             }
                             ContextDescriptor timeContext = (ContextDescriptor)timeComponent;
                             String timeAttributeName = od.getTimeAttribute().getAttributeName();
-                            if (!timeContext.getComponentFields().containsKey(timeAttributeName)){
+                            if (!timeContext.getAttributes(Attribute.Calendar.class).containsKey(timeAttributeName)){
                                 throw new OPTASWizardException(JAMS.i18n("Error_during_objective_configuration:Context_%1_does_not_contain_time_attribute!").replace("%1", timeContext.getInstanceName()));
                             }
                             fields.get("time").linkToAttribute(timeContext, timeAttributeName, true);
@@ -389,7 +389,7 @@ public class ModelModifier {
                     }
                     ContextDescriptor timeContext = (ContextDescriptor) timeComponent;
                     String timeAttributeName = od.getTimeAttribute().getAttributeName();
-                    if (!timeContext.getComponentFields().containsKey(timeAttributeName)) {
+                    if (!timeContext.getAttributes(Attribute.Calendar.class).containsKey(timeAttributeName)){
                         throw new OPTASWizardException(JAMS.i18n("Error_during_objective_configuration:Context_%1_does_not_contain_time_attribute!").replace("%1", timeContext.getInstanceName()));
                     }
                     fields.get("time").linkToAttribute(timeContext, timeAttributeName, true);

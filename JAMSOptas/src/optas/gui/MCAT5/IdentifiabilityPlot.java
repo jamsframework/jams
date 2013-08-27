@@ -66,6 +66,9 @@ public class IdentifiabilityPlot extends MCAT5Plot{
         chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
         chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
         
+        chart.getPlot().setBackgroundPaint(Color.white);
+        chart.getXYPlot().setDomainGridlinePaint(Color.black);
+        
         XYLineAndShapeRenderer gradient_renderer = new XYLineAndShapeRenderer();
         gradient_renderer.setSeriesPaint(0, Color.BLACK);
         gradient_renderer.setBaseShapesVisible(false);

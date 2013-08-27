@@ -142,6 +142,9 @@ public class SimpleXYPlot extends JAMSGUIComponent {
 	panel = new JPanel(new BorderLayout());		    		    	    
 	panel.add(chartPanel, BorderLayout.CENTER);	   
 	    
+        chart.getPlot().setBackgroundPaint(Color.white);
+        chart.getXYPlot().setDomainGridlinePaint(Color.black);
+        
 	return panel;
     }
     

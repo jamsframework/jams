@@ -126,7 +126,9 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
                 false);
 
         plot1 = chart1.getXYPlot();
-
+        chart1.getPlot().setBackgroundPaint(Color.white);
+        chart1.getXYPlot().setDomainGridlinePaint(Color.black);
+        
         XYDifferenceRenderer renderer1 = new XYDifferenceRenderer(Color.LIGHT_GRAY, Color.LIGHT_GRAY, false);
         XYLineAndShapeRenderer renderer2 = new XYLineAndShapeRenderer();
         XYLineAndShapeRenderer renderer_mean = new XYLineAndShapeRenderer();

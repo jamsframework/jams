@@ -33,8 +33,6 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import optas.data.DataCollection;
 import optas.data.TimeFilter;
 import optas.data.TimeFilterFactory;
@@ -466,7 +464,11 @@ public class TimeFilterDialog extends JDialog{
     }
 
     ActionListener updateBaseFlowListener = new ActionListener() {
-        public void actionPerformed(ActionEvent e) { ((JRadioButton)e.getSource()).isSelected(); 
+        public void actionPerformed(ActionEvent e) { 
+            /*if (e.getSource() instanceof JTextField){
+                
+            }*/
+            //((JRadioButton)e.getSource()).isSelected(); 
             hydrographBaseFlow.clearTimeFilter();
             hydrographBaseFlow.addTimeFilter(constructBaseFlowFilter());
         }
@@ -521,7 +523,7 @@ public class TimeFilterDialog extends JDialog{
         }
         baseFlowFixedEstimation.addActionListener(updateBaseFlowListener);
         baseFlowLocalMiniumEstimation.addActionListener(updateBaseFlowListener);
-
+        baseFlowRunoffQuantity.addActionListener(updateBaseFlowListener);
         if (filter != null){
             BaseFlowTimeFilter baseFlowFilter = (BaseFlowTimeFilter)filter;
             this.timeserie = baseFlowFilter.getTimeSerie();

@@ -46,7 +46,7 @@ public class BestPredictionPlot extends MCAT5Plot{
     private void init(){
         plot1.setDomainAxis(new DateAxis(JAMS.i18n("TIME")));
         plot1.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
-
+        
         JFreeChart chart1 = new JFreeChart(plot1);
         chart1.setTitle(JAMS.i18n("BEST_PREDICTION_PLOT"));
         chartPanel1 = new ChartPanel(chart1, true);
@@ -55,6 +55,8 @@ public class BestPredictionPlot extends MCAT5Plot{
         chartPanel1.setMinimumDrawHeight( 0 );
         chartPanel1.setMaximumDrawWidth( MAXIMUM_WIDTH );
         chartPanel1.setMaximumDrawHeight( MAXIMUM_HEIGHT );
+        
+        chartPanel1.getChart().getPlot().setBackgroundPaint(Color.white);        
         
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
 

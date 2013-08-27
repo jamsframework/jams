@@ -44,7 +44,6 @@ import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.renderer.xy.XYStepRenderer;
-import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import jams.data.*;
@@ -57,6 +56,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Iterator;
 import java.util.List;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
+import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeriesDataItem;
 
 /**
@@ -222,9 +223,14 @@ public class TSPlot extends JAMSGUIComponent {
                 XYLineAndShapeRenderer lsr = new XYLineAndShapeRenderer();
                 lsr.setBaseShapesVisible(false);
                 return lsr;
-            case 1:
-                return new XYBarRenderer();
-
+            case 1:{
+                XYBarRenderer renderer = new XYBarRenderer();
+                StandardXYBarPainter painter = new StandardXYBarPainter();
+                renderer.setBarPainter(new StandardXYBarPainter());
+                renderer.setDrawBarOutline(false);
+                renderer.setShadowVisible(false);
+                return renderer;
+            }
             case 2:
                 return new XYAreaRenderer();
 
@@ -267,6 +273,9 @@ public class TSPlot extends JAMSGUIComponent {
         if (chart != null) {
             plot = chart.getXYPlot();
 
+            chart.getPlot().setBackgroundPaint(Color.white);
+            chart.getXYPlot().setDomainGridlinePaint(Color.black);
+        
             DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
             dateAxis.setDateFormatOverride(new SimpleDateFormat(dateFormat.getValue()));
 
@@ -291,7 +300,7 @@ public class TSPlot extends JAMSGUIComponent {
                     leftRenderer.setSeriesPaint(i, colorTable.get(colorLeft.getValue()[i]));
                 }
                 
-                tsLeft[i] = new TimeSeries(legendEntry, Second.class);
+                tsLeft[i] = new TimeSeries(legendEntry);
                 dataset1.addSeries(tsLeft[i]);
             }
 
@@ -316,7 +325,7 @@ public class TSPlot extends JAMSGUIComponent {
                     if (titleRight != null && titleRight.getValue().length > i){
                         title = titleRight.getValue()[i];
                     }
-                    tsRight[i] = new TimeSeries(title, Second.class);
+                    tsRight[i] = new TimeSeries(title);
                     dataset2.addSeries(tsRight[i]);
                 }
             }
@@ -373,6 +382,7 @@ public class TSPlot extends JAMSGUIComponent {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
         } //caused by bugs in JFreeChart
     }
 

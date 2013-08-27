@@ -69,6 +69,7 @@ public class DYNIA extends MCAT5Plot {
                 false);
 
         plot = chart1.getXYPlot();
+        chart1.getPlot().setBackgroundPaint(Color.white);
 
         this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
         this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));

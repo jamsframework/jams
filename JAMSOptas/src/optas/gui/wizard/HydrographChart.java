@@ -67,7 +67,7 @@ public class HydrographChart {
                 false,
                 true,
                 false);
-
+        
         XYLineAndShapeRenderer hydrographRenderer = new XYLineAndShapeRenderer();
         hydrographRenderer.setBaseFillPaint(new Color(0, 0, 255));
         hydrographRenderer.setBaseLinesVisible(true);
@@ -82,7 +82,9 @@ public class HydrographChart {
         hydrographRenderer.setStroke(new BasicStroke(3.0f));
         
         chart.getXYPlot().setRenderer(0, hydrographRenderer); //?
-        
+        chart.getPlot().setBackgroundPaint(Color.white);
+        chart.getXYPlot().setDomainGridlinePaint(Color.black);
+            
         StackedXYBarRenderer filterRenderer1 = new StackedXYBarRenderer(0.0);
 
         Color list1[] = new Color[10];        
@@ -265,7 +267,7 @@ public class HydrographChart {
                     return;
                 }
                                 
-                System.out.println("Hydrograph Update!!");
+                //System.out.println("Hydrograph Update!!");
                 TimeSeries seriesHydrograph = new TimeSeries("hydrograph");
                 
                 long n = hydrograph.getTimeDomain().getNumberOfTimesteps();

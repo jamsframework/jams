@@ -75,6 +75,9 @@ public class ParetoOutputUncertainty extends MCAT5Plot {
         plot1.setRenderer(1, renderer2);
         plot1.setRenderer(2, renderer1);
         
+        chart1.getPlot().setBackgroundPaint(Color.white);
+        chart1.getXYPlot().setDomainGridlinePaint(Color.black);
+        
         redraw();
     }
         

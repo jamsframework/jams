@@ -132,7 +132,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
         hydroChart.getDomainAxis().setLabel(JAMS.i18n("TIME"));
         DateAxis axis = (DateAxis) hydroChart.getDomainAxis();
         axis.setDateFormatOverride(new SimpleDateFormat("yyyy-MM-dd"));
-
+        hydroChart.setDomainGridlinePaint(Color.black);
         hydroChart.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
         
         
@@ -145,7 +145,8 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
         chartPanel1.setMaximumDrawWidth( MAXIMUM_WIDTH );
         chartPanel1.setMaximumDrawHeight( MAXIMUM_HEIGHT );
         chart1.setTitle(JAMS.i18n("OUTPUT_UNCERTAINTY_PLOT"));
-        
+        chartPanel1.getChart().getPlot().setBackgroundPaint(Color.white);
+
         
         JFreeChart chart2 = new JFreeChart(spiderPlot);        
         chart2.setTitle("Possible solutions");

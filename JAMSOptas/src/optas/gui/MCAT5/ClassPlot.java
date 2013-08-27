@@ -62,6 +62,9 @@ public class ClassPlot extends MCAT5Plot {
         JFreeChart chart = new JFreeChart(plot);
         
         chart.setTitle(JAMS.i18n("CLASS_PLOT"));
+        chart.getPlot().setBackgroundPaint(Color.white);
+        chart.getXYPlot().setDomainGridlinePaint(Color.black);
+        
         ChartPanel chartPanel = new ChartPanel(chart, true);
 
         chartPanel.setMinimumDrawWidth( 0 );

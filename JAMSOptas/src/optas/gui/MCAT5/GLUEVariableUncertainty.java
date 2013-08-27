@@ -6,6 +6,7 @@ package optas.gui.MCAT5;
 
 import jams.JAMS;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import javax.swing.GroupLayout;
@@ -77,6 +78,10 @@ public class GLUEVariableUncertainty extends MCAT5Plot {
         chartPanel2.setMaximumDrawWidth( MAXIMUM_WIDTH );
         chartPanel2.setMaximumDrawHeight( MAXIMUM_HEIGHT );
         
+        chart1.getPlot().setBackgroundPaint(Color.white);
+        chart1.getXYPlot().setDomainGridlinePaint(Color.black);
+        chart2.getPlot().setBackgroundPaint(Color.white);
+        chart2.getXYPlot().setDomainGridlinePaint(Color.black);
         redraw();
     }
           

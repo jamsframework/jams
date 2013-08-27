@@ -5,15 +5,12 @@
 package optas.gui.MCAT5;
 
 import jams.JAMS;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -62,7 +59,8 @@ public class APosterioriPlot extends MCAT5Plot {
         chartPanel.setMinimumDrawHeight( 0 );
         chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
         chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
-
+        chart.getPlot().setBackgroundPaint(Color.white);
+        
         JPanel sliderPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         sliderPanel.setMaximumSize(new Dimension(250, 60));
         sliderPanel.setPreferredSize(new Dimension(250, 60));

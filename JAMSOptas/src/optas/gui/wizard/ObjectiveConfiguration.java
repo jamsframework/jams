@@ -9,6 +9,7 @@ import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.gui.input.ValueChangeListener;
 import jams.meta.ComponentDescriptor;
+import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
 import jams.meta.ModelDescriptor;
 import jams.tools.JAMSTools;
@@ -18,8 +19,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -39,6 +43,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import optas.data.TimeFilter;
 import optas.data.TimeSerie;
 import optas.efficiencies.UniversalEfficiencyCalculator;
@@ -58,8 +63,9 @@ public class ObjectiveConfiguration extends JPanel{
     JComboBox contextList     = new JComboBox(),
               measurementList = new JComboBox(),
               simulationList = new JComboBox(),              
-              objectivesList = new JComboBox();
-                                     
+              objectivesList = new JComboBox(),
+              timeList       = new JComboBox();
+    
     TimeFilterTableInput filterList = new TimeFilterTableInput(null);
     HydrographChart hydroChart = new HydrographChart();
     ChartPanel chartPanel = null;
@@ -84,13 +90,43 @@ public class ObjectiveConfiguration extends JPanel{
     
     JFileChooser timeseriesFileChooser = new JFileChooser();
     
+    private void updateTimeList(){
+        String context = (String) contextList.getSelectedItem();
+        
+        ContextDescriptor cd = (ContextDescriptor)md.getComponentDescriptor(context);
+        TreeSet<Attribute> potentialTimeAttributes = new TreeSet<Attribute>();
+        while (cd != null) {
+            HashMap<String, ContextAttribute> set = cd.getAttributes(jams.data.Attribute.Calendar.class);
+            for (ContextAttribute ca : set.values()) {
+                potentialTimeAttributes.add(new Attribute(ca));
+            }            
+            TreeNode node = cd.getNode().getParent();
+            if (node == null){
+                cd = null;
+                continue;
+            }
+            if (node instanceof DefaultMutableTreeNode){
+                DefaultMutableTreeNode mtn = (DefaultMutableTreeNode)node;
+                Object o = mtn.getUserObject();
+                if (o instanceof ContextDescriptor)
+                    cd = (ContextDescriptor)o;
+            }
+        }
+
+        DefaultComboBoxModel model = new DefaultComboBoxModel(potentialTimeAttributes.toArray());
+        timeList.setModel(model);
+        timeList.setSelectedIndex(-1);
+    }
+    
     private ActionListener measurementListUpdateListener = new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 if ( measurementList.getSelectedItem() instanceof Attribute ){
+                    Attribute a = (Attribute)measurementList.getSelectedItem();
                     ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();
-                    od.setMeasurementAttribute((Attribute)measurementList.getSelectedItem());
+                    od.setMeasurementAttribute(a);
+                    
                 }                
             }
         };
@@ -245,8 +281,23 @@ public class ObjectiveConfiguration extends JPanel{
                     simulationList.setSelectedIndex(-1);                    
                     measurementList.addActionListener(measurementListUpdateListener);
                     measurementList.setSelectedIndex(-1);
+                    updateTimeList();
                     updateButtonStates();
                 }
+            }
+        });
+        
+        timeList.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Object o = timeList.getSelectedItem();
+                if (o == null)
+                    return;
+                Attribute a = (Attribute)o;
+                
+                ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();  
+                od.setTimeAttribute(a);
             }
         });
         
@@ -410,9 +461,11 @@ public class ObjectiveConfiguration extends JPanel{
         if (contextList.getSelectedIndex() != -1 && contextList.isEnabled() == true){
             measurementList.setEnabled(true);
             simulationList.setEnabled(true);
+            timeList.setEnabled(true);
         }else{
             measurementList.setEnabled(false);
             simulationList.setEnabled(false);
+            timeList.setEnabled(false);
         }
         
         if (this.filterList.timeserie == null){
@@ -506,6 +559,8 @@ public class ObjectiveConfiguration extends JPanel{
         
         modelTimeIntervalInput.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Model_time_interval")));
         modelTimeIntervalInput.setEnabled(false);
+        timeList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Time Attribute")));
+        timeList.setEnabled(false);
         
         JScrollPane scrollbar = new JScrollPane(filterList);
                 
@@ -550,6 +605,8 @@ public class ObjectiveConfiguration extends JPanel{
                         .addGap(5)
                         .addComponent(measurementList)
                         .addGap(5)
+                        .addComponent(timeList)
+                        .addGap(5)
                     )    
                     .addGroup(layout2.createParallelGroup()
                         .addGroup(layout2.createSequentialGroup()  
@@ -572,6 +629,8 @@ public class ObjectiveConfiguration extends JPanel{
                         .addComponent(simulationList)
                         .addGap(5)
                         .addComponent(measurementList)
+                        .addGap(5)
+                        .addComponent(timeList)
                         .addGap(5)
                     )    
                     .addGroup(layout2.createSequentialGroup()

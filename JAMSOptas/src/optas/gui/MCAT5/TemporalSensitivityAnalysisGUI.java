@@ -537,7 +537,7 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
         this.temporalAnalysis = new TemporalSensitivityAnalysis(p, e, ts, obs);
         this.temporalAnalysis.calculate();
 
-        this.chart.setHydrograph(obs);
+        this.chart.setHydrograph(obs);        
         this.weightChart.update(temporalAnalysis.calculate(), null, p, obs, getEnableList(), getShowList(), standardColorList);
     }
 
