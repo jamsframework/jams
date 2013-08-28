@@ -511,7 +511,7 @@ public class ParallelPostSampling2 extends Optimizer{
             throw sle;
         }finally{
             if (collection != null) {
-                collection.dump(getModel().getWorkspace().getOutputDataDirectory());
+                collection.dump(getModel().getWorkspace().getOutputDataDirectory(),false);
             }
         }
         return new double[][]{result.minBound, result.maxBound};
@@ -554,7 +554,7 @@ public class ParallelPostSampling2 extends Optimizer{
                 throw sle;
             }finally{
                 if (collection != null) {
-                    collection.dump(getModel().getWorkspace().getOutputDataDirectory());
+                    collection.dump(getModel().getWorkspace().getOutputDataDirectory(),false);
                 }
             }
 
@@ -598,7 +598,7 @@ public class ParallelPostSampling2 extends Optimizer{
             }
         }
         if (collection != null) {
-            collection.dump(getModel().getWorkspace().getOutputDataDirectory());
+            collection.dump(getModel().getWorkspace().getOutputDataDirectory(),false);
         }
 
         return validSampleCount/maxn;

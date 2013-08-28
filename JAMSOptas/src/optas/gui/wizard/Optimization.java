@@ -269,6 +269,9 @@ public class Optimization implements Serializable {
             startvalues = new String[n];
             if (startValuesField != null) {
                 int counter = 0;
+                if (startValuesField.getValue() == null){
+                    startValuesField.setValue("");
+                }
                 StringTokenizer tokStartValue = new StringTokenizer(startValuesField.getValue(), ";");
                 ArrayList<double[]> x0List = new ArrayList<double[]>();
                 while (tokStartValue.hasMoreTokens()) {

@@ -22,23 +22,36 @@
 package optas.optimizer;
 
 import optas.core.SampleLimitException;
-import optas.optimizer.management.OptimizerDescription;
-import optas.optimizer.management.NumericOptimizerParameter;
 import Jama.Matrix;
 
 import java.util.Arrays;
 import jams.JAMS;
 
 import jams.model.*;
+import jams.runtime.StandardRuntime;
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays.*;
 import java.util.StringTokenizer;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import optas.data.DataCollection;
 import optas.optimizer.directsearch.ImplicitFiltering;
 import optas.optimizer.directsearch.MDS;
 import optas.optimizer.directsearch.NelderMead;
 import optas.optimizer.directsearch.PatternSearch;
+import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.SampleFactory.SampleSO;
 import optas.optimizer.management.SampleFactory.SampleSOComperator;
 import optas.core.ObjectiveAchievedException;
+import optas.optimizer.management.BooleanOptimizerParameter;
+import optas.optimizer.management.OptimizerDescription;
+import optas.optimizer.management.StringOptimizerParameter;
+import optas.optimizer.parallel.ParallelExecution;
+import optas.optimizer.parallel.ParallelSequence;
 
 /**
  *
@@ -51,6 +64,35 @@ description = "optimization routine based on Duan et al. 1992")
 @SuppressWarnings("unchecked")
 public class SCE extends Optimizer {
 
+    static public class InputData implements Serializable {
+        public SCE context;
+
+        int nspl;
+        int nps;
+        int npg;
+        int nopt;        
+        double []bu;
+        double []bl;
+        SampleSO[] c;
+        SampleSO[] x;
+        int[] k1;
+        int[] k2;
+
+        public InputData(SCE context, int nspl, int nps, int npg, int nopt, SampleSO[] c, SampleSO[] x, int[] k1, int[] k2, double[] bu, double[] bl) {
+            this.context = context;
+            this.nspl = nspl;
+            this.nps = nps;
+            this.npg = npg;
+            this.nopt = nopt;
+            this.bu = bu;
+            this.bl = bl;
+            this.x = x;
+            this.c = c;
+            this.k1 = k1;
+            this.k2 = k2;
+        }
+    }
+    
     //"A and B specify linear constraints, so that for every x the condition Ax = B is satisfied. if you don^t specify A and B the unconstrained problem will be solved"
     public String linearConstraintMatrixA;
     public String linearConstraintVectorB;
@@ -58,7 +100,10 @@ public class SCE extends Optimizer {
     public double pcento;
     public double kstop;
     public double peps;
-    
+    public boolean parallelExecution = false;
+    public double threadCount = 12.0; 
+    public String excludeFiles = "(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log";
+    transient DataCollection collection = null;
     int N; //parameter dimension
     int p; //number of complexes
     int s; //population size
@@ -66,11 +111,21 @@ public class SCE extends Optimizer {
     int iterationCounter = 0;
     PatternSearch SearchMethod = null;
     Matrix LinearConstraints_A = null, LinearConstraints_b = null;
+    ParallelSequence pseq = null;
+
+    public String getExcludeFiles(){
+        return excludeFiles;
+    }
+
+    public void setExcludeFiles(String excludeFiles){
+        this.excludeFiles = excludeFiles;
+    }
 
     @Override
     public boolean init() {
-        if (!super.init())
+        if (!super.init()) {
             return false;
+        }
 
         iterationCounter = 0;
         if (linearConstraintMatrixA != null && linearConstraintVectorB != null) {
@@ -147,6 +202,12 @@ public class SCE extends Optimizer {
             log("warning: kstop_value_not_specified, set to default of 10");
             kstop=(10);
         }
+        
+        if (this.parallelExecution) {
+            pseq = new ParallelSequence(this);
+            pseq.setExcludeFiles(excludeFiles);
+            pseq.setThreadCount((int) this.threadCount);
+        }
         return true;
     }
            
@@ -180,7 +241,6 @@ public class SCE extends Optimizer {
         return -1;
     }
 
-
     //this method is superseeded by the pattern search algorithms, but its not a bad idea to keep this meothd
     //s forms the simplex
     //sf function values of simplex
@@ -208,42 +268,73 @@ public class SCE extends Optimizer {
         }
 
         // Attempt a reflection point
-        double snew[] = new double[nopt];
+        double snew1[] = new double[nopt];
+        double snew2[] = new double[nopt];
+        double snew3[] = new double[nopt];
         for (int i = 0; i < nopt; i++) {
-            snew[i] = ce[i] + alpha * (ce[i] - sw.x[i]);
+            snew1[i] = ce[i] + alpha * (ce[i] - sw.x[i]);
         }
 
         // Check if is outside the bounds:
         int ibound = 0;
         for (int i = 0; i < nopt; i++) {
-            if ((snew[i] - bl[i]) < 0) {
+            if ((snew1[i] - bl[i]) < 0) {
                 ibound = 1;
             }
-            if ((bu[i] - snew[i]) < 0) {
+            if ((bu[i] - snew1[i]) < 0) {
                 ibound = 2;
             }
         }
 
         if (ibound >= 1) {
-            snew = this.randomSampler();
+            snew1 = this.randomSampler();
         }
-        
-        SampleSO fnew = getSampleSO(snew);
         
         // Reflection failed; now attempt a contraction point:
-        if (fnew.f() > sw.f()) {
-            for (int i = 0; i < nopt; i++) {
-                snew[i] = sw.x[i] + beta * (ce[i] - s[n-1].x[i]);
-            }
-            fnew = getSampleSO(snew);
+        //if (fnew.f() > sw.f()) {
+        for (int i = 0; i < nopt; i++) {
+            snew2[i] = sw.x[i] + beta * (ce[i] - s[n - 1].x[i]);
         }
-        // Both reflection and contraction have failed, attempt a random point;
-        if (fnew.f() > sw.f()) {
-            snew = this.randomSampler();
-            fnew = getSampleSO(snew);
-        }
+        snew3 = this.randomSampler();
         
-        return fnew;
+
+        if (parallelExecution) {
+            double x_pseq[][] = new double[][]{snew1, snew2, snew3};
+            ParallelSequence.OutputData result = pseq.procedure(x_pseq);
+            if (collection == null) {
+                collection = result.dc;
+            } else {
+                synchronized (collection) {
+                    if (result.dc != null) {
+                        collection.mergeDataCollections(result.dc);
+                    }
+                }
+            }
+            if (result.list.get(0).F()[0] <= result.list.get(1).F()[0] && result.list.get(0).F()[0] <= result.list.get(2).F()[0]) {
+                return this.factory.getSampleSO(result.list.get(0).x, result.list.get(0).F()[0]);
+            } else if (result.list.get(1).F()[0] <= result.list.get(0).F()[0] && result.list.get(1).F()[0] <= result.list.get(2).F()[0]) {
+                return this.factory.getSampleSO(result.list.get(1).x, result.list.get(1).F()[0]);
+            } else {
+                return this.factory.getSampleSO(result.list.get(2).x, result.list.get(2).F()[0]);
+            }
+        } else {
+            SampleSO x0 = this.getSampleSO(snew1);
+            SampleSO x1 = this.getSampleSO(snew2);
+            SampleSO x2 = this.getSampleSO(snew3);
+            
+            if (x0.F()[0] <= x1.F()[0] && x0.F()[0] <= x2.F()[0]) {
+                return x0;
+            } else if (x1.F()[0] <= x0.F()[0] && x1.F()[0] <= x2.F()[0]) {
+                return x1;
+            } else {
+                return x2;
+            }
+        }
+        //do this lately becaus it can throw an exception ..
+        /*if (result.list!=null)
+            this.injectSamples(result.list);*/
+        //inject passiert hier .. 
+        
     }
     
     private SampleSO cceua(SampleSO[] simplex, double bl[], double bu[]) throws SampleLimitException, ObjectiveAchievedException {
@@ -296,7 +387,7 @@ public class SCE extends Optimizer {
             }            
             // Replace the worst point in Simplex with the new point:
             try{
-                s[nps - 1] = cceua(s, bl, bu);
+                s[nps - 1] = cceua2(s, bl, bu);
             }catch(Exception e){
                 e.printStackTrace();
                 return;
@@ -312,7 +403,15 @@ public class SCE extends Optimizer {
         // End of Inner Loop for Competitive Evolution of Simplexes
         }
     }
-       
+
+    private static abstract class ParamRunnable<Y> implements Runnable{
+        Y in;
+
+        ParamRunnable(Y d){
+            in = d;
+        }
+    }
+
     public SampleSO sceua(double[][] x0, double[] bl, double[] bu, int maxn, int kstop, double pcento, double peps, int ngs, int iseed){
         int method = 1;
                 
@@ -336,20 +435,49 @@ public class SCE extends Optimizer {
         }
         int i=0;
         SampleSO x[] = new SampleSO[npt];
-        try{            
+        try{         
+            double initParameter[][] = new double[npt][];
+
             for (i = 0; i < npt; i++) {
-                if (x0!=null && i<x0.length)
-                    x[i] = getSampleSO(x0[i]);
-                else{
-                    double value[] = randomSampler();
-                    x[i] = getSampleSO(value);
+                if (this.x0 != null && this.x0.length > i) {
+                    initParameter[i] = this.x0[i].clone();
+                } else {
+                    initParameter[i] = randomSampler();
                 }
             }
+            
+            if (!this.parallelExecution) {
+                for (i = 0; i < npt; i++) {
+                    x[i] = getSampleSO(initParameter[i]);
+                }
+            } else {
+                ParallelSequence.OutputData result = pseq.procedure(initParameter);
+                for (int j = 0; j < initParameter.length; j++) {
+                    try {
+                        x[j] = factory.getSampleSO(result.list.get(j).x,result.list.get(j).F()[0]);
+                    } catch (ArrayIndexOutOfBoundsException aioobe) {
+                        System.out.println("For an unknown reason parallel sampling did not succeed completly .. switching to sequential execution");
+                        for (int k = j; k < initParameter.length; k++) {
+                            x[k] = getSampleSO(initParameter[k]);
+                        }
+                        j = initParameter.length;
+                        break;
+                    }
+                }
+                if (collection == null) {
+                    collection = result.dc;
+                } else {
+                    synchronized (collection) {
+                        collection.mergeDataCollections(result.dc);
+                        collection.dump(getModel().getWorkspace().getOutputDataDirectory(),true);
+                    }
+                }                
+                //this.injectSamples(result.list);
+            }            
         }catch(SampleLimitException e){
-            System.out.println(e);
+            System.out.println("Sample Limit Reached: " + e);
             return x[i];
-        }catch(Exception e){
-            System.out.println(e);
+        }catch(Exception e){            
             e.printStackTrace();
             return x[i];
         }
@@ -376,6 +504,12 @@ public class SCE extends Optimizer {
 
         while (criter_change > pcento) {
             nloop++;
+            ArrayList<SampleSO[]> complexes = new ArrayList<SampleSO[]>();
+            ArrayList<int[]> k1list = new ArrayList<int[]>();
+            ArrayList<int[]> k2list = new ArrayList<int[]>();
+
+            BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<Runnable>(64);
+            ThreadPoolExecutor threadPool = new ThreadPoolExecutor(ngs, ngs, 30, TimeUnit.SECONDS, workQueue);
             // Loop on complexes (sub-populations);
             for (int igs = 0; igs < ngs; igs++) {
                 // Partition the population into complexes (sub-populations);
@@ -391,14 +525,42 @@ public class SCE extends Optimizer {
                 for ( i = 0; i < npg; i++) {
                     c[k1[i]] = x[k2[i]].clone();
                 }
-                EvolveSubPopulation(nspl, nps, npg, nopt, c, bu, bl);
+                complexes.add(c);
+                k1list.add(k1);
+                k2list.add(k2);
 
-                // Replace the complex back into the population;
-                for ( i = 0; i < npg; i++) {                    
-                    x[k2[i]] = c[k1[i]];
+                if (parallelExecution) {
+                    InputData param = new InputData(this, nspl, npg, npg, nopt, c, x, k1, k2, bu, bl);
+
+                    ParamRunnable r = new ParamRunnable<InputData>(param) {
+                        @Override
+                        public void run() {
+                            synchronized (SCE.this) { //really strict. something less strict would be better .. 
+                                EvolveSubPopulation(this.in.nspl, this.in.nps, this.in.npg, this.in.nopt, this.in.c, this.in.bu, this.in.bl);
+                            }
+                            for (int i = 0; i < in.npg; i++) {
+                                in.x[in.k2[i]] = in.c[in.k1[i]];
+                            }
+                        }
+                    };
+                    threadPool.execute(r);
+                }else{
+                    EvolveSubPopulation(nspl, nps, npg, nopt, c, bu, bl);
+                    for (int j = 0; j < npg; j++) {
+                        x[k2[j]] = c[k1[j]];
+                    }
                 }
-            // End of Loop on Complex Evolution;
-            }            
+            }
+            if (parallelExecution) {
+                threadPool.shutdown();
+
+                try {
+                    threadPool.awaitTermination(100, TimeUnit.HOURS);
+                } catch (InterruptedException ie) {
+                    System.out.println("Serious problem with thread pool .. was interrupted");
+                    ie.printStackTrace();
+                }
+            }
             Arrays.sort(x, new SampleSOComperator(false));
                   
             //Compute the standard deviation for each parameter            
@@ -412,7 +574,9 @@ public class SCE extends Optimizer {
             if (gnrng < peps) {
                 log(JAMS.i18n("THE_POPULATION_HAS_CONVERGED_TO_A_PRESPECIFIED_SMALL_PARAMETER_SPACE"));
             }
-
+            if (getIterationCounter()>this.maxn){
+                break;
+            }
             for ( i = 0; i < kstop - 1; i++) {
                 criter[i] = criter[i + 1];
             }
@@ -436,7 +600,11 @@ public class SCE extends Optimizer {
         log(JAMS.i18n("SEARCH_WAS_STOPPED_AT_TRIAL_NUMBER") + " " +getIterationCounter());
         log(JAMS.i18n("NORMALIZED_GEOMETRIC_RANGE") + " " + gnrng);
         log(JAMS.i18n("THE_BEST_POINT_HAS_IMPROVED_IN_LAST") + kstop + " "+JAMS.i18n("LOOPS_BY") + " "+ criter_change + "%");
-                
+
+        if (collection != null) {
+            collection.dump(getModel().getWorkspace().getOutputDataDirectory(),false);
+        }
+        
         return x[0];
     }
 
@@ -462,6 +630,18 @@ public class SCE extends Optimizer {
         desc.addParameter(new NumericOptimizerParameter(
                 "kstop", JAMS.i18n("kStop"),
                 10, 1, 100));
+        
+        desc.addParameter(new BooleanOptimizerParameter(
+                "parallelExecution", JAMS.i18n("parallelExecution"),
+                false));
+        
+        desc.addParameter(new NumericOptimizerParameter(
+                "threadCount", JAMS.i18n("threadCount"),
+                12, 1, 20));
+        
+        desc.addParameter(new StringOptimizerParameter(
+                "excludeFiles", JAMS.i18n("exclude_files_list"),
+                "(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log"));
 
         return desc;
     }

@@ -532,7 +532,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
 	}
 
 	public static void main(String[] args) {
-		DataCollection dc = DataCollection.createFromFile(new File("D:\\2013_08_21_sa_small2.cdat"));
+		DataCollection dc = DataCollection.createFromFile(new File("E:\\ModelData\\Testgebiete\\J2000\\Gehlberg\\output\\20130824_003244\\2013_08_21_sa_small2.cdat"));
 
 		try {
 			DataRequestPanel d = new DataRequestPanel(new MultiObjectiveDecisionSupport(), dc);

@@ -29,22 +29,16 @@ public class OptimizerLibrary {
         optimizerPool.clear();
         optimizerPool.add(new optas.optimizer.Direct());
         optimizerPool.add(new optas.optimizer.SCE());
-        optimizerPool.add(new optas.optimizer.ParallelSCE());
         optimizerPool.add(new optas.optimizer.BranchAndBound());
         optimizerPool.add(new optas.optimizer.DREAM());
-        
-        //optimizerPool.add(new optas.optimizer.GPSearch());
-        //optimizerPool.add(new optas.optimizer.GutmannMethod());
         optimizerPool.add(new optas.sampler.LatinHyperCubeSampler());
         optimizerPool.add(new optas.optimizer.MOCOM());
-        //optimizerPool.add(new optas.optimizer.MultiPointRandomSampler());
         optimizerPool.add(new optas.optimizer.NSGA2());
         optimizerPool.add(new optas.optimizer.NelderMead());
-        //optimizerPool.add(new optas.optimizer.ParticleSwarm());
         optimizerPool.add(new optas.sampler.RandomSampler());
-        optimizerPool.add(new optas.sampler.SobolsSequenceSampling());
-        optimizerPool.add(new optas.sampler.HaltonSequenceSampling());
-        optimizerPool.add(new optas.sampler.ParallelHaltonSequenceSampling());
+        optimizerPool.add(new optas.sampler.SobolsSequence());
+        optimizerPool.add(new optas.sampler.HaltonSequence());
+        
         return optimizerPool;
     }
     static public Optimizer getDefaultOptimizer(){

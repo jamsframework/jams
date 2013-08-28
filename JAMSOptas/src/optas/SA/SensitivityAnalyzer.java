@@ -11,7 +11,7 @@ import optas.core.AbstractFunction;
 import optas.core.AbstractModel;
 import optas.core.ObjectiveAchievedException;
 import optas.core.SampleLimitException;
-import optas.sampler.SobolsSequenceSampling;
+import optas.sampler.SobolsSequence;
 import optas.optimizer.management.SampleFactory.Sample;
 
 /**
@@ -62,7 +62,7 @@ public abstract class SensitivityAnalyzer {
 
     protected ArrayList<Sample> getRandomSampling(){
         if (model instanceof AbstractFunction) {
-            SobolsSequenceSampling sampler = new SobolsSequenceSampling();
+            SobolsSequence sampler = new SobolsSequence();
             sampler.setFunction((AbstractFunction) model);
             //sampler.setAnalyzeQuality(false);
             //sampler.setBoundaries(getLowBound(), getUpBound());

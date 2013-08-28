@@ -218,6 +218,21 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             return format.format(r);
     }
 
+    private void setObjective(double m[], double s[], int k, Attribute.Double[] field, Attribute.Double[] normalized_field, EfficiencyCalculator calc) {
+        if (field != null && field.length > k && field[k] != null) {
+            field[k].setValue(calcE1.calc(m, s));
+        }
+        if (normalized_field != null && normalized_field.length > k && normalized_field[k] != null) {
+            double value = calcE1.calcNormative(m, s);
+            if (Double.isNaN(value)) {
+                this.e1_normalized[k].setValue(Double.MAX_VALUE);
+            } else {
+                this.e1_normalized[k].setValue(value);
+            }
+            normalized_field[k].setValue(value);
+        }
+    }
+    
     @Override
     public void cleanup(){
         firstIteration = false;
@@ -238,68 +253,19 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
                 m[i] = measurementList[k].get(i);
                 s[i] = simulationList[k].get(i);
             }
-            double value = 0;
 
-            this.e1[k].setValue(calcE1.calc(m, s));
-            value = calcE1.calcNormative(m, s);
-            if (Double.isNaN(value)) {
-                this.e1_normalized[k].setValue(Double.MAX_VALUE);
-            } else {
-                this.e1_normalized[k].setValue(value);
-            }
-
-            this.e2[k].setValue(calcE2.calc(m, s));
-            value = calcE2.calcNormative(m, s);
-            if (Double.isNaN(value)) {
-                this.e2_normalized[k].setValue(Double.MAX_VALUE);
-            } else {
-                this.e2_normalized[k].setValue(value);
-            }
-
-            this.le1[k].setValue(calcLe1.calc(m, s));
-            value = calcLe1.calcNormative(m, s);
-            if (Double.isNaN(value) || Double.isInfinite(value)) {
-                this.le1_normalized[k].setValue(Double.MAX_VALUE);
-            } else {
-                this.le1_normalized[k].setValue(value);
-            }
-
-            this.le2[k].setValue(calcLe2.calc(m, s));
-            value = calcLe2.calcNormative(m, s);
-            if (Double.isNaN(value) || Double.isInfinite(value)) {
-                this.le2_normalized[k].setValue(Double.MAX_VALUE);
-            } else {
-                this.le2_normalized[k].setValue(value);
-            }
-
-            this.ave[k].setValue(calcAve.calc(m, s));
-            value = calcAve.calcNormative(m, s);
-            if (Double.isNaN(value) || Double.isInfinite(value)) {
-                this.ave_normalized[k].setValue(Double.MAX_VALUE);
-            } else {
-                this.ave_normalized[k].setValue(value);
-            }
-
-            this.r2[k].setValue(calcR2.calc(m, s));
-            value = calcR2.calcNormative(m, s);
-            if (Double.isNaN(value) || Double.isInfinite(value)) {
-                this.r2_normalized[k].setValue(Double.MAX_VALUE);
-            } else {
-                this.r2_normalized[k].setValue(value);
-            }
-
-            this.bias[k].setValue(calcPBias.calc(m, s));
-            value = calcPBias.calcNormative(m, s);
-            if (Double.isNaN(value) || Double.isInfinite(value)) {
-                this.bias_normalized[k].setValue(Double.MAX_VALUE);
-            } else {
-                this.bias_normalized[k].setValue(value);
-            }
+            setObjective(m,s,k,e1,e1_normalized,calcE1);
+            setObjective(m,s,k,e2,e2_normalized,calcE2);
+            setObjective(m,s,k,le1,le1_normalized,calcLe1);
+            setObjective(m,s,k,le2,le2_normalized,calcLe2);
+            setObjective(m,s,k,ave,ave_normalized,calcAve);
+            setObjective(m,s,k,r2,r2_normalized,calcR2);
+            setObjective(m,s,k,bias,bias_normalized,calcPBias);
             
             //this.log_likelihood[k].setValue(calcLogLikelihood.calc(m, s));
             
-            this.getModel().getRuntime().println("*******Measurement:" + this.measurementAttributeName);
-            this.getModel().getRuntime().println("*******Simulation :" + this.simulationAttributeName);
+            this.getModel().getRuntime().println("*******Measurement:" + this.measurementAttributeName[k]);
+            this.getModel().getRuntime().println("*******Simulation :" + this.simulationAttributeName[k]);
             this.getModel().getRuntime().println("*******E1:    " + round(this.e1[k].getValue()) + "  (" + round(this.e1_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******E2:    " + round(this.e2[k].getValue()) + "  (" + round(this.e2_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******le1:   " + round(this.le1[k].getValue()) + "  (" + round(this.le1_normalized[k].getValue()) + ")");

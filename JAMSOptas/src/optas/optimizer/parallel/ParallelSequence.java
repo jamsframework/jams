@@ -188,7 +188,7 @@ public class ParallelSequence implements Serializable {
                     merged.list.set(result.start+j, result.list.get(j));
                 }
             }
-            System.out.println("reduce_function_finished");
+            System.out.println("reduce_function_finished");            
             return merged;
         }
     }
@@ -201,7 +201,6 @@ public class ParallelSequence implements Serializable {
 
         InputData param = new InputData(x, 0, x.length, context);
         result = executor.execute(param, new ParallelSequenceTask(), getThreadCount());
-
         return result;
     }
             

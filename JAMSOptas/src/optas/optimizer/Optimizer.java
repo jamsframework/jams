@@ -285,12 +285,12 @@ public abstract class Optimizer implements Serializable, Comparable{
         log("Initialize Optimizer");
         if (!checkConfiguration())
             return false;
-        
+
         if (!debugMode) {
             generator = new Random(System.nanoTime());
         } else {
             generator = new Random(0);
-        }
+        }       
         return true;
     }
 
@@ -298,7 +298,7 @@ public abstract class Optimizer implements Serializable, Comparable{
         return generator.nextDouble();
     }
 
-    protected double[] randomSampler() {
+    protected double[] randomSampler() {        
         double[] sample = new double[n];
         for (int i = 0; i < n; i++) {
             sample[i] = (lowBound[i] + randomValue() * (upBound[i] - lowBound[i]));

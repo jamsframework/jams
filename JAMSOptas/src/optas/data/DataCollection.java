@@ -165,16 +165,20 @@ public class DataCollection extends DataSet implements Serializable{
         idFilter.clear();
     }
 
+    private void filterTimeDomain(TimeFilter f, String s) {
+        if (Measurement.class.isAssignableFrom(this.getDatasetClass(s))) {
+            Measurement m = (Measurement) this.getDataSet(s);
+            if (timeFilter != null) {
+                m.removeTimeFilter(timeFilter);
+            }
+            m.addTimeFilter(f);
+        }
+    }
+    
     public void filterTimeDomain(TimeFilter f){
         Set<String> set = this.getDatasets(Measurement.class);
         for (String s : set){
-            if ( Measurement.class.isAssignableFrom(this.getDatasetClass(s)) ){
-                Measurement m = (Measurement)this.getDataSet(s);
-                if (timeFilter!=null){
-                    m.removeTimeFilter(timeFilter);                    
-                }
-                m.addTimeFilter(f);
-            }
+            filterTimeDomain(f,s);
         }
         this.timeFilter = f;
     }
@@ -802,7 +806,7 @@ public class DataCollection extends DataSet implements Serializable{
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-    private void dumpTSEnsemble(File file, ArrayList<TimeSerieEnsemble> list) throws IOException{
+    private void dumpTSEnsemble(File file, ArrayList<TimeSerieEnsemble> list, boolean createNewFile) throws IOException{
         if (list.isEmpty())
             return;
 
@@ -812,23 +816,26 @@ public class DataCollection extends DataSet implements Serializable{
         int N = array[0].size;
         int T = array[0].getTimesteps();
         
-        BufferedWriter write = new BufferedWriter(new FileWriter(file));
-        write.write("@context\n");
-        write.write("jams.model.JAMSTemporalContext\tdump\t"+T+"\n");
-        write.write("@ancestors"+"\n");
-        write.write("optas.optimizer.generic\tsampler\t"+N+"\n");
-        write.write("@filters"+"\n");
-        write.write("@attributes"+"\n");
-        String attrString = "ID";
-        String types = "JAMSInteger";
-        for (TimeSerieEnsemble s : list){
-            attrString += "\t" + s.getName();
-            types += "\t" + "JAMSDouble";
+        BufferedWriter write = new BufferedWriter(new FileWriter(file, !createNewFile));
+        
+        if (createNewFile) {
+            write.write("@context\n");
+            write.write("jams.model.JAMSTemporalContext\tdump\t" + T + "\n");
+            write.write("@ancestors" + "\n");
+            write.write("optas.optimizer.generic\tsampler\t" + N + "\n");
+            write.write("@filters" + "\n");
+            write.write("@attributes" + "\n");
+            String attrString = "ID";
+            String types = "JAMSInteger";
+            for (TimeSerieEnsemble s : list) {
+                attrString += "\t" + s.getName();
+                types += "\t" + "JAMSDouble";
+            }
+            write.write(attrString + "\n");
+            write.write("@types" + "\n");
+            write.write(types + "\n");
+            write.write("@data" + "\n");
         }
-        write.write(attrString+"\n");
-        write.write("@types"+"\n");
-        write.write(types+"\n");
-        write.write("@data"+"\n");
         Integer ids[] = array[0].getIds();
         Arrays.sort(ids);
 
@@ -886,30 +893,31 @@ public class DataCollection extends DataSet implements Serializable{
         }
     }
 
-    private void dumpSimpleEnsemble(File file, ArrayList<SimpleEnsemble> list) throws IOException{
+    private void dumpSimpleEnsemble(File file, ArrayList<SimpleEnsemble> list, boolean createNewFile) throws IOException{
         if (list.isEmpty())
             return;
 
         int N = list.get(0).getSize();
 
-        BufferedWriter write = new BufferedWriter(new FileWriter(file));
-        write.write("@context"+"\n");
-        write.write("dumping.context\tdump\t"+N+"\n");
-        write.write("@ancestors"+"\n");
-        write.write("@filters"+"\n");
-        write.write("@attributes"+"\n");
-        String attrString = "ID";
-        String types = "JAMSInteger";
-        for (SimpleEnsemble s : list){
-            attrString += "\t" + s.getName();
-            types += "\t" + "JAMSDouble";
+        BufferedWriter write = new BufferedWriter(new FileWriter(file, !createNewFile));
+        if (createNewFile) {
+            write.write("@context" + "\n");
+            write.write("dumping.context\tdump\t" + N + "\n");
+            write.write("@ancestors" + "\n");
+            write.write("@filters" + "\n");
+            write.write("@attributes" + "\n");
+            String attrString = "ID";
+            String types = "JAMSInteger";
+            for (SimpleEnsemble s : list) {
+                attrString += "\t" + s.getName();
+                types += "\t" + "JAMSDouble";
+            }
+            write.write(attrString + "\n");
+            write.write("@types" + "\n");
+            write.write(types + "\n");
+            write.write("@data" + "\n");
+            write.write("@start" + "\n");
         }
-        write.write(attrString+"\n");
-        write.write("@types"+"\n");
-        write.write(types+"\n");
-        write.write("@data"+"\n");
-        write.write("@start"+"\n");
-
         SimpleEnsemble array[] = list.toArray(new SimpleEnsemble[list.size()]);
         Integer ids[] = array[0].getIds();
         Arrays.sort(ids);
@@ -922,36 +930,67 @@ public class DataCollection extends DataSet implements Serializable{
 
             write.write(entry + "\n");
         }
-        write.write("@end");
+        if (createNewFile)
+            write.write("@end");
+        
         write.close();
     }
 
     SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd_HHmmss");
-    public void dump(File directory){
+    HashMap<File, String> dirFileMap = new HashMap<File, String>();
+    HashMap<File, ArrayList<Integer>> idsSavedInDump = new HashMap<File, ArrayList<Integer>>();
+    
+    //simple dump to save the datacollection NOW
+    public void dump(File directory, boolean append){
         ArrayList<SimpleEnsemble> simpleEnsembles = new ArrayList<SimpleEnsemble>();
         ArrayList<TimeSerieEnsemble> tsEnsembles = new ArrayList<TimeSerieEnsemble>();
         ArrayList<Measurement> msEnsembles = new ArrayList<Measurement>();
 
+        boolean createNewFile = !append || dirFileMap.get(directory)==null;
+        
+        ArrayList<Integer> savedIds = null;
+        String dateString = sdf2.format(new Date());
+        
+        if (append && !createNewFile){
+            dateString = dirFileMap.get(directory);
+            savedIds = idsSavedInDump.get(directory);
+            this.clearIDFilter();
+            for (Integer id : savedIds){                
+                this.filterID(id);
+            }
+        }else if (append){
+            dirFileMap.put(directory, dateString);
+            savedIds = new ArrayList<Integer>();
+            idsSavedInDump.put(directory, savedIds);
+        }
+        
         for (String s : this.getDatasets()){
             DataSet d = this.getDataSet(s);
-            if (d instanceof SimpleEnsemble)
+            if (d instanceof SimpleEnsemble) {
                 simpleEnsembles.add((SimpleEnsemble)d);
-            else if (d instanceof TimeSerieEnsemble)
+            }
+            else if (d instanceof TimeSerieEnsemble) {
                 tsEnsembles.add((TimeSerieEnsemble)d);
+            }
             else if (d instanceof Measurement){
                 msEnsembles.add((Measurement)d);
             }
         }
+
         try{
-            dumpSimpleEnsemble(new File(directory.getAbsolutePath()+"/scalar_"+sdf2.format(new Date())+".dat"),simpleEnsembles);
-            dumpTSEnsemble(new File(directory.getAbsolutePath()+"/timeseries_"+sdf2.format(new Date())+".dat"),tsEnsembles);
+            dumpSimpleEnsemble(new File(directory.getAbsolutePath()+"/scalar_"+dateString+".dat"),simpleEnsembles,createNewFile);
+            dumpTSEnsemble(new File(directory.getAbsolutePath()+"/timeseries_"+dateString+".dat"),tsEnsembles,createNewFile);
         }catch(IOException ioe){
             System.err.println(ioe);
             ioe.printStackTrace();
         }
-
+        if (savedIds != null) {
+            savedIds.addAll(Arrays.asList(this.getModelrunIds()));
+            //not really nice, since a previous set filter will be lost
+            this.clearIDFilter();
+        }
     }
-
+    
     static final long serialVersionUID = 3078644694169015704L;
 
     public static void main(String args[]){

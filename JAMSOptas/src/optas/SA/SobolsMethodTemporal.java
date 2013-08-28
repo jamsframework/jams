@@ -16,7 +16,7 @@ import optas.data.Measurement;
 import optas.data.SimpleEnsemble;
 import optas.data.TimeSerieEnsemble;
 import optas.core.SampleLimitException;
-import optas.sampler.SobolsSequenceSampling;
+import optas.sampler.SobolsSequence;
 import optas.core.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.regression.Interpolation.ErrorMethod;
@@ -85,7 +85,7 @@ public class SobolsMethodTemporal extends TemporalSensitivityAnalysis{
         }
         tsStar = new TimeSerieEnsemble(ts.name,size,ts.getTimeInterval());
 
-        SobolsSequenceSampling sampler = new SobolsSequenceSampling();
+        SobolsSequence sampler = new SobolsSequence();
         //TODO reimplement
        sampler.setFunction(new AbstractFunction() {
            @Override

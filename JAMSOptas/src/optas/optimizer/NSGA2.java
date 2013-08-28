@@ -14,6 +14,7 @@ import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.SampleFactory.SampleComperator;
 import optas.optimizer.management.NumericOptimizerParameter;
 import optas.core.ObjectiveAchievedException;
+import optas.optimizer.management.BooleanOptimizerParameter;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.StringOptimizerParameter;
 import optas.optimizer.parallel.ParallelSequence;
@@ -30,7 +31,7 @@ public class NSGA2 extends Optimizer {
     public double crossoverDistributionIndex = 20;
     public double mutationDistributionIndex = 20;
     public int maxGeneration = 1000;
-    public double parallelExecution = 0.0;
+    public boolean parallelExecution = false;
     public double threadCount = 12.0;
     public String excludeFiles = "(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log";
     int crossoverCount = 0;
@@ -58,8 +59,8 @@ public class NSGA2 extends Optimizer {
         desc.addParameter(new NumericOptimizerParameter("threadCount",
                 JAMS.i18n("threadCount"), 8, 2, 100.0));
         
-        desc.addParameter(new NumericOptimizerParameter("parallelExecution",
-                JAMS.i18n("parallelExecution"), 0, 0, 1.0));
+        desc.addParameter(new BooleanOptimizerParameter("parallelExecution",
+                JAMS.i18n("parallelExecution"), false));
                 
         return desc;
     }
@@ -159,14 +160,14 @@ public class NSGA2 extends Optimizer {
     /**
      * @return the parallelExecution
      */
-    public double getParallelExecution() {
+    public boolean isParallelExecution() {
         return parallelExecution;
     }
 
     /**
      * @param parallelExecution the parallelExecution to set
      */
-    public void setParallelExecution(double parallelExecution) {
+    public void setParallelExecution(boolean parallelExecution) {
         this.parallelExecution = parallelExecution;
     }
 
@@ -367,7 +368,7 @@ public class NSGA2 extends Optimizer {
             this.mutationProbability = (1.0 / n);
         }
 
-        if (this.parallelExecution != 0) {
+        if (this.parallelExecution) {
             pseq = new ParallelSequence(this);
             pseq.setExcludeFiles(excludeFiles);
             pseq.setThreadCount((int) this.threadCount);
@@ -835,7 +836,7 @@ public class NSGA2 extends Optimizer {
                 }
             }
 
-            if (this.parallelExecution == 0) {
+            if (!this.parallelExecution) {
                 for (int i = 0; i < this.getPopulationSize(); i++) {
                     oldPopulation.ind[i] = new Individual(this.getSample(initParameter[i]));
                 }
@@ -858,8 +859,9 @@ public class NSGA2 extends Optimizer {
                 } else {
                     synchronized (collection) {
                         collection.mergeDataCollections(result.dc);
+                        collection.dump(getModel().getWorkspace().getOutputDataDirectory(),true);
                     }
-                }
+                }                
                 this.injectSamples(result.list);
             }
 
@@ -885,7 +887,7 @@ public class NSGA2 extends Optimizer {
                 /*------MUTATION-------------------*/
                 real_mutate(newParameter);
                 /*----------FUNCTION EVALUATION-----------*/
-                if (this.parallelExecution == 0) {
+                if (this.parallelExecution) {
                     for (int j = 0; j < newParameter.length; j++) {
                         newPopulation.ind[j] = new Individual(this.getSample(newParameter[j]));
                     }
@@ -908,6 +910,7 @@ public class NSGA2 extends Optimizer {
                     } else {
                         synchronized (collection) {
                             collection.mergeDataCollections(result.dc);
+                            collection.dump(getModel().getWorkspace().getOutputDataDirectory(),true);
                         }
                     }
                     this.injectSamples(result.list);
@@ -932,7 +935,7 @@ public class NSGA2 extends Optimizer {
             log("-----------------------------------------------------------------------------------");
         } finally { //ensure writing the data
             if (collection != null) {
-                collection.dump(getModel().getWorkspace().getOutputDataDirectory());
+                collection.dump(getModel().getWorkspace().getOutputDataDirectory(),false);
             }
         }
     }

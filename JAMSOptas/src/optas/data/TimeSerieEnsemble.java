@@ -60,8 +60,10 @@ public class TimeSerieEnsemble extends Ensemble {
 
     private void buildTimeMapping() {
         timeMap.clear();
-        for (int i = 0; i < value[0].length; i++) {
-            Date d = getDate(i);
+        Attribute.Calendar c1 = this.timeInterval.getStart().clone();
+        for (int i = 0; i < value[0].length; i++) {            
+            c1.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
+            Date d = (Date)c1.getTime().clone();
             boolean isFiltered = false;
             for (TimeFilter f : this.filter) {
                 if (f.isFiltered(d)) {
@@ -106,11 +108,17 @@ public class TimeSerieEnsemble extends Ensemble {
 
     //this is critical, time filter should be applied ??!
     public Date getDate(int time) {
+        int time2 = 0;
+        if (this.filter.isEmpty()) {
+            time2 = time;
+        } else {
+            time2 = this.timeMap.get(time);
+        }
         Attribute.Calendar c1 = this.timeInterval.getStart().clone();
-        c1.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount() * time);
+        c1.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount() * time2);
         return c1.getTime();
     }
-
+    
     public int getTimesteps() {
         if (this.filter.isEmpty()) {
             return value[0].length;

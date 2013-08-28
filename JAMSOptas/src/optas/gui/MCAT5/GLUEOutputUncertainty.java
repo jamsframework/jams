@@ -331,15 +331,12 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         if (p[2].size()>0){
             obs = (Measurement) p[2].get(0);
         }
-        
-        int T = ts.getTimesteps();
-        int N = ts.getSize();
-        
+                
         TimeSeries dataset1 = new TimeSeries(JAMS.i18n("LOWER_CONFIDENCE_BOUND"));
         TimeSeries dataset2 = new TimeSeries(JAMS.i18n("UPPER_CONFIDENCE_BOUND"));
         if (obs!=null){
             TimeSeries dataset3 = new TimeSeries(obs.name);
-            for (int i=0;i<T;i++){
+            for (int i=0;i<obs.getTimesteps();i++){
                 Day d = new Day(obs.getTime((int) i));
                 dataset3.add(d, obs.getValue(i));
             }
@@ -352,15 +349,13 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         TimeSeries dataset4 = new TimeSeries(JAMS.i18n("MEAN"));
         TimeSeries dataset5 = new TimeSeries(JAMS.i18n("MEDIAN"));
                 
-
-
         if (showAll) {
-            TimeSeries dataset_full[] = new TimeSeries[N];
+            TimeSeries dataset_full[] = new TimeSeries[ts.getSize()];
             TimeSeriesCollection ensemble_full = new TimeSeriesCollection();
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < ts.getSize(); i++) {
                 dataset_full[i] = new TimeSeries("data_" + i);
                 int id = ts.getId(i);
-                for (int j = 0; j < T; j++) {
+                for (int j = 0; j < ts.getTimesteps(); j++) {
                     Day d = new Day(ts.getDate((int) j));
                     dataset_full[i].add(d, ts.get(j, id));
                 }
@@ -371,19 +366,23 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
             plot1.setDomainGridlinesVisible(false);
             plot1.setRangeGridlinesVisible(false);
         }
-        double low_conf[] = new double[T];
-        double high_conf[] = new double[T];
+        double low_conf[] = new double[ts.getTimesteps()];
+        double high_conf[] = new double[ts.getTimesteps()];
         double conf = 1.0 - percentil;
         double max_diff = 0;
 
         Integer sortedIds[] = eff.sort();
         int iter=0;
-        if (eff.isPositiveBest())
-            while((iter<sortedIds.length && eff.getValue(sortedIds[iter])>=threshold) || iter==0 )
+        if (eff.isPositiveBest()) {
+            while((iter<sortedIds.length && eff.getValue(sortedIds[iter])>=threshold) || iter==0 ) {
                 iter++;
-        else
-            while((iter<sortedIds.length && eff.getValue(sortedIds[iter])<=threshold) || iter==0 )
+            }
+        }
+        else {
+            while((iter<sortedIds.length && eff.getValue(sortedIds[iter])<=threshold) || iter==0 ) {
                 iter++;
+            }
+        }
         
         int limit = iter;//(int) (threshold * n);
         dataCount = limit;
@@ -392,7 +391,7 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         dataRange.setText("<html><body>the data ranges from " + df.format(eff.getValue(sortedIds[sortedIds.length-1])) + " to " +
                 df.format(eff.getValue(sortedIds[0])) + "<br>" + iter + " datasets are taken into account</body></html>");
 
-        for (int i = 0; i < T; i++) {
+        for (int i = 0; i < ts.getTimesteps(); i++) {
             double mean = 0, median;
             int counter = 0;
             int index_low = 0, index_high =limit ;

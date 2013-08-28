@@ -6,18 +6,18 @@
 package optas.sampler;
 
 
-import optas.core.SampleLimitException;
 import jams.io.SerializableBufferedWriter;
 import jams.model.JAMSComponentDescription;
 import java.util.ArrayList;
-import optas.optimizer.management.SampleFactory.Sample;
 import optas.core.ObjectiveAchievedException;
+import optas.core.SampleLimitException;
 import optas.data.DataCollection;
 import optas.optimizer.Optimizer;
 import optas.optimizer.OptimizerLibrary;
 import optas.optimizer.management.BooleanOptimizerParameter;
 import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.OptimizerDescription;
+import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.StringOptimizerParameter;
 import optas.optimizer.parallel.ParallelSequence;
 import umontreal.iro.lecuyer.hups.PointSetIterator;
@@ -29,9 +29,9 @@ import umontreal.iro.lecuyer.hups.SobolSequence;
         author="Christian Fischer",
         description="Performs a random search"
         )
-public class RandomSampler extends Optimizer{           
+public class SobolsSequence extends Optimizer{           
     SerializableBufferedWriter writer = null;
-            
+
     public String excludeFiles = "";    
     public double threadCount = 12;
     public boolean parallelExecution = false;
@@ -39,7 +39,7 @@ public class RandomSampler extends Optimizer{
 
     @Override
     public OptimizerDescription getDescription() {
-        OptimizerDescription desc = OptimizerLibrary.getDefaultOptimizerDescription(RandomSampler.class.getSimpleName(), RandomSampler.class.getName(), 500, false);
+        OptimizerDescription desc = OptimizerLibrary.getDefaultOptimizerDescription(SobolsSequence.class.getSimpleName(), SobolsSequence.class.getName(), 500, false);
         
         desc.addParameter(new BooleanOptimizerParameter("parallelExecution",
                 "parallelExecution", false));
@@ -55,7 +55,7 @@ public class RandomSampler extends Optimizer{
     
     ParallelSequence pSeq = null;
     transient DataCollection collection = null;
-    
+        
     @Override
     public boolean init() {
         if (!super.init()) {
@@ -69,20 +69,29 @@ public class RandomSampler extends Optimizer{
         }
         return true;
     }
-     
+    
     @Override
     public void procedure()throws SampleLimitException, ObjectiveAchievedException{
-        
+        int k = (int)Math.ceil(Math.log(maxn)/Math.log(2.0));
+        SobolSequence s = new SobolSequence(k, 31, n);
+
+        PointSetIterator iter = s.iterator();
+        int i=0;
         ArrayList<double[]> set = new ArrayList<double[]>();
-        for (int i=0;i<maxn;i++){
-            set.add(this.randomSampler());
+        while(iter.hasNextPoint()){
+            double x0[] = new double[n];
+            iter.nextPoint(x0, n);
+            for (int j=0;j<n;j++){
+                x0[j] = this.lowBound[j]+x0[j]*(this.upBound[j]-this.lowBound[j]);
+            }
+            set.add(x0);
         }
 
         int samplesPerIteration2 = (int) (threadCount * 6);
         if (samplesPerIteration2 == 0) {
             samplesPerIteration2 = 100;
         }
-        int i=0;
+                
         while(i<maxn){
             //int currentOffset = (int) offset + (i * samplesPerIteration2);
             //simplex[i] = this.getSample(x);

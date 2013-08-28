@@ -9,7 +9,6 @@ import optas.core.ObjectiveAchievedException;
 import jams.data.Attribute;
 import java.util.Arrays;
 import optas.optimizer.NelderMead;
-import optas.optimizer.ParallelNelderMead;
 import optas.core.SampleLimitException;
 import optas.optimizer.management.OptimizationController.OptimizationConfiguration;
 import optas.optimizer.management.SampleFactory.Sample;
@@ -67,10 +66,10 @@ public class SpatialRelaxation {
 
             optas.optimizer.Optimizer optimizer = null;
             if (relaxationValue < 0.8 && conf.getLocalSearchDuringRelaxation()) {
-                optimizer = conf.loadOptimizer(ParallelNelderMead.class.getName());
+                optimizer = conf.loadOptimizer(NelderMead.class.getName());
 
-                ParallelNelderMead nmOptimizer = (ParallelNelderMead) optimizer;
-                nmOptimizer.setExcludeFiles("(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|(.*output.*\\.db)|.*\\.cdat|.*\\.log");
+                NelderMead nmOptimizer = (NelderMead) optimizer;
+                //nmOptimizer.setExcludeFiles("(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|(.*output.*\\.db)|.*\\.cdat|.*\\.log");
                 nmOptimizer.setMax_restart_count(1.0);
                 nmOptimizer.setEpsilon(0.01);
             } else {

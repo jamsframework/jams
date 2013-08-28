@@ -197,11 +197,7 @@ public class ParallelPostSampling extends Optimizer{
 
         this.range = new double[][]{result.minBound, result.maxBound};
                 
-        this.injectSamples(result.list);
-
-        if (collection != null) {
-            collection.dump(getModel().getWorkspace().getOutputDataDirectory());
-        }
+        this.injectSamples(result.list);        
     }
 
     private double[] transform(double x[]){
