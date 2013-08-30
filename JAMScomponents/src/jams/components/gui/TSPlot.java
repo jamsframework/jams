@@ -56,6 +56,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.SwingWorker;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeriesDataItem;
@@ -158,7 +159,7 @@ public class TSPlot extends JAMSGUIComponent {
         
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Plot data, after cacheSize values have been collected",
-            defaultValue = "1")
+            defaultValue = "5")
     public Attribute.Integer cacheSize;
     TimeSeries[] tsLeft, tsRight;
     transient TimeSeriesCollection dataset1, dataset2;
