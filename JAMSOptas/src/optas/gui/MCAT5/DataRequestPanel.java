@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package optas.gui.MCAT5;
 
 import jams.JAMS;
@@ -36,227 +35,223 @@ import optas.data.DataSet;
 import optas.data.Efficiency;
 import optas.data.EfficiencyEnsemble;
 
-
 /**
  *
  * @author Christian Fischer
  */
-public final class DataRequestPanel extends JPanel{
-    
-    Dimension defaultDatasetTableDimension = new Dimension(500, 150);
+public final class DataRequestPanel extends JPanel {
+	Dimension defaultDatasetTableDimension = new Dimension(500, 150);
+	MCAT5Plot plot;
+	DataCollection data;
+	JPanel dataPanel = new JPanel();
 
-    MCAT5Plot plot;
-    DataCollection data;
+	public final class RequestGUI {
+		SimpleRequest request;
+		ArrayList<JComboBox> boxes;
 
-    JPanel dataPanel = new JPanel();
+		RequestGUI(SimpleRequest r) throws NoDataException {
+			this.request = r;
+			boxes = new ArrayList<JComboBox>();
+			while(boxes.size() < r.min) {
+				if(!addBox()) {
+					throw new NoDataException(r);
+				}
+			}
+			//try if possible, when r.min = 0;
+			if(r.min == 0 && r.max > 0) {
+				addBox();
+			}
+		}
 
-    public final class RequestGUI{
-        SimpleRequest request;
-        ArrayList<JComboBox> boxes;
+		public void removeLastBox() {
+			boxes.remove(boxes.size() - 1);
+		}
 
-        RequestGUI(SimpleRequest r) throws NoDataException{
-            this.request = r;
-            boxes = new ArrayList<JComboBox>();
-            while(boxes.size()<r.min){
-                if (!addBox()){
-                    throw new NoDataException(r);
-                }
-            }
-            //try if possible, when r.min = 0;
-            if (r.min == 0 && r.max > 0){
-                addBox();
-            }
-        }
+		public boolean addBox() {
+			JComboBox box = new JComboBox();
+			box.setPreferredSize(new Dimension(150, 30));
+			if(data.getDatasets(request.clazz).isEmpty() && request.min > 0) {
+				return false;
+			}
 
-        public void removeLastBox() {
-            boxes.remove(boxes.size() - 1);            
-        }
+			for(String d : data.getDatasets(request.clazz)) {
+				box.addItem(d);
+			}
 
-        public boolean addBox() {
-            JComboBox box = new JComboBox();
-            box.setPreferredSize(new Dimension(150, 30));            
-            if (data.getDatasets(request.clazz).isEmpty() && request.min>0) {
-                return false;
-            }
+			if(request.clazz.equals(Efficiency.class) && ObjectiveConstructorDialog.isApplicable(data)) {
+				box.addItem("User defined");
+			}
 
-            for (String d : data.getDatasets(request.clazz)) {
-                box.addItem(d);
-            }
+			box.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					if(e.getStateChange() != ItemEvent.SELECTED) {
+						return;
+					}
+					if(e.getItem().toString().compareTo("User defined") == 0) {
+						ObjectiveConstructorDialog dlg = new ObjectiveConstructorDialog(data);
+						dlg.setVisible(true);
+						if(dlg.getApproved()) {
+							EfficiencyEnsemble ensemble = dlg.getResult();
+							JComboBox box = (JComboBox) e.getSource();
+							DataRequestPanel.this.data.addEnsemble(ensemble);
+							box.addItem(ensemble);
+							box.setSelectedItem(box);
+						}
+					}
+					updatePlot();
+				}
+			});
+			box.putClientProperty("request", request);
+			boxes.add(box);
+			return true;
+		}
+	}
+	ArrayList<RequestGUI> requests = new ArrayList<RequestGUI>();
 
-            if (request.clazz.equals(Efficiency.class) && ObjectiveConstructorDialog.isApplicable(data)){
-                box.addItem("User defined");
-            }
+	public DataRequestPanel(MCAT5Plot plot, DataCollection data) throws NoDataException {
+		this.plot = plot;
+		this.data = data;
+		plot.setDataSource(data);
+		if(data == null) {
+			throw new NoDataException("datacollection not provided!");
+		}
 
-            box.addItemListener(new ItemListener() {
+		JScrollPane contentScroll = new JScrollPane(plot.getPanel());
+		contentScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		contentScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-                public void itemStateChanged(ItemEvent e) {
-                    if (e.getStateChange()!=ItemEvent.SELECTED)
-                        return;
-                    if (e.getItem().toString().compareTo("User defined")==0){
-                        ObjectiveConstructorDialog dlg = new ObjectiveConstructorDialog(data);
-                        dlg.setVisible(true);
-                        if (dlg.getApproved()){
-                            EfficiencyEnsemble ensemble = dlg.getResult();
-                            JComboBox box = (JComboBox)e.getSource();
-                            DataRequestPanel.this.data.addEnsemble(ensemble);
-                            box.addItem(ensemble);
-                            box.setSelectedItem(box);
-                        }
-                    }
-                    updatePlot();
-                }
-            });
-            box.putClientProperty("request", request);
-            boxes.add(box);
-            return true;
-        }
-    }
+		this.setLayout(new BorderLayout());
+		this.add(contentScroll, BorderLayout.CENTER);
 
-    ArrayList<RequestGUI> requests = new ArrayList<RequestGUI>();
+		ArrayList<SimpleRequest> request = plot.getRequiredData();
 
-    public DataRequestPanel(MCAT5Plot plot, DataCollection data) throws NoDataException{
-        this.plot = plot;
-        this.data = data;
-        plot.setDataSource(data);
-        if (data==null) {
-            throw new NoDataException("datacollection not provided!");
-        }
-        ArrayList<SimpleRequest> request = plot.getRequiredData();
+		if(request.isEmpty()) {
+			updatePlot();
+			return;
+		}
+		for(SimpleRequest r : request) {
+			RequestGUI rGUI = new RequestGUI(r);
+			requests.add(rGUI);
+		}
+		JScrollPane datasetScroll = new JScrollPane(dataPanel);
+		/*datasetScroll.setSize(defaultDatasetTableDimension);
+		 datasetScroll.setMinimumSize(defaultDatasetTableDimension);
+		 datasetScroll.setPreferredSize(defaultDatasetTableDimension);*/
 
-        if (request.isEmpty()){
-            updatePlot();
-            return;
-        }
-        for (SimpleRequest r : request){
-            RequestGUI rGUI = new RequestGUI(r);
-            requests.add(rGUI);
-        }
-        JScrollPane datasetScroll = new JScrollPane(dataPanel);
-        /*datasetScroll.setSize(defaultDatasetTableDimension);
-        datasetScroll.setMinimumSize(defaultDatasetTableDimension);
-        datasetScroll.setPreferredSize(defaultDatasetTableDimension);*/
+		dataPanel.setLayout(new GridBagLayout());
+		layouting();
 
-        dataPanel.setLayout(new GridBagLayout());
+		this.add(datasetScroll, BorderLayout.SOUTH);
 
-        JScrollPane contentScroll = new JScrollPane(plot.getPanel());
-        contentScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        contentScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        layouting();
+		updatePlot();
+	}
 
-        this.setLayout(new BorderLayout());
-        this.add(contentScroll, BorderLayout.CENTER);
-        this.add(datasetScroll, BorderLayout.SOUTH);
+	public void layouting() {
+		dataPanel.removeAll();
 
-        updatePlot();
-    }
+		int i = 0;
+		for(RequestGUI r : requests) {
+			for(int j = 0; j < r.boxes.size(); j++) {
+				GridBagConstraints c = new GridBagConstraints();
+				c.gridx = 0;
+				c.gridy = i;
+				c.anchor = GridBagConstraints.WEST;
+				c.ipadx = 10;
+				dataPanel.add(new JLabel(r.request.name), c);
 
-    public void layouting(){
-        dataPanel.removeAll();
+				c.gridx = 1;
+				if(j == r.boxes.size() - 1) {
+					JPanel panel = new JPanel(new BorderLayout());
+					JPanel buttonPanel = new JPanel(new FlowLayout());
 
-        int i=0;
-        for (RequestGUI r : requests){
-            for (int j=0;j<r.boxes.size();j++){
-                GridBagConstraints c = new GridBagConstraints();
-                c.gridx = 0;
-                c.gridy = i;
-                c.anchor = GridBagConstraints.WEST;
-                c.ipadx = 10;
-                dataPanel.add(new JLabel(r.request.name),c);
+					panel.add(r.boxes.get(j), BorderLayout.WEST);
+					panel.add(buttonPanel, BorderLayout.EAST);
 
-                c.gridx = 1;
-                if (j==r.boxes.size()-1){
-                    JPanel panel = new JPanel(new BorderLayout());
-                    JPanel buttonPanel = new JPanel(new FlowLayout());
+					if(r.boxes.size() < r.request.max) {
+						JButton button = new JButton("+");
+						button.putClientProperty("request", r);
+						button.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								RequestGUI rGUI = (RequestGUI) ((JButton) e.getSource()).getClientProperty("request");
+								rGUI.addBox();
+								SwingUtilities.invokeLater(new Runnable() {
+									public void run() {
+										layouting();
+									}
+								});
+							}
+						});
+						buttonPanel.add(button);
 
-                    panel.add(r.boxes.get(j), BorderLayout.WEST);
-                    panel.add(buttonPanel, BorderLayout.EAST);
+					}
 
-                    if (r.boxes.size() < r.request.max){
-                        JButton button = new JButton("+");
-                        button.putClientProperty("request", r);
-                        button.addActionListener(new ActionListener() {
+					if(r.boxes.size() > r.request.min) {
+						JButton button = new JButton("-");
+						button.putClientProperty("request", r);
+						button.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								RequestGUI rGUI = (RequestGUI) ((JButton) e.getSource()).getClientProperty("request");
+								rGUI.removeLastBox();
+								SwingUtilities.invokeLater(new Runnable() {
+									public void run() {
+										layouting();
+									}
+								});
 
-                            public void actionPerformed(ActionEvent e) {
-                                RequestGUI rGUI = (RequestGUI)((JButton)e.getSource()).getClientProperty("request");
-                                rGUI.addBox();
-                                SwingUtilities.invokeLater(new Runnable(){
-                                    public void run(){
-                                        layouting();
-                                    }
-                                });
-                            }
-                        });
-                        buttonPanel.add(button);
-                         
-                    }
+							}
+						});
+						buttonPanel.add(button);
+					}
+					dataPanel.add(panel, c);
+				} else {
+					dataPanel.add(r.boxes.get(j), c);
+				}
+				i++;
+			}
+		}
 
-                    if (r.boxes.size() > r.request.min){
-                        JButton button = new JButton("-");
-                        button.putClientProperty("request", r);
-                        button.addActionListener(new ActionListener() {
+		dataPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black),
+				"Data Configuration"));
 
-                            public void actionPerformed(ActionEvent e) {
-                                RequestGUI rGUI = (RequestGUI)((JButton)e.getSource()).getClientProperty("request");
-                                rGUI.removeLastBox();
-                                SwingUtilities.invokeLater(new Runnable(){
-                                    public void run(){
-                                        layouting();
-                                    } 
-                                });
+		this.invalidate();
+		this.updateUI();
+	}
 
-                            }
-                        });
-                        buttonPanel.add(button);
-                    }                    
-                    dataPanel.add(panel,c);
-                }else
-                    dataPanel.add(r.boxes.get(j),c);
-                i++;
-            }                                   
-        }
+	public void updatePlot() {
+		Frame parent = JFrame.getFrames().length > 0 ? JFrame.getFrames()[0] : null;
 
-        dataPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black),
-                "Data Configuration"));
-                
-        this.invalidate();
-        this.updateUI();
-    }
+		WorkerDlg progress = new WorkerDlg(parent, "Updating plot");
+		progress.setInderminate(true);
+		progress.setTask(new Runnable() {
+			public void run() {
+				try {
+					for(RequestGUI rGUI : requests) {
+						ArrayList<DataSet> list = new ArrayList<DataSet>();
+						for(JComboBox box : rGUI.boxes) {
+							DataSet e = null;
+							if(box.getSelectedItem() instanceof String) {
+								e = data.getDataSet((String) box.getSelectedItem());
+								list.add(e);
+							} else {
+								list.add((DataSet) box.getSelectedItem());
+							}
 
-    public void updatePlot() {
-        Frame parent = JFrame.getFrames().length > 0 ? JFrame.getFrames()[0] : null;
-        
-        WorkerDlg progress = new WorkerDlg(parent, "Updating plot");
-        progress.setInderminate(true);
-        progress.setTask(new Runnable() {
-            public void run() {
-                try{
-                for (RequestGUI rGUI : requests) {
-                    ArrayList<DataSet> list = new ArrayList<DataSet>();
-                    for (JComboBox box : rGUI.boxes) {
-                        DataSet e = null;
-                        if (box.getSelectedItem() instanceof String) {
-                            e = data.getDataSet((String) box.getSelectedItem());
-                            list.add(e);
-                        } else {
-                            list.add((DataSet) box.getSelectedItem());
-                        }
+						}
+						plot.setData(rGUI.request.name, list);
+					}
+					try {
+						plot.refresh();
+						invalidate();
+						updateUI();
+					} catch(NoDataException nde) {
+						JOptionPane.showMessageDialog(dataPanel, JAMS.i18n("Failed_to_show_dataset_The_data_is_incommensurate!"));
+					}
+				} catch(Throwable t) {
+					t.printStackTrace();
+				}
+			}
+		});
+		progress.execute();
 
-                    }
-                    plot.setData(rGUI.request.name, list);
-                }
-                try {
-                    plot.refresh();
-                    invalidate();
-                    updateUI();
-                } catch (NoDataException nde) {
-                    JOptionPane.showMessageDialog(dataPanel, JAMS.i18n("Failed_to_show_dataset_The_data_is_incommensurate!"));
-                }
-                }catch(Throwable t){
-                    t.printStackTrace();
-                }
-            }
-        });
-        progress.execute();
-
-    }
+	}
 }
