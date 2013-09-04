@@ -162,7 +162,7 @@ public class DisplayManager implements Observer {
 
                 try {
 
-                    Component outputPanel = OutputPanelFactory.getOutputDSPanel(explorer, datFile, dsID);
+                    Component outputPanel = OutputPanelFactory.getOutputDSPanel(explorer, fo, dsID);
                     dataPanels.put(dsID, outputPanel);
                     explorer.getExplorerFrame().getTPane().addTab(dsID, outputPanel);
                     explorer.getExplorerFrame().getTPane().setSelectedComponent(outputPanel);

@@ -15,7 +15,6 @@ import java.util.Hashtable;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -24,7 +23,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -37,6 +35,7 @@ import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
+import optas.tools.PatchedChartPanel;
 
 /**
  *
@@ -46,7 +45,7 @@ import optas.data.TimeSerieEnsemble;
 public class ParameterInterpolation extends MCAT5Plot {
 
     XYPlot plot = new XYPlot();
-    ChartPanel chartPanel = null;
+    PatchedChartPanel chartPanel = null;
     JPanel panel = null;    
     JSlider slider = new JSlider();
 
@@ -113,7 +112,7 @@ public class ParameterInterpolation extends MCAT5Plot {
         
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle("Interpolation");
-        chartPanel = new ChartPanel(chart, true);
+        chartPanel = new PatchedChartPanel(chart, true);
 
         chartPanel.setMinimumDrawWidth( 0 );
         chartPanel.setMinimumDrawHeight( 0 );

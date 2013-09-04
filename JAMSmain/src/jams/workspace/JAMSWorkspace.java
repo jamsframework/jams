@@ -799,7 +799,7 @@ public class JAMSWorkspace implements Workspace {
     public File getOutputDataDirectory() {
         return outputDataDirectory;
     }
-
+    
     /**
      *
      * @return All existing data output directories
@@ -821,7 +821,7 @@ public class JAMSWorkspace implements Workspace {
             files.add(f);
         }
         
-        boolean change = true;
+        /*boolean change = true;
         while (change) {
             change = false;
             for (File f : list) {
@@ -835,7 +835,7 @@ public class JAMSWorkspace implements Workspace {
                     }
                 }
             }
-        }
+        }*/
         return files.toArray(new File[0]);
     }
 
@@ -844,11 +844,14 @@ public class JAMSWorkspace implements Workspace {
      * @param outputDataDirectory An output data directory
      * @return All existing data files from a given output data directory
      */
+    @Override
     public File[] getOutputDataFiles(File outputDataDirectory) {
         FileFilter filter = new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                if (pathname.isFile() && (
+                if (pathname.isDirectory()){
+                    return true;
+                }if (pathname.isFile() && (
                         pathname.getName().endsWith(OUTPUT_FILE_ENDING) || 
                         pathname.getName().endsWith(SPREADSHEET_FILE_ENDING) || 
                         pathname.getName().endsWith(DATACOLLECTION_FILE_ENDING)) || 

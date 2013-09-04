@@ -21,11 +21,9 @@ import java.util.Comparator;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -42,6 +40,7 @@ import optas.data.EfficiencyEnsemble;
 import optas.data.Measurement;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
+import optas.tools.PatchedChartPanel;
 
 /**
  *
@@ -52,8 +51,8 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
 
     XYPlot plot1 = new XYPlot();
     XYPlot plot2 = new XYPlot();
-    ChartPanel chartPanel1 = null;
-    ChartPanel chartPanel2 = null;
+    PatchedChartPanel chartPanel1 = null;
+    PatchedChartPanel chartPanel2 = null;
     JPanel mainPanel = null;
     JTextField thresholdField;
     JTextField percentilField;
@@ -172,7 +171,7 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         chart2.setTitle("");
         chart2.removeLegend();
 
-        chartPanel1 = new ChartPanel(chart1, true);
+        chartPanel1 = new PatchedChartPanel(chart1, true);
 
         chartPanel1.setMinimumDrawWidth( 0 );
         chartPanel1.setMinimumDrawHeight( 0 );

@@ -5,13 +5,10 @@
 package optas.gui.MCAT5;
 
 import jams.JAMS;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.util.ArrayList;
 import javax.swing.GroupLayout;
 import javax.swing.JPanel;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -26,6 +23,7 @@ import optas.data.Efficiency;
 import optas.data.EfficiencyEnsemble;
 import optas.data.SimpleEnsemble;
 import optas.data.StateVariable;
+import optas.tools.PatchedChartPanel;
 
 /**
  *
@@ -36,8 +34,8 @@ public class GLUEVariableUncertainty extends MCAT5Plot {
     XYPlot plot1 = new XYPlot();
     XYPlot plot2 = new XYPlot();
             
-    ChartPanel chartPanel1 = null;
-    ChartPanel chartPanel2 = null;
+    PatchedChartPanel chartPanel1 = null;
+    PatchedChartPanel chartPanel2 = null;
 
     final int GROUPS = 10;
     
@@ -65,8 +63,8 @@ public class GLUEVariableUncertainty extends MCAT5Plot {
         chart2.setTitle(JAMS.i18n("DENSITY_PLOT"));
                 
         chart2.removeLegend();
-        chartPanel1 = new ChartPanel(chart1, true);
-        chartPanel2 = new ChartPanel(chart2, true);
+        chartPanel1 = new PatchedChartPanel(chart1, true);
+        chartPanel2 = new PatchedChartPanel(chart2, true);
                
         chartPanel1.setMinimumDrawWidth( 0 );
         chartPanel1.setMinimumDrawHeight( 0 );

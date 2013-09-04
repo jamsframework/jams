@@ -58,7 +58,22 @@ public class DataStoreProcessorOMS extends AbstractDataStoreProcessor{
     File f = null;
     CSTable table = null;
     
+    private int tableID = 0;
+    ArrayList<AbstractDataStoreProcessor> dsList = null;
+    boolean hasSubDataStores = false;        
+    
+    
     public DataStoreProcessorOMS(File f){
+        this(f,0);
+        
+        this.collectSubDataStores();
+        if (this.dsList.isEmpty()){
+            hasSubDataStores = false;
+        }else{
+            hasSubDataStores = true;
+        }
+    }
+    private DataStoreProcessorOMS(File f, int tableID){
         super(f);
         
         this.f = f;
@@ -67,7 +82,7 @@ public class DataStoreProcessorOMS extends AbstractDataStoreProcessor{
             if (tables.isEmpty()){
                 throw new IOException("File " + f.getAbsolutePath() + " contains no tables");
             }
-            String tableName = tables.get(0);
+            String tableName = tables.get(tableID);
             System.out.println("Loading table " + tableName);
             table = DataIO.table(f, tableName);
         }catch(IOException ioe){
@@ -322,6 +337,37 @@ public class DataStoreProcessorOMS extends AbstractDataStoreProcessor{
             }
         }
         return attribs.toArray(new String[attribs.size()]);
+    }
+
+    private void collectSubDataStores(){
+        dsList = new ArrayList<AbstractDataStoreProcessor>();
+        try{
+            List<String> tables = DataIO.tables(f);
+            if (tables.isEmpty()){
+                throw new IOException("File " + f.getAbsolutePath() + " contains no tables");
+            }            
+            for (String s : tables){
+                CSTable table = DataIO.table(f, s);
+                
+                dsList.add(new DataStoreProcessorOMS(f, tableID++));
+            }
+        }catch(IOException ioe){
+            ioe.printStackTrace();
+        }   
+    }
+    
+    @Override
+    public AbstractDataStoreProcessor[] getSubDataStores() {
+             
+        return dsList.toArray(new AbstractDataStoreProcessor[0]);
+    }
+    
+    @Override
+    public String toString(){
+        if (hasSubDataStores)
+            return this.f.getName();
+        else
+            return this.f.getName() + ":" + this.table.getName();
     }
 
 }

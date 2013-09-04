@@ -7,9 +7,8 @@ package optas.hydro.gui;
 import jams.JAMS;
 import java.awt.Color;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import org.jfree.chart.ChartPanel;
+
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -23,6 +22,7 @@ import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
+import optas.tools.PatchedChartPanel;
 
 /**
  *
@@ -31,7 +31,7 @@ import optas.data.TimeSerieEnsemble;
 public class SimpleGlobalSensitivityAtPoint extends MCAT5Plot {
 
     XYPlot plot = new XYPlot();
-    ChartPanel chartPanel = null;
+    PatchedChartPanel chartPanel = null;
 
     int timeIndex = 0;
     public SimpleGlobalSensitivityAtPoint(int index) {
@@ -53,7 +53,7 @@ public class SimpleGlobalSensitivityAtPoint extends MCAT5Plot {
         //setup chart
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle(JAMS.i18n("DOTTY_PLOT"));
-        chartPanel = new ChartPanel(chart, true);
+        chartPanel = new PatchedChartPanel(chart, true);
 
         redraw();
     }

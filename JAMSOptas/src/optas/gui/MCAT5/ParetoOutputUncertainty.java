@@ -9,7 +9,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JPanel;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -22,6 +21,7 @@ import optas.data.EfficiencyEnsemble;
 import optas.data.Measurement;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
@@ -33,7 +33,7 @@ import org.jfree.data.time.TimeSeriesCollection;
  */
 public class ParetoOutputUncertainty extends MCAT5Plot {
     XYPlot plot1 = new XYPlot();            
-    ChartPanel chartPanel1 = null;
+    PatchedChartPanel chartPanel1 = null;
             
     String var_name = null;
         
@@ -51,7 +51,7 @@ public class ParetoOutputUncertainty extends MCAT5Plot {
         JFreeChart chart1 = new JFreeChart(plot1);
         chart1.setTitle(JAMS.i18n("PARETO_OUTPUT_UNCERTAINTY"));
 
-        chartPanel1 = new ChartPanel(chart1, true);
+        chartPanel1 = new PatchedChartPanel(chart1, true);
         chartPanel1.setMinimumDrawWidth( 0 );
         chartPanel1.setMinimumDrawHeight( 0 );
         chartPanel1.setMaximumDrawWidth( MAXIMUM_WIDTH );

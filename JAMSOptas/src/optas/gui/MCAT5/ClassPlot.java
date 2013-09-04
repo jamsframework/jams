@@ -6,14 +6,12 @@ package optas.gui.MCAT5;
 
 import jams.JAMS;
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -25,7 +23,7 @@ import optas.data.EfficiencyEnsemble;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
 import optas.gui.MCAT5.MCAT5Plot.SimpleRequest;
-import org.jfree.chart.ChartPanel;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -65,7 +63,7 @@ public class ClassPlot extends MCAT5Plot {
         chart.getPlot().setBackgroundPaint(Color.white);
         chart.getXYPlot().setDomainGridlinePaint(Color.black);
         
-        ChartPanel chartPanel = new ChartPanel(chart, true);
+        PatchedChartPanel chartPanel = new PatchedChartPanel(chart, true);
 
         chartPanel.setMinimumDrawWidth( 0 );
         chartPanel.setMinimumDrawHeight( 0 );

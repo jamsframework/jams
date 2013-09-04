@@ -12,13 +12,11 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import optas.data.DataSet;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -29,6 +27,7 @@ import optas.data.Efficiency;
 import optas.data.EfficiencyEnsemble;
 import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
+import optas.tools.PatchedChartPanel;
 
 /**
  *
@@ -39,7 +38,7 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
 
     XYPlot plot = new XYPlot();
     XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-    ChartPanel chartPanel = null;
+    PatchedChartPanel chartPanel = null;
     JPanel mainPanel = null;
     int GROUPS = 10;
 
@@ -53,7 +52,7 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
     private void init() {
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle(JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS"));
-        chartPanel = new ChartPanel(chart, true);
+        chartPanel = new PatchedChartPanel(chart, true);
         chartPanel.setMinimumDrawWidth( 0 );
         chartPanel.setMinimumDrawHeight( 0 );
         chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );

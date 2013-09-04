@@ -30,7 +30,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import optas.data.DataCollection;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -50,6 +49,7 @@ import optas.data.TimeSerieEnsemble;
 import optas.optimizer.management.SampleFactory;
 import optas.optimizer.management.SampleFactory.Sample;
 import optas.optimizer.management.Statistics;
+import optas.tools.PatchedChartPanel;
 import optas.tools.PatchedSpiderWebPlot;
 import optas.tools.Tools;
 import org.jfree.chart.ChartMouseEvent;
@@ -66,8 +66,8 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
 	final int MAX_OBJCOUNT = 10;
 	XYPlot hydroChart = new XYPlot();
 	PatchedSpiderWebPlot spiderPlot = new PatchedSpiderWebPlot();
-	ChartPanel chartPanel1 = null;
-	ChartPanel chartPanel2 = null;
+	PatchedChartPanel chartPanel1 = null;
+	PatchedChartPanel chartPanel2 = null;
 	JSlider objSliders[] = new JSlider[10];
 	JPanel mainPanel = null;
 	JTextField alphaField = new JTextField(5);
@@ -132,7 +132,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
 		//TODO make spiderplot nice
 		spiderPlot.setBaseSeriesOutlineStroke(new BasicStroke(2.0f));
 
-		chartPanel1 = new ChartPanel(chart1, true);
+		chartPanel1 = new PatchedChartPanel(chart1, true);
 		chartPanel1.setMinimumDrawWidth(0);
 		chartPanel1.setMinimumDrawHeight(0);
 		chartPanel1.setMaximumDrawWidth(MAXIMUM_WIDTH);
@@ -145,7 +145,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
 		chart2.setTitle("Possible solutions");
 		chart2.removeLegend();
 
-		chartPanel2 = new ChartPanel(chart2, true);
+		chartPanel2 = new PatchedChartPanel(chart2, true);
 		chartPanel2.setMinimumDrawWidth(0);
 		chartPanel2.setMinimumDrawHeight(0);
 		chartPanel2.setMaximumDrawWidth(MAXIMUM_WIDTH);

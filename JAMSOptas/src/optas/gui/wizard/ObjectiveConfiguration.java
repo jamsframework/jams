@@ -19,8 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -48,9 +46,9 @@ import optas.data.TimeFilter;
 import optas.data.TimeSerie;
 import optas.efficiencies.UniversalEfficiencyCalculator;
 import optas.io.TSDataReader;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.entity.XYItemEntity;
 
 /**
@@ -68,7 +66,7 @@ public class ObjectiveConfiguration extends JPanel{
     
     TimeFilterTableInput filterList = new TimeFilterTableInput(null);
     HydrographChart hydroChart = new HydrographChart();
-    ChartPanel chartPanel = null;
+    PatchedChartPanel chartPanel = null;
     
     JPanel timeIntervalPanel = new JPanel();
     JButton loadTimeSerie = new JButton(JAMS.i18n("Load_Timeserie"));
@@ -568,7 +566,7 @@ public class ObjectiveConfiguration extends JPanel{
         scrollbar.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("time_filters")));
         timeIntervalPanel.setLayout(new BorderLayout());
         timeIntervalPanel.add(scrollbar, BorderLayout.WEST);
-        chartPanel = new ChartPanel(hydroChart.getChart(), true);
+        chartPanel = new PatchedChartPanel(hydroChart.getChart(), true);
         JPanel hydroChartPanel = new JPanel();
         GroupLayout hydroChartLayout = new GroupLayout(hydroChartPanel);
         hydroChartPanel.setLayout(hydroChartLayout);

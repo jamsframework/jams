@@ -29,6 +29,7 @@ import java.util.StringTokenizer;
 import jams.data.*;
 import jams.model.*;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  *
@@ -56,13 +57,15 @@ public class ABCDataReader extends JAMSComponent {
                         description = "Runoff value read from file")
                         public Attribute.Double runoff;
     
-    private BufferedReader reader;
-
+    
+    ArrayList<double[]> data = new ArrayList<double[]>();
+    int counter = 0;
     /*
      *  Component run stages
      */
     @Override
     public void init() {
+        BufferedReader reader=null;
         try {            
             if (fileName == null) {
                 getModel().getRuntime().sendHalt("You should specify a file for ABCDataReader");
@@ -76,20 +79,9 @@ public class ABCDataReader extends JAMSComponent {
             reader = new BufferedReader(new FileReader(file));
             reader.readLine();
             reader.readLine();
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
-    public void run() {
-
-        String line, token;
-        try {
-
-            line = reader.readLine();
+            
+            String line, token;
+            while ((line = reader.readLine()) != null){
             if (line == null) {
                 getModel().getRuntime().sendHalt("There is no more data in" + " "
                         + this.fileName + ". Check your data file or timeInterval");
@@ -97,25 +89,31 @@ public class ABCDataReader extends JAMSComponent {
             }
             StringTokenizer st = new StringTokenizer(line);
             token = st.nextToken();
-            token = st.nextToken();
-            precip.setValue(Double.parseDouble(token));
-            token = st.nextToken();
-            runoff.setValue(Double.parseDouble(token));
-
-        } catch (NumberFormatException ex) {
+            //token = st.nextToken();
+            
+            double dataset[] = new double[2];
+            dataset[0] = Double.parseDouble(st.nextToken());
+            dataset[1] = Double.parseDouble(st.nextToken());
+            data.add(dataset);
+            }
+            reader.close();
+        } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        counter=0;
+    }
 
+    @Override
+    public void run() {
+        precip.setValue(data.get(counter)[0]);
+        runoff.setValue(data.get(counter)[1]);
+        counter++;
     }
 
     @Override
     public void cleanup() {
-        try {
-            reader.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        
     }
 }

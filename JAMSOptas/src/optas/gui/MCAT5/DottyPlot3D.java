@@ -7,16 +7,15 @@ package optas.gui.MCAT5;
 import jams.JAMS;
 import java.awt.Color;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import optas.data.DataSet;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import optas.data.Efficiency;
 import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
@@ -29,7 +28,7 @@ import org.jfree.ui.RectangleAnchor;
 public class DottyPlot3D extends MCAT5Plot {
 
     protected XYPlot plot = new XYPlot();
-    protected ChartPanel chartPanel = null;
+    protected PatchedChartPanel chartPanel = null;
     XYBlockRenderer bg_renderer = new XYBlockRenderer();
 
     private void init() {
@@ -47,7 +46,7 @@ public class DottyPlot3D extends MCAT5Plot {
         //setup chart
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle(JAMS.i18n("DOTTY_PLOT"));
-        chartPanel = new ChartPanel(chart, true);
+        chartPanel = new PatchedChartPanel(chart, true);
 
         redraw();
     }

@@ -31,8 +31,8 @@ import optas.data.EfficiencyEnsemble;
 import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
 import optas.regression.SimpleInterpolation;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.plot.CategoryPlot;
@@ -253,7 +253,7 @@ public class SensitivityToolbox extends MCAT5Plot {
 
         // get a reference to the plot for further customisation...
         chart.getCategoryPlot().setRangeAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-        ChartPanel chartPanel = new ChartPanel(chart);
+        PatchedChartPanel chartPanel = new PatchedChartPanel(chart);
         chartPanel.setMinimumDrawWidth( 0 );
         chartPanel.setMinimumDrawHeight( 0 );
         chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );

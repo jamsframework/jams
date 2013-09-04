@@ -19,7 +19,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -28,7 +27,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
 import optas.data.DataSet;
@@ -37,6 +35,7 @@ import optas.data.EfficiencyEnsemble;
 import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
 import optas.regression.SimpleNeuralNetwork;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.chart.renderer.xy.XYBlockRenderer;
@@ -51,7 +50,7 @@ import org.jfree.ui.RectangleAnchor;
 public class ParameterInterpolation2 extends MCAT5Plot {
 
     protected XYPlot plot = new XYPlot();
-    protected ChartPanel chartPanel = null;
+    protected PatchedChartPanel chartPanel = null;
     XYBlockRenderer bg_renderer = new XYBlockRenderer();
 
     JPanel panel = new JPanel(new BorderLayout());
@@ -102,7 +101,7 @@ public class ParameterInterpolation2 extends MCAT5Plot {
         //setup chart
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle("Interpolation");
-        chartPanel = new ChartPanel(chart, true);
+        chartPanel = new PatchedChartPanel(chart, true);
 
         chartPanel.setMinimumDrawWidth( 0 );
         chartPanel.setMinimumDrawHeight( 0 );

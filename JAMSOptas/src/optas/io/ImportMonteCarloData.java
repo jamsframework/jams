@@ -6,6 +6,7 @@ package optas.io;
 
 import jams.JAMS;
 import jams.JAMSProperties;
+import jams.data.Attribute;
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
 import jams.data.DefaultDataFactory;
@@ -35,6 +36,7 @@ import optas.data.NegativeEfficiency;
 import optas.data.Parameter;
 import optas.data.PositiveEfficiency;
 import optas.data.SimpleDataSet;
+import optas.data.SimpleEnsemble;
 import optas.data.StateVariable;
 import optas.data.TimeSerie;
 
@@ -183,7 +185,7 @@ public class ImportMonteCarloData implements Serializable {
                 }
             }
             try {
-                if (simpleDatasetClasses.containsKey(dataSetClassName)) {
+                if (simpleDatasetClasses.containsKey(dataSetClassName) && p instanceof SimpleSerieProcessor) {
                     if (p instanceof SimpleSerieProcessor) {
                         SimpleSerieProcessor s = ((SimpleSerieProcessor) p);
                         String[] ids = s.getIDs();
@@ -194,23 +196,34 @@ public class ImportMonteCarloData implements Serializable {
                         DataMatrix m = s.getData(ids);
                         a.setSelected(false);
                         int row = 0;
-                        for (String id : ids) {
-                            Integer intID = null;
-                            try {
-                                intID = Integer.parseInt(id);
-                            } catch (NumberFormatException nfe) {
-                                nfe.printStackTrace();
-                                //fallback (there should be a list of all used ids)
-                                intID = new Integer(badIDCounter++);
+                        if (s.isTimeSerie()){
+                            double values[] = m.getCol(0);
+                            Attribute.TimeInterval timeInterval = DefaultDataFactory.getDataFactory().createTimeInterval();
+                            timeInterval.setStart(s.getTimeSteps()[0]);
+                            timeInterval.setEnd(s.getTimeSteps()[values.length-1]);
+                            timeInterval.setTimeUnit(s.getTimeUnit());
+                            
+                            TimeSerie ts = new TimeSerie(values, timeInterval, a.getName(), ensemble);
+                            ensemble.addTimeSerie(new Measurement(ts));
+                        } else {
+                            for (String id : ids) {
+                                Integer intID = null;
+                                try {
+                                    intID = Integer.parseInt(id);
+                                } catch (NumberFormatException nfe) {
+                                    nfe.printStackTrace();
+                                    //fallback (there should be a list of all used ids)
+                                    intID = new Integer(badIDCounter++);
+                                }
+                                Modelrun r = new Modelrun(intID, null);
+                                Class datasetClass = simpleDatasetClasses.get(dataSetClassName);
+                                Constructor c = datasetClass.getConstructor(SimpleDataSet.class);
+                                SimpleDataSet nonTypedSDS = new SimpleDataSet(m.get(row, 0), a.getName(), r);
+                                row++;
+                                SimpleDataSet typedSDS = (SimpleDataSet) c.newInstance(nonTypedSDS);
+                                r.addDataSet(typedSDS);
+                                ensemble.addModelRun(r);
                             }
-                            Modelrun r = new Modelrun(intID, null);
-                            Class datasetClass = simpleDatasetClasses.get(dataSetClassName);
-                            Constructor c = datasetClass.getConstructor(SimpleDataSet.class);
-                            SimpleDataSet nonTypedSDS = new SimpleDataSet(m.get(row, 0), a.getName(), r);
-                            row++;
-                            SimpleDataSet typedSDS = (SimpleDataSet) c.newInstance(nonTypedSDS);
-                            r.addDataSet(typedSDS);
-                            ensemble.addModelRun(r);
                         }
                     }
                 }
@@ -230,7 +243,7 @@ public class ImportMonteCarloData implements Serializable {
                 throw new ImportMonteCarloException(JAMS.i18n("Could_not_build_ensemble_"), t);
             }
             try {
-                if (timeSerieDatasetClasses.containsKey(dataSetClassName)) {
+                if (timeSerieDatasetClasses.containsKey(dataSetClassName) && p instanceof EnsembleTimeSeriesProcessor) {
                     EnsembleTimeSeriesProcessor s = ((EnsembleTimeSeriesProcessor) p);
                     long[] ids = s.getModelRuns();
                     Calendar[] timesteps = s.getTimeSteps();

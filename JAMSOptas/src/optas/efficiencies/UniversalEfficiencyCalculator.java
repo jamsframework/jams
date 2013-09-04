@@ -220,14 +220,14 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
 
     private void setObjective(double m[], double s[], int k, Attribute.Double[] field, Attribute.Double[] normalized_field, EfficiencyCalculator calc) {
         if (field != null && field.length > k && field[k] != null) {
-            field[k].setValue(calcE1.calc(m, s));
+            field[k].setValue(calc.calc(m, s));
         }
         if (normalized_field != null && normalized_field.length > k && normalized_field[k] != null) {
-            double value = calcE1.calcNormative(m, s);
+            double value = calc.calcNormative(m, s);
             if (Double.isNaN(value)) {
-                this.e1_normalized[k].setValue(Double.MAX_VALUE);
+                field[k].setValue(Double.MAX_VALUE);
             } else {
-                this.e1_normalized[k].setValue(value);
+                normalized_field[k].setValue(value);
             }
             normalized_field[k].setValue(value);
         }
@@ -246,6 +246,23 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             if (timeIntervalList.size() > 5) {
                 this.getModel().getRuntime().println("********          :...");
             }
+            
+            
+        if (e1==null || e1.length < m) e1 = new Attribute.Double[m];
+        if (e2==null || e2.length < m) e2 = new Attribute.Double[m];
+        if (le1==null || le1.length < m) le1 = new Attribute.Double[m];
+        if (le2==null || le2.length < m) le2 = new Attribute.Double[m];
+        if (r2==null || r2.length < m) r2 = new Attribute.Double[m];
+        if (ave==null || ave.length < m) ave = new Attribute.Double[m];
+        if (bias==null || bias.length < m) bias = new Attribute.Double[m];
+        if (e1_normalized==null || e1_normalized.length < m) e1 = new Attribute.Double[m];
+        if (e2_normalized==null || e2_normalized.length < m) e2_normalized = new Attribute.Double[m];
+        if (le1_normalized==null || le1_normalized.length < m) le1_normalized = new Attribute.Double[m];
+        if (le2_normalized==null || le2_normalized.length < m) le2_normalized = new Attribute.Double[m];
+        if (r2_normalized==null || r2_normalized.length < m) r2_normalized = new Attribute.Double[m];
+        if (ave_normalized==null || ave_normalized.length < m) ave_normalized = new Attribute.Double[m];
+        if (bias_normalized==null || bias_normalized.length < m) bias_normalized = new Attribute.Double[m];
+        
         for (int k=0;k<m;k++){
             double m[] = new double[measurementList[k].size()],
                     s[] = new double[simulationList[k].size()];
@@ -254,6 +271,21 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
                 s[i] = simulationList[k].get(i);
             }
 
+            if (e1[k] == null) e1[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (e2[k] == null) e2[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (le1[k] == null) le1[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (le2[k] == null) le2[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (r2[k] == null) r2[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (ave[k] == null) ave[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (bias[k] == null) bias[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (e1_normalized[k] == null) e1_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (e2_normalized[k] == null) e2_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (le1_normalized[k] == null) le1_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (le2_normalized[k] == null) le2_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (r2_normalized[k] == null) r2_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (ave_normalized[k] == null) ave_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (bias_normalized[k] == null) bias_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
+            
             setObjective(m,s,k,e1,e1_normalized,calcE1);
             setObjective(m,s,k,e2,e2_normalized,calcE2);
             setObjective(m,s,k,le1,le1_normalized,calcLe1);
@@ -266,6 +298,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             
             this.getModel().getRuntime().println("*******Measurement:" + this.measurementAttributeName[k]);
             this.getModel().getRuntime().println("*******Simulation :" + this.simulationAttributeName[k]);
+            
             this.getModel().getRuntime().println("*******E1:    " + round(this.e1[k].getValue()) + "  (" + round(this.e1_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******E2:    " + round(this.e2[k].getValue()) + "  (" + round(this.e2_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******le1:   " + round(this.le1[k].getValue()) + "  (" + round(this.le1_normalized[k].getValue()) + ")");

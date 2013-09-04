@@ -775,5 +775,12 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         return attribs.toArray(new String[attribs.size()]);
     }
 
-    
+    @Override
+    public AbstractDataStoreProcessor[] getSubDataStores() {
+        return new AbstractDataStoreProcessor[0];
+    }
+
+    public String toString(){
+        return this.dsFile.getName();
+    }
 }

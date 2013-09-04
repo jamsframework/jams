@@ -22,28 +22,13 @@
  */
 package jams.workspace.dsproc;
 
-import jams.JAMS;
-import jams.data.JAMSCalendar;
-import jams.io.BufferedFileReader;
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.NoSuchElementException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -66,9 +51,15 @@ public abstract class AbstractDataStoreProcessor {
     }
 
     abstract public boolean isEmpty();
+    abstract public AbstractDataStoreProcessor[] getSubDataStores();
+    
     static public AbstractDataStoreProcessor getProcessor(File dsFile){
         if (dsFile.getName().endsWith(".csv")){
-            return new DataStoreProcessorOMS(dsFile);
+            try{
+                return new DataStoreProcessorOMS(dsFile);
+            }catch(Exception ex){
+                return null;
+            }
         }else{
             return new DataStoreProcessor(dsFile);
         }

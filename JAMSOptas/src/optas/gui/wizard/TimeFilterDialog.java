@@ -42,7 +42,8 @@ import optas.data.TimeFilterFactory.MonthlyTimeFilter;
 import optas.data.TimeFilterFactory.RangeTimeFilter;
 import optas.data.TimeFilterFactory.YearlyTimeFilter;
 import optas.data.TimeSerie;
-import org.jfree.chart.ChartPanel;
+import optas.tools.PatchedChartPanel;
+
 
 /**
  *
@@ -302,7 +303,7 @@ public class TimeFilterDialog extends JDialog{
         
         filterPanel.add(northPanel, BorderLayout.NORTH);
 
-        ChartPanel chartPanel = rangeFilterHydrograph.getChartPanel();
+        PatchedChartPanel chartPanel = rangeFilterHydrograph.getChartPanel();
 
         filterPanel.add(chartPanel, BorderLayout.CENTER);
 
@@ -391,7 +392,7 @@ public class TimeFilterDialog extends JDialog{
 
         filterPanel.add(northPanel, BorderLayout.NORTH);
 
-        ChartPanel chartPanel = eventFilterHydrograph.getChartPanel();
+        PatchedChartPanel chartPanel = eventFilterHydrograph.getChartPanel();
         filterPanel.add(chartPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
@@ -497,7 +498,7 @@ public class TimeFilterDialog extends JDialog{
 
         filterPanel.add(northPanel, BorderLayout.NORTH);
 
-        ChartPanel chartPanel = hydrographBaseFlow.getChartPanel();
+        PatchedChartPanel chartPanel = hydrographBaseFlow.getChartPanel();
         filterPanel.add(chartPanel, BorderLayout.CENTER);
         
         filterPanel.add(new JButton(JAMS.i18n("OK")) {

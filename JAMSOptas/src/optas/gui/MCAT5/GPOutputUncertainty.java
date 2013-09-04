@@ -39,7 +39,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import optas.data.DataCollection;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -60,6 +59,7 @@ import optas.regression.gaussian.HyperParameter;
 import optas.regression.gaussian.cov.CovarianceFunction;
 import optas.regression.gaussian.mean.MeanFunction;
 import optas.regression.likelihood.LikelihoodFunction;
+import optas.tools.PatchedChartPanel;
 import optas.tools.Tools;
 import org.jfree.chart.plot.IntervalMarker;
 
@@ -167,7 +167,7 @@ public class GPOutputUncertainty extends MCAT5Plot {
     
     XYPlot hydrograph = new XYPlot();
     
-    ChartPanel chartPanel1 = null;
+    PatchedChartPanel chartPanel1 = null;
 
     JPanel informationPanel = new JPanel();
     
@@ -300,7 +300,7 @@ public class GPOutputUncertainty extends MCAT5Plot {
 
         chart1.getPlot().setBackgroundPaint(Color.white);
         chart1.getXYPlot().setDomainGridlinePaint(Color.black);
-        
+
         XYDifferenceRenderer renderer_uncert = new XYDifferenceRenderer(Color.LIGHT_GRAY, Color.LIGHT_GRAY, false);
         XYLineAndShapeRenderer renderer_obs = new XYLineAndShapeRenderer();
         XYLineAndShapeRenderer renderer_sim = new XYLineAndShapeRenderer();
@@ -339,7 +339,7 @@ public class GPOutputUncertainty extends MCAT5Plot {
 
         hydrograph.setRangeAxis(new NumberAxis(JAMS.i18n("OUTPUT")));
 
-        chartPanel1 = new ChartPanel(chart1, true);
+        chartPanel1 = new PatchedChartPanel(chart1, true);
 
         chartPanel1.setMinimumDrawWidth( 0 );
         chartPanel1.setMinimumDrawHeight( 0 );
@@ -1010,7 +1010,7 @@ public class GPOutputUncertainty extends MCAT5Plot {
 
         try {
             DataRequestPanel d = new DataRequestPanel(new GPOutputUncertainty(), dc);
-            JFrame plotWindow = new JFrame("test");
+            JFrame plotWindow = new JFrame("Gaussian Processes Output Uncertainty");
             plotWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             plotWindow.setLayout(new BorderLayout());
             plotWindow.setVisible(true);

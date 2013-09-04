@@ -7,9 +7,7 @@ package optas.gui.MCAT5;
 import jams.JAMS;
 import java.awt.Color;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -21,6 +19,7 @@ import optas.data.Efficiency;
 import optas.data.EfficiencyEnsemble;
 import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
+import optas.tools.PatchedChartPanel;
 
 /**
  *
@@ -28,7 +27,7 @@ import optas.data.SimpleEnsemble;
  */
 public class NormalisedParameterRangePlot extends MCAT5Plot{
     XYPlot plot1 = new XYPlot();            
-    ChartPanel chartPanel1 = null;
+    PatchedChartPanel chartPanel1 = null;
                     
     public NormalisedParameterRangePlot() {
         this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"),Parameter.class,1,10));
@@ -47,7 +46,7 @@ public class NormalisedParameterRangePlot extends MCAT5Plot{
         JFreeChart chart1 = new JFreeChart(plot1);
         chart1.setTitle(JAMS.i18n("NORMALISED_PARAMETER_RANGE_PLOT"));
         chart1.removeLegend();
-        chartPanel1 = new ChartPanel(chart1, true);
+        chartPanel1 = new PatchedChartPanel(chart1, true);
                       
         chartPanel1.setMinimumDrawWidth( 0 );
         chartPanel1.setMinimumDrawHeight( 0 );

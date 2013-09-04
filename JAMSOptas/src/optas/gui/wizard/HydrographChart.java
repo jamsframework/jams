@@ -14,8 +14,8 @@ import optas.data.TimeFilter;
 import optas.data.TimeFilterCollection;
 import optas.data.TimeFilterFactory;
 import optas.data.TimeSerie;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
@@ -55,7 +55,7 @@ public class HydrographChart {
     TimeFilterCollection filters = new TimeFilterCollection();
     TimeFilter selectedTimeFilter = null;
         
-    ChartPanel panel = null;
+    PatchedChartPanel panel = null;
     
     public HydrographChart(){
                         
@@ -223,9 +223,9 @@ public class HydrographChart {
         return chart;
     }
     
-    public ChartPanel getChartPanel(){
+    public PatchedChartPanel getChartPanel(){
         if (panel == null){
-            panel = new ChartPanel(chart, true);
+            panel = new PatchedChartPanel(chart, true);
             panel.setMinimumDrawWidth( 0 );
             panel.setMinimumDrawHeight( 0 );
             panel.setMaximumDrawWidth( 2000 );

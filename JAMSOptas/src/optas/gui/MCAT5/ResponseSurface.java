@@ -28,7 +28,6 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import optas.data.DataCollection;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import optas.data.Efficiency;
 import optas.data.EfficiencyEnsemble;
@@ -36,6 +35,7 @@ import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
 import optas.regression.SimpleInterpolation;
 import optas.regression.SimpleNeuralNetwork;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.plot.XYPlot;
 
 /**
@@ -46,7 +46,7 @@ import org.jfree.chart.plot.XYPlot;
 public class ResponseSurface extends MCAT5Plot {
 
     XYPlot plot = new XYPlot();
-    ChartPanel chartPanel = null;
+    PatchedChartPanel chartPanel = null;
     JPanel panel = null;
     JPanel mainPanel = null;
     JSlider sliders[] = null;
@@ -245,7 +245,7 @@ public class ResponseSurface extends MCAT5Plot {
     private void init(){
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle("Response Surface");
-        chartPanel = new ChartPanel(chart, true);
+        chartPanel = new PatchedChartPanel(chart, true);
         chartPanel.setMinimumDrawWidth( 0 );
         chartPanel.setMinimumDrawHeight( 0 );
         chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );

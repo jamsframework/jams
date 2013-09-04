@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -27,8 +26,8 @@ import optas.data.SimpleEnsemble;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
 import optas.gui.MCAT5.MCAT5Plot.SimpleRequest;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.DateAxis;
@@ -52,7 +51,7 @@ public class DYNIA extends MCAT5Plot {
 
     int window_size = 10;
     XYPlot plot = null;
-    ChartPanel chartPanel = null;
+    PatchedChartPanel chartPanel = null;
     JTextField winsize_box = new JTextField(10);
     
     final int BOX_COUNT = 10;
@@ -109,7 +108,7 @@ public class DYNIA extends MCAT5Plot {
         text.add(new JLabel(JAMS.i18n("WINDOW_SIZE")));
         text.add(winsize_box);
 
-        chartPanel = new ChartPanel(chart, true);
+        chartPanel = new PatchedChartPanel(chart, true);
         chartPanel.setLayout(new BorderLayout());
         chartPanel.add(text, BorderLayout.SOUTH);
 

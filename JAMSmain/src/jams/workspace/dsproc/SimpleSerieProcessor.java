@@ -28,6 +28,7 @@ import jams.data.DefaultDataFactory;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,6 +53,51 @@ public class SimpleSerieProcessor extends Processor {
     }
     public boolean isTimeSerie(){
         return timeSerie;
+    }
+    
+    /**
+     * Get all available time steps
+     * @return An array of calendar objects representing the time steps
+     * @throws java.sql.SQLException
+     */
+    public synchronized Attribute.Calendar[] getTimeSteps() throws SQLException, IOException {
+        if (!this.isTimeSerie())
+            return null;
+        Object[] ids = this.getIDs();
+        Attribute.Calendar steps[] = new Attribute.Calendar[ids.length];
+
+        for (int i = 0; i < ids.length; i++) {
+            Attribute.Calendar calendar = DefaultDataFactory.getDataFactory().createCalendar();
+            calendar.setValue((String) ids[i]);
+            steps[i] = calendar;
+        }
+        return steps;
+    }
+    
+    public int getTimeUnit() throws SQLException, IOException{
+        Attribute.Calendar timeSteps[] = this.getTimeSteps();
+        if (timeSteps == null)
+            return -1;
+        Attribute.Calendar t0 = timeSteps[0];
+        Attribute.Calendar tn = timeSteps[timeSteps.length-1];
+
+        int n = timeSteps.length;
+
+        long diff = ((tn.getTimeInMillis() - t0.getTimeInMillis())/n)/1000;
+
+        //todo: add time unit count
+        if (0<=diff && diff<30)
+            return Calendar.SECOND;
+        if (30<=diff && diff<1800)
+            return Calendar.MINUTE;
+        if (1800<=diff && diff<43200)
+            return Calendar.HOUR;
+        if (43200<=diff && diff<1296000)
+            return Calendar.DAY_OF_YEAR;
+        if (1296000<=diff && diff<3456000)
+            return Calendar.MONTH;
+        else
+            return Calendar.YEAR;
     }
     
     public SimpleSerieProcessor(AbstractDataStoreProcessor dsdb) {

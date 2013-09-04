@@ -22,6 +22,7 @@
 
 package reg.tree;
 
+import jams.workspace.dsproc.AbstractDataStoreProcessor;
 import java.io.File;
 
 /**
@@ -31,14 +32,48 @@ import java.io.File;
 public class FileObject {
 
     private File file;
-
+    private boolean isValid = false;
+    
+    AbstractDataStoreProcessor processor;
+        
     public FileObject(File file) {
         this.file = file;
+        if (file.isFile()){
+            this.processor = AbstractDataStoreProcessor.getProcessor(file);
+        }
+        if (processor != null)
+            isValid = true;
     }
 
+    public boolean isValid(){
+        return isValid;
+    }
+    private FileObject(File file, AbstractDataStoreProcessor processor){
+        this.file = file;
+        this.processor = processor;
+    }
+    
+    public FileObject[] getSubDataStores(){
+        if (processor == null){
+            return new FileObject[0];
+        }
+        AbstractDataStoreProcessor processors[] = this.processor.getSubDataStores();
+        FileObject fileObjects[] = new FileObject[processors.length];
+        
+        int i=0;
+        for (AbstractDataStoreProcessor p: processors){
+            fileObjects[i++] = new FileObject(file, p);
+        }
+        return fileObjects;
+    }
+    
     @Override
     public String toString() {
-        return file.getName();
+        if (processor == null){
+            return file.getName();
+        }else{
+            return processor.toString();
+        }
     }
 
     /**

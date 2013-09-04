@@ -162,26 +162,50 @@ public class DSTree extends JAMSTree {
         return inputRoot;
     }
 
+    private DSTreeNode createSubOutputNode(TreeMap<String, DSTreeNode> pathNodeMap, File dir) {
+
+        if (dir.isDirectory()) {
+            DSTreeNode outputDataStoreNode = new DSTreeNode(new FileObject(dir), DSTreeNode.OUTPUT_DIR);
+            for (File file : dir.listFiles()) {
+                DSTreeNode subNode = createSubOutputNode(pathNodeMap, file);
+                if (subNode!=null) {
+                    outputDataStoreNode.add(subNode);
+                }
+            }
+            return outputDataStoreNode;
+        } else {
+            FileObject fileObject = new FileObject(dir);
+            if (!fileObject.isValid()) {
+                return null;
+            }
+            //datastores can contain subdatastores .. 
+            FileObject subFileObjects[] = fileObject.getSubDataStores();
+            DSTreeNode outputDataStoreNode = null;
+            if (subFileObjects.length==0) {
+                outputDataStoreNode = new DSTreeNode(fileObject, DSTreeNode.OUTPUT_DS);
+            }
+            else {
+                outputDataStoreNode = new DSTreeNode(fileObject, DSTreeNode.OUTPUT_DIR);
+                for (FileObject subFileObject : subFileObjects) {
+                    DSTreeNode subOutputDataStoreNode = new DSTreeNode(subFileObject, DSTreeNode.OUTPUT_DS);
+                    if (subOutputDataStoreNode != null) {
+                        outputDataStoreNode.add(subOutputDataStoreNode);
+                    }
+                }
+            }
+            return outputDataStoreNode;
+        }
+    }
+    
     private DSTreeNode createOutputNode() {
         DSTreeNode outputRoot = new DSTreeNode(OUTPUT_NAME, DSTreeNode.OUTPUT_ROOT);
 
         File[] outputDirs = explorer.getWorkspace().getOutputDataDirectories();
+        TreeMap<String, DSTreeNode> pathNodeMap = new TreeMap<String, DSTreeNode>();
         for (File dir : outputDirs) {
-            DSTreeNode outputDataDirNode = new DSTreeNode(dir.getName(), DSTreeNode.OUTPUT_DIR);
-            for (File file : explorer.getWorkspace().getOutputDataFiles(dir)) {
-                DSTreeNode outputDataStoreNode = new DSTreeNode(new FileObject(file), DSTreeNode.OUTPUT_DS);
-                outputDataDirNode.add(outputDataStoreNode);
-            }
-            outputRoot.add(outputDataDirNode);
+            outputRoot.add(createSubOutputNode(pathNodeMap, dir));
         }
 
-//        List<String> outIDList = new ArrayList<String>(workspace.getOutputDataStoreIDs());
-//        Collections.sort(outIDList);
-//        for (String id : outIDList) {
-//            DSTreeNode dsNode = new DSTreeNode(id, DSTreeNode.OUTPUT_DS);
-//            outputRoot.add(dsNode);
-//            //!!!take care of different result sets here!!!
-//        }
         return outputRoot;
     }
 

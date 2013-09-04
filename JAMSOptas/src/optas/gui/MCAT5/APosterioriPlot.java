@@ -18,7 +18,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import optas.data.Calculations;
 import optas.data.DataSet;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -31,6 +30,7 @@ import optas.data.Efficiency;
 import optas.data.EfficiencyEnsemble;
 import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
+import optas.tools.PatchedChartPanel;
 
 /**
  *
@@ -39,7 +39,7 @@ import optas.data.SimpleEnsemble;
 public class APosterioriPlot extends MCAT5Plot {
 
     XYPlot plot = new XYPlot();
-    ChartPanel chartPanel = null;
+    PatchedChartPanel chartPanel = null;
     JPanel mainPanel;
     int boxCount = 20;
     JTextField groupCount = new JTextField(2);
@@ -53,7 +53,7 @@ public class APosterioriPlot extends MCAT5Plot {
     private void init() {
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle(JAMS.i18n("A_POSTERIO_PARAMETER_DISTRIBUTION"));
-        chartPanel = new ChartPanel(chart, true);
+        chartPanel = new PatchedChartPanel(chart, true);
 
         chartPanel.setMinimumDrawWidth( 0 );
         chartPanel.setMinimumDrawHeight( 0 );

@@ -34,10 +34,12 @@ public abstract class Processor {
         return dsdb;
     }
     
-    public void close() throws SQLException {
+    public void close() throws SQLException {        
         processingProgressObservable = null;
-        conn.close();
-        dsdb.close();
+        if (conn != null)
+            conn.close();
+        if (dsdb != null)
+            dsdb.close();
     }
 
     public void addProcessingProgressObserver(Observer o) {

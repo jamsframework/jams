@@ -63,9 +63,9 @@ import optas.data.TimeFilterFactory;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
 import optas.hydro.gui.WeightChart;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.event.AxisChangeEvent;
@@ -528,7 +528,7 @@ public class TemporalSAAnalysisANN extends MCAT5Plot {
             weightRenderer[i].setStroke(new BasicStroke(1.0f));
         }
 
-        ChartPanel weightChartPanel = new ChartPanel(weightChart.getChart(), true);
+        PatchedChartPanel weightChartPanel = new PatchedChartPanel(weightChart.getChart(), true);
         
         weightChartPanel.addChartMouseListener(new ChartMouseListener() {
 
@@ -568,7 +568,7 @@ public class TemporalSAAnalysisANN extends MCAT5Plot {
             }
         });
 
-        ChartPanel hydrographChartPanel = new ChartPanel(hydrographChart.getChart(), true);
+        PatchedChartPanel hydrographChartPanel = new PatchedChartPanel(hydrographChart.getChart(), true);
 
         JScrollPane parameterTablePane = new JScrollPane(parameterTable);
         

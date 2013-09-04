@@ -6,7 +6,6 @@ package optas.gui.MCAT5;
 
 
 import jams.JAMS;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -14,15 +13,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import optas.data.DataSet;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -35,6 +31,7 @@ import optas.data.Efficiency;
 import optas.data.EfficiencyEnsemble;
 import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
+import optas.tools.PatchedChartPanel;
 
 
 /**
@@ -44,7 +41,7 @@ import optas.data.SimpleEnsemble;
 @SuppressWarnings({"unchecked"})
 public class IdentifiabilityPlot extends MCAT5Plot{
     XYPlot plot = new XYPlot();    
-    ChartPanel chartPanel = null;
+    PatchedChartPanel chartPanel = null;
     JPanel mainPanel;
     JTextField groupCount = new JTextField(2);
     int boxCount = 10;
@@ -59,7 +56,7 @@ public class IdentifiabilityPlot extends MCAT5Plot{
         JFreeChart chart = new JFreeChart(plot);
         chart.removeLegend();
         chart.setTitle(JAMS.i18n("IDENTIFYABLITY_PLOT"));
-        chartPanel = new ChartPanel(chart, true);
+        chartPanel = new PatchedChartPanel(chart, true);
 
         chartPanel.setMinimumDrawWidth( 0 );
         chartPanel.setMinimumDrawHeight( 0 );

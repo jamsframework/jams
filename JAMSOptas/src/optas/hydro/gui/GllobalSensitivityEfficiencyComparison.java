@@ -7,9 +7,7 @@ package optas.hydro.gui;
 import jams.JAMS;
 import java.awt.Color;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -23,6 +21,7 @@ import optas.data.Efficiency;
 import optas.data.EfficiencyEnsemble;
 import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
+import optas.tools.PatchedChartPanel;
 
 /**
  *
@@ -31,7 +30,7 @@ import optas.data.SimpleEnsemble;
 public class GllobalSensitivityEfficiencyComparison extends MCAT5Plot {
 
     XYPlot plot = new XYPlot();
-    ChartPanel chartPanel = null;
+    PatchedChartPanel chartPanel = null;
 
     public GllobalSensitivityEfficiencyComparison() {
         this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
@@ -51,7 +50,7 @@ public class GllobalSensitivityEfficiencyComparison extends MCAT5Plot {
         //setup chart
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle(JAMS.i18n("DOTTY_PLOT"));
-        chartPanel = new ChartPanel(chart, true);
+        chartPanel = new PatchedChartPanel(chart, true);
 
         redraw();
     }

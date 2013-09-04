@@ -17,7 +17,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -38,20 +37,20 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import optas.gui.MCAT5.DataCollectionPanel;
-import optas.gui.MCAT5.MCAT5Toolbar;
-import org.jdesktop.swingx.JXDatePicker;
-import optas.data.Ensemble;
-import optas.data.SimpleEnsemble;
-import optas.data.TimeSerieEnsemble;
 import optas.data.DataCollection;
 import optas.data.DataSet;
 import optas.data.EfficiencyEnsemble;
+import optas.data.Ensemble;
 import optas.data.Measurement;
+import optas.data.SimpleEnsemble;
 import optas.data.TimeFilter;
 import optas.data.TimeFilterFactory;
+import optas.data.TimeSerieEnsemble;
+import optas.gui.MCAT5.DataCollectionPanel;
+import optas.gui.MCAT5.MCAT5Toolbar;
+import optas.tools.PatchedChartPanel;
+import org.jdesktop.swingx.JXDatePicker;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.time.Day;
@@ -532,6 +531,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
            public void actionPerformed(ActionEvent e){
                Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
                delegate.getDataCollection().removeDataset(item.toString());
+               ((AbstractTableModel) dataSetList.getModel()).fireTableDataChanged();   
            }
         });
 
@@ -553,16 +553,18 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
 
                 boolean validStartDate2 = filterStartDatePicker.getDateInMillis() >= startCal.getTimeInMillis();
                 boolean validFinalDate2 = filterFinalDatePicker.getDateInMillis() <= endCal.getTimeInMillis();
-                if (validStartDate && validFinalDate) {
+                if (!validStartDate){
                     startDatePicker.setDate(startCal.getTime());
-                } else {
+                }
+                if (!validFinalDate){
                     finalDatePicker.setDate(endCal.getTime());
                 }
-                if (validStartDate2 && validFinalDate2) {
+                if (!validStartDate2){
                     filterStartDatePicker.setDate(startCal.getTime());
-                } else {
-                    filterFinalDatePicker.setDate(endCal.getTime());
                 }
+                if (!validFinalDate2){
+                    filterFinalDatePicker.setDate(endCal.getTime());
+                }                
             }
         };
         startDatePicker.addActionListener(datePickerActionListener);
@@ -773,7 +775,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                             }
 
                             /* setup chart view and show window */
-                            ChartPanel chartPanel = new ChartPanel(chart);
+                            PatchedChartPanel chartPanel = new PatchedChartPanel(chart);
                             chartWindow.getContentPane().add(chartPanel);
                             chartWindow.setVisible(true);
                         } catch (ParseException ex) {
@@ -798,6 +800,8 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                     interval.getStart().setTime(startDate);
                     interval.getEnd().setTime(endDate);
 
+                    Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
+                    
                     getDataCollection().filterTimeDomain(TimeFilterFactory.getRangeFilter(interval));
                 }
                 if (filterFromValueField.isEnabled() && filterToValueField.isEnabled()) {

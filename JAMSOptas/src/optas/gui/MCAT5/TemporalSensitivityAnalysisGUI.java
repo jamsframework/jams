@@ -44,9 +44,9 @@ import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
 import optas.gui.wizard.HydrographChart;
 import optas.hydro.gui.WeightChart;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.event.AxisChangeEvent;
@@ -363,14 +363,14 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
             weightRenderer[i].setStroke(new BasicStroke(1.0f));
         }
 
-        ChartPanel weightChartPanel = new ChartPanel(weightChart.getChart(), true);
+        PatchedChartPanel weightChartPanel = new PatchedChartPanel(weightChart.getChart(), true);
 
         weightChartPanel.setMinimumDrawWidth( 0 );
         weightChartPanel.setMinimumDrawHeight( 0 );
         weightChartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
         weightChartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
         
-        ChartPanel chartPanel = new ChartPanel(chart.getChart(), true);
+        PatchedChartPanel chartPanel = new PatchedChartPanel(chart.getChart(), true);
         chartPanel.setMinimumDrawWidth( 0 );
         chartPanel.setMinimumDrawHeight( 0 );
         chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
@@ -415,7 +415,7 @@ public class TemporalSensitivityAnalysisGUI extends MCAT5Plot {
             }
         });
 
-        ChartPanel hydrographChartPanel = new ChartPanel(chart.getChart(), true);
+        PatchedChartPanel hydrographChartPanel = new PatchedChartPanel(chart.getChart(), true);
         hydrographChartPanel.setMinimumDrawWidth( 0 );
         hydrographChartPanel.setMinimumDrawHeight( 0 );
         hydrographChartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );

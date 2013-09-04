@@ -39,6 +39,7 @@ import reg.gui.OutputDSPanel;
 import reg.gui.SimpleOutputPanel;
 import reg.spreadsheet.JAMSSpreadSheet;
 import reg.spreadsheet.SpreadsheetConstants;
+import reg.tree.FileObject;
 
 /**
  *
@@ -67,11 +68,11 @@ public class OutputPanelFactory {
         return controller;
     }
 
-    public static Component getOutputDSPanel(JAMSExplorer explorer, File file, String id) throws FileNotFoundException, IOException {
-        if (file.getAbsolutePath().endsWith("cdat")){
-            DataCollection collection = DataCollection.createFromFile(file);
+    public static Component getOutputDSPanel(JAMSExplorer explorer, FileObject file, String id) throws FileNotFoundException, IOException {
+        if (file.getFile().getAbsolutePath().endsWith("cdat")){
+            DataCollection collection = DataCollection.createFromFile(file.getFile());
             if (collection == null){
-                JOptionPane.showMessageDialog(explorer.getExplorerFrame(), "failed to load data collection from file: " + file.getName());
+                JOptionPane.showMessageDialog(explorer.getExplorerFrame(), "failed to load data collection from file: " + file.getFile().getName());
                 return null;
             }
             DataCollectionViewController controller = new DataCollectionViewController(collection);
@@ -79,17 +80,17 @@ public class OutputPanelFactory {
             return controller.getView();
         }
         
-        if (file.getAbsolutePath().endsWith(".csv")){
-            if (DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.DataStoreType.TimeDataSerie ||
-                DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.DataStoreType.DataSerie1D){
-                DataCollectionViewController controller = OutputPanelFactory.constructDataCollection(explorer.getExplorerFrame(), null, file);
+        if (file.getFile().getAbsolutePath().endsWith(".csv")){
+            if (DataStoreProcessor.getDataStoreType(file.getFile()) == DataStoreProcessor.DataStoreType.TimeDataSerie ||
+                DataStoreProcessor.getDataStoreType(file.getFile()) == DataStoreProcessor.DataStoreType.DataSerie1D){
+                DataCollectionViewController controller = OutputPanelFactory.constructDataCollection(explorer.getExplorerFrame(), null, file.getFile());
                 return controller.getView();
             }else {
-                return new OutputDSPanel(explorer, file, id);
+                return new OutputDSPanel(explorer, file.getFile(), id);
             }
         }
         
-        BufferedFileReader reader = new BufferedFileReader(new FileInputStream(file));
+        BufferedFileReader reader = new BufferedFileReader(new FileInputStream(file.getFile()));
         String line = reader.readLine();
         reader.close();
 
@@ -98,28 +99,21 @@ public class OutputPanelFactory {
         }
 
         if (line.startsWith("@context")) {
-            return new OutputDSPanel(explorer, file, id);
+            return new OutputDSPanel(explorer, file.getFile(), id);
         }
-        /*    if (DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.DataStoreType.TimeDataSerie ||
-                DataStoreProcessor.getDataStoreType(file) == DataStoreProcessor.DataStoreType.DataSerie1D){
-                DataCollectionViewController controller = OutputPanelFactory.constructDataCollection(explorer.getExplorerFrame(), null, file);
-                return controller.getView();
-            }else
-                return new OutputDSPanel(explorer, file, id);
-        }*/
-
+        
         if (line.startsWith(SpreadsheetConstants.LOAD_HEADERS)) {
 
             // create the spreadsheet
             JAMSSpreadSheet spreadsheet = new JAMSSpreadSheet(explorer);
             spreadsheet.init();
-            spreadsheet.load(file);
+            spreadsheet.load(file.getFile());
             spreadsheet.setAsOutputSheet();
             spreadsheet.setID(id);
 
             return spreadsheet;
         }
 
-        return new SimpleOutputPanel(file);
+        return new SimpleOutputPanel(file.getFile());
     }
 }

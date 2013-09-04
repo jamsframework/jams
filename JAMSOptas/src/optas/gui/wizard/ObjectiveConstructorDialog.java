@@ -27,7 +27,7 @@ import optas.data.EfficiencyEnsemble.Method;
 import optas.data.Measurement;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
-import org.jfree.chart.ChartPanel;
+import optas.tools.PatchedChartPanel;
 
 /**
  *
@@ -142,7 +142,7 @@ public class ObjectiveConstructorDialog extends JDialog{
         c.gridwidth = 2;
         c.gridheight = 8;
         yCounter+=8;
-        ChartPanel chartPanel = new ChartPanel(chart.getChart(), true);
+        PatchedChartPanel chartPanel = new PatchedChartPanel(chart.getChart(), true);
         mainPanel.add(chartPanel,c);
 
         filterList = new TimeFilterTableInput(getSelectedMeasurement());

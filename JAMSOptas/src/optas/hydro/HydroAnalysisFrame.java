@@ -37,7 +37,6 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.time.TimeSeriesCollection;
 import java.util.Set;
@@ -88,6 +87,7 @@ import optas.hydro.gui.SelectionDialog;
 import optas.hydro.gui.SimpleGlobalSensitivityAtPoint;
 import optas.hydro.gui.WeightChart;
 import optas.io.TSDataReader;
+import optas.tools.PatchedChartPanel;
 
 /**
  *
@@ -458,9 +458,9 @@ public class HydroAnalysisFrame extends JFrame {
 
 
 
-        ChartPanel weightChartPanel = new ChartPanel(weightChart.getChart(), true);
+        PatchedChartPanel weightChartPanel = new PatchedChartPanel(weightChart.getChart(), true);
 
-        ChartPanel chartPanel = new ChartPanel(chart.getChart(), true);
+        PatchedChartPanel chartPanel = new PatchedChartPanel(chart.getChart(), true);
         chartPanel.addChartMouseListener(new ChartMouseListener() {
 
             public void chartMouseClicked(ChartMouseEvent event) {
@@ -494,7 +494,7 @@ public class HydroAnalysisFrame extends JFrame {
             }
         });
 
-        ChartPanel dominantParametersChartPanel = new ChartPanel(dominantParameterChart, true);
+        PatchedChartPanel dominantParametersChartPanel = new PatchedChartPanel(dominantParameterChart, true);
 
 
         /*JPanel westPanel = new JPanel(new BorderLayout());

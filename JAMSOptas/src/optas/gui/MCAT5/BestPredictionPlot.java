@@ -8,7 +8,6 @@ import jams.JAMS;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import optas.data.DataSet;
 import optas.data.Efficiency;
@@ -16,7 +15,7 @@ import optas.data.EfficiencyEnsemble;
 import optas.data.Measurement;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
-import org.jfree.chart.ChartPanel;
+import optas.tools.PatchedChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -33,7 +32,7 @@ import org.jfree.data.time.TimeSeriesCollection;
  */
 public class BestPredictionPlot extends MCAT5Plot{
     XYPlot plot1 = new XYPlot();            
-    ChartPanel chartPanel1 = null;
+    PatchedChartPanel chartPanel1 = null;
     
     public BestPredictionPlot() {
         this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"),TimeSerie.class));
@@ -49,7 +48,7 @@ public class BestPredictionPlot extends MCAT5Plot{
         
         JFreeChart chart1 = new JFreeChart(plot1);
         chart1.setTitle(JAMS.i18n("BEST_PREDICTION_PLOT"));
-        chartPanel1 = new ChartPanel(chart1, true);
+        chartPanel1 = new PatchedChartPanel(chart1, true);
 
         chartPanel1.setMinimumDrawWidth( 0 );
         chartPanel1.setMinimumDrawHeight( 0 );
