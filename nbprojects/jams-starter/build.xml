@@ -24,7 +24,7 @@
         <ant antfile="../jams-remote/build.xml" inheritall="false" target="jar"/>
     </target>
     
-    <target name="-post-jar"/>
+    <!--target name="-post-jar"/-->
     
 <!--    <target name="-pre-run">
         <property name="no.deps" value="true"/>
