@@ -638,14 +638,14 @@ public class JAMSContext extends JAMSComponent implements Context {
                     runEnumerator.reset();
 
                     Component comp = null;
-                    try {
-                        while (runEnumerator.hasNext() && doRun) {
-                            comp = runEnumerator.next();
-                            //comp.updateRun();
+                    while (runEnumerator.hasNext() && doRun) {
+                        comp = runEnumerator.next();
+                        //comp.updateRun();
+                        try {
                             comp.run();
+                        } catch (Exception e) {
+                            getModel().getRuntime().handle(e, comp.getInstanceName());
                         }
-                    } catch (Exception e) {
-                        getModel().getRuntime().handle(e, comp.getInstanceName());
                     }
 
                     updateEntityData();
