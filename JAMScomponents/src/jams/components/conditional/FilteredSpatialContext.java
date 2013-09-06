@@ -47,7 +47,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Attribute values to match")
-    public Attribute.Double[] attributeValues;
+    public Attribute.String[] attributeValues;
 
     @Override
     public void init() {
@@ -63,11 +63,11 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
             try {
                 if (e.existsAttribute(attributeName.getValue())) {
                     
-                    double d = e.getDouble(attributeName.getValue());
+                    Object o = e.getObject(attributeName.getValue());
                     boolean found = false;
                     
-                    for (Attribute.Double value : attributeValues) {
-                        if (d == value.getValue()) {
+                    for (Attribute.String value : attributeValues) {
+                        if (o.toString().startsWith(value.getValue())) {
                             found = true;
                             break;
                         }
