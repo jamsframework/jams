@@ -580,7 +580,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         if (cntxt.size() != 2) {
             return false;
         }
-        if (!cntxt.get(0).getType().equals("jams.model.JAMSSpatialContext")) {
+        if (!(cntxt.get(0).getType().equals("jams.model.JAMSSpatialContext") || cntxt.get(0).getType().equals("jams.components.conditional.FilteredSpatialContext"))) {
             return false;
         }
         if (!cntxt.get(1).getType().equals("jams.model.JAMSTemporalContext")) {
