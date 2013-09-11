@@ -179,6 +179,7 @@ public class TSDataStore extends TableDataStore {
         }
 
         bufferSize = oldBufferSize;
+        
     }
 
     private DataSetDefinition getDSDFromDumpFile() throws IOException {
@@ -420,25 +421,34 @@ public class TSDataStore extends TableDataStore {
 
                     DataValue value;
                     String valueString = a[i];
+                                       
                     switch (type[i - 1]) {
                         case DOUBLE:
                             value = new DoubleValue(valueString);
+                            if (valueString.equals(this.getMissingDataValue())) {
+                                value.setDouble((Double) JAMS.getMissingDataValue(double.class));
+                            }
                             break;
                         case LONG:
                             value = new LongValue(valueString);
+                            if (valueString.equals(this.getMissingDataValue())) {
+                                value.setLong((Long) JAMS.getMissingDataValue(long.class));
+                            }
                             break;
                         case STRING:
                             value = new StringValue(valueString);
+                            if (valueString.equals(this.getMissingDataValue())) {
+                                value.setString((String) JAMS.getMissingDataValue(String.class));
+                            }
                             break;
                         case TIMESTAMP:
                             Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
                             cal.setTimeInMillis(new Long(valueString));
                             value = new CalendarValue(cal);
-                            break;
                         default:
                             value = new ObjectValue(valueString);
                     }
-
+                    
                     result.setData(i, value);
                 }
 
