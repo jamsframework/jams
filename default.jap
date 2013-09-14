@@ -1,9 +1,10 @@
 #JAMS-Konfigurationsdatei
-#Wed Jun 19 14:34:43 CEST 2013
+#Thu Sep 05 09:33:05 CEST 2013
 infolog=
 libs=lib
 guiconfig=true
 docbook-home=docbook/
+debugmode=false
 model=
 charset=
 username=
@@ -17,7 +18,7 @@ forcelocale=
 windowheight=600
 verbose=false
 maxrecentfiles=5
-recentfiles=
+recentfiles=E\:\\jamsapplication\\JAMS-Gehlberg\\j2k_gehlberg.jam
 debug=1
 guiconfigheight=600
 windowwidth=900
