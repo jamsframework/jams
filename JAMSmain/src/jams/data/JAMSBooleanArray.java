@@ -51,7 +51,7 @@ public class JAMSBooleanArray implements Attribute.BooleanArray {
 
     @Override
     public void setValue(String value) {
-        StringTokenizer st = new StringTokenizer(value, ",");
+        StringTokenizer st = new StringTokenizer(value, ";,");
         boolean[] values = new boolean[st.countTokens()];
         for (int i = 0; i < values.length; i++) {
             values[i] = Boolean.parseBoolean(st.nextToken().trim());

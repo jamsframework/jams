@@ -59,7 +59,7 @@ public class JAMSIntegerArray implements Attribute.IntegerArray {
     }
 
     public void setValue(String value) {
-        StringTokenizer st = new StringTokenizer(value, ",");
+        StringTokenizer st = new StringTokenizer(value, ";,");
         int[] values = new int[st.countTokens()];
         for (int i = 0; i < values.length; i++) {
             values[i] = Integer.parseInt(st.nextToken().trim());

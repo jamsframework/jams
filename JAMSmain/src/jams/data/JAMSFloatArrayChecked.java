@@ -40,7 +40,7 @@ public class JAMSFloatArrayChecked extends JAMSFloatArray {
     }
 
     public void setValue(String value) {
-        StringTokenizer st = new StringTokenizer(value, ",");
+        StringTokenizer st = new StringTokenizer(value, ";,");
         float[] values = new float[st.countTokens()];
         for (int i = 0; i < values.length; i++) {
             values[i] = Float.parseFloat(st.nextToken().trim());

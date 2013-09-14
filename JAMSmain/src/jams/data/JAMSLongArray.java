@@ -59,11 +59,11 @@ public class JAMSLongArray implements Attribute.LongArray {
     }
 
     public void setValue(String value) {
-        StringTokenizer st = new StringTokenizer(value, ",");
+        StringTokenizer st = new StringTokenizer(value, ";,");
         long[] values = new long[st.countTokens()];
         for (int i = 0; i < values.length; i++) {
             values[i] = Long.parseLong(st.nextToken().trim());
-        }
+        }   
         this.value = values;
     }
 }
