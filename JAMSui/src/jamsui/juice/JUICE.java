@@ -143,10 +143,12 @@ public class JUICE {
     public static void createJUICEFrame() {
         juiceFrame = new JUICEFrame();
 
+        registerLogger(log);
+
         juiceFrame.setVisible(true);
 
         int maxLibClasses = Integer.parseInt(getJamsProperties().getProperty(SystemProperties.MAX_LIB_CLASSES));
-        
+
         libTree = new LibTree(new ComponentCollection(log), maxLibClasses);
 
         JUICE.updateLibs();
@@ -248,7 +250,7 @@ public class JUICE {
         return libTree;
     }
 
-    public static Logger getLogger() {
+    public static void registerLogger(Logger log) {
         if (notificationDlg == null) {
             notificationDlg = new NotificationDlg(juiceFrame, JAMS.i18n("Info"));
         }
@@ -264,7 +266,7 @@ public class JUICE {
                     String level = JAMS.i18n(record.getLevel().toString());
                     String msg = level + ": " + line[0];
                     for (int i = 1; i < line.length; i++) {
-                        msg += "\n" + String.format("%0" + level.length() + "d", 0).replace("0"," ") + line[i];
+                        msg += "\n" + String.format("%0" + level.length() + "d", 0).replace("0", " ") + line[i];
                     }
                     if (record.getLevel() == Level.SEVERE && record.getThrown() != null && !(record.getThrown() instanceof JAMSException)) {
                         msg += "\n" + record.getThrown().toString();
@@ -281,12 +283,15 @@ public class JUICE {
                 public void close() throws SecurityException {
                 }
             };
-            log.addHandler(logHandler);
-            log.setUseParentHandlers(false);
         }
+        log.addHandler(logHandler);
+        log.setUseParentHandlers(false);
+    }
+
+    public static Logger getLogger() {
         return log;
     }
-    
+
     public static void focusNotificationDlg() {
         notificationDlg.requestFocus();
     }

@@ -108,6 +108,8 @@ public class ModelView {
                 try {
                     // create the runtime
                     runtime = new StandardRuntime(JUICE.getJamsProperties());
+                    
+//                    JUICE.registerLogger(runtime.getLogger());
 
                     // add info and error log output
                     runtime.addInfoLogObserver(new Observer() {
