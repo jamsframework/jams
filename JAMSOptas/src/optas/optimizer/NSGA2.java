@@ -887,7 +887,7 @@ public class NSGA2 extends Optimizer {
                 /*------MUTATION-------------------*/
                 real_mutate(newParameter);
                 /*----------FUNCTION EVALUATION-----------*/
-                if (this.parallelExecution) {
+                if (!this.parallelExecution) {
                     for (int j = 0; j < newParameter.length; j++) {
                         newPopulation.ind[j] = new Individual(this.getSample(newParameter[j]));
                     }
