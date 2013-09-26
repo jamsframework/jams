@@ -71,4 +71,15 @@
     nbproject/build-impl.xml file. 
 
     -->
+    
+    <!-- Copy lib-external folder to dist/lib -->
+    <target name="-post-jar">
+        <echo>Copying over extra libs into jams-worldwind</echo>
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+        <copy todir="${dist.dir}/lib/lib-external/">
+            <fileset dir="../../JAMSworldwind/lib/lib-external/"/>
+        </copy>
+    </target>
+    
 </project>
