@@ -1,0 +1,2 @@
+-Anzeigefehler unter Mac OS X
+    WorldWindWindow in linker unterer Ecke bis zum Resize des Fensters

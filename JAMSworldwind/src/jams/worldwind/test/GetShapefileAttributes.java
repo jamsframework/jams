@@ -24,7 +24,7 @@ public class GetShapefileAttributes {
             while (sf.hasNext()) {
                 ShapefileRecord record = sf.nextRecord();
                 Set<Entry<String, Object>> att = record.getAttributes().getEntries();
-                
+
                 //print entries
                 for ( Iterator<Entry<String,Object>> iterator = att.iterator(); iterator.hasNext(); )
                     System.out.println("Entry             : " + iterator.next());
