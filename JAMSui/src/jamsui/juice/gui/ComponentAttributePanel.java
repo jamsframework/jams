@@ -242,21 +242,22 @@ public class ComponentAttributePanel extends JPanel {
             return;
         }
 
-        if (!valueInput.verify()) {
-            return;
-        }
-
-        if (valueInput.getValue().equals("")) {
-            setButton.setSelected(false);
-            return;
-        }
+//        if (valueInput.getValue().equals("")) {
+//            setButton.setSelected(false);
+//            return;
+//        }
 
         if (setButton.isSelected()) {
+            if (!valueInput.verify()) {
+                
+                GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Invalid_value!"), null);
+                return;
+            }
             //valueInput.getComponent().setEnabled(false);
             field.setValue(valueInput.getValue());
         } else {
             //valueInput.getComponent().setEnabled(true);
-            field.setValue("");
+            field.setValue(null);
         }
         tableModel.setValueAt(field.getValue(), selectedRow, 4);
     }
