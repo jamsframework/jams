@@ -37,7 +37,7 @@ public class GlobeModel implements UIEvents {
         changeSupport = new PropertyChangeSupport(this);
 
         this.wwd = new WorldWindowGLCanvas();
-        
+
         // Create the default model as described in the current worldwind properties.
         this.model = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
         this.wwd.setModel(this.model);
@@ -49,7 +49,7 @@ public class GlobeModel implements UIEvents {
     public WorldWindow getWorldWindow() {
         return wwd;
     }
-    
+
     public Model getModel() {
         return this.model;
     }
@@ -58,27 +58,15 @@ public class GlobeModel implements UIEvents {
         return statusBar;
     }
 
-    public void addShapefile(File f, String layerName) {
+    public void addShapefile(File f) {
+        String layerName = f.getName()+"|"+f.getAbsolutePath();
         List<Layer> layers = new ShapefileLoader().createLayersFromSource(f);
-
+        //insert Layer
         for (Layer l : layers) {
             l.setName(layerName);
-            insertBeforePlacenames(l);
+            model.getLayers().add(l);
         }
         changeSupport.firePropertyChange(UIEvents.LAYER_CHANGE, null, null);
-
-    }
-
-    public void insertBeforePlacenames(Layer layer) {
-        // Insert the layer into the layer list just before the placenames.
-        int compassPosition = 0;
-        LayerList layers = this.wwd.getModel().getLayers();
-        for (Layer l : layers) {
-            if (l instanceof PlaceNameLayer) {
-                compassPosition = layers.indexOf(l);
-            }
-        }
-        layers.add(compassPosition, layer);
     }
 
     @Override

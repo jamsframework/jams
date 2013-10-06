@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package jams.worldwind.ui.model;
 
 import gov.nasa.worldwind.layers.Layer;
@@ -27,15 +23,6 @@ public class LayerListModel extends DefaultListModel<Layer> {
         for(int i=0;i<layers.size();i++) {
             this.add(i,layers.get(i));
         }
-        /* LayerListItem
-        for (Layer l : layers) {
-            
-            LayerListItem lli = new LayerListItem(l.getName(), l.isEnabled());
-            this.
-            //this.add(lli);
-            this.addElement(lli);
-        }
-        */
     }
 
     public void update() {

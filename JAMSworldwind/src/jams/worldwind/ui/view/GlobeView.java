@@ -40,7 +40,6 @@ public class GlobeView implements PropertyChangeListener {
     private GlobeModel globeModel;
     private JFrame viewingFrame;
     private JMenuBar menuBar;
-    private LayerPanel layerPanel;
     private LayerListView layerView;
     
     public GlobeView(GlobeModel gm) {
@@ -55,8 +54,7 @@ public class GlobeView implements PropertyChangeListener {
         viewingFrame.add((Component) globeModel.getStatusBar(), BorderLayout.PAGE_END);
 
         layerView = new LayerListView(this.globeModel);
-        //layerPanel = new LayerPanel(globeModel.getWorldWindow());
-        //globeModel.getWorldWindow().addPropertyChangeListener(this);
+
         buildMenu();
         fixMacOSX();
 
@@ -75,6 +73,7 @@ public class GlobeView implements PropertyChangeListener {
                 JFileChooser fc = new JFileChooser("/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp");
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("ESRI Shapefile", "shp");
                 fc.setFileFilter(filter);
+
                 switch (fc.showOpenDialog(viewingFrame)) {
                     case JFileChooser.APPROVE_OPTION:
                         File file = fc.getSelectedFile();
@@ -82,11 +81,11 @@ public class GlobeView implements PropertyChangeListener {
                             //Shapefile ist schon vorhanden
                             if (reloadShapefile(file)) {
                                 //Shapefile neu laden
-                                globeModel.addShapefile(file, file.getName() + "|" + file.getAbsolutePath());
+                                globeModel.addShapefile(file);
                             }
                         } else {
                             //Shapefile nicht vorhanden -> hinzufügen
-                            globeModel.addShapefile(file, file.getName() + "|" + file.getAbsolutePath());
+                            globeModel.addShapefile(file);
                         }
                         break;
                     default:
@@ -191,21 +190,11 @@ public class GlobeView implements PropertyChangeListener {
         viewingFrame.setVisible(true);
     }
 
-    public void addMouseListenerToWindow(MouseListener ml) {
-        logger.info("Register Mouse Listener...");
-        viewingFrame.addMouseListener(ml);
-    }
-
-    public void addMouseListenerToGlobe(MouseListener ml) {
-        logger.info("Register Mouse Listener...");
-        globeModel.getWorldWindow().getInputHandler().addMouseListener(ml);
-    }
-
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         logger.info("Recieving Event: " + evt.getPropertyName());
         if (evt.getPropertyName().equals(UIEvents.LAYER_CHANGE)) {
-            layerPanel.update(this.globeModel.getWorldWindow());
+            layerView.updateLayerListView();
         }
     }
 }

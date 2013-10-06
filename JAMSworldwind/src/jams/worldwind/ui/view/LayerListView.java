@@ -1,18 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package jams.worldwind.ui.view;
 
 import gov.nasa.worldwind.layers.Layer;
 import jams.worldwind.handler.LayerListItemTransferHandler;
 import jams.worldwind.ui.UIEvents;
 import jams.worldwind.ui.model.GlobeModel;
-import jams.worldwind.ui.model.LayerListItem;
 import jams.worldwind.ui.model.LayerListModel;
 import jams.worldwind.ui.renderer.LayerListRenderer;
 import java.awt.GridLayout;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -40,7 +34,6 @@ public class LayerListView implements PropertyChangeListener {
 
     public LayerListView(GlobeModel gm) {
         this.globeModel = gm;
-        this.globeModel.addPropertyChangeListener(this);
         this.layerModel = new LayerListModel(globeModel);
 
         theFrame = new JFrame("Layers");
@@ -68,29 +61,30 @@ public class LayerListView implements PropertyChangeListener {
                 JList list = (JList) event.getSource();
 
                 // Get index of item clicked
-
                 int index = list.locationToIndex(event.getPoint());
                 Layer item = (Layer) list.getModel().getElementAt(index);
 
                 // Toggle selected state
-
                 item.setEnabled(!item.isEnabled());
-                Layer l = globeModel.getWorldWindow().getModel().getLayers().getLayerByName(item.toString());
+                Layer l = globeModel.getWorldWindow().getModel().getLayers().getLayerByName(item.getName());
                 if (l != null) {
                     l.setEnabled(item.isEnabled());
                 } else {
                     logger.error("Clicked layer not found at WorldWind model!");
                 }
-
                 globeModel.getWorldWindow().redraw();
                 // Repaint cell
-
                 list.repaint(list.getCellBounds(index, index));
             }
         });
 
         theFrame.add(scrollPane);
         theFrame.setSize(200, 600);
+        this.globeModel.addPropertyChangeListener(this);
+    }
+    
+    public void updateLayerListView() {
+        layerModel.update();
     }
     
     public void updateModel() {
