@@ -80,6 +80,10 @@
         <copy todir="${dist.dir}/lib/lib-external/">
             <fileset dir="../../JAMSworldwind/lib/lib-external/"/>
         </copy>
-    </target>
-    
+        <!--<echo>Copying logback.xml file and KnowIssues.txt to distribution dir</echo>-->
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the ../build.xml file. -->
+        <!--<copy file="../../JAMSworldwind/src/jams/worldwind/logback.xml" todir="${dist.dir}"/>-->
+        <!--<copy file="../../JAMSworldwind/src/jams/worldwind/KnownIssues.txt" todir="${dist.dir}"/>-->
+    </target>    
 </project>

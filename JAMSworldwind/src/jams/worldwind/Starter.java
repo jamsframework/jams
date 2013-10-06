@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package jams.worldwind;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.util.StatusPrinter;
 import gov.nasa.worldwind.Configuration;
-import jams.worldwind.ui.MainFrame;
-import javax.swing.JFrame;
+import jams.worldwind.ui.model.GlobeModel;
+import jams.worldwind.ui.view.GlobeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,19 +34,16 @@ public class Starter {
         if (Configuration.isMacOS()) {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
         }
-        LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+        //LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         // print logback's internal status
-        StatusPrinter.print(lc);
+        //StatusPrinter.print(lc);
+        //logger.info(lc.toString());
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-
-                JFrame frame = new MainFrame();
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setName(appName);
-                frame.pack();
-                frame.setVisible(true);
+                GlobeView view = new GlobeView(new GlobeModel());
+                view.show();
             }
         });
         logger.info("Exiting Starter application.");
