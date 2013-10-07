@@ -14,11 +14,12 @@ import java.util.Set;
 
 public class GetShapefileAttributes {
     
-    final String testshapefile = "../../JAMSworldwind/shapefiles/JAMS-KOSI/hrus.shp";
+    final String testshapefile = "../../../JAMSworldwind/shapefiles/JAMS-KOSI/hrus.shp";
 
     public GetShapefileAttributes() {
         System.out.println("Working directory : " + System.getProperty("user.dir"));
         Shapefile sf = new Shapefile(new File(testshapefile));
+        
         System.out.println("Number of records : " + sf.getNumberOfRecords());
         try {
             while (sf.hasNext()) {
@@ -28,6 +29,7 @@ public class GetShapefileAttributes {
                 //print entries
                 for ( Iterator<Entry<String,Object>> iterator = att.iterator(); iterator.hasNext(); )
                     System.out.println("Entry             : " + iterator.next());
+                System.out.println("Type              : " + record.getShapeType());
             }
         } finally {
         }
