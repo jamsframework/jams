@@ -11,20 +11,20 @@ import optas.regression.GaussianProcessRegression;
  *
  * @author christian
  */
-public class covSEiso extends CovarianceFunction{
+public class covSEard extends CovarianceFunction{
     
     @Override
     public Matrix selfVariance(double hyp[], double x[][]){
         int n = x[0].length; //num of parameters
         int D = x.length; //num of samples
         
-        double ell = Math.exp(hyp[0]);  //                               % characteristic length scale
-        double sf2 = Math.exp(2.*hyp[1]);//     
+        //double ell = Math.exp(hyp[0]);  //                               % characteristic length scale
+        double sf2 = Math.exp(2.*hyp[n]);//     
         
         double x_copy[][] = new double[D][n];
         for (int i=0;i<n;i++){
             for (int j=0;j<D;j++){
-                x_copy[j][i] = x[j][i] / ell;
+                x_copy[j][i] = x[j][i] / Math.exp(hyp[i]);
             }            
         }
         
@@ -60,7 +60,6 @@ public class covSEiso extends CovarianceFunction{
         return K;
     }
     
-    @Override
     public Matrix crossVariance(double hyp[], double x[][], double xs[][]){
         int n = x[0].length; //num of parameters
         int D1 = x.length; //num of training samples
@@ -71,18 +70,18 @@ public class covSEiso extends CovarianceFunction{
             return null;
         }
         
-        double ell = Math.exp(hyp[0]);  //                               % characteristic length scale
-        double sf2 = Math.exp(2.*hyp[1]);//                                           % signal variance
+        //double ell = Math.exp(hyp[0]);  //                               % characteristic length scale
+        double sf2 = Math.exp(2.*hyp[n]);//                                           % signal variance
 
         double x_copy[][] = new double[D1][n];
         double xs_copy[][] = new double[D2][n];
         
         for (int i=0;i<n;i++){
             for (int j=0;j<D1;j++){
-                x_copy[j][i] = x[j][i] / ell;
+                x_copy[j][i] = x[j][i] / Math.exp(hyp[i]);
             }
             for (int j=0;j<D2;j++){
-                xs_copy[j][i] = xs[j][i] / ell;
+                xs_copy[j][i] = xs[j][i] / Math.exp(hyp[i]);
             }
         }
         
@@ -169,7 +168,7 @@ public class covSEiso extends CovarianceFunction{
        
         double hyp[] = {Math.log(0.25), Math.log(1.0)};
         
-        covSEiso test = new covSEiso();
+        covSEard test = new covSEard();
         Matrix C = test.eval(hyp, x);
         
         for (int i=0;i<C.getRowDimension();i++){
@@ -183,7 +182,7 @@ public class covSEiso extends CovarianceFunction{
 
     @Override
     public int getNumberOfHyperparameters(double[][] x) {
-        return 2;
+        return x.length+1;
     }
     
     @Override
@@ -195,7 +194,7 @@ public class covSEiso extends CovarianceFunction{
     }
     @Override
     public String toString(){
-        return "covSEiso";
+        return "covSEard";
     }
     
 }

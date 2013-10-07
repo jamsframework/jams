@@ -13,7 +13,8 @@ import Jama.Matrix;
 public abstract class CovarianceFunction {    
     public static CovarianceFunction[] getCovFunctions(){
         return new CovarianceFunction[]{
-            new covSEiso()
+            new covSEiso(),
+            new covSEard()
         };
     }
     public abstract Matrix eval(double hyp[], double x[][]);

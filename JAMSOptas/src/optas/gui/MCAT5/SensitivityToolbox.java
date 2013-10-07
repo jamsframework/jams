@@ -260,7 +260,7 @@ public class SensitivityToolbox extends MCAT5Plot {
         chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
         
         chart.getPlot().setBackgroundPaint(Color.white);
-        chart.getXYPlot().setDomainGridlinePaint(Color.black);
+        //chart.getXYPlot().setDomainGridlinePaint(Color.black);
         
         centerPanel.add(chartPanel);
 

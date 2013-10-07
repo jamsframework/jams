@@ -11,48 +11,34 @@ import optas.regression.GaussianProcessRegression;
  *
  * @author christian
  */
-public class covSEiso extends CovarianceFunction{
+public class covNNiso extends CovarianceFunction{
     
+    //TESTEN
     @Override
     public Matrix selfVariance(double hyp[], double x[][]){
         int n = x[0].length; //num of parameters
         int D = x.length; //num of samples
         
-        double ell = Math.exp(hyp[0]);  //                               % characteristic length scale
+        double ell = Math.exp(2.*hyp[0]);  //                               % characteristic length scale
         double sf2 = Math.exp(2.*hyp[1]);//     
-        
-        double x_copy[][] = new double[D][n];
-        for (int i=0;i<n;i++){
-            for (int j=0;j<D;j++){
-                x_copy[j][i] = x[j][i] / ell;
-            }            
-        }
-        
-        double mean[] = new double[n];
-        for (int i=0;i<n;i++){
-            for (int j=0;j<D;j++){
-                mean[i] += x_copy[j][i];
-            }            
-            mean[i] /= (double)(D);            
-        }
-        
-        for (int i=0;i<n;i++){
-            for (int j=0;j<D;j++){
-                x_copy[j][i] -= mean[i];
-            }            
-        }
-        
-        
         
         Matrix K = new Matrix(D,1);
         
+        double xs[] = new double[D];
+        for (int i=0;i<D;i++){
+            xs[i] = 1;
+            for (int j=0;j<n;j++){
+                xs[i] += x[i][j]*x[i][j];
+            }
+        }
+        
         for (int i=0;i<K.getColumnDimension();i++){
             for (int j=0;j<K.getRowDimension();j++){
-                double sum = 0;
+                double sum = 1;
                 for (int k=0;k<n;k++){
-                    sum += (x_copy[i][k])*(x_copy[i][k]) + (x_copy[j][k])*(x_copy[j][k]) - 2.0*(x_copy[i][k])*(x_copy[j][k]);                    
+                    sum += x[i][k]*x[j][k];                    
                 }
-                double r = sf2*Math.exp(-sum /2.0);
+                double r = sum / Math.sqrt(ell);
                 K.set(j, i, r);
             }            
         }   
@@ -169,7 +155,7 @@ public class covSEiso extends CovarianceFunction{
        
         double hyp[] = {Math.log(0.25), Math.log(1.0)};
         
-        covSEiso test = new covSEiso();
+        covNNiso test = new covNNiso();
         Matrix C = test.eval(hyp, x);
         
         for (int i=0;i<C.getRowDimension();i++){

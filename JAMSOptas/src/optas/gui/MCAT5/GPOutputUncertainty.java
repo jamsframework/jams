@@ -75,6 +75,8 @@ public class GPOutputUncertainty extends MCAT5Plot {
     TreeSet<Double> ys = new TreeSet<Double>();
     ArrayList<Double> ys_array = new ArrayList<Double>();
     
+    Measurement sim = null;
+    
     private class NQTTransformation{
         public NQTTransformation(double[]err,double[]sim){
             L = err.length;
@@ -195,16 +197,13 @@ public class GPOutputUncertainty extends MCAT5Plot {
     
     GaussianProcessRegression gp = new GaussianProcessRegression();
     double x[][] = null;
-    
-    TimeSerieEnsemble ts_sim = null;
-
-            
+                
     class TimeSeriesTableModel extends AbstractTableModel {
 
         private String[] columnNames = new String[]{"select", "name"};
         private Object[][] data = null;
 
-        TimeSeriesTableModel(TimeSerieEnsemble ts[]) {
+        TimeSeriesTableModel(TimeSerie ts[]) {
             data = new Object[ts.length][2];
             for (int i=0;i<ts.length;i++){
                 data[i][0] = Boolean.FALSE;
@@ -250,8 +249,8 @@ public class GPOutputUncertainty extends MCAT5Plot {
         public boolean isCellEditable(int row, int col) {
             switch (col) {
                 case 0:{
-                    if (ts_sim != null){
-                        if (this.getValueAt(row, 1).toString().equals(ts_sim.toString())){
+                    if (sim != null){
+                        if (this.getValueAt(row, 1).toString().equals(sim.toString())){
                             return false;
                         }
                     }
@@ -276,7 +275,7 @@ public class GPOutputUncertainty extends MCAT5Plot {
     }
     
     public GPOutputUncertainty() {
-        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), TimeSerie.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"), Measurement.class, 0, 10));
         this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"), Measurement.class, 0, 1));
 
         init();
@@ -698,7 +697,8 @@ public class GPOutputUncertainty extends MCAT5Plot {
         likParameterPanelLayout.setVerticalGroup(vertGroup);
     }
             
-    int index = 50;    
+    //int index = 50;    
+    int index = 2123;    
     boolean initData = false;
                     
     private double calcE2(double sim[], double obs[]){
@@ -779,11 +779,11 @@ public class GPOutputUncertainty extends MCAT5Plot {
         }
         //collect data
         //1. all timeseries ensembles
-        Set<String> tsSet = this.getDataSource().getDatasets(TimeSerie.class);
-        TimeSerieEnsemble ts[] = new TimeSerieEnsemble[tsSet.size()];
+        Set<String> tsSet = this.getDataSource().getDatasets(Measurement.class);
+        Measurement ts[] = new Measurement[tsSet.size()];
         int counter = 0;
         for (String name : tsSet) {
-            ts[counter++] = this.getDataSource().getTimeserieEnsemble(name);
+            ts[counter++] = (Measurement)this.getDataSource().getDataSet(name);
         }
                         
         if (!initData) {
@@ -800,12 +800,10 @@ public class GPOutputUncertainty extends MCAT5Plot {
         ArrayList<DataSet> p[] = getData(new int[]{0, 1});
 
         Measurement obs = (Measurement) p[1].get(0);
-        ts_sim = (TimeSerieEnsemble) p[0].get(0);
+        sim = (Measurement) p[0].get(0);
         int T = obs.getTimesteps();
         
-        //3. simulation
-        TimeSerie sim = ts_sim.getTimeSerie(ts_sim.getId(index));
-                
+        //3. simulation                        
         ArrayList<Integer> rows = new ArrayList<Integer>();
         
         for (int i=0;i<this.tsTable.getModel().getRowCount();i++){
@@ -817,7 +815,7 @@ public class GPOutputUncertainty extends MCAT5Plot {
         
         //select simulation in table .. must have!
         for (int i=0;i<tsTable.getModel().getRowCount();i++){
-           if (tsTable.getModel().getValueAt(i, 1).toString().compareTo(ts_sim.toString())==0){
+           if (tsTable.getModel().getValueAt(i, 1).toString().compareTo(sim.toString())==0){
                if (tsTable.getModel().getValueAt(i, 0) == Boolean.FALSE){
                    tsTable.getModel().setValueAt(Boolean.TRUE, i, 0);
                    return;
@@ -831,13 +829,13 @@ public class GPOutputUncertainty extends MCAT5Plot {
         
         //set default if necessary
         if (startDate == null){
-            trainStartDate.setDate(ts_sim.getDate(0));
-            trainStartDate.setTime(ts_sim.getDate(0));
+            trainStartDate.setDate(sim.getTime(0));
+            trainStartDate.setTime(sim.getTime(0));
             startDate = this.trainStartDate.getCalendarValue();
         }
         if (endDate == null){
-            trainEndDate.setDate(ts_sim.getDate(ts_sim.getTimesteps()/2));
-            trainEndDate.setTime(ts_sim.getDate(ts_sim.getTimesteps()/2));
+            trainEndDate.setDate(sim.getTime(sim.getTimesteps()/2));
+            trainEndDate.setTime(sim.getTime(sim.getTimesteps()/2));
             endDate = this.trainEndDate.getCalendarValue();
         }
         hydrograph.clearDomainMarkers();
@@ -860,8 +858,7 @@ public class GPOutputUncertainty extends MCAT5Plot {
        
         for (int i=0;i<n;i++){
             int row = rows.get(i);
-            TimeSerieEnsemble dataset = (TimeSerieEnsemble)tsTable.getModel().getValueAt(row, 1);
-            TimeSerie input_ts = dataset.getTimeSerie(dataset.getId(index));
+            TimeSerie input_ts = (TimeSerie)tsTable.getModel().getValueAt(row, 1);
             for (int j=trainStart;j<trainEnd;j++){
                 x[j-trainStart][i] = input_ts.getValue(j);                
             }
@@ -914,8 +911,7 @@ public class GPOutputUncertainty extends MCAT5Plot {
         double xs[][] = new double[T][n];
         for (int i=0;i<rows.size();i++){
             int row = rows.get(i);
-            TimeSerieEnsemble dataset = (TimeSerieEnsemble)tsTable.getModel().getValueAt(row, 1);
-            TimeSerie input_ts = dataset.getTimeSerie(dataset.getId(index));
+            TimeSerie input_ts = (TimeSerie)tsTable.getModel().getValueAt(row, 1);
             for (int j=0;j<T;j++){
                 xs[j][i] = input_ts.getValue(j);
             }
@@ -923,6 +919,33 @@ public class GPOutputUncertainty extends MCAT5Plot {
                 
         Matrix result[] = gp.inference(xs);
                 
+        int TEST_LIMIT = 2000;
+        double xs_test[][] = new double[TEST_LIMIT][1];
+        for (int i=0;i<TEST_LIMIT;i++){
+            xs_test[i][0] = (double)i;
+        }
+        Matrix result2[] = gp.inference(xs_test);
+        System.out.println("Lower conf\tUpper conf\texp");
+        
+        double upperBound2[] = new double[TEST_LIMIT];
+        double lowerBound2[] = new double[TEST_LIMIT];
+        double expected2[]   = new double[TEST_LIMIT];
+        for (int i = 0; i < TEST_LIMIT; i++) {
+            upperBound2[i] = result2[0].get(0, i)+2.*Math.sqrt(result2[1].get(0, i));
+            lowerBound2[i] = result2[0].get(0, i)-2.*Math.sqrt(result2[1].get(0, i));
+            expected2[i] = result2[0].get(0, i);
+        }
+        upperBound2 = nqt.inv_transform(upperBound2);
+        lowerBound2 = nqt.inv_transform(lowerBound2);
+        expected2 = nqt.inv_transform(expected2);
+        
+        for (int i=0;i<TEST_LIMIT;i++){
+            System.out.println(i+"\t"+
+                (Math.max(i-(i+beta)*lowerBound2[i],0)) + "\t" +
+                (Math.max(i-(i+beta)*upperBound2[i],0)) + "\t" +
+                (Math.max(i-(i+beta)*expected2[i],0)) + "\t");
+        }
+        
         TimeSeries dataset1 = new TimeSeries(JAMS.i18n("LOWER_CONFIDENCE_BOUND"));
         TimeSeries dataset2 = new TimeSeries(JAMS.i18n("UPPER_CONFIDENCE_BOUND"));
         TimeSeries dataset3 = new TimeSeries(obs.name);
@@ -1006,7 +1029,7 @@ public class GPOutputUncertainty extends MCAT5Plot {
     }
     
     public static void main(String[] args) {
-        DataCollection dc = DataCollection.createFromFile(new File("E:/Vortraege und Paper/J2000 Training/2013-05-17-ABC-Gehlberg/Worktask 1/output/current/fullEnsemble.cdat"));
+        DataCollection dc = DataCollection.createFromFile(new File("E:/Vortraege und Paper/2013-10-17 KOS/Hymod/output/current/nsga_save2.cdat"));
 
         try {
             DataRequestPanel d = new DataRequestPanel(new GPOutputUncertainty(), dc);

@@ -643,7 +643,7 @@ public class DataCollection extends DataSet implements Serializable{
         Calendar c1 = DefaultDataFactory.getDataFactory().createCalendar();
         Calendar c2 = DefaultDataFactory.getDataFactory().createCalendar();
 
-        long startTime = 0;
+        long startTime = Long.MIN_VALUE;
         long endTime   = Long.MAX_VALUE;
 
         int timeUnit = 0;
