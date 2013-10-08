@@ -840,9 +840,10 @@ public class DataCollection extends DataSet implements Serializable{
         Arrays.sort(ids);
 
         for (int i=0;i<N;i++){
-            write.write("sampler\t"+i+"\n");
-            write.write("@start"+"\n");
             int id = ids[i];
+            
+            write.write("sampler\t"+id+"\n");
+            write.write("@start"+"\n");            
             for (int t=0;t<T;t++){
                 Date date = array[0].getDate(t);
                 String entry = sdf.format(date);
@@ -893,7 +894,7 @@ public class DataCollection extends DataSet implements Serializable{
         }
     }
 
-    private void dumpSimpleEnsemble(File file, ArrayList<SimpleEnsemble> list, boolean createNewFile) throws IOException{
+    private void dumpSimpleEnsemble(File file, ArrayList<SimpleEnsemble> list, boolean createNewFile, boolean append) throws IOException{
         if (list.isEmpty())
             return;
 
@@ -930,7 +931,7 @@ public class DataCollection extends DataSet implements Serializable{
 
             write.write(entry + "\n");
         }
-        if (createNewFile)
+        if (createNewFile && !append)
             write.write("@end");
         
         write.close();
@@ -978,7 +979,7 @@ public class DataCollection extends DataSet implements Serializable{
         }
 
         try{
-            dumpSimpleEnsemble(new File(directory.getAbsolutePath()+"/scalar_"+dateString+".dat"),simpleEnsembles,createNewFile);
+            dumpSimpleEnsemble(new File(directory.getAbsolutePath()+"/scalar_"+dateString+".dat"),simpleEnsembles,createNewFile, append);
             dumpTSEnsemble(new File(directory.getAbsolutePath()+"/timeseries_"+dateString+".dat"),tsEnsembles,createNewFile);
         }catch(IOException ioe){
             System.err.println(ioe);
