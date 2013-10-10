@@ -6,6 +6,7 @@ package optas.gui.MCAT5;
 
 
 import jams.JAMS;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -32,6 +33,9 @@ import optas.data.EfficiencyEnsemble;
 import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
 import optas.tools.PatchedChartPanel;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
+import org.jfree.chart.renderer.xy.XYBarPainter;
+import org.jfree.chart.util.ShadowGenerator;
 
 
 /**
@@ -64,7 +68,7 @@ public class IdentifiabilityPlot extends MCAT5Plot{
         chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
         
         chart.getPlot().setBackgroundPaint(Color.white);
-        chart.getXYPlot().setDomainGridlinePaint(Color.black);
+        //chart.getXYPlot().setDomainGridlinePaint(Color.black);
         
         XYLineAndShapeRenderer gradient_renderer = new XYLineAndShapeRenderer();
         gradient_renderer.setSeriesPaint(0, Color.BLACK);
@@ -129,11 +133,13 @@ public class IdentifiabilityPlot extends MCAT5Plot{
         XYSeries dataset_box[] = new XYSeries[boxCount];
         XYSeries dataset = new XYSeries(JAMS.i18n("CUMULATIVE_DISTRIBUTION"));
         for (int i = 0; i < boxCount; i++) {
-            dataset_box[i] = new XYSeries("");
+            dataset_box[i] = new XYSeries(i);
         }
             
         XYBarRenderer renderer = new XYBarRenderer(0.33 / (double)boxCount);
 
+        renderer.setShadowVisible(false);
+        renderer.setBarPainter(new StandardXYBarPainter());
         Integer sortedIds[] = p2.sort();
 
         //double sortedData[][] = MCAT5Tools.sortbyEff(p1,p2);

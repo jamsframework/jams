@@ -37,6 +37,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.DatasetUtilities;
 
@@ -260,6 +263,9 @@ public class SensitivityToolbox extends MCAT5Plot {
         chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
         
         chart.getPlot().setBackgroundPaint(Color.white);
+        ((StackedBarRenderer)chart.getCategoryPlot().getRenderer()).setShadowVisible(false);
+        ((BarRenderer)chart.getCategoryPlot().getRenderer()).setBarPainter(new StandardBarPainter());
+
         //chart.getXYPlot().setDomainGridlinePaint(Color.black);
         
         centerPanel.add(chartPanel);

@@ -65,7 +65,7 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
         mainPanel.add(chartPanel, BorderLayout.NORTH);
 
         chart.getPlot().setBackgroundPaint(Color.white);
-        chart.getXYPlot().setDomainGridlinePaint(Color.black);
+        //chart.getXYPlot().setDomainGridlinePaint(Color.black);
         
         JPanel sliderPanel = new JPanel(new BorderLayout());
         sliderPanel.setMaximumSize(new Dimension(300, 100));
@@ -141,7 +141,7 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
             } else if (i == boxes.length - 1) {
                 dataset = new XYSeries("worst group");
             } else {
-                dataset = new XYSeries("");
+                dataset = new XYSeries(i);
             }
 
             double box_data[] = new double[boxes[i].size()];
