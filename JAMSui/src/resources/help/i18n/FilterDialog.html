@@ -107,8 +107,7 @@
 <b>getAttribute(jams.model.Context, java.lang.String)</b>
 </tr>
 <tr style="background-color:#eeeeee">
-<pre>public static&nbsp;java.lang.Object&nbsp;getAttribute(jams.model.Context&nbsp;context,
-                            java.lang.String&nbsp;name)</pre><br>
+<pre>public static&nbsp;java.lang.Object&nbsp;getAttribute(jams.model.Context&nbsp;context, java.lang.String&nbsp;name)</pre><br>
 <br>returns the attribute with "name" from "context" 
 <dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>context</code> - the name of a model context</dd><dd><code>name</code> - the name of a attribute in context</dd> 
     <dt><span style="font-weight:bold;">Returns:</span></dt><dd>the value of that attribute</dd>  </dl>
@@ -118,9 +117,7 @@
 <b>dateCompare(jams.data.Attribute.Calendar, jams.data.Attribute.Calendar, int)</b>
 </tr>
 <tr style="background-color:#eeeeee">
-<pre>public static&nbsp;int&nbsp;dateCompare(jams.data.Attribute.Calendar&nbsp;c1,
-              jams.data.Attribute.Calendar&nbsp;c2,
-              int&nbsp;accuracy)</pre><br>
+<pre>public static&nbsp;int&nbsp;dateCompare(jams.data.Attribute.Calendar&nbsp;c1, jams.data.Attribute.Calendar&nbsp;c2, int&nbsp;accuracy)</pre><br>
 <br>compares two calendar objects
 <dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>c1</code> - calendar 1</dd><dd><code>c2</code> - calendar 2</dd> 
     <dt><span style="font-weight:bold;">Returns:</span></dt><dd>-1 if c1 is before c2, 1 if c1 is after c2 and 0 otherwise</dd>  </dl>
@@ -135,7 +132,7 @@
 </tr>
 <tr style="background-color:#eeeeee">
 <dl><dt><span style="font-weight:bold;">Objective</span></dt><dd>Writing attributes only for settlement hrus (id=1 or id=2)</dd> 
-    <dt><span style="font-weight:bold;">Solution</span></dt><dd><pre>getAttribute(HRULoop,landuse)==1 || getAttribute(HRULoop,landuse)==2</pre></dd>  </dl>
+    <dt><span style="font-weight:bold;">Solution</span></dt><dd><pre>getAttribute(HRULoop,&quot;landuse&quot;)==1 || getAttribute(HRULoop,&quot;landuse&quot;)==2</pre></dd>  </dl>
 </tr>
 
 <tr style="background-color:#ddddff">
@@ -143,7 +140,7 @@
 </tr>
 <tr style="background-color:#eeeeee">
 <dl><dt><span style="font-weight:bold;">Objective</span></dt><dd>Writing attributes only at the first day of every month</dd> 
-    <dt><span style="font-weight:bold;">Solution</span></dt><dd><pre>day(getAttribute(TimeLoop,time)==1)</pre></dd>  </dl>
+    <dt><span style="font-weight:bold;">Solution</span></dt><dd><pre>day(getAttribute(TimeLoop,&quot;time&quot;)==1)</pre></dd>  </dl>
 </tr>
 
 <tr style="background-color:#ddddff">
@@ -151,7 +148,7 @@
 </tr>
 <tr style="background-color:#eeeeee">
 <dl><dt><span style="font-weight:bold;">Objective</span></dt><dd>Writing attributes only at the last day of every month</dd> 
-    <dt><span style="font-weight:bold;">Solution</span></dt><dd><pre>isLastDayInMonthay(getAttribute(TimeLoop,time))</pre></dd>  </dl>
+    <dt><span style="font-weight:bold;">Solution</span></dt><dd><pre>isLastDayInMonthay(getAttribute(TimeLoop,&quot;time&quot;))</pre></dd>  </dl>
 </tr>
 </tbody>
 </table>

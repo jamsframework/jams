@@ -200,7 +200,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
         
         public DefaultFilter(String contextName, String expression) {
             this.contextName = contextName;
-            this.expression = expression;
+            this.expression = "${" + expression + "}";
 
             java.util.Properties properties = new java.util.Properties();
             properties.put("javax.el.cacheSize", "1000");
@@ -213,7 +213,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
 
             exprContext = FilterFunctions.getContext();
 
-            valueExpr = factory.createValueExpression(exprContext, expression, boolean.class);
+            valueExpr = factory.createValueExpression(exprContext, this.expression, boolean.class);
             idExpr = factory.createValueExpression(exprContext, "${id}", double.class);           
         }
 

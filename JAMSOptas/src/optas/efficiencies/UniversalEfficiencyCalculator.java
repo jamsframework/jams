@@ -48,78 +48,99 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] e1;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] e2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] le1;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] le2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] ave;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] r2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] bias;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] e1_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] e2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] le1_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] le2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] ave_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] r2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
+    description = "file name of optimization process description",
+    defaultValue = "0")
     public Attribute.Double[] bias_normalized;
     
-    /*@JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description")
-    public Attribute.Double[] log_likelihood;*/
+    description = "file name of optimization process description",
+    defaultValue = "0")
+    public Attribute.Double[] log_likelihood;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description",
+    defaultValue = "0")
+    public Attribute.Double[] log_likelihood_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
@@ -293,9 +314,8 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             setObjective(m,s,k,ave,ave_normalized,calcAve);
             setObjective(m,s,k,r2,r2_normalized,calcR2);
             setObjective(m,s,k,bias,bias_normalized,calcPBias);
-            
-            //this.log_likelihood[k].setValue(calcLogLikelihood.calc(m, s));
-            
+            setObjective(m,s,k,log_likelihood, log_likelihood_normalized, calcLogLikelihood);
+                        
             this.getModel().getRuntime().println("*******Measurement:" + this.measurementAttributeName[k]);
             this.getModel().getRuntime().println("*******Simulation :" + this.simulationAttributeName[k]);
             
