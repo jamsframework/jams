@@ -6,23 +6,24 @@ package jams.worldwind.shapefile;
 
 import gov.nasa.worldwind.formats.shapefile.ShapefileRecord;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Ronny Berndt <ronny.berndt@uni-jena.de>
  */
 public class JamsShapeAttributes extends BasicShapeAttributes {
-    
-    private ShapefileRecord record;
-    
-    public JamsShapeAttributes() {
-    }
-    
+
+    private final static Logger logger = LoggerFactory.getLogger(JamsShapeAttributes.class);
+    private ShapefileRecord shapeFileRecord;
+
     public JamsShapeAttributes(ShapefileRecord record) {
-        this.record = record;
+        this.shapeFileRecord = record;
     }
     
-    public ShapefileRecord getShapefileRecord() {
-        return this.record;
+    public ShapefileRecord getShapeFileRecord() {
+        return shapeFileRecord;
     }
+   
 }

@@ -10,16 +10,15 @@ import javax.swing.DefaultListModel;
  */
 public class LayerListModel extends DefaultListModel<Layer> {
 
-    private GlobeModel globeModel;
+    private Globe globeModel;
 
-    public LayerListModel(GlobeModel gm) {
-        this.globeModel = gm;
+    public LayerListModel() {
+        this.globeModel = Globe.getInstance();
         fillList();
     }
 
     private void fillList() {
         LayerList layers = this.globeModel.getWorldWindow().getModel().getLayers();
-        //System.out.println(layers);
         for(int i=0;i<layers.size();i++) {
             this.add(i,layers.get(i));
         }

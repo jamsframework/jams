@@ -80,6 +80,10 @@
         <copy todir="${dist.dir}/lib/lib-external/">
             <fileset dir="../../JAMSworldwind/lib/lib-external/"/>
         </copy>
+        <echo>Copying config files</echo>
+        <copy todir="${dist.dir}/config/">
+            <fileset dir="../../JAMSworldwind/src/config/"/>
+        </copy>
         <!--<echo>Copying logback.xml file and KnowIssues.txt to distribution dir</echo>-->
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->

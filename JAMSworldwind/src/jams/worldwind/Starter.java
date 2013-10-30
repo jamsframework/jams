@@ -3,7 +3,9 @@ package jams.worldwind;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.util.StatusPrinter;
 import gov.nasa.worldwind.Configuration;
-import jams.worldwind.ui.model.GlobeModel;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.AVList;
+import jams.worldwind.ui.model.Globe;
 import jams.worldwind.ui.view.GlobeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,9 @@ public class Starter {
     final static Logger logger = LoggerFactory.getLogger(Starter.class);
 
     static {
+        //load own configuration        
+        System.setProperty("gov.nasa.worldwind.app.config.document", "config/jams.worldwind.xml");
+
         System.setProperty("java.net.useSystemProxies", "true");
         if (Configuration.isMacOS()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -38,11 +43,13 @@ public class Starter {
         // print logback's internal status
         //StatusPrinter.print(lc);
         //logger.info(lc.toString());
+        
+        //System.out.println(Configuration.getStringValue("gov.nasa.worldwind.appconfig.document"));
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                GlobeView view = new GlobeView(new GlobeModel());
+                GlobeView view = new GlobeView();
                 view.show();
             }
         });

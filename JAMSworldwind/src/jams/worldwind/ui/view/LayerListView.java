@@ -4,12 +4,11 @@ import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.render.Material;
-import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.render.SurfacePolygons;
 import jams.worldwind.handler.LayerListItemTransferHandler;
 import jams.worldwind.shapefile.JamsShapeAttributes;
 import jams.worldwind.ui.UIEvents;
-import jams.worldwind.ui.model.GlobeModel;
+import jams.worldwind.ui.model.Globe;
 import jams.worldwind.ui.model.LayerListModel;
 import jams.worldwind.ui.renderer.LayerListRenderer;
 import java.awt.Color;
@@ -18,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import javax.swing.DropMode;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -37,33 +37,13 @@ public class LayerListView implements PropertyChangeListener {
     private JFrame theFrame;
     private JList layers;
     private LayerListModel layerModel;
-    private GlobeModel globeModel;
+    private Globe globeModel;
 
-    public LayerListView(GlobeModel gm) {
-        this.globeModel = gm;
-        this.globeModel.getWorldWindow().addSelectListener(new SelectListener() {
-            protected Object lastObject;
+    public LayerListView() {
+        this.globeModel = Globe.getInstance();
+        this.layerModel = new LayerListModel();
 
-            @Override
-            public void selected(SelectEvent event) {
-                Object o = event.getTopObject();
-                if (lastObject != o && o!=null) {
-                    lastObject = o;
-                    if (o instanceof SurfacePolygons) {
-                        SurfacePolygons s = (SurfacePolygons)o;
-                        
-                        System.out.println("AREA: " + s.getArea(globeModel.getModel().getGlobe()));
-                        
-                        JamsShapeAttributes bs = (JamsShapeAttributes)s.getAttributes();
-                        System.out.println(bs.getShapefileRecord().getAttributes().getEntries());
-                        Material material = new Material(Color.RED);
-                        bs.setOutlineMaterial(material);
-                    }
-                }
-            }
-        });
-        this.layerModel = new LayerListModel(globeModel);
-        theFrame = new JFrame("Layers");
+        theFrame = new JFrame("LAYERS");
         layers = new JList(layerModel);
 
         layers.setDragEnabled(

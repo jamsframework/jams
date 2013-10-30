@@ -35,7 +35,7 @@ public class JamsShapefileLoader extends ShapefileLoader {
     protected ShapeAttributes createPolygonAttributes(ShapefileRecord record)
     {
         //logger.info(record.getShapeType());
-        logger.info("No.: " + record.getRecordNumber() + " Attributes: " + record.getAttributes().getEntries().toString());
+        //logger.info("No.: " + record.getRecordNumber() + " Attributes: " + record.getAttributes().getValue("AREA"));
         ShapeAttributes shapeAttributes = new JamsShapeAttributes(record);
         return shapeAttributes;
     }
