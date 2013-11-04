@@ -191,7 +191,13 @@ public class SampleFactory implements Serializable {
     static public class SampleComperator implements Comparator, Serializable {
 
         private int order = 1;
-
+        private boolean subset[] = null;
+                
+        public SampleComperator(boolean decreasing_order, boolean subset[]) {
+            order = decreasing_order ? -1 : 1;
+            this.subset = subset;
+        }
+        
         public SampleComperator(boolean decreasing_order) {
             order = decreasing_order ? -1 : 1;
         }
@@ -203,6 +209,9 @@ public class SampleFactory implements Serializable {
             }
             int ord = 0;
             for (int i = 0; i < m; i++) {
+                if (subset!=null && !subset[i])
+                    continue;
+                
                 int nextOrd;
                 if (((Sample) d1).fx[i] < ((Sample) d2).fx[i]) {
                     nextOrd = -1 * order;

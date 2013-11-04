@@ -126,6 +126,12 @@ public class SimpleEnsemble extends Ensemble{
         public int compareTo(Object obj){
             if (obj instanceof DataIdPair){
                 DataIdPair eip = (DataIdPair)obj;
+                if (Double.isNaN(value))
+                    return 1;
+                
+                if (Double.isNaN(eip.value))
+                    return -1;
+                    
                 if ( this.value < eip.value){
                     return -1;
                 } else if (this.value > eip.value){

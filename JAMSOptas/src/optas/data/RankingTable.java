@@ -106,6 +106,12 @@ public class RankingTable {
         @Override
         public int compare(RankedSample o1, RankedSample o2) {
             double d = o1.sample.F()[column] - o2.sample.F()[column];
+            if (Double.isNaN(o1.sample.F()[column])){
+                return -1;
+            }
+            if (Double.isNaN(o2.sample.F()[column])){
+                return  1;
+            }
             if (d > 0) {
                 return 1;
             } else if (d < 0) {

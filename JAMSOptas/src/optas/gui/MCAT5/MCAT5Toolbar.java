@@ -163,7 +163,12 @@ public class MCAT5Toolbar extends JToolBar {
                 JAMS.i18n("NORMALIZED_PARAMETER_RANGE_PLOT"),
                 JAMS.i18n("NORMALISED_PARAMETER_RANGE_PLOT"),
                 NormalisedParameterRangePlot.class));
-
+        
+        registeredPlots.add(new PlotDesc(PlotType.Uncertainty,new ImageIcon(getClass().getResource("/reg/resources/images/ParetoBoxPlot.png")),
+                JAMS.i18n("PARETO_BOX_PLOT"),
+                JAMS.i18n("PARETO_BOX_PLOT"),
+                ParetoBoxPlot.class));
+                
         registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity.png")),
                 JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS"),
                 JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS"),

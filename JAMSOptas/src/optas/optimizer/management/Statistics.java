@@ -227,12 +227,19 @@ public class Statistics implements Serializable{
         return null;
     }
 
-    public ArrayList<Sample> getParetoFront(){        
+    
+    public ArrayList<Sample> getParetoSubset(boolean subset[]){
+        if (subset.length != this.m())
+            return null;
+        
         /*if (!bestSampleList.isEmpty())
             return bestSampleList;*/
         bestSampleList.clear();
         if (this.m()==1){
-            SampleComperator comparer = new SampleComperator(true);
+            if (!subset[0])
+                return new ArrayList<Sample>();
+            
+            SampleComperator comparer = new SampleComperator(true, subset);
             Sample best = null;
             Iterator<Sample> iter = sampleList.iterator();
             while(iter.hasNext()){
@@ -246,7 +253,7 @@ public class Statistics implements Serializable{
             return bestSampleList;
         }
 
-        SampleComperator comparer = new SampleComperator(true);
+        SampleComperator comparer = new SampleComperator(true, subset);
         Iterator<Sample> iter = sampleList.iterator();
         while(iter.hasNext()){
             Sample candidate = iter.next();
@@ -265,6 +272,12 @@ public class Statistics implements Serializable{
                 bestSampleList.add(candidate);
         }
         return bestSampleList;
+    }
+    
+    public ArrayList<Sample> getParetoFront(){        
+        boolean subsetFilter[] = new boolean[m()];
+        Arrays.fill(subsetFilter, true);
+        return getParetoSubset(subsetFilter);
     }
 
     public void optimizeInterpolation(){
