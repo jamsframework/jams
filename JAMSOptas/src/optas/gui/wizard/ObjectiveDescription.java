@@ -106,9 +106,11 @@ public class ObjectiveDescription {
         }
         Attribute measurementAttribute = new Attribute(map.get("measurement").getContextAttributes().get(0));
         Attribute simulationAttribute  = new Attribute(map.get("simulation").getContextAttributes().get(0));
+        Attribute timeAttribute  = new Attribute(map.get("time").getContextAttributes().get(0));
         
         od.setMeasurementAttribute(measurementAttribute);
         od.setSimulationAttribute(simulationAttribute);
+        od.setTimeAttribute(timeAttribute);
         
         if (map.get("timeInterval")==null){
             throw new OPTASWizardException("TODO");

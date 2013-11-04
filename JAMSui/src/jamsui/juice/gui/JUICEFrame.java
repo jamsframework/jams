@@ -287,10 +287,11 @@ public class JUICEFrame extends JFrame {
                         public void actionPerformed(ActionEvent e) {
 
                             OptimizerConfiguration wizard = (OptimizerConfiguration) e.getSource();
-                            ModelDescriptor newModelDoc = wizard.getModelDescriptor();
-                            view.setModelDescriptor(newModelDoc);
-                            view.loadModel(view.getModelDoc());
-
+                            if (wizard.getSuccessState()){
+                                ModelDescriptor newModelDoc = wizard.getModelDescriptor();
+                                view.setModelDescriptor(newModelDoc);
+                                view.loadModel(view.getModelDoc());
+                            }
                         }
                     });
 

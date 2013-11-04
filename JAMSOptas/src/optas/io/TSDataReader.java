@@ -94,7 +94,7 @@ public class TSDataReader{
         boolean dataValueAttribsValid = false, datasetAttribsValid = false, statAttribsValid = false;
         //metadata tags
         StringTokenizer strTok = new StringTokenizer(line, SEPARATOR);
-        String token = strTok.nextToken();
+        String token = strTok.nextToken().replace("\t", "");        
         try{
         while (line!=null && token != null && !token.equalsIgnoreCase(J2KTSDataStore.TAGNAME_DATAVAL)) {
             if (token.equalsIgnoreCase(J2KTSDataStore.TAGNAME_DATAVALUEATTRIBS)) {

@@ -69,7 +69,9 @@ public class OptimizerConfiguration extends JPanel {
     
     Logger logger = null;
     JButton okButton = new JButton(JAMS.i18n("OK"));
-            
+        
+    boolean success = false;
+    
     JTable parameterTable = new JTable() {
         {
             setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -133,7 +135,7 @@ public class OptimizerConfiguration extends JPanel {
 
 
     public OptimizerConfiguration(ModelDescriptor md, Logger logger) throws OPTASWizardException {
-        optimizationScheme = new Optimization(md);
+        optimizationScheme = new Optimization(new ModelDescriptor(md));
 
         this.logger = logger;
         initData();
@@ -166,6 +168,10 @@ public class OptimizerConfiguration extends JPanel {
             return optimizationScheme.getModelDescriptor();
         }
         return null;
+    }
+    
+    public boolean getSuccessState(){
+        return success;
     }
 
     private void initGUI() {
@@ -412,7 +418,7 @@ public class OptimizerConfiguration extends JPanel {
             updateGUI();
         }
     }
-    
+            
     class ObjectiveTableModel extends AbstractTableModel {
 
         private String[] columnNames = new String[]{JAMS.i18n("selected"), JAMS.i18n("Name"), JAMS.i18n("component")};
@@ -474,22 +480,38 @@ public class OptimizerConfiguration extends JPanel {
             }
         }
 
+        
+        class SetValueRunnable implements Runnable {
+
+            int col, row;
+            Object value;
+            
+
+            @Override
+            public void run() {
+                if (col == 0 && ((Boolean) value).booleanValue() == false) {
+                    optimizationScheme.removeObjective(dataObjects[row]);
+                } else if (col == 0 && ((Boolean) value).booleanValue() == true) {
+                    optimizationScheme.addObjective(dataObjects[row]);
+                }
+                for (int i = 0; i < 3; i++) {
+                    fireTableCellUpdated(row, i);
+                }
+                updateGUI();
+            }
+        }
+            
         /*
          * Don't need to implement this method unless your table's
          * data can change.
          */
         @Override
         public void setValueAt(Object value, int row, int col) {
-            if (col == 0 && ((Boolean) value).booleanValue() == false) {                
-                optimizationScheme.removeObjective(dataObjects[row]);                
-            }
-            else if (col == 0 && ((Boolean) value).booleanValue() == true) {                
-                optimizationScheme.addObjective(dataObjects[row]);                                
-            }            
-            for (int i = 0; i < 3; i++) {
-                fireTableCellUpdated(row, i);
-            }          
-            updateGUI();
+            SetValueRunnable r = new SetValueRunnable();
+            r.col = col;
+            r.row = row;
+            r.value = value;
+            SwingUtilities.invokeLater(r);            
         }
     }
    
@@ -510,6 +532,7 @@ public class OptimizerConfiguration extends JPanel {
                 for (ActionListener listener : listeners) {
                     listener.actionPerformed(new ActionEvent(OptimizerConfiguration.this, 1, "doc_modified"));
                 }
+                success = true;
             }
         });
 
@@ -519,6 +542,7 @@ public class OptimizerConfiguration extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         dialog.setVisible(false);
+                        success = false;
                     }
                 });
             }

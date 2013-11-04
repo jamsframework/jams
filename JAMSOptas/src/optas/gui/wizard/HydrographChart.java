@@ -112,7 +112,8 @@ public class HydrographChart {
         filterRenderer1.setBaseSeriesVisible(true);
         filterRenderer1.setOutlinePaint(null);
         filterRenderer1.setStroke(new BasicStroke(0.0f));
-                        
+        filterRenderer1.setShadowVisible(false);
+
         chart.getXYPlot().setRenderer(1, filterRenderer1);                
                 
         chart.getXYPlot().mapDatasetToRangeAxis(1, 1);
@@ -184,10 +185,13 @@ public class HydrographChart {
     }
     
     public void setTimeFilters(TimeFilterCollection timeFilters){
+        setTimeFilters(timeFilters, false);
+    }
+    public void setTimeFilters(TimeFilterCollection timeFilters, boolean forceUpdate){
         boolean isTheSame = true;
         if (timeFilters.size() == this.filters.size()){
             for (int i=0;i<timeFilters.size();i++){
-                if (timeFilters.get(i) != this.filters.get(i)){
+                if (timeFilters.get(i).equals(this.filters.get(i))){
                     isTheSame = false;
                 }
             }
@@ -195,7 +199,7 @@ public class HydrographChart {
             isTheSame = false;
         }
         
-        if (!isTheSame){
+        if (!isTheSame || forceUpdate){
             clearTimeFilter();
             addTimeFilters(timeFilters);
         }

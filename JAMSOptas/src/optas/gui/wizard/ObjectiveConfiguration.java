@@ -115,7 +115,7 @@ public class ObjectiveConfiguration extends JPanel{
         timeList.setModel(model);
         timeList.setSelectedIndex(-1);
     }
-    
+       
     private ActionListener measurementListUpdateListener = new ActionListener() {
 
             @Override
@@ -167,7 +167,8 @@ public class ObjectiveConfiguration extends JPanel{
                     ((DefaultComboBoxModel)objectivesList.getModel()).addElement(od);
                     objectivesList.getModel().setSelectedItem(od);
                     measurementList.setSelectedIndex(-1);
-                    simulationList.setSelectedIndex(-1);                    
+                    simulationList.setSelectedIndex(-1);        
+                    timeList.setSelectedIndex(-1);
                     filterList.clear();   
                     updateButtonStates();
                 }
@@ -240,10 +241,12 @@ public class ObjectiveConfiguration extends JPanel{
                         contextList.setSelectedItem(od.getMeasurementAttribute().getParentName());
                         measurementList.setSelectedItem(od.getMeasurementAttribute());
                         simulationList.setSelectedItem(od.getSimulationAttribute());
+                        timeList.setSelectedItem(od.getTimeAttribute());
                     }else{
                         contextList.setSelectedIndex(-1);
                         measurementList.setSelectedIndex(-1);
                         simulationList.setSelectedIndex(-1);
+                        timeList.setSelectedIndex(-1);
                     }
                     filterList.setTimeFilters(od.getTimeFilters());   
                     updateButtonStates();
@@ -285,6 +288,22 @@ public class ObjectiveConfiguration extends JPanel{
             }
         });
         
+        measurementList.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateButtonStates();
+            }
+        });
+        
+        simulationList.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateButtonStates();
+            }
+        });
+        
         timeList.addActionListener(new ActionListener() {
 
             @Override
@@ -296,6 +315,7 @@ public class ObjectiveConfiguration extends JPanel{
                 
                 ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();  
                 od.setTimeAttribute(a);
+                updateButtonStates();
             }
         });
         
@@ -328,7 +348,7 @@ public class ObjectiveConfiguration extends JPanel{
             public void itemChanged(TimeFilterTableInput tfti) {
                 ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();
                 od.setTimeFilters(filterList.getTimeFilters());                
-                hydroChart.setTimeFilters(filterList.getTimeFilters());                
+                hydroChart.setTimeFilters(filterList.getTimeFilters(), true);                
             }
         });
         
@@ -471,6 +491,25 @@ public class ObjectiveConfiguration extends JPanel{
         }else{
             filterList.setEnabled(true);
         }
+        
+        boolean enableOkButton = true;
+        for (int i=0; i<this.objectives.getSize();i++){
+            ObjectiveDescription od = this.objectives.getElementAt(i);
+            if (od == null){
+                enableOkButton = this.objectives.getSize()>1;
+                continue;
+            }
+            if (od.getMeasurementAttribute() == null)
+                enableOkButton = false;
+            if (od.getSimulationAttribute() == null)
+                enableOkButton = false;
+            if (od.getTimeAttribute() == null)
+                enableOkButton = false;
+            if (od.getName() == null)
+                enableOkButton = false;            
+        }
+        
+        this.okButton.setEnabled(enableOkButton);
     }
                
     private void loadTimeseries(File f) {
@@ -557,7 +596,7 @@ public class ObjectiveConfiguration extends JPanel{
         
         modelTimeIntervalInput.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Model_time_interval")));
         modelTimeIntervalInput.setEnabled(false);
-        timeList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Time Attribute")));
+        timeList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Time_Attribute")));
         timeList.setEnabled(false);
         
         JScrollPane scrollbar = new JScrollPane(filterList);

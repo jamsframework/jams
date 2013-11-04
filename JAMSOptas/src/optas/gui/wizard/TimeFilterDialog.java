@@ -12,6 +12,7 @@ import jams.gui.input.CalendarInput;
 import jams.gui.input.ValueChangeListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -136,7 +138,9 @@ public class TimeFilterDialog extends JDialog{
 
         yearList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-        filterPanel.add(yearList, BorderLayout.CENTER);
+        JScrollPane yearlyListScrollPane = new JScrollPane(yearList);
+        
+        filterPanel.add(yearlyListScrollPane, BorderLayout.CENTER);
         if (filter != null) {
             int selectedYears[] = filter.getYears();
             int indicies[] = new int[selectedYears.length];
@@ -546,6 +550,8 @@ public class TimeFilterDialog extends JDialog{
 
     public void init(TimeSerie serie, TimeFilter filter){
         this.filter = filter;
+        
+        this.setMaximumSize(new Dimension(1024, 800));
         
         JTabbedPane pane = new JTabbedPane();
         

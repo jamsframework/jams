@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import optas.efficiencies.UniversalEfficiencyCalculator;
 import optas.optimizer.OptimizerLibrary;
@@ -111,12 +112,14 @@ public class ModelModifier {
                     if (ca.getContext() == optimizerContext)
                         continue;
                     String attributeName = ca.getContext().getInstanceName() + "_" + ca.getName();
-                    
-                    optimizerContext.addDynamicAttribute(attributeName, Attribute.Double.class);
-                    for (ComponentField field : ca.getFields()){
+                    if (!optimizerContext.getDynamicAttributes().containsKey(attributeName)){
+                        optimizerContext.addDynamicAttribute(attributeName, Attribute.Double.class);
+                    }
+                    while (ca.getFields().size()>0){
+                        ComponentField field = ca.getFields().iterator().next();
                         field.unlinkFromAttribute(ca);
                         field.linkToAttribute(optimizerContext, attributeName);
-                    }
+                    }                    
                     ca.getContext().removeStaticAttribute(ca.getName());
                     o.field = optimizerContext.getDynamicAttributes().get(attributeName);
                 }
@@ -239,6 +242,12 @@ public class ModelModifier {
             //first have a look if it is allready 
             String name = od.getName();
             
+            if (od.getMeasurementAttribute() == null){
+                throw new OPTASWizardException("Please specify a measuremed attribute!");
+            }
+            if (od.getSimulationAttribute() == null){
+                throw new OPTASWizardException("Please specify a simulated attribute!");
+            }
             ComponentDescriptor measurementContext = md.getComponentDescriptor(od.getMeasurementAttribute().getParentName());
             ComponentDescriptor simulationContext = md.getComponentDescriptor(od.getSimulationAttribute().getParentName());
             
@@ -397,6 +406,35 @@ public class ModelModifier {
                 ModelNode objectiveNode = new ModelNode(objectiveComponent);
                 objectiveNode.setType(ModelNode.COMPONENT_TYPE);
                 context.getNode().insert(objectiveNode, context.getNode().getChildCount()-1);
+            }
+            //remove components which has been deleted
+            boolean wasChangedInLastIteration = true;
+            while (wasChangedInLastIteration){
+                wasChangedInLastIteration = false;
+                for (ComponentDescriptor cd2 : md.getComponentDescriptors().values()){
+                    if (UniversalEfficiencyCalculator.class.isAssignableFrom(cd2.getClazz())){
+                        boolean isInList = false;
+                        for (ObjectiveDescription od2 : odList){
+                            if (od2==null)
+                                continue;
+                            if (od2.getName().equals(cd2.getInstanceName())){
+                                isInList = true;
+                                break;
+                            }                                
+                        }
+                        if (!isInList){
+                            Enumeration<TreeNode> nodes = md.getRootNode().breadthFirstEnumeration();
+                            while(nodes.hasMoreElements()){
+                                ModelNode node = (ModelNode) nodes.nextElement();
+                                if (cd2.equals((ComponentDescriptor) node.getUserObject())){
+                                    ((ModelNode)node.getParent()).remove(node);
+                                    wasChangedInLastIteration = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

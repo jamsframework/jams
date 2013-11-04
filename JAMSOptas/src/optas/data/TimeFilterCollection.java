@@ -142,9 +142,11 @@ public class TimeFilterCollection implements Serializable{
                 jams.data.Attribute.TimeInterval nextInterval = jams.data.DefaultDataFactory.getDataFactory().createTimeInterval();
                 nextInterval.setValue(actStart.toString() + " " + lastTimeStep.toString() + " " + timeUnit + " " + timeUnitCount);
                 timeIntervals.add(nextInterval);
-            } else if (!actStepFiltered && !lastStepFiltered) {
+            } 
+            if (!actStepFiltered) {
                 lastTimeStep = actTime;
-            } else if (!actStepFiltered && lastStepFiltered) {
+            } 
+            if (!actStepFiltered && lastStepFiltered) {
                 actStart = actTime.clone();
             }
             lastStepFiltered = actStepFiltered;

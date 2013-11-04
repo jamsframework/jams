@@ -42,6 +42,6 @@ public abstract class TimeFilter implements Serializable{
     public boolean isInverted(){
         return isInverted;
     }
-
+   
     abstract public boolean isFiltered(Date date);
 }

@@ -119,7 +119,7 @@ class TimeFilterTableInput extends TableInput {
                         }
                     }
                     for (TimeFilterTableInputListener tftiListener : listeners){
-                        tftiListener.tableChanged(TimeFilterTableInput.this); //1
+                        tftiListener.itemChanged(TimeFilterTableInput.this); //1
                     }
                 }
             });

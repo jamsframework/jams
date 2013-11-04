@@ -59,6 +59,22 @@ public class ModelDescriptor extends ComponentCollection {
         modelProperties = new ModelProperties();
     }
 
+    public ModelDescriptor(ModelDescriptor md) {
+        super(md.logger);
+        this.author = md.author; //is deep copy
+        this.date = md.date;
+        this.description = md.description;
+        this.helpBaseUrl = md.helpBaseUrl;
+        this.modelName = md.modelName;
+        this.workspacePath = md.workspacePath;
+        
+         //are those safe??
+        this.modelProperties = md.getModelProperties();
+        this.outputDataStores = (HashMap<String, OutputDSDescriptor>)md.getDatastores().clone();
+        this.preprocessors = (ArrayList<MetaProcessorDescriptor>)md.getPreprocessors().clone();
+        this.rootNode = md.getRootNode().clone(this, true, new HashMap<ContextDescriptor, ContextDescriptor>());
+   }
+        
     /*
      * Create a new name for a component instance. If possible, use the given
      * name, else add a suffix in order to create a unique one.
