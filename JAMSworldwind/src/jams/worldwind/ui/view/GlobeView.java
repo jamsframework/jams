@@ -108,7 +108,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.buildMenu();
         this.fixMacOSX();
 
-        File file = new File("/Users/bigr/Documents/BA-Arbeit/vg2500_geo84/vg2500_bld.shp");
+        File file = new File("../../../JAMSworldwind/shapefiles/vg2500_geo84/vg2500_bld.shp");
         this.theGlobeModel.addShapefile(file);
 
         //zoom to region after loading
