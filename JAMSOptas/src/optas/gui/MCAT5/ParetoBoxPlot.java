@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -21,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.LayoutStyle;
 import javax.swing.table.AbstractTableModel;
 import optas.data.DataCollection;
 import optas.data.Efficiency;
@@ -52,14 +54,15 @@ public class ParetoBoxPlot extends MCAT5Plot {
     BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
     CategoryPlot plot = null;
         
-    JCheckBox showMean = new JCheckBox("show_mean",true);
-    JCheckBox showMedian = new JCheckBox("show_median",true);
+    JCheckBox showMean = new JCheckBox(JAMS.i18n("show_mean"),true);
+    JCheckBox showMedian = new JCheckBox(JAMS.i18n("show_median"),true);
     boolean calcParetoFront = true;
-    JCheckBox useParetoOptimalSolutionsOnly = new JCheckBox("use_only_pareto_solutions",calcParetoFront);
+    JCheckBox useParetoOptimalSolutionsOnly = new JCheckBox(JAMS.i18n("use_only_pareto_solutions"),calcParetoFront);
     
     
     JLabel alphaLabel = new JLabel("\u03B1: ");
     JTextField alphaField = new JTextField("0.1");
+    JButton applyAlpha = new JButton(JAMS.i18n("Apply"));
     
     JLabel numLabel = new JLabel("n: ");
     JTextField numField = new JTextField("0.0");
@@ -71,25 +74,35 @@ public class ParetoBoxPlot extends MCAT5Plot {
 
     private void init() {
         CategoryAxis xAxis = new CategoryAxis("");
-        CategoryAxis xAxis2 = new CategoryAxis("Parameter");
+        CategoryAxis xAxis2 = new CategoryAxis(JAMS.i18n("Parameter"));
         CategoryAxis xAxis3 = new CategoryAxis("");
-        NumberAxis yAxis = new NumberAxis("Normalized_Parameter_Range");
+        NumberAxis yAxis = new NumberAxis(JAMS.i18n("NORMALISED_RANGE"));
 
         plot = new CategoryPlot(null, xAxis, yAxis, renderer);
         plot.setDomainAxis(1, xAxis2);
         plot.setDomainAxis(2, xAxis3);
 
+        
+        
         xAxis.setFixedDimension(20);
         xAxis2.setFixedDimension(20);
         xAxis3.setFixedDimension(20);
         
         JFreeChart chart = new JFreeChart(plot);
-
+        chart.removeLegend();
         renderer.setFillBox(true);
-        renderer.setSeriesPaint(0, Color.BLACK);
-
+        renderer.setSeriesPaint(0, Color.BLUE);
+        renderer.setSeriesFillPaint(0, Color.BLUE);
+        renderer.setSeriesFillPaint(1, Color.BLUE);
+        renderer.setSeriesFillPaint(2, Color.BLUE);
+        
+        renderer.setUseOutlinePaintForWhiskers(false);
+        renderer.setMaximumBarWidth(0.33);
+        
         plot.setBackgroundPaint(Color.WHITE);
         plot.setRangeGridlinePaint(Color.BLACK);
+        plot.setDomainGridlinePaint(Color.BLACK);
+        plot.setDomainGridlinesVisible(true);
         
         PatchedChartPanel chartPanel = new PatchedChartPanel(chart, true);
 
@@ -105,9 +118,9 @@ public class ParetoBoxPlot extends MCAT5Plot {
         mainPanel.setLayout(layout);
 
         JScrollPane tableScrollPane = new JScrollPane(objectiveTable);
-        tableScrollPane.setMinimumSize(new Dimension(400, 400));
-        tableScrollPane.setMaximumSize(new Dimension(400, 400));
-        tableScrollPane.setPreferredSize(new Dimension(400, 400));
+        /*tableScrollPane.setMinimumSize(new Dimension(400, 350));
+        tableScrollPane.setMaximumSize(new Dimension(400, 350));
+        tableScrollPane.setPreferredSize(new Dimension(400, 350));*/
 
         showMedian.addActionListener(new ActionListener() {
 
@@ -122,7 +135,7 @@ public class ParetoBoxPlot extends MCAT5Plot {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                renderer.setMedianVisible(showMean.isSelected());
+                renderer.setMeanVisible(showMean.isSelected());
                 objTableModel.update();
             }
         });
@@ -136,7 +149,7 @@ public class ParetoBoxPlot extends MCAT5Plot {
             }
         });
         
-        alphaField.addActionListener(new ActionListener() {
+        ActionListener applyAlphaListener = new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -155,25 +168,30 @@ public class ParetoBoxPlot extends MCAT5Plot {
                                 
                 objTableModel.update();
             }
-        });
+        };
+        
+        alphaField.addActionListener(applyAlphaListener);        
+        applyAlpha.addActionListener(applyAlphaListener);
         
         numField.setEditable(false);
         layout.setHorizontalGroup(layout.createSequentialGroup()
                 .addComponent(chartPanel)
                 .addGroup(
-                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)     
-                        .addComponent(tableScrollPane)
+                    layout.createParallelGroup(GroupLayout.Alignment.LEADING,false)     
+                        .addComponent(tableScrollPane,200,425,500)
                         .addGroup(
                             layout.createSequentialGroup()
                             .addComponent(alphaLabel)
-                            .addComponent(alphaField)
-                            .addGap(20)
-                            .addComponent(useParetoOptimalSolutionsOnly) 
+                            .addComponent(alphaField,35,50,75)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,5,10)
+                            .addComponent(applyAlpha)                     
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,10,20)                            
                         )
+                        .addComponent(useParetoOptimalSolutionsOnly) 
                         .addGroup(
                             layout.createSequentialGroup()
                             .addComponent(numLabel)
-                            .addComponent(numField)
+                            .addComponent(numField,35,50,75)
                         )
                         .addComponent(useParetoOptimalSolutionsOnly) 
                         .addComponent(showMedian)
@@ -181,34 +199,26 @@ public class ParetoBoxPlot extends MCAT5Plot {
                         
                     )
                 );
-
-        alphaField.setMaximumSize(new Dimension(50, 20));
-        numField.setMaximumSize(new Dimension(50, 20));
         
         layout.setVerticalGroup(
-                layout.createSequentialGroup()
-                .addGap(10, 20, 25)
-                .addGroup(
-                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)                
-                        .addComponent(chartPanel)
-                        .addComponent(tableScrollPane)
-                        )
-                .addGroup(
-                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)  
-                    .addComponent(alphaLabel)
-                    .addComponent(alphaField)                    
-                    .addComponent(useParetoOptimalSolutionsOnly) 
-                )
-                .addGroup(
-                    layout.createParallelGroup(GroupLayout.Alignment.CENTER)  
-                    .addComponent(numLabel)
-                    .addComponent(numField)
-                )
-                .addGap(20)
-                .addComponent(showMedian)
-                .addComponent(showMean)
-                .addGap(0, 20, 2000)
-                );
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(chartPanel)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(tableScrollPane, 200, 350, 400)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, 20, 20)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(alphaLabel, 20, 26, 30)
+                            .addComponent(alphaField, 20, 26, 30)
+                            .addComponent(applyAlpha, 20, 26, 30))
+                            .addComponent(useParetoOptimalSolutionsOnly)
+                            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                .addComponent(numLabel, 20, 26, 30)
+                                .addComponent(numField, 20, 26, 30))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(showMedian)
+                                .addComponent(showMean)
+                                .addContainerGap(100, 2000)));
     }
     
     class ObjectiveTableModel extends AbstractTableModel {
@@ -234,6 +244,8 @@ public class ParetoBoxPlot extends MCAT5Plot {
             bestValue = new double[m];
             worstAcceptableValue = new double[m];
             Arrays.fill(worstAcceptableValue, Double.POSITIVE_INFINITY);
+            Arrays.fill(selected, true);
+            
             objectives = new EfficiencyEnsemble[m];
             for (int i=0;i<m;i++){
                 objectives[i] = (EfficiencyEnsemble)dataSource.getDataSet(name[i]);
@@ -341,6 +353,8 @@ public class ParetoBoxPlot extends MCAT5Plot {
             int i = 0;
             while (i < paretoFront.size()) {
                 for (int j = 0; j < m; j++) {
+                    if (!selected[j])
+                        continue;
                     if (paretoFront.get(i).F()[j] > worstAcceptableValue[j]) {
                         paretoFront.set(i, paretoFront.get(paretoFront.size() - 1));
                         paretoFront.remove(paretoFront.size() - 1);
@@ -368,10 +382,10 @@ public class ParetoBoxPlot extends MCAT5Plot {
             parameterEnsembles[counter++] = this.getDataSource().getSimpleEnsemble(name);
         }
 
-        objectiveTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+        objectiveTable.getColumnModel().getColumn(0).setPreferredWidth(55);
         objectiveTable.getColumnModel().getColumn(1).setPreferredWidth(115);
         objectiveTable.getColumnModel().getColumn(2).setPreferredWidth(80);
-        objectiveTable.getColumnModel().getColumn(3).setPreferredWidth(140);
+        objectiveTable.getColumnModel().getColumn(3).setPreferredWidth(160);
         objectiveTable.getTableHeader().setPreferredSize(new Dimension(objectiveTable.getTableHeader().getPreferredSize().width, 40));
         objectiveTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
@@ -452,7 +466,6 @@ public class ParetoBoxPlot extends MCAT5Plot {
         
         
         plot.setDomainAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
-
         plot.setDomainAxisLocation(1, AxisLocation.BOTTOM_OR_LEFT);
         plot.setDomainAxisLocation(2, AxisLocation.TOP_OR_LEFT);
         

@@ -136,6 +136,7 @@ public class APosterioriPlot extends MCAT5Plot {
 
         XYBarRenderer renderer = new XYBarRenderer(0.33 / (double) boxCount);
         renderer.setSeriesPaint(0, Color.DARK_GRAY);
+        renderer.setShadowVisible(false);
         plot.setRenderer(0, renderer);
 
         if (null != plot.getRangeAxis()) {
