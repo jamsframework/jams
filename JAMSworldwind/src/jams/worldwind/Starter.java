@@ -34,6 +34,10 @@ public class Starter {
         }
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         logger.info("Entering Starter application.");
         if (Configuration.isMacOS()) {

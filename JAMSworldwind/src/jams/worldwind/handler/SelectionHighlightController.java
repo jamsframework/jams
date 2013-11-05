@@ -25,9 +25,21 @@ import javax.swing.JButton;
  */
 public class SelectionHighlightController extends HighlightController implements MessageListener {
 
+    /**
+     *
+     */
     protected ScreenSelector screenSelector;
+
+    /**
+     *
+     */
     protected List<Highlightable> lastBoxHighlightObjects = new ArrayList<>();
 
+    /**
+     *
+     * @param wwd
+     * @param screenSelector
+     */
     public SelectionHighlightController(WorldWindow wwd, ScreenSelector screenSelector) {
         super(wwd, SelectEvent.ROLLOVER);
 
@@ -35,6 +47,9 @@ public class SelectionHighlightController extends HighlightController implements
         this.screenSelector.addMessageListener(this);
     }
 
+    /**
+     *
+     */
     @Override
     public void dispose() {
         super.dispose();
@@ -58,6 +73,10 @@ public class SelectionHighlightController extends HighlightController implements
         }
     }
 
+    /**
+     *
+     * @param o
+     */
     @Override
     protected void highlight(Object o) {
         // Determine if the highlighted object under the cursor has changed, but should remain highlighted because
@@ -71,6 +90,10 @@ public class SelectionHighlightController extends HighlightController implements
         super.highlight(o);
     }
 
+    /**
+     *
+     * @param list
+     */
     protected void highlightSelectedObjects(List<?> list) {
         if (this.lastBoxHighlightObjects.equals(list)) {
             return; // same thing selected
@@ -88,7 +111,7 @@ public class SelectionHighlightController extends HighlightController implements
             // Turn on highlight if object selected.
             for (Object o : list) {
                 if (o instanceof Highlightable) {
-                    ((Highlightable) o).setHighlighted(true);
+                    //((Highlightable) o).setHighlighted(true);
                     this.lastBoxHighlightObjects.add((Highlightable) o);
                 }
             }
@@ -101,4 +124,5 @@ public class SelectionHighlightController extends HighlightController implements
         // there's no mouse movement to cause an automatic redraw.
         this.wwd.redraw();
     }
+
 }

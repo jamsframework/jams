@@ -12,9 +12,21 @@ import java.beans.PropertyChangeListener;
  */
 public interface UIEvents {
     
+    /**
+     *
+     */
     public static final String LAYER_CHANGE = "LayerChange";
     
+    /**
+     *
+     * @param pcl
+     */
     public void addPropertyChangeListener(PropertyChangeListener pcl);
+
+    /**
+     *
+     * @param pcl
+     */
     public void removePropertyChangeListener(PropertyChangeListener pcl);
     
 }

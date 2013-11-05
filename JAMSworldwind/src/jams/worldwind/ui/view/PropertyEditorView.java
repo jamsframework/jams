@@ -1,7 +1,9 @@
 package jams.worldwind.ui.view;
 
 import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.render.SurfacePolygons;
 import jams.worldwind.handler.MaterialClassCellEditor;
+import jams.worldwind.shapefile.JamsShapeAttributes;
 import jams.worldwind.ui.model.Globe;
 import jams.worldwind.ui.model.PropertyEditorModel;
 import jams.worldwind.ui.renderer.MaterialClassCellRenderer;
@@ -14,6 +16,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -41,9 +44,14 @@ public class PropertyEditorView {
     private PropertyEditorModel theTableModel;
 
     //Singleton pattern
-    public synchronized static PropertyEditorView getInstance() {
+
+    /**
+     *
+     * @return 
+     */
+        public synchronized static PropertyEditorView getInstance() {
         if (instance == null) {
-            instance = new PropertyEditorView("OBJECT PROPERTIES");
+            instance = new PropertyEditorView("LAST SELECTED OBJECTS");
         }
         return instance;
     }
@@ -63,23 +71,40 @@ public class PropertyEditorView {
         theFrame.setSize(theFrame.getPreferredSize());
     }
 
-    public void setClassProperties(Object cls) {
-        BeanInfo beanInfo;
+    /**
+     *
+     * @param objects
+     */
+    public void fillTableWithObjects(List<?> objects) {
         HashMap<String, Object> data = new HashMap<>();
-        try {
-            beanInfo = Introspector.getBeanInfo(cls.getClass().getSuperclass());
-            for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-                if (pd.getReadMethod() != null && !"class".equals(pd.getName())) {
-                    data.put(pd.getDisplayName(), pd.getReadMethod().invoke(cls));
+        for (Object cls : objects) {
+            BeanInfo beanInfo;
+            try {
+                SurfacePolygons s = (SurfacePolygons) cls;
+                JamsShapeAttributes sattr = (JamsShapeAttributes) s.getAttributes();
+                beanInfo = Introspector.getBeanInfo(sattr.getClass().getSuperclass());
+                for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
+                    if (pd.getReadMethod() != null && !"class".equals(pd.getName())) {
+                        data.put(pd.getDisplayName(), pd.getReadMethod().invoke(sattr));
+                    }
                 }
+
+            } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                Logger.getLogger(PropertyEditorView.class.getName()).log(Level.SEVERE, null, ex);
             }
-            this.setTableModel(cls, data);
-        } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-            Logger.getLogger(PropertyEditorView.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.setTableModel(objects, data);
     }
 
-    public void setTableModel(Object cls, HashMap<String, Object> data) {
+    /**
+     *
+     * @param cls
+     */
+    public void setClassProperties(List<?> cls) {
+
+    }
+
+    private void setTableModel(List<?> cls, HashMap<String, Object> data) {
         this.theTableModel = new PropertyEditorModel(cls, data);
         this.theTable.setModel(this.theTableModel);
         this.autoResizeColWidth(theTable, theTableModel);
@@ -96,9 +121,17 @@ public class PropertyEditorView {
         });
 
     }
-    
+
     /*  Code from http://ieatbinary.com/2008/08/13/auto-resize-jtable-column-width/
-    */
+     */
+
+    /**
+     *
+     * @param table
+     * @param model
+     * @return
+     */
+    
     public JTable autoResizeColWidth(JTable table, DefaultTableModel model) {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         //table.setModel(model);
@@ -149,10 +182,18 @@ public class PropertyEditorView {
         return table;
     }
 
+    /**
+     *
+     * @param title
+     */
     public void setTitle(String title) {
         this.theFrame.setTitle(title);
     }
 
+    /**
+     *
+     * @param b
+     */
     public void show(boolean b) {
         this.theFrame.pack();
         this.theFrame.setVisible(b);

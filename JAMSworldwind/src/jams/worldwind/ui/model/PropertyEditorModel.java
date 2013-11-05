@@ -1,17 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package jams.worldwind.ui.model;
 
-import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.render.SurfacePolygons;
 import jams.worldwind.shapefile.JamsShapeAttributes;
 import jams.worldwind.ui.view.PropertyEditorView;
 import java.beans.IntrospectionException;
+import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,32 +27,54 @@ import org.slf4j.LoggerFactory;
 public class PropertyEditorModel extends DefaultTableModel {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PropertyEditorModel.class);
-    private List<String> columnIdentifiers;
-    private List<Object> data;
+
     private int shapeAttributes = 0;
+    final private List<?> theObjects;
 
-    private Object theObject;
+    /**
+     * Constructs a <code>PropertyEditorModel</code> with a list
+     * of selected Polygons on top of the globe.
+     * @param polyList list of selected polygons
+     * @param attributesList list key/value pairs for Java Reflection access
+     * 
+     */
+    public PropertyEditorModel(List<?> polyList, HashMap<String, Object> attributesList) {
+        this.theObjects = new ArrayList(polyList);
+        this.setColumnIdentifiers(polyList, attributesList);
+        for (Object o : polyList) {
+            SurfacePolygons s = (SurfacePolygons) o;
+            JamsShapeAttributes sattr = (JamsShapeAttributes) s.getAttributes();
+            Set<Entry<String, Object>> d = sattr.getShapeFileRecord().getAttributes().getEntries();
+            int columnSize = d.size() + attributesList.size();
+            this.shapeAttributes = d.size() - 1;
+            Vector v = new Vector(columnSize);
+            int count = 0;
+            //Shapefile entries
+            for (Map.Entry<String, Object> e : d) {
+                v.add(e.getValue());
+            }
+            //SurfacePolygons entries
+            for (Map.Entry<String, Object> e : attributesList.entrySet()) {
+                v.add(e.getValue());
+            }
+            super.addRow(v);
+        }
+    }
 
-    public PropertyEditorModel(Object cls, HashMap<String, Object> mapData) {
-        this.theObject = cls;
-        Set<Entry<String, Object>> d = ((JamsShapeAttributes) this.theObject).getShapeFileRecord().getAttributes().getEntries();
-        int columnSize = d.size() + mapData.size();
-        this.shapeAttributes = d.size() - 1;
-        this.columnIdentifiers = new ArrayList<>(columnSize - 1);
-        this.data = new ArrayList<>();
-        Object[] o = new Object[columnSize];
-        int count = 0;
-        for (Map.Entry<String, Object> e : d) {
-            super.addColumn(e.getKey());
-            o[count] = e.getValue();
-            count++;
+    private void setColumnIdentifiers(List<?> polyList, HashMap<String, Object> attributesList) {
+        SurfacePolygons s = (SurfacePolygons) polyList.get(0);
+        JamsShapeAttributes sattr = (JamsShapeAttributes) s.getAttributes();
+        Set<Entry<String, Object>> d = sattr.getShapeFileRecord().getAttributes().getEntries();
+        for (Object o : polyList) {
+            for (Map.Entry<String, Object> e : d) {
+                super.addColumn(e.getKey());
+            }
+            //SurfacePolygons entries
+            for (Map.Entry<String, Object> e : attributesList.entrySet()) {
+                super.addColumn(e.getKey());
+            }
+            break;
         }
-        for (Map.Entry<String, Object> e : mapData.entrySet()) {
-            super.addColumn(e.getKey());
-            o[count] = e.getValue();
-            count++;
-        }
-        super.addRow(o);
     }
 
     @Override
@@ -66,11 +86,13 @@ public class PropertyEditorModel extends DefaultTableModel {
     public void setValueAt(Object aValue, int row, int column) {
         try {
             String propertyName = getColumnName(column);
-            PropertyDescriptor pd = new PropertyDescriptor(propertyName, this.theObject.getClass());
+            SurfacePolygons obj = (SurfacePolygons)theObjects.get(row);
+            JamsShapeAttributes sattr = (JamsShapeAttributes) obj.getAttributes();
+            PropertyDescriptor pd = new PropertyDescriptor(propertyName, sattr.getClass().getSuperclass());
             if (pd.getWriteMethod() != null) {
-                pd.getWriteMethod().invoke(this.theObject, aValue);  //this.castCellTypeToObject(aValue, propertyName));
-                Vector rowVector = (Vector) dataVector.elementAt(row);
-                rowVector.setElementAt(aValue, column);
+                pd.getWriteMethod().invoke(sattr, aValue);  //this.castCellTypeToObject(aValue, propertyName));
+                //Vector rowVector = (Vector) dataVector.elementAt(row);
+                super.setValueAt(aValue, row, column);//setElementAt(aValue, column);
                 fireTableCellUpdated(row, column);
             }
         } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
@@ -78,59 +100,9 @@ public class PropertyEditorModel extends DefaultTableModel {
         }
     }
 
-    /*
-     * Cast cell object if reflection method of proerty is primitiv
-     * data type to prevent IllegalArgumentException during invoke
-     * method
-     */
-    /*
-    private Object castCellTypeToObject(Object aValue, String propertyName) {
-        try {
-            PropertyDescriptor pd = new PropertyDescriptor(propertyName, this.theObject.getClass());
-            Class<?>[] cls = pd.getWriteMethod().getParameterTypes();
-            Object castedObject = aValue;
-            for (int i = 0; i < cls.length; i++) {
-                //System.out.println("TYPE STRING: " + cls[i].toString());
-                switch (cls[i].getName()) {
-                    case "byte":
-                        castedObject = Byte.parseByte(aValue.toString());
-                        break;
-                    case "short":
-                        castedObject = Short.parseShort(aValue.toString());
-                        break;
-                    case "int":
-                        castedObject = Integer.parseInt(aValue.toString());
-                        break;
-                    case "long":
-                        castedObject = Long.parseLong(aValue.toString());
-                        break;
-                    case "float":
-                        castedObject = Float.parseFloat(aValue.toString());
-                        break;
-                    case "double":
-                        castedObject = Double.parseDouble(aValue.toString());
-                        break;
-                    case "boolean":
-                        castedObject = Boolean.parseBoolean(aValue.toString());
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if (castedObject == null) {
-                return "null";
-            }
-            return castedObject;
-        } catch (IntrospectionException | IllegalArgumentException ex) {
-            Logger.getLogger(PropertyEditorView.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println(aValue.getClass());
-        return aValue;
-    }*/
-
     @Override
-    public Class getColumnClass(int c) {
-        Object o = getValueAt(0, c);
+    public Class getColumnClass(int columnIndex) {
+        Object o = getValueAt(0, columnIndex);
         if (o != null) {
             return o.getClass();
         } else {

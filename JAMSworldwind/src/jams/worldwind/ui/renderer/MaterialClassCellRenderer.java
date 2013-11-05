@@ -26,6 +26,10 @@ public class MaterialClassCellRenderer extends JLabel implements TableCellRender
     Border selectedBorder = null;
     boolean isBordered = true;
 
+    /**
+     *
+     * @param isBordered
+     */
     public MaterialClassCellRenderer(boolean isBordered) {
         this.isBordered = isBordered;
         this.

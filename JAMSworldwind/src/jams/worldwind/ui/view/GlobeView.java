@@ -2,19 +2,16 @@ package jams.worldwind.ui.view;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.event.SelectListener;
+import gov.nasa.worldwind.event.Message;
+import gov.nasa.worldwind.event.MessageListener;
 import gov.nasa.worldwind.formats.shapefile.Shapefile;
-import gov.nasa.worldwind.formats.shapefile.ShapefileRecord;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.render.SurfacePolygons;
 import gov.nasa.worldwindx.examples.util.ScreenSelector;
 import jams.worldwind.handler.SelectionHighlightController;
-import jams.worldwind.shapefile.JamsShapeAttributes;
 import jams.worldwind.ui.model.Globe;
 import jams.worldwind.ui.UIEvents;
 import java.awt.BorderLayout;
@@ -28,12 +25,10 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -51,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Ronny Berndt <ronny.berndt@uni-jena.de>
  */
-public class GlobeView implements PropertyChangeListener {
+public class GlobeView implements PropertyChangeListener, MessageListener {
 
     //<editor-fold defaultstate="collapsed" desc="variables definition">
     private static final Logger logger = LoggerFactory.getLogger(GlobeView.class);
@@ -66,9 +61,18 @@ public class GlobeView implements PropertyChangeListener {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="constructors">
-    public GlobeView() {
+
+    /**
+     * 
+     */
+        public GlobeView() {
         this.theGlobeModel = Globe.getInstance();
         this.theGlobeModel.addPropertyChangeListener(this);
+        this.theLayerView = new LayerListView();
+        //this.theGlobeModel.addPropertyChangeListener(theLayerView);
+        theScreenSelector = new ScreenSelector(theGlobeModel.getWorldWindow());
+        theSelectionHighlightController = new SelectionHighlightController(theGlobeModel.getWorldWindow(), theScreenSelector);
+        this.theScreenSelector.addMessageListener(this);
 
         this.theFrame = new JFrame("JAMS WORLDWIND VIEWER");
         this.theFrame.setLayout(new BorderLayout());
@@ -76,33 +80,29 @@ public class GlobeView implements PropertyChangeListener {
         this.theFrame.add((Component) theGlobeModel.getWorldWindow(), BorderLayout.CENTER);
         this.theFrame.add((Component) theGlobeModel.getStatusBar(), BorderLayout.PAGE_END);
 
-        this.theLayerView = new LayerListView();
+        
+        /*
+         this.theGlobeModel.getWorldWindow().addSelectListener(new SelectListener() {
+         protected Object lastObject;
 
-        this.theGlobeModel.getWorldWindow().addSelectListener(new SelectListener() {
-            protected Object lastObject;
-
-            @Override
-            public void selected(SelectEvent event) {
-                Object o = event.getTopObject();
-                if (lastObject != o && o != null) {
-                    lastObject = o;
-                    if (o instanceof SurfacePolygons) {
-                        SurfacePolygons s = (SurfacePolygons) o;
-                        //System.out.println(s.getEntries().toString());
-                        JamsShapeAttributes bs = (JamsShapeAttributes) s.getAttributes();
-                        /*ShapefileRecord record = bs.getShapeAttributes();
-                        Set<Map.Entry<String, Object>> c = record.getAttributes().getEntries();
-                        for (Map.Entry<String, Object> e : c) {
-                           System.out.println(e.getKey() +":" +e.getValue());
-                        }*/
-                        PropertyEditorView pEV = PropertyEditorView.getInstance();
-                        pEV.setClassProperties(bs);
-                        pEV.show(true);
-                        theFrame.toFront();
-                    }
-                }
-            }
-        });
+         @Override
+         public void selected(SelectEvent event) {
+         Object o = event.getTopObject();
+         if (lastObject != o && o != null) {
+         lastObject = o;
+         if (o instanceof SurfacePolygons) {
+         SurfacePolygons s = (SurfacePolygons) o;
+         //System.out.println(s.getEntries().toString());
+         JamsShapeAttributes bs = (JamsShapeAttributes) s.getAttributes();
+         ShapefileRecord record = bs.getShapeAttributes();
+         Set<Map.Entry<String, Object>> c = record.getAttributes().getEntries();
+         for (Map.Entry<String, Object> e : c) {
+         System.out.println(e.getKey() +":" +e.getValue());
+         }
+         }
+         }
+         }
+         });*/
 
         this.buildToolBar();
         this.buildMenu();
@@ -125,32 +125,49 @@ public class GlobeView implements PropertyChangeListener {
 
     //<editor-fold defaultstate="collapsed" desc="build GUI functions">
     private void buildToolBar() {
-        this.theToolBar = new JToolBar("Toolbar");
+        this.theToolBar = new JToolBar("TOOLBAR");
 
-        theScreenSelector = new ScreenSelector(theGlobeModel.getWorldWindow());
-        theSelectionHighlightController = new SelectionHighlightController(theGlobeModel.getWorldWindow(), theScreenSelector);
+        Icon smallIcon = new ImageIcon(GlobeView.class.getResource("/jams/worldwind/ressources/16x16/draw-rectangle-2.png"));
+//        final Icon largeIcon = new ImageIcon(GlobeView.class.getResource("/jams/worldwind/ressources/22x22/draw-rectangle.png"));
 
-        final Icon smallIcon = new ImageIcon(GlobeView.class.getResource("/jams/worldwind/ressources/16x16/draw-rectangle-2.png"));
-        final Icon largeIcon = new ImageIcon(GlobeView.class.getResource("/jams/worldwind/ressources/22x22/draw-rectangle.png"));
-
-        JToggleButton selectObjects = new JToggleButton(largeIcon);
+        JToggleButton selectObjects = new JToggleButton(smallIcon);
+        selectObjects.setToolTipText("SELECT OBJECTS");
         selectObjects.addActionListener(new ActionListener() {
-
-            boolean enable = false;
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (enable) {
-                    enable = false;
-                    theScreenSelector.disable();
-                } else {
-                    enable = true;
+                if (((JToggleButton) e.getSource()).isSelected()) {
                     theScreenSelector.enable();
+                } else {
+                    theScreenSelector.disable();
                 }
             }
         });
-
         this.theToolBar.add(selectObjects);
+        this.theToolBar.addSeparator();
+
+        smallIcon = new ImageIcon(GlobeView.class.getResource("/jams/worldwind/ressources/16x16/table-link.png"));
+        JButton b = new JButton(smallIcon);
+        b.setEnabled(false);
+        //b.setText("OBJECTTABLE");
+        b.putClientProperty("TABLE", "OBJECTTABLE");
+        b.setToolTipText("SHOW OBJECT TABLE");
+
+        b.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                List<?> list = theScreenSelector.getSelectedObjects();
+                System.out.println(list);
+                if (!list.isEmpty()) {
+                    PropertyEditorView pEV = PropertyEditorView.getInstance();
+                    pEV.fillTableWithObjects(list);
+                    pEV.show(true);
+                    theFrame.toFront();
+                }
+            }
+
+        });
+        this.theToolBar.add(b);
+
         this.theFrame.add(this.theToolBar, BorderLayout.PAGE_START);
     }
 
@@ -257,7 +274,13 @@ public class GlobeView implements PropertyChangeListener {
     // </editor-fold>  
 
     //<editor-fold defaultstate="collapsed" desc="zoom to region">
-    public double computeZoomForExtent(Sector sector) {
+
+    /**
+     *
+     * @param sector
+     * @return
+     */
+        public double computeZoomForExtent(Sector sector) {
         Angle delta = sector.getDeltaLat();
         if (sector.getDeltaLon().compareTo(delta) > 0) {
             delta = sector.getDeltaLon();
@@ -268,6 +291,10 @@ public class GlobeView implements PropertyChangeListener {
         return ret;
     }
 
+    /**
+     *
+     * @param sector
+     */
     public void zoomToSector(Sector sector) {
         double zoom = computeZoomForExtent(sector);
         Position p = new Position(sector.getCentroid(), zoom);
@@ -309,7 +336,11 @@ public class GlobeView implements PropertyChangeListener {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="ui functions">
-    public void show() {
+
+    /**
+     *
+     */
+        public void show() {
         this.theFrame.setSize(800, 600);
         this.theFrame.setLocationRelativeTo(null);
         this.theFrame.setVisible(true);
@@ -338,4 +369,34 @@ public class GlobeView implements PropertyChangeListener {
         }
     }
     //</editor-fold>
+
+    @Override
+    public void onMessage(Message msg) {
+        if (msg.getName().equals(ScreenSelector.SELECTION_ENDED)) {
+            if (!theScreenSelector.getSelectedObjects().isEmpty()) {
+                Component[] comp = theToolBar.getComponents();
+                for (Object o : comp) {
+                    if (o instanceof JButton) {
+                        JButton b = (JButton) o;
+                        if (b.getClientProperty("TABLE").toString().compareTo("OBJECTTABLE") == 0) {
+                            b.setEnabled(true);
+                        }
+                    }
+
+                }
+            }
+
+        } else if (msg.getName().equals(ScreenSelector.SELECTION_STARTED)) {
+            Component[] comp = theToolBar.getComponents();
+            for (Object o : comp) {
+                if (o instanceof JButton) {
+                    JButton b = (JButton) o;
+                    if (b.getClientProperty("TABLE").toString().compareTo("OBJECTTABLE") == 0) {
+                        b.setEnabled(false);
+                    }
+                }
+
+            }
+        }
+    }
 }

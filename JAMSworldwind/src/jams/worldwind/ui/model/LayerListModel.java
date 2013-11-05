@@ -12,6 +12,9 @@ public class LayerListModel extends DefaultListModel<Layer> {
 
     private Globe globeModel;
 
+    /**
+     *
+     */
     public LayerListModel() {
         this.globeModel = Globe.getInstance();
         fillList();
@@ -24,11 +27,17 @@ public class LayerListModel extends DefaultListModel<Layer> {
         }
     }
 
+    /**
+     *
+     */
     public void update() {
         this.clear();
         fillList();
     }
 
+    /**
+     *
+     */
     public void updateWorldWind() {
         globeModel.getModel().getLayers().clear();
         LayerList newLayers = new LayerList();

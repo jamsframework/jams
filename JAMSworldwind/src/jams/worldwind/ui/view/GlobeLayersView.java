@@ -18,6 +18,10 @@ public class GlobeLayersView {
     private WorldWindow wwd;
     private JFrame frame;
     
+    /**
+     *
+     * @param w
+     */
     public GlobeLayersView(WorldWindow w) {
         this.wwd = w;
         

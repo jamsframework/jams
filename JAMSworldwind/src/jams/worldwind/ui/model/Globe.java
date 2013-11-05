@@ -36,7 +36,12 @@ public class Globe implements UIEvents {
     private StatusBar statusBar;
 
     //Singleton pattern
-    public synchronized static Globe getInstance() {
+
+    /**
+     *
+     * @return
+     */
+        public synchronized static Globe getInstance() {
         if(instance == null) {
             instance = new Globe();
         }
@@ -56,22 +61,42 @@ public class Globe implements UIEvents {
         this.statusBar.setEventSource(window);
     }
 
+    /**
+     *
+     * @return
+     */
     public WorldWindow getWorldWindow() {
         return this.window;
     }
 
+    /**
+     *
+     * @return
+     */
     public Model getModel() {
         return this.model;
     }
 
+    /**
+     *
+     * @return
+     */
     public View getView() {
         return this.window.getView();
     }
 
+    /**
+     *
+     * @return
+     */
     public StatusBar getStatusBar() {
         return this.statusBar;
     }
 
+    /**
+     *
+     * @param f
+     */
     public void addShapefile(File f) {
         String layerName = f.getName() + "|" + f.getAbsolutePath();
         //Layer layer = new ShapefileLoader().createLayerFromShapefile(new Shapefile(f));
@@ -82,11 +107,19 @@ public class Globe implements UIEvents {
         changeSupport.firePropertyChange(UIEvents.LAYER_CHANGE, null, null);
     }
 
+    /**
+     *
+     * @param pcl
+     */
     @Override
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
         changeSupport.addPropertyChangeListener(pcl);
     }
 
+    /**
+     *
+     * @param pcl
+     */
     @Override
     public void removePropertyChangeListener(PropertyChangeListener pcl) {
         changeSupport.removePropertyChangeListener(pcl);

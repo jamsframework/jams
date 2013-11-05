@@ -15,6 +15,11 @@ public class JamsShapefileLoader extends ShapefileLoader {
     
     private static final Logger logger = LoggerFactory.getLogger(JamsShapefileLoader.class);
     
+    /**
+     *
+     * @param record
+     * @return
+     */
     @Override
     protected PointPlacemarkAttributes createPointAttributes(ShapefileRecord record)
     {
@@ -22,7 +27,11 @@ public class JamsShapefileLoader extends ShapefileLoader {
         return null;
     }
 
-    
+    /**
+     *
+     * @param record
+     * @return
+     */
     @Override
     protected ShapeAttributes createPolylineAttributes(ShapefileRecord record)
     {
@@ -30,7 +39,11 @@ public class JamsShapefileLoader extends ShapefileLoader {
         return null;
     }
 
-    
+    /**
+     *
+     * @param record
+     * @return
+     */
     @Override
     protected ShapeAttributes createPolygonAttributes(ShapefileRecord record)
     {

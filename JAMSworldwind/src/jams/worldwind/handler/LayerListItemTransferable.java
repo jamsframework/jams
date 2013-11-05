@@ -12,9 +12,16 @@ import java.io.IOException;
  */
 public class LayerListItemTransferable implements Transferable {
 
+    /**
+     *
+     */
     public static final DataFlavor LAYER_LIST_ITEM_DATA_FLAVOR = new DataFlavor(Layer.class, "gov/nasa/worldwind/layers/Layer");
     private Layer item;
     
+    /**
+     *
+     * @param l
+     */
     public LayerListItemTransferable(Layer l) {
         this.item = l;
     }

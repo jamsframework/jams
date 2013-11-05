@@ -16,6 +16,9 @@ public class GetShapefileAttributes {
     
     final String testshapefile = "../../../JAMSworldwind/shapefiles/JAMS-KOSI/hrus.shp";
 
+    /**
+     *
+     */
     public GetShapefileAttributes() {
         System.out.println("Working directory : " + System.getProperty("user.dir"));
         Shapefile sf = new Shapefile(new File(testshapefile));
@@ -35,6 +38,10 @@ public class GetShapefileAttributes {
         }
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         new GetShapefileAttributes();
     }

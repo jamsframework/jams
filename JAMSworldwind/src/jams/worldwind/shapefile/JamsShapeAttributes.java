@@ -18,10 +18,18 @@ public class JamsShapeAttributes extends BasicShapeAttributes {
     private final static Logger logger = LoggerFactory.getLogger(JamsShapeAttributes.class);
     private ShapefileRecord shapeFileRecord;
 
+    /**
+     *
+     * @param record
+     */
     public JamsShapeAttributes(ShapefileRecord record) {
         this.shapeFileRecord = record;
     }
     
+    /**
+     *
+     * @return
+     */
     public ShapefileRecord getShapeFileRecord() {
         return shapeFileRecord;
     }

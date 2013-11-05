@@ -30,8 +30,15 @@ public class MaterialClassCellEditor extends AbstractCellEditor implements Table
     JButton button;
     JColorChooser colorChooser;
     JDialog dialog;
+
+    /**
+     *
+     */
     protected static final String EDIT = "edit";
 
+    /**
+     *
+     */
     public MaterialClassCellEditor() {
         //Set up the editor (from the table's point of view),
         //which is a button.
@@ -55,6 +62,7 @@ public class MaterialClassCellEditor extends AbstractCellEditor implements Table
     /**
      * Handles events from the editor button and from
      * the dialog's OK button.
+     * @param e
      */
     @Override
     public void actionPerformed(ActionEvent e) {

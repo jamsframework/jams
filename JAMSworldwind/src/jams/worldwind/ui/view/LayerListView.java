@@ -39,6 +39,9 @@ public class LayerListView implements PropertyChangeListener {
     private LayerListModel layerModel;
     private Globe globeModel;
 
+    /**
+     *
+     */
     public LayerListView() {
         this.globeModel = Globe.getInstance();
         this.layerModel = new LayerListModel();
@@ -104,14 +107,24 @@ public class LayerListView implements PropertyChangeListener {
                 this);
     }
 
+    /**
+     *
+     */
     public void updateLayerListView() {
         layerModel.update();
     }
 
+    /**
+     *
+     */
     public void updateModel() {
         layerModel.updateWorldWind();
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override

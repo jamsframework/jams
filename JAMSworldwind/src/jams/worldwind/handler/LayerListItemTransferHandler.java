@@ -23,6 +23,10 @@ public class LayerListItemTransferHandler extends TransferHandler {
     private static final Logger logger = LoggerFactory.getLogger(LayerListView.class);
     LayerListModel model;
 
+    /**
+     *
+     * @param m
+     */
     public LayerListItemTransferHandler(LayerListModel m) {
         this.model = m;
     }
