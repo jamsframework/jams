@@ -180,84 +180,25 @@ import org.jfree.chart.ChartPanel;
  * 
  */
 
-import java.awt.AWTEvent;
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Paint;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.Transparency;
-import java.awt.datatransfer.Clipboard;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.print.PageFormat;
 import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.EventListener;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
-import javax.swing.event.EventListenerList;
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
-import org.jfree.chart.ChartRenderingInfo;
-import org.jfree.chart.ChartTransferable;
-import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 
-import org.jfree.chart.editor.ChartEditor;
-import org.jfree.chart.editor.ChartEditorManager;
-import org.jfree.chart.entity.ChartEntity;
-import org.jfree.chart.entity.EntityCollection;
-import org.jfree.chart.event.ChartChangeEvent;
 import org.jfree.chart.event.ChartChangeListener;
-import org.jfree.chart.event.ChartProgressEvent;
 import org.jfree.chart.event.ChartProgressListener;
-import org.jfree.chart.panel.Overlay;
-import org.jfree.chart.event.OverlayChangeEvent;
 import org.jfree.chart.event.OverlayChangeListener;
-import org.jfree.chart.plot.Pannable;
-import org.jfree.chart.plot.Plot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.PlotRenderingInfo;
-import org.jfree.chart.plot.Zoomable;
-import org.jfree.chart.util.ParamChecks;
-import org.jfree.chart.util.ResourceBundleWrapper;
-import org.jfree.io.SerialUtilities;
 import org.jfree.ui.ExtensionFileFilter;
-import org.jfree.*;
 
 /**
  * A Swing GUI component for displaying a {@link JFreeChart} object.

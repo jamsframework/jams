@@ -529,10 +529,10 @@ public class OptimizerConfiguration extends JPanel {
                 optimizationScheme.setOptimizerDescription(OptimizerConfiguration.this.activeOptimizer);
                 optimizationScheme.finish();
                 dialog.setVisible(false);
+                success = true;
                 for (ActionListener listener : listeners) {
                     listener.actionPerformed(new ActionEvent(OptimizerConfiguration.this, 1, "doc_modified"));
-                }
-                success = true;
+                }                
             }
         });
 
