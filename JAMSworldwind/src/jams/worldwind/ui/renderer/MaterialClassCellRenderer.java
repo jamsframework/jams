@@ -32,7 +32,6 @@ public class MaterialClassCellRenderer extends JLabel implements TableCellRender
      */
     public MaterialClassCellRenderer(boolean isBordered) {
         this.isBordered = isBordered;
-        this.
         setOpaque(true); //MUST do this for background to show up.
     }
 

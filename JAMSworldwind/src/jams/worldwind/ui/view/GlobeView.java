@@ -71,7 +71,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.theLayerView = new LayerListView();
         //this.theGlobeModel.addPropertyChangeListener(theLayerView);
         theScreenSelector = new ScreenSelector(theGlobeModel.getWorldWindow());
-        theSelectionHighlightController = new SelectionHighlightController(theGlobeModel.getWorldWindow(), theScreenSelector);
+        //theSelectionHighlightController = new SelectionHighlightController(theGlobeModel.getWorldWindow(), theScreenSelector);
         this.theScreenSelector.addMessageListener(this);
 
         this.theFrame = new JFrame("JAMS WORLDWIND VIEWER");
@@ -108,7 +108,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.buildMenu();
         this.fixMacOSX();
 
-        File file = new File("../../../JAMSworldwind/shapefiles/vg2500_geo84/vg2500_bld.shp");
+        File file = new File("../../JAMSworldwind/shapefiles/vg2500_geo84/vg2500_bld.shp");
+        //File file = new File("../../../jamsmodelsdata/JAMS-Gehlberg/input/local/gis/hrus/hrus.shp");
         this.theGlobeModel.addShapefile(file);
 
         //zoom to region after loading
@@ -156,11 +157,11 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 List<?> list = theScreenSelector.getSelectedObjects();
-                System.out.println(list);
+                //System.out.println(list);
                 if (!list.isEmpty()) {
-                    PropertyEditorView pEV = PropertyEditorView.getInstance();
-                    pEV.fillTableWithObjects(list);
-                    pEV.show(true);
+                    ShapefileAttributesView sAV = ShapefileAttributesView.getInstance();
+                    sAV.fillTableWithObjects(list);
+                    sAV.show(true);
                     theFrame.toFront();
                 }
             }

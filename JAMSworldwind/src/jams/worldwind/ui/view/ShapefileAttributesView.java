@@ -2,24 +2,16 @@ package jams.worldwind.ui.view;
 
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.SurfacePolygons;
-import jams.worldwind.handler.MaterialClassCellEditor;
-import jams.worldwind.shapefile.JamsShapeAttributes;
+import jams.worldwind.handler.SurfacePolygonClassCellEditor;
 import jams.worldwind.ui.model.Globe;
-import jams.worldwind.ui.model.PropertyEditorModel;
-import jams.worldwind.ui.renderer.MaterialClassCellRenderer;
+import jams.worldwind.ui.model.ShapefileAttributesModel;
+import jams.worldwind.ui.renderer.SurfacePolygonClassCellRenderer;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -36,31 +28,38 @@ import javax.swing.table.TableColumn;
  *
  * @author Ronny Berndt <ronny.berndt@uni-jena.de>
  */
-public class PropertyEditorView {
+public class ShapefileAttributesView {
 
-    private static PropertyEditorView instance = null;
-    private JFrame theFrame;
-    private JTable theTable;
-    private PropertyEditorModel theTableModel;
+    private static ShapefileAttributesView instance = null;
+    final private JFrame theFrame;
+    final private JTable theTable;
+    private ShapefileAttributesModel theTableModel;
 
     //Singleton pattern
-
     /**
      *
-     * @return 
+     * @return
      */
-        public synchronized static PropertyEditorView getInstance() {
+    public synchronized static ShapefileAttributesView getInstance() {
         if (instance == null) {
-            instance = new PropertyEditorView("LAST SELECTED OBJECTS");
+            instance = new ShapefileAttributesView("LAST SELECTED OBJECTS");
         }
         return instance;
     }
 
-    private PropertyEditorView(String title) {
+    private ShapefileAttributesView(String title) {
         this.theFrame = new JFrame(title);
         this.theTable = new JTable();
+
         this.theTable.setIntercellSpacing(new Dimension(6, 6));
         this.theTable.setRowHeight(this.theTable.getRowHeight() + 6);
+
+        this.theTable.getModel().addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                Globe.getInstance().getWorldWindow().redrawNow();
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(this.theTable);
         JPanel mainPanel = new JPanel();
@@ -76,62 +75,29 @@ public class PropertyEditorView {
      * @param objects
      */
     public void fillTableWithObjects(List<?> objects) {
-        HashMap<String, Object> data = new HashMap<>();
-        for (Object cls : objects) {
-            BeanInfo beanInfo;
-            try {
-                SurfacePolygons s = (SurfacePolygons) cls;
-                JamsShapeAttributes sattr = (JamsShapeAttributes) s.getAttributes();
-                beanInfo = Introspector.getBeanInfo(sattr.getClass().getSuperclass());
-                for (PropertyDescriptor pd : beanInfo.getPropertyDescriptors()) {
-                    if (pd.getReadMethod() != null && !"class".equals(pd.getName())) {
-                        data.put(pd.getDisplayName(), pd.getReadMethod().invoke(sattr));
-                    }
-                }
-
-            } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                Logger.getLogger(PropertyEditorView.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        this.setTableModel(objects, data);
-    }
-
-    /**
-     *
-     * @param cls
-     */
-    public void setClassProperties(List<?> cls) {
-
-    }
-
-    private void setTableModel(List<?> cls, HashMap<String, Object> data) {
-        this.theTableModel = new PropertyEditorModel(cls, data);
+        this.theTableModel = new ShapefileAttributesModel(objects);
         this.theTable.setModel(this.theTableModel);
+
+        this.theTable.setAutoCreateRowSorter(true);
+        this.theTable.setColumnSelectionAllowed(true);
+
+        this.theTable.setDefaultEditor(SurfacePolygons.class, new SurfacePolygonClassCellEditor());
+        this.theTable.setDefaultRenderer(SurfacePolygons.class, new SurfacePolygonClassCellRenderer());
         this.autoResizeColWidth(theTable, theTableModel);
 
-        this.theTable.setDefaultEditor(Material.class, new MaterialClassCellEditor());
-        this.theTable.setDefaultRenderer(Material.class, new MaterialClassCellRenderer(true));
-
-        this.theTable.getModel().addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                Globe.getInstance().getWorldWindow().redrawNow();
-
-            }
-        });
-
+        TableCellRenderer rendererFromHeader = this.theTable.getTableHeader().getDefaultRenderer();
+        JLabel headerLabel = (JLabel) rendererFromHeader;
+        headerLabel.setHorizontalAlignment(JLabel.CENTER); // Here you can set the alignment you want.
     }
 
     /*  Code from http://ieatbinary.com/2008/08/13/auto-resize-jtable-column-width/
      */
-
     /**
      *
      * @param table
      * @param model
      * @return
      */
-    
     public JTable autoResizeColWidth(JTable table, DefaultTableModel model) {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         //table.setModel(model);

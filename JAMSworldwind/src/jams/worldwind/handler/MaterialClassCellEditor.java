@@ -23,7 +23,7 @@ import javax.swing.table.TableCellEditor;
  *
  * @author Ronny Berndt <ronny.berndt@uni-jena.de>
  */
-public class MaterialClassCellEditor extends AbstractCellEditor implements TableCellEditor,ActionListener {
+public class MaterialClassCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 
     Material currentMaterial;
     Color currentColor;
