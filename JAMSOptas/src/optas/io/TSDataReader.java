@@ -253,6 +253,10 @@ public class TSDataReader{
         Attribute.TimeInterval interval = DefaultDataFactory.getDataFactory().createTimeInterval();
         interval.setStart(startTime);
         interval.setEnd(endTime);
+        if (tres.compareTo("m")==0){
+            interval.setTimeUnit(Calendar.MONTH);
+            interval.setTimeUnitCount(1);
+        }
         if (tres.compareTo("d")==0){
             interval.setTimeUnit(Calendar.DAY_OF_YEAR);
             interval.setTimeUnitCount(1);
