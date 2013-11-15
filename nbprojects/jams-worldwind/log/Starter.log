@@ -1,0 +1,269 @@
+17:19:44.127 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:19:44.158 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:20:40.365 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:20:40.396 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:20:42.954 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:366] | Recieving Event: LayerChange
+17:20:42.954 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+17:21:16.213 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:310] | Shapefile: hrus.shp|Y:\Documents\BA-Arbeit\jamsmodelsdata\JAMS-Gehlberg\input\local\gis\hrus\hrus.shp
+17:26:27.933 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:310] | Shapefile: hrus.shp|Y:\Documents\BA-Arbeit\jamsmodelsdata\JAMS-Gehlberg\input\local\gis\hrus\hrus.shp
+11:45:26.780 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+11:45:26.827 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+11:45:29.401 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:366] | Recieving Event: LayerChange
+11:45:29.401 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+12:57:43.729 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+12:57:43.885 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:00:34.129 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:00:34.160 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:02:39.825 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:02:39.871 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:05:43.163 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:05:43.537 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:40:27.228 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:40:27.338 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:44:43.967 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:44:44.029 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:45:33.419 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+13:45:33.419 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+13:56:02.114 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:56:02.161 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:24:58.119 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:24:58.166 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:25:00.771 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+17:25:00.771 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+17:25:21.160 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListItemTransferHandler.java:89] | Update WorldWind Layers
+17:25:27.291 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListItemTransferHandler.java:89] | Update WorldWind Layers
+17:28:42.276 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:28:42.322 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:28:45.021 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+17:28:45.037 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+17:31:27.013 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:31:27.044 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:31:29.744 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+17:31:29.744 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+17:34:07.382 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:34:07.428 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:34:10.191 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+17:34:10.191 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+17:38:48.319 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:38:48.350 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:38:50.955 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+17:38:50.955 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+17:40:14.384 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:40:14.415 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:40:17.114 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+17:40:17.130 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+17:47:10.889 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:47:10.920 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:47:13.650 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+17:47:13.650 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+17:51:27.415 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:51:27.462 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:51:30.036 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+17:51:30.036 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+17:53:05.805 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:53:05.836 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:53:08.426 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+17:53:08.426 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+17:55:25.271 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+17:55:25.334 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+17:55:28.174 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+17:55:28.174 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+19:04:35.263 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+19:04:35.326 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+19:04:38.290 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+19:04:38.305 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+10:57:08.502 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+10:57:08.533 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+10:57:11.700 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+10:57:11.700 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+10:59:14.741 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+10:59:14.772 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+10:59:17.424 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+10:59:17.424 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+11:04:25.820 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+11:04:25.867 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+11:04:28.597 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+11:04:28.597 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+11:07:48.482 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+11:07:48.529 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+11:07:51.214 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+11:07:51.214 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+11:14:32.962 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+11:14:32.993 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+11:14:35.614 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+11:14:35.614 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+11:14:55.145 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+11:14:55.207 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+11:14:59.263 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+11:14:59.263 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+13:50:30.624 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:50:30.670 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:50:33.387 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+13:50:33.387 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+13:51:11.765 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:51:11.812 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:51:14.745 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+13:51:14.745 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+13:52:05.555 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:52:05.617 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:52:08.300 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+13:52:08.300 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+13:53:44.069 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:53:44.100 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:53:46.845 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+13:53:46.845 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+13:57:10.851 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:57:10.897 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:57:13.721 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+13:57:13.721 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+13:58:09.540 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:58:09.587 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:58:12.239 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+13:58:12.239 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+14:20:33.421 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+14:20:33.468 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+14:20:36.463 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+14:20:36.463 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+14:24:11.933 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+14:24:12.160 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+14:24:15.724 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+14:24:15.771 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+14:24:15.771 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+14:25:45.911 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+14:25:46.042 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+14:25:48.226 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+14:25:48.252 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+14:25:48.253 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+14:28:54.385 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+14:28:54.581 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+14:28:57.703 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+14:28:57.730 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+14:28:57.731 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+14:48:43.882 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+14:48:44.082 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+14:48:46.203 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+14:48:46.228 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+14:48:46.229 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+14:50:23.731 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+14:50:23.918 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+14:50:26.473 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+14:50:26.499 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+14:50:26.500 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:05:36.522 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:05:36.630 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:05:38.689 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:05:38.716 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:05:38.717 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:08:17.403 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:08:17.526 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:08:19.636 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:08:19.660 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:08:19.661 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:09:05.164 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:09:05.285 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:09:07.402 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:09:07.426 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:09:07.427 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:12:04.101 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:12:04.220 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:12:06.311 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:12:06.336 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:12:06.337 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:25:00.874 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:25:01.395 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:25:04.087 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:25:04.112 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:25:04.113 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:38:20.189 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:38:20.791 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:38:23.120 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:38:23.147 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:38:23.148 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:39:40.924 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:39:41.048 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:39:43.183 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:39:43.207 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:39:43.208 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:47:20.207 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:47:20.344 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:47:22.425 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:47:22.450 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:47:22.451 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:49:48.506 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:49:48.683 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:49:50.749 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:49:50.774 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:49:50.775 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+16:23:00.930 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+16:23:01.401 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+16:23:03.810 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+16:23:03.834 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+16:23:03.835 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+16:24:13.547 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+16:24:13.667 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+16:24:15.906 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+16:24:15.931 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+16:24:15.932 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+16:27:05.223 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+16:27:05.396 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+16:27:07.668 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+16:27:07.695 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+16:27:07.696 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+16:29:36.896 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+16:29:37.364 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+16:29:40.033 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+16:29:40.060 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+16:29:40.087 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+16:34:43.174 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+16:34:43.850 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+16:34:46.351 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+16:34:46.376 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+16:34:46.376 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+16:36:20.119 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+16:36:20.241 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+16:36:22.396 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+16:36:22.431 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+16:36:22.432 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+11:37:13.340 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+11:37:13.761 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+11:37:18.679 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+11:37:18.840 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+11:37:18.840 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+12:36:38.031 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+12:36:38.502 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+12:36:41.733 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+12:36:41.787 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+12:36:41.788 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+13:03:13.281 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:03:13.419 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:03:15.557 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+13:03:15.590 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+13:03:15.591 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+13:04:59.497 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+13:04:59.673 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+13:05:01.839 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+13:05:01.866 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+13:05:01.867 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+14:24:49.929 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+14:24:50.468 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+14:24:53.015 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+14:24:53.043 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+14:24:53.044 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:01:12.361 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:01:12.481 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:01:14.583 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:01:14.607 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:01:14.608 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:08:33.484 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:08:33.613 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:08:35.717 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:08:35.742 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:08:35.743 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+15:18:00.046 [main] INFO  jams.worldwind.Starter [Starter.java:42] | Entering Starter application.
+15:18:00.167 [main] INFO  jams.worldwind.Starter [Starter.java:60] | Exiting Starter application.
+15:18:02.236 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:353] | Mac OS X detected - fixing view bug
+15:18:02.261 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:367] | Recieving Event: LayerChange
+15:18:02.261 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListView.java:138] | Recieving Event: LayerChange
+11:06:03.550 [main] WARN  j.w.test.IntervallCalculation [IntervallCalculation.java:145] | Intervall size must be greater zero! Getting standard intervall!
+11:06:39.062 [main] WARN  j.w.test.IntervallCalculation [IntervallCalculation.java:145] | Intervall size must be greater zero! Getting standard intervall!
+11:07:04.776 [main] WARN  j.w.test.IntervallCalculation [IntervallCalculation.java:145] | Intervall size must be greater zero! Getting standard intervall!

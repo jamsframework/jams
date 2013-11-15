@@ -4,8 +4,6 @@
  */
 package jams.worldwind.test;
 
-import jams.worldwind.shapefile.JamsShapeAttributes;
-import jams.worldwind.ui.view.PropertyEditorView;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -77,7 +75,7 @@ public class ReflectionTest {
                 i++;
             }
         } catch (Exception ex) {
-            Logger.getLogger(PropertyEditorView.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(PropertyEditorView.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("Finished!");
     }
