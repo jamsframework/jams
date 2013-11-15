@@ -156,6 +156,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         b.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //SimpleFeatureLayer sfl = Globe.getInstance().getModel().getLayers().get(theGlobeModel.getModel().getLayers().size()-1);
+                
                 List<?> list = theScreenSelector.getSelectedObjects();
                 //System.out.println(list);
                 if (!list.isEmpty()) {

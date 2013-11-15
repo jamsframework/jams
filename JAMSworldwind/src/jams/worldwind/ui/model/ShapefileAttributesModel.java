@@ -70,7 +70,7 @@ public class ShapefileAttributesModel extends DefaultTableModel {
             super.addRow(v);
         }
     }
-
+    
     @Override
     public boolean isCellEditable(int row, int column) {
         return column == 0;

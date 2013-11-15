@@ -18,34 +18,20 @@ public class IntervallCalculation {
     private double minimumValue;
     private double maximumValue;
 
-    private IntervallCalculation() {
-        this.values = new ArrayList<>();
+    public IntervallCalculation(List dvalues) {
+        this.values = new ArrayList<>(dvalues);
         this.minimumValue = Double.POSITIVE_INFINITY;
         this.maximumValue = Double.NEGATIVE_INFINITY;
-    }
-
-    public IntervallCalculation(double[] dvalues) {
-        this();
-        this.fill(dvalues);
         this.calculateMinimumAndMaximum();
     }
-
-    public IntervallCalculation(int[] iValues) {
-        this();
-        double[] doubleValues = new double[iValues.length];
-        for (int i = 0; i < iValues.length; i++) {
-            doubleValues[i] = (double) iValues[i];
-        }
-        this.fill(doubleValues);
-        this.calculateMinimumAndMaximum();
-    }
-
-    private void fill(double[] values) {
-        for (int i = 0; i < values.length; i++) {
+    /*
+    private void fill(List<?> values) {
+        for (int i = 0; i < values.size(); i++) {
             this.values.add(values[i]);
         }
-    }
-
+    }   
+    */
+    
     public double getValue(int index) {
         if (index >= 0 && index < this.values.size()) {
             return this.values.get(index);

@@ -1,8 +1,12 @@
 package jams.worldwind.test;
 
+import jams.worldwind.ui.ColorRamp;
+import jams.worldwind.ui.ColorRampPanel;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.JFrame;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 /**
@@ -67,6 +71,14 @@ public class IntervallTest {
         System.out.println("################################################");
         ic.printHistogramm(ic.getQuantilIntervall(classes));
 
+        ColorRamp c = new ColorRamp(new Color(255,0,0), new Color(255,255,0), 20);
+        JFrame f = new JFrame("COLORRAMP TEST");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.add(new ColorRampPanel(c));
+        f.setSize(600,400);
+        f.setVisible(true);
+        
+        
     }
 
 }

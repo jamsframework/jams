@@ -3,6 +3,7 @@ package jams.worldwind.ui.view;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.SurfacePolygons;
 import jams.worldwind.handler.SurfacePolygonClassCellEditor;
+import jams.worldwind.test.RandomNumbers;
 import jams.worldwind.ui.model.Globe;
 import jams.worldwind.ui.model.ShapefileAttributesModel;
 import jams.worldwind.ui.renderer.SurfacePolygonClassCellRenderer;
@@ -10,6 +11,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.List;
+import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -76,6 +78,12 @@ public class ShapefileAttributesView {
      */
     public void fillTableWithObjects(List<?> objects) {
         this.theTableModel = new ShapefileAttributesModel(objects);
+        /** TESTDATA
+         * 
+         */
+        RandomNumbers rn = new RandomNumbers(0, 10, this.theTableModel.getRowCount());
+        this.theTableModel.addColumn("TESTDATA", new Vector(rn.getDoubleValues()));
+        
         this.theTable.setModel(this.theTableModel);
 
         this.theTable.setAutoCreateRowSorter(true);
