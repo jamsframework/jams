@@ -61,14 +61,11 @@ import jams.model.JAMSSmallModelState;
 import jams.model.Model;
 import jams.tools.JAMSTools;
 import jams.tools.StringTools;
-import jams.workspace.InvalidWorkspaceException;
-import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -463,6 +460,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         long start = System.currentTimeMillis();
+
+        if (this.getState() == JAMSRuntime.STATE_RUN) {
+            model.setup();
+        }
 
         if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.init();

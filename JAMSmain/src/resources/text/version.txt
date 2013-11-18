@@ -1,6 +1,6 @@
 main.majorversion=3
 main.minorversion=0
-main.revision=b04
+main.revision=b05
 api.majorversion=1
 api.minorversion=1
 date=20131022

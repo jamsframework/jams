@@ -41,6 +41,12 @@ package jams.model;
     private Model model = null;
     
     /**
+     * Method to be executed at model's setup stage
+     * @throws java.lang.Exception
+     */
+    public void setup() throws Exception {}
+    
+    /**
      * Method to be executed at model's init stage
      * @throws java.lang.Exception
      */

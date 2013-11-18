@@ -526,12 +526,18 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     }
 
+    @Override
+    public void setup() {
+        
+    }
+
     /**
-     * Initialization of this context: 1. Create accessors for all attributes of
-     * this context which are to be accessed by descendent components 2. Create
-     * the data tracer objects which take care of outputting values of
-     * attributes of this context 3. Calling the init() method of all child
-     * components
+     * Initialization of this context: 
+     * 1. Create accessors for all attributes of this context which are 
+     * to be accessed by descendent components 
+     * 2. Create the data tracer objects which take care of outputting values 
+     * of attributes of this context 
+     * 3. Calling the init() method of all child components
      */
     @Override
     public void init() {

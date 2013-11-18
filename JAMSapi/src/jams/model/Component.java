@@ -31,6 +31,12 @@ import java.io.Serializable;
 public interface Component extends Serializable {
 
     /**
+     * Method to be executed at model's setup stage
+     * @throws java.lang.Exception
+     */
+    void setup() throws Exception;
+
+    /**
      * Method to be executed at model's init stage
      * @throws java.lang.Exception
      */
