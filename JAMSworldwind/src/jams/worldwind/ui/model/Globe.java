@@ -100,8 +100,11 @@ public class Globe implements UIEvents {
     public void addShapefile(File f) {
         String layerName = f.getName() + "|" + f.getAbsolutePath();
         //Layer layer = new ShapefileLoader().createLayerFromShapefile(new Shapefile(f));
+        Shapefile shp = new Shapefile(f);
+        System.out.println("SHAPEFILE RECORDS: " + shp.getNumberOfRecords());
         Layer layer = new JamsShapefileLoader().
-                createLayerFromShapefile(new Shapefile(f));
+                createLayerFromShapefile(shp);
+        
         layer.setName(layerName);
         model.getLayers().add(layer);
         changeSupport.firePropertyChange(UIEvents.LAYER_CHANGE, null, null);

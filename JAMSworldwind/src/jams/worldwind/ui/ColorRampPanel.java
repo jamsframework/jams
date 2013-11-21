@@ -7,6 +7,7 @@
 package jams.worldwind.ui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 
@@ -20,26 +21,21 @@ public class ColorRampPanel extends JPanel {
     
     public ColorRampPanel(ColorRamp r) {
         this.colorRamp = r;
-        this.setSize(600, 200);
     }
-
     
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         int startx, xsteps;
-//        int starty, endy;
         xsteps = this.getWidth() / colorRamp.getSteps();
-        
         startx = 0;
-        for(int i = 0; i< colorRamp.getSteps()+1;i++) {
+        for(int i = 0; i< colorRamp.getSteps();i++) {
             g.setColor(this.colorRamp.getColorRamp().get(i));
             g.fillRect(startx, 0, xsteps, this.getHeight());
             g.setColor(Color.black);
             g.drawLine(startx, 0, startx, this.getHeight());
-            System.out.println("X: " + startx + " XSTEPS: " + xsteps);
+            //System.out.println("X: " + startx + " XSTEPS: " + xsteps);
             startx += xsteps;
-            
         }
     }
 }

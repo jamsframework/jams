@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package jams.worldwind.ui;
 
 import java.awt.Color;
@@ -19,10 +14,20 @@ public class ColorRamp {
     private int steps;
     private final ArrayList<Color> colorRamp;
 
-    public ColorRamp(Color start, Color end, int steps) {
+    /**
+     *
+     * @param start
+     * @param end
+     * @param steps
+     * @throws IllegalArgumentException
+     */
+    public ColorRamp(Color start, Color end, int steps) throws IllegalArgumentException {
+        if(steps>255 || steps<0) {
+            throw new IllegalArgumentException("STEPS MUST BE IN THAT RANGE [0,255].");
+        }
         this.startColor = start;
         this.endColor = end;
-        this.steps = steps - 1;
+        this.steps = steps;
         this.colorRamp = new ArrayList<>(this.steps);
         this.calculateRamp();
     }
@@ -57,5 +62,9 @@ public class ColorRamp {
 
     public ArrayList<Color> getColorRamp() {
         return colorRamp;
+    }
+    
+    public Color getColor(int index) {
+        return this.colorRamp.get(index);
     }
 }

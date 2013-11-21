@@ -3,13 +3,27 @@ package jams.worldwind.ui.view;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.SurfacePolygons;
 import jams.worldwind.handler.SurfacePolygonClassCellEditor;
+import jams.worldwind.shapefile.JamsShapeAttributes;
+import jams.worldwind.test.IntervallCalculation;
 import jams.worldwind.test.RandomNumbers;
+import jams.worldwind.ui.ColorRamp;
 import jams.worldwind.ui.model.Globe;
 import jams.worldwind.ui.model.ShapefileAttributesModel;
 import jams.worldwind.ui.renderer.SurfacePolygonClassCellRenderer;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.JFrame;
@@ -23,6 +37,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -78,20 +93,71 @@ public class ShapefileAttributesView {
      */
     public void fillTableWithObjects(List<?> objects) {
         this.theTableModel = new ShapefileAttributesModel(objects);
-        /** TESTDATA
-         * 
+        /**
+         * TESTDATA
+         *
          */
         RandomNumbers rn = new RandomNumbers(0, 10, this.theTableModel.getRowCount());
         this.theTableModel.addColumn("TESTDATA", new Vector(rn.getDoubleValues()));
-        
+
         this.theTable.setModel(this.theTableModel);
 
-        this.theTable.setAutoCreateRowSorter(true);
+        //this.theTable.setAutoCreateRowSorter(true);
         this.theTable.setColumnSelectionAllowed(true);
+        this.theTable.setRowSelectionAllowed(false);
 
         this.theTable.setDefaultEditor(SurfacePolygons.class, new SurfacePolygonClassCellEditor());
         this.theTable.setDefaultRenderer(SurfacePolygons.class, new SurfacePolygonClassCellRenderer());
         this.autoResizeColWidth(theTable, theTableModel);
+
+        final JTableHeader header = this.theTable.getTableHeader();
+        header.setReorderingAllowed(false);
+        header.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int col = header.columnAtPoint(e.getPoint());
+                int rows = theTableModel.getRowCount();
+                System.out.println("ROWSCOUNT: " + rows);
+                List values = new ArrayList<>(rows);
+                for (int i = 0; i < rows; i++) {
+                    values.add((Double) theTable.getValueAt(i, col));
+                }
+                IntervallCalculation iC = new IntervallCalculation(values);
+                List intervall = iC.getEqualIntervall(12);
+                
+                System.out.println("INTERVALL: " + intervall);
+                System.out.println("INTERVALLSIZE: " + intervall.size());
+                ColorRamp cR = new ColorRamp(Color.red, Color.blue, intervall.size());
+                System.out.println("COLORRAMP: " + cR.getColorRamp());
+                for (int i = 0; i < rows; i++) {
+                    SurfacePolygons o = (SurfacePolygons) theTable.getValueAt(i, 0);
+                    JamsShapeAttributes sattr = (JamsShapeAttributes) o.getAttributes();
+                    Double d = (Double) theTable.getValueAt(i, col);
+                    int index = iC.getIntervallIndex(intervall,d);
+                    sattr.setInteriorMaterial(new Material(cR.getColor(index)));
+                    /*
+                    for (int j = 0; j < intervall.size()-1; j++) {
+                        Double d = (Double) theTable.getValueAt(i, col);
+                        System.out.println("[" + j + "," + (j+1) + "] (" + d + ")");
+                        
+                        
+                        
+                        if (d >= (Double) intervall.get(j) && d < (Double) intervall.get(j + 1)) {
+                            //data.put(pd.getDisplayName(), pd.getReadMethod().invoke(sattr));
+                            sattr.setInteriorMaterial(new Material(cR.getColor(j)));
+                            System.out.println("FOUND: " + d + " INDEX: " + i);
+                            break;
+                        }
+
+                    }
+                    */
+                }
+                Globe.getInstance().getWorldWindow().redrawNow();
+                       
+                
+            }
+        });
 
         TableCellRenderer rendererFromHeader = this.theTable.getTableHeader().getDefaultRenderer();
         JLabel headerLabel = (JLabel) rendererFromHeader;

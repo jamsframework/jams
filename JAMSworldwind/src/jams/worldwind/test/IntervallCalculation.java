@@ -3,6 +3,7 @@ package jams.worldwind.test;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,5 +178,17 @@ public class IntervallCalculation {
             System.out.println();
         }
         System.out.println("SUMMARY: TOTAL STARS: " + sum + " | TOTAL ELEMENTS: " + tmp.size());
+    }
+    
+    public int getIntervallIndex(List<?> intervall, double d) {
+        for (int j = 0; j < intervall.size()-1; j++) {
+           //System.out.println("[" + j + "," + (j+1) + "] (" + d + ")");
+           if ((d >= (Double)intervall.get(j) && d < (Double)intervall.get(j + 1)) || 
+               (d==(Double)intervall.get(intervall.size()-1))) {
+               //System.out.println("FOUND: " + d + " INDEX: " + j);
+               return j;
+           }
+        }
+        throw new NoSuchElementException("VALUE ("+ d + ") NOT FOUND IN INTERVALL " + this.values);
     }
 }

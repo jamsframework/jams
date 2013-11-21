@@ -4,14 +4,19 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.event.MessageListener;
+import gov.nasa.worldwind.event.SelectEvent;
+import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.formats.shapefile.Shapefile;
+import gov.nasa.worldwind.formats.shapefile.ShapefileRecord;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.render.SurfacePolygons;
 import gov.nasa.worldwindx.examples.util.ScreenSelector;
 import jams.worldwind.handler.SelectionHighlightController;
+import jams.worldwind.shapefile.JamsShapeAttributes;
 import jams.worldwind.ui.model.Globe;
 import jams.worldwind.ui.UIEvents;
 import java.awt.BorderLayout;
@@ -26,6 +31,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -52,7 +59,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private static final Logger logger = LoggerFactory.getLogger(GlobeView.class);
     //reference to jams,worldwind.ui.model.Globe
     private final Globe theGlobeModel;
-    private JFrame theFrame;
+    private final JFrame theFrame;
     private JMenuBar theMenuBar;
     private JToolBar theToolBar;
     private final LayerListView theLayerView;
@@ -159,7 +166,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 //SimpleFeatureLayer sfl = Globe.getInstance().getModel().getLayers().get(theGlobeModel.getModel().getLayers().size()-1);
                 
                 List<?> list = theScreenSelector.getSelectedObjects();
-                //System.out.println(list);
+                System.out.println("SELECTED OBJECTS COUNT: " + list.size());
                 if (!list.isEmpty()) {
                     ShapefileAttributesView sAV = ShapefileAttributesView.getInstance();
                     sAV.fillTableWithObjects(list);
