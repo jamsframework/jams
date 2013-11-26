@@ -189,6 +189,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         runState = JAMSRuntime.STATE_RUN;
 
     }
+    
     //initialize logs .. this is necessary, because JAMSLogger is not serializable and must be reinitalized after deserialization
     private void initLogging() {
         // set the debug (i.e. output verbosity) level
@@ -462,11 +463,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         long start = System.currentTimeMillis();
 
         if (this.getState() == JAMSRuntime.STATE_RUN) {
-            model.setup();
+            model.init();
         }
 
         if (this.getState() == JAMSRuntime.STATE_RUN) {
-            model.init();
+            model.setup();
         }
 
         if (this.getState() == JAMSRuntime.STATE_RUN) {

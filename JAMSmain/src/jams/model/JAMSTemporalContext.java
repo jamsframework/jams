@@ -35,22 +35,22 @@ import jams.workspace.stores.Filter;
  * @author S. Kralisch
  */
 @JAMSComponentDescription(title = "Temporal context",
-author = "Sven Kralisch",
-date = "2005-07-31",
-version = "1.0_0",
-description = "This component represents a JAMS context which can be used to "
-+ "represent iteration over discrete time steps typically used in conceptional"
-+ "environmental models")
+        author = "Sven Kralisch",
+        date = "2005-07-31",
+        version = "1.0_0",
+        description = "This component represents a JAMS context which can be used to "
+        + "represent iteration over discrete time steps typically used in conceptional"
+        + "environmental models")
 public class JAMSTemporalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Time interval of temporal context")
+            description = "Time interval of temporal context")
     public JAMSTimeInterval timeInterval;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Current date of temporal context")
+            description = "Current date of temporal context")
     public Attribute.Calendar current;
-    
+
     private Attribute.Calendar lastValue;
 
     public JAMSTemporalContext() {
@@ -60,13 +60,13 @@ public class JAMSTemporalContext extends JAMSContext {
     @Override
     protected DataTracer createDataTracer(OutputDataStore store) {
         return new AbstractTracer(this, store, JAMSLong.class) {
-            
+
             @Override
             public void trace() {
                 // check for filters on other contexts first
                 for (Filter filter : store.getFilters()) {
                     if (filter.getContext() != JAMSTemporalContext.this) {
-                        String s = filter.getContext().getTraceMark();                        
+                        String s = filter.getContext().getTraceMark();
                         //Matcher matcher = filter.getPattern().matcher(s);
                         if (!filter.isFiltered(s)) {
                             return;
@@ -120,9 +120,14 @@ public class JAMSTemporalContext extends JAMSContext {
     }
 
     @Override
+    public void setup() {
+        super.setup();
+    }
+
+    @Override
     public void run() {
         super.run();
-        if (!this.isPaused){
+        if (!this.isPaused) {
             for (DataTracer dataTracer : dataTracers) {
                 if (dataTracer.hasOutput()) {
                     dataTracer.endMark();
@@ -131,19 +136,79 @@ public class JAMSTemporalContext extends JAMSContext {
             }
         }
     }
+    
+    @Override
+    protected ComponentEnumerator getSetupEnumerator() {
+        return getInitEnumerator();
+    }
 
     @Override
-    public ComponentEnumerator getRunEnumerator() {
+    protected ComponentEnumerator getRunEnumerator() {
         // check if there are components to iterate on
         if (!components.isEmpty()) {
             // if yes, return standard enumerator
-            return new RunEnumerator();
-        } else {
-            // if not, return empty enumerator
-            return new RunEnumerator() {
+            return new ComponentEnumerator() {
+
+                ComponentEnumerator ce = getChildrenEnumerator();
+                //DataTracer dataTracers = getDataTracer();
 
                 @Override
                 public boolean hasNext() {
+                    boolean nextTime = current.before(lastValue);
+                    boolean nextComp = ce.hasNext();
+                    return (nextTime || nextComp);
+                }
+
+                @Override
+                public boolean hasPrevious() {
+                    boolean prevTime = current.after(timeInterval.getStart());
+                    boolean prevComp = ce.hasPrevious();
+                    return (prevTime || prevComp);
+                }
+
+                @Override
+                public Component next() {
+            // check end of component elements list, if required switch to the next
+                    // timestep start with the new Component list again
+                    if (!ce.hasNext() && current.before(lastValue)) {
+                        for (DataTracer dataTracer : dataTracers) {
+                            dataTracer.trace();
+                        }
+                        current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
+                        ce.reset();
+                    }
+                    return ce.next();
+                }
+
+                @Override
+                public void reset() {
+                    current.setValue(timeInterval.getStart().getValue());
+                    ce.reset();
+                }
+
+                public Component previous() {
+                    if (ce.hasPrevious()) {
+                        return ce.previous();
+                    } else {
+                        current.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());
+                        while (ce.hasNext()) {
+                            ce.next();
+                        }
+                        return ce.previous();
+                    }
+                }
+            };
+        } else {
+            // if not, return empty enumerator
+            return new ComponentEnumerator() {
+
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
+
+                @Override
+                public boolean hasPrevious() {
                     return false;
                 }
 
@@ -153,7 +218,13 @@ public class JAMSTemporalContext extends JAMSContext {
                 }
 
                 @Override
+                public Component previous() {
+                    return null;
+                }
+
+                @Override
                 public void reset() {
+
                 }
             };
         }
@@ -167,57 +238,5 @@ public class JAMSTemporalContext extends JAMSContext {
     @Override
     public String getTraceMark() {
         return current.toString();
-    }
-
-    class RunEnumerator implements ComponentEnumerator {
-
-        ComponentEnumerator ce = getChildrenEnumerator();
-        //DataTracer dataTracers = getDataTracer();
-
-        @Override
-        public boolean hasNext() {
-            boolean nextTime = current.before(lastValue);
-            boolean nextComp = ce.hasNext();
-            return (nextTime || nextComp);
-        }
-
-        @Override
-        public boolean hasPrevious() {
-            boolean prevTime = current.after(timeInterval.getStart());
-            boolean prevComp = ce.hasPrevious();
-            return (prevTime || prevComp);
-        }
-
-        @Override
-        public Component next() {
-            // check end of component elements list, if required switch to the next
-            // timestep start with the new Component list again
-            if (!ce.hasNext() && current.before(lastValue)) {
-                for (DataTracer dataTracer : dataTracers) {
-                    dataTracer.trace();
-                }                
-                current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
-                ce.reset();
-            }
-            return ce.next();
-        }
-
-        @Override
-        public void reset() {
-            current.setValue(timeInterval.getStart().getValue());
-            ce.reset();
-        }
-
-        public Component previous() {
-            if (ce.hasPrevious()) {
-                return ce.previous();
-            } else {
-                current.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());
-                while (ce.hasNext()) {
-                    ce.next();
-                }
-                return ce.previous();
-            }
-        }
     }
 }
