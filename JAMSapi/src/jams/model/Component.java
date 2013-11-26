@@ -32,27 +32,23 @@ public interface Component extends Serializable {
 
     /**
      * Method to be executed at model's setup stage
-     * @throws java.lang.Exception
      */
-    void setup() throws Exception;
+    void setup();
 
     /**
      * Method to be executed at model's init stage
-     * @throws java.lang.Exception
      */
-    void init() throws Exception;
+    void init();
 
     /**
      * Method to be executed at model's run stage
-     * @throws java.lang.Exception
      */
-    void run() throws Exception;
+    void run();
 
     /**
      * Method to be executed at model's cleanup stage
-     * @throws java.lang.Exception
      */
-    void cleanup() throws Exception;
+    void cleanup();
 
     /**
      * Gets the JAMS model that this component belongs to
@@ -82,9 +78,8 @@ public interface Component extends Serializable {
     /**
      * in the first run after restoring the model from a saved state this method
      * excecuted
-     * @throws java.lang.Exception
      */
-    void restore() throws Exception;
+    void restore();
     /**
      * Sets the context that this component is child of
      * @param context The parent context

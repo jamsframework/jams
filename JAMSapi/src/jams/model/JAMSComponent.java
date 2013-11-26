@@ -42,38 +42,39 @@ package jams.model;
     
     /**
      * Method to be executed at model's setup stage
-     * @throws java.lang.Exception
      */
-    public void setup() throws Exception {}
+    @Override
+    public void setup() {}
     
     /**
      * Method to be executed at model's init stage
-     * @throws java.lang.Exception
      */
-    public void init() throws Exception {}
+    @Override
+    public void init() {}
 
     /**
      * Method to be executed at model's run stage
-     * @throws java.lang.Exception
      */
-    public void run() throws Exception {}
+    @Override
+    public void run() {}
     
     /**
      * Method to be executed when model is restored from a saved state
-     * @throws java.lang.Exception
      */
-    public void restore() throws Exception {}
+    @Override
+    public void restore() {}
 
     /**
      * Method to be executed at model's cleanup stage
-     * @throws java.lang.Exception
      */
-    public void cleanup() throws Exception {}
+    @Override
+    public void cleanup() {}
         
     /**
      * Gets the name of this component
      * @return The component's instance name
      */
+    @Override
     public String getInstanceName() {
         return instanceName;
     }
@@ -82,6 +83,7 @@ package jams.model;
      * Sets the name of this component
      * @param instanceName The component's instance name
      */
+    @Override
     public void setInstanceName(String instanceName) {
         this.instanceName = instanceName;
     }
@@ -91,6 +93,7 @@ package jams.model;
      * @return The parent context of this component, null if this is a model
      * context
      */
+    @Override
     public Context getContext() {
         return context;
     }
@@ -99,6 +102,7 @@ package jams.model;
      * Sets the context that this component is child of
      * @param context The parent context
      */
+    @Override
     public void setContext(Context context) {
         this.context = context;
     }
@@ -107,6 +111,7 @@ package jams.model;
      * Gets the JAMS model that this component belongs to
      * @return The model
      */
+    @Override
     public Model getModel() {
         return model;
     }
@@ -115,6 +120,7 @@ package jams.model;
      * Sets the JAMS model that this component belongs to
      * @param model The model
      */
+    @Override
     public void setModel(Model model) {
         this.model = model;
     }
