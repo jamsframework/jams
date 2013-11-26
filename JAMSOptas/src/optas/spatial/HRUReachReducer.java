@@ -4,7 +4,7 @@
  */
 package optas.spatial;
 
-import jams.components.io.StandardEntityReader;
+import optas.io.StandardEntityReader;
 import java.util.ArrayList;
 import jams.data.*;
 import jams.data.Attribute.Entity;

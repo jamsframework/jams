@@ -20,7 +20,7 @@
  *
  */
 
-package jams.components.io;
+package optas.io;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
