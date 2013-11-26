@@ -207,128 +207,133 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
     static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(null);
 
     @Override
-    public void run() throws Exception {
-        if (panel == null) {
-            return;
-        }
-        
-        java.net.URL shp = new java.io.File(baseShape.getValue().split(";")[0]).toURI().toURL();
-        ShapefileDataStore shpDs = new ShapefileDataStore(shp);
-        crs = shpDs.getSchema().getGeometryDescriptor().getCoordinateReferenceSystem();
-
-        if (crs==null) {
-            ((JLabel)waitPanel.getComponents()[0]).setText("<html><center>No *.PRJ file found for<br>"+shp.getFile()+"<center><html>");
-            ((JLabel)waitPanel.getComponents()[0]).setIcon(new ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/error.png")));
-            return;
-        }
-
-        gispanel.removeAll();
-
-        if (shapeFileName1 == null) {
-            shapeFileName1 = getModel().getRuntime().getDataFactory().createString();
-        }
-        if (shapeFileName2 == null) {
-            shapeFileName2 = getModel().getRuntime().getDataFactory().createString();
-        }
-        if (shapeFileName3 == null) {
-            shapeFileName3 = getModel().getRuntime().getDataFactory().createString();
-        }
-
-        if (mp == null)
-            mp = new Styled3DMapPane();
-        info.setText(JAMS.i18n("3D_Map_Pane_loading_map"));
-        asg = new JAMSAscGridReader(getModel().getWorkspaceDirectory().getPath() + "/" + this.heightMap.toString());
-                
-        mp.light = this.light.getValue();
-        mp.xRes = resolution.getValue();
-        mp.yRes = resolution.getValue();
-        mp.textureWidth = 2.0*resolution.getValue();
-        mp.textureHeight = 2.0*resolution.getValue();
-                
-        mp.setHeightMap(asg);
-        info.setText(JAMS.i18n("3D_Map_Pane_calculating_normals"));
-                
-        otherLayers = new String[]{shapeFileName1.getValue(), shapeFileName2.getValue(), shapeFileName3.getValue()};
-
-        /* Reading additional shapefiles */
-        int j = 0;
-        for (String s : otherLayers) {
-            DefaultMapLayer layer = null;
-            if (!s.isEmpty()) {
-                try {
-                    java.io.File shpFile = new java.io.File(getModel().getWorkspaceDirectory().getPath() + "/" + otherLayers[j]);
-                    java.net.URL shpUrl = shpFile.toURI().toURL();
-                    ShapefileDataStore ds = new ShapefileDataStore(shpUrl);
-                    List<Name> featureNames = ds.getNames();
-                    FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = ds.getFeatureSource(featureNames.get(0));
-
-                    String geoType = featureSource.getSchema().getGeometryDescriptor().getType().getName().toString();
-                    if (geoType.equals("LineString") || geoType.equals("MultiLineString")) {
-                        layer = new DefaultMapLayer(featureSource, gispanel.getLineStyle(shapeColors.getValue()[j]));
-                    } else if (geoType.equals("Point") || geoType.equals("MultiPoint")) {
-                        layer = new DefaultMapLayer(featureSource, gispanel.getPointStyle(shapeColors.getValue()[j]));
-                    } else if (geoType.equals("Polygon") || geoType.equals("MultiPolygon")) {
-                        layer = new DefaultMapLayer(featureSource, gispanel.getSurfaceStyle(shapeColors.getValue()[j]));
+    public void run() {
+        try {
+            if (panel == null) {
+                return;
+            }
+            
+            java.net.URL shp = new java.io.File(baseShape.getValue().split(";")[0]).toURI().toURL();
+            ShapefileDataStore shpDs = new ShapefileDataStore(shp);
+            crs = shpDs.getSchema().getGeometryDescriptor().getCoordinateReferenceSystem();
+            
+            if (crs==null) {
+                ((JLabel)waitPanel.getComponents()[0]).setText("<html><center>No *.PRJ file found for<br>"+shp.getFile()+"<center><html>");
+                ((JLabel)waitPanel.getComponents()[0]).setIcon(new ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/error.png")));
+                return;
+            }
+            
+            gispanel.removeAll();
+            
+            if (shapeFileName1 == null) {
+                shapeFileName1 = getModel().getRuntime().getDataFactory().createString();
+            }
+            if (shapeFileName2 == null) {
+                shapeFileName2 = getModel().getRuntime().getDataFactory().createString();
+            }
+            if (shapeFileName3 == null) {
+                shapeFileName3 = getModel().getRuntime().getDataFactory().createString();
+            }
+            
+            if (mp == null)
+                mp = new Styled3DMapPane();
+            info.setText(JAMS.i18n("3D_Map_Pane_loading_map"));
+            asg = new JAMSAscGridReader(getModel().getWorkspaceDirectory().getPath() + "/" + this.heightMap.toString());
+            
+            mp.light = this.light.getValue();
+            mp.xRes = resolution.getValue();
+            mp.yRes = resolution.getValue();
+            mp.textureWidth = 2.0*resolution.getValue();
+            mp.textureHeight = 2.0*resolution.getValue();
+            
+            mp.setHeightMap(asg);
+            info.setText(JAMS.i18n("3D_Map_Pane_calculating_normals"));
+            
+            otherLayers = new String[]{shapeFileName1.getValue(), shapeFileName2.getValue(), shapeFileName3.getValue()};
+            
+            /* Reading additional shapefiles */
+            int j = 0;
+            for (String s : otherLayers) {
+                DefaultMapLayer layer = null;
+                if (!s.isEmpty()) {
+                    try {
+                        java.io.File shpFile = new java.io.File(getModel().getWorkspaceDirectory().getPath() + "/" + otherLayers[j]);
+                        java.net.URL shpUrl = shpFile.toURI().toURL();
+                        ShapefileDataStore ds = new ShapefileDataStore(shpUrl);
+                        List<Name> featureNames = ds.getNames();
+                        FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = ds.getFeatureSource(featureNames.get(0));
+                        
+                        String geoType = featureSource.getSchema().getGeometryDescriptor().getType().getName().toString();
+                        if (geoType.equals("LineString") || geoType.equals("MultiLineString")) {
+                            layer = new DefaultMapLayer(featureSource, gispanel.getLineStyle(shapeColors.getValue()[j]));
+                        } else if (geoType.equals("Point") || geoType.equals("MultiPoint")) {
+                            layer = new DefaultMapLayer(featureSource, gispanel.getPointStyle(shapeColors.getValue()[j]));
+                        } else if (geoType.equals("Polygon") || geoType.equals("MultiPolygon")) {
+                            layer = new DefaultMapLayer(featureSource, gispanel.getSurfaceStyle(shapeColors.getValue()[j]));
+                        }
+                        layer.setTitle(new File(otherLayers[j]).getName());
+                        optLayers[j] = layer;
+                    } catch (Exception e) {
+                        this.getModel().getRuntime().handle(e);
+                        
                     }
-                    layer.setTitle(new File(otherLayers[j]).getName());
-                    optLayers[j] = layer;
-                } catch (Exception e) {
-                    this.getModel().getRuntime().handle(e);
-
+                }
+                j++;
+            }
+            
+            /* Define a set of maps (MapCollection) and add them to MapPanel */
+            numOfParams = showAttr.getValue().length;
+            mc = new MapCollection[numOfParams];
+            getCollections();
+            for (int i = 0; i < numOfParams; i++) {
+                if (mc[i] == null) {
+                    continue;
+                }
+                gispanel.addMap(mc[i]);
+                infoidx = i;
+            }
+            
+            if (mc[0] == null) {
+                panel.removeAll();
+                JLabel label = new JLabel("No geometry features found in entity set!", SwingConstants.CENTER);
+                label.setVerticalTextPosition(JLabel.BOTTOM);
+                label.setHorizontalTextPosition(JLabel.CENTER);
+                label.setFont(new Font("Dialog", Font.BOLD, 14));
+                panel.setLayout(new BorderLayout());
+                panel.add(label, BorderLayout.CENTER);
+                panel.updateUI();
+                return;
+            }
+            
+            setMap(mc[0]);
+            mp.init();
+            
+            /* Add additional maps to topmap context */
+            for (DefaultMapLayer l : optLayers) {
+                if (l != null) {
+                    topmap.addLayer(l);
                 }
             }
-            j++;
-        }
-        
-        /* Define a set of maps (MapCollection) and add them to MapPanel */
-        numOfParams = showAttr.getValue().length;
-        mc = new MapCollection[numOfParams];
-        getCollections();
-        for (int i = 0; i < numOfParams; i++) {
-            if (mc[i] == null) {
-                continue;
+            
+            for (int i = 0; i < tree.getRowCount(); i++) {
+                tree.expandRow(i);
             }
-            gispanel.addMap(mc[i]);
-            infoidx = i;
+            
+            finished = true;
+            
+            div_hor = gispanel.getSize().width - mainSplitPane.getInsets().right - mainSplitPane.getDividerSize() - 150;
+            int div_ver = gispanel.getSize().height - mainSplitPane.getInsets().bottom - mainSplitPane.getDividerSize() - 150;
+            
+            mainSplitPane.setLeftComponent(mp);
+            mainSplitPane.setRightComponent(legendPane);
+            mainSplitPane.setDividerLocation(div_hor);
+            legendPane.setDividerLocation(div_ver);
+            
+            gispanel.add(mainSplitPane);
+        } catch (IOException ex) {
+            getModel().getRuntime().sendErrorMsg("An error occured while trying to load geometries from " + new java.io.File(baseShape.getValue().split(";")[0]).getAbsolutePath() + 
+                    " (" + ex.getMessage() + ")");
         }
-
-        if (mc[0] == null) {
-            panel.removeAll();
-            JLabel label = new JLabel("No geometry features found in entity set!", SwingConstants.CENTER);
-            label.setVerticalTextPosition(JLabel.BOTTOM);
-            label.setHorizontalTextPosition(JLabel.CENTER);
-            label.setFont(new Font("Dialog", Font.BOLD, 14));           
-            panel.setLayout(new BorderLayout());
-            panel.add(label, BorderLayout.CENTER);
-            panel.updateUI();
-            return;
-        }            
-        
-        setMap(mc[0]);
-        mp.init();
-        
-        /* Add additional maps to topmap context */
-        for (DefaultMapLayer l : optLayers) {
-            if (l != null) {
-                topmap.addLayer(l);
-            }
-        }
-        
-        for (int i = 0; i < tree.getRowCount(); i++) {
-            tree.expandRow(i);
-        }
-                
-        finished = true;
-        
-        div_hor = gispanel.getSize().width - mainSplitPane.getInsets().right - mainSplitPane.getDividerSize() - 150;
-        int div_ver = gispanel.getSize().height - mainSplitPane.getInsets().bottom - mainSplitPane.getDividerSize() - 150;
-
-        mainSplitPane.setLeftComponent(mp);
-        mainSplitPane.setRightComponent(legendPane);
-        mainSplitPane.setDividerLocation(div_hor);
-        legendPane.setDividerLocation(div_ver);
-
-        gispanel.add(mainSplitPane);
 
     }
 
@@ -353,7 +358,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
         return panel;
     }
 
-    private void setMap(MapCollection mc) throws Exception {
+    private void setMap(MapCollection mc) {
         map = mc.getMapContext();
         //mp.addMouseListener(this);
         mp.setHeightMap(asg);
@@ -364,7 +369,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
         return this.selectedF;
     }
 
-    private void getCollections() throws Exception {
+    private void getCollections() {
 
         for (int i = 0; i <= numOfParams - 1; i++) {
 

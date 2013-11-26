@@ -415,11 +415,9 @@ title="Title",
             Component comp = runEnumerator.next();
             try {
                 comp.cleanup();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.out.println(comp.getInstanceName());
                 e.printStackTrace();
-            } catch (Exception e) {
-
             }
         }
     }

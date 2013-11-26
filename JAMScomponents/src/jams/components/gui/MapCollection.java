@@ -44,7 +44,7 @@ public class MapCollection {
     private int numRanges;
     private CollectionDataStore cds;
     
-    public MapCollection(String desc, FeatureCollection<SimpleFeatureType, SimpleFeature> fc, Set<Double> s, String color, int numRanges, CoordinateReferenceSystem crs) throws Exception {
+    public MapCollection(String desc, FeatureCollection<SimpleFeatureType, SimpleFeature> fc, Set<Double> s, String color, int numRanges, CoordinateReferenceSystem crs) {
         this.desc = desc;
         this.fc = fc;
         this.s = s;

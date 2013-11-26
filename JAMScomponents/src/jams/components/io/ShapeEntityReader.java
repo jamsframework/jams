@@ -30,9 +30,13 @@ import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.AreaFunction;
@@ -78,8 +82,7 @@ public class ShapeEntityReader extends JAMSComponent {
     public Attribute.EntityCollection entities;
 
     @Override
-    public void init() throws Exception {
-
+    public void init() {
         System.out.println("ShapeEntityReader.init. shape-file name " + shapeFileName);
         System.out.println("ShapeEntityReader.init. shape-file id " + idName);
         String workSpaceDirectory = getModel().getWorkspaceDirectory().getPath();
@@ -91,55 +94,62 @@ public class ShapeEntityReader extends JAMSComponent {
         if (!isCompleteFileName) {
             fileName = workSpaceDirectory + File.separator + fileName;
         }
-        URL shapeUrl = (new java.io.File(fileName).toURI().toURL());
-        System.out.println("ShapeEntityReader.init. try to get shape-file from " + shapeUrl.toString());
-        ShapefileDataStore store = new ShapefileDataStore(shapeUrl);
 
-        FeatureIterator<SimpleFeature> featureIterator = store.getFeatureSource().getFeatures().features();
+        try {
 
-        List<AttributeDescriptor> atts = store.getFeatureSource().getSchema().getAttributeDescriptors();
-
-        int idAttributeIndex = -1;
-
-        for (int i = 0; i < atts.size(); i++) {
-            if (atts.get(i).getName().toString().equals(idName.getValue()) &&
-                    ((atts.get(i).getType().getBinding() == Long.class) || (atts.get(i).getType().getBinding() == Integer.class))) {
-                idAttributeIndex = i;
-            }
-        }
-
-        ArrayList<Attribute.Entity> entityList = new ArrayList<Attribute.Entity>();
-
-        while (featureIterator.hasNext()) {
-            SimpleFeature f = featureIterator.next();
-
-            Attribute.Entity e = getModel().getRuntime().getDataFactory().createEntity();
-
+            URL shapeUrl = (new java.io.File(fileName).toURI().toURL());
+            System.out.println("ShapeEntityReader.init. try to get shape-file from " + shapeUrl.toString());
+            ShapefileDataStore store = new ShapefileDataStore(shapeUrl);
+            
+            FeatureIterator<SimpleFeature> featureIterator = store.getFeatureSource().getFeatures().features();
+            
+            List<AttributeDescriptor> atts = store.getFeatureSource().getSchema().getAttributeDescriptors();
+            
+            int idAttributeIndex = -1;
+            
             for (int i = 0; i < atts.size(); i++) {
-                e.setObject(atts.get(i).getName().toString(), getModel().getRuntime().getDataFactory().createInstance(f.getAttribute(i)));
-            }
-            Geometry geom = (Geometry) f.getDefaultGeometry();
-            AreaFunction af = new AreaFunction();
-            e.setDouble(areaAttribute.getValue(), af.getArea(geom));
-
-            CentroidArea c2d = new CentroidArea();
-            c2d.add(geom);
-            Coordinate coord = c2d.getCentroid();
-            e.setDouble(xAttribute.getValue(), coord.x);
-            e.setDouble(yAttribute.getValue(), coord.y);
-            //System.out.println("ShapeEntityReader.x/y: " + coord.x + "/" + coord.y);
-
-            if (idAttributeIndex != -1) {
-                try {
-                    long id = Long.parseLong(f.getAttribute(idAttributeIndex).toString());
-                    e.setId(id);
-                } catch (NumberFormatException nfe) {
-                    getModel().getRuntime().sendErrorMsg("Could not parse " + f.getAttribute(idAttributeIndex) + " as long value!");
+                if (atts.get(i).getName().toString().equals(idName.getValue()) &&
+                        ((atts.get(i).getType().getBinding() == Long.class) || (atts.get(i).getType().getBinding() == Integer.class))) {
+                    idAttributeIndex = i;
                 }
             }
-            entityList.add((Attribute.Entity) e);
-        }
+            
+            ArrayList<Attribute.Entity> entityList = new ArrayList<Attribute.Entity>();
+            
+            while (featureIterator.hasNext()) {
+                SimpleFeature f = featureIterator.next();
+                
+                Attribute.Entity e = getModel().getRuntime().getDataFactory().createEntity();
+                
+                for (int i = 0; i < atts.size(); i++) {
+                    e.setObject(atts.get(i).getName().toString(), getModel().getRuntime().getDataFactory().createInstance(f.getAttribute(i)));
+                }
+                Geometry geom = (Geometry) f.getDefaultGeometry();
+                AreaFunction af = new AreaFunction();
+                e.setDouble(areaAttribute.getValue(), af.getArea(geom));
+                
+                CentroidArea c2d = new CentroidArea();
+                c2d.add(geom);
+                Coordinate coord = c2d.getCentroid();
+                e.setDouble(xAttribute.getValue(), coord.x);
+                e.setDouble(yAttribute.getValue(), coord.y);
+                //System.out.println("ShapeEntityReader.x/y: " + coord.x + "/" + coord.y);
+                
+                if (idAttributeIndex != -1) {
+                    try {
+                        long id = Long.parseLong(f.getAttribute(idAttributeIndex).toString());
+                        e.setId(id);
+                    } catch (NumberFormatException nfe) {
+                        getModel().getRuntime().sendErrorMsg("Could not parse " + f.getAttribute(idAttributeIndex) + " as long value!");
+                    }
+                }
+                entityList.add((Attribute.Entity) e);
+            }
 
-        entities.setEntities(entityList);
+            entities.setEntities(entityList);
+        } catch (IOException ex) {
+            getModel().getRuntime().sendErrorMsg("An error occured while trying to load entities from " + new java.io.File(fileName).getAbsolutePath() + 
+                    " (" + ex.getMessage() + ")");
+        }
     }
 }

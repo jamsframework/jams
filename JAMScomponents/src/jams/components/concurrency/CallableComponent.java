@@ -37,7 +37,7 @@ class CallableComponent implements Callable {
     }
 
     @Override
-    public Object call() throws Exception {
+    public Object call() {
         try {
             comp.run();
         } catch (Exception e) {

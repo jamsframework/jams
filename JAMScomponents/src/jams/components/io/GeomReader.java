@@ -31,9 +31,13 @@ import jams.data.Attribute.String;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
+import java.io.IOException;
+import java.net.MalformedURLException;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
@@ -81,35 +85,39 @@ public class GeomReader extends JAMSComponent {
         public Attribute.String baseShape;
 
     @Override
-    public void run() throws Exception {
-
-        java.net.URL shapeUrl = (new java.io.File(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue()).toURI().toURL());
-        ShapefileDataStore shapefile = new ShapefileDataStore(shapeUrl);
-        List<Name> featureNames = shapefile.getNames();
-        FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = shapefile.getFeatureSource(featureNames.get(0));
-
-        baseShape.setValue(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue() + ";" + idName);
-
-        FeatureIterator<SimpleFeature> iterator = featureSource.getFeatures().features();
-        
-        HashMap<Long, Geometry> geomMap = new HashMap<Long, Geometry>();
-        while (iterator.hasNext()) {
-            SimpleFeature f = iterator.next();
-            Object attribute = f.getAttribute(idName.getValue());
-            if (attribute==null){
-                iterator.close();
-                getModel().getRuntime().sendInfoMsg("Could not access attribute " + idName.getValue() + ". Please check your shapefile!");
-                return;
+    public void run() {
+        try {
+            java.net.URL shapeUrl = (new java.io.File(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue()).toURI().toURL());
+            ShapefileDataStore shapefile = new ShapefileDataStore(shapeUrl);
+            List<Name> featureNames = shapefile.getNames();
+            FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = shapefile.getFeatureSource(featureNames.get(0));
+            
+            baseShape.setValue(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue() + ";" + idName);
+            
+            FeatureIterator<SimpleFeature> iterator = featureSource.getFeatures().features();
+            
+            HashMap<Long, Geometry> geomMap = new HashMap<Long, Geometry>();
+            while (iterator.hasNext()) {
+                SimpleFeature f = iterator.next();
+                Object attribute = f.getAttribute(idName.getValue());
+                if (attribute==null){
+                    iterator.close();
+                    getModel().getRuntime().sendInfoMsg("Could not access attribute " + idName.getValue() + ". Please check your shapefile!");
+                    return;
+                }
+                Long id = new Long(attribute.toString());
+                geomMap.put(id, (Geometry) f.getDefaultGeometry());
             }
-            Long id = new Long(attribute.toString());
-            geomMap.put(id, (Geometry) f.getDefaultGeometry());
-        }
-
-        iterator.close();
-        
-        for (Attribute.Entity e : hrus.getEntities()) {
-            long id = new Double(e.getDouble("ID")).longValue();
-            e.setGeometry("geom", geomMap.get(id));
+            
+            iterator.close();
+            
+            for (Attribute.Entity e : hrus.getEntities()) {
+                long id = new Double(e.getDouble("ID")).longValue();
+                e.setGeometry("geom", geomMap.get(id));
+            }
+        } catch (IOException ex) {
+            getModel().getRuntime().sendErrorMsg("An error occured while trying to load geometries from " + new java.io.File(getModel().getWorkspaceDirectory().getPath() + 
+                    "/" + shapeFileName.getValue()).getAbsolutePath() + " (" + ex.getMessage() + ")");
         }
     }
 }

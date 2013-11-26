@@ -77,7 +77,7 @@ public class MapLegend extends JPanel {
         return "#" + RGB[r] + RGB[g] + RGB[b];
     }
 
-    private static Style generateSLD(Map cmap) throws Exception {
+    private static Style generateSLD(Map cmap) {
         String sld = "<UserStyle><FeatureTypeStyle>";
         for (int i = 0; i < cmap.size() - 1; i++) {
             String hexColor = rgbToHex(((Color) cmap.keySet().toArray()[cmap.size() - i - 1]).getRed(),
@@ -112,7 +112,7 @@ public class MapLegend extends JPanel {
         return parse.readXML()[0];
     }
 
-    public static Map coloring(Set<Double> d, int numRanges, String rangeColor) throws Exception {
+    public static Map coloring(Set<Double> d, int numRanges, String rangeColor) {
         Double val = Math.rint(new Double(510.0 / (d.size() - 1)) * 1000) / 1000.;
         Map<Integer, Double> colmap = new TreeMap<Integer, Double>();
         Object[] li = d.toArray();
