@@ -44,19 +44,19 @@ package jams.model;
      * Method to be executed at model's setup stage
      */
     @Override
-    public void setup() {}
+    public void setup() throws Exception {}
     
     /**
      * Method to be executed at model's init stage
      */
     @Override
-    public void init() {}
+    public void init() throws Exception {}
 
     /**
      * Method to be executed at model's run stage
      */
     @Override
-    public void run() {}
+    public void run() throws Exception {}
     
     /**
      * Method to be executed when model is restored from a saved state
@@ -68,7 +68,7 @@ package jams.model;
      * Method to be executed at model's cleanup stage
      */
     @Override
-    public void cleanup() {}
+    public void cleanup() throws Exception {}
         
     /**
      * Gets the name of this component
