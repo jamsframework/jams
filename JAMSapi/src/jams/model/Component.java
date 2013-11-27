@@ -32,23 +32,27 @@ public interface Component extends Serializable {
 
     /**
      * Method to be executed at model's setup stage
+     * @throws java.lang.Exception
      */
-    void setup();
+    void setup() throws Exception;
 
     /**
      * Method to be executed at model's init stage
+     * @throws java.lang.Exception
      */
-    void init();
+    void init() throws Exception;
 
     /**
      * Method to be executed at model's run stage
+     * @throws java.lang.Exception
      */
-    void run();
+    void run() throws Exception;
 
     /**
      * Method to be executed at model's cleanup stage
+     * @throws java.lang.Exception
      */
-    void cleanup();
+    void cleanup() throws Exception;
 
     /**
      * Gets the JAMS model that this component belongs to
