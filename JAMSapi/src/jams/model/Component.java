@@ -31,16 +31,16 @@ import java.io.Serializable;
 public interface Component extends Serializable {
 
     /**
-     * Method to be executed at model's setup stage
-     * @throws java.lang.Exception
-     */
-    void setup() throws Exception;
-
-    /**
      * Method to be executed at model's init stage
      * @throws java.lang.Exception
      */
     void init() throws Exception;
+
+    /**
+     * Method to be executed at model's initAll stage
+     * @throws java.lang.Exception
+     */
+    void initAll() throws Exception;
 
     /**
      * Method to be executed at model's run stage
@@ -53,6 +53,12 @@ public interface Component extends Serializable {
      * @throws java.lang.Exception
      */
     void cleanup() throws Exception;
+
+    /**
+     * Method to be executed at model's cleanup stage
+     * @throws java.lang.Exception
+     */
+    void cleanupAll() throws Exception;
 
     /**
      * Gets the JAMS model that this component belongs to

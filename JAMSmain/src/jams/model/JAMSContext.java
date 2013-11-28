@@ -63,7 +63,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     protected DataTracer[] dataTracers;
     protected boolean doRun = true;
     protected boolean isPaused = false;
-    transient protected Runnable runRunnable, resumeRunnable, setupRunnable;
+    transient protected Runnable runRunnable, resumeRunnable, initAllRunnable, cleanupAllRunnable;
     transient protected Component currentComponent;
 
     /**
@@ -167,7 +167,7 @@ public class JAMSContext extends JAMSComponent implements Context {
             }
         };
     }
-    
+
     /**
      *
      * @return An enumerator iterating over all child components depending on
@@ -180,17 +180,16 @@ public class JAMSContext extends JAMSComponent implements Context {
     /**
      *
      * @return An enumerator iterating over all child components depending on
-     * this context's cleanup stage  functionality
+     * this context's cleanup stage functionality
      */
     protected ComponentEnumerator getCleanupEnumerator() {
         return getChildrenEnumerator();
     }
-    
 
     /**
      *
      * @return An enumerator iterating over all child components depending on
-     * this context's run stage  functionality
+     * this context's run stage functionality
      */
     protected ComponentEnumerator getRunEnumerator() {
         return new ComponentEnumerator() {
@@ -257,11 +256,20 @@ public class JAMSContext extends JAMSComponent implements Context {
     /**
      *
      * @return An enumerator iterating over all child components depending on
-     * this context's setup stage  functionality
+     * this context's initAll stage functionality
      */
-    protected ComponentEnumerator getSetupEnumerator() {
+    protected ComponentEnumerator getInitAllEnumerator() {
         return getRunEnumerator();
     }
+    
+    /**
+     *
+     * @return An enumerator iterating over all child components depending on
+     * this context's initAll stage functionality
+     */
+    protected ComponentEnumerator getCleanupAllEnumerator() {
+        return getRunEnumerator();
+    }    
 
     /**
      *
@@ -647,7 +655,11 @@ public class JAMSContext extends JAMSComponent implements Context {
                 @Override
                 public void run() {
                     long cStart = System.currentTimeMillis();
-                    currentComponent.run();
+                    try {
+                        currentComponent.run();
+                    } catch (Exception e) {
+                        getModel().getRuntime().handle(e, currentComponent.getInstanceName());
+                    }
                     getModel().measureTime(cStart, currentComponent);
                 }
             };
@@ -657,40 +669,87 @@ public class JAMSContext extends JAMSComponent implements Context {
             runRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    currentComponent.run();
+                    try {
+                        currentComponent.run();
+                    } catch (Exception e) {
+                        getModel().getRuntime().handle(e, currentComponent.getInstanceName());
+                    }
                 }
             };
 
         }
     }
 
-    private void createSetupRunnable(boolean isProfiling) {
+    private void createInitAllRunnable(boolean isProfiling) {
         // create the runnable object that is executed at each run stage of that context
         // this will differ depending on wether the child components' execution time should be
         // measured or not
         if (isProfiling) {
 
-            setupRunnable = new Runnable() {
+            initAllRunnable = new Runnable() {
                 @Override
                 public void run() {
                     long cStart = System.currentTimeMillis();
-                    currentComponent.setup();
+                    try {
+                        currentComponent.initAll();
+                    } catch (Exception e) {
+                        getModel().getRuntime().handle(e, currentComponent.getInstanceName());
+                    }
                     getModel().measureTime(cStart, currentComponent);
                 }
             };
 
         } else {
 
-            setupRunnable = new Runnable() {
+            initAllRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    currentComponent.setup();
+                    try {
+                        currentComponent.initAll();
+                    } catch (Exception e) {
+                        getModel().getRuntime().handle(e, currentComponent.getInstanceName());
+                    }
                 }
             };
 
         }
     }
 
+    private void createCleanupAllRunnable(boolean isProfiling) {
+        // create the runnable object that is executed at each run stage of that context
+        // this will differ depending on wether the child components' execution time should be
+        // measured or not
+        if (isProfiling) {
+
+            cleanupAllRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    long cStart = System.currentTimeMillis();
+                    try {
+                        currentComponent.cleanupAll();
+                    } catch (Exception e) {
+                        getModel().getRuntime().handle(e, currentComponent.getInstanceName());
+                    }
+                    getModel().measureTime(cStart, currentComponent);
+                }
+            };
+
+        } else {
+
+            cleanupAllRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        currentComponent.cleanupAll();
+                    } catch (Exception e) {
+                        getModel().getRuntime().handle(e, currentComponent.getInstanceName());
+                    }
+                }
+            };
+
+        }
+    }    
+    
     private void createResumeRunnable(boolean isProfiling) {
         // create the runnable object that is executed at each run stage of that context
         // this will differ depending on wether the child components' execution time should be
@@ -867,7 +926,7 @@ public class JAMSContext extends JAMSComponent implements Context {
             return;
         }
 
-        // setup accessors for data exchange between context attributes and
+        // initAll accessors for data exchange between context attributes and
         // component attributes
         initAccessors();
 
@@ -900,12 +959,13 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
 
         createRunRunnable(getModel().isProfiling());
-        createSetupRunnable(getModel().isProfiling());
+        createInitAllRunnable(getModel().isProfiling());
+        createCleanupAllRunnable(getModel().isProfiling());
         createResumeRunnable(getModel().isProfiling());
     }
 
     @Override
-    public void setup() {
+    public void initAll() {
 
         //initEntityData();
         if (getEntities().getEntities().isEmpty()) {
@@ -913,7 +973,7 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
 
         if (setupEnumerator == null) {
-            setupEnumerator = getSetupEnumerator();
+            setupEnumerator = getInitAllEnumerator();
         }
 
         setupEnumerator.reset();
@@ -922,12 +982,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         while (setupEnumerator.hasNext() && doRun) {
             currentComponent = setupEnumerator.next();
-
-            try {
-                setupRunnable.run();
-            } catch (Exception e) {
-                getModel().getRuntime().handle(e, currentComponent.getInstanceName());
-            }
+            initAllRunnable.run();
         }
 
         updateEntityData();
@@ -987,6 +1042,32 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         updateEntityData();
     }
+    
+    @Override
+    public void cleanupAll() {
+
+        //initEntityData();
+        if (getEntities().getEntities().isEmpty()) {
+            return;
+        }
+
+        if (setupEnumerator == null) {
+            setupEnumerator = getCleanupAllEnumerator();
+        }
+
+        setupEnumerator.reset();
+
+        currentComponent = null;
+
+        while (setupEnumerator.hasNext() && doRun) {
+            currentComponent = setupEnumerator.next();
+            initAllRunnable.run();
+        }
+
+        updateEntityData();
+    }
+
+    
 
     @Override
     public void resume() {

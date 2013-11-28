@@ -120,8 +120,8 @@ public class JAMSTemporalContext extends JAMSContext {
     }
 
     @Override
-    public void setup() {
-        super.setup();
+    public void initAll() {
+        super.initAll();
     }
 
     @Override

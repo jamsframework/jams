@@ -467,7 +467,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         if (this.getState() == JAMSRuntime.STATE_RUN) {
-            model.setup();
+            model.initAll();
         }
 
         if (this.getState() == JAMSRuntime.STATE_RUN) {
@@ -476,6 +476,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.cleanup();
+        }
+
+        if (this.getState() == JAMSRuntime.STATE_RUN) {
+            model.cleanupAll();
         }
 
         finishModelExecution(System.currentTimeMillis() - start);

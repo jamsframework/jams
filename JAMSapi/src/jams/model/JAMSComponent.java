@@ -41,16 +41,16 @@ package jams.model;
     private Model model = null;
     
     /**
-     * Method to be executed at model's setup stage
+     * Method to be executed at model's initAll stage
      */
     @Override
-    public void setup() throws Exception {}
+    public void init() throws Exception {}
     
     /**
      * Method to be executed at model's init stage
      */
     @Override
-    public void init() throws Exception {}
+    public void initAll() throws Exception {}
 
     /**
      * Method to be executed at model's run stage
@@ -70,6 +70,12 @@ package jams.model;
     @Override
     public void cleanup() throws Exception {}
         
+    /**
+     * Method to be executed at model's cleanup stage
+     */
+    @Override
+    public void cleanupAll() throws Exception {}
+
     /**
      * Gets the name of this component
      * @return The component's instance name

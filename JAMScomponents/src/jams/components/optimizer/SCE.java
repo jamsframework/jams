@@ -39,7 +39,7 @@ import java.util.Arrays.*;
 /**
  *
  * @author Christian Fischer, based on the original MatLab sources
- * from SAHRA Tuscon Arizona
+ from SAHRA Tuscon Arizona
  */
 @JAMSComponentDescription(
 title="Title",

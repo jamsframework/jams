@@ -223,7 +223,7 @@ public class ModelLoader {
             // generate an instance of that class
             component = (Component) componentClazz.newInstance();
 
-            // do some basic setup
+            // do some basic initAll
             component.setModel(jamsModel);
             component.setInstanceName(componentName);
 
