@@ -138,7 +138,7 @@ public class JAMSTemporalContext extends JAMSContext {
     }
     
     @Override
-    protected ComponentEnumerator getSetupEnumerator() {
+    protected ComponentEnumerator getInitAllEnumerator() {
         return getInitEnumerator();
     }
 
