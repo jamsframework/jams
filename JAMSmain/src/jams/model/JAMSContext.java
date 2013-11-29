@@ -54,7 +54,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     private Attribute.EntityCollection entities;
     protected ArrayList<Component> components = new ArrayList();
-    protected ComponentEnumerator initEnumerator = null, setupEnumerator = null, runEnumerator = null, cleanupEnumerator = null;
+    protected ComponentEnumerator initEnumerator = null, initAllEnumerator = null, runEnumerator = null, cleanupEnumerator = null, cleanupAllEnumerator = null;
     private ArrayList<AttributeAccess> attributeAccessList = new ArrayList();
     private ArrayList<AttributeSpec> attributeSpecs = new ArrayList();
     protected DataAccessor[] dataAccessors = new DataAccessor[0];
@@ -972,16 +972,16 @@ public class JAMSContext extends JAMSComponent implements Context {
             return;
         }
 
-        if (setupEnumerator == null) {
-            setupEnumerator = getInitAllEnumerator();
+        if (initAllEnumerator == null) {
+            initAllEnumerator = getInitAllEnumerator();
         }
 
-        setupEnumerator.reset();
+        initAllEnumerator.reset();
 
         currentComponent = null;
 
-        while (setupEnumerator.hasNext() && doRun) {
-            currentComponent = setupEnumerator.next();
+        while (initAllEnumerator.hasNext() && doRun) {
+            currentComponent = initAllEnumerator.next();
             initAllRunnable.run();
         }
 
@@ -1051,17 +1051,17 @@ public class JAMSContext extends JAMSComponent implements Context {
             return;
         }
 
-        if (setupEnumerator == null) {
-            setupEnumerator = getCleanupAllEnumerator();
+        if (cleanupAllEnumerator == null) {
+            cleanupAllEnumerator = getCleanupAllEnumerator();
         }
 
-        setupEnumerator.reset();
+        cleanupAllEnumerator.reset();
 
         currentComponent = null;
 
-        while (setupEnumerator.hasNext() && doRun) {
-            currentComponent = setupEnumerator.next();
-            initAllRunnable.run();
+        while (cleanupAllEnumerator.hasNext() && doRun) {
+            currentComponent = cleanupAllEnumerator.next();
+            cleanupAllRunnable.run();
         }
 
         updateEntityData();

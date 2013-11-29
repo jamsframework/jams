@@ -123,6 +123,11 @@ public class JAMSTemporalContext extends JAMSContext {
     public void initAll() {
         super.initAll();
     }
+    
+    @Override
+    public void cleanupAll() {
+        super.cleanupAll();
+    }
 
     @Override
     public void run() {
@@ -141,7 +146,12 @@ public class JAMSTemporalContext extends JAMSContext {
     protected ComponentEnumerator getInitAllEnumerator() {
         return getInitEnumerator();
     }
-
+    
+    @Override
+    protected ComponentEnumerator getCleanupAllEnumerator() {
+        return getInitEnumerator();
+    }
+    
     @Override
     protected ComponentEnumerator getRunEnumerator() {
         // check if there are components to iterate on
