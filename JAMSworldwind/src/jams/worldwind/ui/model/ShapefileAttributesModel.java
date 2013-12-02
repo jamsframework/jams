@@ -1,5 +1,6 @@
 package jams.worldwind.ui.model;
 
+import gov.nasa.worldwind.render.AbstractSurfaceShape;
 import gov.nasa.worldwind.render.SurfacePolygons;
 import jams.worldwind.shapefile.JamsShapeAttributes;
 import java.util.ArrayList;
@@ -41,8 +42,14 @@ public class ShapefileAttributesModel extends DefaultTableModel {
     private void setColumnIdentifiers() {
         //first column for Shapefile attributes
         super.addColumn("PROPERTIES");
-        SurfacePolygons s = (SurfacePolygons) this.theObjects.get(0);
+        
+        
+        //SurfacePolygons s = (SurfacePolygons) this.theObjects.get(0);
+        //JamsShapeAttributes sattr = (JamsShapeAttributes) s.getAttributes();
+        
+        AbstractSurfaceShape s = (AbstractSurfaceShape)this.theObjects.get(0);
         JamsShapeAttributes sattr = (JamsShapeAttributes) s.getAttributes();
+        
         Set<Entry<String, Object>> d = sattr.getShapeFileRecord().getAttributes().getEntries();
         for (Object o : this.theObjects) {
             for (Map.Entry<String, Object> e : d) {
@@ -54,8 +61,13 @@ public class ShapefileAttributesModel extends DefaultTableModel {
 
     private void addRows() {
         for (Object o : this.theObjects) {
-            SurfacePolygons s = (SurfacePolygons) o;
+            
+            //SurfacePolygons s = (SurfacePolygons) o;
+            //JamsShapeAttributes sattr = (JamsShapeAttributes) s.getAttributes();
+            
+            AbstractSurfaceShape s = (AbstractSurfaceShape) o;
             JamsShapeAttributes sattr = (JamsShapeAttributes) s.getAttributes();
+            
             Set<Entry<String, Object>> d = sattr.getShapeFileRecord().getAttributes().getEntries();
             //Number of Shapefile entries + first Column
             int columnCount = d.size() + 1;

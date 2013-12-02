@@ -1,6 +1,5 @@
 package jams.worldwind.ui.model;
 
-import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.Model;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.WorldWind;
@@ -9,12 +8,10 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.formats.shapefile.Shapefile;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.StatusBar;
 import jams.worldwind.shapefile.JamsShapefileLoader;
-import jams.worldwind.ui.UIEvents;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import jams.worldwind.events.Events;
+import jams.worldwind.events.Observer;
 import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,18 +20,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author Ronny Berndt <ronny.berndt@uni-jena.de>
  */
-public class Globe implements UIEvents {
+public class Globe {
 
     private static Globe instance;
     //observe this class
-    private PropertyChangeSupport changeSupport;
+    //private PropertyChangeSupport changeSupport;
     private static final Logger logger = LoggerFactory.getLogger(Globe.class);
     //The main Globe Window
-    private WorldWindow window;
+    private WorldWindowGLCanvas window;
     private Model model;
     //Statusbar
     private StatusBar statusBar;
-
     //Singleton pattern
 
     /**
@@ -49,10 +45,9 @@ public class Globe implements UIEvents {
     }
 
     private Globe() {
-        changeSupport = new PropertyChangeSupport(this);
+        //changeSupport = new PropertyChangeSupport(this);
 
         this.window = new WorldWindowGLCanvas();
-
         // Create the default model as described in the current worldwind properties.
         this.model = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
         this.window.setModel(this.model);
@@ -107,24 +102,7 @@ public class Globe implements UIEvents {
         
         layer.setName(layerName);
         model.getLayers().add(layer);
-        changeSupport.firePropertyChange(UIEvents.LAYER_CHANGE, null, null);
-    }
-
-    /**
-     *
-     * @param pcl
-     */
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener pcl) {
-        changeSupport.addPropertyChangeListener(pcl);
-    }
-
-    /**
-     *
-     * @param pcl
-     */
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener pcl) {
-        changeSupport.removePropertyChangeListener(pcl);
+        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_ADDED,null,null);
+        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED,null,null);
     }
 }

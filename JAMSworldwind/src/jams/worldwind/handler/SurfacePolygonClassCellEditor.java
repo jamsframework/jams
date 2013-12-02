@@ -30,7 +30,7 @@ import javax.swing.table.TableColumn;
 
 /**
  *
- * @author bigr
+ * @author Ronny Berndt <ronny.berndt@uni-jena.de>
  */
 public class SurfacePolygonClassCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 

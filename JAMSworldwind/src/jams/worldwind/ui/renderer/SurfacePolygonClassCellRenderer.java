@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package jams.worldwind.ui.renderer;
 
 import java.awt.Component;
@@ -13,7 +7,7 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  *
- * @author bigr
+ * @author Ronny Berndt <ronny.berndt@uni-jena.de>
  */
 public class SurfacePolygonClassCellRenderer implements TableCellRenderer{
 

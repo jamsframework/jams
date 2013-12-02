@@ -47,7 +47,7 @@ public class LayerListItemTransferHandler extends TransferHandler {
                     JList list = (JList) support.getComponent();
                     int indexOld = model.indexOf(value);
                     int indexNew = list.getDropLocation().getIndex();
-                    boolean increment = (indexNew >= indexOld) ? true : false;
+                    boolean increment = (indexNew >= indexOld);
                     Layer oldValue = model.elementAt(indexOld);
                     if (increment) {
                         model.insertElementAt(oldValue, indexNew);

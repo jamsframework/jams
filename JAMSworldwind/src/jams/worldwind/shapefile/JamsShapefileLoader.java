@@ -1,6 +1,8 @@
 package jams.worldwind.shapefile;
 
+import gov.nasa.worldwind.formats.shapefile.Shapefile;
 import gov.nasa.worldwind.formats.shapefile.ShapefileRecord;
+import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwindx.examples.util.ShapefileLoader;
@@ -14,6 +16,22 @@ import org.slf4j.LoggerFactory;
 public class JamsShapefileLoader extends ShapefileLoader {
     
     private static final Logger logger = LoggerFactory.getLogger(JamsShapefileLoader.class);
+    
+    @Override
+    protected void addRenderablesForPolylines(Shapefile shp, RenderableLayer layer)
+    {
+        while (shp.hasNext())
+        {
+            ShapefileRecord record = shp.nextRecord();
+        
+            if (!Shapefile.isPolylineType(record.getShapeType()))
+                continue;
+        
+            ShapeAttributes attrs = this.createPolylineAttributes(record);
+            layer.addRenderable(this.createPolyline(record, attrs));
+        }
+    }
+    
     
     /**
      *
@@ -35,8 +53,8 @@ public class JamsShapefileLoader extends ShapefileLoader {
     @Override
     protected ShapeAttributes createPolylineAttributes(ShapefileRecord record)
     {
-        logger.error("Shapefile polyline type NOT implemented - no attributes added!");
-        return null;
+        ShapeAttributes shapeAttributes = new JamsShapeAttributes(record);
+        return shapeAttributes;
     }
 
     /**

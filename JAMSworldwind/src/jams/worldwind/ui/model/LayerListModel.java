@@ -10,20 +10,24 @@ import javax.swing.DefaultListModel;
  */
 public class LayerListModel extends DefaultListModel<Layer> {
 
-    private Globe globeModel;
+    //sets the active Layer
+    private int activeIndex;
+
+    private final Globe globeModel;
 
     /**
      *
      */
     public LayerListModel() {
+        this.activeIndex = -1;
         this.globeModel = Globe.getInstance();
         fillList();
     }
 
     private void fillList() {
         LayerList layers = this.globeModel.getWorldWindow().getModel().getLayers();
-        for(int i=0;i<layers.size();i++) {
-            this.add(i,layers.get(i));
+        for (int i = 0; i < layers.size(); i++) {
+            this.add(i, layers.get(i));
         }
     }
 
@@ -41,10 +45,20 @@ public class LayerListModel extends DefaultListModel<Layer> {
     public void updateWorldWind() {
         globeModel.getModel().getLayers().clear();
         LayerList newLayers = new LayerList();
-        for(int i=0;i<this.size();i++) {
+        for (int i = 0; i < this.size(); i++) {
             newLayers.add(this.get(i));
         }
         globeModel.getModel().setLayers(newLayers);
         globeModel.getWorldWindow().redraw();
+    }
+
+    public Layer getActiveLayer() {
+        return super.get(activeIndex);
+    }
+
+    public void setActiveLayer(int index) {
+        if (index >= 0 && index < this.globeModel.getModel().getLayers().size()) {
+            this.activeIndex = index;
+        }
     }
 }
