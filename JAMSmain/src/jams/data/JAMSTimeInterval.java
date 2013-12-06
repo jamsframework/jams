@@ -153,6 +153,7 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
         return false;
     }
 
+    @Override
     public long getNumberOfTimesteps() {
 
         if (timestepCount < 0) {
@@ -160,9 +161,9 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
             long count = 0;
 
             JAMSCalendar start = new JAMSCalendar();
-            start.setValue(this.getStart().getValue());
+            start.setValue(this.getStart());
             JAMSCalendar end = new JAMSCalendar();
-            end.setValue(this.getEnd().getValue());
+            end.setValue(this.getEnd());
             end.setTimeInMillis(end.getTimeInMillis() + 1);
 
             while (start.before(end)) {

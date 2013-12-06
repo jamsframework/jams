@@ -177,7 +177,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         if (st.hasMoreTokens()) {
             millisecond = st.nextToken().trim();
         }
-
+                
         try {
             set(Attribute.Calendar.YEAR, Integer.parseInt(year));
         } catch (NumberFormatException nfe) {
@@ -192,7 +192,8 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
             set(Attribute.Calendar.DAY_OF_MONTH, Integer.parseInt(day));
         } catch (NumberFormatException nfe) {
             jams.tools.JAMSTools.handle(nfe);
-        }
+        }   
+        
         try {
             set(Attribute.Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
         } catch (NumberFormatException nfe) {
@@ -271,5 +272,5 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     public TimeZone getTimeZone() {
         return TIME_ZONE;
     }
-
+    
 }

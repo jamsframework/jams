@@ -66,7 +66,7 @@ public class CalendarAccessor implements DataAccessor {
     public void initEntityData() {
         for (Attribute.Calendar v : entityObject) {
             if (componentObject.getValue() != null) {
-                v.setValue(componentObject.getValue().clone());
+                v.setValue(componentObject.getValue().clone()); //clone is done allready in getValue -> may be removed
             }
         }
     }
