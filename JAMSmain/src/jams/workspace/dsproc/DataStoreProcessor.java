@@ -79,7 +79,10 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
 
         // use a lot (100MB) of cache to avoid output of data to file which  
         // causes errorneous handling of timestamps
-        jdbcURL = "jdbc:h2:mem:" + dsFile.toString().substring(0, dsFile.toString().lastIndexOf(".")) + ";LOG=0";
+        if (dsFile.toString().lastIndexOf(".") == -1){
+            jdbcURL = "jdbc:h2:mem:" + dsFile.toString() + ";LOG=0";
+        }else
+            jdbcURL = "jdbc:h2:mem:" + dsFile.toString().substring(0, dsFile.toString().lastIndexOf(".")) + ";LOG=0";
 
     }
 
