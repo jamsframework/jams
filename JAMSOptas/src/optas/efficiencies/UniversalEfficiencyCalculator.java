@@ -229,6 +229,9 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
 
     DecimalFormat format = new DecimalFormat("######0.000");
     private String round(double r){
+        if (Double.MAX_VALUE == r){
+            return "[-]";
+        }
         if (Double.isInfinite(r) && r >0)
             return "Infinity";
         else if(Double.isNaN(r))
@@ -240,17 +243,25 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     }
 
     private void setObjective(double m[], double s[], int k, Attribute.Double[] field, Attribute.Double[] normalized_field, EfficiencyCalculator calc) {
+        
         if (field != null && field.length > k && field[k] != null) {
-            field[k].setValue(calc.calc(m, s));
+            if ((m.length == 0 || s.length == 0)){
+                field[k].setValue(Double.NaN);
+            }else{
+                field[k].setValue(calc.calc(m, s));
+            }
         }
         if (normalized_field != null && normalized_field.length > k && normalized_field[k] != null) {
-            double value = calc.calcNormative(m, s);
-            if (Double.isNaN(value)) {
-                field[k].setValue(Double.MAX_VALUE);
+            if ((m.length == 0 || s.length == 0)){
+                normalized_field[k].setValue(Double.MAX_VALUE);
             } else {
-                normalized_field[k].setValue(value);
+                double value = calc.calcNormative(m, s);
+                if (Double.isNaN(value)) {
+                    normalized_field[k].setValue(Double.MAX_VALUE);
+                } else {
+                    normalized_field[k].setValue(value);
+                }
             }
-            normalized_field[k].setValue(value);
         }
     }
     

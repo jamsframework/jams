@@ -47,7 +47,7 @@ public class FilterFunctions {
         }else if (a instanceof Attribute.StringArray){
             return ((Attribute.StringArray)a).getValue();
         }else if (a instanceof Attribute.Calendar){
-            return ((Attribute.Calendar)a).getValue();
+            return ((Attribute.Calendar)a);
         }
         
         return null;
@@ -145,7 +145,12 @@ public class FilterFunctions {
      * @return
      */
     public static Object getAttribute(Context context, String name){        
-        return getValue(context.getAttributeMap().get(name)); 
+        JAMSData o = (JAMSData)context.getEntities().getCurrent().getObject(name); 
+                
+        if (o==null){
+            System.out.println("Warning: Unknown attribute: " + name + " in filter function!" );
+        }
+        return getValue(o);         
     }
     
     /**

@@ -182,6 +182,7 @@ public class TSDataStore extends TableDataStore {
         
     }
 
+    //TODO: we should add some checks if dump file is consistent with xml description
     private DataSetDefinition getDSDFromDumpFile() throws IOException {
 
         String str;
