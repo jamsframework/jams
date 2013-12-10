@@ -1,0 +1,7 @@
+# hru.par: HRU-Parameter fuer den Pegel in RabDud (400 Reliefeinheiten)													
+ID	x	y	elevation	area	type	to_poly	to_reach	slope	aspect	flowlength	soilID	landuseID	hgeoID
+0	0	0	0	0	0	0	0	0	0	0	0	0	0
+9999	9999999	9999999	10000	9999999999	3	9999	9999	90	360	999999	9999	9999	9999
+n/a	m	m	m	m2	n/a	n/a	n/a	deg	deg	m	n/a	n/a	n/a
+300	487716	3060203	5000	500000	2	0	118	26.78	117.5	0	141	12	3
+# Ende des Datensatzes										
