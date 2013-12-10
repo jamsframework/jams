@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.DropMode;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -32,13 +33,13 @@ import org.slf4j.LoggerFactory;
  */
 public class LayerListView implements PropertyChangeListener, ActionListener {
 
-
     private static final Logger logger = LoggerFactory.getLogger(LayerListView.class);
     private JFrame theFrame;
+    JScrollPane scrollPane;
     private JList layers;
     private LayerListModel layerModel;
     private Globe globeModel = Globe.getInstance();
-    
+
     private int indexToRemove;
 
     /**
@@ -65,7 +66,7 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
         theFrame.setLayout(
                 new GridLayout(1, 1));
 
-        JScrollPane scrollPane = new JScrollPane(layers);
+        scrollPane = new JScrollPane(layers);
 
         scrollPane.setBorder(
                 new TitledBorder("Available Layers"));
@@ -96,23 +97,56 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
                             } else {
                                 logger.error("Clicked layer not found at WorldWind model!");
                             }
-                            Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED,null,null);
+                            Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
                             //globeModel.getWorldWindow().redraw();
                             // Repaint cell
                             list.repaint(list.getCellBounds(index, index));
-                        } else if (SwingUtilities.isRightMouseButton(event)) {
-                            indexToRemove = index;
-                            
+                        } /*else if (SwingUtilities.isRightMouseButton(event)) {
+                            if (event.isPopupTrigger()) {
+                                JPopupMenu popup = createPopupMenu();
+
+                                popup.show(event.getComponent(), event.getX(), event.getY());
+                                indexToRemove = list.locationToIndex(event.getPoint());
+                                System.out.println("Rechtsklick");
+                            }
+                        }*/
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        //super.mousePressed(e); //To change body of generated methods, choose Tools | Templates.
+                        if (e.isPopupTrigger()) {
+                                JList list = (JList) e.getSource();
+                                JPopupMenu popup = createPopupMenu();
+
+                                popup.show(e.getComponent(), e.getX(), e.getY());
+                                indexToRemove = list.locationToIndex(e.getPoint());
+                                System.out.println("Rechtsklick");
+                            }
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        //super.mouseReleased(e); //To change body of generated methods, choose Tools | Templates.
+                        System.out.println("mouseReleased()");
+                        JPopupMenu popup = createPopupMenu();
+                        JList list = (JList) e.getSource();
+
+                        if (e.isPopupTrigger()) {
+                            popup.show(e.getComponent(), e.getX(), e.getY());
+                            indexToRemove = list.locationToIndex(e.getPoint());
+                            System.out.println("Rechtsklick");
                         }
                     }
+
                 });
-        layers.setComponentPopupMenu(createPopupMenu());
+        //layers.setComponentPopupMenu(createPopupMenu());
 
         theFrame.add(scrollPane);
 
         theFrame.setSize(
                 200, 600);
-        
+
         this.indexToRemove = -1;
 
     }
@@ -121,8 +155,8 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
     public void actionPerformed(ActionEvent e) {
         Layer item = (Layer) this.layers.getModel().getElementAt(this.indexToRemove);
         Globe.getInstance().getModel().getLayers().remove(item);
-        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_REMOVED,null,null);
-        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED,null,null);
+        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_REMOVED, null, null);
+        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
     }
 
     public JPopupMenu createPopupMenu() {

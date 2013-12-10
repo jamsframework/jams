@@ -1,11 +1,6 @@
 package jams.worldwind;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.util.StatusPrinter;
 import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.avlist.AVList;
-import jams.worldwind.ui.model.Globe;
 import jams.worldwind.ui.view.GlobeView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

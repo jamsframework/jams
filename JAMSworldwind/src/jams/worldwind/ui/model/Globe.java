@@ -101,6 +101,7 @@ public class Globe {
                 createLayerFromShapefile(shp);
         
         layer.setName(layerName);
+        
         model.getLayers().add(layer);
         Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_ADDED,null,null);
         Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED,null,null);

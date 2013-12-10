@@ -20,7 +20,8 @@ public class RandomNumbers {
     }
 
     private void fill(double from, double to, int count) {
-        Random rnd = new Random(System.currentTimeMillis());
+        Random rnd = new Random();
+        
         for(int i=0;i<count;i++) {
             //this.values[i]=from + rnd.nextDouble() * (to-from);
             valueList.add(from + rnd.nextDouble() * (to-from));

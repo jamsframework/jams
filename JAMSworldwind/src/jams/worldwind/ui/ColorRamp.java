@@ -45,7 +45,7 @@ public class ColorRamp {
             this.colorRamp.add(new Color(red,green,blue));
         }
         this.colorRamp.add(endColor);
-        System.out.println(this.colorRamp);
+        //System.out.println(this.colorRamp);
     }
 
     public Color getStartColor() {

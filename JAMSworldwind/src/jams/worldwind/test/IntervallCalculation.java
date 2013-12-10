@@ -123,6 +123,23 @@ public class IntervallCalculation {
             return this.standardMinimumMaximumIntervall();
         }
     }
+    
+    public List<?> getEqualIntervall(double min, double max, int numberOfClasses) {
+        if (numberOfClasses > 0) {
+            List<Double> breakPoints = new ArrayList<>(numberOfClasses + 1);
+            double intervallWidth = (max-min) / numberOfClasses;
+            double sum = 0;
+            breakPoints.add(this.getMinimumValue());
+            for (int i = 1; i < numberOfClasses; i++) {
+                breakPoints.add(Math.nextUp(breakPoints.get(i - 1)) + intervallWidth);
+            }
+            breakPoints.add(this.getMaximumValue());
+            return breakPoints;
+        } else {
+            logger.warn("Intervall classes must be greater zero! Getting standard intervall!");
+            return this.standardMinimumMaximumIntervall();
+        }
+    }
 
     public List<?> getDefinedIntervall(double intervallSize) {
         if (intervallSize > 0) {
