@@ -406,9 +406,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                         for (int j = 0; j < t.getItemCount(); j++) {
                             TimeSeriesDataItem di = t.getDataItem(j);
                             al.add(di.getValue().doubleValue());
-                            System.out.print("Y: " + di.getPeriod().toString() + " " + di.getValue().doubleValue() + " ");
+                            //System.out.print("Y: " + di.getPeriod().toString() + " " + di.getValue().doubleValue() + " ");
                         }
-                        System.out.println();
+                        //System.out.println();
 
                         if (tempmin > t.getMinY()) {
                             tempmin = t.getMinY();
@@ -473,9 +473,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             RandomNumbers rn = new RandomNumbers(0, 100, maxNumbers);
             Double value = (Double) rn.getDoubleValues().get(i);
             timeData.add(new Year(2000 + i), value);
-            System.out.print("Y: " + (2000 + i) + " " + value + " ");
+            //System.out.print("Y: " + (2000 + i) + " " + value + " ");
         }
-        System.out.println();
+        //System.out.println();
 
         return timeData;
     }
