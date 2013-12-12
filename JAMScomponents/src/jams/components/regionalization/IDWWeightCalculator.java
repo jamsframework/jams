@@ -114,10 +114,9 @@ public class IDWWeightCalculator extends JAMSComponent {
         }
         return result;
     }
-
+    int i=0;
     @Override
-    public void run() {
-
+    public void run() {        
         double[] idwWeights = null;
         if (equalWeights == null || !equalWeights.getValue()) {
             idwWeights = IDW.calcNidwWeights(entityX.getValue(), entityY.getValue(), statX, statY, pidw.getValue(), nidw.getValue());

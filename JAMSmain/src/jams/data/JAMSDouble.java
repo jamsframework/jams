@@ -39,7 +39,7 @@ public class JAMSDouble implements Attribute.Double {
     }
 
     JAMSDouble(double value) {
-        this.value = value;
+        this.value = (double)value;
     }
 
     /*
@@ -60,11 +60,11 @@ public class JAMSDouble implements Attribute.Double {
     }
 
     public void setValue(double value) {
-        this.value = value;
+        this.value = (double)value;
     }
 
     public void setValue(String value) {
-        this.value = Double.parseDouble(value);
+        this.value = (double)Double.parseDouble(value);
     }
 
     public boolean equals(Object other) {

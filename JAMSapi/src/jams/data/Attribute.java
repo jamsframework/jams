@@ -21,12 +21,12 @@
  */
 package jams.data;
 
+import gnu.trove.map.hash.THashMap;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
@@ -239,9 +239,11 @@ public interface Attribute extends Serializable{
 
         public java.lang.Object[] getKeys();
 
-        public void setValue(HashMap<java.lang.String, java.lang.Object> value);
+        public void setValue(THashMap<java.lang.String, java.lang.Object> value);
+        
+        public boolean isEmpty();
 
-        public HashMap<java.lang.String, java.lang.Object> getValue();
+        public THashMap<java.lang.String, java.lang.Object> getValue();
 
         public long getId();
 

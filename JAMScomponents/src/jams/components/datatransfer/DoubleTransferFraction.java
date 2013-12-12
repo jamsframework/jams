@@ -84,7 +84,7 @@ import jams.model.*;
     
     public void run() {
 
-        if(target.getValue() != null){
+        if(!target.getValue().isEmpty()){
             for (int i = 0; i < values.length; i++) {            
                 double x = values[i].getValue() * fraction[i].getValue();
                 target.setDouble(inNames[i].getValue(),target.getDouble(inNames[i].getValue()) + x);

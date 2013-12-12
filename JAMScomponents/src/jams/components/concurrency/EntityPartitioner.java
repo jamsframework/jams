@@ -123,7 +123,7 @@ public class EntityPartitioner extends JAMSComponent {
 
             try {
                 Attribute.Entity f = (Attribute.Entity) e.getObject(asso);
-                if (f.getValue() == null) {
+                if (f.isEmpty()) {
                     alList.add(listSubTree(e));
                 }
             } catch (NoSuchAttributeException ex) {
@@ -239,7 +239,7 @@ public class EntityPartitioner extends JAMSComponent {
                 try {
 
                     f = (Attribute.Entity) e.getObject(asso);
-                    if ((f != null) && (f.getValue() != null)) {
+                    if ((f != null) && (f.isEmpty())) {
                         eDepth = depthMap.get(e);
                         fDepth = depthMap.get(f);
                         if (fDepth <= eDepth) {

@@ -23,6 +23,8 @@ package jams.data;
 
 import java.util.*;
 import com.vividsolutions.jts.geom.Geometry;
+import gnu.trove.map.hash.THashMap;
+
 import jams.JAMS;
 
 /**
@@ -31,8 +33,7 @@ import jams.JAMS;
  */
 public class JAMSEntity implements Attribute.Entity {
 
-    private HashMap<String, Object> values = new HashMap<String, Object>();
-
+    private THashMap<String, Object> values = new THashMap<String, Object>();    
     private long id = -1;
 
     @Override
@@ -162,6 +163,11 @@ public class JAMSEntity implements Attribute.Entity {
         return this.values.keySet().toArray(new Object[values.size()]);
     }
 
+    @Override
+    public boolean isEmpty() {
+        return this.values.isEmpty();
+    }
+    
     //that's crap
     @Override
     public void setValue(String value) {
@@ -183,12 +189,12 @@ public class JAMSEntity implements Attribute.Entity {
    
     
     @Override
-    public void setValue(HashMap<String, Object> values) {        
+    public void setValue(THashMap<String, Object> values) {        
         this.values = values;
     }
 
     @Override
-    public HashMap<String, Object> getValue() {
+    public THashMap<String, Object> getValue() {
         return values;
     }
 
