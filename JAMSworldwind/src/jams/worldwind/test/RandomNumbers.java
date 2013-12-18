@@ -32,6 +32,14 @@ public class RandomNumbers {
         return this.valueList;
     }
     
+    public double[] getPrimitivDoubleValues() {
+        double[] result = new double[valueList.size()];
+        for(int i=0;i<this.valueList.size();i++) {
+            result[i]=this.valueList.get(i);
+        }
+        return result;
+    }
+    
     public Object[] getIntegerValues() {
         Object[] intvalues = new Object[valueList.size()];
         for(int i=0;i<intvalues.length;i++) {

@@ -85,7 +85,7 @@ import org.jfree.data.time.TimeSeriesDataItem;
 import org.jfree.data.time.Year;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import reg.DataTransfer;
+import reg.DataTransfer;
 
 /**
  *
@@ -478,6 +478,21 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         //System.out.println();
 
         return timeData;
+    }
+    
+    public void addData(DataTransfer data) {
+        double[][] d = data.getData();
+        for (double[] d1 : d) {
+            for (int j = 0; j < d1.length; j++) {
+                System.out.print(d1[j]+ " ");
+            }
+            System.out.println();
+        }
+        
+    }
+    
+    public void addTimeData() {
+        
     }
 
     private void addComponent(Container container,
