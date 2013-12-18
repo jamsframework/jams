@@ -1,6 +1,8 @@
 package jams.worldwind.ui.view;
 
+import jams.worldwind.test.RandomNumbers;
 import jams.worldwind.ui.IntervallSettingsPanel;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
 
@@ -33,5 +35,10 @@ public class IntervallSettingsView {
         //this.intervallSettingsFrame.setBounds(new Dimension(400, 800));
         //this.intervallSettingsFrame.setMaximizedBounds(new Rectangle(400, 800));
         this.intervallSettingsFrame.setVisible(true);
-    }    
+    }
+    
+    public static void main(String[] args) {
+        RandomNumbers rn = new RandomNumbers(0, 100, 1000);
+        new IntervallSettingsView(rn.getDoubleValues());
+    }
 }
