@@ -22,10 +22,10 @@
  */
 package jams.workspace.dsproc;
 
+import jams.data.JAMSCalendar;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.Observable;
 import java.util.Observer;
@@ -38,58 +38,66 @@ public class DSExample {
 
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException, URISyntaxException {
 
-        URL dsURL = ClassLoader.getSystemResource("reg/dsproc/HRULoop.dat");
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File(dsURL.toURI()));
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("E:\\jamsapplication\\JAMS-Gehlberg\\output\\current\\HRULoop.dat"));
+        
         dsdb.addImportProgressObserver(new Observer() {
-
             public void update(Observable o, Object arg) {
-                System.out.println("IMPORT PROGRESS: " + arg);
+                System.out.print(arg + " ");
             }
         });
-
-        if (!dsdb.existsH2DBFiles()) {
-            dsdb.createDB();
-        }
+        
+        dsdb.createDB();
         TimeSpaceProcessor tsproc = new TimeSpaceProcessor(dsdb);
-        /*if (!tsproc.isTimeSpaceDatastore()) {
-            return;
-        }*/
-
+        System.out.println("\nDatastore loaded");
+        
         tsproc.addProcessingProgressObserver(new Observer() {
-
             public void update(Observable o, Object arg) {
-                //System.out.println("Processing progress: " + arg);
+                System.out.print(arg + " ");
             }
         });
 
-        if (!tsproc.isMonthlyMeanExisiting()) {
-            tsproc.calcMonthlyMean();
-        }
-
-        // longterm monthly mean values
-        for (int i = 1; i <= 12; i++) {
-            DataMatrix monthlyMean = tsproc.getMonthlyMean(i);
-            double[][] data = monthlyMean.getArray();
-//            monthlyMean.output();
-        }
-
-        // monthly mean values
-        for (int year : tsproc.getYears()) {
-            for (int i = 1; i <= 12; i++) {
-                DataMatrix monthlyMean = tsproc.getTemporalAggregate(year + "-" + String.format("%02d", i) + "-%", -1);
-                if (monthlyMean == null) {
-                    continue;
-                }
-
-//                double[][] data = monthlyMean.getArray();
-//                Object[] ids = monthlyMean.getIds();
-//                System.out.println(ids[0] + " : " + data[0][1]);
-
-                monthlyMean.output();
+        Long[] ids = tsproc.getEntityIDs();
+        JAMSCalendar[] dates = tsproc.getTimeSteps();
+        
+        for (AbstractDataStoreProcessor.AttributeData attribute : dsdb.getAttributes()) {
+            if (attribute.getName().equals("precip")) {
+                attribute.setSelected(true);
             }
         }
+        
+        int i = 0;
+        long[] entityIds = new long[ids.length];
+        for (Long id : ids) {
+            entityIds[i++] = id.longValue();
+        }
+        
+        i = 0;
+        String[] dateIds = new String[dates.length];
+        for (JAMSCalendar date : dates) {
+            dateIds[i++] = date.toString();
+        }        
+        
+        DataMatrix crossProduct = tsproc.getCrossProduct(entityIds, dateIds);
 
-//        dsdb.removeDB();
+        
+        System.out.println("\nHRU IDs:");
+        for (String id : crossProduct.getAttributeIDs()) {
+            System.out.print(id + " ");
+        }
+        
+        System.out.println("\nDates:");
+        for (Object id : crossProduct.getIds()) {
+            System.out.print(id + " ");
+        }        
 
+        System.out.println("\nValues for 1996-11-02 07:30:");
+        int rowID = crossProduct.getIDPosition("1996-11-02 07:30");
+        double[] rowData = crossProduct.getRow(rowID);
+        for (double d : rowData) {
+            System.out.print(d + " ");
+        }
+        
+        // access full array
+        double[][] data = crossProduct.getArray();
     }
 }
