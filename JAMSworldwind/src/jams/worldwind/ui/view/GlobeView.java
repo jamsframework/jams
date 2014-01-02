@@ -21,6 +21,7 @@ import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.render.SurfacePolygons;
 import gov.nasa.worldwindx.examples.util.HighlightController;
 import gov.nasa.worldwindx.examples.util.ScreenSelector;
+import jams.worldwind.data.DataTransfer3D;
 import jams.worldwind.handler.SelectionHighlightController;
 import jams.worldwind.ui.model.Globe;
 import jams.worldwind.events.Events;
@@ -85,7 +86,7 @@ import org.jfree.data.time.TimeSeriesDataItem;
 import org.jfree.data.time.Year;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reg.DataTransfer;
+//import reg.DataTransfer;
 
 /**
  *
@@ -115,25 +116,35 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private JButton showAttributeTableButton;
 
     private HashMap<Object, TimeSeries> objectsTimeData;
-
+    private DataTransfer3D data;
+    
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="constructors">
+
     /**
      *
+     * @param d
      */
+    public GlobeView(DataTransfer3D d) {
+        this();
+        this.data=d;
+    }
+    
     public GlobeView() {
         //this.theGlobeModel = Globe.getInstance();
         Observer.getInstance().addPropertyChangeListener(this);
         this.theLayerView = new LayerListView();
         //this.theGlobeModel.addPropertyChangeListener(theLayerView);
-        theScreenSelector = new ScreenSelector(theGlobeModel.getWorldWindow());
-        //theSelectionHighlightController = new SelectionHighlightController(theGlobeModel.getWorldWindow(), theScreenSelector);
+        this.theScreenSelector = new ScreenSelector(theGlobeModel.getWorldWindow());
+        
+        //this.theSelectionHighlightController = new SelectionHighlightController(theGlobeModel.getWorldWindow(), theScreenSelector);
+        
         this.theScreenSelector.addMessageListener(this);
-        //this.highlightController = new HighlightController(this.theGlobeModel.getWorldWindow(), SelectEvent.ROLLOVER);
+        this.highlightController = new HighlightController(this.theGlobeModel.getWorldWindow(), SelectEvent.ROLLOVER);
 
         this.theFrame = new JFrame("JAMS WORLDWIND VIEWER");
         this.theFrame.setLayout(new BorderLayout());
-        this.theFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.theFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.theFrame.add((Component) theGlobeModel.getWorldWindow(), BorderLayout.CENTER);
         this.theFrame.add((Component) theGlobeModel.getStatusBar(), BorderLayout.PAGE_END);
 
@@ -480,6 +491,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         return timeData;
     }
     
+    /*
     public void addData(DataTransfer data) {
         double[][] d = data.getData();
         for (double[] d1 : d) {
@@ -490,7 +502,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         }
         
     }
-    
+    */
     public void addTimeData() {
         
     }
