@@ -40,7 +40,7 @@ import java.text.ParseException;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import reg.DataTransfer;
+//import reg.DataTransfer;
 import reg.JAMSExplorer;
 import jams.workspace.dsproc.DataMatrix;
 import reg.gui.StatisticDialogPanel;
@@ -1180,14 +1180,14 @@ public class JAMSSpreadSheet extends JPanel {
             double[] ids = getIdValues();
 
             // create and fill the DataTransfer object
-            DataTransfer dataTransfer = new DataTransfer();
+            /*DataTransfer dataTransfer = new DataTransfer();
             dataTransfer.setNames(headers);
             dataTransfer.setIds(ids);
             dataTransfer.setData(data);
             dataTransfer.setParentName(shapeFileName);
             dataTransfer.setParentURI(uri);
             dataTransfer.setTargetKeyName(keyColumn);
-
+            */
             // get the Geowind viewer and pass the DataTransfer object
             //Viewer viewer = Viewer.getViewer();
 
