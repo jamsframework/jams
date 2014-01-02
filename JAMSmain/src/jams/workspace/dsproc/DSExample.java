@@ -38,7 +38,7 @@ public class DSExample {
 
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException, URISyntaxException {
 
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File("E:\\jamsapplication\\JAMS-Gehlberg\\output\\current\\HRULoop.dat"));
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/output/20131220_142111/HRULoop.dat"));
         
         dsdb.addImportProgressObserver(new Observer() {
             public void update(Observable o, Object arg) {
@@ -59,11 +59,15 @@ public class DSExample {
         Long[] ids = tsproc.getEntityIDs();
         JAMSCalendar[] dates = tsproc.getTimeSteps();
         
+        int count = 0;
         for (AbstractDataStoreProcessor.AttributeData attribute : dsdb.getAttributes()) {
-            if (attribute.getName().equals("precip")) {
+            if (attribute.getName().equals("precip") || attribute.getName().equals("tmean")) {
                 attribute.setSelected(true);
+                count++;
             }
         }
+        
+        System.out.println(count);
         
         int i = 0;
         long[] entityIds = new long[ids.length];
@@ -90,8 +94,8 @@ public class DSExample {
             System.out.print(id + " ");
         }        
 
-        System.out.println("\nValues for 1996-11-02 07:30:");
-        int rowID = crossProduct.getIDPosition("1996-11-02 07:30");
+        System.out.println("\nValues for 1997-09-16 00:00");
+        int rowID = crossProduct.getIDPosition("1997-09-16 00:00");
         double[] rowData = crossProduct.getRow(rowID);
         for (double d : rowData) {
             System.out.print(d + " ");
