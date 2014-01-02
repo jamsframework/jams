@@ -44,7 +44,7 @@ import reg.DataTransfer;
 import reg.JAMSExplorer;
 import jams.workspace.dsproc.DataMatrix;
 import reg.gui.StatisticDialogPanel;
-import reg.viewer.Viewer;
+//import reg.viewer.Viewer;
 
 /*
  *
@@ -1189,10 +1189,13 @@ public class JAMSSpreadSheet extends JPanel {
             dataTransfer.setTargetKeyName(keyColumn);
 
             // get the Geowind viewer and pass the DataTransfer object
-            Viewer viewer = Viewer.getViewer();
+            //Viewer viewer = Viewer.getViewer();
 
             try {
-                viewer.addData(dataTransfer);
+                
+                
+                
+                //viewer.addData(dataTransfer);
             } catch (Exception ex) {
                 GUIHelper.showErrorDlg(JAMSSpreadSheet.this, JAMS.i18n("ERROR_WHILE_TRYING_TO_DISPLAY_MAP!"), JAMS.i18n("ERROR!"));
             }

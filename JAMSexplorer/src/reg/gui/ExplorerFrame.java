@@ -75,7 +75,7 @@ import org.w3c.dom.Document;
 import reg.DataCollectionViewController;
 import reg.JAMSExplorer;
 import reg.spreadsheet.STPConfigurator;
-import reg.viewer.Viewer;
+//import reg.viewer.Viewer;
 
 /**
  *
@@ -184,7 +184,8 @@ public class ExplorerFrame extends JFrame {
         setTitle(JAMSExplorer.APP_TITLE);
 
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        jfc.setSelectedFile(new File(System.getProperty("user.dir")));
+        jfc.setSelectedFile(new File("/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/"));
+        //jfc.setSelectedFile(new File(System.getProperty("user.dir")));
 
         tPane = new JTabbedPane();
 
@@ -596,7 +597,7 @@ public class ExplorerFrame extends JFrame {
 
     protected void exit() {
 
-        Viewer.destroy();
+        //Viewer.destroy();
 
         for (Window window : ((JAMSExplorer) explorer).getChildWindows()) {
             window.dispose();

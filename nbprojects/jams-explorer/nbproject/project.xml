@@ -27,14 +27,6 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>jams-geowind</foreign-project>
-                <artifact-type>jar</artifact-type>
-                <script>build.xml</script>
-                <target>jar</target>
-                <clean-target>clean</clean-target>
-                <id>jar</id>
-            </reference>
-            <reference>
                 <foreign-project>jams-main</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
@@ -44,6 +36,14 @@
             </reference>
             <reference>
                 <foreign-project>jams-optas</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>jams-worldwind</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
