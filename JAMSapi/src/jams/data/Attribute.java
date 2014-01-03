@@ -182,10 +182,6 @@ public interface Attribute extends Serializable{
 
         public void set(int year, int month, int day, int hour, int minute, int second);
         
-        public java.lang.String getFormatPattern();
-        
-        public TimeZone getTimeZone();
-        
         public java.lang.String toString();
     }
  
