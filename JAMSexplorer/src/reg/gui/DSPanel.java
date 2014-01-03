@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import jams.workspace.dsproc.DataStoreProcessor;
 import jams.workspace.dsproc.DataMatrix;
+import reg.JAMSExplorer;
 import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
@@ -47,9 +48,11 @@ public abstract class DSPanel extends JPanel {
     protected CancelableWorkerDlg workerDlg;
     protected File outputDSFile;
     protected AttribComboBox attribCombo;
+    protected JAMSExplorer explorer;
 
-    public void setParent(Frame parent) {
-        this.parent = parent;
+    public void setExplorer(JAMSExplorer explorer) {
+        this.explorer = explorer;
+        this.parent = explorer.getExplorerFrame();
         workerDlg = new CancelableWorkerDlg(parent, JAMS.i18n("PROCESSING_DATA"));
         workerDlg.setProgress(0);
         workerDlg.setProgressMax(100);

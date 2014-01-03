@@ -28,7 +28,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 import reg.JAMSExplorer;
-import jams.workspace.dsproc.DataStoreProcessor;
 import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
@@ -73,12 +72,14 @@ public class OutputDSPanel extends JPanel {
                 break;
         }
 
-        tsp.setParent(explorer.getExplorerFrame());
-        tsp.setOutputSpreadSheet(this.spreadsheet);
-        tsp.createProc(file);
+        if (tsp != null) {
+            tsp.setExplorer(explorer);
+            tsp.setOutputSpreadSheet(this.spreadsheet);
+            tsp.createProc(file);
 
-        this.add(tsp, BorderLayout.NORTH);
-        this.add(this.spreadsheet, BorderLayout.CENTER);
+            this.add(tsp, BorderLayout.NORTH);
+            this.add(this.spreadsheet, BorderLayout.CENTER);
+        }
     }
 
     /**

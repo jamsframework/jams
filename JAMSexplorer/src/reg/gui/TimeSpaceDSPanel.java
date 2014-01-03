@@ -403,7 +403,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         JFrame frame = new JFrame();
         JScrollPane scroll = new JScrollPane(tsp);
         frame.add(scroll);
-        tsp.setParent(frame);
+//        tsp.setExplorer(frame);
         frame.setPreferredSize(new Dimension(300, 100));
         frame.pack();
         frame.setVisible(true);
