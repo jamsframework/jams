@@ -22,6 +22,7 @@
  */
 package jams.workspace.dsproc;
 
+import jams.data.Attribute;
 import jams.data.JAMSCalendar;
 import java.io.File;
 import java.io.IOException;
@@ -82,8 +83,8 @@ public class DSExample {
         }        
         
         DataMatrix crossProduct = tsproc.getCrossProduct(entityIds, dateIds);
-
         
+                 
         System.out.println("\nHRU IDs:");
         for (String id : crossProduct.getAttributeIDs()) {
             System.out.print(id + " ");

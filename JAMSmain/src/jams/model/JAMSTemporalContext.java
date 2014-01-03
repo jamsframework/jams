@@ -23,7 +23,6 @@ package jams.model;
 
 import jams.workspace.stores.OutputDataStore;
 import jams.JAMS;
-import java.util.regex.Matcher;
 import jams.data.*;
 import jams.dataaccess.DataAccessor;
 import jams.io.datatracer.DataTracer;

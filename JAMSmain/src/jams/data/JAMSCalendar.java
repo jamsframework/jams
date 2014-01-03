@@ -69,13 +69,13 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
 
     private void initTZ() {
         this.setTimeZone(DEFAULT_TIME_ZONE);
-        dateFormat = new SimpleDateFormat(getFormatPattern());
+        dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
         dateFormat.setTimeZone(DEFAULT_TIME_ZONE);
     }
 
     public void setTimeZone(TimeZone timezone){
         super.setTimeZone(timezone);
-        dateFormat = new SimpleDateFormat(getFormatPattern());
+        dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
         dateFormat.setTimeZone(timezone);
     }
 
@@ -263,14 +263,22 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         super.add(field, amount);
     }
 
-    @Override
-    public String getFormatPattern() {
-        return FORMAT_PATTERN;
-    }
-
-    @Override
-    public TimeZone getTimeZone() {
-        return TIME_ZONE;
-    }
+//    @Override
+//    public String getFormatPattern() {
+//        return FORMAT_PATTERN;
+//    }
+//
+//    @Override
+//    public TimeZone getTimeZone() {
+//        return TIME_ZONE;
+//    }
     
+    public static void main(String[] args) {
+        double[][][] data = new double[1][2][3];
+        data[0][1][2] = 10;
+        HashMap<Integer, Integer> map = new HashMap();
+        
+        data[map.get(1)][1][2] = 1;
+        
+    }
 }

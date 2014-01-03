@@ -60,7 +60,7 @@ public class JAMSTableDataArray implements Serializable {
             valueNumber = parts.length - 2;
 
             Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
-            cal.setValue(dateString, cal.getFormatPattern());
+            cal.setValue(dateString, Attribute.Calendar.DEFAULT_FORMAT_PATTERN);
             this.setTime(cal);
 
             String[] theValues = new String[valueNumber];
