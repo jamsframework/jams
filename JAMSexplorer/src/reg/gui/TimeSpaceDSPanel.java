@@ -21,7 +21,6 @@
  */
 package reg.gui;
 
-import gnu.trove.map.hash.THashMap;
 import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
@@ -74,7 +73,6 @@ import jams.worldwind.data.DataTransfer3D;
 import jams.worldwind.ui.view.GlobeView;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Date;
 
 /**
  *
@@ -769,7 +767,7 @@ public class TimeSpaceDSPanel extends DSPanel {
             int progress;
             DataMatrix[] m;
             DataTransfer3D transfer;
-            ArrayList<String> attributeNames = new ArrayList<>();
+            ArrayList<String> attributeNames = new ArrayList();
 
             @Override
             public Void doInBackground() {
