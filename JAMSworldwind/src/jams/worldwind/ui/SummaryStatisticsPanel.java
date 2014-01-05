@@ -18,11 +18,12 @@ public class SummaryStatisticsPanel extends JPanel {
     private DescriptiveStatistics stats;
     private JLabel[] statisticLabels;
 
-    private void SummaryStatisticsPanel() {
+    public SummaryStatisticsPanel() {
         stats = new DescriptiveStatistics();
         this.createGUI();
     }
 
+    /*
     public SummaryStatisticsPanel(double[] values) {
         this.SummaryStatisticsPanel();
         this.calculateStatistics(values);
@@ -32,7 +33,8 @@ public class SummaryStatisticsPanel extends JPanel {
         this.SummaryStatisticsPanel();
         this.calculateStatistics(values);
     }
-
+    */
+    
     private void createGUI() {
         this.setBorder(new TitledBorder("CLASSIFICATION STATISTICS"));
         this.setLayout(new GridLayout(8, 2));
@@ -40,16 +42,19 @@ public class SummaryStatisticsPanel extends JPanel {
         this.statisticLabels = new JLabel[16];
         for (int i = 0; i < this.statisticLabels.length; i++) {
             this.statisticLabels[i] = new JLabel();
+            if(i % 2 == 1) {
+                this.statisticLabels[i].setHorizontalAlignment(JLabel.RIGHT);
+            }
         }
 
-        this.statisticLabels[0].setText("COUNT:          ");
-        this.statisticLabels[2].setText("MINIMUM:        ");
-        this.statisticLabels[4].setText("MAXIMUM:        ");
-        this.statisticLabels[6].setText("SUM:            ");
-        this.statisticLabels[8].setText("MEAN:           ");
-        this.statisticLabels[10].setText("MEDIAN:         ");
-        this.statisticLabels[12].setText("STD. DEVIATION: ");
-        this.statisticLabels[14].setText("VARIANCE:       ");
+        this.statisticLabels[0].setText("COUNT:");
+        this.statisticLabels[2].setText("MINIMUM:");
+        this.statisticLabels[4].setText("MAXIMUM:");
+        this.statisticLabels[6].setText("SUM:");
+        this.statisticLabels[8].setText("MEAN:");
+        this.statisticLabels[10].setText("MEDIAN:");
+        this.statisticLabels[12].setText("STD. DEVIATION:");
+        this.statisticLabels[14].setText("VARIANCE:");
 
         for (JLabel statisticLabel : this.statisticLabels) {
             this.add(statisticLabel);
@@ -73,6 +78,7 @@ public class SummaryStatisticsPanel extends JPanel {
 
     private void printStatistics() {
         NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(3);
         this.statisticLabels[1].setText(nf.format(stats.getN()));
         this.statisticLabels[3].setText(nf.format(stats.getMin()));
         this.statisticLabels[5].setText(nf.format(stats.getMax()));

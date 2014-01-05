@@ -41,7 +41,7 @@ public class IntervallCalculation {
         }
     }
 
-    public List<?> getValues() {
+    public List<Double> getValues() {
         return this.values;
     }
 
@@ -100,14 +100,14 @@ public class IntervallCalculation {
         return Math.sqrt(this.getVariance());
     }
 
-    private List<?> standardMinimumMaximumIntervall() {
+    private List<Double> standardMinimumMaximumIntervall() {
         List<Double> breakPoints = new ArrayList<>(2);
         breakPoints.add(this.getMinimumValue());
         breakPoints.add(this.getMaximumValue());
         return breakPoints;
     }
 
-    public List<?> getEqualIntervall(int numberOfClasses) {
+    public List<Double> getEqualIntervall(int numberOfClasses) {
         if (numberOfClasses > 0) {
             List<Double> breakPoints = new ArrayList<>(numberOfClasses + 1);
             double intervallWidth = this.getRange() / numberOfClasses;
@@ -124,7 +124,7 @@ public class IntervallCalculation {
         }
     }
     
-    public List<?> getEqualIntervall(double min, double max, int numberOfClasses) {
+    public List<Double> getEqualIntervall(double min, double max, int numberOfClasses) {
         if (numberOfClasses > 0) {
             List<Double> breakPoints = new ArrayList<>(numberOfClasses + 1);
             double intervallWidth = (max-min) / numberOfClasses;
@@ -141,7 +141,7 @@ public class IntervallCalculation {
         }
     }
 
-    public List<?> getDefinedIntervall(double intervallSize) {
+    public List<Double> getDefinedIntervall(double intervallSize) {
         if (intervallSize > 0) {
             int numberOfClasses = (int) Math.round(this.getRange() / intervallSize);
             return getEqualIntervall(numberOfClasses);
@@ -151,7 +151,7 @@ public class IntervallCalculation {
         }
     }
 
-    public List<?> getQuantilIntervall(int numberOfClasses) {
+    public List<Double> getQuantilIntervall(int numberOfClasses) {
         if (numberOfClasses > 0) {
             List<Double> breakPoints = new ArrayList<>(numberOfClasses + 1);
             int numberPerClass = (int) Math.round(this.values.size() / numberOfClasses);

@@ -38,14 +38,14 @@ public class Globe {
      *
      * @return
      */
-    public synchronized static Globe getInstance() {
+    /*public synchronized static Globe getInstance() {
         if (instance == null) {
             instance = new Globe();
 
         }
         return instance;
     }
-    
+    */
     public void reInit() {
         instance = new Globe();
     }

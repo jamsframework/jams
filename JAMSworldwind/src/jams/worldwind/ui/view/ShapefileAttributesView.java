@@ -61,15 +61,17 @@ public class ShapefileAttributesView implements PropertyChangeListener, MouseLis
      *
      * @return
      */
+    /*
     public synchronized static ShapefileAttributesView getInstance() {
         if (instance == null) {
             instance = new ShapefileAttributesView("ATTRIBUTESTABLE OF ACTIVE LAYER");
         }
         return instance;
     }
-
-    private ShapefileAttributesView(String title) {
-        Observer.getInstance().addPropertyChangeListener(this);
+    */
+    
+    public ShapefileAttributesView(String title) {
+        //Observer.getInstance().addPropertyChangeListener(this);
         this.theFrame = new JFrame(title);
         this.theTable = new JTable();
 
@@ -79,7 +81,7 @@ public class ShapefileAttributesView implements PropertyChangeListener, MouseLis
         this.theTable.getModel().addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
-                Globe.getInstance().getWorldWindow().redrawNow();
+                GlobeView.getInstance().getWorldWindow().redrawNow();
             }
         });
         this.theTable.addMouseListener(this);
@@ -99,13 +101,16 @@ public class ShapefileAttributesView implements PropertyChangeListener, MouseLis
      */
     public void fillTableWithObjects(List<?> objects) {
         this.theTableModel = new ShapefileAttributesModel(objects);
+        
         /**
          * TESTDATA
          * TODO REMOVE
          */
+        /*
         RandomNumbers rn = new RandomNumbers(0, 10, this.theTableModel.getRowCount());
         this.theTableModel.addColumn("TESTDATA", new Vector(rn.getDoubleValues()));
-
+        */
+        
         this.theTable.setModel(this.theTableModel);
 
         this.theTable.setAutoCreateRowSorter(true);

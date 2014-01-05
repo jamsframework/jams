@@ -28,7 +28,7 @@ public class RandomNumbers {
         }
     }
     
-    public List<?> getDoubleValues() {
+    public List<Double> getDoubleValues() {
         return this.valueList;
     }
     

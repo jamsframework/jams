@@ -38,7 +38,6 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
     private JScrollPane scrollPane;
     private JList layers;
     private LayerListModel layerModel;
-    private Globe globeModel = Globe.getInstance();
 
     private int indexToRemove;
 
@@ -46,7 +45,7 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
      *
      */
     public LayerListView() {
-        Observer.getInstance().addPropertyChangeListener(this);
+        //Observer.getInstance().addPropertyChangeListener(this);
         this.layerModel = new LayerListModel();
 
         theFrame = new JFrame("LAYERS");
@@ -61,7 +60,7 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
         layers.setTransferHandler(
                 new LayerListItemTransferHandler(layerModel));
 
-        theFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        theFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         theFrame.setLayout(
                 new GridLayout(1, 1));
@@ -90,14 +89,14 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
 
                             // Toggle selected state
                             item.setEnabled(!item.isEnabled());
-                            Layer l = globeModel.getWorldWindow().getModel().getLayers().getLayerByName(item.getName());
+                            Layer l = GlobeView.getInstance().getModel().getLayers().getLayerByName(item.getName());
 
                             if (l != null) {
                                 l.setEnabled(item.isEnabled());
                             } else {
                                 logger.error("Clicked layer not found at WorldWind model!");
                             }
-                            Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
+                            GlobeView.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
                             //globeModel.getWorldWindow().redraw();
                             // Repaint cell
                             list.repaint(list.getCellBounds(index, index));
@@ -154,10 +153,10 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Layer item = (Layer) this.layers.getModel().getElementAt(this.indexToRemove);
-        Globe.getInstance().getModel().getLayers().remove(item);
+        GlobeView.getInstance().getModel().getLayers().remove(item);
         //this.layerModel.remove(this.indexToRemove);
-        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_REMOVED, null, null);
-        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
+        GlobeView.getInstance().getPCS().firePropertyChange(Events.LAYER_REMOVED, null, null);
+        GlobeView.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
     }
 
     public JPopupMenu createPopupMenu() {
@@ -189,10 +188,11 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
         layerModel.updateWorldWind();
     }
 
+    /*
     public void setActiveLayerIndex(int activeLayerIndex) {
         this.layerModel.setActiveLayer(activeLayerIndex);
     }
-
+*/
     /**
      *
      * @param args

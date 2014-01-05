@@ -48,7 +48,7 @@ public class Starter {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                GlobeView view = new GlobeView(false);
+                GlobeView view = GlobeView.getInstance();
                 view.show();
             }
         });

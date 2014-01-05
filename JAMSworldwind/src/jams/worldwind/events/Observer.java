@@ -1,6 +1,6 @@
 package jams.worldwind.events;
 
-import jams.worldwind.ui.model.Globe;
+import jams.worldwind.ui.view.GlobeView;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -18,17 +18,17 @@ public class Observer implements PropertyChangeListener {
      *
      * @return
      */
-    public synchronized static Observer getInstance() {
+    /*public synchronized static Observer getInstance() {
         if (instance == null) {
             instance = new Observer();
         }
         return instance;
     }
-
+*/
     private Observer() {
         this.pcs = new PropertyChangeSupport(this);
         //register our Observer for notifications from WorldWind
-        Globe.getInstance().getWorldWindow().addPropertyChangeListener(this);
+        GlobeView.getInstance().getWorldWindow().addPropertyChangeListener(this);
     }
     
     public PropertyChangeSupport getPCS() {

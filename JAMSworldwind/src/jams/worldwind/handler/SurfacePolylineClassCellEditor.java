@@ -1,11 +1,10 @@
 package jams.worldwind.handler;
 
 import gov.nasa.worldwind.render.Material;
-import gov.nasa.worldwind.render.SurfacePolygons;
 import gov.nasa.worldwind.render.SurfacePolylines;
-import jams.worldwind.ui.model.Globe;
 import jams.worldwind.ui.model.ShapefilePropertiesModel;
 import jams.worldwind.ui.renderer.MaterialClassCellRenderer;
+import jams.worldwind.ui.view.GlobeView;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -86,7 +85,7 @@ public class SurfacePolylineClassCellEditor extends AbstractCellEditor implement
         propertiesTable.getModel().addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
-                Globe.getInstance().getWorldWindow().redrawNow();
+                GlobeView.getInstance().getWorldWindow().redrawNow();
             }
         });
         
