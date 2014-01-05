@@ -1,4 +1,4 @@
-package jams.worldwind.test;
+package jams.worldwind.data;
 
 import java.util.ArrayList;
 import java.util.Collections;

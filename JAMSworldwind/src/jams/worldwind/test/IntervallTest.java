@@ -1,5 +1,7 @@
 package jams.worldwind.test;
 
+import jams.worldwind.data.RandomNumbers;
+import jams.worldwind.data.IntervallCalculation;
 import jams.worldwind.ui.ColorRamp;
 import jams.worldwind.ui.ColorRampPanel;
 import java.awt.BorderLayout;

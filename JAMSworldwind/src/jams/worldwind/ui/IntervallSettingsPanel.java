@@ -2,7 +2,7 @@ package jams.worldwind.ui;
 
 import jams.data.JAMSCalendar;
 import jams.worldwind.data.DataTransfer3D;
-import jams.worldwind.test.IntervallCalculation;
+import jams.worldwind.data.IntervallCalculation;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;

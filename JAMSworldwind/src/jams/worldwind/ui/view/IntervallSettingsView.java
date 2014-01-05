@@ -1,7 +1,7 @@
 package jams.worldwind.ui.view;
 
 import jams.worldwind.data.DataTransfer3D;
-import jams.worldwind.test.RandomNumbers;
+import jams.worldwind.data.RandomNumbers;
 import jams.worldwind.ui.IntervallSettingsPanel;
 import java.util.ArrayList;
 import java.util.List;
