@@ -101,15 +101,15 @@ public class ShapefileAttributesView implements PropertyChangeListener, MouseLis
         this.theTableModel = new ShapefileAttributesModel(objects);
         /**
          * TESTDATA
-         *
+         * TODO REMOVE
          */
         RandomNumbers rn = new RandomNumbers(0, 10, this.theTableModel.getRowCount());
         this.theTableModel.addColumn("TESTDATA", new Vector(rn.getDoubleValues()));
 
         this.theTable.setModel(this.theTableModel);
 
-        //this.theTable.setAutoCreateRowSorter(true);
-        this.theTable.setColumnSelectionAllowed(true);
+        this.theTable.setAutoCreateRowSorter(true);
+        this.theTable.setColumnSelectionAllowed(false);
         this.theTable.setRowSelectionAllowed(true);
 
         this.theTable.setDefaultEditor(SurfacePolygons.class, new SurfacePolygonClassCellEditor());
@@ -118,6 +118,7 @@ public class ShapefileAttributesView implements PropertyChangeListener, MouseLis
         this.theTable.setDefaultRenderer(SurfacePolylines.class, new SurfacePolylineClassCellRenderer());
         this.autoResizeColWidth(theTable, theTableModel);
 
+        /*
         final JTableHeader header = this.theTable.getTableHeader();
         header.setReorderingAllowed(false);
         header.addMouseListener(new MouseAdapter() {
@@ -144,7 +145,7 @@ public class ShapefileAttributesView implements PropertyChangeListener, MouseLis
                     Double d = (Double) theTable.getValueAt(i, col);
                     int index = iC.getIntervallIndex(intervall, d);
                     sattr.setInteriorMaterial(new Material(cR.getColor(index)));
-                    /*
+                    
                      for (int j = 0; j < intervall.size()-1; j++) {
                      Double d = (Double) theTable.getValueAt(i, col);
                      System.out.println("[" + j + "," + (j+1) + "] (" + d + ")");
@@ -159,13 +160,13 @@ public class ShapefileAttributesView implements PropertyChangeListener, MouseLis
                      }
 
                      }
-                     */
+                     
                 }
                 Globe.getInstance().getWorldWindow().redrawNow();
 
             }
         });
-
+*/
         TableCellRenderer rendererFromHeader = this.theTable.getTableHeader().getDefaultRenderer();
         JLabel headerLabel = (JLabel) rendererFromHeader;
         headerLabel.setHorizontalAlignment(JLabel.CENTER); // Here you can set the alignment you want.
@@ -251,37 +252,16 @@ public class ShapefileAttributesView implements PropertyChangeListener, MouseLis
             return;
         }
         if (this.theFrame.isVisible()) {
-            JViewport viewport = (JViewport) theTable.getParent();
             int rowIndex = 0;
 
             for (int i = 0; i < theTable.getRowCount(); i++) {
                 if (theTable.getValueAt(i, 0).equals(highlighted)) {
                     rowIndex = i;
-                    System.out.println("ROWINDEX: " + rowIndex);
                     break;
                 }
             }
-
-        // This rectangle is relative to the table where the
-            // northwest corner of cell (0,0) is always (0,0).
-            Rectangle rect = theTable.getCellRect(rowIndex, 0, true);
-
-            // The location of the viewport relative to the table
-            Point pt = viewport.getViewPosition();
-
-        // Translate the cell location so that it is relative
-            // to the view, assuming the northwest corner of the
-            // view is (0,0)
-            rect.setLocation(rect.x - pt.x, rect.y - pt.y);
-
-            theTable.scrollRectToVisible(rect);
+            theTable.scrollRectToVisible(theTable.getCellRect(rowIndex,0, true));
             theTable.setRowSelectionInterval(rowIndex, rowIndex);
-            Component c = theTable.prepareRenderer(theTable.getCellRenderer(rowIndex, 0), rowIndex, 0);
-            c.setBackground(Color.RED);
-            theTable.repaint();
-
-        // Scroll the area into view
-            //viewport.scrollRectToVisible(rect);
         }
     }
 

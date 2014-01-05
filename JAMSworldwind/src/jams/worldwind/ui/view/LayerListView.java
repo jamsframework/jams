@@ -35,7 +35,7 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(LayerListView.class);
     private JFrame theFrame;
-    JScrollPane scrollPane;
+    private JScrollPane scrollPane;
     private JList layers;
     private LayerListModel layerModel;
     private Globe globeModel = Globe.getInstance();
@@ -155,6 +155,7 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
     public void actionPerformed(ActionEvent e) {
         Layer item = (Layer) this.layers.getModel().getElementAt(this.indexToRemove);
         Globe.getInstance().getModel().getLayers().remove(item);
+        //this.layerModel.remove(this.indexToRemove);
         Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_REMOVED, null, null);
         Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
     }

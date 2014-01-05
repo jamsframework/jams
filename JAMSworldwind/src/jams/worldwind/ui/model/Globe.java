@@ -32,18 +32,24 @@ public class Globe {
     //Statusbar
     private StatusBar statusBar;
     //Singleton pattern
+    
 
     /**
      *
      * @return
      */
-        public synchronized static Globe getInstance() {
-        if(instance == null) {
+    public synchronized static Globe getInstance() {
+        if (instance == null) {
             instance = new Globe();
+
         }
         return instance;
     }
-
+    
+    public void reInit() {
+        instance = new Globe();
+    }
+    
     private Globe() {
         //changeSupport = new PropertyChangeSupport(this);
 
@@ -54,7 +60,10 @@ public class Globe {
 
         this.statusBar = new StatusBar();
         this.statusBar.setEventSource(window);
+        
     }
+
+
 
     /**
      *
@@ -86,24 +95,5 @@ public class Globe {
      */
     public StatusBar getStatusBar() {
         return this.statusBar;
-    }
-
-    /**
-     *
-     * @param f
-     */
-    public void addShapefile(File f) {
-        String layerName = f.getName() + "|" + f.getAbsolutePath();
-        //Layer layer = new ShapefileLoader().createLayerFromShapefile(new Shapefile(f));
-        Shapefile shp = new Shapefile(f);
-        System.out.println("SHAPEFILE RECORDS: " + shp.getNumberOfRecords());
-        Layer layer = new JamsShapefileLoader().
-                createLayerFromShapefile(shp);
-        
-        layer.setName(layerName);
-        
-        model.getLayers().add(layer);
-        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_ADDED,null,null);
-        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED,null,null);
     }
 }

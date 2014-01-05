@@ -267,3 +267,367 @@
 11:06:03.550 [main] WARN  j.w.test.IntervallCalculation [IntervallCalculation.java:145] | Intervall size must be greater zero! Getting standard intervall!
 11:06:39.062 [main] WARN  j.w.test.IntervallCalculation [IntervallCalculation.java:145] | Intervall size must be greater zero! Getting standard intervall!
 11:07:04.776 [main] WARN  j.w.test.IntervallCalculation [IntervallCalculation.java:145] | Intervall size must be greater zero! Getting standard intervall!
+09:49:51.888 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+09:49:52.000 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+09:49:54.924 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:730] | Mac OS X detected - fixing view bug
+09:49:55.041 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:744] | Recieving Event: jams.worldwind.events.LayerAdded
+09:49:55.042 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:744] | Recieving Event: jams.worldwind.events.LayerChanged
+09:49:59.345 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:744] | Recieving Event: jams.worldwind.events.ActiveLayerChanged
+09:50:05.557 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:744] | Recieving Event: jams.worldwind.events.LayerRemoved
+09:50:05.558 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:744] | Recieving Event: jams.worldwind.events.LayerChanged
+09:57:02.197 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+09:57:02.327 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+09:57:04.860 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:735] | Mac OS X detected - fixing view bug
+09:57:04.889 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:749] | Recieving Event: jams.worldwind.events.LayerAdded
+09:57:04.889 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:749] | Recieving Event: jams.worldwind.events.LayerChanged
+09:57:37.284 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+09:57:37.423 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:02:28.426 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:02:28.576 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:03:28.450 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:734] | Mac OS X detected - fixing view bug
+10:03:30.003 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:748] | Recieving Event: jams.worldwind.events.LayerAdded
+10:03:30.004 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:748] | Recieving Event: jams.worldwind.events.LayerChanged
+10:43:48.993 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:43:49.403 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:43:51.712 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:778] | Mac OS X detected - fixing view bug
+10:44:17.922 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:44:18.048 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:44:20.197 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:778] | Mac OS X detected - fixing view bug
+10:44:45.908 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:44:46.007 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:44:48.127 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:778] | Mac OS X detected - fixing view bug
+10:45:12.698 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:45:12.814 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:45:15.006 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:778] | Mac OS X detected - fixing view bug
+11:07:44.317 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+11:07:44.472 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+11:07:46.588 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:797] | Mac OS X detected - fixing view bug
+11:07:51.861 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:07:52.277 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:07:52.277 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:04.240 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:05.342 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:05.894 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:06.456 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:06.962 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:07.480 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:08.076 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:08.729 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:10.649 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:08:10.653 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:13.825 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:14.410 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:14.905 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:15.771 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:08:17.307 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:08:17.308 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:09:31.695 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+11:09:31.806 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+11:09:33.933 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:797] | Mac OS X detected - fixing view bug
+11:09:47.627 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:09:48.026 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:09:48.026 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:09:54.052 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:09:54.828 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:09:55.514 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:09:56.234 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:09:57.055 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:09:57.865 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:09:59.728 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:09:59.728 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:00.532 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:00.791 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:01.409 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:01.871 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:02.669 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:03.074 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:06.595 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.ActiveLayerChanged
+11:10:14.886 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:10:15.166 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:10:15.166 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:17.036 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:17.598 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:19.124 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.LayerListView [LayerListItemTransferHandler.java:89] | Update WorldWind Layers
+11:10:19.420 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:19.938 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:20.388 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:21.153 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:21.794 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:22.300 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:22.840 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:23.279 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:10:34.068 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:12:17.186 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:12:17.929 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:12:19.852 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:12:21.090 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:12:23.947 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:12:24.319 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:15:06.263 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:15:09.229 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:15:09.236 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:15:11.470 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:15:11.470 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:15:22.901 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:15:23.105 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:15:23.105 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:15:43.645 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:15:43.652 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:21:46.687 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+11:21:47.313 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+11:21:49.929 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:797] | Mac OS X detected - fixing view bug
+11:21:55.867 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:21:56.289 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:21:56.290 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:22:10.129 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:22:10.130 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:22:12.168 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:22:12.876 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:22:16.105 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.ActiveLayerChanged
+11:22:20.198 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:22:20.460 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:22:20.461 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:22:34.226 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:22:34.233 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:22:42.497 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:22:43.341 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:22:44.128 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:22:44.443 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:22:44.848 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:22:45.344 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:23:42.323 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+11:23:42.496 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+11:23:44.759 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:797] | Mac OS X detected - fixing view bug
+11:23:52.374 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+11:23:52.595 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+11:23:55.224 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:797] | Mac OS X detected - fixing view bug
+11:24:02.917 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:24:03.349 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:24:03.349 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:25:52.153 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:26:37.083 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+11:26:37.267 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+11:26:39.908 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:797] | Mac OS X detected - fixing view bug
+11:26:44.704 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:26:45.147 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:26:45.148 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:27:04.259 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:29:02.827 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:29:11.264 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:29:15.015 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:30:10.038 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:30:11.444 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:32:55.924 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:32:57.770 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:33:05.215 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:33:10.176 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:33:14.789 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:33:15.218 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:33:15.615 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:33:54.798 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+11:33:54.926 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+11:33:57.107 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:797] | Mac OS X detected - fixing view bug
+11:34:03.935 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:34:04.348 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:34:04.349 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:11.442 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:14.432 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:15.366 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:16.131 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:19.292 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:20.406 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:32.101 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:34:32.106 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:43.750 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:44.279 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:44.537 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:44.920 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:45.088 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:45.313 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:47.019 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:34:47.019 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:34:47.608 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:39:20.984 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+11:39:21.150 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+11:39:23.268 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:797] | Mac OS X detected - fixing view bug
+11:39:29.917 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:39:30.322 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:39:30.322 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:40:06.510 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:40:06.515 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:40:53.718 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+11:40:53.842 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+11:40:56.267 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:797] | Mac OS X detected - fixing view bug
+11:41:03.486 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:41:03.900 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:41:03.900 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:43:06.551 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerRemoved
+11:43:06.556 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:43:14.042 [AWT-EventQueue-0] ERROR jams.worldwind.ui.view.LayerListView [LayerListView.java:98] | Clicked layer not found at WorldWind model!
+11:43:14.042 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:47:39.295 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:47:40.049 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:47:40.589 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:47:41.118 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:47:50.545 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:47:51.041 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:47:51.603 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:47:52.042 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:52:12.030 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+11:52:12.153 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+11:52:14.328 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:797] | Mac OS X detected - fixing view bug
+11:52:21.965 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:755] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+11:52:22.378 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerAdded
+11:52:22.379 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:52:34.643 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:52:35.329 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:52:38.603 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.ActiveLayerChanged
+11:52:42.856 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:52:43.283 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:52:43.846 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:52:44.689 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+11:52:45.027 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:811] | Recieving Event: jams.worldwind.events.LayerChanged
+12:01:07.042 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+12:01:07.152 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+12:01:09.218 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:799] | Mac OS X detected - fixing view bug
+12:01:14.554 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:757] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+12:01:14.989 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:813] | Recieving Event: jams.worldwind.events.LayerAdded
+12:01:14.989 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:813] | Recieving Event: jams.worldwind.events.LayerChanged
+12:01:35.170 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:813] | Recieving Event: jams.worldwind.events.LayerRemoved
+12:01:35.176 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:813] | Recieving Event: jams.worldwind.events.LayerChanged
+12:01:38.865 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:813] | Recieving Event: jams.worldwind.events.LayerChanged
+12:01:39.686 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:813] | Recieving Event: jams.worldwind.events.LayerChanged
+13:31:28.658 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+13:31:29.146 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+13:31:31.715 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:814] | Mac OS X detected - fixing view bug
+13:31:37.712 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:772] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+13:31:38.134 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:828] | Recieving Event: jams.worldwind.events.LayerAdded
+13:31:38.135 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:828] | Recieving Event: jams.worldwind.events.LayerChanged
+13:49:24.363 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+13:49:24.494 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+13:49:27.715 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:816] | Mac OS X detected - fixing view bug
+13:55:00.030 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+13:55:00.177 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+13:55:02.333 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:817] | Mac OS X detected - fixing view bug
+14:13:44.987 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+14:13:45.091 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+14:13:47.537 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:817] | Mac OS X detected - fixing view bug
+14:14:05.294 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:775] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp
+14:14:05.731 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:831] | Recieving Event: jams.worldwind.events.LayerAdded
+14:14:05.732 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:831] | Recieving Event: jams.worldwind.events.LayerChanged
+14:14:38.425 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:775] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_DudhKosi_Tutorial/input/local/gis/hrus/hrus.shp
+14:14:38.753 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:831] | Recieving Event: jams.worldwind.events.LayerAdded
+14:14:38.753 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:831] | Recieving Event: jams.worldwind.events.LayerChanged
+14:15:17.459 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:831] | Recieving Event: jams.worldwind.events.LayerRemoved
+14:15:17.460 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:831] | Recieving Event: jams.worldwind.events.LayerChanged
+14:26:30.065 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+14:26:30.684 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+14:26:34.744 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:817] | Mac OS X detected - fixing view bug
+14:27:03.464 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:775] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+14:27:04.793 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:831] | Recieving Event: jams.worldwind.events.LayerAdded
+14:27:04.794 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:831] | Recieving Event: jams.worldwind.events.LayerChanged
+14:58:00.185 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+14:58:00.331 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+14:58:02.620 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:817] | Mac OS X detected - fixing view bug
+14:58:08.510 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:775] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+14:58:08.941 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:831] | Recieving Event: jams.worldwind.events.LayerAdded
+14:58:08.942 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:831] | Recieving Event: jams.worldwind.events.LayerChanged
+15:00:46.751 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+15:00:46.907 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+15:00:49.101 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:819] | Mac OS X detected - fixing view bug
+15:00:53.258 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:777] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+15:00:53.694 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:833] | Recieving Event: jams.worldwind.events.LayerAdded
+15:00:53.694 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:833] | Recieving Event: jams.worldwind.events.LayerChanged
+17:17:18.003 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+17:17:18.368 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+17:17:21.024 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:819] | Mac OS X detected - fixing view bug
+17:48:17.433 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+17:48:17.598 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+17:48:19.834 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:819] | Mac OS X detected - fixing view bug
+17:48:31.367 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:777] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+17:48:31.802 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:833] | Recieving Event: jams.worldwind.events.LayerAdded
+17:48:31.802 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:833] | Recieving Event: jams.worldwind.events.LayerChanged
+17:48:57.468 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:833] | Recieving Event: jams.worldwind.events.LayerChanged
+17:48:58.200 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:833] | Recieving Event: jams.worldwind.events.LayerChanged
+17:48:59.281 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:833] | Recieving Event: jams.worldwind.events.LayerRemoved
+17:48:59.281 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:833] | Recieving Event: jams.worldwind.events.LayerChanged
+17:49:23.770 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:777] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+17:49:24.048 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:833] | Recieving Event: jams.worldwind.events.LayerAdded
+17:49:24.048 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:833] | Recieving Event: jams.worldwind.events.LayerChanged
+17:59:24.316 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+17:59:24.493 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+17:59:26.743 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:825] | Mac OS X detected - fixing view bug
+17:59:32.524 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:783] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+17:59:32.946 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:839] | Recieving Event: jams.worldwind.events.LayerAdded
+17:59:32.946 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:839] | Recieving Event: jams.worldwind.events.LayerChanged
+18:00:08.126 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+18:00:08.274 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+18:00:10.631 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:825] | Mac OS X detected - fixing view bug
+18:00:14.845 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:783] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+18:00:15.270 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:839] | Recieving Event: jams.worldwind.events.LayerAdded
+18:00:15.270 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:839] | Recieving Event: jams.worldwind.events.LayerChanged
+18:01:03.665 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+18:01:03.845 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+18:01:06.077 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:825] | Mac OS X detected - fixing view bug
+18:01:09.873 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:783] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+18:01:10.309 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:839] | Recieving Event: jams.worldwind.events.LayerAdded
+18:01:10.310 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:839] | Recieving Event: jams.worldwind.events.LayerChanged
+10:20:12.222 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:20:12.724 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:20:15.331 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:856] | Mac OS X detected - fixing view bug
+10:20:19.948 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:814] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+10:20:20.382 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:870] | Recieving Event: jams.worldwind.events.LayerAdded
+10:20:20.383 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:870] | Recieving Event: jams.worldwind.events.LayerChanged
+10:28:51.533 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:28:51.673 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:28:53.867 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:846] | Mac OS X detected - fixing view bug
+10:28:59.574 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:804] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+10:28:59.968 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:860] | Recieving Event: jams.worldwind.events.LayerAdded
+10:28:59.969 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:860] | Recieving Event: jams.worldwind.events.LayerChanged
+10:30:46.660 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:30:46.804 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:30:49.045 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:848] | Mac OS X detected - fixing view bug
+10:30:51.751 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:806] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+10:30:52.151 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:862] | Recieving Event: jams.worldwind.events.LayerAdded
+10:30:52.151 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:862] | Recieving Event: jams.worldwind.events.LayerChanged
+10:33:42.972 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:33:43.143 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:33:45.290 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:848] | Mac OS X detected - fixing view bug
+10:33:49.926 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:806] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+10:33:50.342 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:862] | Recieving Event: jams.worldwind.events.LayerAdded
+10:33:50.342 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:862] | Recieving Event: jams.worldwind.events.LayerChanged
+10:46:31.732 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:46:31.850 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:46:34.069 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:848] | Mac OS X detected - fixing view bug
+10:46:39.085 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:806] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+10:46:39.509 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:862] | Recieving Event: jams.worldwind.events.LayerAdded
+10:46:39.510 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:862] | Recieving Event: jams.worldwind.events.LayerChanged
+10:47:55.794 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:47:55.911 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:47:58.137 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:848] | Mac OS X detected - fixing view bug
+10:48:01.757 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:806] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+10:48:02.173 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:862] | Recieving Event: jams.worldwind.events.LayerAdded
+10:48:02.173 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:862] | Recieving Event: jams.worldwind.events.LayerChanged
+10:59:31.938 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+10:59:32.084 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+10:59:34.270 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:848] | Mac OS X detected - fixing view bug
+10:59:40.318 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:806] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+10:59:40.723 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:862] | Recieving Event: jams.worldwind.events.LayerAdded
+10:59:40.723 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:862] | Recieving Event: jams.worldwind.events.LayerChanged
+13:54:24.133 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+13:54:24.619 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+13:54:26.997 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:849] | Mac OS X detected - fixing view bug
+13:54:31.606 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:807] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+13:54:32.055 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:863] | Recieving Event: jams.worldwind.events.LayerAdded
+13:54:32.056 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:863] | Recieving Event: jams.worldwind.events.LayerChanged
+14:00:36.354 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+14:00:36.506 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+14:00:38.790 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:849] | Mac OS X detected - fixing view bug
+14:04:34.443 [main] INFO  jams.worldwind.Starter [Starter.java:37] | Entering Starter application.
+14:04:34.594 [main] INFO  jams.worldwind.Starter [Starter.java:55] | Exiting Starter application.
+14:04:37.046 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:849] | Mac OS X detected - fixing view bug
+14:04:47.176 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:807] | Shapefile: hrus.shp|/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp
+14:04:47.578 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:863] | Recieving Event: jams.worldwind.events.LayerAdded
+14:04:47.578 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:863] | Recieving Event: jams.worldwind.events.LayerChanged
+14:04:54.419 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:863] | Recieving Event: jams.worldwind.events.LayerRemoved
+14:04:54.419 [AWT-EventQueue-0] INFO  jams.worldwind.ui.view.GlobeView [GlobeView.java:863] | Recieving Event: jams.worldwind.events.LayerChanged

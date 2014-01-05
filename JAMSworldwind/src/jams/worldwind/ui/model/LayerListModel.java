@@ -13,19 +13,16 @@ public class LayerListModel extends DefaultListModel<Layer> {
     //sets the active Layer
     private int activeIndex;
 
-    private final Globe globeModel;
-
     /**
      *
      */
     public LayerListModel() {
         this.activeIndex = -1;
-        this.globeModel = Globe.getInstance();
-        fillList();
+         fillList();
     }
 
     private void fillList() {
-        LayerList layers = this.globeModel.getWorldWindow().getModel().getLayers();
+        LayerList layers = Globe.getInstance().getWorldWindow().getModel().getLayers();
         for (int i = 0; i < layers.size(); i++) {
             this.add(i, layers.get(i));
         }
@@ -43,13 +40,15 @@ public class LayerListModel extends DefaultListModel<Layer> {
      *
      */
     public void updateWorldWind() {
-        globeModel.getModel().getLayers().clear();
+        Globe.getInstance().getModel().getLayers().clear();
         LayerList newLayers = new LayerList();
         for (int i = 0; i < this.size(); i++) {
+            
             newLayers.add(this.get(i));
+            System.out.println(newLayers.get(i).getName());
         }
-        globeModel.getModel().setLayers(newLayers);
-        globeModel.getWorldWindow().redraw();
+        Globe.getInstance().getModel().setLayers(newLayers);
+        Globe.getInstance().getWorldWindow().redraw();
     }
 
     public Layer getActiveLayer() {
@@ -57,7 +56,7 @@ public class LayerListModel extends DefaultListModel<Layer> {
     }
 
     public void setActiveLayer(int index) {
-        if (index >= 0 && index < this.globeModel.getModel().getLayers().size()) {
+        if (index >= 0 && index < Globe.getInstance().getModel().getLayers().size()) {
             this.activeIndex = index;
         }
     }

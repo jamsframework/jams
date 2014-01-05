@@ -10,4 +10,7 @@ public interface Events {
     public static final String LAYER_ADDED = "jams.worldwind.events.LayerAdded";
     public static final String LAYER_CHANGED = "jams.worldwind.events.LayerChanged";
     public static final String LAYER_REMOVED = "jams.worldwind.events.LayerRemoved";
+    public static final String DATATRANSFER3DDATA_APPEND = "jams.worldwind.events.DataTransfer3DAppend";
+    public static final String BOUNDINGBOXOFSHAPEFILE = "jams.worldwind.events.BoundingBoxOfShapefile";
+    
 }

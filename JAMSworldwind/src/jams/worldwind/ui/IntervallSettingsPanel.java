@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.util.List;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -37,12 +38,17 @@ public class IntervallSettingsPanel extends JPanel {
 
     private final List dataValues;
     private JSpinner numClassesSpinner;
-    private JComboBox classifierComboBox;
+    private JComboBox<String> classifierComboBox;
+    private JComboBox<String> attributeNameComboBox;
+    private String[] attribs;
     private SummaryStatisticsPanel summaryStatisticsPanel;
-    private JList breakPoints;
+    private JList<Double> breakPoints;
+    private JButton calculateButton;
+    private JButton applyButton;
 
-    public IntervallSettingsPanel(List dataValues) {
+    public IntervallSettingsPanel(List dataValues, String[] attribs) {
         this.dataValues = dataValues;
+        this.attribs = attribs;
         this.createPanelGUI();
     }
 
@@ -50,22 +56,18 @@ public class IntervallSettingsPanel extends JPanel {
         GridBagLayout gbl = new GridBagLayout();
         this.setLayout(gbl);
 
-        JLabel label = new JLabel("Number of Classes:");
-        this.addComponent(this, gbl, label, 0, 0, 1, 1, 0, 0);
-
+        JLabel numClassesLabel = new JLabel("Number of Classes:");
         this.numClassesSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 50, 1));
-        this.addComponent(this, gbl, this.numClassesSpinner, 1, 0, 1, 1, 1.0, 0);
 
-        label = new JLabel("Classifier:");
-        this.addComponent(this, gbl, label, 0, 1, 1, 1, 0, 0);
-
+        JLabel classifierLabel = new JLabel("Classifier:");
         String[] items = {"Equal Intervall", "Defined Intervall", "Quantil"};
         this.classifierComboBox = new JComboBox(items);
-        this.classifierComboBox.setSelectedIndex(-1);
-        this.addComponent(this, gbl, this.classifierComboBox, 1, 1, 1, 1, 1.0, 0);
+        //this.classifierComboBox.setSelectedIndex(-1);
+
+        JLabel attributeLabel = new JLabel("Attribute:");
+        this.attributeNameComboBox = new JComboBox<>(this.attribs);
 
         this.summaryStatisticsPanel = new SummaryStatisticsPanel(this.dataValues);
-        this.addComponent(this, gbl, this.summaryStatisticsPanel, 0, 2, 1, 1, 1.0, 0);
 
         DefaultListModel<Double> listModel = new DefaultListModel<>();
         listModel.addElement(1.0);
@@ -82,7 +84,6 @@ public class IntervallSettingsPanel extends JPanel {
             }
         });
         this.breakPoints.setBorder(new TitledBorder("Intervall breakpoints"));
-        this.addComponent(this, gbl, this.breakPoints, 1, 2, 1, 1, 1.0, 0);
 
         final JFreeChart chart = ChartFactory.createHistogram("Histogram", null, null, this.createHistogramDataSet(), PlotOrientation.VERTICAL, false, true, false);
         final ChartPanel chartPanel = new ChartPanel(chart);
@@ -92,7 +93,7 @@ public class IntervallSettingsPanel extends JPanel {
         range.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
-        
+
         //Marker
         final Marker currentEnd = new ValueMarker(50.5);
         currentEnd.setPaint(Color.black);
@@ -100,8 +101,23 @@ public class IntervallSettingsPanel extends JPanel {
         currentEnd.setLabelAnchor(RectangleAnchor.TOP_RIGHT);
         currentEnd.setLabelTextAnchor(TextAnchor.TOP_LEFT);
         xyPlot.addDomainMarker(currentEnd);
+        
+        this.calculateButton = new JButton("CALCULATE");
+        this.applyButton = new JButton("APPLY");
+        
 
-        this.addComponent(this, gbl, chartPanel, 0, 4, 2, 1, 1.0, 1.0);
+        this.addComponent(this, gbl, numClassesLabel,               0, 0, 1, 1, 0, 0);
+        this.addComponent(this, gbl, this.numClassesSpinner,        1, 0, 1, 1, 1.0, 0);
+        this.addComponent(this, gbl, classifierLabel,               0, 1, 1, 1, 0, 0);
+        this.addComponent(this, gbl, this.classifierComboBox,       1, 1, 1, 1, 1.0, 0);
+        this.addComponent(this, gbl, attributeLabel,                0, 2, 1, 1, 0, 0);
+        this.addComponent(this, gbl, this.attributeNameComboBox,    1, 2, 1, 1, 1.0, 0);
+        this.addComponent(this, gbl, this.summaryStatisticsPanel,   0, 3, 1, 1, 1.0, 0);
+        this.addComponent(this, gbl, this.breakPoints,              1, 3, 1, 1, 1.0, 0);
+        this.addComponent(this, gbl, chartPanel,                    0, 4, 2, 1, 1.0, 1.0);
+        this.addComponent(this, gbl, calculateButton,               0, 5, 1, 1, 1.0, 1.0);
+        this.addComponent(this, gbl, applyButton,                   1, 5, 1, 1, 1.0, 1.0);
+        
 
     }
 

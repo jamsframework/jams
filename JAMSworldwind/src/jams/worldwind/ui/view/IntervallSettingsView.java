@@ -27,7 +27,7 @@ public class IntervallSettingsView {
     private void  createGUI() {
         this.intervallSettingsFrame = new JFrame("INTERVALL/CLASSIFIER FRAME");
         this.intervallSettingsFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.intervallSettingsPanel = new IntervallSettingsPanel(dataValues);
+        this.intervallSettingsPanel = new IntervallSettingsPanel(dataValues,new String[]{"tmean", "precip"});
         
         
         

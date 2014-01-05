@@ -15,18 +15,19 @@ import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.AbstractSurfaceShape;
-import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.render.SurfacePolygons;
 import gov.nasa.worldwindx.examples.util.HighlightController;
 import gov.nasa.worldwindx.examples.util.ScreenSelector;
+import jams.data.JAMSCalendar;
+import jams.workspace.stores.ShapeFileDataStore;
 import jams.worldwind.data.DataTransfer3D;
 import jams.worldwind.handler.SelectionHighlightController;
 import jams.worldwind.ui.model.Globe;
 import jams.worldwind.events.Events;
 import jams.worldwind.events.Observer;
-import jams.worldwind.shapefile.JamsShapeAttributes;
+import jams.worldwind.shapefile.JamsShapefileLoader;
 import jams.worldwind.test.IntervallCalculation;
 import jams.worldwind.test.RandomNumbers;
 import jams.worldwind.ui.ColorRamp;
@@ -38,6 +39,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,15 +48,15 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -77,12 +79,12 @@ import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingWorker;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesDataItem;
 import org.jfree.data.time.Year;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,11 +99,11 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     //<editor-fold desc="variables definition">
     private static final Logger logger = LoggerFactory.getLogger(GlobeView.class);
     //reference to jams,worldwind.ui.model.Globe
-    private final Globe theGlobeModel = Globe.getInstance();
-    private final JFrame theFrame;
+    //private Globe theGlobeModel = Globe.getInstance();
+    private JFrame theFrame;
     private JMenuBar theMenuBar;
     private JToolBar theToolBar;
-    private final LayerListView theLayerView;
+    private LayerListView theLayerView;
     private ScreenSelector theScreenSelector;
     private ShapefileAttributesView sAV;
     private SelectionHighlightController theSelectionHighlightController;
@@ -111,46 +113,50 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private JPanel topPanel;
     private JSlider opacitySlider;
     private JSlider timeSeriesSlider;
-    private JComboBox activeLayerComboBox;
+    private JLabel timeSeriesSliderLabel;
+    private JComboBox<String> activeLayerComboBox;
     private JToggleButton selectObjectsToggleButton;
     private JButton showAttributeTableButton;
 
-    private HashMap<Object, TimeSeries> objectsTimeData;
     private DataTransfer3D data;
-    
+
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="constructors">
-
     /**
      *
      * @param d
      */
-    public GlobeView(DataTransfer3D d) {
-        this();
-        this.data=d;
+    public GlobeView(DataTransfer3D d, boolean reload) {
+        this(reload);
+        this.data = d;
     }
-    
-    public GlobeView() {
+
+    public GlobeView(boolean reload) {
+        //if (reload) {
+         //   logger.info("Model reload");
+        //    Globe.getInstance().reInit();
+        //}
+         
+
         //this.theGlobeModel = Globe.getInstance();
         Observer.getInstance().addPropertyChangeListener(this);
         this.theLayerView = new LayerListView();
         //this.theGlobeModel.addPropertyChangeListener(theLayerView);
-        this.theScreenSelector = new ScreenSelector(theGlobeModel.getWorldWindow());
-        
+        this.theScreenSelector = new ScreenSelector(Globe.getInstance().getWorldWindow());
+
         //this.theSelectionHighlightController = new SelectionHighlightController(theGlobeModel.getWorldWindow(), theScreenSelector);
-        
         this.theScreenSelector.addMessageListener(this);
-        this.highlightController = new HighlightController(this.theGlobeModel.getWorldWindow(), SelectEvent.ROLLOVER);
+        this.highlightController = new HighlightController(Globe.getInstance().getWorldWindow(), SelectEvent.ROLLOVER);
 
         this.theFrame = new JFrame("JAMS WORLDWIND VIEWER");
         this.theFrame.setLayout(new BorderLayout());
         this.theFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.theFrame.add((Component) theGlobeModel.getWorldWindow(), BorderLayout.CENTER);
-        this.theFrame.add((Component) theGlobeModel.getStatusBar(), BorderLayout.PAGE_END);
+        this.theFrame.add((Component) Globe.getInstance().getWorldWindow(), BorderLayout.CENTER);
+        this.theFrame.add((Component) Globe.getInstance().getStatusBar(), BorderLayout.PAGE_END);
 
         sAV = ShapefileAttributesView.getInstance();
 
-        this.theGlobeModel.getWorldWindow().addSelectListener(new SelectListener() {
+        Globe.getInstance().getWorldWindow().addSelectListener(new SelectListener() {
             protected Object lastObject;
 
             @Override
@@ -178,16 +184,10 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         });
 
-        objectsTimeData = new HashMap<>();
-
         this.buildToolBar();
         this.buildMenu();
         this.fixMacOSX();
         this.setKeyboardShortcuts();
-
-        File file = new File("../../JAMSworldwind/shapefiles/vg2500_geo84/vg2500_bld.shp");
-        //File file = new File("../../../jamsmodelsdata/JAMS-Gehlberg/input/local/gis/hrus/hrus.shp");
-        this.theGlobeModel.addShapefile(file);
 
         //zoom to region after loading
       /*
@@ -200,6 +200,21 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
          */
     }
     //</editor-fold>
+
+    public void addJAMSExplorerData(DataTransfer3D d, ShapeFileDataStore s) {
+        this.data = d;
+
+        testData(s);
+    }
+
+    private void testData(ShapeFileDataStore shp) {
+        File file = shp.getShapeFile();
+        if (!isShapefileAlreadyOpened(file)) {
+            //File file = new File("../../JAMSworldwind/shapefiles/vg2500_geo84/vg2500_bld.shp");
+            addShapefile(file);
+        }
+
+    }
 
     private void setKeyboardShortcuts() {
         JComponent c = (JComponent) theFrame.getRootPane();
@@ -254,12 +269,29 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //SimpleFeatureLayer sfl = Globe.getInstance().getModel().getLayers().get(theGlobeModel.getModel().getLayers().size()-1);
-                List<?> list = theScreenSelector.getSelectedObjects();
-                System.out.println("SELECTED OBJECTS COUNT: " + list.size());
-                if (!list.isEmpty()) {
-                    sAV.fillTableWithObjects(list);
+                List<?> screenselectorList = theScreenSelector.getSelectedObjects();
+                String layerName = (String) activeLayerComboBox.getSelectedItem();
+                System.out.println("LAYERNAME: " + layerName);
+                System.out.println("SELECTED OBJECTS COUNT: " + screenselectorList.size());
+                theScreenSelector.disable();
+                selectObjectsToggleButton.setEnabled(false);
+                if (!screenselectorList.isEmpty()) {
+                    sAV.fillTableWithObjects(screenselectorList);
                     sAV.show(true);
                     theFrame.toFront();
+                } else if (layerName != null) {
+                    Layer l = Globe.getInstance().getModel().getLayers().getLayerByName(layerName);
+                    if (l.getClass().equals(RenderableLayer.class)) {
+
+                        List<Object> list = new ArrayList<>(((RenderableLayer) l).getNumRenderables());
+                        for (Renderable r : ((RenderableLayer) l).getRenderables()) {
+                            list.add(r);
+
+                        }
+                        sAV.fillTableWithObjects(list);
+                        sAV.show(true);
+                        theFrame.toFront();
+                    }
                 }
             }
 
@@ -282,34 +314,48 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                     JComboBox cb = (JComboBox) e.getSource();
                     theLayerView.setActiveLayerIndex(index);
                     showAttributeTableButton.setEnabled(true);
-                    Layer l = theGlobeModel.getModel().getLayers().getLayerByName(cb.getSelectedItem().toString());
+                    Layer l = Globe.getInstance().getModel().getLayers().getLayerByName(cb.getSelectedItem().toString());
+
+                    double[] br = (double[]) l.getValue(Events.BOUNDINGBOXOFSHAPEFILE);
+                    if (br != null) {
+                        Sector s = new Sector(Angle.fromDegrees(br[0]),
+                                Angle.fromDegrees(br[1]),
+                                Angle.fromDegrees(br[2]),
+                                Angle.fromDegrees(br[3]));
+                        zoomToSector(s);
+                    }
+
                     //System.out.println("OPACITY: " + l.getOpacity() * 100);
                     //create test time data
                     if (l.getClass().equals(RenderableLayer.class)) {
+
                         Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
-                        if (objectsTimeData.isEmpty()) {
-                            for (Object o : list) {
-                                objectsTimeData.put(o, createTimeData());
-                            }
+                        DataTransfer3D d = (DataTransfer3D) l.getValue(Events.DATATRANSFER3DDATA_APPEND);
+
+                        if (d == null) {
+                            return;
                         }
-                        System.out.println("END INIT");
-                        Object first = list.iterator().next();
-                        Collection periods = objectsTimeData.get(first).getTimePeriods();
-                        LinkedList llist = new LinkedList(periods);
 
-                        //System.out.println("PERIOD: " + objectsTimeData.get(first).getTimePeriods());
+                        String[] ids = d.getSortedIds();
+                        String[] attr = d.getSortedAttributes();
+                        JAMSCalendar[] cal = d.getSortedTimeSteps();
 
-                        int fyear = ((Year) llist.getFirst()).getYear();
-                        timeSeriesSlider.setMinimum(fyear);
-                        int lyear = ((Year) llist.getLast()).getYear();
-                        timeSeriesSlider.setMaximum(lyear);
-                        
-                        timeSeriesSlider.setMinorTickSpacing(1);
-                        //System.out.println("Major: " + (lyear - fyear / llist.size() / 5));
-                        timeSeriesSlider.setMajorTickSpacing(5);
+                        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>(cal.length);
+
+                        for (int i = 0; i < cal.length; i++) {
+                            labelTable.put(new Integer(i), new JLabel(cal[i].toString()));
+
+                        }
+
+                        timeSeriesSlider.setLabelTable(labelTable);
+                        timeSeriesSlider.setMinimum(0);
+                        timeSeriesSlider.setMaximum(cal.length - 1);
+
+                        timeSeriesSlider.setMajorTickSpacing(1);
                         timeSeriesSlider.setPaintTicks(true);
                         timeSeriesSlider.setSnapToTicks(true);
-                        timeSeriesSlider.setPaintLabels(true);
+                        timeSeriesSlider.setPaintLabels(false);
+                        timeSeriesSlider.setValue(0);
                         timeSeriesSlider.setEnabled(true);
 
                     }
@@ -368,7 +414,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                  for (Component o : comp) {
                  if (o instanceof JComboBox) {
                  JComboBox c = (JComboBox) o;*/
-                Layer l = theGlobeModel.getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
+                Layer l = Globe.getInstance().getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
                 System.out.println(l.getValues());
                 System.out.println(l.getName());
                 //if a renderable is found, opacity must be set for every Renderable
@@ -393,17 +439,25 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         });
 
+        JPanel sliderPanel = new JPanel();
+        sliderPanel.setLayout(new GridLayout(2, 1));
+        sliderPanel.setBorder(new TitledBorder("TIME SERIES DATA"));
+
         timeSeriesSlider = new JSlider();
-        timeSeriesSlider.setBorder(new TitledBorder("TIME SERIES DATA"));
+        //timeSeriesSlider.setBorder(new TitledBorder("TIME SERIES DATA"));
         timeSeriesSlider.setName("TIME_SERIES_SLIDER");
         timeSeriesSlider.setEnabled(false);
         timeSeriesSlider.addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent e) {
+                Dictionary d = timeSeriesSlider.getLabelTable();
+                Integer value = ((JSlider) e.getSource()).getValue();
+                timeSeriesSliderLabel.setText(((JLabel) d.get((Object) value)).getText());
+
                 double year = (double) ((JSlider) e.getSource()).getValue();
                 //System.out.println("TIME: " + year);
-                Layer l = theGlobeModel.getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
+                Layer l = Globe.getInstance().getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
                 //if a renderable is found, opacity must be set for every Renderable
 
                 if (l.getClass().equals(RenderableLayer.class)) {
@@ -412,23 +466,23 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                     ArrayList al = new ArrayList();
                     double tempmin = Double.MAX_VALUE;
                     double tempmax = Double.MIN_VALUE;
+                    /*
+                     for (TimeSeries t : objectsTimeData.values()) {
+                     for (int j = 0; j < t.getItemCount(); j++) {
+                     TimeSeriesDataItem di = t.getDataItem(j);
+                     al.add(di.getValue().doubleValue());
+                     //System.out.print("Y: " + di.getPeriod().toString() + " " + di.getValue().doubleValue() + " ");
+                     }
+                     //System.out.println();
 
-                    for (TimeSeries t : objectsTimeData.values()) {
-                        for (int j = 0; j < t.getItemCount(); j++) {
-                            TimeSeriesDataItem di = t.getDataItem(j);
-                            al.add(di.getValue().doubleValue());
-                            //System.out.print("Y: " + di.getPeriod().toString() + " " + di.getValue().doubleValue() + " ");
-                        }
-                        //System.out.println();
-
-                        if (tempmin > t.getMinY()) {
-                            tempmin = t.getMinY();
-                        }
-                        if (tempmax < t.getMaxY()) {
-                            tempmax = t.getMaxY();
-                        }
-                    }
-
+                     if (tempmin > t.getMinY()) {
+                     tempmin = t.getMinY();
+                     }
+                     if (tempmax < t.getMaxY()) {
+                     tempmax = t.getMaxY();
+                     }
+                     }
+                     */
                     IntervallCalculation iC = new IntervallCalculation(al);
                     List intervall = iC.getEqualIntervall(tempmin, tempmax, 10);
 
@@ -439,14 +493,15 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
                     //color objects
                     for (Object obj : list) {
-                        SurfacePolygons o = (SurfacePolygons) obj;
-                        JamsShapeAttributes sattr = (JamsShapeAttributes) o.getAttributes();
-                        Number value = objectsTimeData.get(obj).getValue(new Year((int) year));
-                        double d = value.doubleValue();
-                        int index = iC.getIntervallIndex(intervall, d);
-                        //System.out.println("OBJ: " + obj.toString() + "|" + " D: " + d + "|" + " I:" + index);
-                        sattr.setInteriorMaterial(new Material(cR.getColor(index)));
-
+                        /*
+                         SurfacePolygons o = (SurfacePolygons) obj;
+                         JamsShapeAttributes sattr = (JamsShapeAttributes) o.getAttributes();
+                         Number value = objectsTimeData.get(obj).getValue(new Year((int) year));
+                         double d = value.doubleValue();
+                         int index = iC.getIntervallIndex(intervall, d);
+                         //System.out.println("OBJ: " + obj.toString() + "|" + " D: " + d + "|" + " I:" + index);
+                         sattr.setInteriorMaterial(new Material(cR.getColor(index)));
+                         */
                         /* 
                          AbstractSurfaceShape shape = (AbstractSurfaceShape) obj;
                          ShapeAttributes shapeAttr = shape.getAttributes();
@@ -460,6 +515,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         });
 
+        this.timeSeriesSliderLabel = new JLabel("NO DATA", JLabel.CENTER);
+        this.timeSeriesSliderLabel.setEnabled(true);
+
+        sliderPanel.add(timeSeriesSlider);
+        sliderPanel.add(timeSeriesSliderLabel);
+
         this.topPanel = new JPanel();
         GridBagLayout gbl = new GridBagLayout();
         this.topPanel.setLayout(gbl);
@@ -469,7 +530,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.addComponent(topPanel, gbl, showAttributeTableButton, 2, 0, 1, 1, 1.0, 1.0);
         this.addComponent(topPanel, gbl, activeLayerComboBox, 3, 0, 1, 1, 1.0, 1.0);
         this.addComponent(topPanel, gbl, opacitySlider, 0, 1, 1, 2, 1.0, 1.0);
-        this.addComponent(topPanel, gbl, timeSeriesSlider, 1, 1, 2, 1, 1.0, 1.0);
+        this.addComponent(topPanel, gbl, sliderPanel, 1, 1, 2, 1, 1.0, 1.0);
+        //this.addComponent(topPanel, gbl, timeSeriesSlider, 1, 1, 2, 1, 1.0, 1.0);
         this.theFrame.add(topPanel, BorderLayout.NORTH);
 
         //comboBox.setEnabled(true);
@@ -477,6 +539,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         //this.theFrame.add(this.theToolBar, BorderLayout.PAGE_START);
     }
 
+    //TODE REMOVE
     private TimeSeries createTimeData() {
         int maxNumbers = 11;
         TimeSeries timeData = new TimeSeries("TEST PRECIPITATION");
@@ -490,21 +553,21 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
         return timeData;
     }
-    
+
     /*
-    public void addData(DataTransfer data) {
-        double[][] d = data.getData();
-        for (double[] d1 : d) {
-            for (int j = 0; j < d1.length; j++) {
-                System.out.print(d1[j]+ " ");
-            }
-            System.out.println();
-        }
+     public void addData(DataTransfer data) {
+     double[][] d = data.getData();
+     for (double[] d1 : d) {
+     for (int j = 0; j < d1.length; j++) {
+     System.out.print(d1[j]+ " ");
+     }
+     System.out.println();
+     }
         
-    }
-    */
+     }
+     */
     public void addTimeData() {
-        
+
     }
 
     private void addComponent(Container container,
@@ -585,7 +648,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
          if (o instanceof JComboBox) {
          JComboBox c = (JComboBox) o;*/
         activeLayerComboBox.removeAllItems();
-        LayerList layers = this.theGlobeModel.getWorldWindow().getModel().getLayers();
+        LayerList layers = Globe.getInstance().getWorldWindow().getModel().getLayers();
         int index = 0;
         for (int i = 0; i < layers.size(); i++) {
             //if (layers.get(i).getClass() == RenderableLayer.class) {
@@ -595,6 +658,15 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             // }
         }
         activeLayerComboBox.setPreferredSize(new Dimension(100, 45));
+        activeLayerComboBox.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                if (activeLayerComboBox.getSelectedIndex() > -1) {
+                    activeLayerComboBox.setToolTipText(activeLayerComboBox.getSelectedItem().toString());
+                }
+            }
+        });
+
         /*}
 
          }*/
@@ -602,7 +674,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     // <editor-fold defaultstate="collapsed" desc="Menu-Action-Listeners"> 
     private void openShapefileActionlistener(ActionEvent e) {
-        JFileChooser fc = new JFileChooser("/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/JAMS-Kosi/hrus.shp");
+        JFileChooser fc = new JFileChooser("/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp");
         FileNameExtensionFilter filter = new FileNameExtensionFilter("ESRI Shapefile", "shp");
         fc.setFileFilter(filter);
 
@@ -613,19 +685,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                     //Shapefile ist schon vorhanden
                     if (reloadShapefile(file)) {
                         //Shapefile neu laden
-                        this.theGlobeModel.addShapefile(file);
+                        addShapefile(file);
                     }
                 } else {
                     //Shapefile nicht vorhanden -> hinzufügen
-                    this.theGlobeModel.addShapefile(file);
+                    addShapefile(file);
                 }
-                //zoom to region after loading
-                double[] br = new Shapefile(file).getBoundingRectangle();
-                Sector s = new Sector(Angle.fromDegrees(br[0]),
-                        Angle.fromDegrees(br[1]),
-                        Angle.fromDegrees(br[2]),
-                        Angle.fromDegrees(br[3]));
-                this.zoomToSector(s);
                 break;
             default:
                 break;
@@ -643,6 +708,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     private void showLayersActionListener(ActionEvent e) {
         if (((JCheckBoxMenuItem) e.getSource()).isSelected()) {
+            //this.theLayerView = new LayerListView();
             this.theLayerView.show(true);
             this.theFrame.toFront();
         } else {
@@ -674,25 +740,78 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
      * @param sector
      */
     public void zoomToSector(Sector sector) {
+        Globe.getInstance().getWorldWindow().getView().stopAnimations();
         double zoom = computeZoomForExtent(sector);
         Position p = new Position(sector.getCentroid(), zoom);
-        this.theGlobeModel.getWorldWindow().getView().stopAnimations();
-        this.theGlobeModel.getWorldWindow().getView().goTo(p, zoom);
+        Globe.getInstance().getWorldWindow().getView().goTo(p, zoom);
     }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Shapefile loading">
+    private class DelayZoom extends SwingWorker<Object, Object> {
+
+        private final long TIME_TO_WAIT_IN_MILLIS = 7000;
+        private final Sector sector;
+
+        public DelayZoom(double[] boundingRectangle) {
+            Sector s = new Sector(Angle.fromDegrees(boundingRectangle[0]),
+                    Angle.fromDegrees(boundingRectangle[1]),
+                    Angle.fromDegrees(boundingRectangle[2]),
+                    Angle.fromDegrees(boundingRectangle[3]));
+            this.sector = s;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            Thread.sleep(TIME_TO_WAIT_IN_MILLIS);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            zoomToSector(sector);
+        }
+    }
+
+//<editor-fold defaultstate="collapsed" desc="Shapefile loading">
+    /**
+     *
+     * @param f
+     */
+    public void addShapefile(File f) {
+        String layerName = f.getName() + "|" + f.getAbsolutePath();
+        //Layer layer = new ShapefileLoader().createLayerFromShapefile(new Shapefile(f));
+        Shapefile shp = new Shapefile(f);
+        System.out.println("SHAPEFILE RECORDS: " + shp.getNumberOfRecords());
+        Layer layer = new JamsShapefileLoader().
+                createLayerFromShapefile(shp);
+
+        if (data != null) {
+            layer.setValue(Events.DATATRANSFER3DDATA_APPEND, data);
+        }
+
+        layer.setValue(Events.BOUNDINGBOXOFSHAPEFILE, shp.getBoundingRectangle());
+        layer.setName(layerName);
+        Globe.getInstance().getModel().getLayers().add(layer);
+        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_ADDED, null, null);
+        Observer.getInstance().getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
+
+        activeLayerComboBox.setSelectedIndex(activeLayerComboBox.getItemCount() - 1);
+        theLayerView.setActiveLayerIndex(activeLayerComboBox.getItemCount() - 1);
+        new DelayZoom(shp.getBoundingRectangle()).execute();
+
+    }
+
     private boolean isShapefileAlreadyOpened(File f) {
         //Check if Shapefile already loaded
         String layerName = f.getName() + "|" + f.getAbsolutePath();
         this.logger.info("Shapefile: " + layerName);
-        Layer l = this.theGlobeModel.getWorldWindow().getModel().getLayers().getLayerByName(layerName);
+        Layer l = Globe.getInstance().getWorldWindow().getModel().getLayers().getLayerByName(layerName);
         return l != null;
     }
 
     private boolean reloadShapefile(File f) {
         String layerName = f.getName() + "|" + f.getAbsolutePath();
-        Layer layer = this.theGlobeModel.getWorldWindow().getModel().getLayers().getLayerByName(layerName);
+        Layer layer = Globe.getInstance().getWorldWindow().getModel().getLayers().getLayerByName(layerName);
         int result = JOptionPane.showConfirmDialog(null,
                 "Shapefile already loaded, reload?",
                 "Shapefile exists",
@@ -703,7 +822,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             return false;
         } else if (result == JOptionPane.YES_OPTION) {
             //remove old Shapefile layer
-            this.theGlobeModel.getWorldWindow().getModel().getLayers().remove(layer);
+            Globe.getInstance().getWorldWindow().getModel().getLayers().remove(layer);
         }
         return true;
     }
