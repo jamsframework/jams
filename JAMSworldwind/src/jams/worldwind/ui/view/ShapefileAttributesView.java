@@ -34,7 +34,7 @@ import javax.swing.table.TableColumn;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class ShapefileAttributesView implements PropertyChangeListener, MouseListener {
 
@@ -80,6 +80,11 @@ public class ShapefileAttributesView implements PropertyChangeListener, MouseLis
 
         theFrame.getContentPane().add(mainPanel);
         theFrame.setSize(theFrame.getPreferredSize());
+    }
+
+    void dispose() {
+        this.theFrame.setVisible(false);
+        this.theFrame.dispose();
     }
 
     /**

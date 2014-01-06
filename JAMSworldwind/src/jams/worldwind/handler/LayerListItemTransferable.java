@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class LayerListItemTransferable implements Transferable {
 

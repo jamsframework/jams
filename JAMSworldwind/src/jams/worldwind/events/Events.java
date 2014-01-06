@@ -2,7 +2,7 @@ package jams.worldwind.events;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public interface Events {
     public static final String ACTIVE_LAYER_CHANGED = "jams.worldwind.events.ActiveLayerChanged";

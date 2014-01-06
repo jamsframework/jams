@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class IntervallCalculation {
 
@@ -26,13 +26,13 @@ public class IntervallCalculation {
         this.calculateMinimumAndMaximum();
     }
     /*
-    private void fill(List<?> values) {
-        for (int i = 0; i < values.size(); i++) {
-            this.values.add(values[i]);
-        }
-    }   
-    */
-    
+     private void fill(List<?> values) {
+     for (int i = 0; i < values.size(); i++) {
+     this.values.add(values[i]);
+     }
+     }   
+     */
+
     public double getValue(int index) {
         if (index >= 0 && index < this.values.size()) {
             return this.values.get(index);
@@ -123,11 +123,11 @@ public class IntervallCalculation {
             return this.standardMinimumMaximumIntervall();
         }
     }
-    
+
     public List<Double> getEqualIntervall(double min, double max, int numberOfClasses) {
         if (numberOfClasses > 0) {
             List<Double> breakPoints = new ArrayList<>(numberOfClasses + 1);
-            double intervallWidth = (max-min) / numberOfClasses;
+            double intervallWidth = (max - min) / numberOfClasses;
             double sum = 0;
             breakPoints.add(this.getMinimumValue());
             for (int i = 1; i < numberOfClasses; i++) {
@@ -158,10 +158,11 @@ public class IntervallCalculation {
             //System.out.println("Classes: " + numberPerClass);
             ArrayList<Double> tmp = new ArrayList(this.values);
             Collections.sort(tmp);
+            
             breakPoints.add(this.getMinimumValue());
             for (int i = 1; i < numberOfClasses; i++) {
-                //System.out.println("i: " + i + " index: " + (i * numberPerClass - 1));
-                breakPoints.add(Math.nextUp(tmp.get(i * numberPerClass - 1)));
+                Double value = tmp.get(i * numberPerClass - 1);
+                breakPoints.add(Math.nextUp(value));
             }
             breakPoints.add(this.getMaximumValue());
             return breakPoints;
@@ -176,7 +177,7 @@ public class IntervallCalculation {
         Collections.sort(tmp);
         int start = 0;
         int count = 0;
-        int sum   = 0;
+        int sum = 0;
         //System.out.println("Size: " + intervall.size());
         for (int h = 0; h < intervall.size() - 1; h++) {
             System.out.print("[" + intervall.get(h) + "," + intervall.get(h + 1) + "] : ");
@@ -196,16 +197,16 @@ public class IntervallCalculation {
         }
         System.out.println("SUMMARY: TOTAL STARS: " + sum + " | TOTAL ELEMENTS: " + tmp.size());
     }
-    
+
     public int getIntervallIndex(List<?> intervall, double d) {
-        for (int j = 0; j < intervall.size()-1; j++) {
-           //System.out.println("[" + j + "," + (j+1) + "] (" + d + ")");
-           if ((d >= (Double)intervall.get(j) && d < (Double)intervall.get(j + 1)) || 
-               (d==(Double)intervall.get(intervall.size()-1))) {
-               //System.out.println("FOUND: " + d + " INDEX: " + j);
-               return j;
-           }
+        for (int j = 0; j < intervall.size() - 1; j++) {
+            //System.out.println("[" + j + "," + (j+1) + "] (" + d + ")");
+            if ((d >= (Double) intervall.get(j) && d < (Double) intervall.get(j + 1))
+                    || (d == (Double) intervall.get(intervall.size() - 1))) {
+                //System.out.println("FOUND: " + d + " INDEX: " + j);
+                return j;
+            }
         }
-        throw new NoSuchElementException("VALUE ("+ d + ") NOT FOUND IN INTERVALL " + this.values);
+        throw new NoSuchElementException("VALUE (" + d + ") NOT FOUND IN INTERVALL " + this.values);
     }
 }

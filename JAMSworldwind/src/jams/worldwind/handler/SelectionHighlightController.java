@@ -21,7 +21,7 @@ import javax.swing.JButton;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class SelectionHighlightController extends HighlightController implements MessageListener {
 

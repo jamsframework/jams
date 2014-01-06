@@ -18,7 +18,7 @@ import javax.swing.table.TableCellEditor;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class PropertyEditorCellEditor extends AbstractCellEditor implements TableCellEditor {
 

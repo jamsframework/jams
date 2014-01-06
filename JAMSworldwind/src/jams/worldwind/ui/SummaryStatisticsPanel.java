@@ -5,36 +5,26 @@ import java.text.NumberFormat;
 import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.border.TitledBorder;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class SummaryStatisticsPanel extends JPanel {
 
     private DescriptiveStatistics stats;
     private JLabel[] statisticLabels;
+    private double min;
+    private double max;
 
     public SummaryStatisticsPanel() {
         stats = new DescriptiveStatistics();
         this.createGUI();
     }
 
-    /*
-    public SummaryStatisticsPanel(double[] values) {
-        this.SummaryStatisticsPanel();
-        this.calculateStatistics(values);
-    }
-
-    public SummaryStatisticsPanel(List values) {
-        this.SummaryStatisticsPanel();
-        this.calculateStatistics(values);
-    }
-    */
-    
     private void createGUI() {
         this.setBorder(new TitledBorder("CLASSIFICATION STATISTICS"));
         this.setLayout(new GridLayout(8, 2));
@@ -69,7 +59,7 @@ public class SummaryStatisticsPanel extends JPanel {
         this.printStatistics();
     }
 
-    private void calculateStatistics(List values) {
+    public void calculateStatistics(List values) {
         for (int i = 0; i < values.size(); i++) {
             stats.addValue((double) values.get(i));
         }
@@ -81,18 +71,26 @@ public class SummaryStatisticsPanel extends JPanel {
         nf.setMinimumFractionDigits(3);
         this.statisticLabels[1].setText(nf.format(stats.getN()));
         this.statisticLabels[3].setText(nf.format(stats.getMin()));
+        min = stats.getMin();
         this.statisticLabels[5].setText(nf.format(stats.getMax()));
+        max = stats.getMax();
         this.statisticLabels[7].setText(nf.format(stats.getSum()));
         this.statisticLabels[9].setText(nf.format(stats.getMean()));
         this.statisticLabels[11].setText(nf.format(stats.getPercentile(50)));
         this.statisticLabels[13].setText(nf.format(stats.getStandardDeviation()));
         this.statisticLabels[15].setText(nf.format(stats.getVariance()));
-        stats.clear();
+        //stats.clear();
     }
-
-    /*
-    public void updateStatistics(List values) {
-        this.calculateStatistics(values);
+    
+    public double getMin() {
+        return min;
     }
-    */
+    
+    public double getMax() {
+        return max;
+    }
+    
+    public DescriptiveStatistics getStatistics() {
+        return this.stats;
+    }
 }

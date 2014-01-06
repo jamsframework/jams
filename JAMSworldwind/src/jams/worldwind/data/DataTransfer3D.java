@@ -3,7 +3,12 @@ package jams.worldwind.data;
 import gnu.trove.map.hash.THashMap;
 import jams.data.JAMSCalendar;
 import jams.workspace.dsproc.DataMatrix;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,9 +16,9 @@ import java.util.Set;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
-public class DataTransfer3D {
+public class DataTransfer3D implements Serializable {
 
     // ID x attrib x timestep
     private final double[][][] data;
@@ -78,27 +83,27 @@ public class DataTransfer3D {
             }
         });
         //System.out.println("F: " + list.get(0) + " L: " + list.get(size - 1));
-        String[] result = (String[])list.toArray(new String[size]);
+        String[] result = (String[]) list.toArray(new String[size]);
         return result;
     }
-    
+
     public String[] getSortedAttributes() {
         Set<String> keys = this.attributeToIndex.keySet();
         int size = keys.size();
         ArrayList list = new ArrayList(keys);
         Collections.sort(list);
         //System.out.println("F: " + list.get(0) + " L: " + list.get(size - 1));
-        String[] result = (String[])list.toArray(new String[size]);
+        String[] result = (String[]) list.toArray(new String[size]);
         return result;
     }
-    
+
     public JAMSCalendar[] getSortedTimeSteps() {
         Set<JAMSCalendar> keys = this.timeStepToIndex.keySet();
         int size = keys.size();
         ArrayList<JAMSCalendar> list = new ArrayList<>(keys);
         Collections.sort(list);
         //System.out.println("F: " + list.get(0) + " L: " + list.get(size - 1));
-        JAMSCalendar[] result = (JAMSCalendar[])list.toArray(new JAMSCalendar[size]);
-        return result;        
+        JAMSCalendar[] result = (JAMSCalendar[]) list.toArray(new JAMSCalendar[size]);
+        return result;
     }
 }

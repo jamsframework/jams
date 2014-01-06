@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class LayerListView implements PropertyChangeListener, ActionListener {
 
@@ -169,6 +169,11 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
         //Add listener to the text area so the popup menu can come up.
         //MouseListener popupListener = new PopupListener(popup);
         //layers.addMouseListener(popupListener);
+    }
+
+    void dispose() {
+        this.theFrame.setVisible(false);
+        this.theFrame.dispose();
     }
 
     /**

@@ -7,7 +7,7 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class SurfacePolygonClassCellRenderer implements TableCellRenderer{
 

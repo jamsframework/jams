@@ -7,7 +7,7 @@ import javax.swing.DefaultListModel;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class LayerListModel extends DefaultListModel<Layer> {
 

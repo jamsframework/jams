@@ -8,7 +8,7 @@ import gov.nasa.worldwind.layers.Layer;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class LayerListItem {
 

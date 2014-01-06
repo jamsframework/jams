@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class ColorRampPanel extends JPanel {
 

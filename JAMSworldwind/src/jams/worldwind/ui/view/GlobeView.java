@@ -59,7 +59,11 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -94,11 +98,10 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.Year;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import reg.DataTransfer;
 
 /**
  *
- * @author Ronny Berndt <ronny.showAttributeTableButtonerndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class GlobeView implements PropertyChangeListener, MessageListener {
 
@@ -129,6 +132,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private JMenuBar theMenuBar;
     private JToolBar theToolBar;
     private LayerListView theLayerView;
+    private IntervallSettingsView intervallView;
     private ScreenSelector theScreenSelector;
     private ShapefileAttributesView sAV;
     private SelectionHighlightController theSelectionHighlightController;
@@ -238,10 +242,13 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             @Override
             public void windowClosed(WindowEvent e) {
                 if (sAV != null) {
-                    sAV.show(false);
+                    sAV.dispose();
                 }
                 if (theLayerView != null) {
-                    theLayerView.show(false);
+                    theLayerView.dispose();
+                }
+                if (intervallView != null) {
+                    intervallView.dispose();
                 }
             }
 
@@ -299,6 +306,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.data = d;
         addData(s);
         fillAttributeComboBox();
+        writeToDisk();
     }
 
     private void addData(ShapeFileDataStore shp) {
@@ -624,7 +632,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
         this.classifyButton = new JButton("CLASSIFY");
         this.classifyButton.setEnabled(false);
-        
+
         this.classifyButton.addActionListener(new ActionListener() {
 
             @Override
@@ -940,19 +948,34 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
     //</editor-fold>
-    
     //<editor-fold defaultstate="collapsed" desc="ActionListener">
-    
     private void classifyButtonActionPerformed(ActionEvent e) {
         String[] attributes = data.getSortedAttributes();
-        
-        IntervallSettingsView intervallView = new IntervallSettingsView(data, attributes);
+
+        intervallView = new IntervallSettingsView(data, attributes);
     }
-    
-    
-    
+
+    public void writeToDisk() {
+        try {
+            // Serialize data object to a file
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/src/jams/worldwind/test/DataTransfer3DTestData.ser"));
+            out.writeObject(data);
+            out.close();
+
+            // Serialize data object to a byte array
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            out = new ObjectOutputStream(bos);
+            out.writeObject(data);
+            out.close();
+
+            // Get the bytes of the serialized object
+            byte[] buf = bos.toByteArray();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
     //</editor-fold>
-    
     //<editor-fold defaultstate="collapsed" desc="PropertyChangeEvent">
     public PropertyChangeSupport getPCS() {
         return pcs;
@@ -1008,9 +1031,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         }
     }
     //</editor-fold>
-    
+
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
-    
     private class DelayZoom extends SwingWorker<Object, Object> {
 
         private Sector sector = null;
@@ -1040,5 +1062,5 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         }
     }
     //</editor-fold>
-    
+
 }

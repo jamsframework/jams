@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.JFrame;
@@ -15,7 +16,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class IntervallTest {
 
@@ -29,8 +30,18 @@ public class IntervallTest {
     public IntervallTest() {
         int numbers = 171;
         //double [] test = {0.05,0.24,0.25,0.285,0.49,0.50,0.51,0.74,0.76,0.99};
-        RandomNumbers rn = new RandomNumbers(0, 100, numbers);
-        IntervallCalculation ic = new IntervallCalculation(rn.getDoubleValues());
+        double[] testquantil = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
+                                1.0,1.0,1.0,1.0,1.0,1.0,2.0,3.0,4.0,5.0,
+                                6.0,6.0,6.0,6.0,6.0,6.0,7.0,8.0,8.0,9.0};
+        
+        ArrayList<Double> tlist = new ArrayList<>(testquantil.length);
+        for(double d : testquantil) {
+            tlist.add(d);
+        };
+        IntervallCalculation ic = new IntervallCalculation(tlist);
+
+        //RandomNumbers rn = new RandomNumbers(0, 100, numbers);
+        //IntervallCalculation ic = new IntervallCalculation(rn.getDoubleValues());
 
         System.out.println("Minimum : " + ic.getMinimumValue());
         System.out.println("Maximum : " + ic.getMaximumValue());
@@ -52,7 +63,7 @@ public class IntervallTest {
         System.out.println(stats.getStandardDeviation());
         
         int classes = 5;
-        double width = 15;
+        double width = 2;
 
         List list = new ArrayList(ic.getValues());
         Collections.sort(list);

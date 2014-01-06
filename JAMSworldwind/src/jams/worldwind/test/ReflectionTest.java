@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Ronny Berndt <ronny.berndt@uni-jena.de>
+ * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 class A {
 
