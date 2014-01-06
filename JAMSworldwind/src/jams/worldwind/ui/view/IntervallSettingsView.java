@@ -62,7 +62,7 @@ public class IntervallSettingsView {
     public static DataTransfer3D readTestObjectFromDisk() {
         DataTransfer3D data = null;
         try {
-            FileInputStream fin = new FileInputStream("/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/src/jams/worldwind/test/DataTransfer3DTestData.ser");
+            FileInputStream fin = new FileInputStream("../../JAMSworldwind/src/jams/worldwind/test/DataTransfer3DTestData.ser");
             ObjectInputStream ois = new ObjectInputStream(fin);
             data = (DataTransfer3D) ois.readObject();
             ois.close();
