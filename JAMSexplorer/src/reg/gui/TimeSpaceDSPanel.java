@@ -24,8 +24,10 @@ package reg.gui;
 import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
+import jams.tools.StringTools;
 import jams.workspace.dsproc.AbstractDataStoreProcessor;
 import jams.workspace.dsproc.AbstractDataStoreProcessor.AttributeData;
+import jams.workspace.dsproc.DataMatrix;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -60,19 +62,21 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import jams.workspace.dsproc.DataMatrix;
 import jams.workspace.dsproc.DataStoreProcessor;
 import jams.workspace.dsproc.TimeSpaceProcessor;
+import jams.workspace.stores.ShapeFileDataStore;
 import jams.worldwind.data.DataTransfer3D;
 import jams.worldwind.ui.view.GlobeView;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.URI;
+import javax.swing.SwingWorker;
+import reg.spreadsheet.JAMSSpreadSheet;
 
 /**
  *
@@ -836,7 +840,8 @@ public class TimeSpaceDSPanel extends DSPanel {
                         progress = progress + ((j + 1) * (50 - progress)) / attributeNames.size();
                         setProgress(progress);
                     }
-                    transfer = new DataTransfer3D(m, entitiesString, dateIds, attribs);
+
+                    transfer = new DataTransfer3D(m, entitiesString, dateIds, attribs, proc.getDataStoreProcessor().getFile());
                     setProgress(100);
 
                 } catch (SQLException | IOException ex) {
@@ -848,13 +853,42 @@ public class TimeSpaceDSPanel extends DSPanel {
             @Override
             public void done() {
                 System.out.println("READY TO START");
+
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        GlobeView view = new GlobeView(transfer);
+
+                        String selectedShape = (String) outputSpreadSheet.getShapeSelector().getSelectedItem();
+                        if (StringTools.isEmptyString(selectedShape)) {
+                            Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No shape selected.");
+                            return;  // errorMessage?
+                        }
+
+                        System.out.println("shape selected >" + selectedShape + "<");
+                        ShapeFileDataStore dataStore = (ShapeFileDataStore) explorer.getWorkspace().getInputDataStore(selectedShape);
+                        if (dataStore == null) {
+                            Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No datastore found.");
+                            return;
+                        }
+
+                        URI uri = dataStore.getUri();
+                        if (uri == null) {
+                            System.out.println("error: can't access shapefile! path is: "
+                                    + dataStore.getShapeFile().getAbsolutePath());
+                            return;
+                        }
+                        System.out.println("KEY COLUMN:" + dataStore.getKeyColumn());
+
+                        //ShapeFileDataStore shapeDataStore = (ShapeFileDataStore) explorer.getWorkspace().;
+                        GlobeView view = GlobeView.getInstance();
+                        view.addJAMSExplorerData(transfer, dataStore);
                         view.show();
+                        
+                        
+
                     }
                 });
+
             }
 
             @Override

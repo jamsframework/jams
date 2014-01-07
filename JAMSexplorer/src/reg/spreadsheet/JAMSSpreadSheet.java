@@ -738,6 +738,10 @@ public class JAMSSpreadSheet extends JPanel {
         this.outputDSDir = outputDSDir;
     }
 
+    public JComboBox getShapeSelector() {
+        return shapeSelector;
+    }
+    
     private void formatDoubleArray(double[] rowBuffer) {
         // shorten double values to four decimal digits
         for (int i = 0; i < rowBuffer.length; i++) {
