@@ -14,9 +14,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
-import reg.dsproc.DataMatrix;
-import reg.dsproc.DataStoreProcessor;
-import reg.dsproc.SimpleSerieProcessor;
+import jams.workspace.dsproc.DataMatrix;
+import jams.workspace.dsproc.DataStoreProcessor;
+import jams.workspace.dsproc.SimpleSerieProcessor;
 
 /**
  *
