@@ -9,6 +9,8 @@
 
     <target name="doall" depends="buildproj, dostarters, doJ2K, doThornthwaite"/>
 
+    <target name="dojams" depends="buildproj, dostarters"/>
+
     <target name="clean" depends="cleanproj, cleanlib" />
 
     <target name="doallwithclean" depends="clean, doall"/>
