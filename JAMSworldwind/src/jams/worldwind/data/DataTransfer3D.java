@@ -3,11 +3,7 @@ package jams.worldwind.data;
 import gnu.trove.map.hash.THashMap;
 import jams.data.JAMSCalendar;
 import jams.workspace.dsproc.DataMatrix;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +19,7 @@ public class DataTransfer3D implements Serializable {
     // ID x attrib x timestep
     private final double[][][] data;
 
+    //fast Hashtables to get values
     private final THashMap<String, Integer> hruIdToIndex;
     private final THashMap<String, Integer> attributeToIndex;
     private final THashMap<JAMSCalendar, Integer> timeStepToIndex;

@@ -61,8 +61,10 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -121,10 +123,10 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     //private Globe theGlobeModel = Globe.getInstance();
 
     //The main Globe Window
-    private WorldWindowGLCanvas window;
-    private Model model;
+    private final WorldWindowGLCanvas window;
+    private final Model model;
     //Statusbar
-    private StatusBar statusBar;
+    private final StatusBar statusBar;
 
     private PropertyChangeSupport pcs;
 
@@ -150,6 +152,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private JButton classifyButton;
 
     private DataTransfer3D data;
+    private List<Double> intervall;
+    private ColorRamp colorRamp;
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="constructors">
@@ -171,7 +175,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.statusBar.setEventSource(window);
     }
 
-    private void fillAttributeComboBox() {
+    private void fillAttributesComboBox() {
         String[] attributes = data.getSortedAttributes();
         if (attributes != null) {
             for (String s : attributes) {
@@ -305,7 +309,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     public void addJAMSExplorerData(DataTransfer3D d, ShapeFileDataStore s) {
         this.data = d;
         addData(s);
-        fillAttributeComboBox();
+        fillAttributesComboBox();
         writeToDisk();
     }
 
@@ -321,8 +325,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         InputMap im = c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap am = c.getActionMap();
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "F1");
-        am.put("F1", new AbstractAction() {
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "VK_M");
+        am.put("VK_M", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (topPanel.isVisible()) {
@@ -426,8 +430,13 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
                         //is data from jams-explorer availible
                         DataTransfer3D d = (DataTransfer3D) l.getValue(Events.DATATRANSFER3DDATA_APPEND);
-                        if (d == null) {
-                            return;
+                        if (d != null) {
+                            logger.info("DATATRANSFER3D found...");
+                            fillAttributesComboBox();
+                            classifyButton.setEnabled(true);
+                            attributesComboBox.setEnabled(true);
+                        } else {
+                            logger.info("DATATRANSFER3D not found...");
                         }
 
                         String[] ids = d.getSortedIds();
@@ -629,6 +638,13 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
         this.attributesComboBox = new JComboBox<>();
         this.attributesComboBox.setEnabled(false);
+        this.attributesComboBox.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                attributesComboBoxItemStateChanged(e);
+            }
+        });
 
         this.classifyButton = new JButton("CLASSIFY");
         this.classifyButton.setEnabled(false);
@@ -644,16 +660,16 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         classifierPanel.add(attributesComboBox);
         classifierPanel.add(classifyButton);
 
-        this.addComponent(topPanel, gbl, selectObjectsToggleButton, 0, 0, 1, 1, 1.0, 1.0);
-        this.addComponent(topPanel, gbl, showAttributeTableButton, 1, 0, 1, 1, 1.0, 1.0);
-        this.addComponent(topPanel, gbl, activeLayerComboBox, 0, 1, 2, 1, 1.0, 1.0);
+        this.addComponent(topPanel, gbl, selectObjectsToggleButton, 0, 0, 1, 1, 1.0, 0);
+        this.addComponent(topPanel, gbl, showAttributeTableButton, 1, 0, 1, 1, 1.0, 0);
+        this.addComponent(topPanel, gbl, activeLayerComboBox, 0, 1, 2, 1, 1.0, 0);
 
         //this.addComponent(topPanel, gbl, attributesComboBox, 0, 2, 2, 1, 1.0, 1.0);
         //this.addComponent(topPanel, gbl, classifyButton, 0, 3, 2, 1, 1.0, 1.0);
-        this.addComponent(topPanel, gbl, classifierPanel, 2, 0, 2, 2, 1.0, 1.0);
+        this.addComponent(topPanel, gbl, classifierPanel, 2, 0, 2, 2, 1.0, 0);
 
-        this.addComponent(topPanel, gbl, opacitySlider, 4, 0, 2, 2, 1.0, 1.0);
-        this.addComponent(topPanel, gbl, sliderPanel, 6, 0, 2, 2, 1.0, 1.0);
+        this.addComponent(topPanel, gbl, opacitySlider, 4, 0, 2, 2, 1.0, 0);
+        this.addComponent(topPanel, gbl, sliderPanel, 6, 0, 2, 2, 1.0, 0);
 
         //this.addComponent(topPanel, gbl, timeSeriesSlider, 1, 1, 2, 1, 1.0, 1.0);
         this.theFrame.add(topPanel, BorderLayout.NORTH);
@@ -951,14 +967,17 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     //<editor-fold defaultstate="collapsed" desc="ActionListener">
     private void classifyButtonActionPerformed(ActionEvent e) {
         String[] attributes = data.getSortedAttributes();
-
-        intervallView = new IntervallSettingsView(data, attributes);
+        if (intervallView == null) {
+            intervallView = new IntervallSettingsView(data, attributes);
+        } else {
+            intervallView.show();
+        }
     }
 
     public void writeToDisk() {
         try {
             // Serialize data object to a file
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/src/jams/worldwind/test/DataTransfer3DTestData.ser"));
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("../../JAMSworldwind/src/jams/worldwind/test/DataTransfer3DTestData.ser"));
             out.writeObject(data);
             out.close();
 
@@ -969,9 +988,23 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             out.close();
 
             // Get the bytes of the serialized object
-            byte[] buf = bos.toByteArray();
+            //byte[] buf = bos.toByteArray();
         } catch (IOException e) {
             System.out.println(e);
+        }
+    }
+
+    /**
+     *
+     * @param fileName
+     */
+    public void readFromDisk(String fileName) {
+        try {
+            FileInputStream fin = new FileInputStream(fileName);
+            ObjectInputStream ois = new ObjectInputStream(fin);
+            data = (DataTransfer3D) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            logger.error(e.toString());
         }
     }
 
@@ -992,8 +1025,15 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         this.logger.info("Recieving Event: " + evt.getPropertyName());
-        if (evt.getPropertyName().equals(Events.LAYER_CHANGED)) {
-            this.fillComboBox();
+        switch (evt.getPropertyName()) {
+            case Events.LAYER_CHANGED:
+                this.fillComboBox();
+                break;
+            case Events.INTERVALL_CALCULATED:
+                this.intervall = (List<Double>) evt.getNewValue();
+                break;
+            case Events.INTERVALL_COLORS_SET:
+                this.colorRamp = (ColorRamp) evt.getNewValue();
         }
     }
     //</editor-fold>
@@ -1032,6 +1072,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="ItemListener">
+    private void attributesComboBoxItemStateChanged(ItemEvent e) {
+
+    }
+
+//</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private class DelayZoom extends SwingWorker<Object, Object> {
 

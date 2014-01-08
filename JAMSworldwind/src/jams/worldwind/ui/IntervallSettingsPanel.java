@@ -3,6 +3,10 @@ package jams.worldwind.ui;
 import jams.data.JAMSCalendar;
 import jams.worldwind.data.DataTransfer3D;
 import jams.worldwind.data.IntervallCalculation;
+import jams.worldwind.events.Events;
+import jams.worldwind.ui.view.GlobeView;
+import jams.worldwind.ui.view.IntervallSettingsView;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
@@ -13,33 +17,37 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.Marker;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.Range;
-import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
 import org.jfree.data.xy.IntervalXYDataset;
-import org.jfree.data.xy.XYDataset;
+import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.TextAnchor;
 
 /**
  *
@@ -47,33 +55,51 @@ import org.jfree.data.xy.XYDataset;
  */
 public class IntervallSettingsPanel extends JPanel implements PropertyChangeListener {
 
+    private final IntervallSettingsView frame;
+    
     private final DataTransfer3D dataValues;
     private JSpinner numClassesSpinner;
     private JComboBox<String> classifierComboBox;
     private JFormattedTextField widthTextField;
-    private double intervallWidth = Double.NaN;
+    private double intervallWidth = 0.0;
     private JComboBox<String> attributeNameComboBox;
     private final String[] attribs;
     private SummaryStatisticsPanel summaryStatisticsPanel;
     private JList<Double> breakPoints;
-    private JCheckBox includeMaxCountingValue;
+    private List<Double> intervall;
+    //private JCheckBox includeMaxCountingValue;
+    private ColorRampPanel colorPanel;
     private JFreeChart chart;
     private ChartPanel chartPanel;
     private JButton calculateButton;
     private JButton applyButton;
+    
+    private boolean intervallCalculatedAndColorsSet;
 
-    public IntervallSettingsPanel(DataTransfer3D dataValues, String[] attribs) {
+    public IntervallSettingsPanel(IntervallSettingsView frame, DataTransfer3D dataValues, String[] attribs) {
+        this.frame = frame;
         this.dataValues = dataValues;
         this.attribs = attribs;
+        this.intervallCalculatedAndColorsSet = false;
         this.createPanelGUI();
     }
 
     private void createPanelGUI() {
+        
         GridBagLayout gbl = new GridBagLayout();
         this.setLayout(gbl);
 
         JLabel numClassesLabel = new JLabel("Number of Classes:");
         this.numClassesSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 50, 1));
+        this.numClassesSpinner.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (colorPanel != null) {
+                    colorPanel.setButtonsEnabled(false);
+                }
+            }
+        });
 
         JLabel classifierLabel = new JLabel("Classifier:");
         String[] items = {"Equal Intervall", "Defined Intervall", "Quantil"};
@@ -105,14 +131,9 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
 
         this.summaryStatisticsPanel = new SummaryStatisticsPanel();
 
-        /*
-         DefaultListModel<Double> listModel = new DefaultListModel<>();
-         listModel.addElement(1.0);
-         listModel.addElement(5.0);
-         listModel.addElement(10.0);
-         listModel.addElement(15.0);
-         listModel.addElement(20.0);
-         this.breakPoints = new JList<>(listModel);*/
+        DefaultListModel<Double> listModel = new DefaultListModel<>();
+        this.breakPoints = new JList<>(listModel);
+
         this.breakPoints = new JList<>();
         this.breakPoints.setBackground(this.getBackground());
         this.breakPoints.setCellRenderer(new DefaultListCellRenderer() {
@@ -121,21 +142,14 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
                 return RIGHT;
             }
         });
-        this.breakPoints.setBorder(new TitledBorder("Intervall breakpoints"));
+        //this.breakPoints.setBorder(new TitledBorder("Intervall breakpoints"));
+        JScrollPane breakPointsScrollPane = new JScrollPane(this.breakPoints);
+        breakPointsScrollPane.setBackground(this.getBackground());
+        breakPointsScrollPane.setBorder(new TitledBorder("INTERVAL BREAKPOINTS"));
 
-        this.includeMaxCountingValue = new JCheckBox("Include Value (n/a) with most occurrences in Histogramm");
-        this.includeMaxCountingValue.setEnabled(false);
-        this.includeMaxCountingValue.addActionListener(new ActionListener() {
+        this.colorPanel = new ColorRampPanel();
+        this.colorPanel.setBorder(new TitledBorder("SETTING COLORS FOR INTERVAL"));
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                includeMaxCountingValueActionListener(e);
-            }
-        });
-        
-        //HistogramDataset dataSet = new HistogramDataset();
-        //dataSet.addSeries("HISTOGRAM", new double[]{0.0,10.0}, 1000);
-        //chart = ChartFactory.createHistogram("Histogram", null, null, dataSet, PlotOrientation.VERTICAL, false, true, false);
         chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
 
@@ -150,20 +164,29 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
             }
         });
 
-        this.addComponent(this, gbl, numClassesLabel, 0, 0, 1, 1, 0, 0);
+        this.applyButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                applyButtonActionListener(e);
+            }
+
+        });
+
+        this.addComponent(this, gbl, numClassesLabel, 0, 0, 1, 1, 1.0, 0);
         this.addComponent(this, gbl, this.numClassesSpinner, 1, 0, 1, 1, 1.0, 0);
-        this.addComponent(this, gbl, classifierLabel, 0, 1, 1, 1, 0, 0);
+        this.addComponent(this, gbl, classifierLabel, 0, 1, 1, 1, 1.0, 0);
         this.addComponent(this, gbl, this.classifierComboBox, 1, 1, 1, 1, 1.0, 0);
         this.addComponent(this, gbl, widthLabel, 0, 2, 1, 1, 1.0, 0);
         this.addComponent(this, gbl, widthTextField, 1, 2, 1, 1, 1.0, 0);
-        this.addComponent(this, gbl, attributeLabel, 0, 3, 1, 1, 0, 0);
+        this.addComponent(this, gbl, attributeLabel, 0, 3, 1, 1, 1.0, 0);
         this.addComponent(this, gbl, this.attributeNameComboBox, 1, 3, 1, 1, 1.0, 0);
-        this.addComponent(this, gbl, this.summaryStatisticsPanel, 0, 4, 1, 1, 1.0, 0);
-        this.addComponent(this, gbl, this.breakPoints, 1, 4, 1, 1, 1.0, 0);
-        this.addComponent(this, gbl, this.includeMaxCountingValue, 0, 5, 2, 1, 1.0, 0.0);
-        this.addComponent(this, gbl, chartPanel, 0, 6, 2, 1, 1.0, 1.0);
-        this.addComponent(this, gbl, calculateButton, 0, 7, 1, 1, 1.0, 1.0);
-        this.addComponent(this, gbl, applyButton, 1, 7, 1, 1, 1.0, 1.0);
+        this.addComponent(this, gbl, this.summaryStatisticsPanel, 0, 4, 1, 2, 1.0, 0);
+        this.addComponent(this, gbl, breakPointsScrollPane, 1, 4, 1, 2, 1.0, 0);
+        this.addComponent(this, gbl, this.colorPanel, 0, 6, 2, 1, 1.0, 0.0);
+        this.addComponent(this, gbl, chartPanel, 0, 8, 2, 2, 1.0, 1.0);
+        this.addComponent(this, gbl, calculateButton, 0, 10, 1, 1, 1.0, 0);
+        this.addComponent(this, gbl, applyButton, 1, 10, 1, 1, 1.0, 0);
 
     }
 
@@ -178,24 +201,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
     private IntervalXYDataset createHistogramDataSet(List<Double> list) {
         HistogramDataset dataSet = new HistogramDataset();
         dataSet.setType(HistogramType.FREQUENCY);
-        System.out.println("MIN:"+this.summaryStatisticsPanel.getMin());
-        System.out.println("MAX:"+ this.summaryStatisticsPanel.getMax());
-        
-        double cubeRootofSize = Math.pow(list.size(),1.0/3.0);
-        System.out.println("3-Root:" + cubeRootofSize);
-        double inverse = 1.0/cubeRootofSize;
-        System.out.println("Inverse:" + inverse);
-        DescriptiveStatistics s = this.summaryStatisticsPanel.getStatistics();
-        double val = inverse*s.getStandardDeviation()*3.49;
-        System.out.println("Value: "+val);
-        
-        int binwidth = Math.round(((float)s.getMax()-(float)s.getMin())/(float)val);
-        System.out.println("binwidth: "+binwidth);
-        
-        
-        
-        
-        dataSet.addSeries("HISTOGRAM", convertToDoublePrimitiv(list), list.size(), this.summaryStatisticsPanel.getMin(), this.summaryStatisticsPanel.getMax());
+        dataSet.addSeries("HISTOGRAM", convertToDoublePrimitiv(list), list.size() * 10);
         return dataSet;
 
     }
@@ -219,27 +225,15 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
     }
 
     private void printHistogramm(List<Double> values) {
-
         chart = ChartFactory.createHistogram("Histogram", null, null, createHistogramDataSet(values), PlotOrientation.VERTICAL, false, true, false);
         chartPanel.setChart(chart);
-
-        //System.out.println("DATA RANGE: " + chart.getXYPlot().getDataRange(null).toString());
-        //System.out.println("DATA RANGE: " + chart.getXYPlot().getDomain(null).toString());
-
         XYPlot xyPlot = chart.getXYPlot();
-
-        NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
-        range.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-        //chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
-        //Marker
-        /*final Marker currentEnd = new ValueMarker(5.5);
-         currentEnd.setPaint(Color.black);
-         currentEnd.setLabel("Test Marker");
-         currentEnd.setLabelAnchor(RectangleAnchor.TOP_RIGHT);
-         currentEnd.setLabelTextAnchor(TextAnchor.TOP_LEFT);
-         xyPlot.addDomainMarker(currentEnd);
-         */
+        NumberAxis rangeAxis = (NumberAxis) xyPlot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        ValueAxis domainAxis = xyPlot.getDomainAxis();
+        DescriptiveStatistics stat = this.summaryStatisticsPanel.getStatistics();
+        double range = (stat.getMax() - stat.getMin()) / 10;
+        domainAxis.setRange(stat.getMin() - range, stat.getMax() + range);
     }
 
     //<editor-fold defaultstate="collapsed" desc="ActionListener">
@@ -254,38 +248,19 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
 
         ArrayList<Double> values = new ArrayList<>(dates.length * ids.length);
 
-        int numZeros = 0;
         for (String id : ids) {
             for (JAMSCalendar d : dates) {
                 double value = this.dataValues.getValue(id, attribute, d);
-                    values.add(value);
-                //System.out.println(this.dataValues.getValue(id, attribute, d));
+                values.add(value);
             }
         }
-        //System.out.println("Zeros in DataSet: " + numZeros);
 
         this.summaryStatisticsPanel.calculateStatistics(values);
-        
         this.printHistogramm(values);
 
         IntervallCalculation iCalculation = new IntervallCalculation(values);
+        this.intervall = new ArrayList<>(numberOfClasses);
 
-        ArrayList<Double> sortedValues = new ArrayList<>(iCalculation.getValues());
-        Collections.sort(sortedValues);
-        
-        int index=0;
-        for(int i=0;i<sortedValues.size();i++) {
-            if(sortedValues.get(i)>0.0) {
-                index=i;
-                break;
-            }
-        }
-        
-        ArrayList<Double> sortedValuesNonZero = new ArrayList<>(sortedValues.subList(index, sortedValues.size()-1));
-        //this.printHistogramm(sortedValuesNonZero);
-        
-
-        List<Double> intervall = new ArrayList<>(numberOfClasses);
         switch (intervallSelection) {
             case "Equal Intervall":
                 intervall = iCalculation.getEqualIntervall(numberOfClasses);
@@ -301,13 +276,44 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
                 iCalculation.printHistogramm(intervall);
                 break;
             default:
+
                 break;
         }
+        
+        if (intervall.size() > 0) {
+            this.fillBreakpointList();
+            this.setHistogramMarkers();
+            colorPanel.setNumberOfColors((Integer) this.numClassesSpinner.getValue());
+            
+        }
+    }
 
-        System.out.println("Intervall:" + intervall);
-        this.includeMaxCountingValue.setEnabled(true);
+    private void applyButtonActionListener(ActionEvent e) {
+        GlobeView.getInstance().getPCS().firePropertyChange(Events.INTERVALL_CALCULATED, null, intervall);
+        GlobeView.getInstance().getPCS().firePropertyChange(Events.INTERVALL_COLORS_SET, null, colorPanel.getColorRamp());
+        this.frame.hide();
+    }
 
+    public void fillBreakpointList() {
+        DefaultListModel listModel = new DefaultListModel();
+        for (int i = 0; i < this.intervall.size(); i++) {
+            listModel.addElement(this.intervall.get(i));
+        }
+        this.breakPoints.setModel(listModel);
+    }
 
+    private void setHistogramMarkers() {
+        //Marker
+        XYPlot xyPlot = chart.getXYPlot();
+        Marker marker;
+        for (int i = 1; i < this.intervall.size() - 1; i++) {
+            marker = new ValueMarker(this.intervall.get(i));
+            marker.setPaint(Color.black);
+            marker.setLabel("I" + i);
+            marker.setLabelAnchor(RectangleAnchor.TOP_RIGHT);
+            marker.setLabelTextAnchor(TextAnchor.TOP_LEFT);
+            xyPlot.addDomainMarker(marker);
+        }
     }
 
     private void classifierComboBoxActionListener(ActionEvent e) {
@@ -318,27 +324,8 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
             this.widthTextField.setBackground(this.getBackground());
         }
     }
-    
-    private void includeMaxCountingValueActionListener(ActionEvent e) {
-        if(chart!=null) {
-            XYDataset dataset = chart.getXYPlot().getDataset();
-            Range range = DatasetUtilities.findRangeBounds(dataset);
-            double v = 0.0,k =0.0;
-            for(int i=0;i<dataset.getItemCount(0);i++) {
-                v = dataset.getYValue(0, i);
-                k = dataset.getXValue(0, i);
-                //System.out.println(k + "|" + v);
-                if(v==range.getUpperBound()) {
-                    break;
-                }
-            }
-            //System.out.println("MIN:" + range.getLowerBound() + " MAX:" + range.getUpperBound());
-            this.includeMaxCountingValue.setText("Include Value ("+k+"|"+v+") with most occurrences in Histogram");
-        }
-    }
-    
-    //</editor-fold>
 
+    //</editor-fold>
     /**
      * Called when a field's "value" property changes.
      *
@@ -354,6 +341,6 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
                 System.out.println(ex);
             }
         }
-    }
 
+    }
 }

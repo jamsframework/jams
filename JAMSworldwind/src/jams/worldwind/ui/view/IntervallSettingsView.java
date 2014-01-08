@@ -3,10 +3,11 @@ package jams.worldwind.ui.view;
 import jams.worldwind.data.DataTransfer3D;
 import jams.worldwind.data.RandomNumbers;
 import jams.worldwind.ui.IntervallSettingsPanel;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.List;
-import java.util.Queue;
 import javax.swing.JFrame;
 
 /**
@@ -35,13 +36,16 @@ public class IntervallSettingsView {
 
     private void createGUI() {
         this.intervallSettingsFrame = new JFrame("INTERVALL/CLASSIFIER FRAME");
-        this.intervallSettingsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.intervallSettingsPanel = new IntervallSettingsPanel(dataValues, this.attributes);
+        this.intervallSettingsPanel = new IntervallSettingsPanel(this, dataValues, this.attributes);
 
         this.intervallSettingsFrame.add(this.intervallSettingsPanel);
         this.intervallSettingsFrame.pack();
-        //this.intervallSettingsFrame.setBounds(new Dimension(400, 800));
-        //this.intervallSettingsFrame.setMaximizedBounds(new Rectangle(400, 800));
+        this.intervallSettingsFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                intervallSettingsFrame.setEnabled(true);
+            }
+        });
         this.intervallSettingsFrame.setVisible(true);
     }
 
@@ -50,11 +54,20 @@ public class IntervallSettingsView {
         this.intervallSettingsFrame.dispose();
     }
 
+    public void show() {
+        intervallSettingsFrame.setVisible(true);
+        intervallSettingsFrame.toFront();
+    }
+    
+    public void hide() {
+        intervallSettingsFrame.setVisible(false);
+    }
+
     public static void main(String[] args) {
         RandomNumbers rn = new RandomNumbers(0, 100, 1000);
         DataTransfer3D d = readTestObjectFromDisk();
         //new IntervallSettingsView(new String[]{"precip", "tmean"}, rn.getDoubleValues());
-        if(d!=null) {
+        if (d != null) {
             new IntervallSettingsView(d, d.getSortedAttributes());
         }
     }

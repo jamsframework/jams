@@ -49,6 +49,7 @@ public class Starter {
             @Override
             public void run() {
                 GlobeView view = GlobeView.getInstance();
+                view.readFromDisk("../../JAMSworldwind/src/jams/worldwind/test/DataTransfer3DTestData.ser");
                 view.show();
             }
         });

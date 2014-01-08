@@ -7,7 +7,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 
 /**
  *
@@ -15,28 +14,24 @@ import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatisti
  */
 public class SummaryStatisticsPanel extends JPanel {
 
-    private DescriptiveStatistics stats;
+    private DescriptiveStatistics statistics;
     private JLabel[] statisticLabels;
-    private double min;
-    private double max;
 
     public SummaryStatisticsPanel() {
-        stats = new DescriptiveStatistics();
+        statistics = new DescriptiveStatistics();
         this.createGUI();
     }
 
     private void createGUI() {
+        this.setLayout(new GridLayout(0,2,1,1));
         this.setBorder(new TitledBorder("CLASSIFICATION STATISTICS"));
-        this.setLayout(new GridLayout(8, 2));
-
         this.statisticLabels = new JLabel[16];
         for (int i = 0; i < this.statisticLabels.length; i++) {
             this.statisticLabels[i] = new JLabel();
-            if(i % 2 == 1) {
+            if (i % 2 == 1) {
                 this.statisticLabels[i].setHorizontalAlignment(JLabel.RIGHT);
             }
         }
-
         this.statisticLabels[0].setText("COUNT:");
         this.statisticLabels[2].setText("MINIMUM:");
         this.statisticLabels[4].setText("MAXIMUM:");
@@ -45,52 +40,41 @@ public class SummaryStatisticsPanel extends JPanel {
         this.statisticLabels[10].setText("MEDIAN:");
         this.statisticLabels[12].setText("STD. DEVIATION:");
         this.statisticLabels[14].setText("VARIANCE:");
-
         for (JLabel statisticLabel : this.statisticLabels) {
             this.add(statisticLabel);
         }
-
     }
 
     private void calculateStatistics(double[] values) {
+        statistics.clear();
         for (int i = 0; i < values.length; i++) {
-            stats.addValue(values[i]);
+            statistics.addValue(values[i]);
         }
-        this.printStatistics();
+        this.updateLabels();
     }
 
     public void calculateStatistics(List values) {
+        statistics.clear();
         for (int i = 0; i < values.size(); i++) {
-            stats.addValue((double) values.get(i));
+            statistics.addValue((double) values.get(i));
         }
-        this.printStatistics();
+        this.updateLabels();
     }
 
-    private void printStatistics() {
+    private void updateLabels() {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(3);
-        this.statisticLabels[1].setText(nf.format(stats.getN()));
-        this.statisticLabels[3].setText(nf.format(stats.getMin()));
-        min = stats.getMin();
-        this.statisticLabels[5].setText(nf.format(stats.getMax()));
-        max = stats.getMax();
-        this.statisticLabels[7].setText(nf.format(stats.getSum()));
-        this.statisticLabels[9].setText(nf.format(stats.getMean()));
-        this.statisticLabels[11].setText(nf.format(stats.getPercentile(50)));
-        this.statisticLabels[13].setText(nf.format(stats.getStandardDeviation()));
-        this.statisticLabels[15].setText(nf.format(stats.getVariance()));
-        //stats.clear();
+        this.statisticLabels[1].setText(nf.format(statistics.getN()));
+        this.statisticLabels[3].setText(nf.format(statistics.getMin()));
+        this.statisticLabels[5].setText(nf.format(statistics.getMax()));
+        this.statisticLabels[7].setText(nf.format(statistics.getSum()));
+        this.statisticLabels[9].setText(nf.format(statistics.getMean()));
+        this.statisticLabels[11].setText(nf.format(statistics.getPercentile(50)));
+        this.statisticLabels[13].setText(nf.format(statistics.getStandardDeviation()));
+        this.statisticLabels[15].setText(nf.format(statistics.getVariance()));
     }
-    
-    public double getMin() {
-        return min;
-    }
-    
-    public double getMax() {
-        return max;
-    }
-    
+
     public DescriptiveStatistics getStatistics() {
-        return this.stats;
+        return this.statistics;
     }
 }

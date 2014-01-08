@@ -3,7 +3,10 @@ package jams.worldwind.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,22 +19,19 @@ public class IntervallCalculation {
     private static final Logger logger = LoggerFactory.getLogger(IntervallCalculation.class);
 
     private final ArrayList<Double> values;
-    private double minimumValue;
-    private double maximumValue;
+    private final DescriptiveStatistics statistics;
 
     public IntervallCalculation(List dvalues) {
         this.values = new ArrayList<>(dvalues);
-        this.minimumValue = Double.POSITIVE_INFINITY;
-        this.maximumValue = Double.NEGATIVE_INFINITY;
-        this.calculateMinimumAndMaximum();
+        this.statistics = new DescriptiveStatistics();
+        this.calculateStatistics();
     }
-    /*
-     private void fill(List<?> values) {
-     for (int i = 0; i < values.size(); i++) {
-     this.values.add(values[i]);
-     }
-     }   
-     */
+
+    private void calculateStatistics() {
+        for(int i=0; i<this.values.size();i++) {
+            this.statistics.addValue(this.values.get(i));
+        }
+    }
 
     public double getValue(int index) {
         if (index >= 0 && index < this.values.size()) {
@@ -46,58 +46,31 @@ public class IntervallCalculation {
     }
 
     public double getMinimumValue() {
-        return this.minimumValue;
+        return this.statistics.getMin();
     }
 
     public double getMaximumValue() {
-        return this.maximumValue;
-    }
-
-    private void calculateMinimumAndMaximum() {
-        for (int i = 0; i < this.values.size(); i++) {
-            if (values.get(i) < this.minimumValue) {
-                this.minimumValue = values.get(i);
-            } else if (values.get(i) > this.maximumValue) {
-                this.maximumValue = values.get(i);
-            }
-        }
+        return this.statistics.getMax();
     }
 
     public double getRange() {
-        return this.getMaximumValue() - this.getMinimumValue();
+        return this.getMaximumValue()-this.getMinimumValue();
     }
 
     public double getMean() {
-        double sum = 0;
-        for (int i = 0; i < this.values.size(); i++) {
-            sum += this.values.get(i);
-        }
-        return sum / this.values.size();
+        return this.statistics.getMean();
     }
 
     public double getMedian() {
-        ArrayList<Double> tmp = new ArrayList(this.values);
-        Collections.sort(tmp);
-        //collection size is even than median is mean of lower and upper median
-        if (tmp.size() % 2 == 0) {
-            return 0.5 * (tmp.get(tmp.size() / 2) + tmp.get(tmp.size() / 2 - 1));
-        } else {
-            return tmp.get(tmp.size() / 2);
-        }
+        return this.statistics.getPercentile(50);
     }
 
     public double getVariance() {
-        double mean = this.getMean();
-        int n = this.values.size();
-        double sum = 0;
-        for (int i = 0; i < n; i++) {
-            sum += Math.pow((this.values.get(i) - mean), 2);
-        }
-        return sum / (n - 1);
+        return this.statistics.getVariance();
     }
 
     public double getStandardDeviation() {
-        return Math.sqrt(this.getVariance());
+        return this.statistics.getStandardDeviation();
     }
 
     private List<Double> standardMinimumMaximumIntervall() {
@@ -155,14 +128,42 @@ public class IntervallCalculation {
         if (numberOfClasses > 0) {
             List<Double> breakPoints = new ArrayList<>(numberOfClasses + 1);
             int numberPerClass = (int) Math.round(this.values.size() / numberOfClasses);
-            //System.out.println("Classes: " + numberPerClass);
-            ArrayList<Double> tmp = new ArrayList(this.values);
-            Collections.sort(tmp);
-            
+
+            TreeMap<Double, Integer> countOccurences = new TreeMap<>();
             breakPoints.add(this.getMinimumValue());
-            for (int i = 1; i < numberOfClasses; i++) {
-                Double value = tmp.get(i * numberPerClass - 1);
-                breakPoints.add(Math.nextUp(value));
+            for (int i = 0; i < this.values.size(); i++) {
+                if (!countOccurences.containsKey(this.values.get(i))) {
+                    countOccurences.put(this.values.get(i), 1);
+                } else {
+                    Integer count = countOccurences.get(this.values.get(i));
+                    count++;
+                    countOccurences.put(this.values.get(i), count);
+                }
+            }
+            boolean last = false;
+            int remainingObjectsCount = this.values.size();
+            int sum = 0;
+            int newNumberOfClasses = numberOfClasses;
+            Entry<Double, Integer> ent = countOccurences.pollFirstEntry();
+            while (ent != null) {
+                int count = ent.getValue();
+                sum += count;
+                remainingObjectsCount-=count;
+                if (sum >= numberPerClass) {
+                    double d = Math.nextUp(ent.getKey());
+                    if (d < this.getMaximumValue()) {
+                        breakPoints.add(d);
+                    }
+                    System.out.println("Remain: " + remainingObjectsCount);
+                    newNumberOfClasses--;
+                    System.out.println("Left Classes: " + newNumberOfClasses);
+                    if(newNumberOfClasses>0) {
+                    numberPerClass = remainingObjectsCount / newNumberOfClasses;
+                    System.out.println("PER CLASS: " + numberPerClass);
+                    }
+                    sum = 0;
+                }
+                ent = countOccurences.pollFirstEntry();
             }
             breakPoints.add(this.getMaximumValue());
             return breakPoints;

@@ -89,9 +89,9 @@ public class IntervallTest {
         ColorRamp c = new ColorRamp(new Color(255,0,0), new Color(255,255,0), 5);
         JFrame f = new JFrame("COLORRAMP TEST");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ColorRampPanel cp = new ColorRampPanel(c);
+        //ColorRampPanel cp = new ColorRampPanel(c);
         f.setLayout(new BorderLayout());
-        f.add(cp,BorderLayout.CENTER);
+        //f.add(cp,BorderLayout.CENTER);
         f.setSize(800,50);
         //f.pack();
         f.setVisible(true);
