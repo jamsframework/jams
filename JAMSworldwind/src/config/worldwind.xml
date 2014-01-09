@@ -13,7 +13,7 @@
 <WorldWindConfiguration version="1">
     <!--The initial layer list can be embedded here or linked as below. To change the set of initial layers,-->
     <!--modify the file identified by the href or replace the link with your own-->
-    <LayerList href="config/jams.worldwind.layers.xml"/>
+    <LayerList href="config/worldwind.layers.xml"/>
     <!--Most configuration information is defined in attribute-value pairs-->
     <Property name="gov.nasa.worldwind.avkey.ModelClassName" value="gov.nasa.worldwind.BasicModel"/>
     <Property name="gov.nasa.worldwind.avkey.GlobeClassName"
@@ -58,7 +58,7 @@
               value="gov.nasa.worldwind.cache.BasicDataFileStore"/>
     <Property name="gov.nasa.worldwind.avkey.DataRasterReaderFactoryClassName"
               value="gov.nasa.worldwind.data.BasicDataRasterReaderFactory"/>
-    <Property name="gov.nasa.worldwind.avkey.DataFileStoreConfigurationFileName" value="config/jams.DataFileStore.xml"/>
+    <Property name="gov.nasa.worldwind.avkey.DataFileStoreConfigurationFileName" value="config/DataFileStore.xml"/>
     <Property name="gov.nasa.worldwind.avkey.WorldMapImagePath" value="images/earth-map-512x256.dds"/>
     <Property name="gov.nasa.worldwind.StarsLayer.StarsFileName" value="config/Hipparcos_Stars_Mag6x5044.dat"/>
     <!--The following are tuning parameters for various World Wind internals-->
