@@ -39,6 +39,7 @@ import jams.worldwind.data.RandomNumbers;
 import jams.worldwind.shapefile.JamsShapeAttributes;
 import jams.worldwind.ui.ColorRamp;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -320,7 +321,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     public void addJAMSExplorerData(DataTransfer3D d) {
         this.data = d;
         addData(d.getShapeFileDataStore());
-        fillAttributesComboBox();
+        //fillAttributesComboBox();
         writeToDisk();
     }
 
@@ -586,7 +587,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 openShapefileActionlistener(e);
             }
         });
-        
+
         JMenuItem saveScreenshot = new JMenuItem("Save Screenshot...");
         saveScreenshot.addActionListener(new ScreenShotAction(getWorldWindow()));
         stroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
@@ -818,7 +819,6 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
     //</editor-fold>
-    
     //<editor-fold defaultstate="collapsed" desc="ActionListener">
     private void classifyButtonActionPerformed(ActionEvent e) {
         String[] attributes = data.getSortedAttributes();
@@ -970,15 +970,17 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     //<editor-fold defaultstate="collapsed" desc="ItemListener">
     private void attributesComboBoxItemStateChanged(ItemEvent e) {
-        if (intervallView != null) {
-            if (this.intervallCollection[this.attributesComboBox.getSelectedIndex()] == null
-                    || this.colorRampCollection[this.attributesComboBox.getSelectedIndex()] == null) {
-                /*                JOptionPane.showMessageDialog(null,
-                 "Please calculate intervall and colorramp for attribute (" + this.attributesComboBox.getItemAt(this.attributesComboBox.getSelectedIndex()) + ")",
-                 "NO INTERVALL DATA",
-                 JOptionPane.OK_OPTION);
-                 */
-                this.timeSeriesSlider.setEnabled(false);
+        if (attributesComboBox.getSelectedIndex() != -1) {
+            if (intervallView != null) {
+                if (this.intervallCollection[this.attributesComboBox.getSelectedIndex()] == null
+                        || this.colorRampCollection[this.attributesComboBox.getSelectedIndex()] == null) {
+                    /*                JOptionPane.showMessageDialog(null,
+                     "Please calculate intervall and colorramp for attribute (" + this.attributesComboBox.getItemAt(this.attributesComboBox.getSelectedIndex()) + ")",
+                     "NO INTERVALL DATA",
+                     JOptionPane.OK_OPTION);
+                     */
+                    this.timeSeriesSlider.setEnabled(false);
+                }
             }
         }
     }
@@ -1046,7 +1048,6 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
 //</editor-fold>
-    
     //<editor-fold defaultstate="collapsed" desc="ChangeListener">
     private void opacitySliderStateChanged(ChangeEvent e) {
         double value = (double) ((JSlider) e.getSource()).getValue() / 100.0;
@@ -1101,26 +1102,27 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                     record = sattr.getShapeFileRecord().getAttributes();
 
                     double dataValue = d.getValue(record.getValue(column).toString(), attributesComboBox.getSelectedItem().toString(), dates[value]);
-                    int index = 0;
-                    for (int j = 0; j < intervall.size() - 1; j++) {
-                        if (dataValue >= intervall.get(j) && dataValue < intervall.get(j + 1)) {
-                            index = j;
-                            break;
+                    if (dataValue != Double.NEGATIVE_INFINITY) {
+                        int index = 0;
+                        for (int j = 0; j < intervall.size() - 1; j++) {
+                            if (dataValue >= intervall.get(j) && dataValue < intervall.get(j + 1)) {
+                                index = j;
+                                break;
+                            }
+                            if (dataValue == intervall.get(intervall.size() - 1)) {
+                                index = intervall.size() - 1;
+                                break;
+                            }
                         }
-                        if (dataValue == intervall.get(intervall.size() - 1)) {
-                            index = intervall.size() - 1;
-                            break;
-                        }
+                        sattr.setInteriorMaterial(new Material(colorRamp.getColor(index)));
                     }
-                    sattr.setInteriorMaterial(new Material(colorRamp.getColor(index)));
                 }
             }
             getWorldWindow().redraw();
         }
     }
 
-//</editor-fold>
-    
+    //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private class DelayZoom extends SwingWorker<Object, Object> {
 
@@ -1151,5 +1153,4 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         }
     }
     //</editor-fold>
-
 }

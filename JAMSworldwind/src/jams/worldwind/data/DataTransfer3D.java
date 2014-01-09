@@ -60,7 +60,7 @@ public class DataTransfer3D implements Serializable {
         }
 
     }
-    
+
     public ShapeFileDataStore getShapeFileDataStore() {
         return this.shapefileDataStore;
     }
@@ -68,18 +68,23 @@ public class DataTransfer3D implements Serializable {
     public void setShapeFileDataStore(ShapeFileDataStore dataStore) {
         this.shapefileDataStore = dataStore;
     }
-    
+
     public String getKeyColumn() {
         return this.shapefileDataStore.getKeyColumn();
     }
 
     public double getValue(String id, String attrib, JAMSCalendar date) {
-        Integer i = this.hruIdToIndex.get(id);
-        Integer j = this.attributeToIndex.get(attrib);
-        Integer k = this.timeStepToIndex.get(date);
-        return this.data[i][j][k];
+        if (this.hruIdToIndex.containsKey(id) && this.attributeToIndex.containsKey(attrib) && this.timeStepToIndex.containsKey(date)) {
+            Integer i = this.hruIdToIndex.get(id);
+            Integer j = this.attributeToIndex.get(attrib);
+            Integer k = this.timeStepToIndex.get(date);
+            return this.data[i][j][k];
+        } else {
+            return Double.NEGATIVE_INFINITY;
+        }
     }
 
+    //public boolean 
     public String[] getSortedIds() {
         Set<String> keys = this.hruIdToIndex.keySet();
         int size = keys.size();
