@@ -818,6 +818,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
     //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="ActionListener">
     private void classifyButtonActionPerformed(ActionEvent e) {
         String[] attributes = data.getSortedAttributes();
@@ -1003,6 +1004,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                     attributesComboBox.setEnabled(true);
                 } else {
                     logger.info("DATATRANSFER3D not found...");
+                    return;
                 }
 
                 String[] ids = d.getSortedIds();
@@ -1044,6 +1046,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
 //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="ChangeListener">
     private void opacitySliderStateChanged(ChangeEvent e) {
         double value = (double) ((JSlider) e.getSource()).getValue() / 100.0;
@@ -1117,6 +1120,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
 //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private class DelayZoom extends SwingWorker<Object, Object> {
 
