@@ -1,7 +1,5 @@
 package jams.worldwind.ui;
 
-import jams.worldwind.events.Events;
-import jams.worldwind.ui.view.GlobeView;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -87,6 +85,12 @@ public class ColorRampPanel extends JPanel {
         this.addComponent(this, gbl, colorPanel, 0, 1, 2, 1, 1.0, 0);
     }
 
+    public void setColorRamp(ColorRamp colorRamp) {
+        this.colorRamp = colorRamp;
+        this.numberOfColors = colorRamp.getSteps()-1;
+        this.colorPanel.repaint();
+    }
+    
     public void setNumberOfColors(int numberOfColors) {
         this.numberOfColors = numberOfColors;
         this.setButtonsEnabled(true);

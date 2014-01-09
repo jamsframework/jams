@@ -13,6 +13,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -67,7 +69,6 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
     private SummaryStatisticsPanel summaryStatisticsPanel;
     private JList<Double> breakPoints;
     private List<Double> intervall;
-    //private JCheckBox includeMaxCountingValue;
     private ColorRampPanel colorPanel;
     private JFreeChart chart;
     private ChartPanel chartPanel;
@@ -128,6 +129,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
 
         JLabel attributeLabel = new JLabel("Attribute:");
         this.attributeNameComboBox = new JComboBox<>(this.attribs);
+        this.attributeNameComboBox.setSelectedIndex(0);
 
         this.summaryStatisticsPanel = new SummaryStatisticsPanel();
 
@@ -189,13 +191,45 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         this.addComponent(this, gbl, applyButton, 1, 10, 1, 1, 1.0, 0);
 
     }
-
+    
     private double[] convertToDoublePrimitiv(List<Double> list) {
         double[] values = new double[list.size()];
         for (int i = 0; i < values.length; i++) {
             values[i] = (double) list.get(i);
         }
         return values;
+    }
+    
+    public void setIntervallAndColorRamp(List<Double> intervall, ColorRamp colorRamp) {
+        this.intervall = intervall;
+        this.colorPanel.setColorRamp(colorRamp);
+        //recalculate statistics
+        
+        String attribute = (String) this.attributeNameComboBox.getSelectedItem();
+        //int numberOfClasses = (Integer) this.numClassesSpinner.getValue();
+        String intervallSelection = (String) this.classifierComboBox.getSelectedItem();
+
+        JAMSCalendar[] dates = this.dataValues.getSortedTimeSteps();
+        String[] ids = this.dataValues.getSortedIds();
+
+        ArrayList<Double> values = new ArrayList<>(dates.length * ids.length);
+
+        for (String id : ids) {
+            for (JAMSCalendar d : dates) {
+                double value = this.dataValues.getValue(id, attribute, d);
+                values.add(value);
+            }
+        }
+        
+        this.numClassesSpinner.setValue(new Integer(intervall.size()-1));
+        
+        this.summaryStatisticsPanel.calculateStatistics(values);
+        this.printHistogramm(values);
+        
+        this.fillBreakpointList();
+        this.setHistogramMarkers();
+        colorPanel.setNumberOfColors((Integer) this.numClassesSpinner.getValue());
+        
     }
 
     private IntervalXYDataset createHistogramDataSet(List<Double> list) {
@@ -259,21 +293,22 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         this.printHistogramm(values);
 
         IntervallCalculation iCalculation = new IntervallCalculation(values);
+        
         this.intervall = new ArrayList<>(numberOfClasses);
 
         switch (intervallSelection) {
             case "Equal Intervall":
                 intervall = iCalculation.getEqualIntervall(numberOfClasses);
-                iCalculation.printHistogramm(intervall);
+                //iCalculation.printHistogramm(intervall);
                 break;
             case "Defined Intervall":
                 System.out.println(this.intervallWidth);
                 intervall = iCalculation.getDefinedIntervall(this.intervallWidth);
-                iCalculation.printHistogramm(intervall);
+                //iCalculation.printHistogramm(intervall);
                 break;
             case "Quantil":
                 intervall = iCalculation.getQuantilIntervall(numberOfClasses);
-                iCalculation.printHistogramm(intervall);
+                //iCalculation.printHistogramm(intervall);
                 break;
             default:
 
@@ -286,6 +321,10 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
             colorPanel.setNumberOfColors((Integer) this.numClassesSpinner.getValue());
             
         }
+    }
+    
+    public int getSelectedAttributeIndex() {
+        return (Integer)this.attributeNameComboBox.getSelectedIndex();
     }
 
     private void applyButtonActionListener(ActionEvent e) {

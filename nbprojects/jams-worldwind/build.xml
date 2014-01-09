@@ -84,6 +84,10 @@
         <copy todir="${dist.dir}/config/">
             <fileset dir="../../JAMSworldwind/src/config/"/>
         </copy>
+        <echo>Copying start scripts</echo>
+        <copy todir="${dist.dir}/">
+            <fileset dir="../../JAMSworldwind/scripts/"/>
+        </copy>
         <!--<echo>Copying logback.xml file and KnowIssues.txt to distribution dir</echo>-->
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->

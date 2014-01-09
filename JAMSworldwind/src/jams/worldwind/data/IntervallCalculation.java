@@ -154,12 +154,12 @@ public class IntervallCalculation {
                     if (d < this.getMaximumValue()) {
                         breakPoints.add(d);
                     }
-                    System.out.println("Remain: " + remainingObjectsCount);
+                    //System.out.println("Remain: " + remainingObjectsCount);
                     newNumberOfClasses--;
-                    System.out.println("Left Classes: " + newNumberOfClasses);
+                    //System.out.println("Left Classes: " + newNumberOfClasses);
                     if(newNumberOfClasses>0) {
                     numberPerClass = remainingObjectsCount / newNumberOfClasses;
-                    System.out.println("PER CLASS: " + numberPerClass);
+                    //System.out.println("PER CLASS: " + numberPerClass);
                     }
                     sum = 0;
                 }

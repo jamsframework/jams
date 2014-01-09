@@ -11,6 +11,7 @@ import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.event.MessageListener;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
+import gov.nasa.worldwind.formats.shapefile.DBaseRecord;
 import gov.nasa.worldwind.formats.shapefile.Shapefile;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Position;
@@ -20,23 +21,24 @@ import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.LayerList;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.AbstractSurfaceShape;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.render.SurfacePolygons;
 import gov.nasa.worldwind.util.StatusBar;
 import gov.nasa.worldwindx.examples.util.HighlightController;
 import gov.nasa.worldwindx.examples.util.ScreenSelector;
+import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 import jams.data.JAMSCalendar;
 import jams.workspace.stores.ShapeFileDataStore;
 import jams.worldwind.data.DataTransfer3D;
 import jams.worldwind.handler.SelectionHighlightController;
 import jams.worldwind.events.Events;
 import jams.worldwind.shapefile.JamsShapefileLoader;
-import jams.worldwind.data.IntervallCalculation;
 import jams.worldwind.data.RandomNumbers;
+import jams.worldwind.shapefile.JamsShapeAttributes;
 import jams.worldwind.ui.ColorRamp;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -67,7 +69,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -152,8 +153,17 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private JButton classifyButton;
 
     private DataTransfer3D data;
+
+    //temporary fields -- getting data from other frames
     private List<Double> intervall;
     private ColorRamp colorRamp;
+
+    //saves the calculated intervalls for attrib i
+    private List[] intervallCollection;
+    //saves the calculated ColorRamp for attrib i
+    private ColorRamp[] colorRampCollection;
+
+    private int lastClassifiedIndex = -1;
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="constructors">
@@ -176,14 +186,15 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
     private void fillAttributesComboBox() {
+        this.attributesComboBox.removeAllItems();
         String[] attributes = data.getSortedAttributes();
         if (attributes != null) {
             for (String s : attributes) {
                 this.attributesComboBox.addItem(s);
             }
             this.attributesComboBox.setSelectedIndex(0);
-            this.attributesComboBox.setEnabled(true);
-            this.classifyButton.setEnabled(true);
+            //this.attributesComboBox.setEnabled(true);
+            //this.classifyButton.setEnabled(true);
         }
     }
 
@@ -306,9 +317,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
     //</editor-fold>
 
-    public void addJAMSExplorerData(DataTransfer3D d, ShapeFileDataStore s) {
+    public void addJAMSExplorerData(DataTransfer3D d) {
         this.data = d;
-        addData(s);
+        addData(d.getShapeFileDataStore());
         fillAttributesComboBox();
         writeToDisk();
     }
@@ -375,8 +386,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 //SimpleFeatureLayer sfl = getModel().getLayers().get(theGlobeModel.getModel().getLayers().size()-1);
                 List<?> screenselectorList = theScreenSelector.getSelectedObjects();
                 String layerName = (String) activeLayerComboBox.getSelectedItem();
-                System.out.println("LAYERNAME: " + layerName);
-                System.out.println("SELECTED OBJECTS COUNT: " + screenselectorList.size());
+                //System.out.println("LAYERNAME: " + layerName);
+                //System.out.println("SELECTED OBJECTS COUNT: " + screenselectorList.size());
                 theScreenSelector.disable();
                 selectObjectsToggleButton.setEnabled(false);
                 if (!screenselectorList.isEmpty()) {
@@ -407,89 +418,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         activeLayerComboBox.setSelectedIndex(-1);
         activeLayerComboBox.setName("ACTIVE_LAYER_COMBOBOX");
         activeLayerComboBox.setBorder(new TitledBorder("ACTIVE LAYER"));
-        //comboBox.setEnabled(false);
+        //activeLayerComboBox.setEnabled(false);
         //comboBox.setMaximumSize(new Dimension(150, 30));
         activeLayerComboBox.addItemListener(new ItemListener() {
-
             @Override
             public void itemStateChanged(ItemEvent e) {
-                int index = ((JComboBox) e.getSource()).getSelectedIndex();
-
-                if (e.getStateChange() == ItemEvent.SELECTED && index >= 0) {
-                    JComboBox cb = (JComboBox) e.getSource();
-                    //theLayerView.setActiveLayerIndex(index);
-
-                    Layer l = getModel().getLayers().getLayerByName(cb.getSelectedItem().toString());
-                    new DelayZoom((double[]) l.getValue(Events.BOUNDINGBOXOFSHAPEFILE), 2000).execute();
-
-                    //System.out.println("OPACITY: " + l.getOpacity() * 100);
-                    //create test time data
-                    if (l.getClass().equals(RenderableLayer.class)) {
-                        showAttributeTableButton.setEnabled(true);
-                        //Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
-
-                        //is data from jams-explorer availible
-                        DataTransfer3D d = (DataTransfer3D) l.getValue(Events.DATATRANSFER3DDATA_APPEND);
-                        if (d != null) {
-                            logger.info("DATATRANSFER3D found...");
-                            fillAttributesComboBox();
-                            classifyButton.setEnabled(true);
-                            attributesComboBox.setEnabled(true);
-                        } else {
-                            logger.info("DATATRANSFER3D not found...");
-                        }
-
-                        String[] ids = d.getSortedIds();
-                        String[] attr = d.getSortedAttributes();
-                        JAMSCalendar[] cal = d.getSortedTimeSteps();
-
-                        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>(cal.length);
-
-                        for (int i = 0; i < cal.length; i++) {
-                            labelTable.put(new Integer(i), new JLabel(cal[i].toString()));
-
-                        }
-
-                        timeSeriesSlider.setLabelTable(labelTable);
-                        timeSeriesSlider.setMinimum(0);
-                        timeSeriesSlider.setMaximum(cal.length - 1);
-
-                        timeSeriesSlider.setMajorTickSpacing(1);
-                        timeSeriesSlider.setPaintTicks(true);
-                        timeSeriesSlider.setSnapToTicks(true);
-                        timeSeriesSlider.setPaintLabels(false);
-                        timeSeriesSlider.setValue(0);
-                        timeSeriesSlider.setEnabled(true);
-
-                    } else {
-                        showAttributeTableButton.setEnabled(false);
-                    }
-                    //if (l instanceof RenderableLayer) {
-                    /*
-                     Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
-                     ArrayList alist = new ArrayList();
-
-                     for (Object o : list) {
-                        
-                     alist.add(o);
-                     }
-                     sAV.fillTableWithObjects(alist);
-                     sAV.show(true);
-                     theFrame.toFront();
-                     //}
-                     */
-
-                    opacitySlider.setEnabled(true);
-                    timeSeriesSlider.setEnabled(true);
-                    opacitySlider.setValue((int) (l.getOpacity() * 100));
-
-                    getPCS().firePropertyChange(Events.ACTIVE_LAYER_CHANGED, null, index);
-
-                } else {
-                    opacitySlider.setEnabled(false);
-                    timeSeriesSlider.setEnabled(false);
-                    showAttributeTableButton.setEnabled(false);
-                }
+                activeLayerComboBoxItemStateChanged(e);
             }
         });
         this.fillComboBox();
@@ -515,33 +449,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
             @Override
             public void stateChanged(ChangeEvent e) {
-                double value = (double) ((JSlider) e.getSource()).getValue() / 100.0;
-                /*Component[] comp = topPanel.getComponents();
-                 for (Component o : comp) {
-                 if (o instanceof JComboBox) {
-                 JComboBox c = (JComboBox) o;*/
-                Layer l = getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
-                System.out.println(l.getValues());
-                System.out.println(l.getName());
-                //if a renderable is found, opacity must be set for every Renderable
-                if (l.getClass().equals(RenderableLayer.class)) {
-                    Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
-                    for (Object obj : list) {
-                        AbstractSurfaceShape shape = (AbstractSurfaceShape) obj;
-                        ShapeAttributes shapeAttr = shape.getAttributes();
-                        shapeAttr.setInteriorOpacity(value);
-                        shapeAttr.setOutlineOpacity(value);
-                    }
-                } else {
-                    l.setOpacity(value);
-                }
-
-                getWorldWindow().redraw();
-                /*}
-
-                 }
-                 */
-                System.out.println("V: " + value);
+                opacitySliderStateChanged(e);
             }
         });
 
@@ -557,67 +465,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
             @Override
             public void stateChanged(ChangeEvent e) {
-                Dictionary d = timeSeriesSlider.getLabelTable();
-                Integer value = ((JSlider) e.getSource()).getValue();
-                timeSeriesSliderLabel.setText(((JLabel) d.get((Object) value)).getText());
-
-                double year = (double) ((JSlider) e.getSource()).getValue();
-                //System.out.println("TIME: " + year);
-                Layer l = getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
-                //if a renderable is found, opacity must be set for every Renderable
-
-                if (l.getClass().equals(RenderableLayer.class)) {
-                    Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
-
-                    ArrayList al = new ArrayList();
-                    double tempmin = Double.MAX_VALUE;
-                    double tempmax = Double.MIN_VALUE;
-                    /*
-                     for (TimeSeries t : objectsTimeData.values()) {
-                     for (int j = 0; j < t.getItemCount(); j++) {
-                     TimeSeriesDataItem di = t.getDataItem(j);
-                     al.add(di.getValue().doubleValue());
-                     //System.out.print("Y: " + di.getPeriod().toString() + " " + di.getValue().doubleValue() + " ");
-                     }
-                     //System.out.println();
-
-                     if (tempmin > t.getMinY()) {
-                     tempmin = t.getMinY();
-                     }
-                     if (tempmax < t.getMaxY()) {
-                     tempmax = t.getMaxY();
-                     }
-                     }
-                     */
-                    IntervallCalculation iC = new IntervallCalculation(al);
-                    List intervall = iC.getEqualIntervall(tempmin, tempmax, 10);
-
-                    //System.out.println(intervall);
-                    //System.out.println("allmin" + iC.getMinimumValue() + "|" + tempmin);
-                    //System.out.println("allmax" + iC.getMaximumValue() + "|" + tempmax);
-                    ColorRamp cR = new ColorRamp(Color.red, Color.blue, intervall.size());
-
-                    //color objects
-                    for (Object obj : list) {
-                        /*
-                         SurfacePolygons o = (SurfacePolygons) obj;
-                         JamsShapeAttributes sattr = (JamsShapeAttributes) o.getAttributes();
-                         Number value = objectsTimeData.get(obj).getValue(new Year((int) year));
-                         double d = value.doubleValue();
-                         int index = iC.getIntervallIndex(intervall, d);
-                         //System.out.println("OBJ: " + obj.toString() + "|" + " D: " + d + "|" + " I:" + index);
-                         sattr.setInteriorMaterial(new Material(cR.getColor(index)));
-                         */
-                        /* 
-                         AbstractSurfaceShape shape = (AbstractSurfaceShape) obj;
-                         ShapeAttributes shapeAttr = shape.getAttributes();
-                         shapeAttr.setInteriorOpacity(value);
-                         shapeAttr.setOutlineOpacity(value);
-                         */
-                    }
-                }
-
-                getWorldWindow().redraw();
+                timeSeriesSliderStateChanged(e);
             }
         });
 
@@ -738,6 +586,11 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 openShapefileActionlistener(e);
             }
         });
+        
+        JMenuItem saveScreenshot = new JMenuItem("Save Screenshot...");
+        saveScreenshot.addActionListener(new ScreenShotAction(getWorldWindow()));
+        stroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+        saveScreenshot.setAccelerator(stroke);
 
         JMenuItem jMenuItemExit = new JMenuItem("Exit");
         stroke = KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
@@ -750,6 +603,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         });
 
         fileMenu.add(openShapefile);
+        fileMenu.add(saveScreenshot);
         fileMenu.addSeparator();
         fileMenu.add(jMenuItemExit);
 
@@ -968,15 +822,24 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private void classifyButtonActionPerformed(ActionEvent e) {
         String[] attributes = data.getSortedAttributes();
         if (intervallView == null) {
+
             intervallView = new IntervallSettingsView(data, attributes);
         } else {
-            intervallView.show();
+            if (this.attributesComboBox.getSelectedIndex() == lastClassifiedIndex) {
+                intervallView.show();
+            } else {
+                intervallView = new IntervallSettingsView(data, attributes);
+            }
+
         }
+        intervallView.show();
+        lastClassifiedIndex = this.attributesComboBox.getSelectedIndex();
     }
 
     public void writeToDisk() {
         try {
             // Serialize data object to a file
+            logger.info("Flushing dataset to disk...");
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("../../JAMSworldwind/src/jams/worldwind/test/DataTransfer3DTestData.ser"));
             out.writeObject(data);
             out.close();
@@ -1000,6 +863,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
      */
     public void readFromDisk(String fileName) {
         try {
+            logger.info("Reading dataset from disk...");
             FileInputStream fin = new FileInputStream(fileName);
             ObjectInputStream ois = new ObjectInputStream(fin);
             data = (DataTransfer3D) ois.readObject();
@@ -1007,8 +871,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             logger.error(e.toString());
         }
     }
-
     //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="PropertyChangeEvent">
     public PropertyChangeSupport getPCS() {
         return pcs;
@@ -1024,16 +888,47 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        this.logger.info("Recieving Event: " + evt.getPropertyName());
+        logger.info("Recieving Event: " + evt.getPropertyName());
+        int selectedIndex = -1;
+        if (evt.getPropertyName().equals(Events.INTERVALL_CALCULATED)
+                || evt.getPropertyName().equals(Events.INTERVALL_COLORS_SET)) {
+
+            if (this.intervallView != null) {
+                selectedIndex = this.intervallView.getSelectedAttributeIndex();
+            }
+            if (this.intervallCollection == null) {
+                this.intervallCollection = new List[this.data.getSortedAttributes().length];
+            }
+            if (this.colorRampCollection == null) {
+                this.colorRampCollection = new ColorRamp[this.data.getSortedAttributes().length];
+            }
+        }
         switch (evt.getPropertyName()) {
             case Events.LAYER_CHANGED:
                 this.fillComboBox();
                 break;
             case Events.INTERVALL_CALCULATED:
+                if (selectedIndex == -1) {
+                    return;
+                }
                 this.intervall = (List<Double>) evt.getNewValue();
+                this.intervallCollection[selectedIndex] = intervall;
+                this.attributesComboBox.setSelectedIndex(selectedIndex);
                 break;
             case Events.INTERVALL_COLORS_SET:
+                if (selectedIndex == -1) {
+                    return;
+                }
                 this.colorRamp = (ColorRamp) evt.getNewValue();
+                this.colorRampCollection[selectedIndex] = colorRamp;
+                break;
+        }
+        if (selectedIndex != -1) {
+            if (this.intervallCollection[selectedIndex] != null
+                    && this.colorRampCollection[selectedIndex] != null) {
+                timeSeriesSlider.setEnabled(true);
+                timeSeriesSlider.setValue(0);
+            }
         }
     }
     //</editor-fold>
@@ -1074,7 +969,151 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     //<editor-fold defaultstate="collapsed" desc="ItemListener">
     private void attributesComboBoxItemStateChanged(ItemEvent e) {
+        if (intervallView != null) {
+            if (this.intervallCollection[this.attributesComboBox.getSelectedIndex()] == null
+                    || this.colorRampCollection[this.attributesComboBox.getSelectedIndex()] == null) {
+                /*                JOptionPane.showMessageDialog(null,
+                 "Please calculate intervall and colorramp for attribute (" + this.attributesComboBox.getItemAt(this.attributesComboBox.getSelectedIndex()) + ")",
+                 "NO INTERVALL DATA",
+                 JOptionPane.OK_OPTION);
+                 */
+                this.timeSeriesSlider.setEnabled(false);
+            }
+        }
+    }
 
+    private void activeLayerComboBoxItemStateChanged(ItemEvent e) {
+        int index = ((JComboBox) e.getSource()).getSelectedIndex();
+
+        if (e.getStateChange() == ItemEvent.SELECTED && index >= 0) {
+            JComboBox cb = (JComboBox) e.getSource();
+
+            Layer l = getModel().getLayers().getLayerByName(cb.getSelectedItem().toString());
+            new DelayZoom((double[]) l.getValue(Events.BOUNDINGBOXOFSHAPEFILE), 2000).execute();
+
+            if (l.getClass().equals(RenderableLayer.class)) {
+                showAttributeTableButton.setEnabled(true);
+
+                //is data from jams-explorer availible
+                DataTransfer3D d = (DataTransfer3D) l.getValue(Events.DATATRANSFER3DDATA_APPEND);
+                if (d != null) {
+                    logger.info("DATATRANSFER3D found...");
+                    fillAttributesComboBox();
+                    classifyButton.setEnabled(true);
+                    attributesComboBox.setEnabled(true);
+                } else {
+                    logger.info("DATATRANSFER3D not found...");
+                }
+
+                String[] ids = d.getSortedIds();
+                String[] attr = d.getSortedAttributes();
+                JAMSCalendar[] cal = d.getSortedTimeSteps();
+
+                Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>(cal.length);
+
+                for (int i = 0; i < cal.length; i++) {
+                    labelTable.put(new Integer(i), new JLabel(cal[i].toString()));
+                    //System.out.println("TIME:"+cal[i].toString());
+                }
+
+                timeSeriesSlider.setLabelTable(labelTable);
+                timeSeriesSlider.setMinimum(0);
+                timeSeriesSlider.setMaximum(cal.length - 1);
+
+                timeSeriesSlider.setMajorTickSpacing(1);
+                timeSeriesSlider.setPaintTicks(true);
+                timeSeriesSlider.setSnapToTicks(true);
+                timeSeriesSlider.setPaintLabels(false);
+                //timeSeriesSlider.setValue(0);
+                timeSeriesSlider.setEnabled(false);
+                Integer value = timeSeriesSlider.getValue();
+                timeSeriesSliderLabel.setText(((JLabel) timeSeriesSlider.getLabelTable().get(value)).getText());
+
+            } else {
+                showAttributeTableButton.setEnabled(false);
+            }
+            opacitySlider.setEnabled(true);
+            opacitySlider.setValue((int) (l.getOpacity() * 100));
+            getPCS().firePropertyChange(Events.ACTIVE_LAYER_CHANGED, null, index);
+
+        } else {
+            opacitySlider.setEnabled(false);
+            timeSeriesSlider.setEnabled(false);
+            showAttributeTableButton.setEnabled(false);
+        }
+    }
+
+//</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="ChangeListener">
+    private void opacitySliderStateChanged(ChangeEvent e) {
+        double value = (double) ((JSlider) e.getSource()).getValue() / 100.0;
+        /*Component[] comp = topPanel.getComponents();
+         for (Component o : comp) {
+         if (o instanceof JComboBox) {
+         JComboBox c = (JComboBox) o;*/
+        Layer l = getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
+        //if a renderable is found, opacity must be set for every Renderable
+        if (l.getClass().equals(RenderableLayer.class)) {
+            Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
+            for (Object obj : list) {
+                AbstractSurfaceShape shape = (AbstractSurfaceShape) obj;
+                ShapeAttributes shapeAttr = shape.getAttributes();
+                shapeAttr.setInteriorOpacity(value);
+                shapeAttr.setOutlineOpacity(value);
+            }
+        } else {
+            l.setOpacity(value);
+        }
+
+        getWorldWindow().redraw();
+    }
+
+    private void timeSeriesSliderStateChanged(ChangeEvent e) {
+        //System.out.println("TIME: " + year);
+        if (timeSeriesSlider.isEnabled()) {
+            Layer l = getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
+
+            //only for Shapefile layers
+            if (l.getClass().equals(RenderableLayer.class)) {
+                Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
+                int selectedIndex = this.attributesComboBox.getSelectedIndex();
+
+                intervall = intervallCollection[selectedIndex];
+                colorRamp = colorRampCollection[selectedIndex];
+                DataTransfer3D d = (DataTransfer3D) l.getValue(Events.DATATRANSFER3DDATA_APPEND);
+                JAMSCalendar[] dates = d.getSortedTimeSteps();
+
+                Integer value = timeSeriesSlider.getValue();
+                timeSeriesSliderLabel.setText(dates[value].toString());
+
+                String column = d.getKeyColumn();
+                SurfacePolygons poly = null;
+                JamsShapeAttributes sattr = null;
+                DBaseRecord record = null;
+
+                //color objects
+                for (Object obj : list) {
+                    poly = (SurfacePolygons) obj;
+                    sattr = (JamsShapeAttributes) poly.getAttributes();
+                    record = sattr.getShapeFileRecord().getAttributes();
+
+                    double dataValue = d.getValue(record.getValue(column).toString(), attributesComboBox.getSelectedItem().toString(), dates[value]);
+                    int index = 0;
+                    for (int j = 0; j < intervall.size() - 1; j++) {
+                        if (dataValue >= intervall.get(j) && dataValue < intervall.get(j + 1)) {
+                            index = j;
+                            break;
+                        }
+                        if (dataValue == intervall.get(intervall.size() - 1)) {
+                            index = intervall.size() - 1;
+                            break;
+                        }
+                    }
+                    sattr.setInteriorMaterial(new Material(colorRamp.getColor(index)));
+                }
+            }
+            getWorldWindow().redraw();
+        }
     }
 
 //</editor-fold>

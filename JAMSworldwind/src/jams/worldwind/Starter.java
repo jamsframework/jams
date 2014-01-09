@@ -2,6 +2,8 @@ package jams.worldwind;
 
 import gov.nasa.worldwind.Configuration;
 import jams.worldwind.ui.view.GlobeView;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +17,6 @@ public class Starter {
     final static Logger logger = LoggerFactory.getLogger(Starter.class);
 
     static {
-        //load own configuration        
-        System.setProperty("gov.nasa.worldwind.app.config.document", "config/jams.worldwind.xml");
-
         System.setProperty("java.net.useSystemProxies", "true");
         if (Configuration.isMacOS()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -38,12 +37,23 @@ public class Starter {
         if (Configuration.isMacOS()) {
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
         }
-        //LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-        // print logback's internal status
-        //StatusPrinter.print(lc);
-        //logger.info(lc.toString());
-        
-        //System.out.println(Configuration.getStringValue("gov.nasa.worldwind.appconfig.document"));
+
+        if (args[0].equals("run_from_netbeans")) {
+            System.out.println("Run from Netbeans...");
+            System.setProperty("gov.nasa.worldwind.app.config.document", System.getProperty("user.dir") + "/dist/config/worldwind.xml");
+        } else {
+            System.out.println("Normal start...");
+            String path = Starter.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            String decodedPath = path;
+            try {
+                decodedPath = URLDecoder.decode(path, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                logger.error(e.toString());
+            }
+            String absolutePath = decodedPath.substring(0, decodedPath.lastIndexOf("/"));
+            //load own configuration        
+            System.setProperty("gov.nasa.worldwind.app.config.document", absolutePath + "/config/worldwind.xml");
+        }
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override

@@ -2,6 +2,7 @@ package jams.worldwind.ui.view;
 
 import jams.worldwind.data.DataTransfer3D;
 import jams.worldwind.data.RandomNumbers;
+import jams.worldwind.ui.ColorRamp;
 import jams.worldwind.ui.IntervallSettingsPanel;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -28,12 +29,13 @@ public class IntervallSettingsView {
         createGUI();
     }
 
-    public IntervallSettingsView(String[] attributes, List<Double> values) {
+    /*
+    public IntervallSettingsView(String[] attributes, List<Double> values, int selected) {
         this.dataValues = null;
         this.attributes = attributes;
-        createGUI();
+        createGUI(selected);
     }
-
+*/
     private void createGUI() {
         this.intervallSettingsFrame = new JFrame("INTERVALL/CLASSIFIER FRAME");
         this.intervallSettingsPanel = new IntervallSettingsPanel(this, dataValues, this.attributes);
@@ -62,7 +64,15 @@ public class IntervallSettingsView {
     public void hide() {
         intervallSettingsFrame.setVisible(false);
     }
-
+    
+    public void setIntervallAndColorRamp(List<Double> intervall, ColorRamp colorRamp) {
+        this.intervallSettingsPanel.setIntervallAndColorRamp(intervall,colorRamp);
+    }
+    
+    public int getSelectedAttributeIndex() {
+        return this.intervallSettingsPanel.getSelectedAttributeIndex();
+    }
+    
     public static void main(String[] args) {
         RandomNumbers rn = new RandomNumbers(0, 100, 1000);
         DataTransfer3D d = readTestObjectFromDisk();

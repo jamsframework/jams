@@ -3,6 +3,7 @@ package jams.worldwind.data;
 import gnu.trove.map.hash.THashMap;
 import jams.data.JAMSCalendar;
 import jams.workspace.dsproc.DataMatrix;
+import jams.workspace.stores.ShapeFileDataStore;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,9 +25,9 @@ public class DataTransfer3D implements Serializable {
     private final THashMap<String, Integer> attributeToIndex;
     private final THashMap<JAMSCalendar, Integer> timeStepToIndex;
 
-    private final File shapefile;
+    private ShapeFileDataStore shapefileDataStore;
 
-    public DataTransfer3D(DataMatrix[] m, String[] ids, String[] timesteps, String[] attribs, File shape) {
+    public DataTransfer3D(DataMatrix[] m, String[] ids, String[] timesteps, String[] attribs) {
 
         int numIds, numAttribs, numTimeSteps;
 
@@ -37,11 +38,9 @@ public class DataTransfer3D implements Serializable {
         this.hruIdToIndex = new THashMap<>(numIds);
         this.attributeToIndex = new THashMap<>(numAttribs);
         this.timeStepToIndex = new THashMap<>(numTimeSteps);
-        this.shapefile = shape;
-
-        System.out.println(this.shapefile.toString());
 
         this.data = new double[numIds][numAttribs][numTimeSteps];
+        this.shapefileDataStore = null;
 
         //for all ids
         for (int i = 0; i < numIds; i++) {
@@ -60,6 +59,18 @@ public class DataTransfer3D implements Serializable {
             this.hruIdToIndex.put(ids[i], i);
         }
 
+    }
+    
+    public ShapeFileDataStore getShapeFileDataStore() {
+        return this.shapefileDataStore;
+    }
+
+    public void setShapeFileDataStore(ShapeFileDataStore dataStore) {
+        this.shapefileDataStore = dataStore;
+    }
+    
+    public String getKeyColumn() {
+        return this.shapefileDataStore.getKeyColumn();
     }
 
     public double getValue(String id, String attrib, JAMSCalendar date) {
