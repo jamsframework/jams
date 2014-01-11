@@ -2,7 +2,7 @@ package jams.worldwind.ui.model;
 
 import gov.nasa.worldwind.render.AbstractSurfaceShape;
 import gov.nasa.worldwind.render.SurfacePolygons;
-import jams.worldwind.shapefile.JamsShapeAttributes;
+import jams.worldwind.data.shapefile.JamsShapeAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

@@ -86,6 +86,10 @@ public class ShapefileAttributesView implements PropertyChangeListener, MouseLis
         this.theFrame.setVisible(false);
         this.theFrame.dispose();
     }
+    
+    public boolean isVisible() {
+        return this.theFrame.isVisible();
+    }
 
     /**
      *

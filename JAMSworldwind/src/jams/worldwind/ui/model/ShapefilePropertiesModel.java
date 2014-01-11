@@ -7,7 +7,7 @@ package jams.worldwind.ui.model;
 
 import gov.nasa.worldwind.render.SurfacePolygons;
 import gov.nasa.worldwind.render.SurfacePolylines;
-import jams.worldwind.shapefile.JamsShapeAttributes;
+import jams.worldwind.data.shapefile.JamsShapeAttributes;
 import jams.worldwind.ui.view.ShapefileAttributesView;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;

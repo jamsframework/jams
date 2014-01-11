@@ -34,9 +34,9 @@ import jams.workspace.stores.ShapeFileDataStore;
 import jams.worldwind.data.DataTransfer3D;
 import jams.worldwind.handler.SelectionHighlightController;
 import jams.worldwind.events.Events;
-import jams.worldwind.shapefile.JamsShapefileLoader;
+import jams.worldwind.data.shapefile.JamsShapefileLoader;
 import jams.worldwind.data.RandomNumbers;
-import jams.worldwind.shapefile.JamsShapeAttributes;
+import jams.worldwind.data.shapefile.JamsShapeAttributes;
 import jams.worldwind.ui.ColorRamp;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -138,10 +138,13 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private LayerListView theLayerView;
     private IntervallSettingsView intervallView;
     private ScreenSelector theScreenSelector;
-    private ShapefileAttributesView sAV;
+    private ShapefileAttributesView shapefileAttributesView;
     private SelectionHighlightController theSelectionHighlightController;
     private HighlightController highlightController;
 
+    //Listener
+    SelectListener selectListener;
+    
     //Components of View
     private JPanel topPanel;
     private JSlider opacitySlider;
@@ -257,49 +260,35 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
             @Override
             public void windowClosed(WindowEvent e) {
-                if (sAV != null) {
-                    sAV.dispose();
+                if (shapefileAttributesView != null) {
+                    shapefileAttributesView.dispose();
+                    shapefileAttributesView = null;
                 }
                 if (theLayerView != null) {
                     theLayerView.dispose();
+                    theLayerView = null;
                 }
                 if (intervallView != null) {
                     intervallView.dispose();
+                    intervallView = null;
                 }
+                if (intervallCollection != null) {
+                    intervallCollection = null;
+                }
+                if (colorRampCollection != null) {
+                    colorRampCollection = null;
+                }
+                removeListener();
             }
 
         });
 
-        sAV = new ShapefileAttributesView("ATTRIBUTESTABLE OF ACTIVE LAYER");;
-        getPCS().addPropertyChangeListener(this.sAV);
+        
+        getPCS().addPropertyChangeListener(this.shapefileAttributesView);
 
-        getWorldWindow().addSelectListener(new SelectListener() {
-            protected Object lastObject;
+        createListener();
 
-            @Override
-            public void selected(SelectEvent event) {
-                Object o = event.getTopObject();
-                if (lastObject != o && o != null) {
-                    lastObject = o;
-                    if (o instanceof SurfacePolygons) {
-                        SurfacePolygons s = (SurfacePolygons) o;
-
-                        s.setHighlighted(true);
-                        ((SurfacePolygons) lastObject).setHighlighted(false);
-                        sAV.scrollToObject(o);
-
-                        /*         
-                         //System.out.println(s.getEntries().toString());
-                         JamsShapeAttributes bs = (JamsShapeAttributes) s.getAttributes();
-                         ShapefileRecord record = bs.getShapeAttributes();
-                         Set<Map.Entry<String, Object>> c = record.getAttributes().getEntries();
-                         for (Map.Entry<String, Object> e : c) {
-                         System.out.println(e.getKey() +":" +e.getValue());
-                         }*/
-                    }
-                }
-            }
-        });
+        getWorldWindow().addSelectListener(selectListener);
 
         this.buildToolBar();
         this.buildMenu();
@@ -318,8 +307,54 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
     //</editor-fold>
 
+    private void createListener() {
+        selectListener = new SelectListener() {
+            protected Object lastObject;
+
+            @Override
+            public void selected(SelectEvent event) {
+                Object o = event.getTopObject();
+                if (lastObject != o && o != null) {
+                    lastObject = o;
+                    if (o instanceof SurfacePolygons) {
+                        SurfacePolygons s = (SurfacePolygons) o;
+
+                        s.setHighlighted(true);
+                        ((SurfacePolygons) lastObject).setHighlighted(false);
+                        if(shapefileAttributesView!=null && shapefileAttributesView.isVisible()) {
+                            shapefileAttributesView.scrollToObject(o);
+                        }
+
+                        /*         
+                         //System.out.println(s.getEntries().toString());
+                         JamsShapeAttributes bs = (JamsShapeAttributes) s.getAttributes();
+                         ShapefileRecord record = bs.getShapeAttributes();
+                         Set<Map.Entry<String, Object>> c = record.getAttributes().getEntries();
+                         for (Map.Entry<String, Object> e : c) {
+                         System.out.println(e.getKey() +":" +e.getValue());
+                         }*/
+                    }
+                }
+            }
+        };
+    }
+    
+    private void removeListener() {
+        getWorldWindow().removeSelectListener(selectListener);
+    }
+
     public void addJAMSExplorerData(DataTransfer3D d) {
         this.data = d;
+        this.fillAttributesComboBox();
+        createListener();
+        timeSeriesSlider.setEnabled(false);
+        attributesComboBox.setEnabled(false);
+        classifyButton.setEnabled(false);
+        if (intervallView != null) {
+            intervallView.dispose();
+            intervallView = null;
+        }
+
         addData(d.getShapeFileDataStore());
         //fillAttributesComboBox();
         writeToDisk();
@@ -328,6 +363,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private void addData(ShapeFileDataStore shp) {
         File file = shp.getShapeFile();
         if (!isShapefileAlreadyOpened(file)) {
+            addShapefile(file);
+        } else {
+            removeShapefile(file);
             addShapefile(file);
         }
     }
@@ -391,9 +429,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 //System.out.println("SELECTED OBJECTS COUNT: " + screenselectorList.size());
                 theScreenSelector.disable();
                 selectObjectsToggleButton.setEnabled(false);
+                if(shapefileAttributesView==null) {
+                    shapefileAttributesView = new ShapefileAttributesView("ATTRIBUTESTABLE OF ACTIVE LAYER");;
+                }
                 if (!screenselectorList.isEmpty()) {
-                    sAV.fillTableWithObjects(screenselectorList);
-                    sAV.show(true);
+                    shapefileAttributesView.fillTableWithObjects(screenselectorList);
+                    shapefileAttributesView.show(true);
                     theFrame.toFront();
                 } else if (layerName != null) {
                     Layer l = getModel().getLayers().getLayerByName(layerName);
@@ -404,8 +445,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                             list.add(r);
 
                         }
-                        sAV.fillTableWithObjects(list);
-                        sAV.show(true);
+                        shapefileAttributesView.fillTableWithObjects(list);
+                        shapefileAttributesView.show(true);
                         theFrame.toFront();
                     }
                 }
@@ -698,9 +739,10 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
     private void showLayersActionListener(ActionEvent e) {
-        if (((JCheckBoxMenuItem) e.getSource()).isSelected()) {
-            //this.theLayerView = new LayerListView();
+        if(theLayerView==null) {
             this.theLayerView = new LayerListView();
+        }
+        if (((JCheckBoxMenuItem) e.getSource()).isSelected()) {
             getPCS().addPropertyChangeListener(this.theLayerView);
             this.theLayerView.show(true);
             this.theFrame.toFront();
@@ -766,6 +808,21 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         //activeLayerComboBox.setSelectedIndex(activeLayerComboBox.getItemCount() - 1);
         //theLayerView.setActiveLayerIndex(activeLayerComboBox.getItemCount() - 1);
         //new DelayZoom(shp.getBoundingRectangle()).execute();
+    }
+
+    /**
+     *
+     * @param f
+     */
+    public void removeShapefile(File f) {
+        String layerName = f.getName() + "|" + f.getAbsolutePath();
+        Layer layer = getWorldWindow().getModel().getLayers().getLayerByName(layerName);
+
+        if (layer != null) {
+            logger.info("Layer removed...");
+            getModel().getLayers().remove(layer);
+        }
+        getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
     }
 
     private boolean isShapefileAlreadyOpened(File f) {
@@ -1082,7 +1139,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
                 int selectedIndex = this.attributesComboBox.getSelectedIndex();
 
-                intervall = intervallCollection[selectedIndex];
+                List<Double> intervall_temp = new ArrayList<>(intervallCollection[selectedIndex]);
                 colorRamp = colorRampCollection[selectedIndex];
                 DataTransfer3D d = (DataTransfer3D) l.getValue(Events.DATATRANSFER3DDATA_APPEND);
                 JAMSCalendar[] dates = d.getSortedTimeSteps();
@@ -1104,13 +1161,13 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                     double dataValue = d.getValue(record.getValue(column).toString(), attributesComboBox.getSelectedItem().toString(), dates[value]);
                     if (dataValue != Double.NEGATIVE_INFINITY) {
                         int index = 0;
-                        for (int j = 0; j < intervall.size() - 1; j++) {
-                            if (dataValue >= intervall.get(j) && dataValue < intervall.get(j + 1)) {
+                        for (int j = 0; j < intervall_temp.size() - 1; j++) {
+                            if (dataValue >= intervall_temp.get(j) && dataValue < intervall_temp.get(j + 1)) {
                                 index = j;
                                 break;
                             }
-                            if (dataValue == intervall.get(intervall.size() - 1)) {
-                                index = intervall.size() - 1;
+                            if (dataValue == intervall_temp.get(intervall_temp.size() - 1)) {
+                                index = intervall_temp.size() - 1;
                                 break;
                             }
                         }
