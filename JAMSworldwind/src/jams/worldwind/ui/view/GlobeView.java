@@ -1157,8 +1157,16 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                     poly = (SurfacePolygons) obj;
                     sattr = (JamsShapeAttributes) poly.getAttributes();
                     record = sattr.getShapeFileRecord().getAttributes();
+                    
+                    System.out.println("VALUE    :"+value);
+                    System.out.println("RECORD-ID:" + record.getValue(column).toString());
+                    System.out.println("ATTRIB   :" + attributesComboBox.getSelectedItem().toString());
+                    System.out.println("DATE     :" + dates[value]);
 
                     double dataValue = d.getValue(record.getValue(column).toString(), attributesComboBox.getSelectedItem().toString(), dates[value]);
+                    
+                    System.out.println("DATA     :"+ dataValue);
+                    
                     if (dataValue != Double.NEGATIVE_INFINITY) {
                         int index = 0;
                         for (int j = 0; j < intervall_temp.size() - 1; j++) {
