@@ -1,0 +1,4 @@
+#Fri Sep 19 10:44:19 CEST 2008
+description=Test dataset for Gehlberg catchment in Thuringia/Germany.
+persistent=true
+title=Gehlberg
