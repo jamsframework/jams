@@ -73,22 +73,26 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         dateFormat.setTimeZone(DEFAULT_TIME_ZONE);
     }
 
+    @Override
     public void setTimeZone(TimeZone timezone){
         super.setTimeZone(timezone);
         dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
         dateFormat.setTimeZone(timezone);
     }
 
+    @Override
     public JAMSCalendar clone() {
         return new JAMSCalendar(get(Attribute.Calendar.YEAR), get(Attribute.Calendar.MONTH), get(Attribute.Calendar.DAY_OF_MONTH), get(Attribute.Calendar.HOUR_OF_DAY), get(Attribute.Calendar.MINUTE), get(Attribute.Calendar.SECOND));
     }
 
+    @Override
     public String toString() {
         Date date = new Date();
         date.setTime(this.getTimeInMillis());
         return dateFormat.format(date);
     }
 
+    @Override
     public String toString(DateFormat dateFormat) {
         Date date = new Date();
         date.setTime(this.getTimeInMillis());
@@ -96,6 +100,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         return dateFormat.format(date);
     }
 
+    @Override
     public Attribute.Calendar getValue() {
         return clone();
     }
@@ -216,6 +221,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         }
     }
 
+    @Override
     public void setValue(String value, String format) throws ParseException {
         DateFormat fromFormat = new SimpleDateFormat(format);
         fromFormat.setTimeZone(this.getTimeZone());
@@ -223,6 +229,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         this.setTimeInMillis(date.getTime());
     }
 
+    @Override
     public void setDateFormat(String formatString) {
         dateFormat = new SimpleDateFormat(formatString);
         dateFormat.setTimeZone(this.getTimeZone());
@@ -232,6 +239,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         this.dateFormat = dateFormat;
     }
 
+    @Override
     public DateFormat getDateFormat() {
         return dateFormat;
     }

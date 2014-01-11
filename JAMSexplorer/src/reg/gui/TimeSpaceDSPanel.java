@@ -841,7 +841,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                         setProgress(progress);
                     }
 
-                    transfer = new DataTransfer3D(m, entitiesString, dateIds, attribs, proc.getDataStoreProcessor().getFile());
+                    transfer = new DataTransfer3D(m, entitiesString, dateIds, attribs);
                     setProgress(100);
 
                 } catch (SQLException | IOException ex) {
@@ -878,10 +878,11 @@ public class TimeSpaceDSPanel extends DSPanel {
                             return;
                         }
                         System.out.println("KEY COLUMN:" + dataStore.getKeyColumn());
+                        transfer.setShapeFileDataStore(dataStore);
 
                         //ShapeFileDataStore shapeDataStore = (ShapeFileDataStore) explorer.getWorkspace().;
                         GlobeView view = GlobeView.getInstance();
-                        view.addJAMSExplorerData(transfer, dataStore);
+                        view.addJAMSExplorerData(transfer);
                         view.show();
                         
                         
