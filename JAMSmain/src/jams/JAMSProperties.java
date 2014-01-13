@@ -21,7 +21,6 @@
  */
 package jams;
 
-import static jams.SystemProperties.MAX_RECENT_FILES;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Observable;
