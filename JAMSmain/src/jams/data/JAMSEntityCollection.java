@@ -29,7 +29,7 @@ import java.util.*;
  */
 public class JAMSEntityCollection implements Attribute.EntityCollection {
 
-    protected ArrayList<Attribute.Entity> entities = new ArrayList<Attribute.Entity>();
+    protected List<Attribute.Entity> entities = new ArrayList<Attribute.Entity>();
     protected Attribute.Entity[] entityArray;
     protected Attribute.Entity current;
     protected EntityEnumerator ee = null;
@@ -57,7 +57,6 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     public EntityEnumerator getEntityEnumerator() {
 
 //        if (ee == null) {
-
         ee = new EntityEnumerator() {
             Attribute.Entity[] entityArray = getEntityArray();
             int index = 0;
@@ -98,12 +97,12 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     }
 
     @Override
-    public ArrayList<Attribute.Entity> getEntities() {
+    public List<Attribute.Entity> getEntities() {
         return entities;
     }
 
     @Override
-    public void setEntities(ArrayList<Attribute.Entity> entities) {
+    public void setEntities(List<Attribute.Entity> entities) {
         this.entities = entities;
         this.entityArray = entities.toArray(new JAMSEntity[entities.size()]);
         if (entityArray.length > 0) {
@@ -130,12 +129,12 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
     }
 
     @Override
-    public void setValue(ArrayList<Attribute.Entity> entities) {
+    public void setValue(List<Attribute.Entity> entities) {
         setEntities(entities);
     }
 
     @Override
-    public ArrayList<Attribute.Entity> getValue() {
+    public List<Attribute.Entity> getValue() {
         return getEntities();
     }
 

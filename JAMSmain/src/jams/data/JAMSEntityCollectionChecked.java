@@ -30,7 +30,7 @@ import java.util.*;
 public class JAMSEntityCollectionChecked extends JAMSEntityCollection {
     
     @Override
-    public void setEntities(ArrayList<Attribute.Entity> entities) {
+    public void setEntities(List<Attribute.Entity> entities) {
         this.entities = entities;
         this.entityArray = entities.toArray(new JAMSEntityChecked[entities.size()]);
         if (entityArray.length > 0) {
