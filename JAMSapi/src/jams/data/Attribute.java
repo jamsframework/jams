@@ -25,8 +25,8 @@ import gnu.trove.map.hash.THashMap;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
@@ -259,15 +259,15 @@ public interface Attribute extends Serializable{
 
         public EntityEnumerator getEntityEnumerator();
 
-        public ArrayList<Attribute.Entity> getEntities();
+        public List<Attribute.Entity> getEntities();
 
-        public void setEntities(ArrayList<Attribute.Entity> entities);
+        public void setEntities(List<Attribute.Entity> entities);
 
         public Attribute.Entity getCurrent();
 
-        public void setValue(ArrayList<Attribute.Entity> entities);
+        public void setValue(List<Attribute.Entity> entities);
 
-        public ArrayList<Attribute.Entity> getValue();
+        public List<Attribute.Entity> getValue();
         
         public Attribute.Entity getEntity(long id);
     }
