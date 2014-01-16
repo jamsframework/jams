@@ -17,6 +17,11 @@ public class JamsShapefileLoader extends ShapefileLoader {
     
     private static final Logger logger = LoggerFactory.getLogger(JamsShapefileLoader.class);
     
+    public JamsShapefileLoader() {
+        super();
+        setNumPolygonsPerLayer(200000);
+    }
+    
     @Override
     protected void addRenderablesForPolylines(Shapefile shp, RenderableLayer layer)
     {
