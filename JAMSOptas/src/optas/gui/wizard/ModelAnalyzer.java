@@ -86,9 +86,11 @@ public class ModelAnalyzer {
                     boolean consider = !effOnly;
                     if (effOnly) {
                         for (ComponentField cf2 : ca.getFields()) {
-                            if (UniversalEfficiencyCalculator.class.isAssignableFrom(cf2.getParent().getClazz())) {
-                                consider = true;
-                                break;
+                            if (UniversalEfficiencyCalculator.class.isAssignableFrom(cf2.getParent().getClazz())){                                                                
+                                if (cf2.getName().contains("normalized")){
+                                    consider = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -192,9 +194,7 @@ public class ModelAnalyzer {
         Iterator<Attribute> iter1 = objectiveList.iterator();
         while (iter1.hasNext()) {
             Objective o = new Objective(iter1.next());
-            if (o.getAttributeName().contains("normalized")){
-                result.add(new Objective(o));                    
-            }            
+            result.add(new Objective(o));                                
         }
         return result;
     }    
