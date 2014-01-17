@@ -1458,7 +1458,7 @@ public class GraphProperties {
             
             //default values
             setStroke(stroke_slider.getValue());
-            setShape(shape_box.getSelectedIndex(), shape_slider.getValue());
+            GraphProperties.this.setShape(shape_box.getSelectedIndex(), shape_slider.getValue());
             //setSeriesPaint(line_color);
 //            if(outline_paint_box.getSelectedIndex()==0){
 //                setOutlineVisible(false);
@@ -1542,7 +1542,7 @@ public class GraphProperties {
             public void actionPerformed(ActionEvent e) {
                 
                 setStroke(stroke_slider.getValue());
-                setShape(shape_box.getSelectedIndex(), shape_slider.getValue());
+                GraphProperties.this.setShape(shape_box.getSelectedIndex(), shape_slider.getValue());
                 //setSeriesPaint(colorTable.get((String)paint_box.getSelectedItem()));
                 //setSeriesPaint(series_paint);
                 //setSeriesOutlinePaint(series_outline_paint);
@@ -1572,7 +1572,7 @@ public class GraphProperties {
         ActionListener apply = new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 setStroke(stroke_slider.getValue());
-                setShape(shape_box.getSelectedIndex(), shape_slider.getValue());
+                GraphProperties.this.setShape(shape_box.getSelectedIndex(), shape_slider.getValue());
                 //setSeriesPaint(colorTable.get((String)paint_box.getSelectedItem()));
                 //setSeriesPaint(line_color);
                 //setSeriesOutlinePaint(outline_color);
