@@ -38,7 +38,7 @@ public class IntervallTest {
         for(double d : testquantil) {
             tlist.add(d);
         };
-        IntervallCalculation ic = new IntervallCalculation(tlist);
+        IntervallCalculation ic = new IntervallCalculation(testquantil);
 
         //RandomNumbers rn = new RandomNumbers(0, 100, numbers);
         //IntervallCalculation ic = new IntervallCalculation(rn.getDoubleValues());
@@ -52,7 +52,7 @@ public class IntervallTest {
 
         // Get a SummaryStatistics instance
         SummaryStatistics stats = new SummaryStatistics();
-        for(int i=0;i<ic.getValues().size();i++) {
+        for(int i=0;i<ic.getValues().length;i++) {
             stats.addValue(ic.getValue(i));
         }
         
@@ -65,8 +65,10 @@ public class IntervallTest {
         int classes = 5;
         double width = 2;
 
-        List list = new ArrayList(ic.getValues());
-        Collections.sort(list);
+        //List list = new ArrayList(ic.getValues());
+        //Collections.sort(list);
+        double[] list = ic.getValues();
+        Arrays.sort(list);
         //System.out.println("Wert   : " + list.get(numbers/2-1));
         //System.out.println("Wert   : " + list.get(numbers/2));
         System.out.println("Intervall  : " + ic.getEqualIntervall(classes));

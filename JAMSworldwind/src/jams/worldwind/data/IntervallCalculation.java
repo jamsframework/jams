@@ -1,6 +1,7 @@
 package jams.worldwind.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
@@ -18,32 +19,47 @@ public class IntervallCalculation {
 
     private static final Logger logger = LoggerFactory.getLogger(IntervallCalculation.class);
 
-    private final ArrayList<Double> values;
+    //private final ArrayList<Double> values;
+    private final double[] values;
     private final DescriptiveStatistics statistics;
 
-    public IntervallCalculation(List dvalues) {
-        this.values = new ArrayList<>(dvalues);
+    /*
+     public IntervallCalculation(List dvalues) {
+     this.values = new ArrayList<>(dvalues);
+     this.statistics = new DescriptiveStatistics();
+     this.calculateStatistics();
+     }*/
+    
+    public IntervallCalculation(double[] dvalues) {
+        this.values = dvalues;
         this.statistics = new DescriptiveStatistics();
         this.calculateStatistics();
     }
 
     private void calculateStatistics() {
-        for(int i=0; i<this.values.size();i++) {
-            this.statistics.addValue(this.values.get(i));
+        for (int i = 0; i < this.values.length; i++) {
+            this.statistics.addValue(values[i]);
         }
     }
 
     public double getValue(int index) {
-        if (index >= 0 && index < this.values.size()) {
-            return this.values.get(index);
+        if (index >= 0 && index < this.values.length) {
+            return this.values[index];
         } else {
             return Double.NaN;
         }
     }
 
+    public double[] getValues() {
+        return this.values;
+    }
+    
+    
+    /*
     public List<Double> getValues() {
         return this.values;
     }
+    */
 
     public double getMinimumValue() {
         return this.statistics.getMin();
@@ -54,7 +70,7 @@ public class IntervallCalculation {
     }
 
     public double getRange() {
-        return this.getMaximumValue()-this.getMinimumValue();
+        return this.getMaximumValue() - this.getMinimumValue();
     }
 
     public double getMean() {
@@ -124,31 +140,32 @@ public class IntervallCalculation {
         }
     }
 
+    
     public List<Double> getQuantilIntervall(int numberOfClasses) {
         if (numberOfClasses > 0) {
             List<Double> breakPoints = new ArrayList<>(numberOfClasses + 1);
-            int numberPerClass = (int) Math.round(this.values.size() / numberOfClasses);
+            int numberPerClass = (int) Math.round(this.values.length / numberOfClasses);
 
             TreeMap<Double, Integer> countOccurences = new TreeMap<>();
             breakPoints.add(this.getMinimumValue());
-            for (int i = 0; i < this.values.size(); i++) {
-                if (!countOccurences.containsKey(this.values.get(i))) {
-                    countOccurences.put(this.values.get(i), 1);
+            for (int i = 0; i < this.values.length; i++) {
+                if (!countOccurences.containsKey(this.values[i])) {
+                    countOccurences.put(this.values[i], 1);
                 } else {
-                    Integer count = countOccurences.get(this.values.get(i));
+                    Integer count = countOccurences.get(this.values[i]);
                     count++;
-                    countOccurences.put(this.values.get(i), count);
+                    countOccurences.put(this.values[i], count);
                 }
             }
             boolean last = false;
-            int remainingObjectsCount = this.values.size();
+            int remainingObjectsCount = this.values.length;
             int sum = 0;
             int newNumberOfClasses = numberOfClasses;
             Entry<Double, Integer> ent = countOccurences.pollFirstEntry();
             while (ent != null) {
                 int count = ent.getValue();
                 sum += count;
-                remainingObjectsCount-=count;
+                remainingObjectsCount -= count;
                 if (sum >= numberPerClass) {
                     double d = Math.nextUp(ent.getKey());
                     if (d < this.getMaximumValue()) {
@@ -157,9 +174,9 @@ public class IntervallCalculation {
                     //System.out.println("Remain: " + remainingObjectsCount);
                     newNumberOfClasses--;
                     //System.out.println("Left Classes: " + newNumberOfClasses);
-                    if(newNumberOfClasses>0) {
-                    numberPerClass = remainingObjectsCount / newNumberOfClasses;
-                    //System.out.println("PER CLASS: " + numberPerClass);
+                    if (newNumberOfClasses > 0) {
+                        numberPerClass = remainingObjectsCount / newNumberOfClasses;
+                        //System.out.println("PER CLASS: " + numberPerClass);
                     }
                     sum = 0;
                 }
@@ -174,16 +191,18 @@ public class IntervallCalculation {
     }
 
     public void printHistogramm(List<?> intervall) {
-        ArrayList<Double> tmp = new ArrayList(this.values);
-        Collections.sort(tmp);
+        double[] tmp = this.values.clone();
+        Arrays.sort(tmp);
+        //ArrayList<Double> tmp = new ArrayList(this.values);
+        //Collections.sort(tmp);
         int start = 0;
         int count = 0;
         int sum = 0;
         //System.out.println("Size: " + intervall.size());
         for (int h = 0; h < intervall.size() - 1; h++) {
             System.out.print("[" + intervall.get(h) + "," + intervall.get(h + 1) + "] : ");
-            for (int i = start; i < tmp.size(); i++) {
-                if (tmp.get(i).compareTo((Double) intervall.get(h + 1)) <= 0) {
+            for (int i = start; i < tmp.length; i++) {
+                if (tmp[i]  <= (Double)intervall.get(h + 1)) {
                     System.out.print("*");
                     count++;
                     start++;
@@ -196,7 +215,7 @@ public class IntervallCalculation {
             count = 0;
             System.out.println();
         }
-        System.out.println("SUMMARY: TOTAL STARS: " + sum + " | TOTAL ELEMENTS: " + tmp.size());
+        System.out.println("SUMMARY: TOTAL STARS: " + sum + " | TOTAL ELEMENTS: " + tmp.length);
     }
 
     public int getIntervallIndex(List<?> intervall, double d) {

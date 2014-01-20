@@ -45,7 +45,7 @@ public class SummaryStatisticsPanel extends JPanel {
         }
     }
 
-    private void calculateStatistics(double[] values) {
+    public void calculateStatistics(double[] values) {
         statistics.clear();
         for (int i = 0; i < values.length; i++) {
             statistics.addValue(values[i]);
@@ -53,6 +53,7 @@ public class SummaryStatisticsPanel extends JPanel {
         this.updateLabels();
     }
 
+    /*
     public void calculateStatistics(List values) {
         statistics.clear();
         for (int i = 0; i < values.size(); i++) {
@@ -60,6 +61,7 @@ public class SummaryStatisticsPanel extends JPanel {
         }
         this.updateLabels();
     }
+    */
 
     private void updateLabels() {
         NumberFormat nf = NumberFormat.getInstance();

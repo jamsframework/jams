@@ -50,6 +50,8 @@ import org.jfree.data.statistics.HistogramType;
 import org.jfree.data.xy.IntervalXYDataset;
 import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.TextAnchor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -57,7 +59,11 @@ import org.jfree.ui.TextAnchor;
  */
 public class IntervallSettingsPanel extends JPanel implements PropertyChangeListener {
 
+    private static final Logger logger = LoggerFactory.getLogger(IntervallSettingsPanel.class);
+    
     private final IntervallSettingsView frame;
+    private final int NUMBER_OF_BINS_FOR_HISTOGRAM = 100;
+    
     
     private final DataTransfer3D dataValues;
     private JSpinner numClassesSpinner;
@@ -192,6 +198,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
 
     }
     
+    /*
     private double[] convertToDoublePrimitiv(List<Double> list) {
         double[] values = new double[list.size()];
         for (int i = 0; i < values.length; i++) {
@@ -199,6 +206,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         }
         return values;
     }
+    */
     
     public void setIntervallAndColorRamp(List<Double> intervall, ColorRamp colorRamp) {
         this.intervall = intervall;
@@ -212,12 +220,16 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         JAMSCalendar[] dates = this.dataValues.getSortedTimeSteps();
         String[] ids = this.dataValues.getSortedIds();
 
-        ArrayList<Double> values = new ArrayList<>(dates.length * ids.length);
-
+        
+        //ArrayList<Double> values = new ArrayList<>(dates.length * ids.length);
+        double [] values = new double[dates.length * ids.length];
+        
+        int i = 0;
         for (String id : ids) {
             for (JAMSCalendar d : dates) {
                 double value = this.dataValues.getValue(id, attribute, d);
-                values.add(value);
+                values[i] = value;
+                i++;
             }
         }
         
@@ -232,12 +244,13 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         
     }
 
-    private IntervalXYDataset createHistogramDataSet(List<Double> list) {
+    private IntervalXYDataset createHistogramDataSet(double[] list) {
+        logger.info("Creating Histogram-Series...");
         HistogramDataset dataSet = new HistogramDataset();
         dataSet.setType(HistogramType.FREQUENCY);
-        dataSet.addSeries("HISTOGRAM", convertToDoublePrimitiv(list), list.size() * 10);
+        dataSet.addSeries("HISTOGRAM", list, this.NUMBER_OF_BINS_FOR_HISTOGRAM);
+        logger.info("...Histogram-Series done.");
         return dataSet;
-
     }
 
     private void addComponent(Container container,
@@ -258,7 +271,8 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         container.add(c);
     }
 
-    private void printHistogramm(List<Double> values) {
+    private void printHistogramm(double[] values) {
+        logger.info("Creating Histogram...");
         chart = ChartFactory.createHistogram("Histogram", null, null, createHistogramDataSet(values), PlotOrientation.VERTICAL, false, true, false);
         chartPanel.setChart(chart);
         XYPlot xyPlot = chart.getXYPlot();
@@ -268,11 +282,13 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         DescriptiveStatistics stat = this.summaryStatisticsPanel.getStatistics();
         double range = (stat.getMax() - stat.getMin()) / 10;
         domainAxis.setRange(stat.getMin() - range, stat.getMax() + range);
+        logger.info("...Histogram done");
     }
 
     //<editor-fold defaultstate="collapsed" desc="ActionListener">
     private void calculateButtonActionListener(ActionEvent e) {
 
+        logger.info("Starting Classification...");
         String attribute = (String) this.attributeNameComboBox.getSelectedItem();
         int numberOfClasses = (Integer) this.numClassesSpinner.getValue();
         String intervallSelection = (String) this.classifierComboBox.getSelectedItem();
@@ -280,18 +296,28 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         JAMSCalendar[] dates = this.dataValues.getSortedTimeSteps();
         String[] ids = this.dataValues.getSortedIds();
 
-        ArrayList<Double> values = new ArrayList<>(dates.length * ids.length);
+        //ArrayList<Double> values = new ArrayList<>(dates.length * ids.length);
+        double [] values = new double[dates.length * ids.length];
 
+        //String format = "%-20s%s%n";
+        
+        //System.out.println("VALUES:");
+        int i=0;
         for (String id : ids) {
             for (JAMSCalendar d : dates) {
                 double value = this.dataValues.getValue(id, attribute, d);
-                values.add(value);
+                //values.add(value);
+                values[i]=value;
+                i++;
+                //System.out.printf(format, d.toString(), value);
             }
         }
 
+        logger.info("Calculating statistics...");
         this.summaryStatisticsPanel.calculateStatistics(values);
         this.printHistogramm(values);
 
+        logger.info("Calculating Intervall");
         IntervallCalculation iCalculation = new IntervallCalculation(values);
         
         this.intervall = new ArrayList<>(numberOfClasses);
