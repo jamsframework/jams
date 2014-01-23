@@ -29,7 +29,6 @@ import java.awt.BorderLayout;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Properties;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -59,10 +58,10 @@ public class ParameterOutput extends JAMSGUIComponent {
 
     private JScrollPane scrollPanel;
     private JTextArea logArea;
-    private int c = 0;
 
     private JPanel panel;
 
+    @Override
     public JPanel getPanel() {
         if (this.panel == null) {
             createPanel();
@@ -79,7 +78,6 @@ public class ParameterOutput extends JAMSGUIComponent {
             logArea.append(header);
 
             HashMap<String, HashMap<String, Element>> componentHash = ParameterProcessor.getAttributeHash(getModel().getRuntime().getModelDocument());
-            Properties params = new Properties();
 
             for (String componentName : componentHash.keySet()) {
                 HashMap<String, Element> attributeHash = componentHash.get(componentName);
