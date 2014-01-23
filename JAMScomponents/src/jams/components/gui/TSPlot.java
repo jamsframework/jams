@@ -51,8 +51,6 @@ import jams.model.JAMSComponentDescription;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSVarDescription;
 import jams.model.VersionComments;
-import jams.runtime.JAMSRuntime;
-import jams.runtime.StandardRuntime;
 import java.awt.Font;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -60,8 +58,10 @@ import java.io.ObjectOutputStream;
 import java.util.Iterator;
 import java.util.List;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeriesDataItem;
+import org.jfree.ui.RectangleEdge;
 
 /**
  *
@@ -76,103 +76,116 @@ import org.jfree.data.time.TimeSeriesDataItem;
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
     @VersionComments.Entry(version = "1.0_1", comment = "Changed default cache size"),
-    @VersionComments.Entry(version = "1.0_2", comment = "Aligned font sizes for left/right axis")
+    @VersionComments.Entry(version = "1.0_2", comment = "\n- Aligned font sizes for left/right axis labels\n"
+            + "- Added horizotal grid line and display option\n"
+            + "- Added legend positioning option")
 })
 public class TSPlot extends JAMSGUIComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Title string for plot. Default: component name")
     public Attribute.String plotTitle;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Static title strings for left graphs. Number of entries "
             + "must be identical to number of plottet values (valueLeft).",
-            defaultValue="titleLeft")
+            defaultValue = "titleLeft")
     public Attribute.StringArray titleLeft;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Dynamic addon title strings added after left static titles (titleLeft)")
     public Attribute.StringArray varTitleLeft;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Static title strings for right graphs",
             defaultValue = "titleRight")
     public Attribute.StringArray titleRight;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Colors for left graphs (yellow, orange, red, pink, "
             + "magenta, cyan, yellow, green, lightgray, gray, black). Number of "
             + "entries must be identical to number of plottet values (valueLeft).",
             defaultValue = "blue;red")
     public Attribute.StringArray colorLeft;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Colors for right graphs (yellow, orange, red, pink, "
             + "magenta, cyan, yellow, green, lightgray, gray, black). Number of "
             + "entries must be identical to number of plottet values (valueRight).",
             defaultValue = "red")
     public Attribute.StringArray colorRight;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Graph type for left y axis graphs",
             defaultValue = "0")
     public Attribute.Integer typeLeft;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Graph type for right y axis graphs",
             defaultValue = "0")
     public Attribute.Integer typeRight;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Title string for x axis",
             defaultValue = "Time")
     public Attribute.String xAxisTitle;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Title string for left y axis",
             defaultValue = "LeftTitle")
     public Attribute.String leftAxisTitle;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Title string for right y axis",
             defaultValue = "RightTitle")
     public Attribute.String rightAxisTitle;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             defaultValue = "0",
             description = "Paint inverted right y axis?")
     public Attribute.Boolean rightAxisInverted;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Date format",
             defaultValue = "dd-MM-yyyy")
     public Attribute.String dateFormat;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Current time")
     public Attribute.Calendar time;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Values to be plotted on left x-axis")
     public Attribute.Double[] valueLeft;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Values to be plotted on right x-axis")
     public Attribute.Double[] valueRight;
-        
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Plot data, after cacheSize values have been collected",
             defaultValue = "5")
     public Attribute.Integer cacheSize;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Paint horizontal/vertical grid lines?",
+            defaultValue = "true")
+    public Attribute.Boolean paintGridLines;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Paint legend right of the plot?",
+            defaultValue = "false")
+    public Attribute.Boolean legendRight;
+
     TimeSeries[] tsLeft, tsRight;
     transient TimeSeriesCollection dataset1, dataset2;
     transient XYItemRenderer rightRenderer, leftRenderer;
     transient XYPlot plot;
-    transient JFreeChart chart;    
+    transient JFreeChart chart;
     int graphCountLeft = 0, graphCountRight = 0;
-    
+
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
-    
+
     long[] timeStamps;
     double[] dataValuesLeft;
     double[] dataValuesRight;
@@ -199,10 +212,10 @@ public class TSPlot extends JAMSGUIComponent {
         dataset2 = new TimeSeriesCollection();
 
         String title = getInstanceName();
-        if (this.plotTitle != null){
+        if (this.plotTitle != null) {
             title = plotTitle.getValue();
         }
-        
+
         chart = ChartFactory.createTimeSeriesChart(
                 title,
                 xAxisTitle.getValue(),
@@ -221,13 +234,13 @@ public class TSPlot extends JAMSGUIComponent {
         return panel;
     }
 
-    private XYItemRenderer getRenderer(int type) {        
+    private XYItemRenderer getRenderer(int type) {
         switch (type) {
             case 0:
                 XYLineAndShapeRenderer lsr = new XYLineAndShapeRenderer();
                 lsr.setBaseShapesVisible(false);
                 return lsr;
-            case 1:{
+            case 1: {
                 XYBarRenderer renderer = new XYBarRenderer();
                 StandardXYBarPainter painter = new StandardXYBarPainter();
                 renderer.setBarPainter(new StandardXYBarPainter());
@@ -250,13 +263,13 @@ public class TSPlot extends JAMSGUIComponent {
 
             case 5:
                 return new XYDifferenceRenderer();
-                
+
             case 6:
                 return new XYStepRenderer();
-                
+
             case 7:
                 return new XYStepAreaRenderer();
-                
+
             default:
                 lsr = new XYLineAndShapeRenderer();
                 lsr.setBaseShapesVisible(false);
@@ -278,11 +291,22 @@ public class TSPlot extends JAMSGUIComponent {
             plot = chart.getXYPlot();
 
             chart.getPlot().setBackgroundPaint(Color.white);
-            chart.getXYPlot().setDomainGridlinePaint(Color.black);
-        
+            plot.setDomainGridlinePaint(Color.gray);
+            plot.setRangeGridlinePaint(Color.gray);
+
+            plot.setDomainGridlinesVisible(paintGridLines.getValue());
+            plot.setRangeGridlinesVisible(paintGridLines.getValue());
+            
+            chart.getLegend().setMargin(0, 10, 10, 10);
+
+            if (legendRight.getValue()) {
+                LegendTitle legend = chart.getLegend();
+                legend.setPosition(RectangleEdge.RIGHT);
+            }
+
             DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
             dateAxis.setDateFormatOverride(new SimpleDateFormat(dateFormat.getValue()));
-            
+
             Font labelFont = plot.getRangeAxis().getLabelFont();
 
             leftRenderer = getRenderer(typeLeft.getValue());
@@ -296,16 +320,16 @@ public class TSPlot extends JAMSGUIComponent {
             tsLeft = new TimeSeries[graphCountLeft];
             for (int i = 0; i < graphCountLeft; i++) {
                 String legendEntry = "";
-                if (titleLeft != null && titleLeft.getValue().length >= i){
+                if (titleLeft != null && titleLeft.getValue().length >= i) {
                     legendEntry = titleLeft.getValue()[i];
                 }
                 if (this.varTitleLeft != null && this.varTitleLeft.getValue().length > i) {
                     legendEntry += varTitleLeft.getValue()[i];//getModel().getRuntime().getDataHandles().get(varTitleLeft.getValue()[i]);
                 }
-                if (colorLeft != null && colorLeft.getValue().length>i){
+                if (colorLeft != null && colorLeft.getValue().length > i) {
                     leftRenderer.setSeriesPaint(i, colorTable.get(colorLeft.getValue()[i]));
                 }
-                
+
                 tsLeft[i] = new TimeSeries(legendEntry);
                 dataset1.addSeries(tsLeft[i]);
             }
@@ -326,10 +350,11 @@ public class TSPlot extends JAMSGUIComponent {
                 graphCountRight = valueRight.length;
                 tsRight = new TimeSeries[graphCountRight];
                 for (int i = 0; i < graphCountRight; i++) {
-                    if (colorRight != null && colorRight.getValue().length >= i)
+                    if (colorRight != null && colorRight.getValue().length >= i) {
                         rightRenderer.setSeriesPaint(i, colorTable.get(colorRight.getValue()[i]));
+                    }
                     String title = "";
-                    if (titleRight != null && titleRight.getValue().length > i){
+                    if (titleRight != null && titleRight.getValue().length > i) {
                         title = titleRight.getValue()[i];
                     }
                     tsRight[i] = new TimeSeries(title);
@@ -373,7 +398,7 @@ public class TSPlot extends JAMSGUIComponent {
         if (++count == this.cacheSize.getValue()) {
             plotData();
             count = 0;
-        } 
+        }
     }
 
     private void plotData() {
@@ -388,9 +413,9 @@ public class TSPlot extends JAMSGUIComponent {
                 }
             }
 
-        } catch (java.lang.IllegalArgumentException e) {
+        } catch (Exception e) {
             // swallow exceptions caused by bugs in JFreeChart
-        } 
+        }
     }
 
     @Override
