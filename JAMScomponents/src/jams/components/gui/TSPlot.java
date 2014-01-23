@@ -51,12 +51,14 @@ import jams.model.JAMSComponentDescription;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSVarDescription;
 import jams.model.VersionComments;
+import jams.runtime.JAMSRuntime;
+import jams.runtime.StandardRuntime;
+import java.awt.Font;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.SwingWorker;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeriesDataItem;
@@ -70,10 +72,11 @@ import org.jfree.data.time.TimeSeriesDataItem;
         date = "2013-04-26",
         description = "This component creates a graphical plot of time series data, "
         + "e.g. precipitation and runoff over time.",
-        version = "1.0_1")
+        version = "1.0_2")
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
-    @VersionComments.Entry(version = "1.0_1", comment = "Changed default cache size")
+    @VersionComments.Entry(version = "1.0_1", comment = "Changed default cache size"),
+    @VersionComments.Entry(version = "1.0_2", comment = "Aligned font sizes for left/right axis")
 })
 public class TSPlot extends JAMSGUIComponent {
 
@@ -279,6 +282,8 @@ public class TSPlot extends JAMSGUIComponent {
         
             DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
             dateAxis.setDateFormatOverride(new SimpleDateFormat(dateFormat.getValue()));
+            
+            Font labelFont = plot.getRangeAxis().getLabelFont();
 
             leftRenderer = getRenderer(typeLeft.getValue());
             plot.setRenderer(0, leftRenderer);
@@ -307,6 +312,7 @@ public class TSPlot extends JAMSGUIComponent {
 
             if (valueRight != null) {
                 ValueAxis axis2 = new NumberAxis(rightAxisTitle.getValue());
+                axis2.setLabelFont(labelFont);
                 axis2.setInverted(rightAxisInverted.getValue());
                 plot.setRangeAxis(1, axis2);
                 plot.setDataset(1, dataset2);
@@ -382,9 +388,9 @@ public class TSPlot extends JAMSGUIComponent {
                 }
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } //caused by bugs in JFreeChart
+        } catch (java.lang.IllegalArgumentException e) {
+            // swallow exceptions caused by bugs in JFreeChart
+        } 
     }
 
     @Override
