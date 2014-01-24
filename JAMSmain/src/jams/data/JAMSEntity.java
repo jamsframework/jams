@@ -26,6 +26,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import gnu.trove.map.hash.THashMap;
 
 import jams.JAMS;
+import jams.data.Attribute.Entity;
 
 /**
  *
@@ -33,7 +34,7 @@ import jams.JAMS;
  */
 public class JAMSEntity implements Attribute.Entity {
 
-    private THashMap<String, Object> values = new THashMap<String, Object>();    
+    private THashMap<String, Object> values = new THashMap<String, Object>();
     private long id = -1;
 
     @Override
@@ -167,7 +168,7 @@ public class JAMSEntity implements Attribute.Entity {
     public boolean isEmpty() {
         return this.values.isEmpty();
     }
-    
+
     //that's crap
     @Override
     public void setValue(String value) {
@@ -186,16 +187,26 @@ public class JAMSEntity implements Attribute.Entity {
         }
     }
 
-   
-    
     @Override
-    public void setValue(THashMap<String, Object> values) {        
+    public void setValue(THashMap<String, Object> values) {
         this.values = values;
     }
 
     @Override
     public THashMap<String, Object> getValue() {
         return values;
+    }
+
+    public boolean removeValue(String name) {
+        if (this.values.remove(name) != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public void removeValues() {
+        values.clear();
     }
 
     public String getStringValue() {
@@ -219,7 +230,7 @@ public class JAMSEntity implements Attribute.Entity {
     public void setId(long id) {
         this.id = id;
     }
-    
+
     @Override
     public String toString() {
         String result = "$ID = " + getId();
@@ -228,7 +239,7 @@ public class JAMSEntity implements Attribute.Entity {
         }
         TreeSet<String> orderedSet = new TreeSet<String>(values.keySet());
         Iterator<String> iter = orderedSet.iterator();
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             String key = iter.next();
             result += "\t" + key + "=" + values.get(key);
         }

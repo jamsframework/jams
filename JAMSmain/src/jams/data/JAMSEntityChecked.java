@@ -22,7 +22,6 @@
 package jams.data;
 
 import java.util.*;
-import com.vividsolutions.jts.geom.Geometry;
 import jams.JAMS;
 
 /**
