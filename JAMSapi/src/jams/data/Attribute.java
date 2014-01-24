@@ -34,7 +34,7 @@ import java.util.TimeZone;
  *
  * @author S. Kralisch
  */
-public interface Attribute extends Serializable{
+public interface Attribute extends Serializable {
 
     public interface Boolean extends JAMSData {
 
@@ -136,7 +136,7 @@ public interface Attribute extends Serializable{
         public final static int MILLISECOND = java.util.Calendar.MILLISECOND;
         public final static int ZONE_OFFSET = java.util.Calendar.ZONE_OFFSET;
         public final static java.lang.String DEFAULT_FORMAT_PATTERN = "yyyy-MM-dd HH:mm";
-        public final static TimeZone DEFAULT_TIME_ZONE = new SimpleTimeZone(0, "UTC");        
+        public final static TimeZone DEFAULT_TIME_ZONE = new SimpleTimeZone(0, "UTC");
 
         public Attribute.Calendar getValue();
 
@@ -181,10 +181,10 @@ public interface Attribute extends Serializable{
         public void setTimeInMillis(long millis);
 
         public void set(int year, int month, int day, int hour, int minute, int second);
-        
+
         public java.lang.String toString();
     }
- 
+
     public interface FileName extends Attribute.String {
     }
 
@@ -236,8 +236,12 @@ public interface Attribute extends Serializable{
         public java.lang.Object[] getKeys();
 
         public void setValue(THashMap<java.lang.String, java.lang.Object> value);
-        
+
         public boolean isEmpty();
+
+        public boolean removeValue(java.lang.String name);
+
+        public void removeValues();
 
         public THashMap<java.lang.String, java.lang.Object> getValue();
 
@@ -268,7 +272,7 @@ public interface Attribute extends Serializable{
         public void setValue(List<Attribute.Entity> entities);
 
         public List<Attribute.Entity> getValue();
-        
+
         public Attribute.Entity getEntity(long id);
     }
 
@@ -305,12 +309,11 @@ public interface Attribute extends Serializable{
 
         public void setValue(java.lang.Object value);
     }
-    
+
     public interface ObjectArray extends JAMSData {
 
         public java.lang.Object[] getValue();
 
         public void setValue(java.lang.Object[] value);
-    }    
+    }
 }
-
