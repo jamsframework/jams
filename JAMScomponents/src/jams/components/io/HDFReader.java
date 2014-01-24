@@ -8,14 +8,11 @@ import jams.data.Attribute;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 import java.io.File;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.hdflib.HDFException;
-import ncsa.hdf.object.Dataset;
-import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.h4.H4File;
 import ncsa.hdf.object.h4.H4SDS;
 
