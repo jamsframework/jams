@@ -1,9 +1,10 @@
 #JAMS-Konfigurationsdatei
-#Mon Jan 14 10:49:23 CET 2013
+#Wed Jan 29 23:13:27 CET 2014
 infolog=
 libs=../../lib
 guiconfig=true
 docbook-home=docbook/
+debugmode=false
 model=
 charset=
 username=
@@ -11,13 +12,18 @@ profiling=false
 defaultworkspace=true
 windowenable=true
 errordlg=true
+maxlibclasses=10000
 windowontop=false
 forcelocale=
 windowheight=600
-verbose=true
+verbose=false
+maxrecentfiles=5
+recentfiles=
 debug=3
 guiconfigheight=600
 windowwidth=900
 guiconfigwidth=600
+preprocessing=true
 errorlog=
 helpbaseurl=
+floatformat=%f
