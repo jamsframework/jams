@@ -357,7 +357,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
         addData(d.getShapeFileDataStore());
         //fillAttributesComboBox();
-        writeToDisk();
+//        writeToDisk();
     }
 
     private void addData(ShapeFileDataStore shp) {
