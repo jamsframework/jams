@@ -52,8 +52,7 @@
       -init-macrodef-junit:     defines macro for junit execution
       -init-macrodef-debug:     defines macro for class debugging
       -init-macrodef-java:      defines macro for class execution
-      -do-jar-with-manifest:    JAR building (if you are using a manifest)
-      -do-jar-without-manifest: JAR building (if you are not using a manifest)
+      -do-jar:                  JAR building
       run:                      execution of project 
       -javadoc-build:           Javadoc generation
       test-report:              JUnit report generation
@@ -72,27 +71,4 @@
     nbproject/build-impl.xml file. 
 
     -->
-    
-    <!-- Copy lib-external folder to dist/lib -->
-    <target name="-post-jar">
-        <echo>Copying over extra libs into jams-worldwind</echo>
-        <!-- Empty placeholder for easier customization. -->
-        <!-- You can override this target in the ../build.xml file. -->
-        <copy todir="${dist.dir}/lib/lib-external/">
-            <fileset dir="../../JAMSworldwind/lib/lib-external/"/>
-        </copy>
-        <echo>Copying config files</echo>
-        <copy todir="${dist.dir}/config/">
-            <fileset dir="../../JAMSworldwind/src/config/"/>
-        </copy>
-        <echo>Copying start scripts</echo>
-        <copy todir="${dist.dir}/">
-            <fileset dir="../../JAMSworldwind/scripts/"/>
-        </copy>
-        <!--<echo>Copying logback.xml file and KnowIssues.txt to distribution dir</echo>-->
-        <!-- Empty placeholder for easier customization. -->
-        <!-- You can override this target in the ../build.xml file. -->
-        <!--<copy file="../../JAMSworldwind/src/jams/worldwind/logback.xml" todir="${dist.dir}"/>-->
-        <!--<copy file="../../JAMSworldwind/src/jams/worldwind/KnownIssues.txt" todir="${dist.dir}"/>-->
-    </target>    
 </project>
