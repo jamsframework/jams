@@ -144,7 +144,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     //Listener
     SelectListener selectListener;
-    
+
     //Components of View
     private JPanel topPanel;
     private JSlider opacitySlider;
@@ -283,7 +283,6 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
         });
 
-        
         getPCS().addPropertyChangeListener(this.shapefileAttributesView);
 
         createListener();
@@ -321,7 +320,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
                         s.setHighlighted(true);
                         ((SurfacePolygons) lastObject).setHighlighted(false);
-                        if(shapefileAttributesView!=null && shapefileAttributesView.isVisible()) {
+                        if (shapefileAttributesView != null && shapefileAttributesView.isVisible()) {
                             shapefileAttributesView.scrollToObject(o);
                         }
 
@@ -338,7 +337,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         };
     }
-    
+
     private void removeListener() {
         getWorldWindow().removeSelectListener(selectListener);
     }
@@ -429,7 +428,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 //System.out.println("SELECTED OBJECTS COUNT: " + screenselectorList.size());
                 theScreenSelector.disable();
                 selectObjectsToggleButton.setEnabled(false);
-                if(shapefileAttributesView==null) {
+                if (shapefileAttributesView == null) {
                     shapefileAttributesView = new ShapefileAttributesView("ATTRIBUTESTABLE OF ACTIVE LAYER");;
                 }
                 if (!screenselectorList.isEmpty()) {
@@ -739,7 +738,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
     private void showLayersActionListener(ActionEvent e) {
-        if(theLayerView==null) {
+        if (theLayerView == null) {
             this.theLayerView = new LayerListView();
         }
         if (((JCheckBoxMenuItem) e.getSource()).isSelected()) {
@@ -792,16 +791,20 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         //Layer layer = new ShapefileLoader().createLayerFromShapefile(new Shapefile(f));
         Shapefile shp = new Shapefile(f);
         System.out.println("SHAPEFILE RECORDS: " + shp.getNumberOfRecords());
-        Layer layer = new JamsShapefileLoader().
-                createLayerFromShapefile(shp);
+        List<Layer> layers = new JamsShapefileLoader().
+                createLayersFromShapefile(shp);
 
-        if (data != null) {
-            layer.setValue(Events.DATATRANSFER3DDATA_APPEND, data);
+        int i = 0;
+        for (Layer layer : layers) {
+            layer.setEnabled(true);
+            if (data != null) {
+                layer.setValue(Events.DATATRANSFER3DDATA_APPEND, data);
+            }
+
+            layer.setValue(Events.BOUNDINGBOXOFSHAPEFILE, shp.getBoundingRectangle());
+            layer.setName(layerName + "_" + (i++));
+            getModel().getLayers().add(layer);
         }
-
-        layer.setValue(Events.BOUNDINGBOXOFSHAPEFILE, shp.getBoundingRectangle());
-        layer.setName(layerName);
-        getModel().getLayers().add(layer);
         getPCS().firePropertyChange(Events.LAYER_ADDED, null, null);
         getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
 
@@ -1157,16 +1160,14 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                     poly = (SurfacePolygons) obj;
                     sattr = (JamsShapeAttributes) poly.getAttributes();
                     record = sattr.getShapeFileRecord().getAttributes();
-                    
+
                     //System.out.println("VALUE    :"+value);
                     //System.out.println("RECORD-ID:" + record.getValue(column).toString());
                     //System.out.println("ATTRIB   :" + attributesComboBox.getSelectedItem().toString());
                     //System.out.println("DATE     :" + dates[value]);
-
                     double dataValue = d.getValue(record.getValue(column).toString(), attributesComboBox.getSelectedItem().toString(), dates[value]);
-                    
+
                     //System.out.println("DATA     :"+ dataValue);
-                    
                     if (dataValue != Double.NEGATIVE_INFINITY) {
                         int index = 0;
                         for (int j = 0; j < intervall_temp.size() - 1; j++) {

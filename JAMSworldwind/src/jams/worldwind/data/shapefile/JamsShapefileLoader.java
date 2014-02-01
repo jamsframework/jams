@@ -19,7 +19,7 @@ public class JamsShapefileLoader extends ShapefileLoader {
     
     public JamsShapefileLoader() {
         super();
-        setNumPolygonsPerLayer(200000);
+        setNumPolygonsPerLayer(10000);
     }
     
     @Override
@@ -73,6 +73,8 @@ public class JamsShapefileLoader extends ShapefileLoader {
         //logger.info(record.getShapeType());
         //logger.info("No.: " + record.getRecordNumber() + " Attributes: " + record.getAttributes().getValue("AREA"));
         ShapeAttributes shapeAttributes = new JamsShapeAttributes(record);
+        shapeAttributes.setOutlineOpacity(0.2);
+        shapeAttributes.setOutlineWidth(0.5);
         return shapeAttributes;
     }
     
