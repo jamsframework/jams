@@ -844,8 +844,10 @@ public class TimeSpaceDSPanel extends DSPanel {
                     transfer = new DataTransfer3D(m, entitiesString, dateIds, attribs);
                     setProgress(100);
 
-                } catch (SQLException | IOException ex) {
-                    System.out.println(ex);
+                } catch (SQLException ex) {
+                    explorer.getRuntime().handle(ex);
+                } catch (IOException ex) {
+                    explorer.getRuntime().handle(ex);
                 }
                 return null;
             }
