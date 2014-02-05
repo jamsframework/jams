@@ -22,6 +22,7 @@ import javax.swing.table.*;
 import java.io.*;
 import java.util.ArrayList;
 import jams.data.*;
+import jams.explorer.tools.ShapeFileWriter;
 
 import jams.gui.tools.GUIHelper;
 import jams.tools.StringTools;
@@ -43,6 +44,7 @@ import java.util.logging.Logger;
 //import reg.DataTransfer;
 import reg.JAMSExplorer;
 import jams.workspace.dsproc.DataMatrix;
+import org.apache.http.protocol.UriPatternMatcher;
 import reg.gui.StatisticDialogPanel;
 //import reg.viewer.Viewer;
 
@@ -1148,7 +1150,7 @@ public class JAMSSpreadSheet extends JPanel {
 
         }
     };
-    Action joinMapAction = new AbstractAction(JAMS.i18n("AUF_KARTE_ZEIGEN")) {
+    Action joinMapAction = new AbstractAction(JAMS.i18n("WRITE_TO_SHAPE")) {
         public void actionPerformed(ActionEvent e) {
 
             String selectedShape = (String) shapeSelector.getSelectedItem();
@@ -1164,14 +1166,15 @@ public class JAMSSpreadSheet extends JPanel {
                 return;
             }
 
-            URI uri = dataStore.getUri();
-            if (uri == null) {
+            URI inUri = dataStore.getUri();
+            if (inUri == null) {
                 System.out.println("error: can't access shapefile! path is: "
                         + dataStore.getShapeFile().getAbsolutePath());
                 return;
             }
             String keyColumn = dataStore.getKeyColumn();
             String shapeFileName = dataStore.getFileName();
+            URI outUri = new File(explorer.getWorkspace().getTempDirectory(), new File(inUri).toPath().getFileName().toString()).toURI();
 
             int[] columns = table.getSelectedColumns();
             if (columns.length == 0) {
@@ -1184,25 +1187,19 @@ public class JAMSSpreadSheet extends JPanel {
             double[] ids = getIdValues();
 
             // create and fill the DataTransfer object
-            /*DataTransfer dataTransfer = new DataTransfer();
-            dataTransfer.setNames(headers);
-            dataTransfer.setIds(ids);
-            dataTransfer.setData(data);
-            dataTransfer.setParentName(shapeFileName);
-            dataTransfer.setParentURI(uri);
-            dataTransfer.setTargetKeyName(keyColumn);
-            */
-            // get the Geowind viewer and pass the DataTransfer object
-            //Viewer viewer = Viewer.getViewer();
-
+            ShapeFileWriter writer = new ShapeFileWriter();
+            writer.setNames(headers);
+            writer.setIds(ids);
+            writer.setData(data);
+            writer.setInShapefileURI(inUri);
+            writer.setTargetKeyName(keyColumn);            
+            writer.setOutShapefileURI(outUri);
             try {
-                
-                
-                
-                //viewer.addData(dataTransfer);
-            } catch (Exception ex) {
-                GUIHelper.showErrorDlg(JAMSSpreadSheet.this, JAMS.i18n("ERROR_WHILE_TRYING_TO_DISPLAY_MAP!"), JAMS.i18n("ERROR!"));
+                writer.writeShape();
+            } catch (IOException ex) {
+                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
         }
     };
 
