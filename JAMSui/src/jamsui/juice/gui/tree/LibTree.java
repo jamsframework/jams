@@ -42,6 +42,7 @@ import javax.swing.KeyStroke;
 import jamsui.juice.JUICE;
 import jams.JAMS;
 import jams.JAMSException;
+import jams.JAMSLogging;
 import jams.meta.ComponentDescriptor;
 import jams.tools.StringTools;
 import jams.meta.ComponentCollection;
@@ -66,7 +67,7 @@ public class LibTree extends JAMSTree {
 
     public LibTree(ComponentCollection componentCollection, int maxClasses) {
         super(componentCollection);
-
+        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
         setEditable(false);
         new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY);
         this.maxClasses = maxClasses;
@@ -228,7 +229,7 @@ public class LibTree extends JAMSTree {
 
                     } catch (ClassNotFoundException cnfe) {
 
-                        JUICE.getLogger().log(Level.SEVERE, JAMS.i18n("Error_while_loading_archive_") + jarName + "\"" + JAMS.i18n("_(class_") + classString
+                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, JAMS.i18n("Error_while_loading_archive_") + jarName + "\"" + JAMS.i18n("_(class_") + classString
                                 + JAMS.i18n("_could_not_be_found)!"), cnfe);
 
 
@@ -236,13 +237,13 @@ public class LibTree extends JAMSTree {
                         // loading classes can cause a lot of NoClassDefFoundError
                         // exceptions, they are caught silently!
                     } catch (UnsupportedClassVersionError ucve) {
-                        JUICE.getLogger().log(Level.SEVERE, MessageFormat.format(JAMS.i18n("ClassVersionErrorWhileLoadingComponentLib"), classString + " (" + jarName + ")") 
+                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, MessageFormat.format(JAMS.i18n("ClassVersionErrorWhileLoadingComponentLib"), classString + " (" + jarName + ")") 
                                 + "\n" + ucve.getMessage(), ucve);
                     } catch (Throwable e) {
                         // other exception like e.g. java.lang.SecurityException
                         // won't be handled since they hopefully don't occur
                         // while loading JARs containing JAMS components
-                        JUICE.getLogger().log(Level.SEVERE, JAMS.i18n("Error_while_loading_archive_") + jarName + "\"" + JAMS.i18n("_(class_") + classString
+                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, JAMS.i18n("Error_while_loading_archive_") + jarName + "\"" + JAMS.i18n("_(class_") + classString
                                 + JAMS.i18n("_could_not_be_loaded)!") + "\n" + e.getMessage(), e);
                     }
                 }

@@ -23,6 +23,7 @@ package jams.meta;
 
 import jams.JAMS;
 import jams.JAMSException;
+import jams.JAMSLogging;
 import jams.JAMSVersion;
 import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
@@ -54,20 +55,19 @@ public class ModelIO {
     private ClassLoader loader;
     private String modelName;
     private NodeFactory nodeFactory;
-    private Logger logger;
 
-    public ModelIO(NodeFactory nodeFactory, Logger logger) {
+    public ModelIO(NodeFactory nodeFactory) {
+        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
         this.nodeFactory = nodeFactory;
-        this.logger = logger;
     }
 
-    public static ModelIO getStandardModelIO(Logger logger) {
+    public static ModelIO getStandardModelIO() {
         return new ModelIO(new NodeFactory() {
             @Override
             public ModelNode createNode(ComponentDescriptor cd) {
                 return new ModelNode(cd);
             }
-        }, logger);
+        });
     }
 
 //    public ModelIO(ModelDescriptor md, JAMSClassLoader loader) {
@@ -76,7 +76,7 @@ public class ModelIO {
 //    }
     public ModelDescriptor createModel() {
 
-        ModelDescriptor md = new ModelDescriptor(logger);
+        ModelDescriptor md = new ModelDescriptor();
         ContextDescriptor cd = new ContextDescriptor(JAMS.i18n("New_Model"), modelClazz, null, md);
         ModelNode rootNode = nodeFactory.createNode(cd);
         rootNode.setType(ModelNode.MODEL_TYPE);
@@ -104,7 +104,7 @@ public class ModelIO {
         Node node;
         Element element, docRoot;
 
-        ModelDescriptor md = new ModelDescriptor(logger);
+        ModelDescriptor md = new ModelDescriptor();
 
         //get model name, description, author and date
 
@@ -148,7 +148,7 @@ public class ModelIO {
                 try {
                     rootNode.add(getSubTree(element, md));
                 } catch (JAMSException mle) {
-                    logger.log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
                 }
 
             } else if (node.getNodeName().equals("attribute")) {
@@ -156,7 +156,7 @@ public class ModelIO {
                 try {
                     addContextAttribute(cd, (Element) node);
                 } catch (JAMSException mle) {
-                    logger.log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
                 }
 
             } else if (node.getNodeName().equals("var")) {
@@ -250,7 +250,7 @@ public class ModelIO {
                     setVar(cd, (Element) varChilds.item(index), md);
 
                 } catch (JAMSException ex) {
-                    logger.log(Level.SEVERE, ex.getMessage(), ex.getWrappedException());
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, ex.getMessage(), ex.getWrappedException());
                 }
             }
 
@@ -282,7 +282,7 @@ public class ModelIO {
                     }
 
                 } catch (JAMSException mle) {
-                    logger.log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
                 }
             }
         }
@@ -365,7 +365,7 @@ public class ModelIO {
             // and do the above for every token
             String[] values = StringTools.toArray(attribute, ";");
             for (String value : values) {
-                logger.info("check addContextAttribute for array types!");
+                Logger.getLogger(this.getClass().getName()).info("check addContextAttribute for array types!");
                 cd.addStaticAttribute(attribute, type, value);
 //                    cd.getDataRepository().addAttribute(new ContextAttribute(attribute, type, cd));
             }

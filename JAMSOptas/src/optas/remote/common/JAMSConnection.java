@@ -6,7 +6,7 @@
 package optas.remote.common;
 
 import optas.remote.server.ServerOPTAS;
-import jams.runtime.JAMSLogger;
+import jams.runtime.RuntimeLogger;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,8 +39,8 @@ public class JAMSConnection {
     private OutputStream out;
     private InputStream in;
 
-    private JAMSLogger errorLog = new JAMSLogger();
-    private JAMSLogger infoLog = new JAMSLogger();
+    private RuntimeLogger errorLog = new RuntimeLogger();
+    private RuntimeLogger infoLog = new RuntimeLogger();
 
     LinkedList<JAMSCommand> commandBuffer = new LinkedList<JAMSCommand>();
     ArrayList<ReceivePacketListener> listenerList = new ArrayList<ReceivePacketListener>();
@@ -68,7 +68,7 @@ public class JAMSConnection {
     final int CONNECTED = 0;
     final int DISCONNECTED = 1;
     
-    public JAMSConnection(Socket socket, CommandHandler handler, JAMSLogger infoLog, JAMSLogger errorLog) throws IOException{
+    public JAMSConnection(Socket socket, CommandHandler handler, RuntimeLogger infoLog, RuntimeLogger errorLog) throws IOException{
         this.socket = socket;
 
         if (this.socket.isConnected())

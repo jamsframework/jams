@@ -23,6 +23,7 @@ package jams.meta;
 
 import jams.JAMS;
 import jams.JAMSException;
+import jams.JAMSLogging;
 import jams.io.ParameterProcessor;
 import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelElement;
@@ -54,27 +55,27 @@ public class ModelDescriptor extends ComponentCollection {
     private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "", modelName = "";
     private ModelNode rootNode;
 
-    public ModelDescriptor(Logger log) {
-        super(log);
+    public ModelDescriptor() {
+        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
         modelProperties = new ModelProperties();
     }
 
     public ModelDescriptor(ModelDescriptor md) {
-        super(md.logger);
+        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
         this.author = md.author; //is deep copy
         this.date = md.date;
         this.description = md.description;
         this.helpBaseUrl = md.helpBaseUrl;
         this.modelName = md.modelName;
         this.workspacePath = md.workspacePath;
-        
-         //are those safe??
+
+        //are those safe??
         this.modelProperties = md.getModelProperties();
-        this.outputDataStores = (HashMap<String, OutputDSDescriptor>)md.getDatastores().clone();
-        this.preprocessors = (ArrayList<MetaProcessorDescriptor>)md.getPreprocessors().clone();
+        this.outputDataStores = (HashMap<String, OutputDSDescriptor>) md.getDatastores().clone();
+        this.preprocessors = (ArrayList<MetaProcessorDescriptor>) md.getPreprocessors().clone();
         this.rootNode = md.getRootNode().clone(this, true, new HashMap<ContextDescriptor, ContextDescriptor>());
-   }
-        
+    }
+
     /*
      * Create a new name for a component instance. If possible, use the given
      * name, else add a suffix in order to create a unique one.
@@ -168,7 +169,7 @@ public class ModelDescriptor extends ComponentCollection {
             ContextDescriptor context = (ContextDescriptor) getComponentDescriptor(e.getAttribute("context"));
 
             if (context == null) {
-                logger.warning(MessageFormat.format(JAMS.i18n("Context_does_not_exist"), e.getAttribute("context")));
+                Logger.getLogger(this.getClass().getName()).warning(MessageFormat.format(JAMS.i18n("Context_does_not_exist"), e.getAttribute("context")));
                 continue;
             }
 
@@ -190,7 +191,7 @@ public class ModelDescriptor extends ComponentCollection {
                     ca = context.getStaticAttributes().get(attributeName);
                 }
                 if (ca == null) {
-                    logger.warning(MessageFormat.format(JAMS.i18n("Attribute_does_not_exist_and_is_removed"),
+                    Logger.getLogger(this.getClass().getName()).warning(MessageFormat.format(JAMS.i18n("Attribute_does_not_exist_and_is_removed"),
                             attributeName, od.getName()));
                 } else {
                     contextAttributes.add(ca);
@@ -238,7 +239,7 @@ public class ModelDescriptor extends ComponentCollection {
                         mProp.addProperty(group, property);
                     } catch (JAMSException je) {
                         exceptions.add(je);
-                        logger.warning(je.getMessage());
+                        Logger.getLogger(this.getClass().getName()).warning(je.getMessage());
                     }
                 }
                 if (node.getNodeName().equalsIgnoreCase("subgroup")) {
@@ -255,7 +256,7 @@ public class ModelDescriptor extends ComponentCollection {
                             mProp.addProperty(subgroup, property);
                         } catch (JAMSException je) {
                             exceptions.add(je);
-                            logger.warning(je.getMessage());
+                            Logger.getLogger(this.getClass().getName()).warning(je.getMessage());
                         }
                     }
                 }
@@ -313,7 +314,6 @@ public class ModelDescriptor extends ComponentCollection {
 
         // not used anymore
         //property.defaultValue = propertyElement.getAttribute("default");
-
         // set description and name
         property.description = propertyElement.getAttribute("description");
         property.name = propertyElement.getAttribute("name");
@@ -329,7 +329,6 @@ public class ModelDescriptor extends ComponentCollection {
                 property.attribute.setValue(valueString);
             }
         }
-
 
         String range = propertyElement.getAttribute("range");
         StringTokenizer tok = new StringTokenizer(range, ";");
@@ -463,7 +462,6 @@ public class ModelDescriptor extends ComponentCollection {
                     mp.process(mpd.getContext(), this, rt);
 
 //                    mpd.setEnabled(false);
-
                 } catch (Exception ex) {
                     throw (new JAMSException("Error while preprocessing model:\n" + StringTools.getStackTraceString(ex.getStackTrace()), ex));
                 }

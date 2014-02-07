@@ -84,8 +84,8 @@ import org.w3c.dom.Document;
 public class StandardRuntime extends Observable implements JAMSRuntime, Serializable {
 
     private HashMap<String, JAMSData> dataHandles = new HashMap<String, JAMSData>();
-    private JAMSLogger errorLog = new JAMSLogger();
-    private JAMSLogger infoLog = new JAMSLogger();
+    private RuntimeLogger errorLog = new RuntimeLogger();
+    private RuntimeLogger infoLog = new RuntimeLogger();
     private int debugLevel = JAMS.STANDARD;
     //private RunState runState = new RunState();
     private ArrayList<GUIComponent> guiComponents = new ArrayList<GUIComponent>();
@@ -101,7 +101,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private HashMap<String, Integer> idMap;
     transient private SmallModelState state = new JAMSSmallModelState();
     private DataFactory dataFactory = DefaultDataFactory.getDataFactory();
-    transient protected Logger runtimeLogger = Logger.getLogger(this.toString());
+    transient protected Logger logger = Logger.getLogger(this.toString());
 
     private String runtimeID = null;
     
@@ -135,7 +135,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
             // create a ModelIO instance and load the model from XML into a 
             // ModelDescriptor object
-            ModelIO modelIO = ModelIO.getStandardModelIO(this.getLogger());
+            ModelIO modelIO = ModelIO.getStandardModelIO();
             ModelDescriptor md = modelIO.loadModelDescriptor(modelDocument, this.getClassLoader(), false);
 
             boolean doAutoPreprocessing = Boolean.parseBoolean(properties.getProperty(JAMSProperties.AUTO_PREPROCESSING, "false"));
@@ -190,7 +190,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     }
     
-    //initialize logs .. this is necessary, because JAMSLogger is not serializable and must be reinitalized after deserialization
+    //initialize logs .. this is necessary, because RuntimeLogger is not serializable and must be reinitalized after deserialization
     private void initLogging() {
         // set the debug (i.e. output verbosity) level
         this.setDebugLevel(Integer.parseInt(properties.getProperty(SystemProperties.DEBUG_IDENTIFIER, "1")));
@@ -258,7 +258,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     
 //    public void loadModelDescriptor(ModelDescriptor md, String defaultWorkspacePath) {
 //
-//        ModelIO modelIO = ModelIO.getStandardModelIO(runtimeLogger);
+//        ModelIO modelIO = ModelIO.getStandardModelIO(logger);
 //        this.modelDocument = modelIO.getModelDocument(md);
 //
 //        // start the loading process
@@ -323,8 +323,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private void init(boolean start) {
 
 
-        runtimeLogger.setUseParentHandlers(false);
-        runtimeLogger.addHandler(new Handler() {
+        logger.setUseParentHandlers(false);
+        logger.addHandler(new Handler() {
             @Override
             public void publish(LogRecord record) {
                 if (record.getLevel().intValue() >= Level.INFO.intValue()) {
@@ -361,7 +361,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         // load the libraries and create the class loader
 
 //        this.println(JAMS.i18n("Creating_class_loader"), JAMS.STANDARD);
-        JAMSLogger log = new JAMSLogger();
+        RuntimeLogger log = new RuntimeLogger();
         classLoader = JAMSClassLoader.createClassLoader(getLibs(), log);
         for (String line : log.toString().split("\n")) {
             this.println(line, JAMS.STANDARD);
@@ -931,7 +931,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     @Override
     public Logger getLogger() {
-        return runtimeLogger;
+        return logger;
     }
     
     private void writeObject(ObjectOutputStream objOut) throws IOException {
@@ -941,7 +941,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
         
-        runtimeLogger = Logger.getLogger(runtimeID);
+        logger = Logger.getLogger(runtimeID);
         
         deleteErrorLogObservers();
         deleteInfoLogObservers();

@@ -1,6 +1,6 @@
 Development:
 Sven Kralisch, Christian Fischer, Christian Schwartze,
-Heiko Busch, Robert Riedel, Christin Michel
+Robert Riedel, Christin Michel, Ronny Berndt
 
 Support:
 Peter Krause & FSU/DGHM Team      
@@ -10,7 +10,6 @@ Libraries:
 GeoTools (http://www.geotools.org)
 JTS Topology Suite (http://www.vividsolutions.com/jts)
 JScience (http://jscience.org)
-GeoWind (http://geowind.javaforge.com)
 WorldWind (http://worldwind.arc.nasa.gov)
 JFreeChart (http://www.jfree.org/jfreechart)
 H2 Database (http://www.h2database.com)   
@@ -19,4 +18,5 @@ JAMA (http://math.nist.gov/javanumerics/jama)
 JAI (http://jai.dev.java.net)
 Java3D (https://java3d.dev.java.net)
 VecMath (http://vecmath.dev.java.net)
+... and others
                                                        

@@ -40,6 +40,7 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import jams.JAMS;
 import jams.JAMSException;
+import jams.JAMSLogging;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.tools.JAMSTools;
@@ -58,6 +59,7 @@ import jamsui.juice.gui.tree.ModelTree;
 import java.awt.Desktop;
 import java.net.URI;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import reg.JAMSExplorer;
 
@@ -84,7 +86,7 @@ public class ModelView {
     public static ViewList viewList = new ViewList();
     private JAMSRuntime runtime;
     private static JAMSExplorer theExplorer;
-    private ModelDescriptor modelDescriptor = new ModelDescriptor(JUICE.getLogger());
+    private ModelDescriptor modelDescriptor = new ModelDescriptor();
     private OutputDSDlg outputDSDlg;
 //    private PanelDlg launcherPanelDlg;
 
@@ -93,7 +95,7 @@ public class ModelView {
     }
 
     public ModelView(String title, JDesktopPane parentPanel) {
-
+        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
         this.parentPanel = parentPanel;
         modelEditPanel = new ModelEditPanel(this);
         compEditPanel = new ComponentPanel(this);
@@ -144,7 +146,7 @@ public class ModelView {
                     }
 
                 } catch (Exception e) {
-                    JUICE.getLogger().log(Level.SEVERE, e.getMessage(), e);
+                    Logger.getLogger(ModelView.class.getName()).log(Level.SEVERE, e.getMessage(), e);
                 }
             }
         };
@@ -316,7 +318,7 @@ public class ModelView {
         try {
             t.start();
         } catch (Exception e) {
-            JUICE.getLogger().log(Level.SEVERE, e.getMessage(), e);
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -380,7 +382,7 @@ public class ModelView {
     public void loadParams(File paramsFile) {
         try {
             Document doc = ParameterProcessor.loadParams(getModelDoc(), paramsFile);
-            modelDescriptor = new ModelDescriptor(JUICE.getLogger());
+            modelDescriptor = new ModelDescriptor();
             this.setTree(new ModelTree(this, doc));
         } catch (Exception ex) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("File_") + paramsFile.getName() + JAMS.i18n("_could_not_be_loaded."), JAMS.i18n("File_open_error"));

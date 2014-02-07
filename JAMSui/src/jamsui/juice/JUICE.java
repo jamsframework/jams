@@ -23,13 +23,14 @@ package jamsui.juice;
 
 import jams.JAMS;
 import jams.JAMSException;
+import jams.JAMSLogging;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
 import jams.meta.ComponentCollection;
 import jams.runtime.JAMSClassLoader;
-import jams.runtime.JAMSLogger;
+import jams.runtime.RuntimeLogger;
 import jams.tools.JAMSTools;
 import jams.tools.StringTools;
 import jamsui.cmdline.JAMSCmdLine;
@@ -56,7 +57,6 @@ public class JUICE {
     public static final Class[] JAMS_DATA_TYPES = getJAMSDataClasses();
     public static final int SCREEN_WIDTH = 1200;
     public static final int SCREEN_HEIGHT = 720;
-    private static final Logger log = Logger.getLogger(JUICE.class.getName());
     private static JUICEFrame juiceFrame;
     private static JAMSProperties jamsProperties = JAMSProperties.createProperties();
     private static File baseDir = null;
@@ -94,6 +94,21 @@ public class JUICE {
                 System.exit(0);
             }
         }
+
+        // take care of loggers
+        JAMSLogging.getInstance().addObserver(new Observer() {
+
+            @Override
+            public void update(Observable o, Object arg) {
+                List loggers = JAMSLogging.getInstance().getLoggers();
+                Logger logger = (Logger) arg;
+                if (loggers.contains(logger)) {
+                    JUICE.registerLogger(logger);
+                } else {
+                    JUICE.unregisterLogger(logger);
+                }
+            }
+        });
 
         cmdLine = new JAMSCmdLine(args, JUICE.APP_TITLE);
 
@@ -143,13 +158,11 @@ public class JUICE {
     public static void createJUICEFrame() {
         juiceFrame = new JUICEFrame();
 
-        registerLogger(log);
-
         juiceFrame.setVisible(true);
 
         int maxLibClasses = Integer.parseInt(getJamsProperties().getProperty(SystemProperties.MAX_LIB_CLASSES));
 
-        libTree = new LibTree(new ComponentCollection(log), maxLibClasses);
+        libTree = new LibTree(new ComponentCollection(), maxLibClasses);
 
         JUICE.updateLibs();
 
@@ -186,7 +199,7 @@ public class JUICE {
 
         String[] libsArray = StringTools.toArray(libs, ";");
 
-        JUICE.loader = JAMSClassLoader.createClassLoader(libsArray, new JAMSLogger());
+        JUICE.loader = JAMSClassLoader.createClassLoader(libsArray, new RuntimeLogger());
     }
 
     private static Class[] getJAMSDataClasses() {
@@ -252,7 +265,7 @@ public class JUICE {
 
     public static void registerLogger(Logger log) {
         if (notificationDlg == null) {
-            notificationDlg = new NotificationDlg(juiceFrame, JAMS.i18n("Info"));
+            notificationDlg = new NotificationDlg(null, JAMS.i18n("Info"));
         }
 
         if (logHandler == null) {
@@ -287,10 +300,16 @@ public class JUICE {
         log.addHandler(logHandler);
         log.setUseParentHandlers(false);
     }
-
-    public static Logger getLogger() {
-        return log;
+    
+    public static void unregisterLogger(Logger log) {
+        log.removeHandler(logHandler);
+        log.setUseParentHandlers(true);
     }
+    
+
+//    public static Logger getLogger() {
+//        return log;
+//    }
 
     public static void focusNotificationDlg() {
         notificationDlg.requestFocus();

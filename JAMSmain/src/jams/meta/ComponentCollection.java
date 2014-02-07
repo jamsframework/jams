@@ -22,6 +22,7 @@
 package jams.meta;
 
 import jams.JAMS;
+import jams.JAMSLogging;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -34,11 +35,9 @@ import java.util.logging.Logger;
 public class ComponentCollection {
 
     private HashMap<String, ComponentDescriptor> componentDescriptors;
-    protected Logger logger;
 
-    public ComponentCollection(Logger logger) {
+    public ComponentCollection() {
         componentDescriptors = new HashMap<String, ComponentDescriptor>();
-        this.logger = logger;
     }
 
     public String registerComponentDescriptor(String oldName, String newName, ComponentDescriptor cd) {
@@ -50,7 +49,8 @@ public class ComponentCollection {
         componentDescriptors.put(newNewName, cd);
         
         if (!newName.equals(newNewName)) {
-            logger.fine(MessageFormat.format(JAMS.i18n("Component_name_is_already_in_use._Renamed_component_to_"), newName, newNewName));
+            JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
+            Logger.getLogger(this.getClass().getName()).fine(MessageFormat.format(JAMS.i18n("Component_name_is_already_in_use._Renamed_component_to_"), newName, newNewName));
         }        
         
         return newNewName;
@@ -70,12 +70,5 @@ public class ComponentCollection {
 
     public ComponentDescriptor getComponentDescriptor(String name) {
         return componentDescriptors.get(name);
-    }
-
-    /**
-     * @return the logger
-     */
-    public Logger getLogger() {
-        return logger;
     }
 }

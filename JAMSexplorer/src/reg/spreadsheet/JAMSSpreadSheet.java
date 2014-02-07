@@ -13,6 +13,7 @@ package reg.spreadsheet;
 
 import jams.JAMS;
 import jams.JAMSFileFilter;
+import jams.JAMSLogging;
 import java.util.Vector;
 import java.awt.event.*;
 import java.awt.*;
@@ -217,6 +218,7 @@ public class JAMSSpreadSheet extends JPanel {
     public JAMSSpreadSheet(JAMSExplorer explorer) {
         this.explorer = explorer;
         this.parent_frame = (JFrame) explorer.getExplorerFrame();
+        JAMSLogging.registerLogger(Logger.getLogger(JAMSSpreadSheet.class.getName()));
     }
 
     private void close() {
@@ -1159,7 +1161,6 @@ public class JAMSSpreadSheet extends JPanel {
                 return;  // errorMessage?
             }
 
-            System.out.println("shape selected >" + selectedShape + "<");
             ShapeFileDataStore dataStore = (ShapeFileDataStore) explorer.getWorkspace().getInputDataStore(selectedShape);
             if (dataStore == null) {
                 Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No datastore found.");
@@ -1168,18 +1169,17 @@ public class JAMSSpreadSheet extends JPanel {
 
             URI inUri = dataStore.getUri();
             if (inUri == null) {
-                System.out.println("error: can't access shapefile! path is: "
+                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "Can't access shapefile! path is: "
                         + dataStore.getShapeFile().getAbsolutePath());
                 return;
             }
+            
             String keyColumn = dataStore.getKeyColumn();
-            String shapeFileName = dataStore.getFileName();
             URI outUri = new File(explorer.getWorkspace().getTempDirectory(), new File(inUri).toPath().getFileName().toString()).toURI();
 
             int[] columns = table.getSelectedColumns();
             if (columns.length == 0) {
                 Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No columns selected.");
-                GUIHelper.showErrorDlg(null, ERR_MSG_CTS, JAMS.i18n("ERROR"));
                 return;
             }
             String[] headers = getSelectedColumnNames();

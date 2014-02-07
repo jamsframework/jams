@@ -88,7 +88,7 @@ public class AboutDlg extends JDialog {
         
 
         JPanel contentPanel = new JPanel();
-        contentPanel.setBackground(Color.white);
+//        contentPanel.setBackground(Color.white);
         contentPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         contentPanel.setPreferredSize(new Dimension(x + 10, y + 280));
 
@@ -112,6 +112,7 @@ public class AboutDlg extends JDialog {
                 + "\n" + JAMS.i18n("Contact") + "\t" + contactText;
 
         JTextArea versionTextArea = new JTextArea();
+        versionTextArea.setBackground(contentPanel.getBackground());
         versionTextArea.setEditable(false);
         versionTextArea.setFont(new Font(Font.SANS_SERIF, 0, 11));
         versionTextArea.setColumns(20);

@@ -50,7 +50,7 @@ public class JAMSClassLoader extends URLClassLoader {
         return defineClass(name, data, 0, data.length);
     }
 
-    private static void addFile(Set<URL> urls, File f, JAMSLogger logger) {
+    private static void addFile(Set<URL> urls, File f, RuntimeLogger logger) {
         try {
             URL url = f.toURI().toURL();
             if (!urls.add(url)) {
@@ -61,7 +61,7 @@ public class JAMSClassLoader extends URLClassLoader {
         }
     }
 
-    public static ClassLoader createClassLoader(String[] libs, JAMSLogger log) {
+    public static ClassLoader createClassLoader(String[] libs, RuntimeLogger log) {
         Set<URL> urls = new HashSet<URL>();
         for (String lib : libs) {
 

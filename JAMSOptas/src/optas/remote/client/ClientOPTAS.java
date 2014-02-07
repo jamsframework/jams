@@ -29,7 +29,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Observer;
 import java.util.StringTokenizer;
-import jams.runtime.JAMSLogger;
+import jams.runtime.RuntimeLogger;
 import jams.tools.StringTools;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -57,8 +57,8 @@ public class ClientOPTAS {
 
     private byte[] buffer;
     private Socket socket;
-    private JAMSLogger errorLog = new JAMSLogger();
-    private JAMSLogger infoLog = new JAMSLogger();
+    private RuntimeLogger errorLog = new RuntimeLogger();
+    private RuntimeLogger infoLog = new RuntimeLogger();
     private String host, account, password;
     private int port;
     private OutputStream outStream;
@@ -777,11 +777,11 @@ public class ClientOPTAS {
         return error;
     }
 
-    public JAMSLogger getErrorLog() {
+    public RuntimeLogger getErrorLog() {
         return errorLog;
     }
 
-    public JAMSLogger getInfoLog() {
+    public RuntimeLogger getInfoLog() {
         return infoLog;
     }
 

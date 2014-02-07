@@ -53,6 +53,7 @@ public class NotificationDlg extends JDialog {
     public NotificationDlg(Frame owner, String title) {
 
         super(owner);
+        setModal(false);
         this.setLocationByPlatform(true);
         this.setTitle(title);
         this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);

@@ -22,9 +22,11 @@
 package jams.meta;
 
 import jams.JAMSException;
+import jams.JAMSLogging;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 /**
@@ -39,6 +41,7 @@ public class ModelNode extends DefaultMutableTreeNode {
 
     public ModelNode(Object o) {
         super(o);
+        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
         if (ComponentDescriptor.class.isAssignableFrom(o.getClass())) {
             ((ComponentDescriptor) o).setNode(this);
         }
@@ -87,7 +90,7 @@ public class ModelNode extends DefaultMutableTreeNode {
                             ContextDescriptor newContext = contextMap.get(context);
                             field.linkToAttribute(newContext, field.getAttribute());
                         } catch (JAMSException ex) {
-                            childCd.getComponentRepository().logger.log(Level.SEVERE, ex.getMessage(), ex);
+                            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, ex.getMessage(), ex);
                         }
                     }
 

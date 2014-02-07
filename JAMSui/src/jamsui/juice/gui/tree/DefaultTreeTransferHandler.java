@@ -1,6 +1,7 @@
 package jamsui.juice.gui.tree;
 
 import jams.JAMSException;
+import jams.JAMSLogging;
 import jams.meta.ComponentDescriptor;
 import jams.meta.ComponentField;
 import jams.meta.ContextDescriptor;
@@ -17,6 +18,7 @@ import java.util.Vector;
 import jams.model.JAMSContext;
 import jamsui.juice.gui.ContextReplaceDlg;
 import jamsui.juice.JUICE;
+import java.util.logging.Logger;
 
 public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
 
@@ -24,6 +26,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
 
     public DefaultTreeTransferHandler(JAMSTree tree, int action) {
         super(tree, action, true);
+        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
     }
 
     public boolean canPerformAction(JAMSTree target, JAMSNode draggedNode, int action, Point location) {
@@ -259,7 +262,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                                 //component.linkComponentAttribute(var.name, newContext, var.getAttribute());
                                 //var.context = newContext;
                             } catch (JAMSException ex) {
-                                JUICE.getLogger().log(Level.SEVERE, null, ex);
+                                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                     }

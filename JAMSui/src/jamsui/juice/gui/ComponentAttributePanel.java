@@ -45,6 +45,7 @@ import jams.gui.input.InputComponent;
 import jams.gui.input.InputComponentFactory;
 import jams.JAMS;
 import jams.JAMSException;
+import jams.JAMSLogging;
 import jams.data.DefaultDataFactory;
 import jams.gui.input.*;
 import jams.meta.ComponentDescriptor;
@@ -61,6 +62,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -94,6 +96,8 @@ public class ComponentAttributePanel extends JPanel {
     private boolean adjusting = false;
 
     public ComponentAttributePanel() {
+
+        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
 
         this.setLayout(new BorderLayout());
 
@@ -173,7 +177,7 @@ public class ComponentAttributePanel extends JPanel {
                         attributeList.scrollRectToVisible(attributeList.getCellBounds(listIndex, listIndex));
                     }
                 } catch (JAMSException ex) {
-                    JUICE.getLogger().warning(ex.getHeader() + "\n" + ex.getMessage());
+                    Logger.getLogger(ComponentAttributePanel.class.getName()).warning(ex.getHeader() + "\n" + ex.getMessage());
                 }
             }
         });
@@ -185,7 +189,6 @@ public class ComponentAttributePanel extends JPanel {
 
         listPanel.add(listScroll, BorderLayout.CENTER);
 
-
         createListeners();
         addListeners();
 
@@ -193,7 +196,7 @@ public class ComponentAttributePanel extends JPanel {
 
     }
 
-    @SuppressWarnings( "deprecation" )
+    @SuppressWarnings("deprecation")
     private void setAttributeLink() {
 
         if (adjusting) {
@@ -222,7 +225,7 @@ public class ComponentAttributePanel extends JPanel {
                 //@TODO: proper handling
                 field.linkToAttribute(context, attributeString);
             } catch (JAMSException ex) {
-                JUICE.getLogger().warning(ex.getHeader() + "\n" + ex.getMessage());
+                Logger.getLogger(ComponentAttributePanel.class.getName()).warning(ex.getHeader() + "\n" + ex.getMessage());
             }
             linkText.setText(field.getContext() + "." + field.getAttribute());
             tableModel.setValueAt(field.getContext() + "." + field.getAttribute(), selectedRow, 3);
@@ -246,10 +249,9 @@ public class ComponentAttributePanel extends JPanel {
 //            setButton.setSelected(false);
 //            return;
 //        }
-
         if (setButton.isSelected()) {
             if (!valueInput.verify()) {
-                
+
                 GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Invalid_value!"), null);
                 return;
             }
@@ -302,7 +304,6 @@ public class ComponentAttributePanel extends JPanel {
 //                for (String value : values) {
 //                    attributeList.setSelectedValue(value, true);
 //                }
-
             } else {
                 // @todo: should stay empty if attribute not provided by some 
                 // context -- workaround for errorneous model files
@@ -403,7 +404,6 @@ public class ComponentAttributePanel extends JPanel {
             }
         });
 
-
         if (type.isArray()) {
             //attributes.addAll(repo.getUniqueAttributesByType(type.getComponentType()));
         }
@@ -443,7 +443,6 @@ public class ComponentAttributePanel extends JPanel {
             attributeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             attributeList.setEnabled(true);
         }
-
 
         attributeList.setModel(lModel);
     }

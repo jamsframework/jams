@@ -90,7 +90,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
             return;
         }
 
-        model.getLogger().setUseParentHandlers(false);
+//        model.getLogger().setUseParentHandlers(false);
 
         // create controller context 
         ContextDescriptor controller = new ContextDescriptor(ConcurrentContext.class, null, model);
@@ -160,7 +160,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
 
         // create a deep copy of the context in order to handle serial
         // component processing and datastore output
-        ModelNode serialContextNode = node.clone(new ModelDescriptor(rt.getLogger()), true, new HashMap<ContextDescriptor, ContextDescriptor>());
+        ModelNode serialContextNode = node.clone(new ModelDescriptor(), true, new HashMap<ContextDescriptor, ContextDescriptor>());
         ContextDescriptor serialContext = (ContextDescriptor) serialContextNode.getUserObject();
         serialContext.setInstanceName(context.getInstanceName() + "_Serial");
         cContainerNode.insert(serialContextNode, 2);
@@ -287,7 +287,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
             proxyAttributes.linkToAttribute(serialContext, ca.getName(), false);
         }
         
-        model.getLogger().setUseParentHandlers(true);
+//        model.getLogger().setUseParentHandlers(true);
 
     }
 }

@@ -27,6 +27,7 @@ import jams.model.JAMSVarDescription;
 import java.util.ArrayList;
 import jams.JAMS;
 import jams.JAMSException;
+import jams.JAMSLogging;
 import jams.model.Context;
 import jams.model.JAMSComponentDescription;
 import jams.model.VersionComments;
@@ -53,7 +54,7 @@ public class ComponentDescriptor extends Observable {
     private boolean enabled = true;
 
     public ComponentDescriptor(String instanceName, Class clazz) {
-
+        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
         if (clazz == null) {
             throw new NullClassException(JAMS.i18n("Could_not_find_class_for_component_") + instanceName + "_!", JAMS.i18n("Error"));
         }
@@ -87,7 +88,7 @@ public class ComponentDescriptor extends Observable {
                 }
             }
 
-            md.logger.warning(message);
+            Logger.getLogger(this.getClass().getName()).warning(message);
         }
 
         register(md);
@@ -141,7 +142,6 @@ public class ComponentDescriptor extends Observable {
 //            }
 //        }
 //    }
-
     public ComponentDescriptor cloneNode() {
 
         ComponentDescriptor copy = new ComponentDescriptor(getInstanceName(), getClazz());

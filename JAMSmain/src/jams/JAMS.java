@@ -82,7 +82,7 @@ public class JAMS {
      * Default output formatting for floating point data
      */  
     private static String floatFormat = "%f";
-
+    
     /**
      * Return a localized string 
      * @param key A resource key
@@ -111,7 +111,7 @@ public class JAMS {
         }
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         String result = "";
-        String line = null;
+        String line;
         try{
             while ((line = reader.readLine())!=null){
                 result += line;        
@@ -161,7 +161,7 @@ public class JAMS {
     }
 
     /**
-     * @param aDoubleFormatString the doubleFormatString to set
+     * @param aFloatFormat the floatFormatString to set
      */
     public static void setFloatFormat(String aFloatFormat) {
         floatFormat = aFloatFormat;
@@ -183,4 +183,5 @@ public class JAMS {
         else
             return null;
     }
+          
 }

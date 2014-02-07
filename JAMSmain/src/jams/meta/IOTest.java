@@ -27,7 +27,7 @@ import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.data.JAMSEntity;
 import jams.runtime.JAMSClassLoader;
-import jams.runtime.JAMSLogger;
+import jams.runtime.RuntimeLogger;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import jams.tools.StringTools;
@@ -53,13 +53,13 @@ public class IOTest {
 
         JAMSRuntime runtime = new StandardRuntime(properties);
 
-        ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new JAMSLogger());
+        ClassLoader classLoader = JAMSClassLoader.createClassLoader(libs, new RuntimeLogger());
 
         ModelIO io = new ModelIO(new NodeFactory() {
             public ModelNode createNode(ComponentDescriptor cd) {
                 return new ModelNode(cd);
             }
-        }, Logger.getLogger("test"));
+        });
 
         Document doc = XMLTools.getDocument("d:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam");
 

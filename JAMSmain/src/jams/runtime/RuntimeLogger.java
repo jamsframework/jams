@@ -1,5 +1,5 @@
 /*
- * JAMSLogger.java
+ * RuntimeLogger.java
  * Created on 30. Juni 2007, 17:10
  *
  * This file is part of JAMS
@@ -29,7 +29,7 @@ import java.util.Observer;
  *
  * @author Sven Kralisch
  */
-public class JAMSLogger extends Observable implements Serializable {
+public class RuntimeLogger extends Observable implements Serializable {
 
     StringBuffer logString = new StringBuffer();
     String lastString;

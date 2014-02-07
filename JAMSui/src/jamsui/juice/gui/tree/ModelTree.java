@@ -80,7 +80,7 @@ public class ModelTree extends JAMSTree {
 //                cd.setNode(node);
                 return node;
             }
-        }, JUICE.getLogger());
+        });
         updateModelTree(modelDoc);
 
         addTreeSelectionListener(new TreeSelectionListener() {

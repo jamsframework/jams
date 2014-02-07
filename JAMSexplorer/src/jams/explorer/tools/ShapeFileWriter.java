@@ -21,6 +21,7 @@
  */
 package jams.explorer.tools;
 
+import jams.JAMSLogging;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -50,32 +51,15 @@ import org.opengis.feature.type.PropertyDescriptor;
  */
 public class ShapeFileWriter {
 
-    /**
-     * the the URI of the parent
-     */
     private URI inShapefileURI = null;
-    /**
-     * the the URI of the child
-     */
     private URI outShapefileURI = null;
-    /**
-     * the key column of the target structure
-     */
     private String targetKeyName = null;
-    /**
-     * the name of the columns
-     */
     private String[] names;
-    /**
-     * the ids
-     */
     private double[] ids;
-    /**
-     * the data corresponding to ids
-     */
-    double[][] data;
+    private double[][] data;
 
     public ShapeFileWriter() {
+        JAMSLogging.registerLogger(Logger.getLogger(ShapeFileWriter.class.getName()));
     }
 
     public String getTargetKeyName() {
@@ -128,6 +112,10 @@ public class ShapeFileWriter {
 
     public void writeShape() throws MalformedURLException, IOException {
 
+        Logger.getLogger(ShapeFileWriter.class.getName()).log(Level.INFO, "Trying to create shapefile "
+                + new File(outShapefileURI).getAbsolutePath() + " based on "
+                + new File(inShapefileURI).getAbsolutePath() + ".");
+
         File targetFile = new File(outShapefileURI);
         if (!targetFile.canWrite() && !targetFile.getParentFile().canWrite()) {
             Logger.getLogger(ShapeFileWriter.class.getName()).log(Level.WARNING, "Target file " + targetFile.getPath()
@@ -159,13 +147,22 @@ public class ShapeFileWriter {
                     + " does not exist in Shapefile " + new File(inShapefileURI) + ". No output written!");
             return;
         }
-        
+
         // create the new feature type with additional attributes
-        
         SimpleFeatureType targetSchema = createFeatureType(sourceSchema);
 
-        // build the new feature collection
+        PropertyDescriptor idProperty = targetSchema.getDescriptor(targetKeyName);
+        String attribs = "";
+        for (PropertyDescriptor d : targetSchema.getDescriptors()) {
+            if (idProperty == d) {
+                attribs += "\t" + d.getName() + "\t(link attribute)\n";
+            } else {
+                attribs += "\t" + d.getName() + "\n";
+            }
+        }
+        Logger.getLogger(ShapeFileWriter.class.getName()).log(Level.INFO, "The following attributes are written:\n" + attribs);
 
+        // build the new feature collection
         FeatureCollection<SimpleFeatureType, SimpleFeature> targetFeatureCollection = FeatureCollections.newCollection();
         int i = 0;
         FeatureIterator fi = featureCollection.features();
@@ -190,7 +187,7 @@ public class ShapeFileWriter {
 
             targetFeatureCollection.add(targetFeature);
         }
-        
+
         // create new shapefile data store
         ShapefileDataStore newShapefileDataStore = new ShapefileDataStore(outShapefileURI.toURL());
 
@@ -212,6 +209,8 @@ public class ShapeFileWriter {
         t.commit();
         t.close();
 
+        Logger.getLogger(ShapeFileWriter.class.getName()).log(Level.INFO, "Succesfully wrote "
+                + i + " shapes to " + targetFile.getPath() + "!");
     }
 
     private SimpleFeatureType createFeatureType(FeatureType inSchema) {
