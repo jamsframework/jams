@@ -23,32 +23,26 @@ package jams.explorer.tools;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotools.data.DataStoreFactorySpi;
-import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureCollections;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -165,13 +159,14 @@ public class ShapeFileWriter {
                     + " does not exist in Shapefile " + new File(inShapefileURI) + ". No output written!");
             return;
         }
+        
+        // create the new feature type with additional attributes
+        
         SimpleFeatureType targetSchema = createFeatureType(sourceSchema);
 
-//        for (AttributeDescriptor ad : newSchema.getAttributeDescriptors()) {
-//            System.out.println(ad.toString());
-//        }
-        FeatureCollection<SimpleFeatureType, SimpleFeature> targetFeatureCollection = FeatureCollections.newCollection();
+        // build the new feature collection
 
+        FeatureCollection<SimpleFeatureType, SimpleFeature> targetFeatureCollection = FeatureCollections.newCollection();
         int i = 0;
         FeatureIterator fi = featureCollection.features();
         while (fi.hasNext()) {
@@ -195,13 +190,11 @@ public class ShapeFileWriter {
 
             targetFeatureCollection.add(targetFeature);
         }
-
-        // get feature type to create new shapefile
-        FeatureType ft = source.getSchema();
+        
         // create new shapefile data store
         ShapefileDataStore newShapefileDataStore = new ShapefileDataStore(outShapefileURI.toURL());
 
-        // create the schema using from the original shapefile
+        // set schema to the new feature type
         newShapefileDataStore.createSchema(targetSchema);
 
         // grab the data source from the new shapefile data store
@@ -213,7 +206,7 @@ public class ShapeFileWriter {
         // accquire a transaction to create the shapefile from FeatureStore
         Transaction t = newFeatureStore.getTransaction();
 
-        // add features got from the old file
+        // add newly generated features (old file + new attributes)
         newFeatureStore.addFeatures(targetFeatureCollection);
 
         t.commit();
@@ -223,7 +216,7 @@ public class ShapeFileWriter {
 
     private SimpleFeatureType createFeatureType(FeatureType inSchema) {
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-        builder.setName("jadeType");
+        builder.setName(inSchema.getName());
         builder.setCRS(inSchema.getCoordinateReferenceSystem());
 
         // add all existing attributes
