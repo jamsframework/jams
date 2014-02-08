@@ -1142,20 +1142,26 @@ public class JAMSSpreadSheet extends JPanel {
 
             String selectedShape = (String) shapeSelector.getSelectedItem();
             if (StringTools.isEmptyString(selectedShape)) {
-                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No Shapefile selected.");
+                GUIHelper.showErrorDlg(explorer.getExplorerFrame(), "No Shapefile selected.");
                 return;  // errorMessage?
             }
 
             ShapeFileDataStore dataStore = (ShapeFileDataStore) explorer.getWorkspace().getInputDataStore(selectedShape);
             if (dataStore == null) {
-                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No datastore found.");
+                GUIHelper.showErrorDlg(explorer.getExplorerFrame(), "No datastore found.");
                 return;
             }
 
             URI inUri = dataStore.getUri();
             if (inUri == null) {
-                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "Can't access Shapefile! path is: "
-                        + dataStore.getShapeFile().getAbsolutePath());
+                GUIHelper.showErrorDlg(explorer.getExplorerFrame(), "Can't access Shapefile! path is: \""
+                        + dataStore.getShapeFile().getAbsolutePath() + "\"");
+                return;
+            }
+
+            int[] columns = table.getSelectedColumns();
+            if (columns.length == 0) {
+                GUIHelper.showErrorDlg(explorer.getExplorerFrame(), "No columns selected.");
                 return;
             }
 
@@ -1169,16 +1175,10 @@ public class JAMSSpreadSheet extends JPanel {
                 return;
             } else {
                 outFile = jfc.getSelectedFile();
-
             }
 
             URI outUri = outFile.toURI();
 
-            int[] columns = table.getSelectedColumns();
-            if (columns.length == 0) {
-                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No columns selected.");
-                return;
-            }
             String[] headers = getSelectedColumnNames();
             double[][] data = getSelectedData();
             double[] ids = getIdValues();

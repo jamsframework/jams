@@ -19,7 +19,6 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package reg.tree;
 
 import jams.workspace.dsproc.AbstractDataStoreProcessor;
@@ -33,46 +32,56 @@ public class FileObject {
 
     private File file;
     private boolean isValid = false;
-    
+    private String[] validExtensions = {"csv", "dat", "txt", "jmp"};
+
     AbstractDataStoreProcessor processor;
-        
+
     public FileObject(File file) {
         this.file = file;
-        if (file.isFile() && (file.getName().endsWith("csv") || file.getName().endsWith("dat"))){
-            this.processor = AbstractDataStoreProcessor.getProcessor(file);
+        if (file.isFile()) {
+            boolean validExt = false;
+            for (String ext : validExtensions) {
+                if (file.getName().endsWith(ext)) {
+                    validExt = true;
+                }
+            }
+            if (validExt) {
+                this.processor = AbstractDataStoreProcessor.getProcessor(file);
+            }
         }
-        if (processor != null && processor.getDataStoreType(file) != AbstractDataStoreProcessor.DataStoreType.Unsupported) {
+        if (processor != null) {
             isValid = true;
         }
     }
 
-    public boolean isValid(){
+    public boolean isValid() {
         return isValid;
     }
-    private FileObject(File file, AbstractDataStoreProcessor processor){
+
+    private FileObject(File file, AbstractDataStoreProcessor processor) {
         this.file = file;
         this.processor = processor;
     }
-    
-    public FileObject[] getSubDataStores(){
-        if (processor == null){
+
+    public FileObject[] getSubDataStores() {
+        if (processor == null) {
             return new FileObject[0];
         }
         AbstractDataStoreProcessor processors[] = this.processor.getSubDataStores();
         FileObject fileObjects[] = new FileObject[processors.length];
-        
-        int i=0;
-        for (AbstractDataStoreProcessor p: processors){
+
+        int i = 0;
+        for (AbstractDataStoreProcessor p : processors) {
             fileObjects[i++] = new FileObject(file, p);
         }
         return fileObjects;
     }
-    
+
     @Override
     public String toString() {
-        if (processor == null){
+        if (processor == null) {
             return file.getName();
-        }else{
+        } else {
             return processor.toString();
         }
     }
@@ -83,5 +92,5 @@ public class FileObject {
     public File getFile() {
         return file;
     }
-    
+
 }
