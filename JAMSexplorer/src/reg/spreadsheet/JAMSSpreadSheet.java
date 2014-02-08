@@ -302,7 +302,7 @@ public class JAMSSpreadSheet extends JPanel {
                             }
                             save(filename, getSaveHeaders());
                         }
-                    } 
+                    }
                 }
 
             } catch (Exception ex) {
@@ -379,10 +379,8 @@ public class JAMSSpreadSheet extends JPanel {
         String[] columnNames = tmodel.getCoulumnNameArray();
 
 //        JFileChooser chooser = new JFileChooser(); //ACHTUNG!!!!!!!!!
-
 //        int returnVal = chooser.showSaveDialog(panel);
 //        if (returnVal == JFileChooser.APPROVE_OPTION) {
-
         try {
 
             File file;
@@ -437,7 +435,6 @@ public class JAMSSpreadSheet extends JPanel {
 
             } else { //AB hier Das gleich nur Transponiert
 
-
                 filewriter.write(SpreadsheetConstants.LOAD_HEADERS + "\r\n");
 
                 String col_string = "";
@@ -472,15 +469,11 @@ public class JAMSSpreadSheet extends JPanel {
                     filewriter.write("\r\n");
                 }
 
-
-
-
                 filewriter.write(SpreadsheetConstants.LOAD_END);
                 filewriter.close();
             }
         } catch (IOException ex) {
         }
-
 
 //        }
     }
@@ -498,7 +491,6 @@ public class JAMSSpreadSheet extends JPanel {
 
         //    int returnVal = chooser.showSaveDialog(panel);
         //    if (returnVal == JFileChooser.APPROVE_OPTION) {
-
         try {
 
             File file;
@@ -557,7 +549,6 @@ public class JAMSSpreadSheet extends JPanel {
 
         } catch (IOException ex) {
         }
-
 
 //      }
     }
@@ -745,16 +736,16 @@ public class JAMSSpreadSheet extends JPanel {
     public JComboBox getShapeSelector() {
         return shapeSelector;
     }
-    
+
     private void formatDoubleArray(double[] rowBuffer) {
         // shorten double values to four decimal digits
         for (int i = 0; i < rowBuffer.length; i++) {
             if (!Double.isNaN(rowBuffer[i]) && !Double.isInfinite(rowBuffer[i])) {
-                double testValue = 10000*rowBuffer[i];
-                
-                if (testValue - Math.floor(testValue) < 0.5){
+                double testValue = 10000 * rowBuffer[i];
+
+                if (testValue - Math.floor(testValue) < 0.5) {
                     rowBuffer[i] = Math.floor(testValue) / 10000.;
-                }else{
+                } else {
                     rowBuffer[i] = Math.ceil(testValue) / 10000.;
                 }
                 //this works not for values larger LONG.Max
@@ -769,12 +760,10 @@ public class JAMSSpreadSheet extends JPanel {
 //        getEPSFileChooser().setCurrentDirectory(outputDSDir.getParentFile());
 //        ttpFile = new File(inputDSDir, store.getID() + ".ttp");
 //        dtpFile = new File(inputDSDir, store.getID() + ".dtp");
-
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<Attribute.Calendar> timeVector = new Vector<Attribute.Calendar>();
 
         this.outputDSDir = outputDSDir;
-
 
         double[] rowBuffer, source;
         int pos = 0;
@@ -847,16 +836,13 @@ public class JAMSSpreadSheet extends JPanel {
         getEPSFileChooser().setCurrentDirectory(inputDSDir.getParentFile());
 
         //regionalizer.getWorkspace().getDirectory().toString()+"/explorer";
-
 //        ttpFile = new File(inputDSDir, store.getID() + ".ttp");
 //        dtpFile = new File(inputDSDir, store.getID() + ".dtp");
-
         ttpFile = new File(explorer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID() + SpreadsheetConstants.FILE_ENDING_TTP);
 //        dtpFile = new File(regionalizer.getWorkspace().getDirectory().toString() + SpreadsheetConstants.FILE_EXPLORER_DIR_NAME, store.getID() + ".dtp");
 
         Vector<double[]> arrayVector = new Vector<double[]>();
         Vector<Attribute.Calendar> timeVector = new Vector<Attribute.Calendar>();
-
 
         // read table headers from attribute "NAME"
         // @TODO: flexible handling of header attribute
@@ -944,7 +930,6 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     private void openCTS(File templateFile) {
-
 
         if (table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)) {
             JTSConfigurator jts;
@@ -1157,7 +1142,7 @@ public class JAMSSpreadSheet extends JPanel {
 
             String selectedShape = (String) shapeSelector.getSelectedItem();
             if (StringTools.isEmptyString(selectedShape)) {
-                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No shape selected.");
+                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No Shapefile selected.");
                 return;  // errorMessage?
             }
 
@@ -1169,13 +1154,25 @@ public class JAMSSpreadSheet extends JPanel {
 
             URI inUri = dataStore.getUri();
             if (inUri == null) {
-                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "Can't access shapefile! path is: "
+                Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "Can't access Shapefile! path is: "
                         + dataStore.getShapeFile().getAbsolutePath());
                 return;
             }
-            
+
             String keyColumn = dataStore.getKeyColumn();
-            URI outUri = new File(explorer.getWorkspace().getTempDirectory(), new File(inUri).toPath().getFileName().toString()).toURI();
+
+            File outFile = new File(explorer.getWorkspace().getOutputDataDirectory(), new File(inUri).toPath().getFileName().toString());
+            JFileChooser jfc = GUIHelper.getJFileChooser(JAMSFileFilter.getShapeFilter());
+            jfc.setSelectedFile(outFile);
+            int result = jfc.showOpenDialog(panel);
+            if (result == JFileChooser.CANCEL_OPTION) {
+                return;
+            } else {
+                outFile = jfc.getSelectedFile();
+
+            }
+
+            URI outUri = outFile.toURI();
 
             int[] columns = table.getSelectedColumns();
             if (columns.length == 0) {
@@ -1192,14 +1189,14 @@ public class JAMSSpreadSheet extends JPanel {
             writer.setIds(ids);
             writer.setData(data);
             writer.setInShapefileURI(inUri);
-            writer.setTargetKeyName(keyColumn);            
+            writer.setTargetKeyName(keyColumn);
             writer.setOutShapefileURI(outUri);
             try {
                 writer.writeShape();
             } catch (IOException ex) {
                 Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
         }
     };
 
@@ -1277,9 +1274,7 @@ public class JAMSSpreadSheet extends JPanel {
         int[] columns = table.getSelectedColumns();
         int kx = columns.length;
 
-
         //sum= (String) table.getValueAt(rows[0],columns[0]);
-
         for (int k = 0; k < kx; k++) {
 
             for (int i = 0; i < ix; i++) {
@@ -1337,7 +1332,6 @@ public class JAMSSpreadSheet extends JPanel {
 
     public void makeTable() {
 
-
         this.table = new JTable(this.tmodel);
 
         this.tableHeader = table.getTableHeader();
@@ -1375,19 +1369,16 @@ public class JAMSSpreadSheet extends JPanel {
 
 //        closeButton.setBackground(SpreadsheetConstants.GUI_COLOR_CLOSETAB);
         //dataplotButton.setEnabled(false);
-
         scrollpane.setVerticalScrollBar(new JScrollBar(JScrollBar.VERTICAL));
         scrollpane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
 //        scrollpane2 = new JScrollPane(scrollpane);
-
         //setColumnNameArray(headers.getValue());
         makeTable();
         //panel.add(scrollpane,grid);
 
         //GUIHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
         //GUIHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
-
         GUIHelper.addGBComponent(controlpanel, gbl, closeButton, 0, 5, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 6, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 7, 1, 1, 0, 0);
@@ -1410,7 +1401,6 @@ public class JAMSSpreadSheet extends JPanel {
 //              controlpanel.add(onthefly);
 //              controlpanel.add(plotButton);
 //              controlpanel.add(dataplotButton);
-
         statButton.addActionListener(statisticAction);
         savebutton.addActionListener(saveAction);
 //        loadbutton.addActionListener(loadAction);
@@ -1427,7 +1417,6 @@ public class JAMSSpreadSheet extends JPanel {
 
         this.add(scrollpane, BorderLayout.CENTER);
         this.add(helperpanel, BorderLayout.EAST);
-
 
     }
 
@@ -1472,12 +1461,10 @@ public class JAMSSpreadSheet extends JPanel {
             }
 
 //            if(!(timeRuns && viewCol == 0)){
-
 //                if(table.getSelectedColumn() == 0){
 //                    col_START = 1;
 //                    button = 3;
 //                }
-
             switch (button) {
 
                 case 1: //SHIFT DOWN
@@ -1511,7 +1498,6 @@ public class JAMSSpreadSheet extends JPanel {
                     table.setColumnSelectionInterval(col_START, col_START);
             }
 //            }
-
 
             table.setRowSelectionInterval(0, table.getRowCount() - 1);
             button = -1;

@@ -29,6 +29,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -37,14 +39,6 @@ import java.util.Observer;
 public abstract class AbstractDataStoreProcessor {
 
     public enum DataStoreType{Unsupported, Timeserie, SpatioTemporal, DataSerie1D, TimeDataSerie};
-    
-    /*public static final int UnsupportedDataStore = 0;
-    public static final int TimeSpaceDataStore = 1;
-    public static final int EnsembleTimeSeriesDataStore = 2;
-    public static final int SimpleDataSerieDataStore = 3;
-    public static final int SimpleTimeSerieDataStore = 4;
-    public static final int SimpleEnsembleDataStore = 5;*/
-
 
     protected AbstractDataStoreProcessor(File dsFile){
     
@@ -58,6 +52,7 @@ public abstract class AbstractDataStoreProcessor {
             try{
                 return new DataStoreProcessorOMS(dsFile);
             }catch(Exception ex){
+                Logger.getLogger(AbstractDataStoreProcessor.class.getName()).log(Level.SEVERE, null, ex);
                 return null;
             }
         }else{

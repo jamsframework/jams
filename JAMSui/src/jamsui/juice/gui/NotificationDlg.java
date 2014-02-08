@@ -54,6 +54,7 @@ public class NotificationDlg extends JDialog {
 
         super(owner);
         setModal(false);
+        setAlwaysOnTop(true);
         this.setLocationByPlatform(true);
         this.setTitle(title);
         this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);

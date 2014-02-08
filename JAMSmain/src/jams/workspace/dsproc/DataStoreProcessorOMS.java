@@ -24,7 +24,6 @@ package jams.workspace.dsproc;
 
 import jams.JAMS;
 import jams.data.Attribute;
-import jams.data.JAMSCalendar;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;

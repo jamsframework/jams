@@ -38,11 +38,12 @@ public class FileObject {
         
     public FileObject(File file) {
         this.file = file;
-        if (file.isFile()){
+        if (file.isFile() && (file.getName().endsWith("csv") || file.getName().endsWith("dat"))){
             this.processor = AbstractDataStoreProcessor.getProcessor(file);
         }
-        if (processor != null)
+        if (processor != null && processor.getDataStoreType(file) != AbstractDataStoreProcessor.DataStoreType.Unsupported) {
             isValid = true;
+        }
     }
 
     public boolean isValid(){

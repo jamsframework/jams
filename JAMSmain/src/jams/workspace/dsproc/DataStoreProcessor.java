@@ -386,6 +386,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         // @context row
         row = reader.readLine();
         if ((row == null) || !row.equals("@context")) {
+            reader.close();
             return;
         }
         row = reader.readLine();
