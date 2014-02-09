@@ -884,8 +884,10 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                         //ShapeFileDataStore shapeDataStore = (ShapeFileDataStore) explorer.getWorkspace().;
                         GlobeView view = GlobeView.getInstance();
-                        view.addJAMSExplorerData(transfer);
-                        view.show();
+                        boolean result = view.addJAMSExplorerData(transfer);
+                        if (result) {
+                            view.show();
+                        }
                         
                         
 

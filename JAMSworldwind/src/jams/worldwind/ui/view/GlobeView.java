@@ -29,6 +29,7 @@ import gov.nasa.worldwind.util.StatusBar;
 import gov.nasa.worldwindx.examples.util.HighlightController;
 import gov.nasa.worldwindx.examples.util.ScreenSelector;
 import gov.nasa.worldwindx.examples.util.ScreenShotAction;
+import jams.JAMSLogging;
 import jams.data.JAMSCalendar;
 import jams.workspace.stores.ShapeFileDataStore;
 import jams.worldwind.data.DataTransfer3D;
@@ -72,6 +73,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.logging.Level;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.Icon;
@@ -342,7 +344,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         getWorldWindow().removeSelectListener(selectListener);
     }
 
-    public void addJAMSExplorerData(DataTransfer3D d) {
+    public boolean addJAMSExplorerData(DataTransfer3D d) {
         this.data = d;
         this.fillAttributesComboBox();
         createListener();
@@ -353,8 +355,18 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             intervallView.dispose();
             intervallView = null;
         }
-
-        addData(d.getShapeFileDataStore());
+        
+        try {
+            addData(d.getShapeFileDataStore());
+        } catch (gov.nasa.worldwind.exception.WWRuntimeException wwrte) {
+            JAMSLogging.registerLogger(java.util.logging.Logger.getLogger(GlobeView.class.getName()));
+            java.util.logging.Logger.getLogger(GlobeView.class.getName()).log(Level.WARNING, 
+                    "Cannot open Shapefile \"" + d.getShapeFileDataStore().getShapeFile().getAbsolutePath() + "\" due to unknown projection. Please correct!", wwrte);
+            JAMSLogging.unregisterLogger(java.util.logging.Logger.getLogger(GlobeView.class.getName()));
+            return false;
+        }        
+        return true;
+        
         //fillAttributesComboBox();
 //        writeToDisk();
     }
@@ -790,6 +802,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         String layerName = f.getName() + "|" + f.getAbsolutePath();
         //Layer layer = new ShapefileLoader().createLayerFromShapefile(new Shapefile(f));
         Shapefile shp = new Shapefile(f);
+        
         System.out.println("SHAPEFILE RECORDS: " + shp.getNumberOfRecords());
         List<Layer> layers = new JamsShapefileLoader().
                 createLayersFromShapefile(shp);
