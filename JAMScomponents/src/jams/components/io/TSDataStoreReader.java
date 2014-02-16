@@ -37,55 +37,75 @@ import java.util.ArrayList;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 @JAMSComponentDescription(title = "TSDataStoreReader",
-author = "Sven Kralisch",
-date = "2008-10-16",
-version = "1.0_1",
-description = "This component can be used obtain data from a time series "
-+ "data store which contains only double values and a number of "
-+ "station-specific metadata.")
+        author = "Sven Kralisch",
+        date = "2014-02-16",
+        version = "1.1",
+        description = "This component can be used to obtain data from a time series "
+        + "data store which contains only double values and a number of "
+        + "station-specific metadata. Additional functions:\n"
+        + "- automated time shift if start date of datastore is before start date of model\n"
+        + "- automated aggregation if time steps of data store and model differ")
+@VersionComments(entries = {
+    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", comment = "Cache functions removed, minor bug fixes"),
+    @VersionComments.Entry(version = "1.1", comment = "\n- Aggregation functions if time steps of data store and model differ\n"
+            + "- Fixed wrong time shift in case of monthly data\n")
+})
 public class TSDataStoreReader extends JAMSComponent {
 
     /*
      *  Component variables
      */
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Datastore ID")
+            description = "Datastore ID")
     public Attribute.String id;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "The time interval within which the component shall read "
-    + "data from the datastore")
+            description = "The time interval within which the component shall read "
+            + "data from the datastore")
     public Attribute.TimeInterval timeInterval;
-    
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Aggregate multiple datastore entries to averages or sums?",
+            defaultValue = "true")
+    public Attribute.Boolean calcAvg;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "The current model time - needed in case of aggregation over irregular time steps (e.g. months).")
+    public Attribute.Calendar time;
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Descriptive name of the dataset (equals datastore ID)")
+            description = "Descriptive name of the dataset (equals datastore ID)")
     public Attribute.String dataSetName;
-   
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Array of double values received from the datastore. Order "
-    + "according to datastore")
+            description = "Array of double values received from the datastore. Order "
+            + "according to datastore")
     public Attribute.DoubleArray dataArray;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Array of station elevations")
+            description = "Array of station elevations")
     public Attribute.DoubleArray elevation;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Array of station's x coordinate")
+            description = "Array of station's x coordinate")
     public Attribute.DoubleArray xCoord;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Array of station's y coordinate")
+            description = "Array of station's y coordinate")
     public Attribute.DoubleArray yCoord;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "Regression coefficients")
+            description = "Regression coefficients")
     public Attribute.DoubleArray regCoeff;
-      
+
     private TSDataStore store;
     private double[] doubles;
     private double[] elevationArray;
     boolean shifted = false;
+    int tsRatio = 1;
+    Attribute.Calendar storeDate;
+    int storeUnit, storeUnitCount, targetUnit, targetUnitCount;
 
     @Override
     public void init() {
@@ -164,68 +184,187 @@ public class TSDataStoreReader extends JAMSComponent {
     }
 
     private void checkConsistency() {
+
         // check if we need to shift forward
-        if (!shifted && store.getStartDate().before(timeInterval.getStart()) && (store.getStartDate().compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) != 0)) {
-            shifted = true;
-            Attribute.Calendar current = store.getStartDate().clone();
-            Attribute.Calendar targetDate = timeInterval.getStart().clone();
-            current.removeUnsignificantComponents(timeInterval.getTimeUnit());
-            targetDate.removeUnsignificantComponents(timeInterval.getTimeUnit());
-            int timeUnit = timeInterval.getTimeUnit();
-            int timeUnitCount = timeInterval.getTimeUnitCount();
+        Attribute.Calendar targetDate = timeInterval.getStart().clone();
+        targetUnit = timeInterval.getTimeUnit();
+        targetUnitCount = timeInterval.getTimeUnitCount();
+        storeDate = store.getStartDate().clone();
+        storeUnit = store.getTimeUnit();
+        storeUnitCount = store.getTimeUnitCount();
 
-            // check if we can calculate offset
+        storeDate.removeUnsignificantComponents(storeUnit);
+        targetDate.removeUnsignificantComponents(targetUnit);
+
+        int offset = storeDate.compareTo(targetDate, targetUnit);
+
+        if (offset > 0) {
+
+            getModel().getRuntime().sendHalt("Time series data read by " + this.getInstanceName() + " start after model start time!"
+                    + "\n(" + store.getStartDate() + " vs " + timeInterval.getStart() + ")");
+
+        } else if (offset < 0) {
+
+            // check if we can calculate offset directly
             // this can be done if the step size can be calculated directly from
-            // milliseconds representation, i.e. for weekly steps and below
-            // ps: this is evil :]
-            if (timeUnit >= Attribute.Calendar.WEEK_OF_YEAR) {
-                long diff = (targetDate.getTimeInMillis() - current.getTimeInMillis()) / 1000;
-                int steps;
-                switch (timeUnit) {
-                    case Attribute.Calendar.DAY_OF_YEAR:
-                        steps = (int) diff / 3600 / 24;
-                        break;
-                    case Attribute.Calendar.HOUR_OF_DAY:
-                        steps = (int) diff / 3600;
-                        break;
-                    case Attribute.Calendar.WEEK_OF_YEAR:
-                        steps = (int) diff / 3600 / 24 / 7;
-                        break;
-                    case Attribute.Calendar.MINUTE:
-                        steps = (int) diff / 60;
-                        break;
-                    default:
-                        steps = (int) diff;
-                }
-                steps = (int) steps / timeUnitCount;
-
-                store.skip(steps);
-            } else {
-
-                // here we need to walk through time with a calendar object
-                // this costs more runtime, but works for monthly and yearly
-                // steps as well
-                targetDate.add(timeUnit, -1 * timeUnitCount);
-                while (current.compareTo(targetDate, timeUnit) < 0) {
-                    store.getNext();
-                    current.add(timeUnit, timeUnitCount);
-                }
+            // milliseconds representation, i.e. for weekly time steps and below
+            // else we calculate offset by iterating in time (less efficient)
+            long diff = (targetDate.getTimeInMillis() - storeDate.getTimeInMillis()) / 1000;
+            int steps;
+            switch (storeUnit) {
+                case Attribute.Calendar.DAY_OF_YEAR:
+                    steps = (int) diff / 3600 / 24 / storeUnitCount;
+                    storeDate.add(storeUnit, storeUnitCount * steps);
+                    break;
+                case Attribute.Calendar.HOUR_OF_DAY:
+                    steps = (int) diff / 3600 / storeUnitCount;
+                    storeDate.add(storeUnit, storeUnitCount * steps);
+                    break;
+                case Attribute.Calendar.WEEK_OF_YEAR:
+                    steps = (int) diff / 3600 / 24 / 7 / storeUnitCount;
+                    storeDate.add(storeUnit, storeUnitCount * steps);
+                    break;
+                case Attribute.Calendar.MINUTE:
+                    steps = (int) diff / 60 / storeUnitCount;
+                    storeDate.add(storeUnit, storeUnitCount * steps);
+                    break;
+                case Attribute.Calendar.SECOND:
+                    steps = (int) diff / storeUnitCount;
+                    storeDate.add(storeUnit, storeUnitCount * steps);
+                    break;
+                default:
+                    steps = iterateStoreDate(targetDate);
             }
+
+            // skip forward datastore to required start time
+            store.skip(steps);
+
         }
+
+        // check if we have different step size in store and model
+        if (storeUnit != targetUnit || storeUnitCount != targetUnitCount) {
+
+            // if both units have a constant duration, calculate this duration and the related ratio
+            if (storeUnit > Attribute.Calendar.MONTH && targetUnit > Attribute.Calendar.MONTH) {
+                int storeMS = getMilliseconds(storeUnit);
+                int targetMS = getMilliseconds(targetUnit);
+                double dRatio = (double) (targetMS * targetUnitCount) / (storeMS * storeUnitCount);
+                int ratio = (int) Math.floor(dRatio);
+                if (ratio != dRatio) {
+                    getModel().getRuntime().sendHalt("Time steps in datastore " + store.getID() + " and model are incompatible. "
+                            + "Please adapt your datastore first!");
+                }
+
+                tsRatio = ratio;
+            } else {
+                tsRatio = -1;
+            }
+
+        }
+    }
+
+    private int getMilliseconds(int unit) {
+        int ms = 0;
+        switch (unit) {
+            case Attribute.Calendar.DAY_OF_YEAR:
+                ms = 1000 * 3600 * 24;
+                break;
+            case Attribute.Calendar.HOUR_OF_DAY:
+                ms = 1000 * 3600;
+                break;
+            case Attribute.Calendar.WEEK_OF_YEAR:
+                ms = 1000 * 3600 * 24 * 7;
+                break;
+            case Attribute.Calendar.MINUTE:
+                ms = 1000 * 60;
+                break;
+            case Attribute.Calendar.SECOND:
+                ms = 1000;
+                break;
+            case Attribute.Calendar.MILLISECOND:
+                ms = 1;
+                break;
+            default:
+                getModel().getRuntime().sendHalt("Cannot calculate constant time unit duration!");
+        }
+        return ms;
+    }
+
+    private int iterateStoreDate(Attribute.Calendar date) {
+        int steps = 0;
+        while (storeDate.compareTo(date, storeUnit) < 0) {
+            storeDate.add(storeUnit, storeUnitCount);
+            steps++;
+        }
+        return steps;
+    }
+
+    @Override
+    public void initAll() {
+        checkConsistency();
     }
 
     @Override
     public void run() {
-        checkConsistency();
 
-        DefaultDataSet ds = store.getNext();
-        DataValue[] data = ds.getData();
-        for (int i = 1; i < data.length; i++) {
-            doubles[i - 1] = data[i].getDouble();
+        if (tsRatio == 1) {
+
+            DefaultDataSet ds = store.getNext();
+            DataValue[] data = ds.getData();
+            for (int i = 1; i < data.length; i++) {
+                doubles[i - 1] = data[i].getDouble();
+            }
+
+            dataArray.setValue(doubles);
+            regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));
+
+        } else {
+
+            int n;
+
+            // get the ratio (fixed or dynamic)
+            if (tsRatio < 0) {
+                Attribute.Calendar nextTime = time.clone();
+                nextTime.add(targetUnit, targetUnitCount);
+                n = iterateStoreDate(nextTime);
+            } else {
+                n = tsRatio;
+            }
+
+            // calc the aggregated values based on the ratio
+            for (int i = 0; i < doubles.length; i++) {
+                doubles[i] = 0;
+            }
+
+            for (int j = 0; j < n; j++) {
+                DefaultDataSet ds = store.getNext();
+                DataValue[] data = ds.getData();
+                for (int i = 1; i < data.length; i++) {
+                    doubles[i - 1] += data[i].getDouble();
+                }
+            }
+
+            if (calcAvg.getValue()) {
+                for (int i = 0; i < doubles.length; i++) {
+                    doubles[i] /= n;
+                }
+            }
+
+            dataArray.setValue(doubles);
+            regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));
+
+            // create some output
+//            String s = store.getID() + " ";
+//            if (time != null) {
+//                s += time + " ";
+//            }
+//            for (int i = 0; i < doubles.length; i++) {
+//                s += doubles[i] + " ";
+//            }
+//            getModel().getRuntime().println(s, JAMS.VVERBOSE);
+
         }
 
-        dataArray.setValue(doubles);
-        regCoeff.setValue(Regression.calcLinReg(elevationArray, doubles));
     }
 
     @Override
