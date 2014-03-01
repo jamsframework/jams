@@ -19,15 +19,3 @@
  * along with JAMS. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-<#if package?? && package != "">
-package ${package};
-
-</#if>
-/**
- *
- * @author ${user}
- */
-public class ${name} {
-
-}
