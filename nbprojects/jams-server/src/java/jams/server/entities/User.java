@@ -75,9 +75,8 @@ public class User implements Serializable {
     @Size(max = 100)
     @Column(name = "email")
     private String email;
-    @Size(max = 1)
     @Column(name = "admin")
-    protected Integer admin;
+    private Integer admin;
 
     public User() {
     }

@@ -1,6 +1,6 @@
 /*
  * UserFacade.java
- * Created on 03.03.2014, 23:00:41
+ * Created on 03.03.2014, 23:19:01
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
