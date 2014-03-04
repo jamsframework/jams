@@ -31,6 +31,7 @@ import gov.nasa.worldwindx.examples.util.ScreenSelector;
 import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 import jams.JAMSLogging;
 import jams.data.JAMSCalendar;
+import jams.tools.JAMSTools;
 import jams.workspace.stores.ShapeFileDataStore;
 import jams.worldwind.data.DataTransfer3D;
 import jams.worldwind.handler.SelectionHighlightController;
@@ -253,7 +254,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.theScreenSelector.addMessageListener(this);
         this.highlightController = new HighlightController(getWorldWindow(), SelectEvent.ROLLOVER);
 
-        this.theFrame = new JFrame("JAMS WORLDWIND VIEWER");
+        this.theFrame = new JFrame("JAMS WorldWind");
+        this.theFrame.setIconImages(JAMSTools.getJAMSIcons());
         this.theFrame.setLayout(new BorderLayout());
         this.theFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.theFrame.add((Component) getWorldWindow(), BorderLayout.CENTER);
@@ -821,9 +823,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         getPCS().firePropertyChange(Events.LAYER_ADDED, null, null);
         getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
 
-        //activeLayerComboBox.setSelectedIndex(activeLayerComboBox.getItemCount() - 1);
-        //theLayerView.setActiveLayerIndex(activeLayerComboBox.getItemCount() - 1);
-        //new DelayZoom(shp.getBoundingRectangle()).execute();
+        activeLayerComboBox.setSelectedIndex(activeLayerComboBox.getItemCount() - 1);
+//        theLayerView.setActiveLayerIndex(activeLayerComboBox.getItemCount() - 1);
+//        new DelayZoom(shp.getBoundingRectangle()).execute();
     }
 
     /**
