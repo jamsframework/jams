@@ -71,7 +71,8 @@ public class TSDataStoreReader extends JAMSComponent {
     public Attribute.Boolean calcAvg;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "The current model time - needed in case of aggregation over irregular time steps (e.g. months).")
+            description = "The current model time - needed in case of aggregation over irregular time steps (e.g. months). "
+                    + "Aggregation is disabled if this value is not set.")
     public Attribute.Calendar time;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
@@ -307,7 +308,7 @@ public class TSDataStoreReader extends JAMSComponent {
     @Override
     public void run() {
 
-        if (tsRatio == 1) {
+        if (tsRatio == 1 || time == null) {
 
             DefaultDataSet ds = store.getNext();
             DataValue[] data = ds.getData();
