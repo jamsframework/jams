@@ -47,7 +47,8 @@ public class XMLProcessor {
         "org\\.unijena\\.jams\\.",
         "jams\\.model\\.cc\\.",
         "jams\\.model\\.BooleanConditionalContext",
-        "jams\\.model\\.DoubleConditionalContext"
+        "jams\\.model\\.DoubleConditionalContext",
+        "org\\.unijena\\.j2kHimalaya"
     };
     
     static String[] replace = {
@@ -62,7 +63,8 @@ public class XMLProcessor {
         "jams.",
         "jams.model.",
         "jams\\.components\\.conditional\\.BooleanConditionalContext",
-        "jams\\.components\\.conditional\\.DoubleConditionalContext"
+        "jams\\.components\\.conditional\\.DoubleConditionalContext",
+        "j2k_Himalaya"
     };
 
     public static String modelDocConverter(String inFileName) {

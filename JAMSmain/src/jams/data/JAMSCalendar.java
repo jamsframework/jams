@@ -118,6 +118,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
      * this calendar equals cal or 1 if this calendar represents a later date 
      * than cal, always leaving unsignificant fields unconsidered.
      */
+    @Override
     public int compareTo(Attribute.Calendar cal, int accuracy) {
         Attribute.Calendar cal1 = this.clone();
         Attribute.Calendar cal2 = cal.clone();
