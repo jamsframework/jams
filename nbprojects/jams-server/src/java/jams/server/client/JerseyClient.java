@@ -1,6 +1,6 @@
 /*
- * JAMSClient.java
- * Created on 02.03.2014, 20:45:28
+ * JerseyClient.java
+ * Created on 04.03.2014, 07:43:04
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -19,15 +19,19 @@
  * along with JAMS. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package jams.server.client;
-
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class JAMSClient {
-    
-    
-    
+public class JerseyClient {
+
+    public static void main(String[] args) {
+
+
+
+    }
+
+
+
 }
