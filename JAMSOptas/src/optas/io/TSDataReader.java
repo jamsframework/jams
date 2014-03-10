@@ -30,6 +30,8 @@ import java.io.*;
 import jams.io.GenericDataReader;
 import jams.io.JAMSTableDataArray;
 import jams.io.JAMSTableDataStore;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import optas.gui.wizard.OPTASWizardException;
 import optas.data.DataSet.MismatchException;
@@ -69,6 +71,13 @@ public class TSDataReader{
         return attr;
     }
 
+    private String cleanToken(String token){        
+        while (token.endsWith(" ") || token.endsWith("\t")){
+            token = token.substring(0, token.length()-1);
+        }
+        return token;
+    }
+    
     private void init() throws IOException {
         //handle the j2k metadata descriptions        
         String dataName = null;
@@ -94,7 +103,7 @@ public class TSDataReader{
         boolean dataValueAttribsValid = false, datasetAttribsValid = false, statAttribsValid = false;
         //metadata tags
         StringTokenizer strTok = new StringTokenizer(line, SEPARATOR);
-        String token = strTok.nextToken().replace("\t", "");        
+        String token = cleanToken(strTok.nextToken());
         try{
         while (line!=null && token != null && !token.equalsIgnoreCase(J2KTSDataStore.TAGNAME_DATAVAL)) {
             if (token.equalsIgnoreCase(J2KTSDataStore.TAGNAME_DATAVALUEATTRIBS)) {
@@ -106,7 +115,7 @@ public class TSDataReader{
                 uppBound = Double.parseDouble(strTok.nextToken());
                 line = reader.readLine();
                 strTok = new StringTokenizer(line, SEPARATOR);
-                token = strTok.nextToken();
+                token = cleanToken(strTok.nextToken());
                 dataValueAttribsValid = true;
                 headerLineCount++;
             } else if (token.equalsIgnoreCase(J2KTSDataStore.TAGNAME_DATASETATTRIBS)) {
@@ -115,28 +124,28 @@ public class TSDataReader{
                 while (i < 4) {
                     headerLineCount++;
                     strTok = new StringTokenizer(line, "\t ");
-                    String desc = strTok.nextToken();
+                    String desc = cleanToken(strTok.nextToken());
                     if (desc.equalsIgnoreCase(J2KTSDataStore.TAGNAME_MISSINGDATAVAL)) {
-                        missingDataValue = Double.parseDouble(strTok.nextToken());
+                        missingDataValue = Double.parseDouble(cleanToken(strTok.nextToken()));
                     } else if (desc.equalsIgnoreCase(J2KTSDataStore.TAGNAME_DATASTART)) {
-                        start = strTok.nextToken(); //date part
+                        start = cleanToken(strTok.nextToken()); //date part
                         if (strTok.hasMoreTokens()) //potential time part
                         {
-                            start = start + " " + strTok.nextToken();
+                            start = start + " " + cleanToken(strTok.nextToken());
                         }
                     } else if (desc.equalsIgnoreCase(J2KTSDataStore.TAGNAME_DATAEND)) {
-                        end = strTok.nextToken();   //date part
+                        end = cleanToken(strTok.nextToken());   //date part
                         if (strTok.hasMoreTokens()) //potential time part
                         {
-                            end = end + " " + strTok.nextToken();
+                            end = end + " " + cleanToken(strTok.nextToken());
                         }
                     } else if (desc.equalsIgnoreCase(J2KTSDataStore.TAGNAME_TEMP_RES)) {
-                        tres = strTok.nextToken();
+                        tres = cleanToken(strTok.nextToken());
                     }
                     i++;
                     line = reader.readLine();                    
                     strTok = new StringTokenizer(line, SEPARATOR);
-                    token = strTok.nextToken();
+                    token = cleanToken(strTok.nextToken());
                 }
                 datasetAttribsValid = true;
             } else if (token.equalsIgnoreCase(J2KTSDataStore.TAGNAME_STATATTRIBVAL)) {
@@ -145,33 +154,33 @@ public class TSDataReader{
                 while (i < 6) {
                     headerLineCount++;
                     strTok = new StringTokenizer(line, SEPARATOR);
-                    String desc = strTok.nextToken();
+                    String desc = cleanToken(strTok.nextToken());
                     int nstat = strTok.countTokens();
 
                     if (desc.equalsIgnoreCase("name")) {
                         name = new String[nstat];
                         for (int j = 0; j < nstat; j++) {
-                            name[j] = strTok.nextToken();
+                            name[j] = cleanToken(strTok.nextToken());
                         }
                     } else if (desc.equalsIgnoreCase("id")) {
                         id = new double[nstat];
                         for (int j = 0; j < nstat; j++) {
-                            id[j] = Double.parseDouble(strTok.nextToken());
+                            id[j] = Double.parseDouble(cleanToken(strTok.nextToken()));
                         }
                     } else if (desc.equalsIgnoreCase("elevation")) {
                         statelev = new double[nstat];
                         for (int j = 0; j < nstat; j++) {
-                            statelev[j] = Double.parseDouble(strTok.nextToken());
+                            statelev[j] = Double.parseDouble(cleanToken(strTok.nextToken()));
                         }
                     } else if (desc.equalsIgnoreCase("x")) {
                         statx = new double[nstat];
                         for (int j = 0; j < nstat; j++) {
-                            statx[j] = Double.parseDouble(strTok.nextToken());
+                            statx[j] = Double.parseDouble(cleanToken(strTok.nextToken()));
                         }
                     } else if (desc.equalsIgnoreCase("y")) {
                         staty = new double[nstat];
                         for (int j = 0; j < nstat; j++) {
-                            staty[j] = Double.parseDouble(strTok.nextToken());
+                            staty[j] = Double.parseDouble(cleanToken(strTok.nextToken()));
                         }
                     } else if (desc.equalsIgnoreCase("datacolumn")) {
                         //do nothing for the moment just counting
@@ -181,7 +190,7 @@ public class TSDataReader{
                     i++;
                     line = reader.readLine();
                     strTok = new StringTokenizer(line, SEPARATOR);
-                    token = strTok.nextToken();
+                    token = cleanToken(strTok.nextToken());
                     statAttribsValid = true;
                 }
             } else {
@@ -277,9 +286,26 @@ public class TSDataReader{
     }
 
     private static Attribute.Calendar parseJ2KTime(String timeString) {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        sdf1.setTimeZone(TimeZone.getTimeZone("GMT"));
+        sdf2.setTimeZone(TimeZone.getTimeZone("GMT"));
         
+        Date d = null;
+        try{
+            d = sdf1.parse(timeString);
+        }catch(ParseException pe){
+            try{
+                d = sdf2.parse(timeString);
+            }catch(ParseException pe2){
+                return null;
+            }
+        }
+        Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
+        cal.setTime(d);
+        return cal;
         //Array keeping values for year, month, day, hour, minute
-        String[] timeArray = new String[5];
+        /*String[] timeArray = new String[5];
         timeArray[0] = "1";
         timeArray[1] = "1";
         timeArray[2] = "0";
@@ -295,7 +321,7 @@ public class TSDataReader{
         
         Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
         cal.setValue(timeArray[2]+"-"+timeArray[1]+"-"+timeArray[0]+" "+timeArray[3]+":"+timeArray[4]);
-        return cal;
+        return cal;*/
     }    
     
 }

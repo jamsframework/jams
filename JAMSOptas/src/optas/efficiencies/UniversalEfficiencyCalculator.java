@@ -327,9 +327,9 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             setObjective(m,s,k,bias,bias_normalized,calcPBias);
             setObjective(m,s,k,log_likelihood, log_likelihood_normalized, calcLogLikelihood);
                         
+            this.getModel().getRuntime().println("*****************************************************");
             this.getModel().getRuntime().println("*******Measurement:" + this.measurementAttributeName[k]);
-            this.getModel().getRuntime().println("*******Simulation :" + this.simulationAttributeName[k]);
-            
+            this.getModel().getRuntime().println("*******Simulation :" + this.simulationAttributeName[k]);            
             this.getModel().getRuntime().println("*******E1:    " + round(this.e1[k].getValue()) + "  (" + round(this.e1_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******E2:    " + round(this.e2[k].getValue()) + "  (" + round(this.e2_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******le1:   " + round(this.le1[k].getValue()) + "  (" + round(this.le1_normalized[k].getValue()) + ")");
@@ -337,6 +337,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             this.getModel().getRuntime().println("*******AVE:   " + round(this.ave[k].getValue()) + "  (" + round(this.ave_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******R2:    " + round(this.r2[k].getValue()) + "  (" + round(this.r2_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******Bias:  " + round(this.bias[k].getValue()) + "  (" + round(this.bias_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("\n");
         }
         this.getModel().getRuntime().println("--------------------------------------------------------");
     }

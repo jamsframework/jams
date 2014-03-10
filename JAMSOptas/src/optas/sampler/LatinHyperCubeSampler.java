@@ -82,7 +82,7 @@ public class LatinHyperCubeSampler extends Optimizer{
         Sample simplex[] = new Sample[divisions];
         for (int i = 0; i < divisions; i++) {
             int indexSet[] = getFreeIndexSet();
-            double[] sample = new double[divisions];
+            double[] sample = new double[n];
             for (int j = 0; j < n; j++) {
                 sample[j] = (((double) indexSet[j] + 0.5) * (d[j] / (double) divisions)) + lowBound[j];
             }
