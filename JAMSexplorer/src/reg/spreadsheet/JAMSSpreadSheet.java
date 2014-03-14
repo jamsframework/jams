@@ -45,7 +45,7 @@ import java.util.logging.Logger;
 //import reg.DataTransfer;
 import reg.JAMSExplorer;
 import jams.workspace.dsproc.DataMatrix;
-import org.apache.http.protocol.UriPatternMatcher;
+import java.util.TreeMap;
 import reg.gui.StatisticDialogPanel;
 //import reg.viewer.Viewer;
 
@@ -435,44 +435,33 @@ public class JAMSSpreadSheet extends JPanel {
 
             } else { //AB hier Das gleich nur Transponiert
 
-                filewriter.write(SpreadsheetConstants.LOAD_HEADERS + "\r\n");
-
-                String col_string = "";
+                TreeMap<String, Integer> map = new TreeMap<String, Integer>();
+                
                 for (int j = 0; j < colcount; j++) {
-                    col_string = columnNames[j];
-                    for (int c = 0; c < write_col_cnt; c++) {
-
-                        if (col_string.compareTo(write_headers[c]) == 0) {
-                            if (c == write_col_cnt - 1) {
-                                filewriter.write(columnNames[j], 0, columnNames[j].length());
-                                filewriter.write("\r\n");
-                                col_index[c] = j;
-                            } else {
-                                filewriter.write(columnNames[j], 0, columnNames[j].length());
-                                filewriter.write("\r\n");
-                                col_index[c] = j;
-                            }
-                        }
-
-                    }
+                    String col_string = columnNames[j];
+                    map.put(col_string, j);
                 }
+                for (int c = 0; c < write_col_cnt; c++) {
+                    Integer i = map.get(write_headers[c]);                    
+                    col_index[c] = i;                                        
+                }
+                filewriter.write(SpreadsheetConstants.LOAD_DATA + "\n");
 
-                filewriter.write("\r\n" + SpreadsheetConstants.LOAD_DATA + " NR.2");
-                filewriter.write("\r\n");
-//            System.out.println("rowcount =" + rowcount + "  write_col_cnt =" + write_col_cnt);
                 for (int i = 0; i < write_col_cnt; i++) {
+                    filewriter.write(columnNames[col_index[i]] + "\t");
                     for (int k = 0; k < rowcount; k++) {
-                        value = table.getValueAt(k, col_index[i]).toString();
-                        filewriter.write(value, 0, value.length());
+                        filewriter.write(table.getValueAt(k, col_index[i]).toString());
                         filewriter.write("\t");
                     }
-                    filewriter.write("\r\n");
+                    filewriter.write("\n");
                 }
 
                 filewriter.write(SpreadsheetConstants.LOAD_END);
                 filewriter.close();
             }
-        } catch (IOException ex) {
+        } catch (IOException ex) {            
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(parent_frame, "Sorry, something went wrong!");
         }
 
 //        }
