@@ -44,6 +44,11 @@ public class ConcurrentContext extends JAMSContext {
     private ExecutorService executor;
     List<Callable<Component>> callables;
 
+    @Override
+    public void init() {
+        super.init();
+        executor = null;
+    }
     /*
      * Component run stages
      */
