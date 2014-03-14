@@ -360,6 +360,17 @@ public abstract class OptimizerWrapper extends JAMSContext {
                 e.printStackTrace();
             }
         }
+        
+        runEnumerator.reset();
+        while (runEnumerator.hasNext() && doRun) {
+            Component comp = runEnumerator.next();
+            try {
+                comp.initAll();
+            } catch (Exception e) {
+                getModel().getRuntime().sendHalt(e.getMessage());
+                e.printStackTrace();
+            }
+        }
 
         runEnumerator.reset();
         while (runEnumerator.hasNext() && doRun) {
