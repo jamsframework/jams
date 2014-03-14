@@ -65,6 +65,16 @@ public class SplitValidation extends JAMSContext {
         while(runEnumerator.hasNext() && doRun) {
             Component comp = runEnumerator.next();
             try {
+                comp.initAll();
+            } catch (Exception e) {
+                
+            }
+        }
+        
+        runEnumerator.reset();
+        while(runEnumerator.hasNext() && doRun) {
+            Component comp = runEnumerator.next();
+            try {
                 comp.run();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
