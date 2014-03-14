@@ -320,7 +320,7 @@ public class TSPlot extends JAMSGUIComponent {
             tsLeft = new TimeSeries[graphCountLeft];
             for (int i = 0; i < graphCountLeft; i++) {
                 String legendEntry = "";
-                if (titleLeft != null && titleLeft.getValue().length >= i) {
+                if (titleLeft != null && titleLeft.getValue().length > i) {
                     legendEntry = titleLeft.getValue()[i];
                 }
                 if (this.varTitleLeft != null && this.varTitleLeft.getValue().length > i) {
