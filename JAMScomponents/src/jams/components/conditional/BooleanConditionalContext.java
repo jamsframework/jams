@@ -39,10 +39,21 @@ public class BooleanConditionalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
     public Attribute.Boolean condition;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
+    public Attribute.Boolean initCondition;
 
     public BooleanConditionalContext() {
     }
 
+    @Override
+    public ComponentEnumerator getInitEnumerator() {
+        if (initCondition == null){
+            return super.getInitEnumerator();
+        }
+        return new InitEnumerator();
+    }
+    
     @Override
     public ComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
@@ -102,6 +113,26 @@ public class BooleanConditionalContext extends JAMSContext {
         @Override
         public void reset() {
             next = true;
+        }
+    }
+    
+    class InitEnumerator extends RunEnumerator {
+
+        final DummyComponent dummy = new DummyComponent();
+        Component[] compArray = getCompArray();
+        boolean next = true;
+        
+        @Override
+        public Component next() {
+            // if condition is true return first component, else second component
+            if (initCondition.getValue()) {
+                return compArray[0];
+            } else {
+                if (compArray.length < 1 || compArray[1] == null) {
+                    return dummy;
+                }
+                return compArray[1];
+            }
         }
     }
 }
