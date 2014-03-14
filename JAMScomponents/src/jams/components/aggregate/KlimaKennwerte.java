@@ -158,17 +158,13 @@ public class KlimaKennwerte extends JAMSComponent {
     public Attribute.Double isThermalVegetationPeriodTrigger;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    description = "calculates if we are in the thermal vegetation period\nDefintion: first day = Sum of Tmean in last 30days is larger than 150\n last day = Sum of Tmean in last 30days is less than 150")
+    public Attribute.Double isThermalVegetationPeriodTrigger2;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "calculates if we are in the forest vegetation period")
     public Attribute.Double isForestVegetationPeriodTrigger;
-        
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    description = "calculates the number of successive days where temperature is higher 5°C")
-    public Attribute.Double successiveDaysWithTmeanAboveFiveDegree;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    description = "calculates the number of successive days where temperature is higher 10°C")
-    public Attribute.Double successiveDaysWithTmeanAboveTenDegree;
-    
+                
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "calculates if a dry period has started")
     public Attribute.Double isBeginningOfDryPeriod;
@@ -212,6 +208,10 @@ public class KlimaKennwerte extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
     description = "calculates the climatic water balance (P-potET) during thermal vegetation period")
     public Attribute.Double KWBinThermalVegetationPeriod;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
+    description = "calculates the climatic water balance (P-potET) during thermal vegetation period (see thermal vegetation period2)")
+    public Attribute.Double KWBinThermalVegetationPeriod2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
     description = "calculates the klimatische wasserbilanz (P-potET) during forstlicher vegetation period")
@@ -221,6 +221,16 @@ public class KlimaKennwerte extends JAMSComponent {
     description = "tmp variables")
     public Attribute.DoubleArray tmp;
     
+    final int INDEX_successiveDaysWithTmeanAboveFiveDegree = 0;
+    final int INDEX_successiveDaysWithTmeanAboveTenDegree = 1;
+    final int INDEX_successiveDaysWithTmeanBelowFiveDegree = 2;
+    final int INDEX_successiveDaysWithTmeanBelowTenDegree = 3;
+    final int INDEX_KWB_in_thermal_vegetation_period = 4;
+    final int INDEX_KWB_in_forest_vegetation_period = 5;
+    final int INDEX_KWB_in_thermal_vegetation_period2 = 6;
+    final int INDEX_KWB_window_position = 7;
+    final int INDEX_KWB_window = 8;
+    final int INDEX_SIZE = 38;
     @Override
     public void run(){
         isFrostDefrostChange.setValue(0.0);
@@ -240,15 +250,14 @@ public class KlimaKennwerte extends JAMSComponent {
         isPrecipHigher20mm.setValue(0.0);
         isPrecipHigher30mm.setValue(0.0);
         isPrecipHigher40mm.setValue(0.0);
-        isPrecipHigher50mm.setValue(0.0);
-        isThermalVegetationPeriodTrigger.setValue(0.0);
-        isForestVegetationPeriodTrigger.setValue(0.0);
+        isPrecipHigher50mm.setValue(0.0);        
         isHeavyStorm.setValue(0.0);
         isProductiveWindday.setValue(0.0);
-        
+                        
         if (tmp.getValue() == null){
-            tmp.setValue(new double[2]);
+            tmp.setValue(new double[INDEX_SIZE]);
         }
+        double inTmp[] = tmp.getValue();
         
         //Frosttauwechsel .. muss zuerst ausgeführt werden
         if (isTempBelowZero.getValue() == 1.0 && tmin.getValue() > 0.0){
@@ -322,29 +331,53 @@ public class KlimaKennwerte extends JAMSComponent {
         
         //Vegetationsperioden
         if (tmean.getValue() > 5.0){
-            successiveDaysWithTmeanAboveFiveDegree.setValue(successiveDaysWithTmeanAboveFiveDegree.getValue()+1.0);
+            inTmp[INDEX_successiveDaysWithTmeanAboveFiveDegree]+=1.0;
+            inTmp[INDEX_successiveDaysWithTmeanBelowFiveDegree]=0.0;
         }else{
-            successiveDaysWithTmeanAboveFiveDegree.setValue(0.0);
+            inTmp[INDEX_successiveDaysWithTmeanBelowFiveDegree]+=1.0;
+            inTmp[INDEX_successiveDaysWithTmeanAboveFiveDegree]=0;
         }
         
         if (tmean.getValue() > 10.0){
-            successiveDaysWithTmeanAboveTenDegree.setValue(successiveDaysWithTmeanAboveTenDegree.getValue()+1.0);
+            inTmp[INDEX_successiveDaysWithTmeanAboveTenDegree]+=1;
+            inTmp[INDEX_successiveDaysWithTmeanBelowTenDegree]=0;
         }else{
-            successiveDaysWithTmeanAboveTenDegree.setValue(0.0);
+            inTmp[INDEX_successiveDaysWithTmeanAboveTenDegree]=0;
+            inTmp[INDEX_successiveDaysWithTmeanBelowTenDegree]+=1;
         }
                 
-        if (successiveDaysWithTmeanAboveFiveDegree.getValue() >= 6){
+        int day = time.get(Attribute.Calendar.DAY_OF_YEAR);
+        
+        if (inTmp[INDEX_successiveDaysWithTmeanAboveFiveDegree] >= 6){
             isThermalVegetationPeriodTrigger.setValue(1.0);
+        }else if (inTmp[INDEX_successiveDaysWithTmeanBelowFiveDegree] < 6 && day >180){
+            isThermalVegetationPeriodTrigger.setValue(0.0);
         }
         
-        if (successiveDaysWithTmeanAboveTenDegree.getValue() >= 6){
+        if (inTmp[INDEX_successiveDaysWithTmeanAboveTenDegree] >= 6){
             isForestVegetationPeriodTrigger.setValue(1.0);
+        }else if (inTmp[INDEX_successiveDaysWithTmeanBelowTenDegree] >= 6 && day >180){
+            isForestVegetationPeriodTrigger.setValue(0.0);
         }
+        
+        int p = (int)inTmp[INDEX_KWB_window_position];
+        inTmp[INDEX_KWB_window+p] = tmean.getValue();
+        p = (p+1)%30;
+        double tSum = 0;
+        for (int i=0;i<30;i++){
+            tSum += inTmp[INDEX_KWB_window_position+i];
+        }
+        if (tSum > 150 && inTmp[INDEX_KWB_window+p]>5) {
+            isThermalVegetationPeriodTrigger2.setValue(1.0);
+        }else if (tSum < 150 && inTmp[INDEX_KWB_window+p]<5 && day >180) {
+            isThermalVegetationPeriodTrigger2.setValue(0.0);
+        }
+        inTmp[INDEX_KWB_window_position] = p;
         
         //Niederschlagskenntage
         if (precip != null) {
             //Trockenperioden
-            if (precip.getValue() == 0) {
+            if (precip.getValue() < 0.1) {
                 successiveDaysWithoutRain.setValue(successiveDaysWithoutRain.getValue() + 1);
 
                 if (successiveDaysWithoutRain.getValue() == 11.0) {
@@ -389,24 +422,30 @@ public class KlimaKennwerte extends JAMSComponent {
             
             KWB.setValue(KWB_mm);
             
-            //PROBLEM!!!
-            tmp.getValue()[0] += KWB_mm;
-            tmp.getValue()[1] += KWB_mm;
+            inTmp[INDEX_KWB_in_thermal_vegetation_period] += KWB_mm;
+            inTmp[INDEX_KWB_in_forest_vegetation_period] += KWB_mm;
+            inTmp[INDEX_KWB_in_thermal_vegetation_period2] += KWB_mm;
             if (isThermalVegetationPeriodTrigger.getValue()==1){
-                KWBinThermalVegetationPeriod.setValue(KWBinThermalVegetationPeriod.getValue()+tmp.getValue()[0]);
-                tmp.getValue()[0] = 0;
+                KWBinThermalVegetationPeriod.setValue(KWBinThermalVegetationPeriod.getValue()+inTmp[INDEX_KWB_in_thermal_vegetation_period]);
+                inTmp[INDEX_KWB_in_thermal_vegetation_period] = 0;
             }
             if (isForestVegetationPeriodTrigger.getValue()==1){
-                KWBinForestVegetationPeriod.setValue(KWBinForestVegetationPeriod.getValue()+tmp.getValue()[1]);
-                tmp.getValue()[1] = 0;
+                KWBinForestVegetationPeriod.setValue(KWBinForestVegetationPeriod.getValue()+inTmp[INDEX_KWB_in_forest_vegetation_period]);
+                inTmp[INDEX_KWB_in_forest_vegetation_period] = 0;
             }            
+            if (isThermalVegetationPeriodTrigger2.getValue()==1){
+                KWBinThermalVegetationPeriod2.setValue(KWBinThermalVegetationPeriod2.getValue()+inTmp[INDEX_KWB_in_thermal_vegetation_period2]);
+                inTmp[INDEX_KWB_in_thermal_vegetation_period2] = 0;
+            }
         }
         //reset counters .. 
         if (time.get(Attribute.Calendar.DAY_OF_YEAR)==1){
             KWBinThermalVegetationPeriod.setValue(0);
+            KWBinThermalVegetationPeriod2.setValue(0);
             KWBinForestVegetationPeriod.setValue(0);
-            tmp.getValue()[0] = 0;
-            tmp.getValue()[1] = 0;
-        }
+            inTmp[INDEX_KWB_in_thermal_vegetation_period2] = 0;
+            inTmp[INDEX_KWB_in_forest_vegetation_period] = 0;
+            inTmp[INDEX_KWB_in_forest_vegetation_period] = 0;
+        }                
     }
 }
