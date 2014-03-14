@@ -70,12 +70,12 @@ public class TimePeriodAggregator extends JAMSComponent {
     public Attribute.Boolean[] enabled;
             
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "The time period to which the values should be aggregated, possible values are: daily, monthly, seasonal, halfyear, hydhalfyear, yearly, decadly or custom",
+    description = "The time period to which the values should be aggregated, possible values are: hourly, daily, monthly, seasonal, halfyear, hydhalfyear, yearly, decadly or custom",
     defaultValue = "daily")
     public Attribute.String outerTimeUnit;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "The reference time period for aggregation, e.g. yearly mean of months mean, possible values are: daily, monthly, seasonal, halfyear, hydhalfyear, yearly, decadly",
+    description = "The reference time period for aggregation, e.g. yearly mean of months mean, possible values are: hourly, daily, monthly, seasonal, halfyear, hydhalfyear, yearly, decadly",
     defaultValue = "daily")
     public Attribute.String innerTimeUnit;
     
@@ -297,6 +297,7 @@ public class TimePeriodAggregator extends JAMSComponent {
     }
     
     SimpleOutputDataStore outData[] = null;
+    SpatialOutputDataStore outData2[] = null;
     Double2ObjectAVLTreeMap<SpatialAggregationEntity[]> aggregatedValues = new Double2ObjectAVLTreeMap<SpatialAggregationEntity[]>();
     //ArrayList<SpatialAggregationEntity[]> aggregatedValues = new ArrayList<SpatialAggregationEntity[]>();
         
@@ -326,8 +327,10 @@ public class TimePeriodAggregator extends JAMSComponent {
             
     @Override
     public void init(){
+        getModel().getRuntime().sendInfoMsg("Init " + this.getInstanceName());
         n = attributeNames.length;
         outData = new SimpleOutputDataStore[n];        
+        outData2 = new SpatialOutputDataStore[n];        
         shpStore = new ShapeFileOutputDataStore[n];
         isEnabled = new boolean[n];
         outerAggregationModeID = new AggregationMode[n];
@@ -354,7 +357,6 @@ public class TimePeriodAggregator extends JAMSComponent {
             }
             
             outerAggregationModeID[i] = getAggregationModeByString(outerAggregationMode[i].getValue());
-            
             String prefix = null;
             if (innerAggregationMode!=null){
                 innerAggregationModeID[i] = getAggregationModeByString(innerAggregationMode[i].getValue());
@@ -365,9 +367,11 @@ public class TimePeriodAggregator extends JAMSComponent {
             }
             
             File f = new File(FileTools.createAbsoluteFileName(getModel().getWorkspace().getOutputDataDirectory().getAbsolutePath(), prefix + ".dat"));
+            File f2 = new File(FileTools.createAbsoluteFileName(getModel().getWorkspace().getOutputDataDirectory().getAbsolutePath(), prefix + "_SODS.dat"));
             
             try {
                 outData[i] = new SimpleOutputDataStore(f);
+                outData2[i] = new SpatialOutputDataStore(f2);
             } catch (IOException ioe) {
                 getModel().getRuntime().sendHalt("Can't write to output file:" + f);
             } 
@@ -526,7 +530,7 @@ public class TimePeriodAggregator extends JAMSComponent {
                     continue;
                 try {
                     outData[i].setHeader(aggregatedValues.keySet());
-                    //outData[i].setHeader(aggregatedValues.size());
+                    outData2[i].setHeader(aggregatedValues.keySet());
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                 }
@@ -605,9 +609,11 @@ public class TimePeriodAggregator extends JAMSComponent {
                                 c.add(Calendar.YEAR, k);
                             }
                             outData[i].writeData(c.toString(), buffers.get(k));
+                            outData2[i].writeData(c.toString(), buffers.get(k));
                         }
                     }else{
                         outData[i].writeData(outerTimePeriod.toString(), buffer);
+                        outData2[i].writeData(outerTimePeriod.toString(), buffer);
                     }
                 }
             }catch (IOException ioe) {
@@ -706,13 +712,10 @@ public class TimePeriodAggregator extends JAMSComponent {
             return;
         }
         //init inner/outer aggregation arrays
-        if (entity == null) {            
-            //while(aggregatedValues.size()<=iid){
-                entity = new SpatialAggregationEntity[n];
-                initAggregatedValueArray(entity, innerAggregationModeID, outerAggregationModeID, innerTimeUnitID, outerTimeUnitID);            
-                aggregatedValues.put(iid,entity);
-            //}
-            
+        if (entity == null) {
+            entity = new SpatialAggregationEntity[n];
+            initAggregatedValueArray(entity, innerAggregationModeID, outerAggregationModeID, innerTimeUnitID, outerTimeUnitID);
+            aggregatedValues.put(iid, entity);
         }
         
         if (currentTimeStep == null){
@@ -756,7 +759,7 @@ public class TimePeriodAggregator extends JAMSComponent {
                 //reset data
                 for (SpatialAggregationEntity entity2[] : this.aggregatedValues.values()){
 //                for (int id=0;id<this.aggregatedValues.size();id++){
-                    this.initAggregatedValueArray(aggregatedValues.get(id.getValue()), innerAggregationModeID, outerAggregationModeID, innerTimeUnitID, outerTimeUnitID);                                
+                    this.initAggregatedValueArray(entity2, innerAggregationModeID, outerAggregationModeID, innerTimeUnitID, outerTimeUnitID);                                
                 }
                 currentOuterTimePeriod = roundToTimePeriod(currentTimeStep, outerTimeUnitID);
             }
