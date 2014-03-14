@@ -260,10 +260,38 @@ public class DBFWriter extends DBFBase {
         }catch(IOException ioe){}
     }
     
+    class Buffer{
+        final int BUFFERSIZE = 65536;
+        byte buffer[] = new byte[BUFFERSIZE];
+        int p=0;
+        
+        Buffer(){
+            
+        }
+        
+        void reset(){
+            p = 0;
+        }
+        
+        void add(byte[]x){
+            System.arraycopy(x, 0, buffer, p, x.length);
+            p+=x.length;
+        }
+        void add(byte x){
+            buffer[p++] = x;
+        }
+        byte[] get(){
+            return Arrays.copyOf(buffer, p);
+        }
+    }
+    
+    Buffer buffer = new Buffer();
     private void writeRecord( DataOutput dataOutput, Object []objectArray)
     throws IOException {
-
-        dataOutput.write( (byte)' ');
+        
+        //dataOutput.write( (byte)' ');
+        buffer.reset();
+        buffer.add((byte)' ');
         for( int j=0; j<this.header.fieldArray.length; j++) { /* iterate throught fields */
 
             switch( this.header.fieldArray[j].getDataType()) {
@@ -272,11 +300,12 @@ public class DBFWriter extends DBFBase {
                     if( objectArray[j] != null) {
 
                         String str_value = objectArray[j].toString();
-                        dataOutput.write( Utils.textPadding( str_value, characterSetName, this.header.fieldArray[j].getFieldLength()));
+                        //dataOutput.write( Utils.textPadding( str_value, characterSetName, this.header.fieldArray[j].getFieldLength()));
+                        buffer.add(Utils.textPadding( str_value, characterSetName, this.header.fieldArray[j].getFieldLength()));
                     }
                     else {
-
-                        dataOutput.write( Utils.textPadding( "", this.characterSetName, this.header.fieldArray[j].getFieldLength()));
+                        //dataOutput.write( Utils.textPadding( "", this.characterSetName, this.header.fieldArray[j].getFieldLength()));
+                        buffer.add(Utils.textPadding( "", this.characterSetName, this.header.fieldArray[j].getFieldLength()));
                     }
 
                     break;
@@ -286,14 +315,18 @@ public class DBFWriter extends DBFBase {
 
                         GregorianCalendar calendar = new GregorianCalendar();
                         calendar.setTime( (Date)objectArray[j]);
-                        StringBuffer t_sb = new StringBuffer();
-                        dataOutput.write( String.valueOf( calendar.get( Calendar.YEAR)).getBytes());
-                        dataOutput.write( Utils.textPadding( String.valueOf( calendar.get( Calendar.MONTH)+1), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte)'0'));
-                        dataOutput.write( Utils.textPadding( String.valueOf( calendar.get( Calendar.DAY_OF_MONTH)), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte)'0'));
+                        //StringBuffer t_sb = new StringBuffer();
+                        //dataOutput.write( String.valueOf( calendar.get( Calendar.YEAR)).getBytes());
+                        //dataOutput.write( Utils.textPadding( String.valueOf( calendar.get( Calendar.MONTH)+1), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte)'0'));
+                        //dataOutput.write( Utils.textPadding( String.valueOf( calendar.get( Calendar.DAY_OF_MONTH)), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte)'0'));
+                        buffer.add( String.valueOf( calendar.get( Calendar.YEAR)).getBytes());
+                        buffer.add( Utils.textPadding( String.valueOf( calendar.get( Calendar.MONTH)+1), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte)'0'));
+                        buffer.add( Utils.textPadding( String.valueOf( calendar.get( Calendar.DAY_OF_MONTH)), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte)'0'));
                     }
                     else {
 
-                        dataOutput.write( "        ".getBytes());
+                        //dataOutput.write( "        ".getBytes());
+                        buffer.add( "        ".getBytes());
                     }
 
                     break;
@@ -302,11 +335,12 @@ public class DBFWriter extends DBFBase {
 
                     if( objectArray[j] != null) {
 
-                        dataOutput.write( Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
+                        //dataOutput.write( Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
+                        buffer.add( Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
                     }
                     else {
-
-                        dataOutput.write( Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
+                        buffer.add( Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
+                        //dataOutput.write( Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
                     }
 
                     break;
@@ -315,12 +349,16 @@ public class DBFWriter extends DBFBase {
 
                     if( objectArray[j] != null) {
 
-                        dataOutput.write(
+                        //dataOutput.write(
+                        //    Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
+                        buffer.add(
                             Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
                     }
                     else {
 
-                        dataOutput.write(
+                        /*dataOutput.write(
+                            Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));*/
+                        buffer.add(
                             Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
                     }
 
@@ -331,16 +369,19 @@ public class DBFWriter extends DBFBase {
 
                         if( (Boolean)objectArray[j] == Boolean.TRUE) {
 
-                            dataOutput.write( (byte)'T');
+                            //dataOutput.write( (byte)'T');
+                            buffer.add( (byte)'T');
                         }
                         else {
 
-                            dataOutput.write((byte)'F');
+                            //dataOutput.write((byte)'F');
+                            buffer.add((byte)'F');
                         }
                     }
                     else {
 
-                        dataOutput.write( (byte)'?');
+                        //dataOutput.write( (byte)'?');
+                        buffer.add( (byte)'?');
                     }
 
                     break;
@@ -353,5 +394,7 @@ public class DBFWriter extends DBFBase {
                     throw new DBFException( "Unknown field type " + this.header.fieldArray[j].getDataType());
             }
         }    /* iterating through the fields */
+        dataOutput.write(buffer.get());
+        buffer.reset();
     }
 }
