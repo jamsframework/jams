@@ -147,7 +147,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
             user = (User) result.get(0);
             session.setAttribute("userid", user.getId());
             session.setAttribute("userlogin", user.getLogin());
-            return "1";
+            return session.getId();
         } else {
             session.setAttribute("userid", "-1");
             session.setAttribute("userlogin", "");
