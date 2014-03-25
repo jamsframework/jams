@@ -1,5 +1,5 @@
 #JAMS-Konfigurationsdatei
-#Thu Sep 05 09:33:05 CEST 2013
+#Fri Feb 07 10:25:48 CET 2014
 infolog=
 libs=lib
 guiconfig=true
@@ -18,7 +18,7 @@ forcelocale=
 windowheight=600
 verbose=false
 maxrecentfiles=5
-recentfiles=E\:\\jamsapplication\\JAMS-Gehlberg\\j2k_gehlberg.jam
+recentfiles=
 debug=1
 guiconfigheight=600
 windowwidth=900
