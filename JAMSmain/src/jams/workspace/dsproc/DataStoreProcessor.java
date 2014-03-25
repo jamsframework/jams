@@ -361,7 +361,11 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
             if (dataType == null){
                 throw new SQLException("unsupported attribute type:" + attribute.getType());
             }
-            q += attribute.getName() + " " + dataType + ",";
+            String attributeName = attribute.getName();
+            while (q.contains(attributeName)) {
+                attributeName += "_";
+            }
+            q += attributeName + " " + dataType + ",";
         }
         q = q.substring(0, q.length() - 1);
 
