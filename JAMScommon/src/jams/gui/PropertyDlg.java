@@ -45,8 +45,9 @@ public class PropertyDlg extends JDialog {
     private FileListInput list;
     private BooleanInput verboseCheck, debugMode, windowEnable,  windowOnTop,  errorDlg, profiling, defaultWSPath, preprocessing;
     private JSpinner debugSpinner;
+    private JComboBox<String> locale;
     private FileInput infoFile,  errorFile, docbookDir;
-    private TextInput windowHeight,  windowWidth, helpBaseURL, userName, forceLocale, charset;
+    private TextInput windowHeight,  windowWidth, helpBaseURL, userName, charset;
     private SystemProperties properties;
     public static final int APPROVE_OPTION = 1;
     public static final int CANCEL_OPTION = 0;
@@ -152,11 +153,20 @@ public class PropertyDlg extends JDialog {
         defaultWSPath.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, defaultWSPath, 1, y, 1, 1, 1, 1);
         
+//        y++;
+//        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Force_Localization:")), 0, y, 1, 1, 0, 0);
+//        forceLocale = new TextInput();
+//        forceLocale.getComponent().setPreferredSize(new Dimension(40, JCOMP_HEIGHT));
+//        GUIHelper.addGBComponent(contentPanel, gbl, forceLocale, 1, y, 1, 1, 1, 1);
+
         y++;
         GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Force_Localization:")), 0, y, 1, 1, 0, 0);
-        forceLocale = new TextInput();
-        forceLocale.getComponent().setPreferredSize(new Dimension(40, JCOMP_HEIGHT));
-        GUIHelper.addGBComponent(contentPanel, gbl, forceLocale, 1, y, 1, 1, 1, 1);
+        locale = new JComboBox<String>();
+        JPanel localePanel = new JPanel(new BorderLayout());
+        localePanel.setPreferredSize(new Dimension(100, JCOMP_HEIGHT));
+        localePanel.add(locale, BorderLayout.WEST);
+        locale.setModel(new javax.swing.DefaultComboBoxModel(new String[] {"", "en", "de", "pt", "vn"}));
+        GUIHelper.addGBComponent(contentPanel, gbl, localePanel, 1, y, 1, 1, 1, 1);
 
         y++;
         GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Character_Set:")), 0, y, 1, 1, 0, 0);
@@ -288,7 +298,8 @@ public class PropertyDlg extends JDialog {
         profiling.setValue(properties.getProperty(SystemProperties.PROFILING_IDENTIFIER));
         preprocessing.setValue(properties.getProperty(SystemProperties.AUTO_PREPROCESSING));
         defaultWSPath.setValue(properties.getProperty(SystemProperties.USE_DEFAULT_WS_PATH));
-        forceLocale.setValue(properties.getProperty(SystemProperties.LOCALE_IDENTIFIER));
+//        forceLocale.setValue(properties.getProperty(SystemProperties.LOCALE_IDENTIFIER));
+        locale.getModel().setSelectedItem(properties.getProperty(SystemProperties.LOCALE_IDENTIFIER));
         charset.setValue(properties.getProperty(SystemProperties.CHARSET_IDENTIFIER));
 
         windowHeight.setValue(properties.getProperty(SystemProperties.WINDOWHEIGHT_IDENTIFIER));
@@ -322,7 +333,8 @@ public class PropertyDlg extends JDialog {
         properties.setProperty(SystemProperties.PROFILING_IDENTIFIER, profiling.getValue());
         properties.setProperty(SystemProperties.AUTO_PREPROCESSING, preprocessing.getValue());
         properties.setProperty(SystemProperties.USE_DEFAULT_WS_PATH, defaultWSPath.getValue());
-        properties.setProperty(SystemProperties.LOCALE_IDENTIFIER, forceLocale.getValue());
+//        properties.setProperty(SystemProperties.LOCALE_IDENTIFIER, forceLocale.getValue());
+        properties.setProperty(SystemProperties.LOCALE_IDENTIFIER, (String) locale.getModel().getSelectedItem());        
         properties.setProperty(SystemProperties.CHARSET_IDENTIFIER, charset.getValue());
         properties.setProperty(SystemProperties.WINDOWHEIGHT_IDENTIFIER, windowHeight.getValue());
         properties.setProperty(SystemProperties.WINDOWWIDTH_IDENTIFIER, windowWidth.getValue());
