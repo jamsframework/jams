@@ -62,7 +62,8 @@ public class ColorRampPanel extends JPanel {
                 buttonActionListener(e);
             }
         });
-
+        this.startColor = Color.WHITE;
+        this.startColorButton.setBackground(this.startColor);
         this.startColorButton.setEnabled(false);
         this.endColorButton = new JButton(endColorAction);
         this.endColorButton.setActionCommand(endColorAction);
@@ -72,6 +73,8 @@ public class ColorRampPanel extends JPanel {
                 buttonActionListener(e);
             }
         });
+        this.endColor = Color.BLUE;
+        this.endColorButton.setBackground(this.endColor);
         this.endColorButton.setEnabled(false);
         
         this.colorPanel = new ColorPanel();
@@ -127,16 +130,15 @@ public class ColorRampPanel extends JPanel {
     }
 
     private void buttonActionListener(ActionEvent e) {
-        Color c = JColorChooser.showDialog(this, "Pick a Color", Color.WHITE);
-
+        
         switch (e.getActionCommand()) {
             case startColorAction:
-                this.startColor = c;
-                this.startColorButton.setBackground(c);
+                this.startColor = JColorChooser.showDialog(this, "Pick a Color", startColor);
+                this.startColorButton.setBackground(this.startColor);
                 break;
             case endColorAction:
-                this.endColor = c;
-                this.endColorButton.setBackground(c);
+                this.endColor = JColorChooser.showDialog(this, "Pick a Color", endColor);
+                this.endColorButton.setBackground(this.endColor);
                 break;
         }
         if (this.startColor != null && this.endColor != null) {

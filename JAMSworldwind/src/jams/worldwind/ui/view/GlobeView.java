@@ -61,6 +61,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -97,6 +98,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -111,13 +113,46 @@ import org.slf4j.LoggerFactory;
  * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
 public class GlobeView implements PropertyChangeListener, MessageListener {
-
+    
     private static GlobeView instance;
-
+    
     public synchronized static GlobeView getInstance() {
         if (instance == null) {
             instance = new GlobeView();
             instance.internalStart();
+            instance.theFrame.addWindowListener(new WindowListener() {
+                @Override
+                public void windowActivated(WindowEvent e) {
+                }
+                
+                @Override
+                public void windowClosed(WindowEvent e) {
+                }
+                
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    LayerList list = instance.getModel().getLayers();
+                    list.remove(list.size()-1);
+                }
+                
+                @Override
+                public void windowDeactivated(WindowEvent e) {
+                }
+                
+                @Override
+                public void windowDeiconified(WindowEvent e) {
+                }
+                
+                @Override
+                public void windowIconified(WindowEvent e) {
+                }
+                
+                @Override
+                public void windowOpened(WindowEvent e) {
+                }
+            });
+
+            instance.theFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         }
         return instance;
     }
@@ -132,9 +167,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private final Model model;
     //Statusbar
     private final StatusBar statusBar;
-
+    
     private PropertyChangeSupport pcs;
-
+    
     private JFrame theFrame;
     private JMenuBar theMenuBar;
     private JToolBar theToolBar;
@@ -158,7 +193,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private JToggleButton selectObjectsToggleButton;
     private JButton showAttributeTableButton;
     private JButton classifyButton;
-
+    
     private DataTransfer3D data;
 
     //temporary fields -- getting data from other frames
@@ -169,7 +204,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private List[] intervallCollection;
     //saves the calculated ColorRamp for attrib i
     private ColorRamp[] colorRampCollection;
-
+    
     private int lastClassifiedIndex = -1;
 
     //</editor-fold>
@@ -187,11 +222,11 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         // Create the default model as described in the current worldwind properties.
         this.model = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
         this.window.setModel(this.model);
-
+        
         this.statusBar = new StatusBar();
         this.statusBar.setEventSource(window);
     }
-
+    
     private void fillAttributesComboBox() {
         this.attributesComboBox.removeAllItems();
         String[] attributes = data.getSortedAttributes();
@@ -236,7 +271,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     public StatusBar getStatusBar() {
         return this.statusBar;
     }
-
+    
     private void internalStart() {
         //if (reload) {
         //   logger.info("Model reload");
@@ -253,7 +288,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         //this.theSelectionHighlightController = new SelectionHighlightController(theGlobeModel.getWorldWindow(), theScreenSelector);
         this.theScreenSelector.addMessageListener(this);
         this.highlightController = new HighlightController(getWorldWindow(), SelectEvent.ROLLOVER);
-
+        
         this.theFrame = new JFrame("JAMS WorldWind");
         this.theFrame.setIconImages(JAMSTools.getJAMSIcons());
         this.theFrame.setLayout(new BorderLayout());
@@ -261,7 +296,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.theFrame.add((Component) getWorldWindow(), BorderLayout.CENTER);
         this.theFrame.add((Component) getStatusBar(), BorderLayout.PAGE_END);
         this.theFrame.addWindowListener(new WindowAdapter() {
-
+            
             @Override
             public void windowClosed(WindowEvent e) {
                 if (shapefileAttributesView != null) {
@@ -284,15 +319,15 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 }
                 removeListener();
             }
-
+            
         });
-
+        
         getPCS().addPropertyChangeListener(this.shapefileAttributesView);
-
+        
         createListener();
-
+        
         getWorldWindow().addSelectListener(selectListener);
-
+        
         this.buildToolBar();
         this.buildMenu();
         this.fixMacOSX();
@@ -313,7 +348,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private void createListener() {
         selectListener = new SelectListener() {
             protected Object lastObject;
-
+            
             @Override
             public void selected(SelectEvent event) {
                 Object o = event.getTopObject();
@@ -321,7 +356,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                     lastObject = o;
                     if (o instanceof SurfacePolygons) {
                         SurfacePolygons s = (SurfacePolygons) o;
-
+                        
                         s.setHighlighted(true);
                         ((SurfacePolygons) lastObject).setHighlighted(false);
                         if (shapefileAttributesView != null && shapefileAttributesView.isVisible()) {
@@ -341,11 +376,11 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         };
     }
-
+    
     private void removeListener() {
         getWorldWindow().removeSelectListener(selectListener);
     }
-
+    
     public boolean addJAMSExplorerData(DataTransfer3D d) {
         this.data = d;
         this.fillAttributesComboBox();
@@ -362,17 +397,17 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             addData(d.getShapeFileDataStore());
         } catch (gov.nasa.worldwind.exception.WWRuntimeException wwrte) {
             JAMSLogging.registerLogger(java.util.logging.Logger.getLogger(GlobeView.class.getName()));
-            java.util.logging.Logger.getLogger(GlobeView.class.getName()).log(Level.WARNING, 
+            java.util.logging.Logger.getLogger(GlobeView.class.getName()).log(Level.WARNING,
                     "Cannot open Shapefile \"" + d.getShapeFileDataStore().getShapeFile().getAbsolutePath() + "\" due to unknown projection. Please correct!", wwrte);
             JAMSLogging.unregisterLogger(java.util.logging.Logger.getLogger(GlobeView.class.getName()));
             return false;
-        }        
+        }
         return true;
-        
+
         //fillAttributesComboBox();
 //        writeToDisk();
     }
-
+    
     private void addData(ShapeFileDataStore shp) {
         File file = shp.getShapeFile();
         if (!isShapefileAlreadyOpened(file)) {
@@ -382,12 +417,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             addShapefile(file);
         }
     }
-
+    
     private void setKeyboardShortcuts() {
         JComponent c = (JComponent) theFrame.getRootPane();
         InputMap im = c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap am = c.getActionMap();
-
+        
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), "VK_M");
         am.put("VK_M", new AbstractAction() {
             @Override
@@ -400,7 +435,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 theFrame.revalidate();
             }
         });
-
+        
     }
 
     //<editor-fold defaultstate="collapsed" desc="build GUI functions">
@@ -431,7 +466,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         //b.setText("OBJECTTABLE");
         //b.putClientProperty("TABLE", "OBJECTTABLE");
         showAttributeTableButton.setToolTipText("SHOW OBJECT TABLE");
-
+        
         showAttributeTableButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -452,11 +487,11 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 } else if (layerName != null) {
                     Layer l = getModel().getLayers().getLayerByName(layerName);
                     if (l.getClass().equals(RenderableLayer.class)) {
-
+                        
                         List<Object> list = new ArrayList<>(((RenderableLayer) l).getNumRenderables());
                         for (Renderable r : ((RenderableLayer) l).getRenderables()) {
                             list.add(r);
-
+                            
                         }
                         shapefileAttributesView.fillTableWithObjects(list);
                         shapefileAttributesView.show(true);
@@ -464,7 +499,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                     }
                 }
             }
-
+            
         });
         //this.theToolBar.add(showAttributeTableButton);
 
@@ -482,7 +517,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         });
         this.fillComboBox();
-
+        
         opacitySlider = new JSlider(0, 100);
         opacitySlider.setBorder(new TitledBorder("ACTIVE LAYER OPACITY"));
         opacitySlider.setName("ACTIVE_LAYER_OPACITY_SLIDER");
@@ -501,68 +536,68 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         //slider.setSnapToTicks(true);
 
         opacitySlider.addChangeListener(new ChangeListener() {
-
+            
             @Override
             public void stateChanged(ChangeEvent e) {
                 opacitySliderStateChanged(e);
             }
         });
-
+        
         JPanel sliderPanel = new JPanel();
         sliderPanel.setLayout(new GridLayout(2, 1));
         sliderPanel.setBorder(new TitledBorder("TIME SERIES DATA"));
-
+        
         timeSeriesSlider = new JSlider();
         //timeSeriesSlider.setBorder(new TitledBorder("TIME SERIES DATA"));
         timeSeriesSlider.setName("TIME_SERIES_SLIDER");
         timeSeriesSlider.setEnabled(false);
         timeSeriesSlider.addChangeListener(new ChangeListener() {
-
+            
             @Override
             public void stateChanged(ChangeEvent e) {
                 timeSeriesSliderStateChanged(e);
             }
         });
-
+        
         this.timeSeriesSliderLabel = new JLabel("NO DATA", JLabel.CENTER);
         this.timeSeriesSliderLabel.setEnabled(true);
-
+        
         sliderPanel.add(timeSeriesSlider);
         sliderPanel.add(timeSeriesSliderLabel);
-
+        
         this.topPanel = new JPanel();
         GridBagLayout gbl = new GridBagLayout();
         this.topPanel.setLayout(gbl);
         this.topPanel.setVisible(true);
-
+        
         JPanel classifierPanel = new JPanel();
         classifierPanel.setLayout(new GridLayout(2, 1));
         classifierPanel.setBorder(new TitledBorder("CLASSIFY DATA"));
-
+        
         this.attributesComboBox = new JComboBox<>();
         this.attributesComboBox.setEnabled(false);
         this.attributesComboBox.addItemListener(new ItemListener() {
-
+            
             @Override
             public void itemStateChanged(ItemEvent e) {
                 attributesComboBoxItemStateChanged(e);
             }
         });
-
+        
         this.classifyButton = new JButton("CLASSIFY");
         this.classifyButton.setEnabled(false);
-
+        
         this.classifyButton.addActionListener(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 classifyButtonActionPerformed(e);
             }
         });
-
+        
         classifierPanel.add(attributesComboBox);
         classifierPanel.add(classifyButton);
-
+        
         this.addComponent(topPanel, gbl, selectObjectsToggleButton, 0, 0, 1, 1, 1.0, 0);
         this.addComponent(topPanel, gbl, showAttributeTableButton, 1, 0, 1, 1, 1.0, 0);
         this.addComponent(topPanel, gbl, activeLayerComboBox, 0, 1, 2, 1, 1.0, 0);
@@ -570,7 +605,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         //this.addComponent(topPanel, gbl, attributesComboBox, 0, 2, 2, 1, 1.0, 1.0);
         //this.addComponent(topPanel, gbl, classifyButton, 0, 3, 2, 1, 1.0, 1.0);
         this.addComponent(topPanel, gbl, classifierPanel, 2, 0, 2, 2, 1.0, 0);
-
+        
         this.addComponent(topPanel, gbl, opacitySlider, 4, 0, 2, 2, 1.0, 0);
         this.addComponent(topPanel, gbl, sliderPanel, 6, 0, 2, 2, 1.0, 0);
 
@@ -626,7 +661,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         gbl.setConstraints(c, gbc);
         container.add(c);
     }
-
+    
     private void buildMenu() {
         this.theMenuBar = new JMenuBar();
 
@@ -641,12 +676,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 openShapefileActionlistener(e);
             }
         });
-
+        
         JMenuItem saveScreenshot = new JMenuItem("Save Screenshot...");
         saveScreenshot.addActionListener(new ScreenShotAction(getWorldWindow()));
         stroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         saveScreenshot.setAccelerator(stroke);
-
+        
         JMenuItem jMenuItemExit = new JMenuItem("Exit");
         stroke = KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         jMenuItemExit.setAccelerator(stroke);
@@ -656,7 +691,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 exitActionListener(e);
             }
         });
-
+        
         fileMenu.add(openShapefile);
         fileMenu.add(saveScreenshot);
         fileMenu.addSeparator();
@@ -665,9 +700,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         //VIEW menu
         JMenu viewMenu = new JMenu("View");
         JMenu controls = new JMenu("View Controls");
-
+        
         controls.add(new JCheckBoxMenuItem());
-
+        
         JMenuItem listLayers = new JCheckBoxMenuItem("Show Layers");
         stroke = KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         listLayers.setAccelerator(stroke);
@@ -678,12 +713,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         });
         viewMenu.add(listLayers);
-
+        
         this.theMenuBar.add(fileMenu);
         this.theMenuBar.add(viewMenu);
-
+        
         this.theFrame.setJMenuBar(theMenuBar);
-
+        
     }
     //</editor-fold>
 
@@ -722,7 +757,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         JFileChooser fc = new JFileChooser("/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp");
         FileNameExtensionFilter filter = new FileNameExtensionFilter("ESRI Shapefile", "shp");
         fc.setFileFilter(filter);
-
+        
         switch (fc.showOpenDialog(this.theFrame)) {
             case JFileChooser.APPROVE_OPTION:
                 File file = fc.getSelectedFile();
@@ -741,7 +776,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 break;
         }
     }
-
+    
     private void exitActionListener(ActionEvent e) {
         for (Frame frame : JFrame.getFrames()) {
             if (frame.isActive()) {
@@ -750,7 +785,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         }
     }
-
+    
     private void showLayersActionListener(ActionEvent e) {
         if (theLayerView == null) {
             this.theLayerView = new LayerListView();
@@ -808,21 +843,21 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         System.out.println("SHAPEFILE RECORDS: " + shp.getNumberOfRecords());
         List<Layer> layers = new JamsShapefileLoader().
                 createLayersFromShapefile(shp);
-
+        
         int i = 0;
         for (Layer layer : layers) {
             layer.setEnabled(true);
             if (data != null) {
                 layer.setValue(Events.DATATRANSFER3DDATA_APPEND, data);
             }
-
+            
             layer.setValue(Events.BOUNDINGBOXOFSHAPEFILE, shp.getBoundingRectangle());
             layer.setName(layerName + "_" + (i++));
             getModel().getLayers().add(layer);
         }
         getPCS().firePropertyChange(Events.LAYER_ADDED, null, null);
         getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
-
+        
         activeLayerComboBox.setSelectedIndex(activeLayerComboBox.getItemCount() - 1);
 //        theLayerView.setActiveLayerIndex(activeLayerComboBox.getItemCount() - 1);
 //        new DelayZoom(shp.getBoundingRectangle()).execute();
@@ -835,14 +870,14 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     public void removeShapefile(File f) {
         String layerName = f.getName() + "|" + f.getAbsolutePath();
         Layer layer = getWorldWindow().getModel().getLayers().getLayerByName(layerName);
-
+        
         if (layer != null) {
             logger.info("Layer removed...");
             getModel().getLayers().remove(layer);
         }
         getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
     }
-
+    
     private boolean isShapefileAlreadyOpened(File f) {
         //Check if Shapefile already loaded
         String layerName = f.getName() + "|" + f.getAbsolutePath();
@@ -850,7 +885,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         Layer l = getWorldWindow().getModel().getLayers().getLayerByName(layerName);
         return l != null;
     }
-
+    
     private boolean reloadShapefile(File f) {
         String layerName = f.getName() + "|" + f.getAbsolutePath();
         Layer layer = getWorldWindow().getModel().getLayers().getLayerByName(layerName);
@@ -879,7 +914,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.theFrame.setLocationRelativeTo(null);
         this.theFrame.setVisible(true);
     }
-
+    
     private void fixMacOSX() {
         //Fix Mac OS X UI Bug Java Version 7 Update 40
         if (Configuration.isMacOS()) {
@@ -898,7 +933,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private void classifyButtonActionPerformed(ActionEvent e) {
         String[] attributes = data.getSortedAttributes();
         if (intervallView == null) {
-
+            
             intervallView = new IntervallSettingsView(data, attributes);
         } else {
             if (this.attributesComboBox.getSelectedIndex() == lastClassifiedIndex) {
@@ -906,12 +941,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             } else {
                 intervallView = new IntervallSettingsView(data, attributes);
             }
-
+            
         }
         intervallView.show();
         lastClassifiedIndex = this.attributesComboBox.getSelectedIndex();
     }
-
+    
     public void writeToDisk() {
         try {
             // Serialize data object to a file
@@ -953,22 +988,22 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     public PropertyChangeSupport getPCS() {
         return pcs;
     }
-
+    
     public synchronized void addPropertyChangeListener(PropertyChangeListener pcl) {
         pcs.addPropertyChangeListener(pcl);
     }
-
+    
     public synchronized void removePropertyChangeListener(PropertyChangeListener pcl) {
         pcs.removePropertyChangeListener(pcl);
     }
-
+    
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         logger.info("Recieving Event: " + evt.getPropertyName());
         int selectedIndex = -1;
         if (evt.getPropertyName().equals(Events.INTERVALL_CALCULATED)
                 || evt.getPropertyName().equals(Events.INTERVALL_COLORS_SET)) {
-
+            
             if (this.intervallView != null) {
                 selectedIndex = this.intervallView.getSelectedAttributeIndex();
             }
@@ -1026,7 +1061,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
                  }*/
             }
-
+            
         } else if (msg.getName().equals(ScreenSelector.SELECTION_STARTED)) {
             showAttributeTableButton.setEnabled(false);
             /*Component[] comp = topPanel.getComponents();
@@ -1059,16 +1094,16 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         }
     }
-
+    
     private void activeLayerComboBoxItemStateChanged(ItemEvent e) {
         int index = ((JComboBox) e.getSource()).getSelectedIndex();
-
+        
         if (e.getStateChange() == ItemEvent.SELECTED && index >= 0) {
             JComboBox cb = (JComboBox) e.getSource();
-
+            
             Layer l = getModel().getLayers().getLayerByName(cb.getSelectedItem().toString());
             new DelayZoom((double[]) l.getValue(Events.BOUNDINGBOXOFSHAPEFILE), 2000).execute();
-
+            
             if (l.getClass().equals(RenderableLayer.class)) {
                 showAttributeTableButton.setEnabled(true);
 
@@ -1083,22 +1118,22 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                     logger.info("DATATRANSFER3D not found...");
                     return;
                 }
-
+                
                 String[] ids = d.getSortedIds();
                 String[] attr = d.getSortedAttributes();
                 JAMSCalendar[] cal = d.getSortedTimeSteps();
-
+                
                 Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>(cal.length);
-
+                
                 for (int i = 0; i < cal.length; i++) {
                     labelTable.put(new Integer(i), new JLabel(cal[i].toString()));
                     //System.out.println("TIME:"+cal[i].toString());
                 }
-
+                
                 timeSeriesSlider.setLabelTable(labelTable);
                 timeSeriesSlider.setMinimum(0);
                 timeSeriesSlider.setMaximum(cal.length - 1);
-
+                
                 timeSeriesSlider.setMajorTickSpacing(1);
                 timeSeriesSlider.setPaintTicks(true);
                 timeSeriesSlider.setSnapToTicks(true);
@@ -1107,14 +1142,14 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 timeSeriesSlider.setEnabled(false);
                 Integer value = timeSeriesSlider.getValue();
                 timeSeriesSliderLabel.setText(((JLabel) timeSeriesSlider.getLabelTable().get(value)).getText());
-
+                
             } else {
                 showAttributeTableButton.setEnabled(false);
             }
             opacitySlider.setEnabled(true);
             opacitySlider.setValue((int) (l.getOpacity() * 100));
             getPCS().firePropertyChange(Events.ACTIVE_LAYER_CHANGED, null, index);
-
+            
         } else {
             opacitySlider.setEnabled(false);
             timeSeriesSlider.setEnabled(false);
@@ -1143,10 +1178,10 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         } else {
             l.setOpacity(value);
         }
-
+        
         getWorldWindow().redraw();
     }
-
+    
     private void timeSeriesSliderStateChanged(ChangeEvent e) {
         //System.out.println("TIME: " + year);
         if (timeSeriesSlider.isEnabled()) {
@@ -1156,15 +1191,15 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             if (l.getClass().equals(RenderableLayer.class)) {
                 Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
                 int selectedIndex = this.attributesComboBox.getSelectedIndex();
-
+                
                 List<Double> intervall_temp = new ArrayList<>(intervallCollection[selectedIndex]);
                 colorRamp = colorRampCollection[selectedIndex];
                 DataTransfer3D d = (DataTransfer3D) l.getValue(Events.DATATRANSFER3DDATA_APPEND);
                 JAMSCalendar[] dates = d.getSortedTimeSteps();
-
+                
                 Integer value = timeSeriesSlider.getValue();
                 timeSeriesSliderLabel.setText(dates[value].toString());
-
+                
                 String column = d.getKeyColumn();
                 SurfacePolygons poly = null;
                 JamsShapeAttributes sattr = null;
@@ -1206,10 +1241,10 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Helper Classes">
     private class DelayZoom extends SwingWorker<Object, Object> {
-
+        
         private Sector sector = null;
         private final long millis;
-
+        
         public DelayZoom(double[] boundingRectangle, long millis) {
             if (boundingRectangle != null) {
                 this.sector = new Sector(Angle.fromDegrees(boundingRectangle[0]),
@@ -1219,13 +1254,13 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
             this.millis = millis;
         }
-
+        
         @Override
         protected Void doInBackground() throws Exception {
             Thread.sleep(millis);
             return null;
         }
-
+        
         @Override
         protected void done() {
             if (sector != null) {

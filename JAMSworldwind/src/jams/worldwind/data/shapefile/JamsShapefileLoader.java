@@ -19,7 +19,7 @@ public class JamsShapefileLoader extends ShapefileLoader {
     
     public JamsShapefileLoader() {
         super();
-        setNumPolygonsPerLayer(10000);
+        setNumPolygonsPerLayer(20000);
     }
     
     @Override

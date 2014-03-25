@@ -97,7 +97,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         this.setLayout(gbl);
 
         JLabel numClassesLabel = new JLabel("Number of Classes:");
-        this.numClassesSpinner = new JSpinner(new SpinnerNumberModel(5, 1, 50, 1));
+        this.numClassesSpinner = new JSpinner(new SpinnerNumberModel(10, 1, 100, 1));
         this.numClassesSpinner.addChangeListener(new ChangeListener() {
 
             @Override
@@ -109,7 +109,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         });
 
         JLabel classifierLabel = new JLabel("Classifier:");
-        String[] items = {"Equal Intervall", "Defined Intervall", "Quantil"};
+        String[] items = {"Quantil", "Equal Intervall", "Defined Intervall"};
         this.classifierComboBox = new JComboBox(items);
         this.classifierComboBox.addActionListener(new ActionListener() {
 
@@ -322,17 +322,16 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         
         this.intervall = new ArrayList<>(numberOfClasses);
 
-        switch (intervallSelection) {
-            case "Equal Intervall":
+        switch (this.classifierComboBox.getSelectedIndex()) {
+            case 1:
                 intervall = iCalculation.getEqualIntervall(numberOfClasses);
                 //iCalculation.printHistogramm(intervall);
                 break;
-            case "Defined Intervall":
-                System.out.println(this.intervallWidth);
+            case 2:
                 intervall = iCalculation.getDefinedIntervall(this.intervallWidth);
                 //iCalculation.printHistogramm(intervall);
                 break;
-            case "Quantil":
+            case 0:
                 intervall = iCalculation.getQuantilIntervall(numberOfClasses);
                 //iCalculation.printHistogramm(intervall);
                 break;
@@ -345,7 +344,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
             this.fillBreakpointList();
             this.setHistogramMarkers();
             colorPanel.setNumberOfColors((Integer) this.numClassesSpinner.getValue());
-            
+            colorPanel.repaint();   
         }
     }
     
