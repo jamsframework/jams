@@ -28,7 +28,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -60,7 +59,6 @@ import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -239,7 +237,7 @@ public class ComponentAttributePanel extends JPanel {
 
     }
 
-    private void setAttributeValue() {
+    private void setAttributeValue(boolean setButtonPressed) {
 
         if (adjusting) {
             return;
@@ -252,7 +250,9 @@ public class ComponentAttributePanel extends JPanel {
         if (setButton.isSelected()) {
             if (!valueInput.verify()) {
 
-                GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Invalid_value!"), null);
+                if (setButtonPressed) {
+                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Invalid_value!"), null);
+                }
                 return;
             }
             //valueInput.getComponent().setEnabled(false);
@@ -376,7 +376,7 @@ public class ComponentAttributePanel extends JPanel {
         valueInput.addValueChangeListener(new ValueChangeListener() {
             @Override
             public void valueChanged() {
-                setAttributeValue();
+                setAttributeValue(false);
             }
         });
 
@@ -483,7 +483,7 @@ public class ComponentAttributePanel extends JPanel {
         setButtonListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                setAttributeValue();
+                setAttributeValue(true);
             }
         };
 
