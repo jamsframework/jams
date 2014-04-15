@@ -21,7 +21,9 @@
  */
 package jams.server.service;
 
+import com.sun.xml.ws.security.impl.policy.Constants;
 import jams.server.entities.User;
+import jams.server.entities.Users;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -31,13 +33,14 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -53,79 +56,100 @@ public class UserFacadeREST extends AbstractFacade<User> {
     public UserFacadeREST() {
         super(User.class);
     }
-
-    @POST
+        
+    @PUT
+    @Path("create")
     @Consumes({"application/xml", "application/json"})
-    public void create(User entity, @Context HttpServletRequest req) {
+    @Produces({"application/xml"})
+    public Response create(User entity, @Context HttpServletRequest req) {
         if (isAdmin(req)) {
+            if (!findByName(entity.getLogin()).isEmpty())
+                return Response.ok("Login is already existing",MediaType.TEXT_PLAIN).build();
             super.create(entity);
+            List<User> list = findByName(entity.getLogin());
+            if (list.isEmpty()){
+                return Response.ok("Failed to create user.",MediaType.TEXT_PLAIN).build();
+            }            
+            return Response.ok(list.get(0),MediaType.APPLICATION_XML_TYPE).build();
         }
+        return Response.status(Response.Status.FORBIDDEN).build();
     }
 
     @PUT
     @Path("{id}")
     @Consumes({"application/xml", "application/json"})
-    public void edit(@PathParam("id") Integer id, User entity, @Context HttpServletRequest req) {
+    public Response edit(@PathParam("id") Integer id, User entity, @Context HttpServletRequest req) {
         HttpSession session = req.getSession(true);
         Object userid = session.getAttribute("userid");
         if (userid == id) {
             super.edit(entity);
+            return Response.ok(true).build();
         }
+        return Response.ok(false).build();
     }
 
     @DELETE
     @Path("{id}")
-    public void remove(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+    @Produces({"application/xml", "application/json"})
+    public Response remove(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         if (isAdmin(req)) {
-            super.remove(super.find(id));
+            User o = super.find(id);
+            if (o == null)
+                return null;
+            super.remove(o);
+            return Response.ok(o).build();
         }
+        return Response.status(Response.Status.FORBIDDEN).build();
     }
 
     @GET
     @Path("{id}")
     @Produces({"application/xml", "application/json"})
-    public User find(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+    public Response find(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         if (isAdmin(req)) {
-            return super.find(id);
+            return Response.ok(super.find(id),MediaType.APPLICATION_XML).build();
         } else {
-            return null;
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
 
     @GET
     @Produces({"application/xml", "application/json"})
-    public User find(@Context HttpServletRequest req) {
+    public Response find(@Context HttpServletRequest req) {
         HttpSession session = req.getSession(true);
         Object userid = session.getAttribute("userid");
         if (userid == null || userid == "-1") {
-            return null;
+            return Response.ok("Invalid Parameter",MediaType.TEXT_PLAIN).build();
         }
-        return super.find(userid);
+        return Response.ok(super.find(userid),MediaType.APPLICATION_XML).build();        
     }
 
     @GET
     @Path("all")
     @Produces({"application/xml", "application/json"})
-    public List<User> findAll(@Context HttpServletRequest req) {
+    public Response findAll(@Context HttpServletRequest req) {
         if (isAdmin(req)) {
-            return super.findAll();
+            return Response.ok(new Users(super.findAll()),MediaType.APPLICATION_XML).build();       
         } else {
-            return null;
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
 
     @GET
     @Path("{from}/{to}")
     @Produces({"application/xml", "application/json"})
-    public List<User> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to, @Context HttpServletRequest req) {
-        return super.findRange(new int[]{from, to});
+    public Response findRange(@PathParam("from") Integer from, @PathParam("to") Integer to, @Context HttpServletRequest req) {
+        if (!isAdmin(req)) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        return Response.ok(new Users(super.findRange(new int[]{from, to})),MediaType.APPLICATION_XML).build();       
     }
 
     @GET
     @Path("count")
     @Produces("text/plain")
-    public String countREST(@Context HttpServletRequest req) {
-        return String.valueOf(super.count());
+    public Response countREST(@Context HttpServletRequest req) {
+        return Response.ok(String.valueOf(super.count()),MediaType.TEXT_PLAIN).build();       
     }
 
     @Override
@@ -135,35 +159,51 @@ public class UserFacadeREST extends AbstractFacade<User> {
 
     @GET
     @Path("login")
-    @Produces("text/plain")
-    public String login(@QueryParam("login") String login, @QueryParam("password") String password, @Context HttpServletRequest req) {
+    @Produces({"application/xml"})
+    public Response login(@QueryParam("login") String login, @QueryParam("password") String password, @Context HttpServletRequest req) {
 
         HttpSession session = req.getSession(true);
 
-        List result = findWithName(login, password);
+        List result = findByNameAndPassword(login, password);
 
         User user;
         if (result.size() > 0) {
             user = (User) result.get(0);
             session.setAttribute("userid", user.getId());
             session.setAttribute("userlogin", user.getLogin());
-            return session.getId();
+            return Response.ok(user,MediaType.APPLICATION_XML_TYPE).build();            
         } else {
             session.setAttribute("userid", "-1");
             session.setAttribute("userlogin", "");
-            return "0";
+            return Response.ok(null,MediaType.APPLICATION_XML).build();            
         }
     }
 
-    private List findWithName(String login, String password) {
+    private List findByNameAndPassword(String login, String password) {
         return em.createQuery(
                 "SELECT u FROM User u WHERE u.login LIKE :login AND u.password LIKE :password")
                 .setParameter("login", login)
                 .setParameter("password", password)
                 .getResultList();
     }
+    
+    private List findByName(String login) {
+        return em.createQuery(
+                "SELECT u FROM User u WHERE u.login LIKE :login")
+                .setParameter("login", login)
+                .getResultList();
+    }
 
-    private boolean isAdmin(HttpServletRequest req) {
+    public boolean isLoggedIn(HttpServletRequest req) {
+        HttpSession session = req.getSession(true);
+        Object userid = session.getAttribute("userid");
+        if (userid == null || userid == "-1") {
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean isAdmin(HttpServletRequest req) {
         HttpSession session = req.getSession(true);
         Object userid = session.getAttribute("userid");
         if (userid == null || userid == "-1") {

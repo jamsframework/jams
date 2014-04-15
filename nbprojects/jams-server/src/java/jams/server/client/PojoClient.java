@@ -23,22 +23,10 @@ package jams.server.client;
 
 import jams.server.entities.User;
 import jams.server.entities.Users;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import javax.xml.bind.JAXBContext;
+import java.util.Random;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 /**
  *
@@ -46,129 +34,179 @@ import javax.xml.bind.Unmarshaller;
  */
 public class PojoClient {
 
+    String SEPARATOR = "**********************";
     String serverUrl = "";
-    String userName = "";
-    String password = "";
 
-    String sessionID = null;
-    
-    private InputStream httpGet(String url){
-        if (!isLoggedIn()){
-            log("user not logged in, not sending request!");
+    HTTPClient client = new HTTPClient();
+
+    boolean connected = false;
+
+    private Object httpGet(String url, Class responseType) {
+        log(SEPARATOR+"\nSENDING: http request:" + url);
+        if (!connected) {
+            log("ERROR: User not logged in, not sending request!");
             return null;
         }
-                        
-        log("sending http request:" + url);
         
-        try{
-            String xmlResult = HTTPClient.httpGet(url, sessionID);
-            //System.out.println(xmlResult);
-            log("request successful!");
-            return new ByteArrayInputStream(xmlResult.getBytes("UTF-8"));
-        }catch(IOException ioe){
-            log("request failed!");
+        try {
+            Object o = client.httpGet(url, responseType);
+            if (o instanceof String){
+                log(o.toString());
+                return null;
+            }
+            log("INFO: Request send successful!");
+            return o;
+        } catch (IOException ioe) {
             log(ioe.toString());
             return null;
-        }                
+        } catch (JAXBException ex) {
+            log(ex.toString());
+            return null;
+        }
     }
-                
+
+    private Object httpPost(String url, String method, Object o, Class type) {
+        if (!connected) {
+            log("ERROR: User not logged in, not sending request!");
+            return null;
+        }
+
+        try {
+            Object result = (Object) client.httpRequest(url, method, o, type);
+            if (result instanceof String){
+                log(result.toString());
+                return null;
+            }
+            log("INFO: Request send successful!");
+            return result;
+        } catch (IOException ioe) {
+            log(ioe.toString());
+            return null;
+        } catch (JAXBException ex) {
+            log(ex.toString());
+            return null;
+        }
+    }
+    
+    private Object httpUpload(String url, File f, Class type) {
+        if (!connected) {
+            log("ERROR: User not logged in, not sending request!");
+            return null;
+        }
+
+        try {
+            Object result = (Object) client.httpFileUpload(url, f, type);
+            if (result instanceof String){
+                log(result.toString());
+                return null;
+            }
+            log("INFO: Request send successful!");
+            return result;
+        } catch (IOException ioe) {
+            log(ioe.toString());
+            return null;
+        } catch (JAXBException ex) {
+            log(ex.toString());
+            return null;
+        }
+    }
+
     public boolean connect(String serverUrl, String userName, String password) {
         this.serverUrl = serverUrl;
-        this.userName = userName;
-        this.password = password;
-
+        log(SEPARATOR+"\nTrying to connect .. ");
+        User u = null;
         try {
-            sessionID = HTTPClient.httpGet(serverUrl + "/login?login=" + userName + "&password=" + password, "");
+            Object o = client.httpGet(serverUrl + "/user/login?login=" + userName + "&password=" + password, User.class);
+            if (o instanceof String){
+                log(o.toString());
+            }else{
+                u = (User)o;
+            }
         } catch (IOException ioe) {
-            sessionID = null;
-            log("Login failed:");
-            log(ioe.getMessage());
-            return false;
+            log(ioe.toString());
+        } catch (JAXBException ex) {
+            log(ex.toString());
         }
-        log("Login successful!");
+
+        if (u == null) {
+            log("ERROR: Connection not established\n");
+            return connected = false;
+        }
+        log("INFO: Login successful\n");
+        return connected = true;
+    }
+
+    //Client Methods
+    public Users getAllUsers() {
+        return (Users) httpGet(serverUrl + "/user/all", Users.class);
+    }
+
+    public Users getUsersInRange(int from, int to) {
+        Object result = httpGet(serverUrl + "/user/" + from + "/" + to, Users.class);
+        if (result instanceof String){
+            log(result.toString());
+            return null;
+        }
+        return (Users)result; 
+    }
+
+    public User getUser(int id) {
+        return (User) httpGet(serverUrl + "/user/" + id, User.class);
+    }
+
+    public boolean removeUser(int id) {        
+        log(SEPARATOR+"\nSENDING: Request remove user with id=" + id);
+
+        boolean success = httpPost(serverUrl + "/user/" + id, "DELETE", null, User.class) != null;
+        if (!success){
+            log("FAILED: User was not deleted!");
+            return false;
+        }else{
+            log("SUCCESS: User was was deleted!");
+            return true;
+        }        
+    }
+
+    public int createUser(User user) {
+        log(SEPARATOR+"\nSENDING: Create user .. ");
+
+        Object result = httpPost(serverUrl + "/user/create", "PUT", user, User.class);
+        if (result instanceof String){
+            log("FAILED: User was not created. The server responed with the following message: " + result);
+            return -1;
+        }else if (result == null) {
+            log("FAILED: User was not created. There was no response from the server");
+            return -1;
+        }else{
+            user = (User)(result);
+            log("SUCCESS: User was created with id = " + user.getId());
+            return user.getId();
+        }
+    }
+
+    public boolean uploadFile(File f) {
+        jams.server.entities.File result = (jams.server.entities.File) this.httpUpload(serverUrl + "/file/upload", f , jams.server.entities.File.class);
+        System.out.println("result is:" + result.toString());
         return true;
     }
-
-    public boolean isLoggedIn() {
-        return sessionID != null;
+    
+    public boolean uploadFile(File f[]) {
+        File result = (File) httpPost(serverUrl + "/file/", "CREATE", null, null);
+        System.out.println("result is" + result);
+        return true;
     }
     
-    //Client Methods
-    
-    public Users getAllUsers() {
-        InputStream stream = httpGet(serverUrl + "/all");
-        
-        if (stream == null){
-            return null;
-        }
-        try {
-            JAXBContext context = JAXBContext.newInstance(Users.class);
-            Unmarshaller unMarshaller = context.createUnmarshaller();
-            return (Users) unMarshaller.unmarshal(stream);
-        } catch (JAXBException ex) {
-            log("conversion failed!");
-            log(ex.toString());
-            return null;
-        }
+    /*public boolean existsFile(File f) {
+        //File result = (File) httpPost(serverUrl + "/file/", "CREATE", null, null);
+        //System.out.println("result is" + result);
+        //return true;
     }
     
-    public Users getUsersInRange(int from, int to) {
-        InputStream stream = httpGet(serverUrl + "/" + from + "/" + to);        
-        if (stream == null){
-            return null;
-        }
-
-        try {
-            JAXBContext context = JAXBContext.newInstance(Users.class);
-            Unmarshaller unMarshaller = context.createUnmarshaller();
-            return (Users) unMarshaller.unmarshal(stream);
-        } catch (JAXBException ex) {
-            log("conversion failed!");
-            log(ex.toString());
-            return null;
-        }
-    }
-    
-    public User getUser(int id) {
-        InputStream stream = httpGet(serverUrl + "/" + id);        
-        if (stream == null){
-            return null;
-        }
-
-        try {
-            JAXBContext context = JAXBContext.newInstance(User.class);
-            Unmarshaller unMarshaller = context.createUnmarshaller();
-            return (User) unMarshaller.unmarshal(stream);
-        } catch (JAXBException ex) {
-            log("conversion failed!");
-            log(ex.toString());
-            return null;
-        }
-    }
-    
-    public boolean removeUser(int id) {
-        log("sending remove request:" + id);
-        
-        try{            
-            return HTTPClient.httpRequest(serverUrl + "/" + id,sessionID, "DELETE",null,null );                
-        }catch(Exception ioe){
-            log("request failed");
-            log(ioe.toString());
-            return false;
-        }
-    }
-    
-    public boolean createUser(User user) {     
-        log("sending create user request:" + user.getId());
-        try{
-            HTTPClient.httpRequest(serverUrl + "/",sessionID, "POST", user, User.class);            
-            return true;
-        }catch(Exception ioe){
-            log("request failed");
-            log(ioe.toString());
-            return false;
-        }
-    }
+    public boolean[] existsFile(File f[]) {
+        //File result = (File) httpPost(serverUrl + "/file/", "CREATE", null, null);
+        //System.out.println("result is" + result);
+        //return true;
+    }*/
 
     public void log(String msg) {
         System.out.println(msg);
@@ -177,21 +215,26 @@ public class PojoClient {
     public static void main(String[] args) throws IOException, JAXBException {
 //        System.out.println(httpGet("http://localhost:8080/jams-server/webresources/user"));
         PojoClient client = new PojoClient();
-        client.connect("http://localhost:8080/jams-server/webresources/user", "chris", "test");
+        client.connect("http://localhost:8080/jams-server/webresources", "Blubb", "test");
         
         User user = new User(5);
         user.setAdmin(1);
         user.setEmail("blubb@gmx.de");
         user.setId(5);
-        user.setLogin("Blubb");
-        user.setName("Blubb der Erste");
+        user.setLogin(Integer.toString((new Random()).nextInt()));
+        user.setName("Der Marshmellow Mann");
         user.setPassword("test");
+
+        int id = client.createUser(user);
+        if (id != -1){
+            client.removeUser(id);       
+        }
+        Users users = client.getAllUsers();
+        System.out.println("List of all users is now:" + users.toString());
+        Users result = client.getUsersInRange(0, 1);
+        System.out.println("Users with id 0 and 1 are" + result.toString());            
         
-        client.createUser(user);        
-        client.getAllUsers();
-        client.getUsersInRange(0, 1);
-        //client.removeUser(5);
-
+        //Files
+        client.uploadFile(new File("E:/tmp/style.css"));
     }
-
 }

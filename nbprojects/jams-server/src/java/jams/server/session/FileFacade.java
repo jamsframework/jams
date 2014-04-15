@@ -1,6 +1,6 @@
 /*
- * User.java
- * Created on 01.03.2014, 21:30:28
+ * UserFacade.java
+ * Created on 03.03.2014, 23:19:01
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -20,38 +20,30 @@
  *
  */
 
-package jams.server.entities;
+package jams.server.session;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jams.server.entities.File;
+import jams.server.entities.User;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "users")
-public class Users {
- 
-    @XmlElement(name = "user", type = User.class)
-    private List<User> users = new ArrayList<User>();
- 
-    public Users() {}
- 
-    public Users(List<User> users) {
-        this.users = users;
+@Stateless
+public class FileFacade extends AbstractFacade<File> {
+    @PersistenceContext(unitName = "jams-serverPU")
+    private EntityManager em;
+
+    @Override
+    protected EntityManager getEntityManager() {
+        return em;
     }
- 
-    public List<User> getUsers() {
-        return users;
+
+    public FileFacade() {
+        super(File.class);
     }
- 
-    public String toString(){
-        return Arrays.toString(users.toArray());
-    }   
+    
 }

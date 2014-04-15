@@ -35,23 +35,23 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "users")
-public class Users {
+@XmlRootElement(name = "files")
+public class Files {
  
-    @XmlElement(name = "user", type = User.class)
-    private List<User> users = new ArrayList<User>();
+    @XmlElement(name = "files", type = Files.class)
+    private List<File> files = new ArrayList<File>();
  
-    public Users() {}
+    public Files() {}
  
-    public Users(List<User> users) {
-        this.users = users;
+    public Files(List<File> files) {
+        this.files = files;
     }
  
-    public List<User> getUsers() {
-        return users;
+    public List<File> getFiles() {
+        return files;
     }
  
     public String toString(){
-        return Arrays.toString(users.toArray());
+        return Arrays.toString(files.toArray());
     }   
 }

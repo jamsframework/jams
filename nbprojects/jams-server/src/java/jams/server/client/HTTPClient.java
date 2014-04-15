@@ -21,24 +21,19 @@
  */
 package jams.server.client;
 
-import jams.server.entities.User;
-import jams.server.entities.Users;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
-import javax.xml.bind.JAXBContext;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 /**
  *
@@ -46,80 +41,73 @@ import javax.xml.bind.Unmarshaller;
  */
 public class HTTPClient {
 
-    String serverUrl = "";
-    String userName = "";
-    String password = "";
-
     String sessionID = null;
 
-    public static String httpGet(String urlStr, String sessionID) throws IOException {
-        URL url = new URL(urlStr);
-        HttpURLConnection conn
-                = (HttpURLConnection) url.openConnection();
+    public Object httpGet(String urlStr, Class responseType) throws IOException, JAXBException {
+        return httpRequest(urlStr, null, null, responseType);
+    }
 
-        if (sessionID != null) {
-            conn.setRequestProperty("Cookie", "JSESSIONID="
-                    + URLEncoder.encode(sessionID, "UTF-8"));
+    public Object httpFileUpload(String urlStr, File f, Class clazz) throws IOException, JAXBException {
+        Client client = ClientBuilder.newClient();       
+        client.register(MultiPartFeature.class);
+        // MediaType of the body part will be derived from the file.
+        final FileDataBodyPart filePart = new FileDataBodyPart("file", f);
+ 
+        MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
+ 
+        Response response = null;
+        response = client.target(urlStr).request().
+                header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")).                   
+                post(Entity.entity(multipart, multipart.getMediaType()));
+        
+        if (response.getStatus() != 200 ){
+            if (response.getStatus() == 203){
+                return "Error: Request is forbidden";
+            }
+            return "Error: Request was not successful";
         }
-
-        conn.connect();
-
-        if (conn.getResponseCode() != 200) {
-            throw new IOException(conn.getResponseMessage());
-        }
-
-        // Buffer the result into a string
-        BufferedReader rd = new BufferedReader(
-                new InputStreamReader(conn.getInputStream()));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
-        }
-        rd.close();
-
-        conn.disconnect();
-        return sb.toString();
+        
+        if (response.getMediaType().equals(MediaType.TEXT_HTML_TYPE)){            
+            return response.readEntity(String.class);
+        }else if (response.getMediaType().equals(MediaType.APPLICATION_XML_TYPE)){
+            return response.readEntity(clazz);
+        }else
+            return response.readEntity(String.class);
     }
     
-    public static boolean httpRequest(String urlStr, String sessionID, String requestMethod, Object param, Class clazz) throws Exception {
-        URL url = new URL(urlStr);
-        HttpURLConnection conn
-                = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod(requestMethod);        
-        conn.setDoInput(true);
-        conn.setUseCaches(false);
-        conn.setAllowUserInteraction(false);
-        conn.setRequestProperty("Content-Type",
-                "application/xml; charset=\"utf-8\"");
-
-        if (sessionID != null) {
-            conn.setRequestProperty("Cookie", "JSESSIONID="
-                    + URLEncoder.encode(sessionID, "UTF-8"));
+    public Object httpRequest(String urlStr, String requestMethod, Object param, Class clazz) throws IOException, JAXBException {
+        Client client = ClientBuilder.newClient();                
+        Response response = null;
+        if (requestMethod != null){
+            response = client.target(urlStr).request().
+                header("Access-Control-Request-Method", requestMethod).
+                header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")).                   
+                method(requestMethod, Entity.entity(param, MediaType.APPLICATION_XML));
+        }else{
+            response = client.target(urlStr).request().
+                header("Access-Control-Request-Method", "GET").
+                header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")).               
+                get();
+        }
+                
+        if (sessionID == null){
+            String result = response.getHeaders().get("set-cookie").toString();//conn.getHeaderField("set-cookie");
+            result = result.split(";")[0];
+            sessionID = result.split("=")[1];
         }
         
-        // Create the form content
-        if (param==null){
-            conn.setDoOutput(false);
-        } else {
-            conn.setDoOutput(true);
-            OutputStream out = conn.getOutputStream();
-            JAXBContext context = JAXBContext.newInstance(clazz);
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.marshal(param, out);
-            out.flush();
-            conn.connect();
-        }
-                       
-        conn.connect();
-
-        //200 = ok
-        //204 = no content
-        if (conn.getResponseCode() != 200 && conn.getResponseCode() != 204) {
-            throw new IOException(conn.getResponseMessage());
+        if (response.getStatus() != 200 ){
+            if (response.getStatus() == 203){
+                return "Error: Request is forbidden";
+            }
+            return "Error: Request was not successful";
         }
         
-        conn.disconnect();
-        return true;
+        if (response.getMediaType().equals(MediaType.TEXT_HTML_TYPE)){            
+            return response.readEntity(String.class);
+        }else if (response.getMediaType().equals(MediaType.APPLICATION_XML_TYPE)){
+            return response.readEntity(clazz);
+        }else
+            return response.readEntity(String.class);
     }
 }
