@@ -5,11 +5,9 @@
         <group>
             <file>file:/E:/JAMS_rep/JAMS/nbprojects/jams-server/src/java/jams/server/entities/User.java</file>
             <file>file:/E:/JAMS_rep/JAMS/nbprojects/jams-server/src/java/jams/server/service/AbstractFacade.java</file>
-            <file>file:/E:/JAMS_rep/JAMS/nbprojects/jams-server/src/java/jams/server/service/UserFacadeREST.java</file>
-            <file>file:/E:/JAMS_rep/JAMS/nbprojects/jams-server/src/java/jams/server/jsf/UserController.java</file>
             <file>file:/E:/JAMS_rep/JAMS/nbprojects/jams-server/src/java/jams/server/client/PojoClient.java</file>
+            <file>file:/E:/JAMS_rep/JAMS/nbprojects/jams-server/src/java/jams/server/service/ApplicationConfig.java</file>
             <file>file:/E:/JAMS_rep/JAMS/nbprojects/jams-server/src/java/jams/server/service/FileFacadeREST.java</file>
-            <file>file:/E:/JAMS_rep/JAMS/nbprojects/jams-server/src/java/jams/server/entities/File.java</file>
             <file>file:/E:/JAMS_rep/JAMS/nbprojects/jams-server/src/java/jams/server/session/UserFacade.java</file>
             <file>file:/E:/JAMS_rep/JAMS/nbprojects/jams-server/src/java/jams/server/client/HTTPClient.java</file>
             <file>file:/E:/JAMS_rep/JAMS/nbprojects/jams-server/src/java/jams/server/entities/Files.java</file>

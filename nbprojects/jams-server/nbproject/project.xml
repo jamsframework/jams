@@ -10,10 +10,67 @@
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <web-module-libraries>
                 <library dirs="200">
-                    <file>${file.reference.jersey-media-multipart-2.0.jar}</file>
+                    <file>${file.reference.aopalliance-repackaged-2.2.0.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.asm-all-repackaged-2.2.0.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.hk2-api-2.2.0.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.hk2-locator-2.2.0.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.hk2-utils-2.2.0.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.javassist-3.18.1-GA.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.javax.annotation-api-1.2.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.javax.inject-2.2.0.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.javax.servlet-api-3.0.1.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jaxb-api-2.2.7.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jersey-guava-2.7.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.org.osgi.core-4.2.0.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.osgi-resource-locator-1.0.1.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.validation-api-1.1.0.Final.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jersey-common.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jersey-client.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jersey-container-servlet-core.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jersey-container-servlet.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jersey-server.jar}</file>
                 </library>
                 <library dirs="200">
                     <file>${file.reference.mimepull-1.9.4.jar}</file>
+                </library>
+                <library dirs="200">
+                    <file>${file.reference.jersey-media-multipart-2.0.jar}</file>
                 </library>
             </web-module-libraries>
             <web-module-additional-libraries/>

@@ -36,9 +36,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "files")
+//@XmlSeeAlso({Fi.class})
 public class Files {
  
-    @XmlElement(name = "files", type = Files.class)
+    @XmlElement(name = "files", type = File.class)
     private List<File> files = new ArrayList<File>();
  
     public Files() {}
@@ -46,7 +47,18 @@ public class Files {
     public Files(List<File> files) {
         this.files = files;
     }
+    
+    public Files(File file) {
+        files.add(file);        
+    }
  
+    public void add(File f){
+        files.add(f);
+    }
+    
+    public void setFiles(List<File> files){
+        this.files = files;
+    }
     public List<File> getFiles() {
         return files;
     }

@@ -76,7 +76,8 @@ public class HTTPClient {
     }
     
     public Object httpRequest(String urlStr, String requestMethod, Object param, Class clazz) throws IOException, JAXBException {
-        Client client = ClientBuilder.newClient();                
+        Client client = ClientBuilder.newClient();     
+
         Response response = null;
         if (requestMethod != null){
             response = client.target(urlStr).request().

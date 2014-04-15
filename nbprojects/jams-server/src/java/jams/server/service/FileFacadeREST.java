@@ -23,10 +23,17 @@ package jams.server.service;
 
 import jams.server.entities.File;
 import jams.server.entities.Files;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
+import java.nio.file.Paths;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -83,7 +90,8 @@ public class FileFacadeREST extends AbstractFacade<File> {
         return q.getResultList();
     }
 
-    @GET
+    @POST
+    @Path("exists")
     @Consumes({"application/xml", "application/json"})
     @Produces({"application/xml", "application/json"})
     public Response exists(Files entity, @Context HttpServletRequest req) {
@@ -91,10 +99,9 @@ public class FileFacadeREST extends AbstractFacade<File> {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
-        boolean result[] = new boolean[entity.getFiles().size()];
-        int i = 0;
+        Files result = new Files();        
         for (File f : entity.getFiles()) {
-            result[i] = findHash(f.getHash()).isEmpty();
+            result.add(findHash(f.getHash()).get(0));
         }
         return Response.ok(result, MediaType.APPLICATION_XML_TYPE).build();
     }
@@ -108,36 +115,58 @@ public class FileFacadeREST extends AbstractFacade<File> {
 
         String filePath = UPLOAD_DIRECTORY + contentDispositionHeader.getFileName();
 
-        // save the file to the server
-        saveFile(fileInputStream, filePath);
-
-        String output = "File saved to server location : " + filePath;
-
-        return Response.status(200).entity(output).build();
+        String hashCode = saveFile(fileInputStream, filePath);
+        if (hashCode == null){
+            return Response.status(200).entity("Error: I/O Error while saving file").build();
+        }
+        File f = new File();
+        f.setHash(hashCode);
+        List<File> list = findHash(hashCode);
+        if (!list.isEmpty())
+            return Response.status(200).entity(list.get(0)).build();        
+        else if (create(f)){
+            return Response.status(200).entity(f).build();
+        }
+        // save the file to the server        
+        return Response.status(200).entity("Error: Something went wrong!").build();
     }
 
     // save uploaded file to a defined location on the server
-    private void saveFile(InputStream uploadedInputStream, String serverLocation) {
+    private String saveFile(InputStream uploadedInputStream, String serverLocation) {
 
+        java.io.File serverFile = new java.io.File(serverLocation);
         try {
-            OutputStream outpuStream = new FileOutputStream(new java.io.File(serverLocation));
+            OutputStream outpuStream = new FileOutputStream(serverFile);
 
             int read = 0;
 
             byte[] bytes = new byte[1024];
 
-            outpuStream = new FileOutputStream(new java.io.File(serverLocation));
-
             while ((read = uploadedInputStream.read(bytes)) != -1) {
-
                 outpuStream.write(bytes, 0, read);
-
             }
             outpuStream.flush();
             outpuStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            DigestInputStream dis = new DigestInputStream(new FileInputStream(new java.io.File(serverLocation)), md);
+            BigInteger bigInt = new BigInteger(md.digest());
+            dis.close();
+
+            String hashCode = bigInt.toString(16);
+            serverFile.renameTo(new java.io.File(serverFile.getParent(), hashCode));
+            return hashCode;
+
+        } catch (NoSuchAlgorithmException nsae) {
+            nsae.printStackTrace();
+        } catch (IOException fnfe) {
+            fnfe.printStackTrace();
+        }
+        return null;
     }
 
 }

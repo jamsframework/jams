@@ -21,10 +21,17 @@
  */
 package jams.server.client;
 
+import jams.server.entities.Files;
 import jams.server.entities.User;
 import jams.server.entities.Users;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Random;
 import javax.xml.bind.JAXBException;
 
@@ -41,6 +48,9 @@ public class PojoClient {
 
     boolean connected = false;
 
+    public PojoClient(){
+        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
+    }
     private Object httpGet(String url, Class responseType) {
         log(SEPARATOR+"\nSENDING: http request:" + url);
         if (!connected) {
@@ -66,6 +76,7 @@ public class PojoClient {
     }
 
     private Object httpPost(String url, String method, Object o, Class type) {
+        log(SEPARATOR+"\nSENDING: http request:" + url);
         if (!connected) {
             log("ERROR: User not logged in, not sending request!");
             return null;
@@ -89,6 +100,7 @@ public class PojoClient {
     }
     
     private Object httpUpload(String url, File f, Class type) {
+        log(SEPARATOR+"\nSENDING: Upload file request:" + url + " file: " + f);
         if (!connected) {
             log("ERROR: User not logged in, not sending request!");
             return null;
@@ -184,29 +196,65 @@ public class PojoClient {
         }
     }
 
+    private String getHashCode(java.io.File f){
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            DigestInputStream dis = new DigestInputStream(new FileInputStream(f), md);
+            BigInteger bigInt = new BigInteger(md.digest());
+            dis.close();
+
+            String hashCode = bigInt.toString(16);            
+            return hashCode;
+
+        } catch (NoSuchAlgorithmException nsae) {
+            nsae.printStackTrace();
+        } catch (IOException fnfe) {
+            fnfe.printStackTrace();
+        }
+        return null;
+    }
+    
     public boolean uploadFile(File f) {
-        jams.server.entities.File result = (jams.server.entities.File) this.httpUpload(serverUrl + "/file/upload", f , jams.server.entities.File.class);
-        System.out.println("result is:" + result.toString());
+        //generate hash code        
+        if (!this.existsFile(f)){
+            jams.server.entities.File result = (jams.server.entities.File) this.httpUpload(serverUrl + "/file/upload", f , jams.server.entities.File.class);
+            if (result != null){
+                log("File upload successful:" + result.toString());
+            }else{
+                log("File upload failed!");
+            }            
+        }else{
+            log("File was already uploaded!");   
+        }
+        
         return true;
     }
     
-    public boolean uploadFile(File f[]) {
+    public boolean uploadFile(File f[]) {        
         File result = (File) httpPost(serverUrl + "/file/", "CREATE", null, null);
         System.out.println("result is" + result);
         return true;
     }
     
-    /*public boolean existsFile(File f) {
-        //File result = (File) httpPost(serverUrl + "/file/", "CREATE", null, null);
-        //System.out.println("result is" + result);
-        //return true;
+    public boolean existsFile(File f) {
+        String hashCode = getHashCode(f);
+        
+        Files filesIn = new Files(new jams.server.entities.File(0, hashCode));
+        Files filesOut = (Files)httpPost(serverUrl + "/file/exists", "POST", filesIn, Files.class);
+        if (filesOut != null){
+            if (filesOut.getFiles().get(0) == null){
+                return false;
+            }
+            return true;
+        }               
+        return false;
     }
     
-    public boolean[] existsFile(File f[]) {
+    //public boolean[] existsFile(File f[]) {
         //File result = (File) httpPost(serverUrl + "/file/", "CREATE", null, null);
         //System.out.println("result is" + result);
         //return true;
-    }*/
+    //}
 
     public void log(String msg) {
         System.out.println(msg);
