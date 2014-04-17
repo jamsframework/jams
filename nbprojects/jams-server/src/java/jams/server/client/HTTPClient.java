@@ -42,13 +42,13 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 public class HTTPClient {
 
     String sessionID = null;
-
+    Client client = ClientBuilder.newClient();       
+    
     public Object httpGet(String urlStr, Class responseType) throws IOException, JAXBException {
         return httpRequest(urlStr, null, null, responseType);
     }
 
-    public Object httpFileUpload(String urlStr, File f, Class clazz) throws IOException, JAXBException {
-        Client client = ClientBuilder.newClient();       
+    public Object httpFileUpload(String urlStr, File f, Class clazz) throws IOException, JAXBException {        
         client.register(MultiPartFeature.class);
         // MediaType of the body part will be derived from the file.
         final FileDataBodyPart filePart = new FileDataBodyPart("file", f);
@@ -72,12 +72,10 @@ public class HTTPClient {
         }else if (response.getMediaType().equals(MediaType.APPLICATION_XML_TYPE)){
             return response.readEntity(clazz);
         }else
-            return response.readEntity(String.class);
+            return response.readEntity(String.class);        
     }
     
     public Object httpRequest(String urlStr, String requestMethod, Object param, Class clazz) throws IOException, JAXBException {
-        Client client = ClientBuilder.newClient();     
-
         Response response = null;
         if (requestMethod != null){
             response = client.target(urlStr).request().
@@ -101,14 +99,26 @@ public class HTTPClient {
             if (response.getStatus() == 203){
                 return "Error: Request is forbidden";
             }
+            if (response.getStatus() == 404){
+                return "Error: Resource not found";
+            }
+            if (response.getStatus() == 500){
+                return "Error: Internal server error";
+            }
             return "Error: Request was not successful";
         }
         
         if (response.getMediaType().equals(MediaType.TEXT_HTML_TYPE)){            
             return response.readEntity(String.class);
         }else if (response.getMediaType().equals(MediaType.APPLICATION_XML_TYPE)){
-            return response.readEntity(clazz);
+            Object o = response.readEntity(clazz);
+            response.close();
+            return o;
         }else
             return response.readEntity(String.class);
+    }
+    
+    public void close(){
+        this.client.close();        
     }
 }

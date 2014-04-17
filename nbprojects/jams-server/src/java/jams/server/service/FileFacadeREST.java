@@ -24,16 +24,10 @@ package jams.server.service;
 import jams.server.entities.File;
 import jams.server.entities.Files;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
-import java.nio.file.Paths;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -44,7 +38,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -65,9 +58,7 @@ public class FileFacadeREST extends AbstractFacade<File> {
     final String UPLOAD_DIRECTORY = "e:/uploaded/";
 
     @PersistenceContext(unitName = "jams-serverPU")
-    private EntityManager em;
-
-    UserFacadeREST users = new UserFacadeREST();
+    private EntityManager em;    
 
     public FileFacadeREST() {
         super(File.class);
@@ -95,13 +86,17 @@ public class FileFacadeREST extends AbstractFacade<File> {
     @Consumes({"application/xml", "application/json"})
     @Produces({"application/xml", "application/json"})
     public Response exists(Files entity, @Context HttpServletRequest req) {
-        if (!users.isLoggedIn(req)) {
+        if (!isLoggedIn(req)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         Files result = new Files();        
         for (File f : entity.getFiles()) {
-            result.add(findHash(f.getHash()).get(0));
+            List<File> list = findHash(f.getHash());
+            if (list.isEmpty())
+                result.add(File.NON_FILE);
+            else
+                result.add(list.get(0));
         }
         return Response.ok(result, MediaType.APPLICATION_XML_TYPE).build();
     }
@@ -120,7 +115,7 @@ public class FileFacadeREST extends AbstractFacade<File> {
             return Response.status(200).entity("Error: I/O Error while saving file").build();
         }
         File f = new File();
-        f.setHash(hashCode);
+        f.setHash(hashCode);        
         List<File> list = findHash(hashCode);
         if (!list.isEmpty())
             return Response.status(200).entity(list.get(0)).build();        
@@ -149,20 +144,15 @@ public class FileFacadeREST extends AbstractFacade<File> {
             outpuStream.close();
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
 
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            DigestInputStream dis = new DigestInputStream(new FileInputStream(new java.io.File(serverLocation)), md);
-            BigInteger bigInt = new BigInteger(md.digest());
-            dis.close();
-
-            String hashCode = bigInt.toString(16);
-            serverFile.renameTo(new java.io.File(serverFile.getParent(), hashCode));
-            return hashCode;
-
-        } catch (NoSuchAlgorithmException nsae) {
-            nsae.printStackTrace();
+            FileInputStream fis = new FileInputStream(serverFile);
+            String hash = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);         
+            fis.close();
+            serverFile.renameTo(new java.io.File(serverFile.getParent(), hash));
+            return hash;
         } catch (IOException fnfe) {
             fnfe.printStackTrace();
         }

@@ -37,7 +37,8 @@ public class ApplicationConfig extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();
         addRestResourceClasses(resources);
-        resources.add(MultiPartFeature.class);
+        if (!resources.contains(MultiPartFeature.class))
+            resources.add(MultiPartFeature.class);
         return resources;
     }
 
@@ -48,8 +49,9 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(jams.server.service.FileFacadeREST.class);               
+        resources.add(jams.server.service.FileFacadeREST.class);
         resources.add(jams.server.service.UserFacadeREST.class);               
+        resources.add(jams.server.service.WorkspaceFacadeREST.class);
     }
     
 }

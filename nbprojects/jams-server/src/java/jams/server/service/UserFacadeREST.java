@@ -21,10 +21,10 @@
  */
 package jams.server.service;
 
-import com.sun.xml.ws.security.impl.policy.Constants;
 import jams.server.entities.User;
 import jams.server.entities.Users;
 import java.util.List;
+import javax.annotation.PreDestroy;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -65,7 +65,11 @@ public class UserFacadeREST extends AbstractFacade<User> {
         if (isAdmin(req)) {
             if (!findByName(entity.getLogin()).isEmpty())
                 return Response.ok("Login is already existing",MediaType.TEXT_PLAIN).build();
+            try{
             super.create(entity);
+            }catch(Throwable t){
+                System.out.println("Shit happens .. ");
+            }
             List<User> list = findByName(entity.getLogin());
             if (list.isEmpty()){
                 return Response.ok("Failed to create user.",MediaType.TEXT_PLAIN).build();
@@ -79,13 +83,15 @@ public class UserFacadeREST extends AbstractFacade<User> {
     @Path("{id}")
     @Consumes({"application/xml", "application/json"})
     public Response edit(@PathParam("id") Integer id, User entity, @Context HttpServletRequest req) {
-        HttpSession session = req.getSession(true);
-        Object userid = session.getAttribute("userid");
-        if (userid == id) {
+        User user = getCurrentUser(req);
+        if (user == null){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        if (user.getId() == id || user.getAdmin()>0) {
             super.edit(entity);
             return Response.ok(true).build();
         }
-        return Response.ok(false).build();
+        return Response.status(Response.Status.FORBIDDEN).build();
     }
 
     @DELETE
@@ -112,18 +118,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
-
-    @GET
-    @Produces({"application/xml", "application/json"})
-    public Response find(@Context HttpServletRequest req) {
-        HttpSession session = req.getSession(true);
-        Object userid = session.getAttribute("userid");
-        if (userid == null || userid == "-1") {
-            return Response.ok("Invalid Parameter",MediaType.TEXT_PLAIN).build();
-        }
-        return Response.ok(super.find(userid),MediaType.APPLICATION_XML).build();        
-    }
-
+   
     @GET
     @Path("all")
     @Produces({"application/xml", "application/json"})
@@ -181,7 +176,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
 
     private List findByNameAndPassword(String login, String password) {
         return em.createQuery(
-                "SELECT u FROM User u WHERE u.login LIKE :login AND u.password LIKE :password")
+                "SELECT u FROM User u WHERE u.login = :login AND u.password = :password")
                 .setParameter("login", login)
                 .setParameter("password", password)
                 .getResultList();
@@ -192,31 +187,6 @@ public class UserFacadeREST extends AbstractFacade<User> {
                 "SELECT u FROM User u WHERE u.login LIKE :login")
                 .setParameter("login", login)
                 .getResultList();
-    }
-
-    public boolean isLoggedIn(HttpServletRequest req) {
-        HttpSession session = req.getSession(true);
-        Object userid = session.getAttribute("userid");
-        if (userid == null || userid == "-1") {
-            return false;
-        }
-        return true;
-    }
-    
-    public boolean isAdmin(HttpServletRequest req) {
-        HttpSession session = req.getSession(true);
-        Object userid = session.getAttribute("userid");
-        if (userid == null || userid == "-1") {
-            return false;
-        }
-
-        User user = super.find(userid);
-
-        if (user != null && user.getAdmin() == 1) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
 }

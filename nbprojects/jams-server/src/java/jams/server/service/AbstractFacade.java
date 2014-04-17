@@ -22,8 +22,13 @@
 
 package jams.server.service;
 
+import jams.server.entities.File;
+import jams.server.entities.User;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.Context;
 
 /**
  *
@@ -78,4 +83,31 @@ public abstract class AbstractFacade<T> {
         return ((Long) q.getSingleResult()).intValue();
     }
     
+    public File findFileByID(Integer id){
+        return getEntityManager().find(File.class, id);
+    }
+    
+     public User getCurrentUser(@Context HttpServletRequest req) {
+        HttpSession session = req.getSession(true);
+        Object userid = session.getAttribute("userid");
+        if (userid == null || userid == "-1") {
+            return null;
+        }
+        return getEntityManager().find(User.class, userid);
+    }
+    
+     public boolean isLoggedIn(HttpServletRequest req) {
+        HttpSession session = req.getSession(true);
+        Object userid = session.getAttribute("userid");
+        if (userid == null || userid == "-1") {
+            return false;
+        }
+        return true;
+    }
+     
+    public boolean isAdmin(HttpServletRequest req) {
+        User user = getCurrentUser(req);
+        
+        return user != null && user.getAdmin() == 1;
+    }
 }
