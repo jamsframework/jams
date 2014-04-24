@@ -138,28 +138,45 @@ public final class Utils {
         return byte_array;
     }
 
+    static int i=0;
+    static ArrayList<DecimalFormat> formatCache = new ArrayList<DecimalFormat>();
     public static byte[] doubleFormating( Double doubleNum, String characterSetName, int fieldLength, int sizeDecimalPart) throws java.io.UnsupportedEncodingException{
 
+        if (doubleNum==null){
+            return textPadding( " ", characterSetName, fieldLength, ALIGN_RIGHT);
+        }
+        
         int sizeWholePart = fieldLength - (sizeDecimalPart>0?( sizeDecimalPart + 1):0);
 
-        StringBuffer format = new StringBuffer( fieldLength);
-
-        for( int i=0; i<sizeWholePart; i++) {
-
-            format.append( "#");
+        DecimalFormat df = null;
+        if (formatCache.size() > sizeWholePart){
+            df = formatCache.get(sizeWholePart);
         }
 
-        if( sizeDecimalPart > 0) {
+        if (df == null) {
 
-            format.append( ".");
+            StringBuffer format = new StringBuffer(fieldLength);
 
-            for( int i=0; i<sizeDecimalPart; i++) {
+            for (int i = 0; i < sizeWholePart; i++) {
 
-                format.append( "0");
+                format.append("#");
             }
-        }
 
-        DecimalFormat df = new DecimalFormat( format.toString());
+            if (sizeDecimalPart > 0) {
+
+                format.append(".");
+
+                for (int i = 0; i < sizeDecimalPart; i++) {
+
+                    format.append("0");
+                }
+            }
+            df = new DecimalFormat( format.toString());
+            while (formatCache.size()<=sizeWholePart){
+                formatCache.add(null);
+            }
+            formatCache.set(sizeWholePart, df);
+        }
 
         return textPadding( df.format( doubleNum.doubleValue()).toString(), characterSetName, fieldLength, ALIGN_RIGHT);
     }

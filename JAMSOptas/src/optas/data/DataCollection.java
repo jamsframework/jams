@@ -105,28 +105,67 @@ public class DataCollection extends DataSet implements Serializable{
         }
     }
 
-    public boolean filter(String e, double low, double high, boolean inverse){
-        DataSet ensemble = this.getDataSet(e);
-        SimpleEnsemble effEnsemble = null;
-        if (ensemble == null)
-            return false;
-        if (ensemble instanceof SimpleEnsemble)
-            effEnsemble = (SimpleEnsemble)ensemble;
-        else
-            return false;
-
-        Integer ids[] = effEnsemble.getIds();        
-        for (Integer id : ids){
-            double value = effEnsemble.getValue(id);
-            if (!inverse){
-                if (value < low || value > high)
-                    filterID(id);
-            }else{
-                if (value >= low && value <= high)
-                    filterID(id);
-            }
+    public void renameDataset(String oldname, String newname){
+        Class clazz = this.datasets.get(oldname);
+        this.datasets.remove(oldname);
+        this.datasets.put(newname, clazz);
+        
+        DataSet globalDataset = this.globalDatasets.get(oldname);
+        if (globalDataset!=null){
+            this.globalDatasets.put(newname, globalDataset);            
+            this.globalDatasets.remove(oldname);
         }
         
+        for (Modelrun r : this.set.values()){
+            if (oldname.equals(r.name)){
+                r.name = newname;
+            }
+            DataSet modelrun_dataset = r.getDataset(oldname);
+            if (modelrun_dataset!=null){
+                modelrun_dataset.name = newname;
+            }
+        }
+    }
+    
+    public boolean filter(String e, double low, double high, boolean inverse){
+        if (!e.equals("ID")) {
+            DataSet ensemble = this.getDataSet(e);
+            SimpleEnsemble effEnsemble = null;
+            if (ensemble == null) {
+                return false;
+            }
+            if (ensemble instanceof SimpleEnsemble) {
+                effEnsemble = (SimpleEnsemble) ensemble;
+            } else {
+                return false;
+            }
+            Integer ids[] = effEnsemble.getIds();
+            for (Integer id : ids) {
+                double value = effEnsemble.getValue(id);
+                if (!inverse) {
+                    if (value < low || value > high) {
+                        filterID(id);
+                    }
+                } else {
+                    if (value >= low && value <= high) {
+                        filterID(id);
+                    }
+                }
+            }
+        } else {
+            Integer ids[] = this.getModelrunIds();
+            for (Integer id : ids) {
+                if (!inverse) {
+                    if (id < low || id > high) {
+                        filterID(id);
+                    }
+                } else {
+                    if (id >= low && id <= high) {
+                        filterID(id);
+                    }
+                }
+            }
+        }
         return true;
     }
 

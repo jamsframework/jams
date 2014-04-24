@@ -404,7 +404,21 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
 
             @Override
             public boolean isCellEditable(int row, int column) {
+                String[] selectedDataSets = getSelectedDataSets();
+                if (selectedDataSets.length > row){
+                    return true;
+                }
                 return false;
+            }
+            
+            @Override
+            public void setValueAt(Object aValue, int row, int column){
+                String[] selectedDataSets = getSelectedDataSets();
+                if (selectedDataSets.length > row){
+                    String name = selectedDataSets[row];
+                    delegate.getDataCollection().renameDataset(name, aValue.toString());
+                }
+                
             }
         });
 

@@ -44,7 +44,7 @@ public class TableRowHeader extends JViewport implements AdjustmentListener{
             JLabel test = new JLabel(names[i].toString());
             width = Math.max(test.getPreferredSize().width,width);                    
         }
-        setPreferredSize( new Dimension( width, 0 ) );
+        setPreferredSize( new Dimension( width+20, 0 ) );
         invalidate();
         repaint();
     }

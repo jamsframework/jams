@@ -11,8 +11,11 @@ import optas.core.AbstractFunction;
 import optas.core.AbstractModel;
 import optas.core.ObjectiveAchievedException;
 import optas.core.SampleLimitException;
-import optas.sampler.SobolsSequence;
+import optas.optimizer.Optimizer;
 import optas.optimizer.management.SampleFactory.Sample;
+import optas.sampler.LatinHyperCubeSampler;
+import optas.sampler.RandomSampler;
+import optas.sampler.SobolsSequence;
 
 /**
  *
@@ -28,6 +31,10 @@ public abstract class SensitivityAnalyzer {
     double sensitivityVariance[];
 
     boolean isVarianceCalulated = false;
+    
+    public enum SamplingMethod{Sobol, URS, URSStatic, LatinHyperCube, Default};
+    
+    SamplingMethod sm = SamplingMethod.URS;
     
     private double[][] getParameterRange() {        
         return range;
@@ -60,13 +67,30 @@ public abstract class SensitivityAnalyzer {
         return sampleSize;
     }
 
+    public void setSamplingMethod(SamplingMethod sm){
+        this.sm = sm;
+    }
+    
     protected ArrayList<Sample> getRandomSampling(){
         if (model instanceof AbstractFunction) {
-            SobolsSequence sampler = new SobolsSequence();
+            Optimizer sampler = null;
+            switch (sm){
+                case Sobol: sampler = new SobolsSequence(); break;
+                case URS:   sampler = new RandomSampler();  break;
+                case URSStatic:   sampler = new RandomSampler();  break;
+                case LatinHyperCube: sampler = new LatinHyperCubeSampler(); break;
+                case Default: sampler = new RandomSampler();  break;
+                default: sampler = new RandomSampler();  break;
+                    
+            }                        
             sampler.setFunction((AbstractFunction) model);
+            sampler.setVerbose(false);
             //sampler.setAnalyzeQuality(false);
             //sampler.setBoundaries(getLowBound(), getUpBound());
-            sampler.setDebugMode(false);
+            if (sm == SamplingMethod.URSStatic){
+                sampler.setDebugMode(true);
+            }else
+                sampler.setDebugMode(false);
             //sampler.setInputDimension(n);
             sampler.setMaxn(sampleSize);
             //sampler.setOffset(0);
@@ -98,33 +122,7 @@ public abstract class SensitivityAnalyzer {
         }
         return sensitivityIndex[parameter];
     }
-    
-    public double getVariance(int parameter){
-        int K = 10;
-        if (!isVarianceCalulated){
-            double statistics[][] = new double[n][K];
-            double mean[] = new double[n];
-            for (int k=0;k<K;k++){
-                calculate();
-                for (int j=0;j<n;j++){
-                    statistics[j][k] = sensitivityIndex[j];
-                    mean[j] += statistics[j][k];
-                    sensitivityVariance[j] = 0;
-                }
-            }
-            for (int k=0;k<K;k++){
-                for (int j=0;j<n;j++){
-                    sensitivityVariance[j] += (statistics[j][k] - mean[j]/K)*(statistics[j][k] - mean[j]/K);
-                }
-            }
-            for (int j=0;j<n;j++){
-                sensitivityVariance[j] /= (K-1);
-            }
-            isVarianceCalulated = true;
-        }
-        return Math.sqrt(sensitivityVariance[parameter]);
-    }
-    
+                    
     protected double[] transformFromUnitCube(double x[]){
         double[] y = new double[n];
         for (int i=0;i<n;i++){

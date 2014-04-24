@@ -7,10 +7,15 @@ package optas.gui.MCAT5;
 
 
 import jams.JAMS;
+import jams.gui.WorkerDlg;
+import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import optas.data.DataCollection;
@@ -23,7 +28,7 @@ import optas.data.Ensemble;
  *
  * @author chris
  */
-public abstract class MCAT5Plot {
+public abstract class MCAT5Plot implements Observer{
     final int MAXIMUM_WIDTH = 2000;
     final int MAXIMUM_HEIGHT = 2000;
     
@@ -85,14 +90,42 @@ public abstract class MCAT5Plot {
     private ArrayList<Result> ensembles = new ArrayList<Result>();
     private DataCollection data = null;
 
-    public abstract void refresh() throws NoDataException;
-    public void redraw(){
-        try {
-            refresh();
-        } catch (NoDataException e) {
-            JOptionPane.showMessageDialog(getPanel(), JAMS.i18n("Failed_to_show_dataset_The_data_is_incommensurate!"));
+    private WorkerDlg progress = null;
+    
+    @Override
+    public void update(Observable o, Object arg) {
+        if (progress != null) {
+            progress.setMessage(arg.toString());
         }
     }
+    public abstract void refresh() throws NoDataException;
+    public void redraw() {
+        Frame parent = JFrame.getFrames().length > 0 ? JFrame.getFrames()[0] : null;
+        while (progress != null){
+            try{
+                Thread.sleep(200);
+            }catch(Exception e){}
+        }
+        
+        progress = new WorkerDlg(parent, "Updating plot", " ");
+        progress.setInderminate(true);
+        progress.setTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    refresh();
+                } catch (NoDataException e) {
+                    JOptionPane.showMessageDialog(getPanel(), JAMS.i18n("Failed_to_show_dataset_The_data_is_incommensurate!"));
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        progress.execute();
+        progress = null;
+
+    }
+        
     public abstract JPanel getPanel();
 
     protected void addRequest(SimpleRequest r){

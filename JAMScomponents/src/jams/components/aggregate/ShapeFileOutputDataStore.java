@@ -4,7 +4,6 @@
  */
 package jams.components.aggregate;
 
-import jams.JAMS;
 import jams.components.dbf.DBFField;
 import jams.components.dbf.DBFReader;
 import jams.components.dbf.DBFWriter;
@@ -13,13 +12,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.logging.Level;
 
 /**
  *
@@ -44,8 +41,17 @@ public class ShapeFileOutputDataStore {
         String name = template.getName().replace(".shp", "");
         for (File srcFile : directory.listFiles()) {
             if (srcFile.getName().startsWith(name)) {
-                try {
-                    Files.copy(Paths.get(srcFile.getAbsolutePath()), Paths.get(file.getParentFile().getAbsolutePath()+"/"+srcFile.getName()), StandardCopyOption.REPLACE_EXISTING);
+                try {                    
+                    Path dest = Paths.get(file.getParentFile().getAbsolutePath()+"/"+srcFile.getName());
+                    Path src  = Paths.get(srcFile.getAbsolutePath());
+                    
+                    if (Files.exists(dest)) {                        
+                        if (Files.size(dest) != Files.size(src)) {
+                            Files.copy(Paths.get(srcFile.getAbsolutePath()), dest, StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    }else{
+                        Files.copy(Paths.get(srcFile.getAbsolutePath()), dest, StandardCopyOption.REPLACE_EXISTING);
+                    }
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                     throw new IOException("The file " + srcFile.getAbsolutePath() + " could not be copied to the output directy!\n" + ioe.toString());
@@ -154,7 +160,12 @@ public class ShapeFileOutputDataStore {
                 }
                 
                 for (int i=0;i<m;i++){
-                    objOut[i+k] = new Double(store.getData(fields[i], position));
+                    if (position==-1){
+                        objOut[i+k] = null;
+                    }else{
+                        objOut[i+k] = new Double(store.getData(fields[i], position));
+                    }
+                    
                 }
                 try{
                     writer.addRecord(objOut);

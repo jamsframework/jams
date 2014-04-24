@@ -14,6 +14,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
@@ -24,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.text.NumberFormatter;
 import optas.SA.UniversalSensitivityAnalyzer;
 import optas.data.DataSet;
 import optas.data.Efficiency;
@@ -35,6 +37,7 @@ import optas.tools.PatchedChartPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.AxisLocation;
+import org.jfree.chart.labels.CategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
@@ -141,16 +144,7 @@ public class SensitivityToolbox extends MCAT5Plot {
                     recalcButton.setEnabled(false);
                 }
 
-                WorkerDlg progress = new WorkerDlg(null, "Updating plot");
-                progress.setInderminate(true);
-                progress.setTask(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        redraw();
-                    }
-                });
-                progress.execute();
+                redraw();
             }
         });
         c.gridwidth = 1;
@@ -225,18 +219,7 @@ public class SensitivityToolbox extends MCAT5Plot {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                WorkerDlg progress = new WorkerDlg(null, "Updating plot");
-                progress.setInderminate(true);
-                progress.setTask(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        redraw();
-                    }
-                });
-                if (!((JButton)e.getSource()).isSelected()) {
-                    progress.execute();
-                }
+                redraw();
             }
         });
         southPanel.add(recalcButton, c);
@@ -266,7 +249,17 @@ public class SensitivityToolbox extends MCAT5Plot {
         ((StackedBarRenderer)chart.getCategoryPlot().getRenderer()).setShadowVisible(false);
         ((BarRenderer)chart.getCategoryPlot().getRenderer()).setBarPainter(new StandardBarPainter());
 
-        //chart.getXYPlot().setDomainGridlinePaint(Color.black);
+        ((StackedBarRenderer)chart.getCategoryPlot().getRenderer()).setToolTipGenerator(new CategoryToolTipGenerator() {
+
+            @Override
+            public String generateToolTip(CategoryDataset cd, int i, int i1) {                
+                double s0 = cd.getValue(0, i1).doubleValue();
+                double s1 = cd.getValue(1, i1).doubleValue();
+                double s2 = cd.getValue(2, i1).doubleValue();
+                
+                return "<html>min: " + String.format(Locale.ENGLISH,"%.2f",s0) + "<br>mean: " + String.format(Locale.ENGLISH,"%.2f",s0+s1) + "<br>max: " + String.format(Locale.ENGLISH,"%.2f",s0+s1+s2) + "</html>";
+            }
+        });
         
         centerPanel.add(chartPanel);
 
@@ -335,14 +328,9 @@ public class SensitivityToolbox extends MCAT5Plot {
 
         uniSA.setSampleCount((int)sampleSize);
 
-        double data[][] = new double[2][n];
+        double data[][] = new double[3][n];
         
-        String categoryName[] = new String[n];
-        int K=1;
-        if (doVarianceEstimation.isSelected()){
-            K = 10;
-        }
-
+        String categoryName[] = new String[n];        
         uniSA.setup(xData, p2);
         
         if (doQualityEstimation.isSelected()) {
@@ -350,11 +338,24 @@ public class SensitivityToolbox extends MCAT5Plot {
         }
         this.sampleCountField.setText(Integer.toString(p2.getSize()));
         
-        double sensitivity[][] = uniSA.getUncertaintyOfSensitivity(K);
-                
+        double sensitivity[][] = null;
+        if (doVarianceEstimation.isSelected()){
+            sensitivity = uniSA.getUncertaintyOfSensitivity();
+        }else{
+            double sA[] = uniSA.getSensitivity();
+            sensitivity = new double[n][3];
+            for (int i=0;i<n;i++){
+                sensitivity[i][0] = sA[i];
+                sensitivity[i][1] = sA[i];
+                sensitivity[i][2] = sA[i];
+            }
+            
+        }
+                        
         for (int i = 0; i < n; i++) {
             data[0][i] = sensitivity[i][0];
-            data[1][i] = sensitivity[i][2] - sensitivity[i][0];
+            data[1][i] = sensitivity[i][1] - sensitivity[i][0];
+            data[2][i] = sensitivity[i][2] - sensitivity[i][1];
 
             categoryName[i] = xData[i].getName();
             
@@ -362,26 +363,13 @@ public class SensitivityToolbox extends MCAT5Plot {
             System.out.println("Variance for:\t" + xData[i].getName() + "\t" + data[1][i]);
         }
         
-        /*for (int k = 0; k < K; k++) {
-            
-            
-            sensitivity[k] = uniSA.getSensitivity();
-            
-        }
 
-        for (int i = 0; i < n; i++) {
-            for (int k = 0; k < K; k++) {
-                data[1][i] += 1.0/n*Math.pow(sensitivity[k][i][0] - data[0][i],2);
-            }
-            System.out.println("Sensitivity for:\t" + xData[i].getName() + "\t" + data[0][i]);
-            System.out.println("Variance for:\t" + xData[i].getName() + "\t" + data[1][i]);
-        }*/
-
-        dataset1 = DatasetUtilities.createCategoryDataset(new String[]{"Sensitivity", "Uncertainty"}, categoryName, data);
+        dataset1 = DatasetUtilities.createCategoryDataset(new String[]{"Sensitivity (low)", "Sensitivity (mean)", "Sensitivity (high)"}, categoryName, data);
 
         ((CategoryPlot) chart.getPlot()).setDataset(0, dataset1);
 
         ((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(0, new Color(0, 255, 0));
-        ((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(1, new Color(255, 0, 0));
+        ((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(1, new Color(255, 50, 50));
+        ((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(2, new Color(255, 0, 0));
     }
 }

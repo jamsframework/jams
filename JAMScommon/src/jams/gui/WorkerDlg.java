@@ -41,7 +41,7 @@ public class WorkerDlg extends JDialog {
     private SwingWorker worker;
     private Frame owner;
     private JProgressBar progressBar;
-
+    private JLabel label = null;
     public WorkerDlg(Frame owner, String title) {
         this(owner, title, "");
     }
@@ -60,7 +60,7 @@ public class WorkerDlg extends JDialog {
         this.setResizable(false);
 
         if (!message.equals("")) {
-            JLabel label = new JLabel(message);
+            label = new JLabel(message);
             this.add(label, BorderLayout.NORTH);
         }
 
@@ -147,5 +147,11 @@ public class WorkerDlg extends JDialog {
      */
     public void setTask(SwingWorker worker) {
         this.worker = worker;
+    }
+    
+    public void setMessage(String text){
+        this.label.setText(text);        
+        this.invalidate(); 
+        this.pack();
     }
 }

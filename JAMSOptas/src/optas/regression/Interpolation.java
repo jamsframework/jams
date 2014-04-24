@@ -104,7 +104,7 @@ public abstract class Interpolation extends ObservableProgress{
         double sim[][] = new double[getM()][L];
 
         this.calculate();
-
+        
         for (int k=0;k<K;k++){
             log("Cross Validation " + k + " of " + K);
 
@@ -135,7 +135,27 @@ public abstract class Interpolation extends ObservableProgress{
             }
         }
 
-        return calcDifference(e, sim, obs);
+        double NSE[] = calcDifference(e, sim, obs);
+        double maxAbsErr=0;
+        double maxRelErr=0;
+        
+        double mean_obs = 0;
+        for (int j=0;j<L;j++){
+            mean_obs += obs[0][1];
+        }
+        mean_obs /= L;
+        
+        for (int i=0;i<L;i++){
+            maxAbsErr = Math.max(maxAbsErr,Math.abs(sim[0][i]-obs[0][i]));
+            maxRelErr = Math.max(maxRelErr,Math.abs(sim[0][i]-obs[0][i])/mean_obs);            
+        }
+        
+        System.out.println("Crossvalidation errors (only first criteria: ");
+        System.out.println("NSE: " + NSE[0]);
+        System.out.println("max abs. error: " + maxAbsErr);
+        System.out.println("max rel. error: " + maxRelErr);
+        
+        return NSE;
     }
 
     public double[] estimateLOOError(ErrorMethod e){

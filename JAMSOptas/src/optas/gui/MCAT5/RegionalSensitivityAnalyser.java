@@ -9,8 +9,13 @@ import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.swing.GroupLayout;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -28,6 +33,11 @@ import optas.data.EfficiencyEnsemble;
 import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
 import optas.tools.PatchedChartPanel;
+import org.jfree.chart.annotations.XYTitleAnnotation;
+import org.jfree.chart.block.BlockBorder;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.ui.RectangleAnchor;
+import org.jfree.ui.RectangleEdge;
 
 /**
  *
@@ -42,6 +52,9 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
     JPanel mainPanel = null;
     int GROUPS = 10;
 
+    JCheckBox showOnlyBestAndWorst = new JCheckBox("show only best and worst graph");
+    JCheckBox blackAndWhite = new JCheckBox("b/w mode");
+
     public RegionalSensitivityAnalyser() {
         this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), Parameter.class));
         this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), Efficiency.class));
@@ -53,20 +66,33 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
         JFreeChart chart = new JFreeChart(plot);
         chart.setTitle(JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS"));
         chartPanel = new PatchedChartPanel(chart, true);
-        chartPanel.setMinimumDrawWidth( 0 );
-        chartPanel.setMinimumDrawHeight( 0 );
-        chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
-        chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
-        
-        plot.setRenderer(renderer);
-        plot.setRangeAxis(new NumberAxis(JAMS.i18n("LIKELIHOOD")));
+        chartPanel.setMinimumDrawWidth(0);
+        chartPanel.setMinimumDrawHeight(0);
+        chartPanel.setMaximumDrawWidth(MAXIMUM_WIDTH);
+        chartPanel.setMaximumDrawHeight(MAXIMUM_HEIGHT);
 
-        mainPanel = new JPanel(new BorderLayout());
+        plot.setRenderer(renderer);
+        plot.setRangeAxis(new NumberAxis(JAMS.i18n("cumulative frequency distribution")));
+
+        mainPanel = new JPanel();
+
+        GroupLayout layout = new GroupLayout(mainPanel);
+        mainPanel.setLayout(layout);
+
+        LegendTitle lt = new LegendTitle(plot);
+        lt.setItemFont(new Font("Dialog", Font.PLAIN, 14));
+        lt.setBackgroundPaint(new Color(200, 200, 200, 100));
+        lt.setFrame(new BlockBorder(Color.white));
+        lt.setPosition(RectangleEdge.BOTTOM);
+        XYTitleAnnotation ta = new XYTitleAnnotation(0.98, 0.02, lt, RectangleAnchor.BOTTOM_RIGHT);
+        
+        ta.setMaxWidth(0.48);
+        plot.addAnnotation(ta);
+
+        
+        
         mainPanel.add(chartPanel, BorderLayout.NORTH);
 
-        chart.getPlot().setBackgroundPaint(Color.white);
-        //chart.getXYPlot().setDomainGridlinePaint(Color.black);
-        
         JPanel sliderPanel = new JPanel(new BorderLayout());
         sliderPanel.setMaximumSize(new Dimension(300, 100));
         sliderPanel.setPreferredSize(new Dimension(300, 100));
@@ -85,9 +111,46 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
 
             }
         });
+
         sliderPanel.add(new JLabel("number of boxes"), BorderLayout.WEST);
         sliderPanel.add(slider, BorderLayout.EAST);
-        mainPanel.add(sliderPanel, BorderLayout.SOUTH);
+
+        layout.setHorizontalGroup(layout.createParallelGroup()
+                .addComponent(chartPanel)
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(showOnlyBestAndWorst)
+                        .addComponent(blackAndWhite)
+                        .addComponent(sliderPanel)
+                )
+        );
+
+        layout.setVerticalGroup(layout.createSequentialGroup()
+                .addComponent(chartPanel)
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(showOnlyBestAndWorst)
+                        .addComponent(blackAndWhite)
+                        .addComponent(sliderPanel)
+                )
+        );
+
+        showOnlyBestAndWorst.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                redraw();
+            }
+        });
+
+        blackAndWhite.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                redraw();
+            }
+        });
+
+        chart.getPlot().setBackgroundPaint(Color.white);
+        chart.removeLegend();
     }
 
     public void refresh() throws NoDataException {
@@ -99,20 +162,39 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
         SimpleEnsemble param = (SimpleEnsemble) p[0].get(0);
         EfficiencyEnsemble eff = (EfficiencyEnsemble) p[1].get(0);
 
-
-        for (int i = 0; i < GROUPS; i++) {
-            renderer.setSeriesShapesVisible(i, false);
-            renderer.setSeriesVisibleInLegend(i, false);
-            if (i == 0 || i == GROUPS - 1) {
-                renderer.setSeriesStroke(i, new BasicStroke(5));
-                renderer.setSeriesVisibleInLegend(i, true);
+        if (showOnlyBestAndWorst.isSelected()) {
+            renderer.setSeriesShapesVisible(0, false);
+            renderer.setSeriesShapesVisible(1, false);
+            renderer.setSeriesStroke(0, new BasicStroke(3));
+            renderer.setSeriesVisibleInLegend(0, true);
+            renderer.setSeriesStroke(1, new BasicStroke(3));
+            renderer.setSeriesVisibleInLegend(1, true);
+            if (blackAndWhite.isSelected()) {
+                renderer.setSeriesPaint(0, new Color(64, 64, 64));
+                renderer.setSeriesPaint(1, new Color(172, 172, 172));
             } else {
-                renderer.setSeriesStroke(i, new BasicStroke(1));
+                renderer.setSeriesPaint(0, new Color(0, 0, 255));
+                renderer.setSeriesPaint(1, new Color(255, 0, 0));
             }
-            int c = (int) (i * 255.0 / GROUPS);
-            renderer.setSeriesPaint(i, new Color(255 - c, 0, c));
+        } else {
+            for (int i = 0; i < GROUPS; i++) {
+                renderer.setSeriesShapesVisible(i, false);
+                renderer.setSeriesVisibleInLegend(i, false);
+                if ((i == 0 || i == GROUPS - 1)) {
+                    renderer.setSeriesStroke(i, new BasicStroke(5));
+                    renderer.setSeriesVisibleInLegend(i, true);
+                } else {
+                    renderer.setSeriesStroke(i, new BasicStroke(1));
+                }
+                if (blackAndWhite.isSelected()) {
+                    int c = 64 + (int) (i * 128.0 / GROUPS);
+                    renderer.setSeriesPaint(i, new Color(c, c, c));
+                } else {
+                    int c = (int) (i * 255.0 / GROUPS);
+                    renderer.setSeriesPaint(i, new Color(255 - c, 0, c));
+                }
+            }
         }
-
         plot.setDomainAxis(new NumberAxis(param.name));
 
         XYSeriesCollection series = new XYSeriesCollection();
@@ -155,14 +237,27 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
                 dataset.add(box_data[j], (double) j / (double) box_data.length);
             }
             dataset.add(range_max, 1.0);
-            series.addSeries(dataset);
+            if (!showOnlyBestAndWorst.isSelected() || i == 0 || i == GROUPS - 1) {
+                series.addSeries(dataset);
+            }
+
         }
         plot.setDataset(series);
         if (plot.getRangeAxis() != null) {
-            plot.getRangeAxis().setAutoRange(true);
+            plot.getRangeAxis().setRange(0.0, 1.0);
         }
         if (plot.getDomainAxis() != null) {
-            plot.getDomainAxis().setAutoRange(true);
+            double r = range_max - range_min;
+            int l = (int)Math.log(r);
+            if (l>=0){
+                double min = Math.floor(range_min*Math.pow(10, l+1)) / Math.pow(10, l+1);
+                double max = Math.ceil(range_max*Math.pow(10, l+1)) / Math.pow(10, l+1)+1E-10;
+                plot.getDomainAxis().setRange(min, max);
+            }else{
+                double min = Math.floor(range_min*Math.pow(10, -l-1)) / Math.pow(10, -l-1);
+                double max = Math.ceil(range_max*Math.pow(10, -l-1)) / Math.pow(10, -l-1)+1E-10;
+                plot.getDomainAxis().setRange(min, max);
+            }
         }
     }
 

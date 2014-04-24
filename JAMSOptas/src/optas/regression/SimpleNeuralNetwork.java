@@ -12,6 +12,8 @@ import java.util.logging.Level;
 import optas.data.SimpleEnsemble;
 import org.encog.engine.network.activation.ActivationLinear;
 import org.encog.engine.network.activation.ActivationSigmoid;
+import org.encog.engine.util.ErrorCalculation;
+import org.encog.engine.util.ErrorCalculationMode;
 import org.encog.neural.data.basic.BasicNeuralDataSet;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
@@ -132,17 +134,34 @@ public class SimpleNeuralNetwork extends SimpleInterpolation {
         BasicNeuralDataSet basicNDS = new BasicNeuralDataSet(xDataArray,yDataArray);
         basicNDS.setDescription("testdataset");
         
+        ErrorCalculation.setMode(ErrorCalculationMode.MSE);
+        
         Train backpropagation = new ResilientPropagation(network, basicNDS);
-        backpropagation.setError(1);
+        
+        //ErrorCalculation.setMode(ErrorCalculationMode.RMS);
+        //ErrorCalculation.setMode(ErrorCalculationMode.ARCTAN);
+        
+        
         int epoch = 1;
-        int epochMax = 1500;
+        int epochMax = 10000;
+        double improvement = 1;
+        
+        double errorNow=0;
+        double errorLast=0;
+        
         do {
             backpropagation.iteration();
             if (epoch % 100 == 0)
-                System.out.println("Epoch #" + epoch + " Error:" + backpropagation.getError());
+                System.out.println("Epoch #" + epoch + " Error:" + backpropagation.getError() + " improvement " + improvement);
             epoch++;
+            errorLast = errorNow;
+            errorNow  = backpropagation.getError();
+            if (epoch>2){
+                improvement = 0.95*improvement + 0.05*(1.0-errorNow/errorLast);
+            }
+            
             setProgress((double)epoch / (double)epochMax);
-        } while (backpropagation.getError() > 0.005 && !backpropagation.isTrainingDone() && epoch < epochMax);
+        } while (improvement > 0.0001 && !backpropagation.isTrainingDone() && epoch < epochMax);
 
         //System.out.println("After "+epoch+" iterations the error is " + backpropagation.getError());
         isTrained = true;

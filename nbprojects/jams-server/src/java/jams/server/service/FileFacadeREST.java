@@ -32,10 +32,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -54,9 +50,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 @Stateless
 @Path("file")
 public class FileFacadeREST extends AbstractFacade<File> {
-
-    final String UPLOAD_DIRECTORY = "e:/uploaded/";
-
+    
     @PersistenceContext(unitName = "jams-serverPU")
     private EntityManager em;    
 
@@ -70,15 +64,10 @@ public class FileFacadeREST extends AbstractFacade<File> {
     }
 
     private List<File> findHash(String hash) {
-        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery cq = cb.createQuery();
-        Root<File> root = cq.from(File.class);
-        Predicate predicate = cb.equal(root.get("hash"), hash);
-        cq.select(cq.from(File.class));
-        cq.where(predicate);
-
-        javax.persistence.Query q = getEntityManager().createQuery(cq);
-        return q.getResultList();
+        return em.createQuery(
+                "SELECT f FROM File f WHERE f.hash = :hash")
+                .setParameter("hash", hash)
+                .getResultList();
     }
 
     @POST
@@ -92,7 +81,7 @@ public class FileFacadeREST extends AbstractFacade<File> {
 
         Files result = new Files();        
         for (File f : entity.getFiles()) {
-            List<File> list = findHash(f.getHash());
+            List<File> list = findHash(f.getHash());            
             if (list.isEmpty())
                 result.add(File.NON_FILE);
             else
@@ -108,7 +97,7 @@ public class FileFacadeREST extends AbstractFacade<File> {
             @FormDataParam("file") InputStream fileInputStream,
             @FormDataParam("file") FormDataContentDisposition contentDispositionHeader) {
 
-        String filePath = UPLOAD_DIRECTORY + contentDispositionHeader.getFileName();
+        String filePath = ApplicationConfig.SERVER_UPLOAD_DIRECTORY + contentDispositionHeader.getFileName();
 
         String hashCode = saveFile(fileInputStream, filePath);
         if (hashCode == null){
@@ -125,7 +114,7 @@ public class FileFacadeREST extends AbstractFacade<File> {
         // save the file to the server        
         return Response.status(200).entity("Error: Something went wrong!").build();
     }
-
+        
     // save uploaded file to a defined location on the server
     private String saveFile(InputStream uploadedInputStream, String serverLocation) {
 

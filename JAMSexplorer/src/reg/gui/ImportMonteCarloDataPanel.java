@@ -325,7 +325,8 @@ public class ImportMonteCarloDataPanel extends JPanel {
             }
         });
         panel.add(buttonBar, BorderLayout.SOUTH);
-        this.add(panel);
+        this.setLayout(new BorderLayout());
+        this.add(panel, BorderLayout.CENTER);
         setSize(defaultWindowSize);
     }
 

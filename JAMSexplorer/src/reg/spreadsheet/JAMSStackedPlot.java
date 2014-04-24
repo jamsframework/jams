@@ -9,6 +9,7 @@ import jams.gui.WorkerDlg;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
 import org.jfree.chart.ChartPanel;
@@ -69,7 +70,7 @@ public class JAMSStackedPlot {
                   out.flush();
                   out.close();
 
-                  }catch(Exception fnfe){}
+                  }catch(IOException fnfe){fnfe.printStackTrace();}
           
         
    } 

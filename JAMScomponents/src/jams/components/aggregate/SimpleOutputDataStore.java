@@ -103,11 +103,14 @@ public class SimpleOutputDataStore {
     }
         
     static boolean text = true;
+    StringBuffer strBuffer = new StringBuffer(5120000);
     public void writeData(String entry, double values[]) throws IOException{
         raf.seek(raf.length());
         //write data
         entryMap.put(entry, raf.getFilePointer());
-        raf.writeBytes(entry);
+        strBuffer.delete(0, strBuffer.length());
+        strBuffer.append(entry);
+        //raf.writeBytes(entry);
         for (int i=0;i<values.length;i++){
             double x = values[i];//roundToSignificantFigures(,5);
             if (Double.isInfinite(x) || Double.isNaN(x)){
@@ -117,9 +120,11 @@ public class SimpleOutputDataStore {
             String result = df2EPos.format(x);
             if (result.contains("E-"))
                 result = df2ENeg.format(x);
-            raf.writeBytes("\t" + result);            
+            //raf.writeBytes("\t" + result);            
+            strBuffer.append("\t" + result);
         }
-        raf.writeBytes("\n");                
+        strBuffer.append("\n");
+        raf.writeBytes(strBuffer.toString());          
     }
     
     byte buffer[] = new byte[12];

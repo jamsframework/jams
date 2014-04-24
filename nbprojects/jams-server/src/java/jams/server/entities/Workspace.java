@@ -77,7 +77,7 @@ public class Workspace implements Serializable {
     @JoinColumn(name="ownerID")
     private User user;
                
-    @OneToMany(mappedBy="ws", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy="ws", cascade = CascadeType.PERSIST, orphanRemoval=true)
     private List<WorkspaceFileAssociation> files;
         
     public Workspace() {
@@ -132,8 +132,8 @@ public class Workspace implements Serializable {
         return user;
     }
     
-    public WorkspaceFileAssociation assignFile(File f, int role){
-        WorkspaceFileAssociation wfa = new WorkspaceFileAssociation(this, f, role);        
+    public WorkspaceFileAssociation assignFile(File f, int role, String path){
+        WorkspaceFileAssociation wfa = new WorkspaceFileAssociation(this, f, role, path);        
         if (!files.contains(wfa))
             this.files.add(wfa);
         else{
@@ -141,6 +141,10 @@ public class Workspace implements Serializable {
             files.get(i).setRole(role);
         }
         return wfa;
+    }
+    
+    public List<WorkspaceFileAssociation> getAssociatedFiles(){
+        return this.files;
     }
     
     @Override

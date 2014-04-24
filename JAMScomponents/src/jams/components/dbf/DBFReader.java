@@ -79,7 +79,7 @@ public class DBFReader extends DBFBase {
 
 		try {
 
-			this.dataInputStream = new DataInputStream( in);
+			this.dataInputStream = new DataInputStream( new BufferedInputStream(in));
 			this.isClosed = false;
 			this.header = new DBFHeader();
 			this.header.read( this.dataInputStream);

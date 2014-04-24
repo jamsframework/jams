@@ -333,7 +333,7 @@ public class DBFWriter extends DBFBase {
 
                 case 'F':
 
-                    if( objectArray[j] != null) {
+                    /*if( objectArray[j] != null) {
 
                         //dataOutput.write( Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
                         buffer.add( Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
@@ -341,26 +341,27 @@ public class DBFWriter extends DBFBase {
                     else {
                         buffer.add( Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
                         //dataOutput.write( Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
-                    }
-
+                    }*/
+                    buffer.add(
+                            Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
                     break;
 
                 case 'N':
 
-                    if( objectArray[j] != null) {
+                    buffer.add(
+                            Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
+                    
+                    /*if( objectArray[j] != null) {
 
                         //dataOutput.write(
                         //    Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
-                        buffer.add(
-                            Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
+                        
                     }
                     else {
 
-                        /*dataOutput.write(
-                            Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));*/
                         buffer.add(
                             Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
-                    }
+                    }*/
 
                     break;
                 case 'L':

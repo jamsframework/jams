@@ -1,6 +1,9 @@
 package optas.tools;
 
 import com.keypoint.PngEncoder;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -179,8 +182,8 @@ import org.jfree.chart.ChartPanel;
  * 02-Jul-2013 : Use ParamChecks class (DG);
  * 
  */
-
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
@@ -191,20 +194,30 @@ import java.awt.print.Printable;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import org.apache.xmlgraphics.java2d.ps.EPSDocumentGraphics2D;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTitleAnnotation;
+import org.jfree.chart.block.BlockContainer;
 
 import org.jfree.chart.event.ChartChangeListener;
 import org.jfree.chart.event.ChartProgressListener;
 import org.jfree.chart.event.OverlayChangeListener;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.title.LegendItemBlockContainer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.ui.ExtensionFileFilter;
+import org.jfree.ui.RectangleInsets;
 
 /**
  * A Swing GUI component for displaying a {@link JFreeChart} object.
  * <P>
  * The panel registers with the chart to receive notification of changes to any
- * component of the chart.  The chart is redrawn automatically whenever this
+ * component of the chart. The chart is redrawn automatically whenever this
  * notification is received.
  */
 public class PatchedChartPanel extends ChartPanel implements ChartChangeListener,
@@ -212,26 +225,26 @@ public class PatchedChartPanel extends ChartPanel implements ChartChangeListener
         MouseMotionListener, OverlayChangeListener, Printable, Serializable {
 
     static public final int DEFAULT_DPI = 300;
-    
+
     public PatchedChartPanel(JFreeChart chart) {
         super(chart);
     }
 
     /**
-     * Constructs a panel containing a chart.  The <code>useBuffer</code> flag
+     * Constructs a panel containing a chart. The <code>useBuffer</code> flag
      * controls whether or not an offscreen <code>BufferedImage</code> is
-     * maintained for the chart.  If the buffer is used, more memory is
-     * consumed, but panel repaints will be a lot quicker in cases where the
-     * chart itself hasn't changed (for example, when another frame is moved
-     * to reveal the panel).  WARNING: If you set the <code>useBuffer</code>
-     * flag to false, note that the mouse zooming rectangle will (in that case)
-     * be drawn using XOR, and there is a SEVERE performance problem with that
-     * on JRE6 on Windows.
+     * maintained for the chart. If the buffer is used, more memory is consumed,
+     * but panel repaints will be a lot quicker in cases where the chart itself
+     * hasn't changed (for example, when another frame is moved to reveal the
+     * panel). WARNING: If you set the <code>useBuffer</code> flag to false,
+     * note that the mouse zooming rectangle will (in that case) be drawn using
+     * XOR, and there is a SEVERE performance problem with that on JRE6 on
+     * Windows.
      *
-     * @param chart  the chart.
-     * @param useBuffer  a flag controlling whether or not an off-screen buffer
-     *                   is used (read the warning above before setting this
-     *                   to <code>false</code>).
+     * @param chart the chart.
+     * @param useBuffer a flag controlling whether or not an off-screen buffer
+     * is used (read the warning above before setting this to
+     * <code>false</code>).
      */
     public PatchedChartPanel(JFreeChart chart, boolean useBuffer) {
 
@@ -242,24 +255,24 @@ public class PatchedChartPanel extends ChartPanel implements ChartChangeListener
     /**
      * Constructs a JFreeChart panel.
      *
-     * @param chart  the chart.
-     * @param properties  a flag indicating whether or not the chart property
-     *                    editor should be available via the popup menu.
-     * @param save  a flag indicating whether or not save options should be
-     *              available via the popup menu.
-     * @param print  a flag indicating whether or not the print option
-     *               should be available via the popup menu.
-     * @param zoom  a flag indicating whether or not zoom options should
-     *              be added to the popup menu.
-     * @param tooltips  a flag indicating whether or not tooltips should be
-     *                  enabled for the chart.
+     * @param chart the chart.
+     * @param properties a flag indicating whether or not the chart property
+     * editor should be available via the popup menu.
+     * @param save a flag indicating whether or not save options should be
+     * available via the popup menu.
+     * @param print a flag indicating whether or not the print option should be
+     * available via the popup menu.
+     * @param zoom a flag indicating whether or not zoom options should be added
+     * to the popup menu.
+     * @param tooltips a flag indicating whether or not tooltips should be
+     * enabled for the chart.
      */
     public PatchedChartPanel(JFreeChart chart,
-                      boolean properties,
-                      boolean save,
-                      boolean print,
-                      boolean zoom,
-                      boolean tooltips) {
+            boolean properties,
+            boolean save,
+            boolean print,
+            boolean zoom,
+            boolean tooltips) {
 
         super(chart, properties, save, print, zoom, tooltips);
 
@@ -268,26 +281,25 @@ public class PatchedChartPanel extends ChartPanel implements ChartChangeListener
     /**
      * Constructs a JFreeChart panel.
      *
-     * @param chart  the chart.
-     * @param width  the preferred width of the panel.
-     * @param height  the preferred height of the panel.
-     * @param minimumDrawWidth  the minimum drawing width.
-     * @param minimumDrawHeight  the minimum drawing height.
-     * @param maximumDrawWidth  the maximum drawing width.
-     * @param maximumDrawHeight  the maximum drawing height.
-     * @param useBuffer  a flag that indicates whether to use the off-screen
-     *                   buffer to improve performance (at the expense of
-     *                   memory).
-     * @param properties  a flag indicating whether or not the chart property
-     *                    editor should be available via the popup menu.
-     * @param save  a flag indicating whether or not save options should be
-     *              available via the popup menu.
-     * @param print  a flag indicating whether or not the print option
-     *               should be available via the popup menu.
-     * @param zoom  a flag indicating whether or not zoom options should be
-     *              added to the popup menu.
-     * @param tooltips  a flag indicating whether or not tooltips should be
-     *                  enabled for the chart.
+     * @param chart the chart.
+     * @param width the preferred width of the panel.
+     * @param height the preferred height of the panel.
+     * @param minimumDrawWidth the minimum drawing width.
+     * @param minimumDrawHeight the minimum drawing height.
+     * @param maximumDrawWidth the maximum drawing width.
+     * @param maximumDrawHeight the maximum drawing height.
+     * @param useBuffer a flag that indicates whether to use the off-screen
+     * buffer to improve performance (at the expense of memory).
+     * @param properties a flag indicating whether or not the chart property
+     * editor should be available via the popup menu.
+     * @param save a flag indicating whether or not save options should be
+     * available via the popup menu.
+     * @param print a flag indicating whether or not the print option should be
+     * available via the popup menu.
+     * @param zoom a flag indicating whether or not zoom options should be added
+     * to the popup menu.
+     * @param tooltips a flag indicating whether or not tooltips should be
+     * enabled for the chart.
      */
     public PatchedChartPanel(JFreeChart chart, int width, int height,
             int minimumDrawWidth, int minimumDrawHeight, int maximumDrawWidth,
@@ -302,40 +314,38 @@ public class PatchedChartPanel extends ChartPanel implements ChartChangeListener
     /**
      * Constructs a JFreeChart panel.
      *
-     * @param chart  the chart.
-     * @param width  the preferred width of the panel.
-     * @param height  the preferred height of the panel.
-     * @param minimumDrawWidth  the minimum drawing width.
-     * @param minimumDrawHeight  the minimum drawing height.
-     * @param maximumDrawWidth  the maximum drawing width.
-     * @param maximumDrawHeight  the maximum drawing height.
-     * @param useBuffer  a flag that indicates whether to use the off-screen
-     *                   buffer to improve performance (at the expense of
-     *                   memory).
-     * @param properties  a flag indicating whether or not the chart property
-     *                    editor should be available via the popup menu.
-     * @param copy  a flag indicating whether or not a copy option should be
-     *              available via the popup menu.
-     * @param save  a flag indicating whether or not save options should be
-     *              available via the popup menu.
-     * @param print  a flag indicating whether or not the print option
-     *               should be available via the popup menu.
-     * @param zoom  a flag indicating whether or not zoom options should be
-     *              added to the popup menu.
-     * @param tooltips  a flag indicating whether or not tooltips should be
-     *                  enabled for the chart.
+     * @param chart the chart.
+     * @param width the preferred width of the panel.
+     * @param height the preferred height of the panel.
+     * @param minimumDrawWidth the minimum drawing width.
+     * @param minimumDrawHeight the minimum drawing height.
+     * @param maximumDrawWidth the maximum drawing width.
+     * @param maximumDrawHeight the maximum drawing height.
+     * @param useBuffer a flag that indicates whether to use the off-screen
+     * buffer to improve performance (at the expense of memory).
+     * @param properties a flag indicating whether or not the chart property
+     * editor should be available via the popup menu.
+     * @param copy a flag indicating whether or not a copy option should be
+     * available via the popup menu.
+     * @param save a flag indicating whether or not save options should be
+     * available via the popup menu.
+     * @param print a flag indicating whether or not the print option should be
+     * available via the popup menu.
+     * @param zoom a flag indicating whether or not zoom options should be added
+     * to the popup menu.
+     * @param tooltips a flag indicating whether or not tooltips should be
+     * enabled for the chart.
      *
      * @since 1.0.13
      */
     public PatchedChartPanel(JFreeChart chart, int width, int height,
-           int minimumDrawWidth, int minimumDrawHeight, int maximumDrawWidth,
-           int maximumDrawHeight, boolean useBuffer, boolean properties,
-           boolean copy, boolean save, boolean print, boolean zoom,
-           boolean tooltips) {
+            int minimumDrawWidth, int minimumDrawHeight, int maximumDrawWidth,
+            int maximumDrawHeight, boolean useBuffer, boolean properties,
+            boolean copy, boolean save, boolean print, boolean zoom,
+            boolean tooltips) {
         super(chart, width, height, minimumDrawWidth, minimumDrawHeight, maximumDrawWidth, maximumDrawHeight, useBuffer, properties, copy, save, print, zoom, tooltips);
     }
 
-    
     /**
      * Opens a file chooser and gives the user an opportunity to save the chart
      * in PNG format.
@@ -346,33 +356,75 @@ public class PatchedChartPanel extends ChartPanel implements ChartChangeListener
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(getDefaultDirectoryForSaveAs());
-        ExtensionFileFilter filter = new ExtensionFileFilter(
+        ExtensionFileFilter filterPng = new ExtensionFileFilter(
                 localizationResources.getString("PNG_Image_Files"), ".png");
-        fileChooser.addChoosableFileFilter(filter);
+        ExtensionFileFilter filterEps = new ExtensionFileFilter("EPS Image Files",".eps");
+
+        fileChooser.addChoosableFileFilter(filterPng);
+        fileChooser.addChoosableFileFilter(filterEps);
 
         int option = fileChooser.showSaveDialog(this);
         if (option == JFileChooser.APPROVE_OPTION) {
             String filename = fileChooser.getSelectedFile().getPath();
             if (isEnforceFileExtensions()) {
-                if (!filename.endsWith(".png")) {
-                    filename = filename + ".png";
+                if (fileChooser.getFileFilter() == filterPng) {
+                    if (!filename.endsWith(".png")) {
+                        filename = filename + ".png";
+                    }
+                } else if (fileChooser.getFileFilter() == filterPng) {
+                    if (!filename.endsWith(".eps")) {
+                        filename = filename + ".eps";
+                    }
                 }
             }
-            OutputStream out = new
-            BufferedOutputStream(new FileOutputStream(new File(filename))); 
-            PngEncoder encoder = new
-            PngEncoder(getHighResChartImage(DEFAULT_DPI),false, 0, 9);
-            encoder.setDpi(DEFAULT_DPI,DEFAULT_DPI); 
-            byte[] pngData = encoder.pngEncode();
-            out.write(pngData);
-            out.close();            
+            String results = JOptionPane.showInputDialog("specify width, height of image", +getWidth() + "," + getHeight());
+            String result[] = results.split(",");
+
+            int width = 0, height = 0;
+            if (result.length == 2) {
+                try {
+                    width = Integer.parseInt(result[0]);
+                    height = Integer.parseInt(result[1]);
+                } catch (Exception e) {
+
+                }
+            }
+            if (fileChooser.getFileFilter() == filterPng) {
+                OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(filename)));
+                PngEncoder encoder = null;
+                if (width == 0 || height == 0) {
+                    encoder = new PngEncoder(getHighResChartImage(DEFAULT_DPI), false, 0, 9);
+                } else {
+                    encoder = new PngEncoder(getHighResChartImage(width, height), false, 0, 9);
+                }
+                encoder.setDpi(DEFAULT_DPI, DEFAULT_DPI);
+                byte[] pngData = encoder.pngEncode();
+                out.write(pngData);
+                out.close();
+            } else {
+                try {
+
+                    OutputStream out = new java.io.FileOutputStream(new File(filename));
+                    EPSDocumentGraphics2D g2d = new EPSDocumentGraphics2D(false);
+                    g2d.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
+
+                    g2d.setupDocument(out, width, height); //400pt x 200pt
+                    this.getChart().draw(g2d, new Rectangle(width, height));
+                    g2d.finish();
+                    out.flush();
+                    out.close();
+
+                } catch (IOException fnfe) {
+                    fnfe.printStackTrace();
+                }
+            }
         }
     }
 
     /**
      * Returns a high resolution BufferedImage of the chart. Uses the default
      * DPI_FILE_RESOLUTION.
-     *     
+     *
      * @return the buffered image.
      */
     private BufferedImage getHighResChartImage() {
@@ -388,12 +440,11 @@ public class PatchedChartPanel extends ChartPanel implements ChartChangeListener
      * @return the buffered image.
      */
     private BufferedImage getHighResChartImage(int resolution) {
-        int screenResolution =
-                Toolkit.getDefaultToolkit().getScreenResolution();
+        int screenResolution
+                = Toolkit.getDefaultToolkit().getScreenResolution();
         double scaleRatio = resolution / screenResolution;
         int rasterWidth = (int) (getWidth() * scaleRatio);
-        int rasterHeight = (int) (getHeight()
-                * scaleRatio);
+        int rasterHeight = (int) (getHeight() * scaleRatio);
         BufferedImage image = new BufferedImage(rasterWidth, rasterHeight,
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D g2 = image.createGraphics();
@@ -404,6 +455,147 @@ public class PatchedChartPanel extends ChartPanel implements ChartChangeListener
         g2.dispose();
         return image;
     }
-    
+
+    private BufferedImage getHighResChartImage(int rasterWidth, int rasterHeight) {
+        BufferedImage image = new BufferedImage(rasterWidth, rasterHeight,
+                BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = image.createGraphics();
+
+        float scaleFactor = (float) Math.max((double) rasterWidth / getWidth(), (double) rasterHeight / getHeight());
+
+        g2.transform(AffineTransform.getScaleInstance((double) rasterWidth / getWidth(),
+                (double) rasterHeight / getHeight()));
+
+        if (getChart().getPlot() instanceof XYPlot) {
+            XYPlot p = getChart().getXYPlot();
+
+            Font f1 = p.getDomainAxis().getTickLabelFont();
+            Font f2 = p.getRangeAxis().getTickLabelFont();
+            Font f3 = p.getDomainAxis().getLabelFont();
+            Font f4 = p.getRangeAxis().getLabelFont();
+            Font f5 = null;
+            if (getChart().getLegend() != null) {
+                f5 = getChart().getLegend().getItemFont();
+            }
+            Font f6 = getChart().getTitle().getFont();
+
+            BasicStroke stroke1 = null, stroke2 = null, stroke3 = null, stroke4 = null;
+            if (p.getDomainGridlineStroke() instanceof BasicStroke) {
+                stroke1 = (BasicStroke) p.getDomainGridlineStroke();
+                getChart().getXYPlot().setDomainGridlineStroke(new BasicStroke(stroke1.getLineWidth() * scaleFactor));
+            }
+            if (p.getDomainMinorGridlineStroke() instanceof BasicStroke) {
+                stroke3 = (BasicStroke) p.getDomainMinorGridlineStroke();
+                p.setDomainMinorGridlineStroke(new BasicStroke(stroke3.getLineWidth() * scaleFactor));
+            }
+            if (p.getRangeGridlineStroke() instanceof BasicStroke) {
+                stroke2 = (BasicStroke) p.getRangeGridlineStroke();
+                p.setRangeGridlineStroke(new BasicStroke(stroke2.getLineWidth() * scaleFactor));
+            }
+            if (p.getRangeGridlineStroke() instanceof BasicStroke) {
+                stroke4 = (BasicStroke) p.getRangeMinorGridlineStroke();
+                p.setRangeMinorGridlineStroke(new BasicStroke(stroke4.getLineWidth() * scaleFactor));
+            }
+
+            ArrayList<BasicStroke> list = new ArrayList<BasicStroke>();
+            for (int i = 0; i < p.getDatasetCount(); i++) {
+                XYItemRenderer r = p.getRendererForDataset(p.getDataset(i));
+                if (r == null) {
+                    continue;
+                }
+                for (int j = 0; j < p.getDataset(i).getSeriesCount(); j++) {
+                    if (r.getSeriesStroke(j) instanceof BasicStroke) {
+                        BasicStroke s = (BasicStroke) r.getSeriesStroke(j);
+                        r.setSeriesStroke(j, new BasicStroke(s.getLineWidth() * scaleFactor));
+                        list.add(s);
+                    }
+                }
+            }
+
+            //TODO: das muss noch gespeichert werden um es später zurückzusetzen
+            for (Object o : p.getAnnotations()) {
+                if (o instanceof XYTitleAnnotation) {
+                    XYTitleAnnotation annotation = (XYTitleAnnotation) o;
+                    if (annotation.getTitle() instanceof LegendTitle) {
+                        LegendTitle l = (LegendTitle) annotation.getTitle();
+
+                        Font f = l.getItemFont();
+                        l.setItemFont(f.deriveFont(f1.getSize() * scaleFactor));
+
+                        RectangleInsets insets = l.getItemLabelPadding();
+                        l.setItemLabelPadding(new RectangleInsets(2 * insets.getTop() * scaleFactor, 2 * insets.getLeft() * scaleFactor, 2 * insets.getBottom() * scaleFactor, 2 * insets.getRight() * scaleFactor));
+                    }
+                }
+            }
+
+            p.getDomainAxis().setTickLabelFont(f1.deriveFont((float) (f1.getSize() * scaleFactor)));
+            p.getRangeAxis().setTickLabelFont(f2.deriveFont((float) (f2.getSize() * scaleFactor)));
+            p.getDomainAxis().setLabelFont(f3.deriveFont((float) (f3.getSize() * scaleFactor)));
+            p.getRangeAxis().setLabelFont(f4.deriveFont((float) (f4.getSize() * scaleFactor)));
+            if (f5 != null) {
+                getChart().getLegend().setItemFont(f5.deriveFont((float) (f5.getSize() * scaleFactor)));
+            }
+
+            getChart().setBackgroundPaint(Color.white);
+
+            RectangleInsets insets = null;
+            if (getChart().getLegend() != null) {
+                insets = getChart().getLegend().getItemLabelPadding();
+                getChart().getLegend().setItemLabelPadding(new RectangleInsets(2 * insets.getTop() * scaleFactor, 2 * insets.getLeft() * scaleFactor, 2 * insets.getBottom() * scaleFactor, 2 * insets.getRight() * scaleFactor));
+            }
+            getChart().getTitle().setFont(f6.deriveFont((float) (f6.getSize() * scaleFactor)));
+
+            BufferedImage img = getChart().createBufferedImage(rasterWidth, rasterHeight);
+
+            getChart().getXYPlot().getDomainAxis().setTickLabelFont(f1);
+            getChart().getXYPlot().getRangeAxis().setTickLabelFont(f2);
+            getChart().getXYPlot().getDomainAxis().setLabelFont(f3);
+            getChart().getXYPlot().getRangeAxis().setLabelFont(f4);
+            if (f5 != null) {
+                getChart().getLegend().setItemFont(f5);
+            }
+
+            getChart().getTitle().setFont(f6);
+            if (insets != null) {
+                getChart().getLegend().setItemLabelPadding(insets);
+            }
+            int counter = 0;
+            for (int i = 0; i < p.getDatasetCount(); i++) {
+                XYItemRenderer r = p.getRendererForDataset(p.getDataset(i));
+                if (r == null) {
+                    continue;
+                }
+                for (int j = 0; j < p.getDataset(i).getSeriesCount(); j++) {
+                    if (r.getSeriesStroke(j) instanceof BasicStroke) {
+                        r.setSeriesStroke(j, list.get(counter++));
+                    }
+                }
+
+            }
+
+            if (stroke1 != null) {
+                getChart().getXYPlot().setDomainGridlineStroke(stroke1);
+            }
+            if (stroke2 != null) {
+                getChart().getXYPlot().setDomainMinorGridlineStroke(stroke2);
+            }
+            if (stroke3 != null) {
+                getChart().getXYPlot().setRangeGridlineStroke(stroke3);
+            }
+            if (stroke4 != null) {
+                getChart().getXYPlot().setRangeMinorGridlineStroke(stroke4);
+            }
+
+            return img;
+        } else {
+            //apply no font sclaing
+            BufferedImage img = getChart().createBufferedImage(rasterWidth, rasterHeight);
+            return img;
+        }
+        /*getChart().draw(g2, new Rectangle2D.Double(0,
+         0, getWidth(), getHeight()), null);
+         g2.dispose();
+         return image;*/
+    }
 
 }

@@ -33,6 +33,10 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 @javax.ws.rs.ApplicationPath("webresources")
 public class ApplicationConfig extends Application {
 
+    public static final String SERVER_UPLOAD_DIRECTORY = "e:/test_server/uploaded/";
+    public static final String SERVER_TMP_DIRECTORY = "E:/test_server/tmp/";
+    public static final String SERVER_EXEC_DIRECTORY = "E:/test_server/exec/";
+    
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<>();
@@ -50,7 +54,8 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(jams.server.service.FileFacadeREST.class);
-        resources.add(jams.server.service.UserFacadeREST.class);               
+        resources.add(jams.server.service.JobFacadeREST.class);
+        resources.add(jams.server.service.UserFacadeREST.class);
         resources.add(jams.server.service.WorkspaceFacadeREST.class);
     }
     

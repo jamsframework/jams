@@ -312,6 +312,7 @@ public class JUICE {
 //    }
 
     public static void focusNotificationDlg() {
-        notificationDlg.requestFocus();
+        if (notificationDlg != null)
+            notificationDlg.requestFocus();
     }
 }

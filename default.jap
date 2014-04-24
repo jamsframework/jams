@@ -1,29 +1,43 @@
+<<<<<<< .mine
+#JAMS configuration file
+#Thu Aug 15 22:41:49 CEST 2013
+=======
 #JAMS-Konfigurationsdatei
-#Fri Feb 07 10:25:48 CET 2014
+#Thu Sep 05 09:33:05 CEST 2013
+>>>>>>> .r2715
 infolog=
-libs=lib
+libs=E\:\\JAMS_rep\\JAMS\\lib
 guiconfig=true
+PosEfficiency=ABCModell_e1;ABCModell_e2;ABCModell_le1;
 docbook-home=docbook/
 debugmode=false
 model=
 charset=
 username=
 profiling=false
+Parameter=ABCModel_a;ABCModel_b;ABCModel_c;ABCModel_initStorage;
 defaultworkspace=true
 windowenable=true
 errordlg=true
 maxlibclasses=10000
 windowontop=false
-forcelocale=
+forcelocale=en
 windowheight=600
-verbose=false
+verbose=true
 maxrecentfiles=5
-recentfiles=
+<<<<<<< .mine
+recentfiles=E\:\\Vortraege und Paper\\J2000 Training\\2013-05-17-ABC-Gehlberg\\Worktask 1\\abc.jam|E\:\\ModelData\\JAMS-Gehlberg\\j2k_gehlberg.jam|E\:\\ModelData\\JAMS-Gehlberg\\j2k_gehlberg_calc.xml|C\:\\Users\\christian\\Desktop\\Anas Modell_alt\\Cainari3Cristian170-82difCapRise1.jam|E\:\\Vortraege und Paper\\J2000 Training\\2013-05-17-ABC-Gehlberg\\Worktask 1\\abc_opt.jam
+debug=3
+=======
+recentfiles=E\:\\jamsapplication\\JAMS-Gehlberg\\j2k_gehlberg.jam
 debug=1
+>>>>>>> .r2715
 guiconfigheight=600
 windowwidth=900
 guiconfigwidth=600
-preprocessing=true
+Timeserie=simQ;
+preprocessing=false
+Measurement=obsQ;
 errorlog=
 helpbaseurl=
-floatformat=%.3f
+floatformat=%f

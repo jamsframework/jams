@@ -2,13 +2,20 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package optas.SA;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Observable;
 import java.util.Set;
+import java.util.TreeSet;
+import optas.SA.SensitivityAnalyzer.SamplingMethod;
 import optas.SA.SobolsMethod.Measure;
 import optas.core.AbstractDataSerie;
 import optas.core.AbstractFunction;
+import optas.data.DataCollection;
 import optas.data.EfficiencyEnsemble;
 import optas.data.SimpleEnsemble;
 import optas.optimizer.management.SampleFactory;
@@ -21,14 +28,18 @@ import optas.regression.SimpleNeuralNetwork;
  *
  * @author chris
  */
-public class UniversalSensitivityAnalyzer {
-    public enum SAMethod{RSA, MaximumGradient, ElementaryEffects, ElementaryEffectsNonAbs, ElementaryEffectsVariance, FOSI1, FOSI2, TOSI, Interaction, LinearRegression};
+public class UniversalSensitivityAnalyzer extends Observable {
+
+    public enum SAMethod {
+
+        RSA, MaximumGradient, ElementaryEffects, ElementaryEffectsNonAbs, ElementaryEffectsVariance, FOSI1, FOSI2, TOSI, Interaction, LinearRegression
+    };
 
     SAMethod method = SAMethod.RSA;
-    
+
     SensitivityAnalyzer sa = null;
-    SimpleInterpolation I  = null;
-    
+    SimpleInterpolation I = null;
+
     boolean usingRegression = false;
 
     NormalizationMethod parameterNormalizationMethod = SimpleInterpolation.NormalizationMethod.Linear;
@@ -36,69 +47,100 @@ public class UniversalSensitivityAnalyzer {
 
     SimpleEnsemble xData[] = null;
     EfficiencyEnsemble yData = null;
-    double range[][] = null;        
+    double range[][] = null;
     int sampleCount = 2000;
     int n = 0;
 
-    public void setParameterNormalizationMethod(NormalizationMethod normalizationMethod){
+    public void setParameterNormalizationMethod(NormalizationMethod normalizationMethod) {
         this.parameterNormalizationMethod = normalizationMethod;
     }
-    public void setObjectiveNormalizationMethod(NormalizationMethod normalizationMethod){
+
+    public void setObjectiveNormalizationMethod(NormalizationMethod normalizationMethod) {
         this.objectiveNormalizationMethod = normalizationMethod;
     }
-    public NormalizationMethod getParameterNormalizationMethod(){
+
+    public NormalizationMethod getParameterNormalizationMethod() {
         return this.parameterNormalizationMethod;
     }
-    public NormalizationMethod getObjectiveNormalizationMethod(){
+
+    public NormalizationMethod getObjectiveNormalizationMethod() {
         return this.objectiveNormalizationMethod;
     }
-    public int getSampleCount(){
+
+    public int getSampleCount() {
         return sampleCount;
     }
-    public void setSampleCount(int sampleCount){
+
+    public void setSampleCount(int sampleCount) {
         this.sampleCount = sampleCount;
     }
 
-    public SAMethod getMethod(){
+    public SAMethod getMethod() {
         return method;
     }
 
-    public void setMethod(SAMethod method){
-        switch(method){
-            case RSA: sa = new optas.SA.RegionalSensitivityAnalysis(); break;
-            case MaximumGradient: sa = new optas.SA.GradientSensitivityAnalysis(); break;
-            case ElementaryEffects: sa = new optas.SA.MorrisMethod(); break;
-            case ElementaryEffectsNonAbs: sa = new optas.SA.MorrisMethod(MorrisMethod.Measure.NonAbsolute); break;
-            case ElementaryEffectsVariance: sa = new optas.SA.MorrisMethod(MorrisMethod.Measure.Variance); break;
-            case FOSI1: sa = new optas.SA.FAST(optas.SA.FAST.Measure.FirstOrder); break;
-            case FOSI2: sa = new optas.SA.SobolsMethod(Measure.FirstOrder); break;
-            case TOSI: sa = new optas.SA.SobolsMethod(Measure.Total); break;
-            case Interaction: sa = new optas.SA.SobolsMethod(Measure.Interaction); break;
-            case LinearRegression: sa = new optas.SA.LinearRegression(); break;
+    public void setMethod(SAMethod method) {
+        switch (method) {
+            case RSA:
+                sa = new optas.SA.RegionalSensitivityAnalysis();
+                break;
+            case MaximumGradient:
+                sa = new optas.SA.GradientSensitivityAnalysis();
+                break;
+            case ElementaryEffects:
+                sa = new optas.SA.MorrisMethod();
+                break;
+            case ElementaryEffectsNonAbs:
+                sa = new optas.SA.MorrisMethod(MorrisMethod.Measure.NonAbsolute);
+                break;
+            case ElementaryEffectsVariance:
+                sa = new optas.SA.MorrisMethod(MorrisMethod.Measure.Variance);
+                break;
+            case FOSI1:
+                sa = new optas.SA.FAST(optas.SA.FAST.Measure.FirstOrder);
+                break;
+            case FOSI2:
+                sa = new optas.SA.SobolsMethod(Measure.FirstOrder);
+                break;
+            case TOSI:
+                sa = new optas.SA.SobolsMethod(Measure.Total);
+                break;
+            case Interaction:
+                sa = new optas.SA.SobolsMethod(Measure.Interaction);
+                break;
+            case LinearRegression:
+                sa = new optas.SA.LinearRegression();
+                break;
         }
     }
 
-    public boolean isUsingRegression(){
+    public void setSamplingMethod(SamplingMethod sm){
+        this.sa.setSamplingMethod(sm);
+    }
+    
+    public boolean isUsingRegression() {
         return this.usingRegression;
     }
-    public void setUsingRegression(boolean flag){
+
+    public void setUsingRegression(boolean flag) {
         this.usingRegression = flag;
     }
 
-    public void setup(SimpleEnsemble xData[], EfficiencyEnsemble yData){
-        setup(xData,yData,new SimpleNeuralNetwork());
+    public void setup(SimpleEnsemble xData[], EfficiencyEnsemble yData) {
+        setup(xData, yData, new SimpleNeuralNetwork());
     }
-    
-    public void setup(SimpleEnsemble xData[], EfficiencyEnsemble yData, SimpleInterpolation interpolationAlgorithm){
+
+    public void setup(SimpleEnsemble xData[], EfficiencyEnsemble yData, SimpleInterpolation interpolationAlgorithm) {
+
+        notifyObservers("setup sensitivity analysis");
         this.xData = xData;
         this.yData = yData;
-        this.n     = xData.length;
+        this.n = xData.length;
         this.range = new double[n][2];
-        
-        
-        if (usingRegression){
+
+        if (usingRegression) {
             this.I = interpolationAlgorithm;
-            if (I == null){
+            if (I == null) {
                 I = new SimpleNeuralNetwork();
             }
             I.setData(xData, yData);
@@ -106,8 +148,8 @@ public class UniversalSensitivityAnalyzer {
             I.setyNormalizationMethod(objectiveNormalizationMethod);
             I.init();
         }
-        
-        for (int i=0;i<n;i++){
+
+        for (int i = 0; i < n; i++) {
             range[i][0] = xData[i].getMin();
             range[i][1] = xData[i].getMax();
         }
@@ -141,10 +183,10 @@ public class UniversalSensitivityAnalyzer {
                 public String[] getOutputFactorNames() {
                     return new String[]{UniversalSensitivityAnalyzer.this.yData.getName()};
                 }
-                
+
                 int counter = 0;
                 SampleFactory factory = new SampleFactory();
-                
+
                 @Override
                 public double[] evaluate(double[] x) {
                     if (usingRegression) {
@@ -160,13 +202,14 @@ public class UniversalSensitivityAnalyzer {
                 }
             });
             sa.setSampleSize(sampleCount);
-        }else{
+        } else {
             sa.setModel(new AbstractDataSerie() {
                 @Override
-                public void reset(){
+                public void reset() {
                     this.counter = 0;
                     factory = new SampleFactory();
                 }
+
                 @Override
                 public int getInputDimension() {
                     return UniversalSensitivityAnalyzer.this.n;
@@ -212,7 +255,7 @@ public class UniversalSensitivityAnalyzer {
                     }
                     return factory.getSampleSO(x, UniversalSensitivityAnalyzer.this.yData.getValue(nextId));
                 }
-                
+
                 @Override
                 public void log(String msg) {
                     System.out.println(msg);
@@ -220,71 +263,280 @@ public class UniversalSensitivityAnalyzer {
             });
             sa.setSampleSize(this.yData.getSize());
         }
-        
-        
+
     }
 
-    public SimpleEnsemble[] getXDataSet(){
+    public SimpleEnsemble[] getXDataSet() {
         return this.xData;
     }
-    public EfficiencyEnsemble getYDataSet(){
+
+    public EfficiencyEnsemble getYDataSet() {
         return this.yData;
     }
-    
-    public double[] getInteraction(Set<Integer> indexSet){
-        if (sa instanceof SobolsMethod){
-            SobolsMethod v = (SobolsMethod)sa;
-            v.calcAll();
-            return v.calcSensitivity(indexSet);
+
+    public double[][][] getInteractionsUncertainty() {
+        notifyObservers("calculating uncertainty of interaction effects");
+
+        double result[][][] = new double[n][n][3];
+
+        ArrayList<double[][]> statistics = new ArrayList<double[][]>();
+
+        double mean[][] = new double[n][n];
+        double sigma[][] = new double[n][n];
+        double min[][] = new double[n][n];
+        double max[][] = new double[n][n];
+
+        double currentMaxError = 1000.0;
+        double maxAcceptedError = 0.01;
+
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++) {
+                min[j][k] = Double.MAX_VALUE;
+                max[j][k] = Double.MIN_VALUE;
+            }
+        }
+
+        double z = 1.96;//CDF_Normal.xnormi(1.0-alpha); //should be 1.96
+        int i = 0;
+        while (i++ < 10 || currentMaxError > maxAcceptedError) {
+            //reset interpolator
+            setup(xData, yData);
+            setChanged();
+            notifyObservers("<html>Calculating Interaction Effects ... <br>Iteration: " + i + "<br>Error: " + String.format(Locale.ENGLISH, "%.4f", currentMaxError) + " ( max: " + String.format(Locale.ENGLISH, "%.4f", maxAcceptedError) + ")</html>");
+
+            double sensitivityIndex[][] = new double[n][n];
+            sensitivityIndex = this.getInteractions();
+            if (sensitivityIndex == null) {
+                return null;
+            }
+
+            statistics.add(Arrays.copyOf(sensitivityIndex, n));
+
+            for (int j = 0; j < n; j++) {
+                for (int k = 0; k < n; k++) {
+                    mean[j][k] += sensitivityIndex[j][k];
+                    sigma[j][k] = 0;
+                    min[j][k] = Math.min(min[j][k], sensitivityIndex[j][k]);
+                    max[j][k] = Math.max(max[j][k], sensitivityIndex[j][k]);
+                }
+            }
+
+            double K = statistics.size();
+
+            for (int l = 0; l < K; l++) {
+                for (int j = 0; j < n; j++) {
+                    for (int k = 0; k < n; k++) {
+                        double v = (statistics.get(l)[j][k] - (mean[j][k] / K));
+                        sigma[j][k] += v * v;
+                    }
+                }
+            }
+
+            currentMaxError = 0.0;
+            for (int j = 0; j < n; j++) {
+                for (int k = 0; k < n; k++) {
+                    sigma[j][k] /= (K - 1);
+                    sigma[j][k] = Math.sqrt(sigma[j][k]);
+
+                    double error_mean = z * sigma[j][k] / Math.sqrt(K);
+                    currentMaxError = Math.max(error_mean / mean[j][k], currentMaxError);
+                }
+            }
+            System.out.println("current error:" + currentMaxError);
+        }
+
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++) {
+                mean[j][k] /= statistics.size();
+            }
+        }
+        System.out.println("******************************************");
+        System.out.println("Uncertainty calculation finished");
+        System.out.println("id\tmu\tsigma\tmin\tmax");
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++) {
+                System.out.println((j + 1) + "-" + (k + 1) + "\t" + String.format(Locale.ENGLISH, "%.3f", mean[j][k]) + "\t" + String.format(Locale.ENGLISH, "%.4f", sigma[j][k]) + "\t" + String.format(Locale.ENGLISH, "%.3f", min[j][k]) + "\t" + String.format(Locale.ENGLISH, "%.3f", max[j][k]));
+            }
+        }
+        System.out.println("******************************************");
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++) {
+                result[j][k] = new double[]{mean[j][k] - 1.96 * sigma[j][k], mean[j][k], mean[j][k] + 1.96 * sigma[j][k]};
+            }
+        }
+        return result;
+    }
+
+    public double[][] getInteractions() {
+        if (sa instanceof SobolsMethod) {
+            double s[][] = new double[n][n];
+            SobolsMethod v = (SobolsMethod) sa;
+            for (int i = 0; i < n; i++) {
+                s[i][i] = v.getSensitivity(i);
+            }
+            for (int i = 0; i < n; i++) {
+                for (int j = i + 1; j < n; j++) {
+                    Set<Integer> set = new TreeSet<Integer>();
+                    set.add(i);
+                    set.add(j);
+                    s[i][j] = v.getSensitivity(set)[0];
+                    s[j][i] = s[i][j] - s[i][i] - s[j][j];
+                }
+            }
+            return s;
         }
         return null;
     }
 
-    public double[] getSensitivity(){
+    public double[] getSensitivity() {
         double result[] = new double[n];
-        for (int i=0;i<n;i++){
-            double s = sa.getSensitivity(i);
-            //double v = sa.getVariance(i);
-            result[i] = s;//s-v;
-            /*result[i][1] = s;
-            result[i][2] = s;//s+v;*/
-        }
-        return result;
-    }
-
-    public double[][] getUncertaintyOfSensitivity(int iterations){        
-        double result[][] = new double[n][3];
-        
         for (int i = 0; i < n; i++) {
-            result[i][0] = Double.POSITIVE_INFINITY;
-            result[i][1] = 0.0;
-            result[i][2] = Double.NEGATIVE_INFINITY;
-        }
-        
-        for (int j = 0; j < iterations; j++) {
-            sa.calculate();
-            for (int i = 0; i < n; i++) {
-                double s = sa.getSensitivity(i);
-
-                result[i][0] = Math.min(result[i][0], s);
-                result[i][1] += s/(double)iterations;
-                result[i][2] = Math.max(result[i][2], s);
-            }
+            double s = sa.getSensitivity(i);
+            result[i] = s;
         }
         return result;
-        
     }
-    
+
+    public double[][] getUncertaintyOfSensitivity() {
+        double result[][] = new double[n][3];
+
+        ArrayList<double[]> statistics = new ArrayList<double[]>();
+
+        double mean[] = new double[n];
+        double sigma[] = new double[n];
+
+        double currentMaxError = 1000.0;
+        double maxAcceptedError = 0.025;
+        double min[] = new double[n];
+        double max[] = new double[n];
+
+        for (int i = 0; i < n; i++) {
+            min[i] = Double.MAX_VALUE;
+            max[i] = Double.MIN_VALUE;
+        }
+
+        double z = 1.96;//CDF_Normal.xnormi(1.0-alpha); //should be 1.96
+        int i = 0;
+        while (i++ < 10 || currentMaxError > maxAcceptedError) {
+            //reset interpolator
+            setup(xData, yData);
+
+            setChanged();
+            notifyObservers("<html>Calculating Sensitivity Indicies ... <br>Iteration: " + i + "<br>Error: " + String.format(Locale.ENGLISH, "%.4f", currentMaxError) + " ( max: " + String.format(Locale.ENGLISH, "%.4f", maxAcceptedError) + ")</html>");
+            double sensitivityIndex[] = new double[n];
+            for (int j = 0; j < n; j++) {
+                sensitivityIndex[j] = sa.getSensitivity(j);
+            }
+            statistics.add(Arrays.copyOf(sensitivityIndex, n));
+
+            for (int j = 0; j < n; j++) {
+                mean[j] += sensitivityIndex[j];
+                sigma[j] = 0;
+                min[j] = Math.min(min[j], sensitivityIndex[j]);
+                max[j] = Math.max(max[j], sensitivityIndex[j]);
+            }
+
+            double K = statistics.size();
+
+            for (int k = 0; k < K; k++) {
+                for (int j = 0; j < n; j++) {
+                    double v = (statistics.get(k)[j] - (mean[j] / K));
+                    sigma[j] += v * v;
+                }
+            }
+
+            currentMaxError = 0.0;
+            for (int j = 0; j < n; j++) {
+                sigma[j] /= (K - 1);
+                sigma[j] = Math.sqrt(sigma[j]);
+
+                double error_mean = z * sigma[j] / Math.sqrt(K);
+                currentMaxError = Math.max(error_mean / mean[j], currentMaxError);
+            }
+            System.out.println("current error:" + currentMaxError);
+        }
+
+        for (int j = 0; j < n; j++) {
+            mean[j] /= statistics.size();
+        }
+        System.out.println("******************************************");
+        System.out.println("Uncertainty calculation finished");
+        System.out.println("id\tmu\tsigma\tmin\tmax");
+        for (int j = 0; j < n; j++) {
+            System.out.println((j + 1) + "\t" + String.format(Locale.ENGLISH, "%.3f", mean[j]) + "\t" + String.format(Locale.ENGLISH, "%.4f", sigma[j]) + "\t" + String.format(Locale.ENGLISH, "%.3f", min[j]) + "\t" + String.format(Locale.ENGLISH, "%.3f", max[j]));
+        }
+        System.out.println("******************************************");
+        for (int j = 0; j < n; j++) {
+            result[j] = new double[]{mean[j] - 1.96 * sigma[j], mean[j], mean[j] + 1.96 * sigma[j]};
+        }
+        return result;
+    }
+
     public double calculateError() {
-        if (usingRegression){
+        if (usingRegression) {
+            setChanged();
+            notifyObservers("<html>Calculating Regression Error ... </html>");
             double error[] = I.estimateCrossValidationError(5, SimpleInterpolation.ErrorMethod.E2);
             double meanCrossValidationError = 0;
-            for (int i=0;i<error.length;i++)
+            for (int i = 0; i < error.length; i++) {
                 meanCrossValidationError += error[i];
+            }
             meanCrossValidationError /= error.length;
 
             return meanCrossValidationError;
-        }else
+        } else {
             return 0.0;
+        }
+    }
+
+    public static void main2(String[] args) {        
+        DataCollection collection = DataCollection.createFromFile(new File("E:\\ModelData\\Testgebiete\\SynthFunction\\Zakharov\\output\\20140403_101642\\zakharov.cdat"));
+        String buffer = "";
+        for (int i = 100; i < 101; i++) {            
+            collection.filter("ID", 0, i, false);
+            UniversalSensitivityAnalyzer usa = new UniversalSensitivityAnalyzer();
+            usa.setMethod(UniversalSensitivityAnalyzer.SAMethod.RSA);
+            usa.setSamplingMethod(SamplingMethod.URS);
+            usa.setObjectiveNormalizationMethod(NormalizationMethod.Linear);
+            usa.setParameterNormalizationMethod(NormalizationMethod.Linear);
+            usa.setSampleCount(50000);
+            usa.setUsingRegression(true);
+            SimpleEnsemble x1 = collection.getSimpleEnsemble("x1");
+            SimpleEnsemble x2 = collection.getSimpleEnsemble("x2");
+            EfficiencyEnsemble y = (EfficiencyEnsemble) collection.getDataSet("y");
+            usa.setup(new SimpleEnsemble[]{x1, x2}, y);
+            usa.getSensitivity();
+        }
+    }
+    
+    public static void main(String[] args) {        
+        DataCollection collection = DataCollection.createFromFile(new File(args[0]));
+        String buffer = "";
+        for (int i = 5; i < 251; i+=5) {            
+            collection.filter("ID", 0, i, false);
+            UniversalSensitivityAnalyzer usa = new UniversalSensitivityAnalyzer();
+            usa.setMethod(UniversalSensitivityAnalyzer.SAMethod.RSA);
+            usa.setSamplingMethod(SamplingMethod.URS);
+            usa.setObjectiveNormalizationMethod(NormalizationMethod.Linear);
+            usa.setParameterNormalizationMethod(NormalizationMethod.Linear);
+            usa.setSampleCount(50000);
+            usa.setUsingRegression(true);
+            
+            SimpleEnsemble x1 = collection.getSimpleEnsemble("x1");
+            SimpleEnsemble x2 = collection.getSimpleEnsemble("x2");
+            EfficiencyEnsemble y = (EfficiencyEnsemble) collection.getDataSet("y");
+            usa.setup(new SimpleEnsemble[]{x1, x2}, y);
+
+            System.out.println("E2 after " + i + " : " + usa.calculateError());
+            
+            double r1[][] = usa.getUncertaintyOfSensitivity();
+            
+            usa.setSamplingMethod(SamplingMethod.URSStatic);
+            
+            double r2[][] = usa.getUncertaintyOfSensitivity();
+            buffer += String.format("%d\t%.3f\t%.3f\t%.3f\t%.3f\t\t%.3f\t%.3f\t%.3f\t%.3f\n", i, r1[0][1], r1[0][2] - r1[0][0], r1[1][1], r1[1][2] - r1[1][0], r2[0][1], r2[0][2] - r2[0][0], r2[1][1], r2[1][2] - r2[1][0]);
+            System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n"+buffer+"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+            collection.clearIDFilter();
+        }
     }
 }

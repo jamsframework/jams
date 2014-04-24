@@ -31,8 +31,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -42,6 +45,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @Table(name = "file2ws")
 @XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "WorkspaceFileAssociation.findByFile", query = "SELECT u FROM WorkspaceFileAssociation u WHERE u.file_id = :fid")
+})
 @Entity 
 public class WorkspaceFileAssociation implements Serializable {    
     @Id
@@ -60,6 +66,11 @@ public class WorkspaceFileAssociation implements Serializable {
     @Basic(optional = true)
     private Integer role;
     
+    @Column(name = "path")
+    @Size(min = 0, max = 1000)
+    @Basic(optional = false)
+    private String path;
+    
     @ManyToOne
     @PrimaryKeyJoinColumn(name="ws_id", referencedColumnName="ID")
     private Workspace ws;
@@ -68,23 +79,33 @@ public class WorkspaceFileAssociation implements Serializable {
     @PrimaryKeyJoinColumn(name="file_id", referencedColumnName="ID")
     private File file;
     
+    public transient final static int ROLE_INPUT = 0;
+    public transient final static int ROLE_OUTPUT = 1;
+    public transient final static int ROLE_MODEL = 2;
+    public transient final static int ROLE_CONFIG = 3;
+    public transient final static int ROLE_OTHER = 4;
+    public transient final static int ROLE_COMPONENTSLIBRARY = 5;
+    public transient final static int ROLE_RUNTIMELIBRARY = 6;
+    
     public WorkspaceFileAssociation() {
     }
 
-    public WorkspaceFileAssociation(Workspace ws, File f) {
+    public WorkspaceFileAssociation(Workspace ws, File f, String path) {
         this.file_id = f.getId();
         this.ws_id = ws.getId();
         this.file = f;
         this.ws = ws;
         this.role = 0;
+        this.path = path;
     }
 
-    public WorkspaceFileAssociation(Workspace ws, File f, int role) {
+    public WorkspaceFileAssociation(Workspace ws, File f, int role, String path) {
         this.file_id = f.getId();
         this.ws_id = ws.getId();
         this.file = f;
         this.ws = ws;
         this.role = role;
+        this.path = path;
     }
 
     public Workspace getWorkspace() {
@@ -111,6 +132,14 @@ public class WorkspaceFileAssociation implements Serializable {
         return role;
     }
     
+    public void setPath(String path){
+        this.path = path;
+    }
+    
+    public String getPath(){
+        return path;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -130,6 +159,9 @@ public class WorkspaceFileAssociation implements Serializable {
             return false;
         }
         if ((this.file_id == null && other.file_id != null) || (this.file_id != null && !this.file_id.equals(other.file_id))) {
+            return false;
+        }
+        if ((this.path == null && other.path != null) || (this.path != null && !this.path.equals(other.path))) {
             return false;
         }
         return true;

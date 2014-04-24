@@ -238,7 +238,7 @@ public abstract class Optimizer implements Serializable, Comparable{
     public void setDebugMode(boolean flag) {
         this.debugMode = flag;
     }
-
+    
     protected boolean checkConfiguration() {
         log("Checking optimizer configuration");
         if (n == 0) {
@@ -298,7 +298,8 @@ public abstract class Optimizer implements Serializable, Comparable{
         return generator.nextDouble();
     }
 
-    protected double[] randomSampler() {        
+    protected double[] randomSampler() {    
+        
         double[] sample = new double[n];
         for (int i = 0; i < n; i++) {
             sample[i] = (lowBound[i] + randomValue() * (upBound[i] - lowBound[i]));

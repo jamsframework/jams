@@ -14,6 +14,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.AbstractAction;
@@ -52,110 +53,16 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
     JTextField regressionErrorField = new JTextField(10);
     JLabel sampleCountRegression = new JLabel("Samples drawn from regression:");
     JTextField sampleCountFieldRegression = new JTextField("1000");
-    JLabel resultLabel = new JLabel("Result:");
-    JTextField resultField = new JTextField("0");
-    JButton refreshButton = new JButton("Refresh");
-    JTable parameterTable = new JTable(new Object[][]{{Boolean.TRUE,"test"}},new String[]{"x","y"});
-
-    JCheckBox multiIteration = new JCheckBox("Multiple Iterations");
+    JButton refreshButton = new JButton("Refresh");    
     JTable interactionTable = new JTable(new Object[][]{{"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","y","z","x","y","z"}},new String[]{"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","1","1","1","1","1"});
+    
+    JCheckBox multiIteration = new JCheckBox("Multiple Iterations");    
 
     TreeSet<Integer> indexSet = new TreeSet<Integer>();
 
     UniversalSensitivityAnalyzer uniSA = null;
     TableRowHeader rowHeader ;
-
-    class ParameterTableModel extends AbstractTableModel {
-
-        private String[] columnNames = new String[]{"enabled", "name", "main effect"};
-        private Object[][] data = null;
-
-        ParameterTableModel(SimpleEnsemble p[]) {
-            data = new Object[p.length][3];
-            for (int i=0;i<p.length;i++){
-                data[i][0] = Boolean.FALSE;
-                data[i][1] = p[i];
-                data[i][2] = 0.0;
-            }
-        }
-
-        @Override
-        public int getColumnCount() {
-            return columnNames.length;
-        }
-
-        @Override
-        public int getRowCount() {
-            if (data != null) {
-                return data.length;
-            } else {
-                return 0;
-            }
-        }
-
-        @Override
-        public String getColumnName(int col) {
-            return columnNames[col];
-        }
-
-        @Override
-        public Object getValueAt(int row, int col) {
-            return data[row][col];
-        }
-
-        @Override
-        public Class getColumnClass(int c) {
-            switch (c) {
-                case 0:
-                    return Boolean.class;
-                case 1:
-                    return String.class;
-                case 2:
-                    return Double.class;
-            }
-            return String.class;
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int col) {
-            switch (col) {
-                case 0:
-                    return true;                
-            }
-            return false;
-        }
-
-        /*
-         * Don't need to implement this method unless your table's
-         * data can change.
-         */
-        @Override
-        public void setValueAt(Object value, int row, int col) {
-            if (col == 0){
-                if (((Boolean)value).booleanValue()==false){
-                    indexSet.remove(row);
-                }else{
-                    indexSet.add(row);
-                }
-                WorkerDlg progress = new WorkerDlg(null, "Updating plot");
-                progress.setInderminate(true);
-                progress.setTask(new Runnable() {
-
-                    public void run() {
-                        double sensitivity[] = uniSA.getInteraction(indexSet);
-                        resultField.setText(sensitivity[0] + "/" + sensitivity[1]);
-                    }
-                });
-                progress.execute();
-            data[row][col] = value;
-            }else if (col == 2){
-                this.data[row][col] = value;
-            }
-            
-            fireTableCellUpdated(row, col);
-        }
-    }
-
+    
     public class InteractionRenderer extends JLabel
             implements TableCellRenderer {
 
@@ -174,32 +81,32 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
                 boolean isSelected, boolean hasFocus,
                 int row, int column) {
 
-            Double value = (Double)obj;
-            value = ((double)Math.round(value*100))/100.0;
+            String values = (String)obj;
+            String value[] = values.split("\\+\\-");
+            double mean = Double.parseDouble(value[0]);
+            double sigma2 = Double.parseDouble(value[1]);
+            
+            double sig = sigma2/(2.0*mean);
+            
             Color color = null;
-            if (row > column) {
-                if (Math.abs(value) <= 1.0){
-                    double red = Math.abs(value) * (double) Color.RED.getRed() + (1.0 - Math.abs(value)) * (double) Color.WHITE.getRed();
-                    double green = Math.abs(value) * (double) Color.RED.getGreen() + (1.0 - Math.abs(value)) * (double) Color.WHITE.getGreen();
-                    double blue = Math.abs(value) * (double) Color.RED.getBlue() + (1.0 - Math.abs(value)) * (double) Color.WHITE.getBlue();
-                    color  = new Color((int) red, (int) green, (int) blue);
-                } else{
-                    color = Color.RED;
-                }
-                setText(value.toString());
-            } else if (row < column) {
-                if (Math.abs(value) <= 1.0){
-                    double red = Math.abs(value) * (double) Color.RED.getRed() + (1.0 - Math.abs(value)) * (double) Color.WHITE.getRed();
-                    double green = Math.abs(value) * (double) Color.RED.getGreen() + (1.0 - Math.abs(value)) * (double) Color.WHITE.getGreen();
-                    double blue = Math.abs(value) * (double) Color.RED.getBlue() + (1.0 - Math.abs(value)) * (double) Color.WHITE.getBlue();
-                    color  = new Color((int) red, (int) green, (int) blue);
-                } else{
-                    color = Color.RED;
-                }
-                setText(value.toString());
+            
+            if (mean <= 0.0) {
+                color = Color.WHITE;
+            }else if (mean <= 1.0) {
+                double red = mean * (double) Color.RED.getRed() + (1.0 - mean) * (double) Color.WHITE.getRed();
+                double green = mean * (double) Color.RED.getGreen() + (1.0 - mean) * (double) Color.WHITE.getGreen();
+                double blue = mean * (double) Color.RED.getBlue() + (1.0 - mean) * (double) Color.WHITE.getBlue();
+                color = new Color((int) red, (int) green, (int) blue);
             } else {
-                color = Color.BLACK;
+                color = Color.RED;
             }
+            
+            if (sig > 0.2){
+                color = Color.YELLOW;
+            }
+            
+            setText(values);
+            
             setBackground(color);
             
             if (isBordered) {
@@ -225,17 +132,19 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
     class InteractionTableModel extends AbstractTableModel {
 
         private String[] columnNames = new String[]{"enabled", "name"};
-        private Object[][] data = null;
+        private double[][][] data = null;
 
-        InteractionTableModel(SimpleEnsemble p[], Double interaction[][]) {
+        InteractionTableModel(SimpleEnsemble p[], double interaction[][][]) {
             int n = interaction.length;
             int m = interaction[0].length;
-            data = new Object[n][m];
+            data = new double[n][n][3];
             columnNames = new String[m];            
             for (int i=0;i<n;i++){
                 columnNames[i] = p[i].name;
                 for (int j=0;j<m;j++){
-                    data[i][j] = interaction[i][j];
+                    data[i][j][0] = interaction[i][j][0];
+                    data[i][j][1] = interaction[i][j][1];
+                    data[i][j][2] = interaction[i][j][2];
                 }
             }
         }
@@ -261,16 +170,12 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
 
         @Override
         public Object getValueAt(int row, int col) {
-            return data[row][col];
+            return String.format(Locale.ENGLISH,"%.3f +- %.3f", data[row][col][1], data[row][col][2]-data[row][col][1]);
         }
 
         @Override
         public Class getColumnClass(int c) {
-            switch (c) {
-                case 0:
-                    return String.class;
-            }
-            return Double.class;
+            return String.class;
         }
 
         @Override
@@ -293,25 +198,18 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                WorkerDlg progress = new WorkerDlg(null, "Updating plot");
-                progress.setInderminate(true);
-                progress.setTask(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        ParameterInteractionAnalyser.this.redraw();
-                    }
-                });
-                if (!((JButton)e.getSource()).isSelected())
-                    progress.execute();
+                ParameterInteractionAnalyser.this.redraw();
             }
         });
 
-        JScrollPane parameterTablePane = new JScrollPane(parameterTable);
+
         JScrollPane interactionTablePane = new JScrollPane(interactionTable);
         interactionTablePane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         interactionTablePane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 
+        interactionTable.setBackground(this.panel.getBackground());
+        interactionTablePane.setBackground(this.panel.getBackground());
+        
         rowHeader = new TableRowHeader( interactionTable, interactionTablePane );
         interactionTablePane.setRowHeader( rowHeader );
 
@@ -319,44 +217,56 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
         GroupLayout layout = new GroupLayout(centerPanel);
         centerPanel.setLayout(layout);
 
-        layout.setHorizontalGroup(layout.createParallelGroup()
-                .addGroup(layout.createSequentialGroup()
-                    .addComponent(parameterTablePane,100,GroupLayout.PREFERRED_SIZE,300)
-                    .addComponent(interactionTablePane))
+        JLabel interactionTableTitle = new JLabel("interaction effects",JLabel.CENTER);
+        
+        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addGroup(layout.createSequentialGroup()                   
+                    .addGroup(layout.createParallelGroup()
+                        .addComponent(interactionTableTitle)
+                        .addComponent(interactionTablePane))
+                )                    
                 .addGroup(layout.createSequentialGroup()
                     .addComponent(sampleCountLabel)
-                    .addComponent(sampleCountField))
+                    .addGap(1, 2, 3)
+                    .addComponent(sampleCountField,50,75,100)
+                    .addGap(5, 10, 15)
+                    .addComponent(sampleCountRegression)
+                    .addGap(1, 2, 3)
+                    .addComponent(sampleCountFieldRegression,50,75,100)
+                )                               
                 .addGroup(layout.createSequentialGroup()
                     .addComponent(regressionErrorLabel)
-                    .addComponent(regressionErrorField)
-                    .addComponent(multiIteration))
+                     .addGap(1, 2, 3)
+                    .addComponent(regressionErrorField,50,75,100)                    
+                )
                 .addGroup(layout.createSequentialGroup()
-                    .addComponent(sampleCountRegression)
-                    .addComponent(sampleCountFieldRegression))
-                .addGroup(layout.createSequentialGroup()
-                    .addComponent(resultLabel)
-                    .addComponent(resultField))
-                .addComponent(refreshButton)
+                    .addComponent(refreshButton)
+                    .addGap(5, 10, 15)
+                    .addComponent(multiIteration)
+                )                
         );
 
         layout.setVerticalGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup()                    
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(interactionTableTitle)
+                        .addComponent(interactionTablePane))
+                ) 
+                .addGap(5, 10, 15)
                 .addGroup(layout.createParallelGroup()
-                    .addComponent(parameterTablePane)
-                    .addComponent(interactionTablePane))
+                    .addComponent(sampleCountLabel,25,30,35)
+                    .addComponent(sampleCountField,25,30,35)
+                    .addComponent(sampleCountRegression,25,30,35)
+                    .addComponent(sampleCountFieldRegression,25,30,35))
+                .addGap(5, 10, 15)
                 .addGroup(layout.createParallelGroup()
-                    .addComponent(sampleCountLabel,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sampleCountField,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
-                .addGroup(layout.createParallelGroup()
-                    .addComponent(regressionErrorLabel,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
-                    .addComponent(regressionErrorField,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
-                    .addComponent(multiIteration))
-                .addGroup(layout.createParallelGroup()
-                    .addComponent(sampleCountRegression,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sampleCountFieldRegression,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
-                .addGroup(layout.createParallelGroup()
-                    .addComponent(resultLabel,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
-                    .addComponent(resultField,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
-                .addComponent(refreshButton)
+                    .addComponent(regressionErrorLabel,25,30,35)
+                    .addComponent(regressionErrorField,25,30,35)
+                )
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                    .addComponent(refreshButton)
+                    .addComponent(multiIteration)
+                )
         );
         panel.add(centerPanel);
     }
@@ -382,14 +292,13 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
 
         this.indexSet.clear();
 
-        parameterTable.setModel(new ParameterTableModel(xData));
-
         uniSA = new UniversalSensitivityAnalyzer();
         uniSA.setMethod(UniversalSensitivityAnalyzer.SAMethod.FOSI2);
         uniSA.setUsingRegression(true);
         uniSA.setParameterNormalizationMethod(SimpleInterpolation.NormalizationMethod.Linear);
         uniSA.setObjectiveNormalizationMethod(SimpleInterpolation.NormalizationMethod.Linear);
-
+        uniSA.addObserver(this);
+        
         int n = counter;
         
         double sampleSize = 0;
@@ -401,100 +310,29 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
         }
 
         uniSA.setSampleCount((int)sampleSize);
-
-        int K = 1;
-        if (this.multiIteration.isSelected())
-            K=10;
-
-        Double interaction[][] = new Double[n][n];
-        Double interactionC[][] = new Double[n][n];
-        Double mainEffect[] = new Double[n];
-        for (int i=0;i<n;i++){
-            mainEffect[i] = new Double(0.0);
-            for (int j=0;j<n;j++){
-                interaction[i][j] = new Double(0.0);
-                interactionC[i][j] = new Double(0.0);
-            }
-        }
+        uniSA.setup(xData, p2);
         
-        for (int k = 0; k < K; k++) {
-            uniSA.setup(xData, p2);
-
-            if (k==0){
-                this.regressionErrorField.setText(Double.toString(uniSA.calculateError()));
-                this.sampleCountField.setText(Integer.toString(p2.getSize()));
-                double sensitivity[] = uniSA.getInteraction(indexSet);
-                this.resultField.setText(sensitivity[0] + "/" + sensitivity[1]);
-            }
-            TreeSet<Integer> set = new TreeSet<Integer>();
-            TreeSet<Integer> set_i = new TreeSet<Integer>();
-            TreeSet<Integer> set_j = new TreeSet<Integer>();
-            for (int i = 0; i < n; i++) {
-                set_i.clear();
-                set_i.add(i);
-
-                for (int j = 0; j < n; j++) {
-                    set_j.clear();
-                    set_j.add(j);
-
-                    double sa_i = Math.max(uniSA.getInteraction(set_i)[0], 0);
-                    double sa_j = Math.max(uniSA.getInteraction(set_j)[0], 0);
-
-                    if (j == i) {
-                        interaction[i][j] = 0.0;
-                        mainEffect[i] += sa_i/K;
-                    } else if (j < i) {
-                        set.add(j);
-                        
-                        set.clear();
-                        set.add(i);
-                        set.add(j);
-                                                                        
-                        interaction[i][j] += Math.max(uniSA.getInteraction(set)[0], 0)/K;
-                        double max = Math.max(sa_i, sa_j);
-                        double min = Math.min(sa_i, sa_j);
-                        double sum = sa_i + sa_j;
-                        double w = 0;
-                        if (Math.abs(sum - max) >= 0.01) {
-                            if (interaction[i][j] > max) {
-                                w = interaction[i][j];//(interaction[i][j] - max) / (sum-max);
-                            } else {
-                                w = interaction[i][j];//(interaction[i][j] - max) / (max-min);
-                            }
-                        }
-                        //interaction[i][j] = w;
-                        set.remove(j);
-                    } else {
-                        set.add(j);
-                        set_i.clear();
-                        set_i.add(i);
-                        set_j.clear();
-                        set_j.add(j);
-                        
-                        interactionC[i][j] += Math.max(uniSA.getInteraction(set)[0], 0) / K;
-                        double max = Math.max(sa_i, sa_j);
-                        double min = Math.min(sa_i, sa_j);
-                        double sum = sa_i + sa_j;
-                        double w = 0;
-                        if (Math.abs(sum - max) >= 0.01) {
-                            if (interaction[i][j] > max) {
-                                w = (interaction[i][j] - max) / (sum - max);
-                            } else {
-                                w = (interaction[i][j] - max) / (max - min);
-                            }
-                        }
-                        //interaction[i][j] = 0.0;//w;
-                        set.remove(j);
-                    }
+        this.regressionErrorField.setText(String.format(Locale.ENGLISH,"%.4f",uniSA.calculateError()));
+        this.sampleCountField.setText(Integer.toString(p2.getSize()));        
+         
+        double sensitivity[][][] = null;
+        if (this.multiIteration.isSelected()){
+            sensitivity = uniSA.getInteractionsUncertainty();
+        }else{
+            double sens[][] = uniSA.getInteractions();
+            sensitivity = new double[n][n][3];
+            for (int i=0;i<n;i++){
+                for (int j=0;j<n;j++){
+                    sensitivity[i][j][0] = sens[i][j];
+                    sensitivity[i][j][1] = sens[i][j];
+                    sensitivity[i][j][2] = sens[i][j];
                 }
             }
         }
-        for (int i=0;i<n;i++){
-            parameterTable.getModel().setValueAt(mainEffect[i], i, 2);
-        }
+                
         TableCellRenderer headerRenderer = new VerticalTableHeaderCellRenderer();
-        interactionTable.setModel(new InteractionTableModel(xData, interaction));
-        interactionTable.setPreferredSize(new Dimension((xData.length)*45,(xData.length)*45));
+        interactionTable.setModel(new InteractionTableModel(xData, sensitivity));
+        interactionTable.setPreferredSize(new Dimension((xData.length)*100,(xData.length)*100));
         for (int i = 0; i < n; i++) {
             interactionTable.getColumnModel().getColumn(i).setCellRenderer(new InteractionRenderer(true));
             interactionTable.getColumnModel().getColumn(i).setWidth(45);

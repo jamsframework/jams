@@ -261,18 +261,21 @@ public class TimePeriodAggregator extends JAMSComponent {
                         }
                     } else if (innerTimePeriod == AggregationTimePeriod.SEASONAL) {
                         int month = time.get(Calendar.MONTH);
-                        if (month < 3){
+                        if (month < 2){
                             outerValue[0] += innerValue;
                             outerTimestepCounter[0]++;
-                        }else if (month < 6){
+                        }else if (month < 5){
                             outerValue[1] += innerValue;
                             outerTimestepCounter[1]++;
-                        }else if (month < 9){
+                        }else if (month < 8){
                             outerValue[2] += innerValue;
                             outerTimestepCounter[2]++;
-                        }else{
+                        }else if (month < 11){
                             outerValue[3] += innerValue;
                             outerTimestepCounter[3]++;
+                        }else if (month < 12){
+                            outerValue[0] += innerValue;
+                            outerTimestepCounter[0]++;
                         }
                     } else if (innerTimePeriod == AggregationTimePeriod.MONTHLY) {
                         int month = time.get(Calendar.MONTH);
@@ -465,21 +468,25 @@ public class TimePeriodAggregator extends JAMSComponent {
             case MONTHLY: out.removeUnsignificantComponents(Attribute.Calendar.MONTH); break;
             case YEARLY: out.removeUnsignificantComponents(Attribute.Calendar.YEAR); break;
             case DECADLY: out.removeUnsignificantComponents(Attribute.Calendar.YEAR); 
-                    int yearInDekade = out.get(Attribute.Calendar.YEAR) % 10;
+                    int yearInDekade = (out.get(Attribute.Calendar.YEAR)-1) % 10;
                     out.set(out.get(Attribute.Calendar.YEAR)-yearInDekade, 0, 1, 12, 0, 0);
                     break;
             case SEASONAL: {out.removeUnsignificantComponents(Attribute.Calendar.MONTH); 
                     int month = out.get(Attribute.Calendar.MONTH);
-                    if (month < 3){
-                        month = 0;
-                    }else if (month < 6){
-                        month = 3;
-                    }else if (month < 9){
-                        month = 6;
-                    }else {
-                        month = 9;
+                    int year  = out.get(Attribute.Calendar.YEAR);
+                    if (month < 2){
+                        month = 12;
+                        year = year - 1;
+                    }else if (month < 5){
+                        month = 2;
+                    }else if (month < 8){
+                        month = 5;
+                    }else if (month < 11){
+                        month = 8;
+                    }else{
+                        month = 12;
                     }
-                    out.set(out.get(Attribute.Calendar.YEAR), month, 1, 12, 0, 0);}
+                    out.set(year, month, 1, 12, 0, 0);}
                     break;
             case HALFYEAR: {out.removeUnsignificantComponents(Attribute.Calendar.MONTH); 
                     int month = out.get(Attribute.Calendar.MONTH);
@@ -553,10 +560,8 @@ public class TimePeriodAggregator extends JAMSComponent {
                 
                 double buffer[] = buffers.get(0);
                                 
-                for (double id : aggregatedValues.keySet()) {                    
-                //for (int id=0;id<aggregatedValues.size();id++) {                    
-                    SpatialAggregationEntity[] dataset = aggregatedValues.get(id);
-                                        
+                for (SpatialAggregationEntity[] dataset : aggregatedValues.values()) {                    
+                    
                     switch (outerAggregationMode[i]) {                        
                         case AVERAGE:
                             dataset[i].outerValue[0] /= dataset[i].outerTimestepCounter[0];
@@ -685,10 +690,8 @@ public class TimePeriodAggregator extends JAMSComponent {
 
         int n = outerAggregationMode.length;
         
-        for (int i = 0; i < n; i++) {
-            for (double id : aggregatedValues.keySet()) {                
-            //for (int id=0;id<aggregatedValues.size();id++){
-                SpatialAggregationEntity entity[] = aggregatedValues.get(id);
+        for (SpatialAggregationEntity entity[] : aggregatedValues.values()){
+            for (int i = 0; i < n; i++) {        
                 if (isEnabled[i]){
                     entity[i].transferInnerDataToOuterData(outerAggregationMode[i], outerTimePeriod, 
                             innerAggregationMode[i], innerTimePeriod, time, timeInterval);                                

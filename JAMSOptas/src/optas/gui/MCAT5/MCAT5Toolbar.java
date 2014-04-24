@@ -103,17 +103,17 @@ public class MCAT5Toolbar extends JToolBar {
                 "DottyPlot3D",
                 "DottyPlot3D",
                 DottyPlot3D.class));*/
-       
-        /*registeredPlots.add(new PlotDesc(new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
-                "Interaction Analyzer",
-                JAMS.i18n("DOTTY_PLOT"),
-                ParameterInteractionAnalyser.class));
-*/
+               
         registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/reg/resources/images/sensitivity.png")),
                 "Sensitivityanalyzer",
                 JAMS.i18n("Sensitivity_Analysis"),
                 SensitivityToolbox.class));
 
+        registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/reg/resources/images/interaction.png")),
+                "Interaction Effects Analyzer",
+                JAMS.i18n("Interaction_analysis"),
+                ParameterInteractionAnalyser.class));
+        
         registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/reg/resources/images/temporal_sa.png")),
                 JAMS.i18n("Temporal_Sensitivity_Analysis"),
                 JAMS.i18n("Temporal_Sensitivity_Analysis"),

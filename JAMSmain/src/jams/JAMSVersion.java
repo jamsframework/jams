@@ -69,7 +69,6 @@ public class JAMSVersion {
      * @return The string representation
      */
     public String getVersionDateString() {
-//        return String.format("%d.%d_%02d (%s)", major, minor, revision, dateString);
         return String.format("%d.%d_%s (%s)", major, minor, revision, dateString);
     }
 

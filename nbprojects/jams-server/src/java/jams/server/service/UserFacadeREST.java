@@ -24,7 +24,6 @@ package jams.server.service;
 import jams.server.entities.User;
 import jams.server.entities.Users;
 import java.util.List;
-import javax.annotation.PreDestroy;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -65,16 +64,13 @@ public class UserFacadeREST extends AbstractFacade<User> {
         if (isAdmin(req)) {
             if (!findByName(entity.getLogin()).isEmpty())
                 return Response.ok("Login is already existing",MediaType.TEXT_PLAIN).build();
-            try{
+            
             super.create(entity);
-            }catch(Throwable t){
-                System.out.println("Shit happens .. ");
+            if (entity.getId() != null)
+                return Response.ok(entity,MediaType.APPLICATION_XML_TYPE).build();
+            else{
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
-            List<User> list = findByName(entity.getLogin());
-            if (list.isEmpty()){
-                return Response.ok("Failed to create user.",MediaType.TEXT_PLAIN).build();
-            }            
-            return Response.ok(list.get(0),MediaType.APPLICATION_XML_TYPE).build();
         }
         return Response.status(Response.Status.FORBIDDEN).build();
     }
@@ -89,7 +85,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
         }
         if (user.getId() == id || user.getAdmin()>0) {
             super.edit(entity);
-            return Response.ok(true).build();
+            return Response.ok(user).build();
         }
         return Response.status(Response.Status.FORBIDDEN).build();
     }

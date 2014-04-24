@@ -72,19 +72,23 @@ public class SobolsSequence extends Optimizer{
     
     @Override
     public void procedure()throws SampleLimitException, ObjectiveAchievedException{
-        int k = (int)Math.ceil(Math.log(maxn)/Math.log(2.0));
-        SobolSequence s = new SobolSequence(k, 31, n);
+        SobolSequence s = new SobolSequence((int)Math.ceil(maxn), n);
 
         PointSetIterator iter = s.iterator();
+        
         int i=0;
         ArrayList<double[]> set = new ArrayList<double[]>();
+        boolean first = true;
         while(iter.hasNextPoint()){
             double x0[] = new double[n];
             iter.nextPoint(x0, n);
             for (int j=0;j<n;j++){
                 x0[j] = this.lowBound[j]+x0[j]*(this.upBound[j]-this.lowBound[j]);
             }
-            set.add(x0);
+            if (first)
+                first = false;
+            else
+                set.add(x0);
         }
 
         int samplesPerIteration2 = (int) (threadCount * 6);
