@@ -26,31 +26,20 @@ import jams.server.entities.User;
 import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
 import jams.server.entities.Workspaces;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -67,8 +56,6 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
 
     @PersistenceContext(unitName = "jams-serverPU")
     private EntityManager em;
-
-    private boolean EAGER_REMOVAL = true;    
     
     public WorkspaceFacadeREST() {
         super(Workspace.class);
@@ -103,6 +90,9 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         if (ws == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
+        if (ws.isReadOnly())
+            return Response.status(Status.FORBIDDEN).build();
+        
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
             super.edit(entity);
             return Response.ok(ws).build();
@@ -116,8 +106,8 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
                 .getResultList().size();
     }
 
-    @DELETE
-    @Path("{id}")
+    @GET
+    @Path("{id}/delete")
     @Produces({"application/xml", "application/json"})
     public Response remove(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
@@ -128,6 +118,9 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         if (ws == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
+        if (ws.isReadOnly())
+            return Response.status(Status.FORBIDDEN).build();
+        
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
             //check if files are still in use
             List<WorkspaceFileAssociation> files = ws.getAssociatedFiles();
@@ -157,28 +150,38 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
             return Response.status(Status.NOT_FOUND).build();
         }
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
-            return Response.ok(super.find(id), MediaType.APPLICATION_XML).build();
+            return Response.ok(ws, MediaType.APPLICATION_XML).build();
         }
         return Response.status(Status.FORBIDDEN).build();
     }
 
     @GET
-    @Path("all")
+    @Path("find")
     @Produces({"application/xml", "application/json"})
-    public Response findAll(@Context HttpServletRequest req) {
+    public Response findAll(@QueryParam("name") String name, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
-
+                
         List<Workspace> workspaces = em.createNamedQuery("findByUserId")
                 .setParameter("id", user.getId())
                 .getResultList();
 
-        return Response.ok(new Workspaces(workspaces), MediaType.APPLICATION_XML).build();
+        List<Workspace> filteredList = new ArrayList<Workspace>();
+        if (name != null){
+            for (Workspace ws : workspaces){
+                if (ws.getName().equals(name))
+                    filteredList.add(ws);
+            }
+        }else{
+            filteredList = workspaces;
+        }
+        
+        return Response.ok(new Workspaces(filteredList), MediaType.APPLICATION_XML).build();
     }
-
+            
     @GET
-    @Path("assign")
+    @Path("{id}/assign")
     @Produces({"application/xml", "application/json"})
-    public Response assignFile(@QueryParam("WORKSPACE_ID") Integer wsID,
+    public Response assignFile(@PathParam("id") Integer wsID,
             @QueryParam("FILE_ID") Integer fileID,
             @QueryParam("ROLE") Integer role,
             @QueryParam("RELATIVE_PATH") String path, @Context HttpServletRequest req) {
@@ -187,9 +190,15 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         Workspace ws = find(wsID);
+        if (ws == null){
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        if (ws.isReadOnly())
+            return Response.status(Status.FORBIDDEN).build();
+        
         File f = findFileByID(fileID);
 
-        if (ws == null || f == null) {
+        if (f == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
@@ -199,12 +208,38 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
 
         return Response.status(Status.FORBIDDEN).build();
     }
+    
+    @GET
+    @Path("{id}/detach")
+    @Produces({"application/xml", "application/json"})
+    public Response detachFile(@PathParam("id") Integer wsID,
+            @QueryParam("RELATIVE_PATH") String path, @Context HttpServletRequest req) {
+        User user = getCurrentUser(req);
+        if (user == null) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        Workspace ws = find(wsID);
+        if (ws.isReadOnly())
+            return Response.status(Status.FORBIDDEN).build();
+        
+        if (ws == null){
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        
+        if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
+            File f = ws.detachFile(path);
+            if (f == null)
+                return Response.status(Status.NOT_FOUND).build();
+            return Response.ok(ws).build();
+        }
+        return Response.status(Status.FORBIDDEN).build();
+    }
 
     @GET
-    @Path("download/file/")
+    @Path("download/{id_ws}/{id_file}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadFile(@QueryParam("WORKSPACE_ID") Integer wsID,
-            @QueryParam("FILE_ID") Integer fileID,
+    public Response downloadFile(@PathParam("id_ws") Integer wsID,
+            @PathParam("id_file") Integer fileID,
             @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
         if (user == null) {
@@ -246,9 +281,9 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
     }
     
     @GET
-    @Path("download/workspace/")
+    @Path("download/{id}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadWorkspace(@QueryParam("WORKSPACE_ID") Integer wsID,
+    public Response downloadWorkspace(@PathParam("id") Integer wsID,
             @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
         if (user == null) {
@@ -284,12 +319,5 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
     @Override
     protected EntityManager getEntityManager() {
         return em;
-    }
-
-    private List findByName(String name) {
-        return em.createQuery(
-                "SELECT u FROM Workspace u WHERE u.name = :name")
-                .setParameter("name", name)
-                .getResultList();
     }
 }

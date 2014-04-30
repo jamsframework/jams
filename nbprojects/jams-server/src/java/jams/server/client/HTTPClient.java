@@ -24,7 +24,9 @@ package jams.server.client;
 import com.sun.istack.logging.Logger;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.logging.Level;
@@ -183,6 +185,27 @@ public class HTTPClient {
         return location;               
     }
     
+    public InputStream getStream(String urlStr)throws JAMSClientException {
+        DefaultHttpClient httpclient = new DefaultHttpClient();                        
+        HttpGet get = new HttpGet(urlStr);
+        //get.addHeader(new BasicHeader("Accept", "application/OCTET_STREAM"));
+        try{
+            get.addHeader(new BasicHeader("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")));
+        }catch(UnsupportedEncodingException uee){
+            uee.printStackTrace();
+        }
+        try{
+            HttpResponse response = httpclient.execute(get);
+            this.respondToResponse(response.getStatusLine().getStatusCode());
+
+            InputStream is = response.getEntity().getContent();     
+            return is;            
+        }catch(IOException | JAMSClientException | IllegalStateException jee){
+            jee.printStackTrace();
+            throw new JAMSClientException(jee.toString(), JAMSClientException.ExceptionType.UNKNOWN, jee);
+        }
+    }
+    
     public Object httpRequest(String urlStr, String requestMethod, Object param, Class clazz) throws JAMSClientException {
         Response response;
                             
@@ -201,7 +224,10 @@ public class HTTPClient {
         }catch(UnsupportedEncodingException uee){
             throw new JAMSClientException(uee.toString(), JAMSClientException.ExceptionType.UNKNOWN, uee);
         }    
-        
+
+        if (response == null){
+            return null;
+        }
         if (sessionID == null){
             String result = response.getHeaders().get("set-cookie").toString();
             result = result.split(";")[0];

@@ -19,24 +19,27 @@
  * along with JAMS. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package jams.server.client;
 
 import jams.server.entities.Files;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author christian
  */
-public class FileController extends Controller{    
-    public FileController(HTTPClient client, String serverUrl){
+public class FileController extends Controller {
+
+    public FileController(HTTPClient client, String serverUrl) {
         super(client, serverUrl);
     }
-    
-    private String getHashCode(java.io.File f) throws JAMSClientException{
+
+    private String getHashCode(java.io.File f) throws JAMSClientException {
         try {
             return org.apache.commons.codec.digest.DigestUtils.md5Hex(new FileInputStream(f));
         } catch (IOException fnfe) {
@@ -45,54 +48,45 @@ public class FileController extends Controller{
         }
     }
 
-    public jams.server.entities.File uploadFile(File f) throws JAMSClientException{
-        jams.server.entities.File result = this.findServerFile(f);
-
-        if (result == null) {
-            return (jams.server.entities.File) client.httpFileUpload(serverURL + "/file/upload", f, jams.server.entities.File.class);
-        } else {
-            log("File was already uploaded!");
-        }
-
-        return result;
+    public jams.server.entities.File uploadFile(File f) throws JAMSClientException {
+        return (jams.server.entities.File) client.httpFileUpload(serverURL + "/file/upload", f, jams.server.entities.File.class);
     }
 
-    public jams.server.entities.File[] uploadFile(File f[]) throws JAMSClientException{
-        Files filesExisting = this.findServerFile(f);
-        jams.server.entities.File files[] = filesExisting.getFiles().toArray(new jams.server.entities.File[0]);
-        for (int i = 0; i < files.length; i++) {
-            if (files[i] == null) {
-                files[i] = uploadFile(f[i]);
-            }
+    public Map<File, jams.server.entities.File> uploadFile(File files[]) throws JAMSClientException {
+        Map<File, jams.server.entities.File> mapping = exists(files);
+                
+        for (File f : files) {
+            if (mapping.get(f)==null)
+                mapping.put(f, uploadFile(f));
         }
-        return files;
+        return mapping;
     }
 
-    public jams.server.entities.File findServerFile(File f) throws JAMSClientException{
-        String hashCode = getHashCode(f);
-
-        Files filesIn = new Files(new jams.server.entities.File(0, hashCode));
-        Files filesOut = (Files) client.httpPost(serverURL + "/file/exists", "POST", filesIn, Files.class);
-        if (filesOut != null && !filesOut.getFiles().isEmpty()) {
-            jams.server.entities.File result = filesOut.getFiles().get(0);
-            if (!result.equals(jams.server.entities.File.NON_FILE)) {
-                return result;
-            }
-        }
-        return null;
+    public File get(int id) throws JAMSClientException {
+        return (File) client.httpGet(serverURL + "/file/" + id, File.class);
     }
 
-    public Files findServerFile(File f[]) throws JAMSClientException{
-        jams.server.entities.Files files = new jams.server.entities.Files();
+    public boolean exists(java.io.File f) throws JAMSClientException {
+        return !exists(new java.io.File[]{f}).isEmpty();
+    }
+
+    public Map<File, jams.server.entities.File> exists(java.io.File f[]) throws JAMSClientException {
+        Map<File, jams.server.entities.File> fileMapping = new HashMap<File, jams.server.entities.File>();
+        Files files = new Files();
         for (File f1 : f) {
             files.add(new jams.server.entities.File(0, getHashCode(f1)));
+            fileMapping.put(f1,null);
         }
-        Files filesOut = (Files) client.httpPost(serverURL + "/file/exists", "POST", files, Files.class);
-        for (int i = 0; i < f.length; i++) {
-            if (filesOut.getFiles().get(i).equals(jams.server.entities.File.NON_FILE)) {
-                filesOut.getFiles().set(i, null);
+        Files result = (Files) client.httpPost(serverURL + "/file/exists", "POST", files, Files.class);
+                
+        for (int i = 0; i < files.getFiles().size(); i++) {
+            for (jams.server.entities.File x : result.getFiles()) {
+                if (x.getHash().equals(files.getFiles().get(i).getHash())) {
+                    fileMapping.put(f[i],x);
+                    break;
+                }
             }
         }
-        return filesOut;
+        return fileMapping;
     }
 }

@@ -23,6 +23,8 @@
 package jams.server.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -76,12 +78,30 @@ public class Workspace implements Serializable {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="ownerID")
     private User user;
+    
+    @Basic(optional = true)
+    @Column(name = "readonly")
+    private Integer readOnly;
+    
+    @Basic(optional = true)
+    @Column(name = "workspaceSize")
+    private Long workspaceSize;
                
     @OneToMany(mappedBy="ws", cascade = CascadeType.PERSIST, orphanRemoval=true)
     private List<WorkspaceFileAssociation> files;
-        
+                
     public Workspace() {
         init();
+    }
+    
+    public Workspace(Workspace ws) {
+        this.creation = new Date();
+        this.files = new ArrayList<WorkspaceFileAssociation>(Arrays.asList(ws.files.toArray(new WorkspaceFileAssociation[0])));
+        this.id = 0;
+        this.name = ws.getName();
+        this.readOnly = ws.readOnly;
+        this.user = ws.user;
+        this.workspaceSize = ws.getWorkspaceSize();
     }
 
     public Workspace(Integer id) {
@@ -132,6 +152,22 @@ public class Workspace implements Serializable {
         return user;
     }
     
+    public boolean isReadOnly(){
+        return readOnly!=null&&readOnly>0;
+    }
+    
+    public void setReadOnly(boolean readOnly){
+        this.readOnly = readOnly ? 1 : 0;
+    }
+    
+    public boolean containsFile(String path){
+        for (WorkspaceFileAssociation wfa : files){
+            if (wfa.getPath().equalsIgnoreCase(path))
+                return true;
+        }
+        return false;
+    }
+    
     public WorkspaceFileAssociation assignFile(File f, int role, String path){
         WorkspaceFileAssociation wfa = new WorkspaceFileAssociation(this, f, role, path);        
         if (!files.contains(wfa))
@@ -140,13 +176,44 @@ public class Workspace implements Serializable {
             int i = files.lastIndexOf(wfa);
             files.get(i).setRole(role);
         }
+        updateSize();
         return wfa;
+    }
+    
+    public File detachFile(String path){
+        for (WorkspaceFileAssociation wfa : files){
+            if (wfa.getPath().equals(path)){
+                files.remove(wfa);
+                updateSize();
+                return wfa.getFile();
+            }
+        } 
+        return null;
     }
     
     public List<WorkspaceFileAssociation> getAssociatedFiles(){
         return this.files;
     }
     
+    private void updateSize(){
+        this.workspaceSize = 0L;
+        if (files==null)
+            return;
+        for (WorkspaceFileAssociation wfa : files){
+            workspaceSize += wfa.getFile().getFileSize();
+        }
+    }
+    
+    public long getWorkspaceSize(){        
+        if (workspaceSize==null)
+            updateSize();
+        return workspaceSize;
+    }
+    
+    public void setWorkspaceSize(long size){
+        this.workspaceSize = size;        
+    }
+            
     @Override
     public int hashCode() {
         int hash = 0;

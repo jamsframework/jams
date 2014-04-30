@@ -23,6 +23,7 @@ package jams.server.service;
 
 import jams.server.entities.File;
 import jams.server.entities.Files;
+import jams.server.entities.User;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,8 +35,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -74,22 +77,38 @@ public class FileFacadeREST extends AbstractFacade<File> {
     @Path("exists")
     @Consumes({"application/xml", "application/json"})
     @Produces({"application/xml", "application/json"})
-    public Response exists(Files entity, @Context HttpServletRequest req) {
+    public Response exists(Files files, @Context HttpServletRequest req) {
         if (!isLoggedIn(req)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         Files result = new Files();        
-        for (File f : entity.getFiles()) {
-            List<File> list = findHash(f.getHash());            
-            if (list.isEmpty())
-                result.add(File.NON_FILE);
-            else
-                result.add(list.get(0));
+        for (File file : files.getFiles()) {
+            List<File> list = findHash(file.getHash());            
+            if (!list.isEmpty())
+                result.add(list.get(0));                
         }
         return Response.ok(result, MediaType.APPLICATION_XML_TYPE).build();
     }
 
+    @GET
+    @Path("{id}")
+    @Produces({"application/xml", "application/json"})
+    public Response find(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+        User user = getCurrentUser(req);
+        if (user == null) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        File f = find(id);
+        if (f == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        if (user.getAdmin() > 0) {
+            return Response.ok(f, MediaType.APPLICATION_XML).build();
+        }
+        return Response.status(Response.Status.FORBIDDEN).build();
+    }
+    
     @POST
     @Path("/upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -101,10 +120,12 @@ public class FileFacadeREST extends AbstractFacade<File> {
 
         String hashCode = saveFile(fileInputStream, filePath);
         if (hashCode == null){
-            return Response.status(200).entity("Error: I/O Error while saving file").build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
         File f = new File();
         f.setHash(hashCode);        
+        f.setLocation(filePath + "/" + hashCode);
+        
         List<File> list = findHash(hashCode);
         if (!list.isEmpty())
             return Response.status(200).entity(list.get(0)).build();        
@@ -112,16 +133,15 @@ public class FileFacadeREST extends AbstractFacade<File> {
             return Response.status(200).entity(f).build();
         }
         // save the file to the server        
-        return Response.status(200).entity("Error: Something went wrong!").build();
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
         
     // save uploaded file to a defined location on the server
     private String saveFile(InputStream uploadedInputStream, String serverLocation) {
 
         java.io.File serverFile = new java.io.File(serverLocation);
-        try {
-            OutputStream outpuStream = new FileOutputStream(serverFile);
 
+        try (OutputStream outpuStream = new FileOutputStream(serverFile)) {
             int read = 0;
 
             byte[] bytes = new byte[1024];
@@ -130,22 +150,19 @@ public class FileFacadeREST extends AbstractFacade<File> {
                 outpuStream.write(bytes, 0, read);
             }
             outpuStream.flush();
-            outpuStream.close();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
 
-        try {
-            FileInputStream fis = new FileInputStream(serverFile);
-            String hash = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);         
-            fis.close();
-            serverFile.renameTo(new java.io.File(serverFile.getParent(), hash));
-            return hash;
+        String hash;
+        try (FileInputStream fis = new FileInputStream(serverFile)) {
+            hash = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
         } catch (IOException fnfe) {
             fnfe.printStackTrace();
+            return null;
         }
-        return null;
+        serverFile.renameTo(new java.io.File(serverFile.getParent(), hash));
+        return hash;
     }
-
 }

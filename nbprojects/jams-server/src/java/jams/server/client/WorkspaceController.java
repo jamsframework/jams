@@ -22,6 +22,7 @@
 package jams.server.client;
 
 import jams.server.entities.Workspace;
+import jams.server.entities.Workspaces;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,11 +30,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -51,14 +52,60 @@ public class WorkspaceController extends Controller {
         fileController = this.getFileController();
     }
 
-    public Workspace removeWorkspace(Workspace ws) throws JAMSClientException {
-        return (Workspace) client.httpPost(serverURL + "/workspace/" + ws.getId(), "DELETE", null, Workspace.class);
+    public Workspace remove(Workspace ws) throws JAMSClientException {
+        return (Workspace) client.httpGet(serverURL + "/workspace/" + ws.getId() + "/delete", Workspace.class);
     }
 
-    public Workspace createWorkspace(Workspace ws) throws JAMSClientException {
+    public Workspace create(Workspace ws) throws JAMSClientException {
         return (Workspace) client.httpPost(serverURL + "/workspace/create", "PUT", ws, Workspace.class);
     }
+    
+    public Workspace find(int id) throws JAMSClientException {
+        return (Workspace) client.httpGet(serverURL + "/workspace/" + id, Workspace.class);
+    }
+    
+    public Workspaces findAll(String name) throws JAMSClientException {
+        if (name==null)
+            return (Workspaces) client.httpGet(serverURL + "/workspace/find", Workspace.class);
+        else
+            return (Workspaces) client.httpGet(serverURL + "/workspace/find?name="+name, Workspace.class);
+    }
 
+    public Workspace assignFile(Workspace ws, jams.server.entities.File f, int role, String relativePath) throws JAMSClientException {
+        String encodedPath = null;
+        try {
+            encodedPath = URLEncoder.encode(relativePath, "UTF8");
+        } catch (UnsupportedEncodingException uee) {
+            uee.printStackTrace();
+        }
+        return (Workspace) client.httpGet(serverURL + "/workspace/"+ws.getId()+"/assign?FILE_ID=" + f.getId() + "&ROLE=" + role + "&RELATIVE_PATH=" + encodedPath, jams.server.entities.Workspace.class);
+    }
+    
+    public Workspace detachFile(Workspace ws, String relativePath) throws JAMSClientException {
+        String encodedPath = null;
+        try {
+            encodedPath = URLEncoder.encode(relativePath, "UTF8");
+        } catch (UnsupportedEncodingException uee) {
+            uee.printStackTrace();
+        }
+        return (Workspace) client.httpGet(serverURL + "/workspace/"+ws.getId()+"/detach?RELATIVE_PATH=" + encodedPath, jams.server.entities.Workspace.class);
+    }
+    
+    public File downloadFile(File target, Workspace ws, jams.server.entities.File f) throws JAMSClientException{
+        //return (Object) client.httpGet(serverURL + "/workspace/download/file?WORKSPACE_ID=" + ws.getId() + "&FILE_ID=" + f.getId(), Object.class);
+        return client.download(serverURL + "/workspace/download/"+ws.getId() + "/" + f.getId(), target);
+    }
+    
+    public File downloadWorkspace(File target, Workspace ws) throws JAMSClientException{        
+        File zip = client.download(serverURL + "/workspace/download/"+ws.getId(), target);
+        try{
+            unzip(zip, target);
+        }catch(IOException ioe){
+            throw new JAMSClientException(ioe.toString(), JAMSClientException.ExceptionType.UNKNOWN, ioe);
+        }
+        return target;
+    }
+    
     public class WorkspaceFile {
 
         File localFile;
@@ -71,17 +118,7 @@ public class WorkspaceController extends Controller {
             this.role = role;
         }
     }
-
-    public Workspace assignFileToWorkspace(Workspace ws, jams.server.entities.File f, int role, String relativePath) throws JAMSClientException {
-        String encodedPath = null;
-        try {
-            encodedPath = URLEncoder.encode(relativePath, "UTF8");
-        } catch (UnsupportedEncodingException uee) {
-            uee.printStackTrace();
-        }
-        return (Workspace) client.httpGet(serverURL + "/workspace/assign?WORKSPACE_ID=" + ws.getId() + "&FILE_ID=" + f.getId() + "&ROLE=" + role + "&RELATIVE_PATH=" + encodedPath, jams.server.entities.Workspace.class);
-    }
-
+    
     private List<File> recursiveFindFiles(File directory, List<File> list, String regex) {        
         for (File f : directory.listFiles()) {
             if (f.isDirectory()) {
@@ -113,7 +150,7 @@ public class WorkspaceController extends Controller {
     public Workspace uploadWorkspace(String name, List<WorkspaceFile> files) throws JAMSClientException {
         Workspace ws = new Workspace();
         ws.setName(name);
-        ws = createWorkspace(ws);
+        ws = create(ws);
         if (ws == null) {
             return null;
         }
@@ -123,15 +160,15 @@ public class WorkspaceController extends Controller {
         for (int i = 0; i < list.length; i++) {
             list[i] = wsFileListArray[i].localFile;
         }
-        jams.server.entities.File serverFileList[] = fileController.uploadFile(list);
+        
+        Map<File,jams.server.entities.File> mapping = fileController.uploadFile(list);
 
-        for (int i = 0; i < wsFileListArray.length; i++) {
-            File f = wsFileListArray[i].localFile;
-            jams.server.entities.File serverFile = serverFileList[i];
-            if (serverFile == jams.server.entities.File.NON_FILE) {
-                throw new JAMSClientException("Couldn't upload file: " + f, JAMSClientException.ExceptionType.UNKNOWN, null);
+        for (WorkspaceFile wf: files) {            
+            jams.server.entities.File serverFile = mapping.get(wf.localFile);
+            if (serverFile == null) {
+                throw new JAMSClientException("Couldn't upload file: " + wf.localFile, JAMSClientException.ExceptionType.UNKNOWN, null);
             }
-            ws = assignFileToWorkspace(ws, serverFile, wsFileListArray[i].role, wsFileListArray[i].relativPath);
+            ws = assignFile(ws, serverFile, wf.role, wf.relativPath);
         }
         return ws;
     }
@@ -180,12 +217,7 @@ public class WorkspaceController extends Controller {
         
         return uploadWorkspace(name, fullUploadList);
     }
-    
-    public File downloadFile(File target, Workspace ws, jams.server.entities.File f) throws JAMSClientException{
-        //return (Object) client.httpGet(serverURL + "/workspace/download/file?WORKSPACE_ID=" + ws.getId() + "&FILE_ID=" + f.getId(), Object.class);
-        return client.download(serverURL + "/workspace/download/file?WORKSPACE_ID=" + ws.getId() + "&FILE_ID=" + f.getId(), target);
-    }
-    
+            
     private File buildDirectoryHierarchyFor(String entryName, File destDir) {
         entryName = entryName.replace("\\", "/");
         int lastIndex = entryName.lastIndexOf('/');
@@ -225,15 +257,5 @@ public class WorkspaceController extends Controller {
         }
         zipFile.close();
         zip.delete();
-    }
-    
-    public File downloadWorkspace(File target, Workspace ws) throws JAMSClientException{        
-        File zip = client.download(serverURL + "/workspace/download/workspace?WORKSPACE_ID=" + ws.getId(), target);
-        try{
-            unzip(zip, target);
-        }catch(IOException ioe){
-            throw new JAMSClientException(ioe.toString(), JAMSClientException.ExceptionType.UNKNOWN, ioe);
-        }
-        return target;
-    }
+    }        
 }

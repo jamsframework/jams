@@ -24,12 +24,12 @@ package jams.server.client;
 
 import com.sun.istack.logging.Logger;
 import jams.server.entities.Job;
-import jams.server.entities.JobState;
 import jams.server.entities.User;
 import jams.server.entities.Users;
 import jams.server.entities.Workspace;
 import java.io.File;
 import java.util.Date;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 
@@ -40,6 +40,7 @@ import java.util.logging.Level;
 public class Controller {
     String SEPARATOR = "**********************";
     HTTPClient client;
+    User user = null;
     String serverURL;
     
     public Controller(HTTPClient client, String serverURL){
@@ -53,9 +54,9 @@ public class Controller {
         
     public void connect(String userName, String password) throws JAMSClientException{
         log(SEPARATOR + "\nTrying to connect .. ");
-        User u = (User)client.connect(serverURL + "/user/login?login=" + userName + "&password=" + password, User.class);
+        user = (User)client.connect(serverURL + "/user/login?login=" + userName + "&password=" + password, User.class);
         
-        if (u == null) {
+        if (user == null) {
             throw new JAMSClientException("Connection to server was not established!", JAMSClientException.ExceptionType.UNKNOWN, null);
         }
         log("INFO: Login successful\n");        
@@ -116,25 +117,27 @@ public class Controller {
         if (f1 != null){
             System.out.println("File with id " + f1.getId() + " was uploaded successfully!");
         }
-        jams.server.entities.File f2[] = client.getFileController().uploadFile(new File[]{new File("E:/tmp/show_log.php"), new File("E:/tmp/successful.php")});
-        if (f2.length == 2 && f2[0] != null && f2[1] != null){
-            System.out.println("File with ids " + f2[0].getId() + "/" + f2[1].getId() + " were uploaded successfully!");
+        File f2 = new File("E:/tmp/show_log.php");
+        File f3 = new File("E:/tmp/successful.php");
+        Map<File, jams.server.entities.File> map = client.getFileController().uploadFile(new File[]{f2, f3});
+        if (map.get(f2)!=null && map.get(f3)!=null){
+            System.out.println("File with ids " + map.get(f2).getId() + "/" + map.get(f3).getId() + " were uploaded successfully!");
         }
         //Workspace
         Workspace ws = new Workspace();
         ws.setId(0);
         ws.setName("TestWs");
         ws.setCreationDate(new Date());
-        ws = client.getWorkspaceController().createWorkspace(ws);        
+        ws = client.getWorkspaceController().create(ws);        
         if (ws != null ) {
             System.out.println("Workspace with id " + ws.getId() + " was created successfully!");
-            client.getWorkspaceController().assignFileToWorkspace(ws, f1,4,"/test/test1.dat");
-            client.getWorkspaceController().assignFileToWorkspace(ws, f2[0],4,"/test/test2.dat");
-            client.getWorkspaceController().assignFileToWorkspace(ws, f2[1],4,"/test/test3.dat");
+            client.getWorkspaceController().assignFile(ws, f1,4,"/test/test1.dat");
+            client.getWorkspaceController().assignFile(ws, map.get(f2),4,"/test/test2.dat");
+            client.getWorkspaceController().assignFile(ws, map.get(f3),4,"/test/test3.dat");
             
             client.getWorkspaceController().downloadFile(new File("E:/tmp/"),ws, f1);
                                     
-            ws = client.getWorkspaceController().removeWorkspace(ws);
+            ws = client.getWorkspaceController().remove(ws);
             if (ws != null){
                 System.out.println("Workspace with id " + ws.getId() + " was removed successfully!");
             }            
@@ -155,13 +158,13 @@ public class Controller {
             if (job != null){
                 System.out.println("Wilde Gera Model started successfully! " + "Job Id is: " + job.getId());
             }
-            JobState state = client.getJobController().getState(job);
-            while (state.isActive()){
+            while (client.getJobController().getState(job).isActive()){
                 System.out.println("Job with id " + job.getId() + " still running!");
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ex) {ex.printStackTrace();}
             }
+            System.out.println("Job with id " + job.getId() + " finished after " + client.getJobController().getState(job).getDuration() + " ms." );
             if (ws2 != null){
                 System.out.println("Workspace of Wilde Gera Model was deleted!");
             }

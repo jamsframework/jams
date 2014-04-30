@@ -25,6 +25,7 @@ package jams.server.service;
 import jams.server.entities.Job;
 import jams.server.entities.JobState;
 import java.io.IOException;
+import javax.ws.rs.core.StreamingOutput;
 
 /**
  *
@@ -33,4 +34,7 @@ import java.io.IOException;
 public interface ProcessManager {    
     Job deploy(Job job) throws IOException;
     JobState state(Job job) throws IOException;
+    JobState kill(Job job) throws IOException;
+    StreamingOutput streamInfoLog(Job job) throws IOException;
+    StreamingOutput streamErrorLog(Job job) throws IOException;
 }

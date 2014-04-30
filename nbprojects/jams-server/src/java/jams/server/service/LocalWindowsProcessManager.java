@@ -21,16 +21,25 @@
  */
 package jams.server.service;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinNT;
+import jams.server.entities.File;
 import jams.server.entities.Job;
 import jams.server.entities.JobState;
+import jams.server.entities.Workspace;
+import jams.server.entities.WorkspaceFileAssociation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Set;
+import java.util.TreeSet;
+import javax.persistence.EntityManager;
+import javax.ws.rs.core.StreamingOutput;
 
 /**
  *
@@ -38,20 +47,28 @@ import java.util.regex.Pattern;
  */
 public class LocalWindowsProcessManager implements ProcessManager {
 
-    private static Integer tryPattern(String processName) {
-        Integer result = null;
+    private java.io.File getLocalExecDir(Job job){
+        return new java.io.File(ApplicationConfig.SERVER_EXEC_DIRECTORY + "/" + job.getWorkspace().getUser().getLogin() + "/" + job.getId() + "/");
+    }
 
-        /* tested on: */
-        /* - windows xp sp 2, java 1.5.0_13 */
-        /* - mac os x 10.4.10, java 1.5.0 */
-        /* - debian linux, java 1.5.0_13 */
-        /* all return pid@host, e.g 2204@antonius */
-        Pattern pattern = Pattern.compile("^([0-9]+)@.+$", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(processName);
-        if (matcher.matches()) {
-            result = new Integer(Integer.parseInt(matcher.group(1)));
+    private Integer getPid(Process process) {
+        if (process.getClass().getName().equals("java.lang.Win32Process")
+                || process.getClass().getName().equals("java.lang.ProcessImpl")) {
+            /* determine the pid on windows plattforms */
+            try {
+                Field f = process.getClass().getDeclaredField("handle");
+                f.setAccessible(true);
+                long handl = f.getLong(process);
+
+                Kernel32 kernel = Kernel32.INSTANCE; 
+                WinNT.HANDLE handle = new WinNT.HANDLE();
+                handle.setPointer(Pointer.createConstant(handl));
+                return kernel.GetProcessId(handle);
+            } catch (Throwable e) {
+                return -1;
+            }
         }
-        return result;
+        return -1;
     }
 
     @Override
@@ -60,7 +77,7 @@ public class LocalWindowsProcessManager implements ProcessManager {
         WorkspaceBuilder builder = new WorkspaceBuilder();
         java.io.File f = builder.zipWorkspace(job.getWorkspace());
 
-        java.io.File localExecDir = new java.io.File(ApplicationConfig.SERVER_EXEC_DIRECTORY + "/" + job.getWorkspace().getUser().getLogin() + "/" + job.getId() + "/");
+        java.io.File localExecDir = getLocalExecDir(job);
         localExecDir.mkdirs();
         builder.unzip(f, localExecDir);
 
@@ -73,15 +90,8 @@ public class LocalWindowsProcessManager implements ProcessManager {
         pb.directory(localExecDir);
         Process process = pb.start();
 
-        job.setPID(-1);
-        try {
-            RuntimeMXBean rtb = ManagementFactory.getRuntimeMXBean();
-            String processName = rtb.getName();
-            Integer pid = tryPattern(processName);
-            job.setPID(pid);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
+        job.setPID(this.getPid(process));
+        
         job.setStartTime(new Date());
         return job;
     }
@@ -112,7 +122,7 @@ public class LocalWindowsProcessManager implements ProcessManager {
             try {
                 if (0 == proc.waitFor()) {
                     while ((line = reader.readLine()) != null) {
-                        if (line.toLowerCase().contains("java") && line.contains(Integer.toString(pid))) {
+                        if (line.toLowerCase().contains("cmd") && line.contains(Integer.toString(pid))) {
                             pidWasFound = true;
                         }
                     }
@@ -135,7 +145,82 @@ public class LocalWindowsProcessManager implements ProcessManager {
         state.setDuration((new Date()).getTime() - job.getStartTime().getTime());
         state.setJob(job);
 
-        state.setSize(folderSize(new java.io.File(ApplicationConfig.SERVER_EXEC_DIRECTORY + "/" + job.getWorkspace().getUser().getLogin() + "/" + job.getId() + "/")));
+        state.setSize(folderSize(getLocalExecDir(job)));
         return state;
+    }
+    
+    private Collection<java.io.File> listFileTree(java.io.File dir) {
+        Set<java.io.File> fileTree = new TreeSet<java.io.File>();
+        for (java.io.File entry : dir.listFiles()) {
+            if (entry.isFile()) fileTree.add(entry);
+            else fileTree.addAll(listFileTree(entry));
+        }
+    return fileTree;
+}
+    
+    private Workspace updateWorkspace(Job job, Workspace ws, EntityManager em){
+        java.io.File dir = getLocalExecDir(job);
+        Path wsPath = dir.toPath();
+        if (dir.isDirectory()){
+            Collection<java.io.File> files = listFileTree(dir);            
+            for (java.io.File file : files){
+                Path filePath = file.toPath();                
+                String relPath = filePath.relativize(wsPath).toString();
+                
+                if (!ws.containsFile(relPath)){
+                    File dbFile = new File();
+                    dbFile.setHash("0");
+                    dbFile.setLocation(filePath.toString());
+                    em.persist(dbFile);
+                    em.flush();
+                    em.refresh(dbFile);
+                    
+                    ws.assignFile(dbFile, WorkspaceFileAssociation.ROLE_OUTPUT , relPath);
+                }
+            }            
+        }
+        return ws;
+    }
+    
+    public Workspace updateWorkspace(Job job, EntityManager em){
+        Workspace ws = job.getWorkspace();
+        if (ws == null){
+            ws = job.getWorkspace();
+            ws.setId(0);                        
+        }
+        ws = updateWorkspace(job, ws, em);
+        em.persist(ws);
+        em.flush();
+        em.refresh(ws);
+        return ws;
+    }
+    
+    @Override
+    public JobState kill(Job job) throws IOException {
+        if (job.getPID()==-1){
+            return null;
+        }
+        JobState jobState = this.state(job);
+        if (!jobState.isActive()){
+            return jobState;
+        }
+        try{
+            Runtime.getRuntime().exec("taskkill /F /PID " + job.getPID()).wait(2000);
+        }catch(InterruptedException ie){
+            ie.printStackTrace();
+        }
+        return this.state(job);
+    }
+    
+    public StreamingOutput streamInfoLog(Job job) throws IOException{
+        java.io.File file = new java.io.File(ApplicationConfig.SERVER_EXEC_DIRECTORY + "/" + job.getWorkspace().getUser().getLogin() + "/" + job.getId() + "/" + "info.log");
+        WorkspaceBuilder wb = new WorkspaceBuilder();
+        return wb.streamFile(file);
+    }
+    
+    public StreamingOutput streamErrorLog(Job job) throws IOException{
+        java.io.File file = new java.io.File(ApplicationConfig.SERVER_EXEC_DIRECTORY + "/" + job.getWorkspace().getUser().getLogin() + "/" + job.getId() + "/" + "error.log");
+        WorkspaceBuilder wb = new WorkspaceBuilder();
+        return wb.streamFile(file);
     }
 }

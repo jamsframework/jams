@@ -62,7 +62,7 @@ public class Job implements Serializable {
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="workspaceID")
     private Workspace workspace;
-    
+        
     @Basic(optional = false)
     @Size(min = 1, max = 500)
     @Column(name = "server")
@@ -112,7 +112,7 @@ public class Job implements Serializable {
     public void setWorkspace(Workspace workspace) {
         this.workspace = workspace;
     }
-
+    
     public String getServer() {
         return server;
     }

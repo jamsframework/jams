@@ -23,7 +23,11 @@ package jams.server.client;
 
 import jams.server.entities.Job;
 import jams.server.entities.JobState;
+import jams.server.entities.Jobs;
 import jams.server.entities.Workspace;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 
 /**
  *
@@ -43,7 +47,75 @@ public class JobController extends Controller {
         return (Job) client.httpPost(serverURL + "/job/create", "PUT", ws, Job.class);
     }
     
+    public Jobs find() throws JAMSClientException {
+        return (Jobs) client.httpGet(serverURL + "/job/find", Jobs.class);
+    }
+    
+    public Jobs getActiveJobs() throws JAMSClientException {
+        return (Jobs) client.httpGet(serverURL + "/job/findActive", Jobs.class);
+    }
+    
+    public Jobs findAll() throws JAMSClientException {
+        if (super.user.getAdmin()==0)
+            return null;
+        return (Jobs) client.httpGet(serverURL + "/job/findAll", Jobs.class);
+    }
+    
     public JobState getState(Job job) throws JAMSClientException {
-        return (JobState) client.httpPost(serverURL + "/job/state", "POST", job, JobState.class);
+        return (JobState) client.httpGet(serverURL + "/job/" + job.getId() + "/state", JobState.class);
+    }
+    
+    public JobState kill(Job job) throws JAMSClientException {
+        return (JobState) client.httpGet(serverURL + "/job/" + job.getId() + "/kill", JobState.class);
+    }
+    
+    public JobState delete(Job job) throws JAMSClientException {
+        return (JobState) client.httpGet(serverURL + "/job/" + job.getId() + "/delete", JobState.class);
+    }
+    
+    public String getInfoLog(Job job, int offset, int size) throws JAMSClientException {
+        InputStream is = client.getStream(serverURL + "/job/" + job.getId() + "/infolog");
+        String t="";
+        try{
+            is.skip(offset);
+            byte buffer[] = new byte[16384];
+            int nread = 0;
+            while ((nread=is.read(buffer,0,Math.min(buffer.length, size)))>0 && size>0){
+                t+=new String(buffer);
+                size-=nread;
+            }            
+        }catch(IOException ioe){
+            throw new JAMSClientException(ioe.toString(), JAMSClientException.ExceptionType.UNKNOWN, ioe);
+        }finally{
+            try{
+                is.close();                
+            }catch(IOException ioe){}
+        }
+        return t;
+    }
+    
+    public String getErrorLog(Job job, int offset, int size) throws JAMSClientException {
+        InputStream is = client.getStream(serverURL + "/job/" + job.getId() + "/errorlog");
+        String t="";
+        try{
+            is.skip(offset);
+            byte buffer[] = new byte[16384];
+            int nread = 0;
+            while ((nread=is.read(buffer,0,Math.min(buffer.length, size)))>0 && size>0){
+                t+=new String(buffer);
+                size-=nread;
+            }            
+        }catch(IOException ioe){
+            throw new JAMSClientException(ioe.toString(), JAMSClientException.ExceptionType.UNKNOWN, ioe);
+        }finally{
+            try{
+                is.close();                
+            }catch(IOException ioe){}
+        }
+        return t;
+    }
+    
+    public Workspace getWorkspace(Job job) throws JAMSClientException {
+        return (Workspace) client.httpPost(serverURL + "/job/state", "POST", job, JobState.class);
     }
 }

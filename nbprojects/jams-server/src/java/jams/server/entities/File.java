@@ -23,6 +23,7 @@
 package jams.server.entities;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -69,8 +70,12 @@ public class File implements Serializable {
     private Date creation;
     
     @Basic(optional = false)    
-    @Column(name = "referenceCounter")
-    private Integer referenceCounter;
+    @Column(name = "serverLocation")
+    private String location;
+    
+    @Basic(optional = true)    
+    @Column(name = "fileSize")
+    private Long fileSize;
     
     public static final File NON_FILE = new File(0,"0");
     
@@ -92,7 +97,6 @@ public class File implements Serializable {
 
     private void init(){
         setCreationDate(new Date());
-        setReferenceCounter(0);
     }
     
     public Integer getId() {
@@ -119,12 +123,26 @@ public class File implements Serializable {
         this.creation = date;
     }
     
-    public int getReferenceCounter(){
-        return this.referenceCounter;
+    public String getLocation(){
+        return this.location;
     }
     
-    public void setReferenceCounter(int counter){
-        this.referenceCounter = counter;
+    public void setLocation(String location){
+        this.location = location;
+        
+        if (getLocation()==null)
+            return;        
+        java.io.File f = new java.io.File(this.getLocation());
+        if (f.exists())           
+            fileSize = f.length();
+    }
+    
+    public long getFileSize(){        
+        return fileSize == null ? 0 : fileSize;        
+    }
+    
+    public void setFileSize(long size){
+        this.fileSize = size;
     }
     
     @Override
