@@ -153,7 +153,7 @@ public class Controller {
         if (ws2 != null){
             System.out.println("Workspace of Wilde Gera Model was uploaded successfully with id " + ws2.getId());
             client.getWorkspaceController().downloadWorkspace(new File("E:/test_client/" + ws2.getId() + "/"),ws2);
-            System.out.println("Workspace of Wilde Gera Model was download to E:/test_client/" + ws2.getId());
+            System.out.println("Workspace of Wilde Gera Model was downloaded to E:/test_client/" + ws2.getId());
             Job job = client.getJobController().create(ws2);
             if (job != null){
                 System.out.println("Wilde Gera Model started successfully! " + "Job Id is: " + job.getId());
@@ -165,9 +165,13 @@ public class Controller {
                 } catch (InterruptedException ex) {ex.printStackTrace();}
             }
             System.out.println("Job with id " + job.getId() + " finished after " + client.getJobController().getState(job).getDuration() + " ms." );
-            if (ws2 != null){
-                System.out.println("Workspace of Wilde Gera Model was deleted!");
-            }
+            Workspace ws3 = job.getWorkspace();
+            System.out.println("Workspace of " +ws3.getName()+" Model is downloading!");
+            client.getWorkspaceController().downloadWorkspace(new File("E:/test_client/"+ws3.getName()),ws3);
+            client.getJobController().delete(job);                
+            System.out.println("Job with id " + job.getId() + " deleted");
+            client.getWorkspaceController().remove(ws2);
+            System.out.println("Workspace of Wilde Gera Model was deleted!");
         }        
         
         client.close();

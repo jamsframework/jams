@@ -327,6 +327,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
                 return Response.status(Status.REQUEST_TIMEOUT).build();
             }else{
                 super.remove(job);
+                em.remove(job.getWorkspace());
             }
             return Response.ok(job, MediaType.APPLICATION_XML_TYPE).build();
         }catch(IOException ioe){

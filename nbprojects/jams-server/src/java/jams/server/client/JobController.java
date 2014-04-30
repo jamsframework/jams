@@ -113,9 +113,5 @@ public class JobController extends Controller {
             }catch(IOException ioe){}
         }
         return t;
-    }
-    
-    public Workspace getWorkspace(Job job) throws JAMSClientException {
-        return (Workspace) client.httpPost(serverURL + "/job/state", "POST", job, JobState.class);
-    }
+    }        
 }

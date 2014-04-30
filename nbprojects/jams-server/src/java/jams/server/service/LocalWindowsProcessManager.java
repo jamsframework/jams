@@ -166,7 +166,7 @@ public class LocalWindowsProcessManager implements ProcessManager {
             for (java.io.File file : files){
                 Path filePath = file.toPath();                
                 String relPath = filePath.relativize(wsPath).toString();
-                
+                //änderungen nachverfolgen .. 
                 if (!ws.containsFile(relPath)){
                     File dbFile = new File();
                     dbFile.setHash("0");
