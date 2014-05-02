@@ -296,6 +296,7 @@ public class ModelGUIPanel extends JPanel {
         groupPanes.put(group, scrollPane);
     }
 
+    // delete group of gui components 
     private void deleteGroup() {
 
         int index = tabbedPane.getSelectedIndex();
@@ -308,21 +309,18 @@ public class ModelGUIPanel extends JPanel {
         }
 
         // get group
-
         ModelProperties mp = view.getModelDescriptor().getModelProperties();
-
         ModelProperties.Group group = mp.getGroup(index);
 
         // remove group
-
         mp.removeGroup(group);
 
         // remove tabbedPane and entry from groupPanels
-
         tabbedPane.removeTabAt(index);
         groupPanels.remove(group);
     }
 
+    // update group of gui components
     public void updateGroup(Group group) {
 
         if (group.isSubGroup()) {
@@ -397,6 +395,7 @@ public class ModelGUIPanel extends JPanel {
         contentPanel.updateUI();
     }
 
+    // update panel, i.e. load list of editors and create controls
     public void updatePanel() {
 
         ArrayList<ModelProperties.Group> groups = view.getModelDescriptor().getModelProperties().getGroupList();

@@ -153,6 +153,7 @@ public class ComponentAttributePanel extends JPanel {
         contextCombo = new JComboBox();
         listPanel.add(contextCombo, BorderLayout.NORTH);
 
+        
         customAttributeButton = new JButton(JAMS.i18n("Custom_Attribute"));
         customAttributeButton.addActionListener(new ActionListener() {
             @Override

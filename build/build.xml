@@ -84,7 +84,7 @@
         <echo>Created Thornthwaite</echo>
     </target>
 
-    <target name="dostarters" depends="juicestarter, remotestarter, jamsstarter" />
+    <target name="dostarters" depends="juicestarter, jamsstarter" />
 
     <target name="juicestarter">
         <property name="starterproj" value="jams-starter"/>

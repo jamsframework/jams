@@ -62,8 +62,10 @@ import jams.meta.ContextDescriptor;
 import jams.meta.ModelNode;
 import jamsui.juice.gui.tree.JAMSNode;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
+import javax.swing.table.TableCellRenderer;
 
 /**
  *
@@ -102,7 +104,7 @@ public class ComponentPanel extends JPanel {
 
         // create some bold font for the labels
         Font labelFont = (Font) UIManager.getDefaults().get("Label.font");
-        labelFont = new Font(labelFont.getName(), Font.BOLD, labelFont.getSize() );
+        labelFont = new Font(labelFont.getName(), Font.BOLD, labelFont.getSize());
 
         GridBagLayout mainLayout = new GridBagLayout();
         componentPanel.setLayout(mainLayout);
@@ -130,7 +132,7 @@ public class ComponentPanel extends JPanel {
                 }
             }
         });
-        
+
         JPanel namePanel = new JPanel();
         ((FlowLayout)namePanel.getLayout()).setVgap(0);
         namePanel.add(getTextField("name", "", false));
@@ -142,7 +144,6 @@ public class ComponentPanel extends JPanel {
 
         GUIHelper.addGBComponent(componentPanel, mainLayout, namePanel, 1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.VERTICAL, GridBagConstraints.WEST);
         GUIHelper.addGBComponent(componentPanel, mainLayout, typePanel, 1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.VERTICAL, GridBagConstraints.WEST);
-
 
         //create var table
         varTable = new JTable() {
@@ -178,10 +179,14 @@ public class ComponentPanel extends JPanel {
         varTableColumnIds.add("R/W");
         varTableColumnIds.add(JAMS.i18n("Context_Attribute"));
         varTableColumnIds.add(JAMS.i18n("Value"));
+        varTableColumnIds.add("");
 
         varTableModel = new DefaultTableModel(varTableColumnIds, 0);
         varTable.setModel(varTableModel);
         varTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        
+        TableCellRenderer buttonRenderer = new JTableButtonRenderer();
+//        varTable.getColumn(5).setCellRenderer(buttonRenderer);
 
         JScrollPane varTableScroll = new JScrollPane(varTable);
         varTableScroll.setPreferredSize(TABLE_DIMENSION);
@@ -239,7 +244,6 @@ public class ComponentPanel extends JPanel {
         attributeTable.setModel(attributeTableModel);
         attributeTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
-
         JScrollPane attributeTableScroll = new JScrollPane(attributeTable);
         attributeTableScroll.setPreferredSize(TABLE_DIMENSION);
 
@@ -286,7 +290,6 @@ public class ComponentPanel extends JPanel {
         GUIHelper.addGBComponent(attributeButtonPanel, gbl, new JPanel(), 0, 3, 1, 1, 1, 1);
         attributePanel.add(attributeButtonPanel, BorderLayout.EAST);
 
-
         //fill the tabbed pane
         tabPane = new JTabbedPane();
 
@@ -295,16 +298,14 @@ public class ComponentPanel extends JPanel {
         tabPane.setEnabledAt(1, false);
 
         attributeConfigPanel = new ComponentAttributePanel();
-        
+
 //        configLabel = new JLabel(MODEL_CONFIG_STRING);
 //        configLabel.setFont(labelFont);
-
         switchPanel = new JPanel();
         switchPanel.setBackground(Color.red);
 
 //        JLabel attrOverviewLabel = new JLabel(ATTR_OVERVIEW_STRING);
 //        attrOverviewLabel.setFont(labelFont);
-        
 //        GUIHelper.addGBComponent(componentPanel, mainLayout, new JPanel(), 0, 2, 4, 1, 1.0, 1.0);
 //        GUIHelper.addGBComponent(componentPanel, mainLayout, attrOverviewLabel, 0, 10, 4, 1, 0, 0);
         GUIHelper.addGBComponent(componentPanel, mainLayout, tabPane, 0, 20, 4, 1, 1.0, 1.0, GridBagConstraints.VERTICAL, GridBagConstraints.WEST);
@@ -314,9 +315,9 @@ public class ComponentPanel extends JPanel {
 
         switchPanel.add(attributeConfigPanel);
 //        switchPanel.add(new JPanel());
-        ((FlowLayout)switchPanel.getLayout()).setHgap(0);
-        ((FlowLayout)switchPanel.getLayout()).setVgap(0);
-        
+        ((FlowLayout) switchPanel.getLayout()).setHgap(0);
+        ((FlowLayout) switchPanel.getLayout()).setVgap(0);
+
         reset(DEFAULT_STRING);
         setLayout(new FlowLayout(FlowLayout.LEFT));
         add(componentPanel);
@@ -420,7 +421,6 @@ public class ComponentPanel extends JPanel {
             }
         }
 
-
         if (componentDescriptor.getType() == JAMSNode.COMPONENT_TYPE) {
             tabPane.setEnabledAt(1, false);
             tabPane.setEnabledAt(0, true);
@@ -521,6 +521,7 @@ public class ComponentPanel extends JPanel {
         varTable.getColumnModel().getColumn(1).setPreferredWidth(80);
         varTable.getColumnModel().getColumn(2).setMaxWidth(35);
         varTable.getColumnModel().getColumn(3).setPreferredWidth(150);
+        varTable.getColumnModel().getColumn(5).setPreferredWidth(20);
 
     }
 
@@ -564,5 +565,12 @@ public class ComponentPanel extends JPanel {
 
         ComponentDescriptor ancestorArray[] = ancestors.toArray(new ComponentDescriptor[ancestors.size()]);
         attributeConfigPanel.update(attr, ancestorArray, componentDescriptor, varTable.getModel(), selectedVarRow);
+    }
+    
+    private static class JTableButtonRenderer implements TableCellRenderer {        
+        @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JButton button = (JButton)value;
+            return button;  
+        }
     }
 }

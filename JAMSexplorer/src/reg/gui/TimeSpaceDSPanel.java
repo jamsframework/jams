@@ -22,6 +22,7 @@
 package reg.gui;
 
 import jams.JAMS;
+import jams.JAMSLogging;
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
 import jams.tools.StringTools;
@@ -854,7 +855,6 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             @Override
             public void done() {
-                System.out.println("READY TO START");
 
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     @Override
@@ -866,7 +866,6 @@ public class TimeSpaceDSPanel extends DSPanel {
                             return;  // errorMessage?
                         }
 
-                        System.out.println("shape selected >" + selectedShape + "<");
                         ShapeFileDataStore dataStore = (ShapeFileDataStore) explorer.getWorkspace().getInputDataStore(selectedShape);
                         if (dataStore == null) {
                             Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No datastore found.");
@@ -875,11 +874,16 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                         URI uri = dataStore.getUri();
                         if (uri == null) {
-                            System.out.println("error: can't access shapefile! path is: "
+                            Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "error: can't access shapefile! path is: "
                                     + dataStore.getShapeFile().getAbsolutePath());
                             return;
                         }
-                        System.out.println("KEY COLUMN:" + dataStore.getKeyColumn());
+                        
+                        // we want to log, but without graphical output..
+                        JAMSLogging.unregisterLogger(Logger.getLogger(JAMSSpreadSheet.class.getName()));
+                        Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.INFO, "Using shape file >" + selectedShape + "< / KEY COLUMN: " + dataStore.getKeyColumn());
+                        JAMSLogging.registerLogger(Logger.getLogger(JAMSSpreadSheet.class.getName()));
+
                         transfer.setShapeFileDataStore(dataStore);
 
                         //ShapeFileDataStore shapeDataStore = (ShapeFileDataStore) explorer.getWorkspace().;
@@ -888,9 +892,6 @@ public class TimeSpaceDSPanel extends DSPanel {
                         if (result) {
                             view.show();
                         }
-                        
-                        
-
                     }
                 });
 
