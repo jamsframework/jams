@@ -137,4 +137,16 @@ public class Parameter extends Attribute{
     public int compareTo(Object o){
         return this.toString().compareToIgnoreCase(o.toString());
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if (o instanceof Parameter){
+            Parameter other = (Parameter)o;
+            if (other.getAttributeName().equals(this.getAttributeName()))
+                if (other.getParentName().equals(this.getParentName()))
+                    return true;
+        }
+        return false;
+
+    }
 }

@@ -27,4 +27,16 @@ public class Objective extends Attribute{
     public Objective(ComponentField cf) {
        super(cf);
     }
+    
+    @Override
+    public boolean equals(Object o){
+        if (o instanceof Parameter){
+            Parameter other = (Parameter)o;
+            if (other.getAttributeName().equals(this.getAttributeName()))
+                if (other.getParentName().equals(this.getParentName()))
+                    return true;
+        }
+        return false;
+
+    }
 }

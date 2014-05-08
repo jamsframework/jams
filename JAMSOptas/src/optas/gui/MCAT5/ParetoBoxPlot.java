@@ -532,7 +532,7 @@ public class ParetoBoxPlot extends MCAT5Plot {
     }
     
     public static void main(String[] args) {
-        DataCollection dc = DataCollection.createFromFile(new File("E:\\ModelData\\Testgebiete\\J2000\\Gehlberg\\output\\20130809_215643\\2013_08_08_sensitivity.cdat"));
+        DataCollection dc = DataCollection.createFromFile(new File("E:\\ModelData\\Testgebiete\\J2000\\Gehlberg\\output\\20140424_131138\\new_nsga_sample.cdat"));
 
         try {
             DataRequestPanel d = new DataRequestPanel(new ParetoBoxPlot(), dc);
