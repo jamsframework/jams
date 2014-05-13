@@ -27,11 +27,13 @@ import optas.tools.PatchedChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.XYDataset;
 
 /**
  *
@@ -52,6 +54,21 @@ public class ClassPlot extends MCAT5Plot {
         init();
     }
 
+    private class CustomXYToolTipGenerator implements XYToolTipGenerator{
+
+        int index=0;
+        String tooltip = "";
+        public CustomXYToolTipGenerator(int index, String tooltip){
+            this.tooltip = tooltip;
+            this.index = index;
+        }
+        @Override
+        public String generateToolTip(XYDataset xyd, int i, int i1) {
+            return tooltip;
+        }
+        
+    }
+    
     private void init() {
         plot.setRenderer(renderer);
         plot.setDomainAxis(new DateAxis(JAMS.i18n("TIME")));
@@ -86,10 +103,13 @@ public class ClassPlot extends MCAT5Plot {
 
             @Override
             public void stateChanged(ChangeEvent e) {
+                
                 JSlider slider = (JSlider) e.getSource();
-                ClassPlot.this.GROUPS = slider.getValue();
-                groupCount.setText(Integer.toString(GROUPS));
-                redraw();
+                if (!slider.getValueIsAdjusting()) {
+                    ClassPlot.this.GROUPS = slider.getValue();
+                    groupCount.setText(Integer.toString(GROUPS));
+                    redraw();
+                }
             }
         });
         sliderPanel.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("number_of_groups")));
@@ -172,7 +192,18 @@ public class ClassPlot extends MCAT5Plot {
                 mean /= (double)(index_high-index_low);
                 dataset.add(d, mean);
             }
+            double mean_eff = 0;
+            for (int k=index_low;k<index_high;k++){
+                mean_eff += eff.getValue(sortedIds[k]);
+            }
+            mean_eff /= (double)(index_high-index_low);
             series.addSeries(dataset);
+            
+            String tooltip = "<html><body>";                        
+            tooltip += eff.getName() + ":" + String.format("%.2f&nbsp;", mean_eff);            
+            tooltip+="</body></html>";
+                        
+            plot.getRenderer().setSeriesToolTipGenerator(i, new CustomXYToolTipGenerator(i, tooltip) );
         }
 
         plot.setDataset(series);

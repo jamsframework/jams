@@ -31,6 +31,7 @@ import optas.data.EfficiencyEnsemble;
 import optas.data.Parameter;
 import optas.data.SimpleEnsemble;
 import optas.tools.PatchedChartPanel;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 
 /**
  *
@@ -134,9 +135,10 @@ public class APosterioriPlot extends MCAT5Plot {
 
         plot.setDataset(0, new XYBarDataset(new XYSeriesCollection(dataset), ((max - min) / (double) boxCount)));
 
-        XYBarRenderer renderer = new XYBarRenderer(0.33 / (double) boxCount);
-        renderer.setSeriesPaint(0, Color.DARK_GRAY);
+        XYBarRenderer renderer = new XYBarRenderer(0.33 / (double) boxCount);        
         renderer.setShadowVisible(false);
+        renderer.setBarPainter(new StandardXYBarPainter());
+        renderer.setSeriesPaint(0, Color.DARK_GRAY);        
         plot.setRenderer(0, renderer);
 
         if (null != plot.getRangeAxis()) {

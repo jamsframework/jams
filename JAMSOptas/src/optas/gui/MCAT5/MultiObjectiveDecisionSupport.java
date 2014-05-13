@@ -42,6 +42,7 @@ import optas.gui.MCAT5.MCAT5Plot.SimpleRequest;
 import optas.data.DataSet;
 import optas.data.Efficiency;
 import optas.data.Measurement;
+import optas.data.Parameter;
 import optas.data.RankingTable;
 import optas.data.SimpleEnsemble;
 import optas.data.TimeSerie;
@@ -64,12 +65,12 @@ import org.jfree.data.category.DefaultCategoryDataset;
 @SuppressWarnings({"unchecked"})
 public class MultiObjectiveDecisionSupport extends MCAT5Plot {
 
-    final int MAX_OBJCOUNT = 10;
+    final int MAX_OBJCOUNT = 100;
     XYPlot hydroChart = new XYPlot();
     PatchedSpiderWebPlot spiderPlot = new PatchedSpiderWebPlot();
     PatchedChartPanel chartPanel1 = null;
     PatchedChartPanel chartPanel2 = null;
-    JSlider objSliders[] = new JSlider[10];
+    JSlider objSliders[] = new JSlider[MAX_OBJCOUNT];
     JPanel mainPanel = null;
     JTextField alphaField = new JTextField(5);
     JButton exportDataset = new JButton("Export");
@@ -77,7 +78,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
     TimeSerieEnsemble ts = null;
     ArrayList<Sample> paretoFront = null;
     RankingTable rt = null;
-    SimpleEnsemble y[] = null;
+    SimpleEnsemble x[],y[] = null;
     int N, m = 0;
     double alpha = 0.1;
     int selectedId = 0;
@@ -174,7 +175,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
                             break;
                         }
                     }
-
+                                        
                     int id = -1;
                     for (int j = 0; j < N; j++) {
                         boolean equals = true;
@@ -185,6 +186,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
                         }
                         if (equals) {
                             updateSimulation(j);
+                            updateParameterSet(j);
                             break;
                         }
                     }
@@ -306,10 +308,10 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
                             }
                         }
                         redistribution = 0;
-                        for (int i = 0; i < objSliders.length; i++) {
+                        for (int i = 0; i < m; i++) {
                             redistribution += correction[i];
                         }
-                        for (int i = 0; i < objSliders.length; i++) {
+                        for (int i = 0; i < m; i++) {
                             if (objSliders[i] == actSlider) {
                                 continue;
                             }
@@ -340,6 +342,19 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
         spiderPlot.setSeriesPaint(m, Color.BLACK);
     }
 
+    private void updateParameterSet(int index){
+        double selectedParameterSet[] = new double[x.length];
+        String parameterName[] = new String[x.length];
+        
+        int i=0;
+        for (SimpleEnsemble e : x){
+            selectedParameterSet[i] = e.getValue(e.getId(index));
+            parameterName[i] = e.getName();
+            i++;
+            System.out.println(e.getName() + ":\t" + e.getValue(e.getId(index)));
+        }        
+    }
+    
     private void updateSimulation(int index) {
         if (ts == null) {
             return;
@@ -398,10 +413,16 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
     }
 
     private void initDataSet() {
-        Set<String> xSet = this.getDataSource().getDatasets(Efficiency.class);
-        y = new SimpleEnsemble[xSet.size()];
+        Set<String> xSet = this.getDataSource().getDatasets(Parameter.class);
+        x = new SimpleEnsemble[xSet.size()];
         int counter = 0;
         for (String name : xSet) {
+            x[counter++] = this.getDataSource().getSimpleEnsemble(name);
+        }
+        Set<String> ySet = this.getDataSource().getDatasets(Efficiency.class);
+        y = new SimpleEnsemble[ySet.size()];
+        counter = 0;
+        for (String name : ySet) {
             y[counter++] = this.getDataSource().getSimpleEnsemble(name);
         }
         N = this.getDataSource().getSimulationCount();
@@ -451,8 +472,8 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
             return;
         }
         //calculate sample based on weights
-        double w[] = new double[this.objSliders.length];
-        for (int i = 0; i < w.length; i++) {
+        double w[] = new double[MAX_OBJCOUNT];
+        for (int i = 0; i < MAX_OBJCOUNT; i++) {
             w[i] = 0.01 * (double) this.objSliders[i].getValue();
         }
 

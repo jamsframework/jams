@@ -50,8 +50,8 @@ public class DottyPlot extends MCAT5Plot {
     }
 
     public DottyPlot() {
-        this.addRequest(new SimpleRequest(JAMS.i18n("PARAMETER"), StateVariable.class));
-        this.addRequest(new SimpleRequest(JAMS.i18n("Efficiency"), StateVariable.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Attribute"), StateVariable.class));
+        this.addRequest(new SimpleRequest(JAMS.i18n("Attribute"), StateVariable.class));
 
         init();
     }

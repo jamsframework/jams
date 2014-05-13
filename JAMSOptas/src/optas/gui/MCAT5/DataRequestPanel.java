@@ -220,21 +220,32 @@ public final class DataRequestPanel extends JPanel {
     }
 
     public void updatePlot() {
-
-        for (RequestGUI rGUI : requests) {
-            ArrayList<DataSet> list = new ArrayList<DataSet>();
-            for (JComboBox box : rGUI.boxes) {
-                DataSet e = null;
-                if (box.getSelectedItem() instanceof String) {
-                    e = data.getDataSet((String) box.getSelectedItem());
-                    list.add(e);
-                } else {
-                    list.add((DataSet) box.getSelectedItem());
+        Frame parent = JFrame.getFrames().length > 0 ? JFrame.getFrames()[0] : null;
+        WorkerDlg progress = new WorkerDlg(parent, "Collecting data", " ");
+        progress.setInderminate(true);
+        progress.setTask(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for (RequestGUI rGUI : requests) {
+                        ArrayList<DataSet> list = new ArrayList<DataSet>();
+                        for (JComboBox box : rGUI.boxes) {
+                            if (box.getSelectedItem() instanceof String) {
+                                DataSet e = data.getDataSet((String) box.getSelectedItem());
+                                list.add(e);
+                            } else {
+                                list.add((DataSet) box.getSelectedItem());
+                            }
+                        }
+                        plot.setData(rGUI.request.name, list);
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
                 }
-
             }
-            plot.setData(rGUI.request.name, list);
-        }
+        });
+        progress.execute();
+        progress = null;
 
         plot.redraw();
     }

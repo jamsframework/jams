@@ -80,6 +80,7 @@ public class SimpleEnsemble extends Ensemble{
         this.value[index] = value;
     }
 
+    //returns ID of minimal element
     public int findArgMin(){
         double min = Double.POSITIVE_INFINITY;
         int index = -1;

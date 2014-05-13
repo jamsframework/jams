@@ -19,11 +19,13 @@ import optas.tools.PatchedChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.xy.XYDataset;
 
 
 /**
@@ -33,7 +35,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 public class BestPredictionPlot extends MCAT5Plot{
     XYPlot plot1 = new XYPlot();            
     PatchedChartPanel chartPanel1 = null;
-    
+        
     public BestPredictionPlot() {
         this.addRequest(new SimpleRequest(JAMS.i18n("SIMULATED_TIMESERIE"),TimeSerie.class));
         this.addRequest(new SimpleRequest(JAMS.i18n("OBSERVED_TIMESERIE"),Measurement.class));
@@ -77,6 +79,21 @@ public class BestPredictionPlot extends MCAT5Plot{
         redraw();
     }
 
+    private class CustomXYToolTipGenerator implements XYToolTipGenerator{
+
+        int index=0;
+        String tooltip = "";
+        public CustomXYToolTipGenerator(int index, String tooltip){
+            this.tooltip = tooltip;
+            this.index = index;
+        }
+        @Override
+        public String generateToolTip(XYDataset xyd, int i, int i1) {
+            return tooltip;
+        }
+        
+    }
+    @Override
     public void refresh() throws NoDataException {
         if (!this.isRequestFulfilled()) {
             return;
@@ -90,22 +107,28 @@ public class BestPredictionPlot extends MCAT5Plot{
         long time_length =  obs.getTimeDomain().getNumberOfTimesteps();
 
         TimeSeries bestTSDataset[] = new TimeSeries[eff.size()+1];
+           
         
         for (int i=0;i<eff.size();i++){
             EfficiencyEnsemble effEnsemble = (EfficiencyEnsemble)eff.get(i);
-            int argmin = effEnsemble.findArgMin();
-            int argmax = effEnsemble.findArgMax();
+            int argbest = effEnsemble.findArgBest();
 
             bestTSDataset[i] = new TimeSeries("opt-"+eff.get(i).name);
             for (int j=0;j<time_length;j++){
                 Day d = new Day(obs.getTime((int) j));
-                if (effEnsemble.isPositiveBest()) {
-                    bestTSDataset[i].add(d,ts.get(j, argmax));
-                }
-                else {
-                    bestTSDataset[i].add(d,ts.get(j, argmin));
+                bestTSDataset[i].add(d,ts.get(j, argbest));                
+            }
+            String tooltip = "<html><body>";
+            for (int j=0;j<eff.size();j++){
+                EfficiencyEnsemble effEnsemble2 = (EfficiencyEnsemble)eff.get(j);
+                tooltip += effEnsemble2.getName() + ":" + String.format("%.2f", effEnsemble2.getValue(argbest));
+                if (j < eff.size()-1){
+                    tooltip += "<br>";
                 }
             }
+            tooltip+="</body></html>";
+                        
+            plot1.getRenderer().setSeriesToolTipGenerator(i, new CustomXYToolTipGenerator(i, tooltip) );
         }
         bestTSDataset[eff.size()] = new TimeSeries(JAMS.i18n("OBSERVED"));
         for (int j=0;j<time_length;j++){  
@@ -114,11 +137,11 @@ public class BestPredictionPlot extends MCAT5Plot{
         }                      
                  
         TimeSeriesCollection bestSeries = new TimeSeriesCollection();
-        for (int i=0;i<bestTSDataset.length;i++){
-            bestSeries.addSeries(bestTSDataset[i]);
+        for (TimeSeries bestTSDataset1 : bestTSDataset) {
+            bestSeries.addSeries(bestTSDataset1);
         }                                                                              
         plot1.setDataset(bestSeries);        
-                                        
+                           
         if (plot1.getRangeAxis() != null) {
             plot1.getRangeAxis().setAutoRange(true);
         }        
