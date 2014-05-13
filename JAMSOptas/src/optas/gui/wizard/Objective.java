@@ -30,8 +30,8 @@ public class Objective extends Attribute{
     
     @Override
     public boolean equals(Object o){
-        if (o instanceof Parameter){
-            Parameter other = (Parameter)o;
+        if (o instanceof Objective){
+            Objective other = (Objective)o;
             if (other.getAttributeName().equals(this.getAttributeName()))
                 if (other.getParentName().equals(this.getParentName()))
                     return true;

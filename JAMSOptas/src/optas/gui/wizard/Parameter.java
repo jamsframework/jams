@@ -142,6 +142,22 @@ public class Parameter extends Attribute{
     public boolean equals(Object o){
         if (o instanceof Parameter){
             Parameter other = (Parameter)o;
+            if (other.getAttributeName()==null){                
+                if (this.getAttributeName()==null)
+                    return true;            
+                else
+                    return false;
+            }
+            if (this.getParentName()==null)
+                return false;
+            if (other.getParentName()==null){                
+                if (this.getParentName()==null)
+                    return true;            
+                else
+                    return false;
+            }
+            if (this.getParentName()==null)
+                return false;
             if (other.getAttributeName().equals(this.getAttributeName()))
                 if (other.getParentName().equals(this.getParentName()))
                     return true;
