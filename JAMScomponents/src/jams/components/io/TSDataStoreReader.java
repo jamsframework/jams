@@ -39,7 +39,7 @@ import java.util.ArrayList;
 @JAMSComponentDescription(title = "TSDataStoreReader",
         author = "Sven Kralisch",
         date = "2014-02-16",
-        version = "1.1",
+        version = "1.1_1",
         description = "This component can be used to obtain data from a time series "
         + "data store which contains only double values and a number of "
         + "station-specific metadata. Additional functions:\n"
@@ -49,9 +49,16 @@ import java.util.ArrayList;
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
     @VersionComments.Entry(version = "1.0_1", comment = "Cache functions removed, minor bug fixes"),
     @VersionComments.Entry(version = "1.1", comment = "\n- Aggregation functions if time steps of data store and model differ\n"
-            + "- Fixed wrong time shift in case of monthly data\n")
+            + "- Fixed wrong time shift in case of monthly data\n"),
+    @VersionComments.Entry(version = "1.1_1", comment = "\n- Fixed bug that caused wrong forward skipping "
+            + "if time offset was very long (> 68 years of daily data)")
 })
 public class TSDataStoreReader extends JAMSComponent {
+    
+    public static void main(String[] args) {
+        int i = Integer.MAX_VALUE;
+        System.out.println(i/ 3600 / 24 / 365);
+    }
 
     /*
      *  Component variables
@@ -214,23 +221,23 @@ public class TSDataStoreReader extends JAMSComponent {
             int steps;
             switch (storeUnit) {
                 case Attribute.Calendar.DAY_OF_YEAR:
-                    steps = (int) diff / 3600 / 24 / storeUnitCount;
+                    steps = (int) (diff / 3600 / 24 / storeUnitCount);
                     storeDate.add(storeUnit, storeUnitCount * steps);
                     break;
                 case Attribute.Calendar.HOUR_OF_DAY:
-                    steps = (int) diff / 3600 / storeUnitCount;
+                    steps = (int) (diff / 3600 / storeUnitCount);
                     storeDate.add(storeUnit, storeUnitCount * steps);
                     break;
                 case Attribute.Calendar.WEEK_OF_YEAR:
-                    steps = (int) diff / 3600 / 24 / 7 / storeUnitCount;
+                    steps = (int) (diff / 3600 / 24 / 7 / storeUnitCount);
                     storeDate.add(storeUnit, storeUnitCount * steps);
                     break;
                 case Attribute.Calendar.MINUTE:
-                    steps = (int) diff / 60 / storeUnitCount;
+                    steps = (int) (diff / 60 / storeUnitCount);
                     storeDate.add(storeUnit, storeUnitCount * steps);
                     break;
                 case Attribute.Calendar.SECOND:
-                    steps = (int) diff / storeUnitCount;
+                    steps = (int) (diff / storeUnitCount);
                     storeDate.add(storeUnit, storeUnitCount * steps);
                     break;
                 default:
