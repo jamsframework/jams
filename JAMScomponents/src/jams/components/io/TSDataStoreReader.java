@@ -54,11 +54,6 @@ import java.util.ArrayList;
             + "if time offset was very long (> 68 years of daily data)")
 })
 public class TSDataStoreReader extends JAMSComponent {
-    
-    public static void main(String[] args) {
-        int i = Integer.MAX_VALUE;
-        System.out.println(i/ 3600 / 24 / 365);
-    }
 
     /*
      *  Component variables
