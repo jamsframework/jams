@@ -71,14 +71,14 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     
     private List<Job> getJobsForUser(int ownerID){
         return em.createQuery(
-                "SELECT w FROM Jobs w WHERE w.ownerID = :ownerID")
-                .setParameter("ownderID", ownerID)
+                "SELECT w FROM Job w WHERE w.ownerID = :ownerID")
+                .setParameter("ownerID", ownerID)
                 .getResultList();
     }
     
     private List<Job> getAllJobs() {
         return em.createQuery(
-                "SELECT w FROM Jobs w ")
+                "SELECT w FROM Job w ")
                 .getResultList();
     }
        
@@ -263,6 +263,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         
         try{
             JobState state = processManager.state(job);
+
             if (!state.isActive()){
                 job.setPID(-1);
                 em.persist(job);
@@ -322,8 +323,8 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         }
         
         try{
-            JobState state = processManager.kill(job);
-            if (state.isActive()){
+            JobState state = processManager.kill(job);            
+            if (state!=null && state.isActive()){
                 return Response.status(Status.REQUEST_TIMEOUT).build();
             }else{
                 super.remove(job);
@@ -334,6 +335,27 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    
+    @GET
+    @Path("{id}/refresh")
+    @Produces({"application/xml"})
+    public Response refresh(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+        User currentUser = getCurrentUser(req);
+        if (currentUser == null) {
+            return Response.status(Status.FORBIDDEN).build();
+        }
+        
+        Job job = find(id);
+        if (job == null){
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        if (job.getOwner().getId() != currentUser.getId()){
+            return Response.status(Status.FORBIDDEN).build();
+        }
+        
+        Workspace ws = processManager.updateWorkspace(job, em);
+        return Response.ok(ws).build();            
     }
     
     @Override

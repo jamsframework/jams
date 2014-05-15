@@ -175,7 +175,7 @@ public class WorkspaceBuilder {
         }
         
         for (WorkspaceFileAssociation wfa : files) {
-            final java.io.File file = new java.io.File(ApplicationConfig.SERVER_UPLOAD_DIRECTORY, wfa.getFile().getHash());
+            final java.io.File file = new java.io.File(wfa.getFile().getLocation());
             if (wfa.getRole() == WorkspaceFileAssociation.ROLE_RUNTIMELIBRARY) {
                 zipFile(file, "/runtime_lib/" + wfa.getPath(), stream);
             } else if (wfa.getRole() == WorkspaceFileAssociation.ROLE_COMPONENTSLIBRARY) {

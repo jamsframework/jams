@@ -124,7 +124,7 @@ public class FileFacadeREST extends AbstractFacade<File> {
         }
         File f = new File();
         f.setHash(hashCode);        
-        f.setLocation(filePath + "/" + hashCode);
+        f.setLocation(ApplicationConfig.SERVER_UPLOAD_DIRECTORY + "/" + hashCode);
         
         List<File> list = findHash(hashCode);
         if (!list.isEmpty())

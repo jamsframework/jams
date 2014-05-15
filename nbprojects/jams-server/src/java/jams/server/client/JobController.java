@@ -25,6 +25,7 @@ import jams.server.entities.Job;
 import jams.server.entities.JobState;
 import jams.server.entities.Jobs;
 import jams.server.entities.Workspace;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -69,8 +70,8 @@ public class JobController extends Controller {
         return (JobState) client.httpGet(serverURL + "/job/" + job.getId() + "/kill", JobState.class);
     }
     
-    public JobState delete(Job job) throws JAMSClientException {
-        return (JobState) client.httpGet(serverURL + "/job/" + job.getId() + "/delete", JobState.class);
+    public Job delete(Job job) throws JAMSClientException {
+        return (Job) client.httpGet(serverURL + "/job/" + job.getId() + "/delete", Job.class);
     }
     
     public String getInfoLog(Job job, int offset, int size) throws JAMSClientException {
@@ -113,5 +114,11 @@ public class JobController extends Controller {
             }catch(IOException ioe){}
         }
         return t;
-    }        
+    }   
+    
+    public File downloadWorkspace(File target, Job job) throws JAMSClientException{        
+        Workspace ws = (Workspace)client.httpGet(serverURL + "/job/"+job.getId()+ "/refresh/", Workspace.class);
+                
+        return this.getWorkspaceController().downloadWorkspace(target, ws);
+    }
 }

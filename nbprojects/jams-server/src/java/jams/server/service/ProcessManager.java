@@ -24,7 +24,9 @@ package jams.server.service;
 
 import jams.server.entities.Job;
 import jams.server.entities.JobState;
+import jams.server.entities.Workspace;
 import java.io.IOException;
+import javax.persistence.EntityManager;
 import javax.ws.rs.core.StreamingOutput;
 
 /**
@@ -37,4 +39,5 @@ public interface ProcessManager {
     JobState kill(Job job) throws IOException;
     StreamingOutput streamInfoLog(Job job) throws IOException;
     StreamingOutput streamErrorLog(Job job) throws IOException;
+    Workspace updateWorkspace(Job job, EntityManager em);
 }

@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.logging.Level;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -221,14 +222,16 @@ public class HTTPClient {
                         header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")).
                         get();
             }
-        }catch(UnsupportedEncodingException uee){
+        }catch(  UnsupportedEncodingException | ProcessingException uee){
             throw new JAMSClientException(uee.toString(), JAMSClientException.ExceptionType.UNKNOWN, uee);
-        }    
+        }
 
         if (response == null){
             return null;
         }
         if (sessionID == null){
+            if (response.getHeaders()==null || response.getHeaders().get("set-cookie")==null)
+                return null;
             String result = response.getHeaders().get("set-cookie").toString();
             result = result.split(";")[0];
             sessionID = result.split("=")[1];

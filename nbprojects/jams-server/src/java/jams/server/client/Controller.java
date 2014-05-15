@@ -167,7 +167,7 @@ public class Controller {
             System.out.println("Job with id " + job.getId() + " finished after " + client.getJobController().getState(job).getDuration() + " ms." );
             Workspace ws3 = job.getWorkspace();
             System.out.println("Workspace of " +ws3.getName()+" Model is downloading!");
-            client.getWorkspaceController().downloadWorkspace(new File("E:/test_client/"+ws3.getName()),ws3);
+            client.getJobController().downloadWorkspace(new File("E:/test_client/"+ws3.getName()),job);
             client.getJobController().delete(job);                
             System.out.println("Job with id " + job.getId() + " deleted");
             client.getWorkspaceController().remove(ws2);

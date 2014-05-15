@@ -59,6 +59,10 @@ public class Job implements Serializable {
     @JoinColumn(name="ownerID")
     private User owner;
     
+    @Basic(optional = false)
+    @Column(name = "ownerID", insertable = false, updatable = false)
+    private Integer ownerID;
+    
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="workspaceID")
     private Workspace workspace;
@@ -105,6 +109,10 @@ public class Job implements Serializable {
         this.owner = owner;
     }
 
+    public User getOwnerID() {
+        return owner;
+    }
+    
     public Workspace getWorkspace() {
         return workspace;
     }
@@ -139,6 +147,6 @@ public class Job implements Serializable {
     
     @Override
     public String toString() {
-        return "jams.server.entities.Job[ id=" + id + " ]";
+        return "jams.server.entities.Job[ id=" + id + " ]";        
     }    
 }
