@@ -228,6 +228,8 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
 		JLabel alphaLabel = new JLabel("alpha: ");
 
 		candidateTable = new JTable();
+		candidateTable.getTableHeader().setReorderingAllowed(false);
+		candidateTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane scrollPane = new JScrollPane(candidateTable);
 
 		GroupLayout.ParallelGroup group1 = layout.createParallelGroup();
