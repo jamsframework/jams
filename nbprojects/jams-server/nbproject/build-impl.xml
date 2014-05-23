@@ -853,8 +853,16 @@ exists or setup the property manually. For example like this:
     <!--
                 COMPILATION SECTION
             -->
-    <target depends="init" if="no.dist.ear.dir" name="deps-module-jar" unless="no.deps"/>
-    <target depends="init" if="dist.ear.dir" name="deps-ear-jar" unless="no.deps"/>
+    <target depends="init" if="no.dist.ear.dir" name="deps-module-jar" unless="no.deps">
+        <ant antfile="${project.jams-server-core}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+    </target>
+    <target depends="init" if="dist.ear.dir" name="deps-ear-jar" unless="no.deps">
+        <ant antfile="${project.jams-server-core}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+    </target>
     <target depends="init, deps-module-jar, deps-ear-jar" name="deps-jar" unless="no.deps"/>
     <target depends="init,deps-jar" name="-pre-pre-compile">
         <mkdir dir="${build.classes.dir}"/>
@@ -1001,6 +1009,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.commons-codec-1.9.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.jna.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${file.reference.platform.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.jams-server-core.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
@@ -1008,6 +1017,7 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${file.reference.commons-codec-1.9.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.jna.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.platform.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.jams-server-core.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
         <delete dir="${build.web.dir}/WEB-INF/lib"/>
@@ -1366,7 +1376,7 @@ exists or setup the property manually. For example like this:
         <mkdir dir="${build.test.results.dir}"/>
     </target>
     <target depends="init,compile-test,-pre-test-run" if="have.tests" name="-do-test-run">
-        <webproject2:test includes="${includes}" testincludes="**/*Test.java"/>
+        <webproject2:test testincludes="**/*Test.java"/>
     </target>
     <target depends="init,compile-test,-pre-test-run,-do-test-run" if="have.tests" name="-post-test-run">
         <fail if="tests.failed" unless="ignore.failing.tests">Some tests failed; see details above.</fail>
@@ -1420,7 +1430,9 @@ exists or setup the property manually. For example like this:
                 
                 CLEANUP SECTION
             -->
-    <target depends="init" name="deps-clean" unless="no.deps"/>
+    <target depends="init" name="deps-clean" unless="no.deps">
+        <ant antfile="${project.jams-server-core}/build.xml" inheritall="false" target="clean"/>
+    </target>
     <target depends="init" name="do-clean">
         <condition property="build.dir.to.clean" value="${build.web.dir}">
             <isset property="dist.ear.dir"/>

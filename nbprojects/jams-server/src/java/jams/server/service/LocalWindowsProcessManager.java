@@ -75,7 +75,7 @@ public class LocalWindowsProcessManager implements ProcessManager {
     public Job deploy(Job job) throws IOException {
 
         WorkspaceBuilder builder = new WorkspaceBuilder();
-        java.io.File f = builder.zipWorkspace(job.getWorkspace());
+        java.io.File f = builder.zipWorkspace(job.getWorkspace(), job.getModelFile());
 
         java.io.File localExecDir = getLocalExecDir(job);
         localExecDir.mkdirs();
@@ -165,7 +165,7 @@ public class LocalWindowsProcessManager implements ProcessManager {
             Collection<java.io.File> files = listFileTree(dir);            
             for (java.io.File file : files){
                 Path filePath = file.toPath();                
-                String relPath = filePath.relativize(wsPath).toString();
+                String relPath = wsPath.relativize(filePath).toString();
                 //änderungen nachverfolgen .. 
                 if (!ws.containsFile(relPath)){
                     File dbFile = new File();

@@ -26,8 +26,10 @@ import jams.server.entities.JobState;
 import jams.server.entities.Jobs;
 import jams.server.entities.User;
 import jams.server.entities.Workspace;
+import jams.server.entities.WorkspaceFileAssociation;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -39,6 +41,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -88,20 +91,28 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         getEntityManager().persist(ws_clone);
         getEntityManager().flush();
         getEntityManager().refresh(ws_clone);
-        return ws;
+        for (WorkspaceFileAssociation wfa : ws.getFiles()){
+            ws_clone.assignFile(wfa.getFile(), wfa.getRole(), wfa.getPath());
+        }        
+        getEntityManager().persist(ws_clone);
+        getEntityManager().flush();
+        getEntityManager().refresh(ws_clone);
+        return ws_clone;
     }
     
-    @PUT
+    @GET
     @Path("create")
     @Consumes({"application/xml", "application/json"})
     @Produces({"application/xml"})
-    public Response create(Workspace entity, @Context HttpServletRequest req) {
+    public Response create(@QueryParam("workspace") Integer wsID, 
+            @QueryParam("file") Integer wfaID, @Context HttpServletRequest req) {
+        
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
         
-        List<Workspace> list = getWorkspaceWithID(entity.getId());
+        List<Workspace> list = getWorkspaceWithID(wsID);
         if (list == null || list.isEmpty()){
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -110,7 +121,16 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (ws.getUser().getId() != currentUser.getId()){
             return Response.status(Status.FORBIDDEN).build();
         }
-        Job job = new Job(0, currentUser, duplicateWorkspace(ws));
+        
+        WorkspaceFileAssociation modelWFA = null;
+        for (WorkspaceFileAssociation wfa : ws.getFiles()){
+            if (wfa.getFile().getId().equals(wfaID))
+                modelWFA = wfa;
+        }
+        if (modelWFA == null){
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        Job job = new Job(0, currentUser, duplicateWorkspace(ws), modelWFA);
         if (!create(job) || job.getId()==null){
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -135,10 +155,9 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         }
         
         List<Job> list = getJobsForUser(currentUser.getId());
-        if (list == null || list.isEmpty()){
+        if (list == null){
             return Response.status(Status.NOT_FOUND).build();
-        }
-        
+        }        
         return Response.ok(new Jobs(list), MediaType.APPLICATION_XML_TYPE).build();
     }
     
@@ -327,8 +346,9 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             if (state!=null && state.isActive()){
                 return Response.status(Status.REQUEST_TIMEOUT).build();
             }else{
-                super.remove(job);
-                em.remove(job.getWorkspace());
+                Workspace ws = job.getWorkspace();                
+                super.remove(job);                
+                em.remove(ws);
             }
             return Response.ok(job, MediaType.APPLICATION_XML_TYPE).build();
         }catch(IOException ioe){

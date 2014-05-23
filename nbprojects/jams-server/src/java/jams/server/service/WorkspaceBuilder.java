@@ -142,38 +142,28 @@ public class WorkspaceBuilder {
         };
     }
     
-    java.io.File zipWorkspace(Workspace ws) throws IOException {
+    java.io.File zipWorkspace(Workspace ws, WorkspaceFileAssociation modelFile) throws IOException {
         //get model file
-        List<WorkspaceFileAssociation> files = ws.getAssociatedFiles();
-        
-        WorkspaceFileAssociation modelFile = null;
-        for (WorkspaceFileAssociation wfa : files) {
-            if (wfa.getRole() == WorkspaceFileAssociation.ROLE_MODEL){
-                modelFile = wfa;
-                break;
-            }
-        }
-        
-        if (modelFile == null){
-            return null;
-        }
-        
+        List<WorkspaceFileAssociation> files = ws.getFiles();
+                               
         java.io.File tmpDir = new java.io.File(ApplicationConfig.SERVER_TMP_DIRECTORY + "/workspace_" + ws.getId());
         tmpDir.mkdirs();
         
         java.io.File JAPFile[] = buildJAPFile(tmpDir);    
-        java.io.File startFile[] = buildStartFiles(tmpDir, modelFile.getPath());
-        
+                
         final java.io.File zipFile = new java.io.File(tmpDir.getAbsolutePath() + "ws.zip");
         ZipOutputStream stream = new ZipOutputStream(new FileOutputStream(zipFile));
                 
         zipFile(JAPFile[0], "/runtime_lib/" + JAPFile[0].getName(), stream);
         zipFile(JAPFile[1], "/runtime_lib/" + JAPFile[1].getName(), stream);
-                                
-        for (java.io.File f : startFile){
-            zipFile(f, "/"  +f.getName(), stream);
+                        
+        if (modelFile != null) {
+            java.io.File startFile[] = buildStartFiles(tmpDir, modelFile.getPath());
+            for (java.io.File f : startFile) {
+                zipFile(f, "/" + f.getName(), stream);
+            }
         }
-        
+                
         for (WorkspaceFileAssociation wfa : files) {
             final java.io.File file = new java.io.File(wfa.getFile().getLocation());
             if (wfa.getRole() == WorkspaceFileAssociation.ROLE_RUNTIMELIBRARY) {
@@ -194,8 +184,8 @@ public class WorkspaceBuilder {
         return new StreamFile(f, false);
     }
     
-    StreamingOutput streamWorkspace(Workspace ws) throws IOException {        
-        final java.io.File zipFile = zipWorkspace(ws);
+    StreamingOutput streamWorkspace(Workspace ws, WorkspaceFileAssociation wfaModel) throws IOException {        
+        final java.io.File zipFile = zipWorkspace(ws, wfaModel);
                 
         return new StreamFile(zipFile, true);
     }

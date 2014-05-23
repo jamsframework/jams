@@ -123,7 +123,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
             //check if files are still in use
-            List<WorkspaceFileAssociation> files = ws.getAssociatedFiles();
+            List<WorkspaceFileAssociation> files = ws.getFiles();
             super.remove(ws);
 
             for (WorkspaceFileAssociation wfa : files) {
@@ -161,7 +161,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
     public Response findAll(@QueryParam("name") String name, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
                 
-        List<Workspace> workspaces = em.createNamedQuery("findByUserId")
+        List<Workspace> workspaces = em.createNamedQuery("Workspace.findByUserId")
                 .setParameter("id", user.getId())
                 .getResultList();
 
@@ -180,7 +180,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
             
     @GET
     @Path("{id}/assign")
-    @Produces({"application/xml", "application/json"})
+    @Produces({"application/xml"})
     public Response assignFile(@PathParam("id") Integer wsID,
             @QueryParam("FILE_ID") Integer fileID,
             @QueryParam("ROLE") Integer role,
@@ -203,7 +203,11 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         }
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
             ws.assignFile(f, role, path);
+            try{
             return Response.ok(ws).build();
+            }catch(Throwable t){
+                t.printStackTrace();
+            }
         }
 
         return Response.status(Status.FORBIDDEN).build();
@@ -252,7 +256,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         
         File f = null;
         WorkspaceFileAssociation wfa = null;
-        for (WorkspaceFileAssociation wfa2 : ws.getAssociatedFiles()) {
+        for (WorkspaceFileAssociation wfa2 : ws.getFiles()) {
             if (wfa2.getFile().getId().equals(fileID)) {
                 f = wfa2.getFile();
                 wfa = wfa2;
@@ -296,7 +300,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
             try{
                 WorkspaceBuilder wsBuilder = new WorkspaceBuilder();
-                StreamingOutput so = wsBuilder.streamWorkspace(ws);
+                StreamingOutput so = wsBuilder.streamWorkspace(ws, null);
                 if (so == null){
                     return Response.status(Response.Status.NOT_FOUND).build();
                 }

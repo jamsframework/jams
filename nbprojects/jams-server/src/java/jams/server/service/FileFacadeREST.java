@@ -162,7 +162,11 @@ public class FileFacadeREST extends AbstractFacade<File> {
             fnfe.printStackTrace();
             return null;
         }
-        serverFile.renameTo(new java.io.File(serverFile.getParent(), hash));
+        java.io.File newFileName = new java.io.File(serverFile.getParent(), hash);
+        if (newFileName.exists())
+            serverFile.delete();
+        else
+            serverFile.renameTo(new java.io.File(serverFile.getParent(), hash));
         return hash;
     }
 }
