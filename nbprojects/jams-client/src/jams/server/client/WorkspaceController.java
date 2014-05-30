@@ -101,7 +101,7 @@ public class WorkspaceController extends Controller {
     public File downloadWorkspace(File target, Workspace ws) {   
         File zip = client.download(serverURL + "/workspace/download/"+ws.getId(), target);
         try{
-            unzip(zip, target);
+            unzip(zip, new File(target, ws.getName()));
         }catch(IOException ioe){
             log(Level.SEVERE, ioe.toString(), ioe);
         }

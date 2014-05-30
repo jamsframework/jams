@@ -35,6 +35,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -47,6 +48,7 @@ import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -60,11 +62,11 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
 /**
@@ -78,7 +80,8 @@ public class RemoteGUI {
     JPanel mainPanel = null;
     JComboBox serverField = new JComboBox();
     JTree workspaceTree = new JTree();
-    
+    JFileChooser jfc = new JFileChooser();
+
     public class ColorRenderer extends JLabel
             implements TableCellRenderer {
 
@@ -93,8 +96,9 @@ public class RemoteGUI {
                 JTable table, Object arg,
                 boolean isSelected, boolean hasFocus,
                 int row, int column) {
-            
+
             Job job = jobs.getJobs().get(row);
+
             if (job.getPID() > -1) {
                 setBackground(Color.green);
                 setForeground(Color.black);
@@ -188,11 +192,13 @@ public class RemoteGUI {
         }
     };
 
-    Action connectAction = null, 
-            deleteJobAction = null, 
-            deleteWorkspaceAction = null, 
-            startWorkspaceAction = null, 
-            downloadWorkspaceAction = null;
+    Action connectAction = null,
+            deleteJobAction = null,
+            killJobAction = null,
+            deleteWorkspaceAction = null,
+            startWorkspaceAction = null,
+            downloadWorkspaceAction = null,
+            uploadWorkspaceAction = null;
 
     Controller client = null;
 
@@ -206,18 +212,28 @@ public class RemoteGUI {
             serverField.addItem(url);
         }
 
-        deleteJobAction = new AbstractAction("Delete"){
-            
+        deleteJobAction = new AbstractAction("Delete") {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = jobsTable.getSelectedRow();
                 Job job = jobs.getJobs().get(selectedRow);
-                client.getJobController().delete(job);                    
+                client.getJobController().delete(job);
             }
         };
-        
-        startWorkspaceAction = new AbstractAction("Start Job"){
-            
+
+        killJobAction = new AbstractAction("Kill") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = jobsTable.getSelectedRow();
+                Job job = jobs.getJobs().get(selectedRow);
+                client.getJobController().kill(job);
+            }
+        };
+
+        startWorkspaceAction = new AbstractAction("Start Job") {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 TreePath path = workspaceTree.getSelectionPath();
@@ -226,38 +242,55 @@ public class RemoteGUI {
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode) o;
                     Object o2 = node.getUserObject();
                     if (o2 instanceof WorkspaceNode) {
-                        
-                    }else if (o2 instanceof WFANode){
-                        WFANode wfaNode = (WFANode)o2;
-                        if (wfaNode.wfa.getRole() == WorkspaceFileAssociation.ROLE_MODEL){
-                            Job job = client.getJobController().create(wfaNode.wfa.getWorkspace(), wfaNode.wfa);
-                            if (job != null){
-                                
-                            }
-                            
+                        JOptionPane.showMessageDialog(mainPanel, "Please select a model file!");
+                    } else if (o2 instanceof WFANode) {
+                        WFANode wfaNode = (WFANode) o2;
+                        if (wfaNode.wfa.getRole() == WorkspaceFileAssociation.ROLE_MODEL) {
+                            startJob(wfaNode.wfa.getWorkspace(), wfaNode.wfa);
+
                         }
                     }
-                }              
+                }
             }
         };
-        
-        downloadWorkspaceAction = new AbstractAction("Download"){
-            
+
+        downloadWorkspaceAction = new AbstractAction("Download") {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 TreePath path = workspaceTree.getSelectionPath();
                 Object o = path.getLastPathComponent();
-                if (o instanceof WorkspaceNode){
-                    
+                SortedMutableTreeNode treeNode = null;
+                if (!(o instanceof SortedMutableTreeNode)) {
+                    return;
                 }
-                if (o instanceof WFANode){
-                    
+                treeNode = (SortedMutableTreeNode) o;
+                Object userObject = treeNode.getUserObject();
+                if (userObject instanceof WorkspaceNode) {
+                    WorkspaceNode node = (WorkspaceNode) userObject;
+                    Workspace ws = node.ws;                    
+                    jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    int result = jfc.showSaveDialog(jfc);
+                    if (result == JFileChooser.APPROVE_OPTION){
+                        File target = jfc.getSelectedFile();                        
+                        downloadWorkspace(ws, target);
+                    };
+                }
+                if (userObject instanceof WFANode) {
+                    WFANode node = (WFANode) userObject;
+                    WorkspaceFileAssociation wfa = node.wfa;                    
+                    jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    int result = jfc.showSaveDialog(jfc);
+                    if (result == JFileChooser.APPROVE_OPTION){
+                        File target = jfc.getSelectedFile();                        
+                        downloadFile(wfa, target);
+                    }                    
                 }
             }
         };
-        
-        deleteWorkspaceAction = new AbstractAction("Delete"){
-            
+
+        deleteWorkspaceAction = new AbstractAction("Delete") {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 TreePath path = workspaceTree.getSelectionPath();
@@ -266,22 +299,24 @@ public class RemoteGUI {
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode) o;
                     Object o2 = node.getUserObject();
                     if (o2 instanceof WorkspaceNode) {
-                        WorkspaceNode wsNode = (WorkspaceNode)o2;
+                        WorkspaceNode wsNode = (WorkspaceNode) o2;
                         Workspace ws = wsNode.ws;
                         client.getWorkspaceController().remove(ws);
                         updateView();
                     }
                 }
-                JOptionPane.showMessageDialog(mainPanel, "Removal of this type of object is not supported!");                
+                JOptionPane.showMessageDialog(mainPanel, "Removal of this type of object is not supported!");
             }
         };
-        
+
         connectAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String serverUrl = getServerUrl().toString();
                 client = new Controller(new HTTPClient(), serverUrl);
 
+                JLabel jServerName = new JLabel("Server");
+                JComboBox serverUrls = new JComboBox(recentUrls);
                 JLabel jUserName = new JLabel("User Name");
                 JTextField userName = new JTextField();
                 JLabel jPassword = new JLabel("Password");
@@ -290,8 +325,8 @@ public class RemoteGUI {
                     userName.setText(user);
                     password.setText(pw);
                 }
-                Object[] ob = {jUserName, userName, jPassword, password};
-                int result = JOptionPane.showConfirmDialog(null, ob, "Please input username/password", JOptionPane.OK_CANCEL_OPTION);
+                Object[] ob = {jServerName, serverUrls, jUserName, userName, jPassword, password};
+                int result = JOptionPane.showConfirmDialog(null, ob, "Please input serverUrl/username/password", JOptionPane.OK_CANCEL_OPTION);
 
                 if (result == JOptionPane.OK_OPTION) {
                     String userNameValue = userName.getText();
@@ -335,49 +370,127 @@ public class RemoteGUI {
                 if (rowindex < 0) {
                     return;
                 }
+                Job job = jobs.getJobs().get(rowindex);
                 if (e.isPopupTrigger() && e.getComponent() instanceof JTable) {
                     JPopupMenu popup = new JPopupMenu();
+                    if (job.getPID() > 0) {
+                        popup.add(new JMenuItem(killJobAction));
+                    }
                     popup.add(new JMenuItem(deleteJobAction));
                     popup.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
         });
-        
+
+        uploadWorkspaceAction = new AbstractAction("Upload Workspace") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        };
+
         workspaceTree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 TreePath p = workspaceTree.getClosestPathForLocation(e.getX(), e.getY());
-                if (p != null){
+                if (p != null) {
                     workspaceTree.getSelectionModel().setSelectionPath(p);
-                }else{
+                } else {
                     workspaceTree.getSelectionModel().clearSelection();
                 }
                 if (!e.isPopupTrigger() || !(e.getComponent() instanceof JTree)) {
-                    return;                    
+                    return;
                 }
                 Object lastTreePathObject = p.getLastPathComponent();
-                if (DefaultMutableTreeNode.class.isAssignableFrom(lastTreePathObject.getClass())){
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode)lastTreePathObject;
+                if (DefaultMutableTreeNode.class.isAssignableFrom(lastTreePathObject.getClass())) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) lastTreePathObject;
                     Object userObject = node.getUserObject();
-                    
+
                     JPopupMenu popup = new JPopupMenu();
-                    if (userObject instanceof WFANode){
-                        WFANode userObjectWrapper = (WFANode)userObject;
-                        if (userObjectWrapper.wfa.getRole() == WorkspaceFileAssociation.ROLE_MODEL){
-                            popup.add(new JMenuItem(startWorkspaceAction));                    
-                            popup.add(new JMenuItem(downloadWorkspaceAction));
+                    if (userObject instanceof WFANode) {
+                        WFANode userObjectWrapper = (WFANode) userObject;
+                        if (userObjectWrapper.wfa.getRole() == WorkspaceFileAssociation.ROLE_MODEL) {
+                            popup.add(new JMenuItem(startWorkspaceAction));
                         }
-                    }else if (userObject instanceof WorkspaceNode){
-                        popup.add(new JMenuItem(startWorkspaceAction));                    
+                        popup.add(new JMenuItem(downloadWorkspaceAction));
+                    } else if (userObject instanceof WorkspaceNode) {
                         popup.add(new JMenuItem(downloadWorkspaceAction));
                         popup.add(new JMenuItem(deleteWorkspaceAction));
                     }
                     popup.show(e.getComponent(), e.getX(), e.getY());
                 }
-                
-                
+
             }
         });
+    }
+
+    private class StartJobRunnable implements Runnable {
+
+        Workspace ws;
+        WorkspaceFileAssociation wfa = null;
+
+        public StartJobRunnable(Workspace ws, WorkspaceFileAssociation wfa) {
+            this.ws = ws;
+            this.wfa = wfa;
+        }
+
+        public void run() {
+            Job job = client.getJobController().create(ws, wfa);
+            if (job != null) {
+                JOptionPane.showMessageDialog(mainPanel, "Job was stated successfully!");
+            } else {
+                JOptionPane.showMessageDialog(mainPanel, "Job was not started!");
+            }
+            updateView();
+        }
+    }
+    
+    private class DownloadRunnable implements Runnable{
+        Workspace ws;
+        WorkspaceFileAssociation wfa;
+        File target;
+        
+        public DownloadRunnable(Workspace ws, File target){
+            this.ws = ws;
+            this.target = target;            
+            this.wfa = null;
+        }
+        
+        public DownloadRunnable(WorkspaceFileAssociation wfa, File target){
+            this.wfa = wfa;
+            this.ws = null;
+            this.target = target;            
+        }
+        
+        public void run(){
+            if (ws != null){
+                client.getWorkspaceController().downloadWorkspace(target, ws);                
+            }else if (wfa != null){
+                client.getWorkspaceController().downloadFile(target, wfa.getWorkspace(), wfa.getFile());
+            }
+        }
+    }
+    
+    private void downloadWorkspace(Workspace ws, File target){
+        WorkerDlg dlg = new WorkerDlg(null, "Download Workspace ... ");
+        dlg.setInderminate(true);
+        dlg.setTask(new DownloadRunnable(ws, target));
+        dlg.execute();
+    }
+    
+    private void downloadFile(WorkspaceFileAssociation wfa, File target){
+        WorkerDlg dlg = new WorkerDlg(null, "Download file ... ");
+        dlg.setInderminate(true);
+        dlg.setTask(new DownloadRunnable(wfa, target));
+        dlg.execute();
+    }
+    
+    private void startJob(Workspace ws, WorkspaceFileAssociation f) {
+        WorkerDlg dlg = new WorkerDlg(null, "Starting Job ... ");
+        dlg.setInderminate(true);
+        dlg.setTask(new StartJobRunnable(ws, f));
+        dlg.execute();
     }
 
     private void updateView() {
@@ -399,6 +512,14 @@ public class RemoteGUI {
         }
 
         jobs = client.getJobController().find();
+        //refresh states .. 
+        for (Job job : jobs.getJobs()) {
+            if (job.getPID() > 0) {
+                if (!client.getJobController().getState(job).isActive()) {
+                    job.setPID(-1);
+                }
+            }
+        }
         Collections.sort(jobs.getJobs(), new Comparator<Job>() {
 
             @Override
@@ -573,8 +694,8 @@ public class RemoteGUI {
         JLabel serverLabel = new JLabel("Server-URL");
 
         JButton connectButton = new JButton(connectAction);
-        connectButton.setText("Connect");
-        JButton uploadWs = new JButton("Upload Workspace");
+        connectButton.setText("Reconnect");
+        JButton uploadWs = new JButton(uploadWorkspaceAction);
 
         JScrollPane jobsScroller = new JScrollPane(jobsTable);
         jobsScroller.setBorder(BorderFactory.createTitledBorder("Jobs"));
@@ -616,6 +737,8 @@ public class RemoteGUI {
                         )
                 )
         );
+        workspaceTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode("empty")));
+        connectAction.actionPerformed(null);
     }
 
     public JPanel getPanel() {
