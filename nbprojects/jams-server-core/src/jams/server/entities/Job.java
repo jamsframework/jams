@@ -105,7 +105,7 @@ public class Job implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-
+   
     public User getOwner() {
         return owner;
     }
