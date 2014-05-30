@@ -176,7 +176,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         }
         ArrayList<Job> activeList = new ArrayList<Job>();
         for (Job job : list){
-            if (job.getPID()!=-1){
+            if (job.getPID()>-1){
                 try {
                     JobState state = processManager.state(job);
                     if (!state.isActive()) {
