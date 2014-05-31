@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ws.rs.ProcessingException;
 
 /**
  *
@@ -63,7 +64,12 @@ public class Controller {
         
     public boolean connect(String userName, String password) {
         log(SEPARATOR + "\nTrying to connect .. ");
-        user = (User)client.connect(serverURL + "/user/login?login=" + userName + "&password=" + password, User.class);
+        
+        try {
+            user = (User)client.connect(serverURL + "/user/login?login=" + userName + "&password=" + password, User.class);
+        } catch (ProcessingException pex) {
+            user = null;
+        }
         
         if (user == null) {
             log(Level.SEVERE, "Connection to server was not established!");
@@ -99,7 +105,7 @@ public class Controller {
     
     public static void main(String[] args) {
         Controller client = new Controller(new HTTPClient(), "http://localhost:8080/jams-server/webresources");        
-        client.connect("Blubb", "test");
+        client.connect("nsk", "nsk1");
 
         User user = new User(5);
         user.setAdmin(1);
