@@ -21,7 +21,7 @@
         <ant antfile="../jams-worldwind/build.xml" inheritall="false" target="jar"/>
         <ant antfile="../jams-explorer/build.xml" inheritall="false" target="jar"/>
         <ant antfile="../jams-ui/build.xml" inheritall="false" target="jar"/>
-        <ant antfile="../jams-remote/build.xml" inheritall="false" target="jar"/>
+        <!--<ant antfile="../jams-remote/build.xml" inheritall="false" target="jar"/>-->
     </target>
     
     <!--target name="-post-jar"/-->
@@ -39,7 +39,7 @@
         <ant antfile="../jams-worldwind/build.xml" inheritall="false" target="clean"/>
         <ant antfile="../jams-explorer/build.xml" inheritall="false" target="clean"/>
         <ant antfile="../jams-ui/build.xml" inheritall="false" target="clean"/>
-        <ant antfile="../jams-remote/build.xml" inheritall="false" target="clean"/>
+        <!--<ant antfile="../jams-remote/build.xml" inheritall="false" target="clean"/>-->
         <delete>
             <fileset dir="../../lib" includes="**/*"/>
             <fileset dir="../../lib/lib" includes="**/*"/>
