@@ -26,10 +26,10 @@ import java.io.Serializable;
 import java.util.*;
 import javax.swing.JFrame;
 import jams.data.JAMSData;
+import jams.model.Context;
 import jams.model.SmallModelState;
 import jams.model.GUIComponent;
 import jams.model.Model;
-import java.util.logging.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -116,5 +116,8 @@ public interface JAMSRuntime extends Serializable {
 
     public void saveModelParameter();
     
-    public Logger getLogger();
+    public void incrementRunCount(int n);
+    
+    public void setRunCount(int n, Context c);
+
 }
