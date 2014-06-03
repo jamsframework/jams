@@ -386,7 +386,7 @@ public class TimePeriodAggregator extends JAMSComponent {
                 try{
                     shpStore[i] = new ShapeFileOutputDataStore(originalShpFile, newDBFFile);
                 }catch(IOException ioe){
-                    getModel().getRuntime().getLogger().log(Level.SEVERE, MessageFormat.format(ioe.toString(), getInstanceName()));
+                    getModel().getRuntime().sendErrorMsg(MessageFormat.format(ioe.toString(), getInstanceName()));
                 }
             }
         }
@@ -437,7 +437,7 @@ public class TimePeriodAggregator extends JAMSComponent {
         }else if (mode.compareToIgnoreCase("custom")==0){
             return AggregationTimePeriod.CUSTOM;
         }else{
-            getModel().getRuntime().getLogger().log(Level.SEVERE, MessageFormat.format(JAMS.i18n("Unknown time unit:" + mode + ".\nPossible values are daily, monthly, yearly and decadly."), getInstanceName()));
+            getModel().getRuntime().sendErrorMsg(MessageFormat.format(JAMS.i18n("Unknown time unit:" + mode + ".\nPossible values are daily, monthly, yearly and decadly."), getInstanceName()));
             return null;
         }   
     }
@@ -456,7 +456,7 @@ public class TimePeriodAggregator extends JAMSComponent {
         }else if (mode.compareToIgnoreCase("independent")==0){
             return AggregationMode.INDEPENDENT;
         }else{
-            getModel().getRuntime().getLogger().log(Level.SEVERE, MessageFormat.format(JAMS.i18n("Unknown aggregation mode:" + mode + ".\nPossible values are sum, average, min, max, independent"), getInstanceName()));
+            getModel().getRuntime().sendErrorMsg(MessageFormat.format(JAMS.i18n("Unknown aggregation mode:" + mode + ".\nPossible values are sum, average, min, max, independent"), getInstanceName()));
             return null;
         } 
     }
@@ -671,7 +671,7 @@ public class TimePeriodAggregator extends JAMSComponent {
                         selectedIds.add(idF);
                     }                    
                 } catch (Throwable nfe) {
-                    getModel().getRuntime().getLogger().log(Level.SEVERE, "Error: Could not parse filter string:" + filter);
+                    getModel().getRuntime().sendErrorMsg("Error: Could not parse filter string:" + filter);
                     return false;
                 }
             }

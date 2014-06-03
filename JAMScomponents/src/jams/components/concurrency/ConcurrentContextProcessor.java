@@ -86,7 +86,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
               
         if (!context.isEnabled() || (nthreads < 2)
                 || !jams.model.JAMSSpatialContext.class.isAssignableFrom(context.getClazz())) {
-            rt.getLogger().info(MessageFormat.format(JAMS.i18n("No_concurrent_processing_for_context"), context.getInstanceName()));
+            rt.sendErrorMsg(MessageFormat.format(JAMS.i18n("No_concurrent_processing_for_context"), context.getInstanceName()));
             return;
         }
 
@@ -143,7 +143,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
             if (paramField != null) {
             paramField.setValue(param.getValue());
             } else {
-                rt.getLogger().info(MessageFormat.format(JAMS.i18n("Tried to set parameter \"{0}\" but it could not be found!"), param.getKey()));
+                rt.sendErrorMsg(MessageFormat.format(JAMS.i18n("Tried to set parameter \"{0}\" but it could not be found!"), param.getKey()));
             }
         }
 
