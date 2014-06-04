@@ -30,12 +30,12 @@ import jams.data.DataFactory;
 import jams.data.JAMSData;
 import jams.data.DefaultDataFactory;
 import jams.model.Component;
+import jams.model.Context;
 import jams.model.GUIComponent;
 import jams.model.JAMSModel;
 import jams.model.SmallModelState;
 import jams.tools.JAMSTools;
 import jams.tools.StringTools;
-import java.util.logging.Logger;
 import org.w3c.dom.Document;
 
 /**
@@ -254,7 +254,13 @@ public class MiniRuntime implements JAMSRuntime {
     }
 
     @Override
-    public Logger getLogger() {
+    public void incrementRunCount(int n) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void setRunCount(int n, Context c) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

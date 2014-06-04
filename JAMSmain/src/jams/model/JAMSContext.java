@@ -218,7 +218,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                 if (!ce.hasNext() && ee.hasNext()) {
                     updateEntityData();
                     ee.next();
-
+                    
                     index++;
                     updateComponentData(index);
                     ce.reset();

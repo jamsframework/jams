@@ -64,7 +64,7 @@ public class JAMSLogging extends Observable {
     /**
      * @return the loggers
      */
-    public List<Logger> getLoggers() {
+    public static List<Logger> getLoggers() {
         return loggers;
     }
 

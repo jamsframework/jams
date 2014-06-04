@@ -39,7 +39,7 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
     protected int timeUnitCount = 1;
     private long timestepCount = -1;
 
-    public JAMSTimeInterval() {        
+    public JAMSTimeInterval() {
     }
 
     public JAMSTimeInterval(Attribute.Calendar start, Attribute.Calendar end, int timeUnit, int timeUnitCount) {
@@ -64,8 +64,8 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
             timeUnit = Integer.parseInt(unit);
             timeUnitCount = Integer.parseInt(count);
         } catch (NoSuchElementException nsee) {
-            Logger.getLogger(JAMSTimeInterval.class.getName()).log(Level.WARNING, "Unable to parse time interval " + value, nsee);            
-        } catch (Exception e){
+            Logger.getLogger(JAMSTimeInterval.class.getName()).log(Level.WARNING, "Unable to parse time interval " + value, nsee);
+        } catch (Exception e) {
             Logger.getLogger(JAMSTimeInterval.class.getName()).log(Level.WARNING, "Errror while setting time interval " + value, e);
         }
     }
@@ -144,11 +144,12 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if (obj instanceof JAMSTimeInterval){
-            if ( ((JAMSTimeInterval)obj).start.compareTo(this.start,Calendar.MINUTE) == 0 ||
-                 ((JAMSTimeInterval)obj).end.compareTo(this.end,Calendar.MINUTE) == 0)
+    public boolean equals(Object obj) {
+        if (obj instanceof JAMSTimeInterval) {
+            if (((JAMSTimeInterval) obj).start.compareTo(this.start, Calendar.MINUTE) == 0
+                    || ((JAMSTimeInterval) obj).end.compareTo(this.end, Calendar.MINUTE) == 0) {
                 return true;
+            }
         }
         return false;
     }

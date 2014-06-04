@@ -52,6 +52,7 @@ import jams.model.SmallModelState;
 import jams.io.ParameterProcessor;
 import jams.meta.ModelDescriptor;
 import jams.meta.ModelIO;
+import jams.model.Context;
 import jams.model.FullModelState;
 import jams.model.GUIComponent;
 import jams.model.JAMSContext;
@@ -66,13 +67,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.w3c.dom.Document;
@@ -100,9 +99,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private int runState = -1;
     private HashMap<String, Integer> idMap;
     transient private SmallModelState state = new JAMSSmallModelState();
-    private DataFactory dataFactory = DefaultDataFactory.getDataFactory();
-    transient protected Logger logger = Logger.getLogger(this.toString());
-
+    private DataFactory dataFactory = DefaultDataFactory.getDataFactory();  
     private String runtimeID = null;
     
     public StandardRuntime(SystemProperties properties) {
@@ -115,8 +112,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
      * Loads a model from an XML document
      *
      * @param modelDocument the XML document
-     * @param properties a set of system properties providing information on
-     * libs to be used and other parameter
+     * @param defaultWorkspacePath the path to the workspace
      */
     @Override
     public void loadModel(Document modelDocument, String defaultWorkspacePath) {
@@ -321,27 +317,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     private void init(boolean start) {
-
-
-        logger.setUseParentHandlers(false);
-        logger.addHandler(new Handler() {
-            @Override
-            public void publish(LogRecord record) {
-                if (record.getLevel().intValue() >= Level.INFO.intValue()) {
-                    String msg = record.getMessage();
-                    msg = msg.replace("\n", "\n    ");
-                    println("    " + msg);
-                }
-            }
-
-            @Override
-            public void flush() {
-            }
-
-            @Override
-            public void close() throws SecurityException {
-            }
-        });
 
         if (start) {
             String user = properties.getProperty(JAMSProperties.USERNAME_IDENTIFIER);
@@ -930,23 +905,12 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
 
     @Override
-    public Logger getLogger() {
-        return logger;
-    }
-    
-    private void writeObject(ObjectOutputStream objOut) throws IOException {
-        objOut.defaultWriteObject();        
-    }
+    public synchronized void incrementRunCount(int n) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }    
 
-    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-        
-        logger = Logger.getLogger(runtimeID);
-        
-        deleteErrorLogObservers();
-        deleteInfoLogObservers();
-        this.initLogging();
-
-        classLoader = JAMSClassLoader.createClassLoader(StringTools.toArray(properties.getProperty("libs", ""), ";"), this.infoLog);
+    @Override
+    public synchronized void setRunCount(int n, Context c) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

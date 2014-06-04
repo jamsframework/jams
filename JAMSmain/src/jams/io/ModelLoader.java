@@ -28,7 +28,6 @@ import jams.model.*;
 import org.w3c.dom.*;
 import java.lang.reflect.*;
 import jams.JAMS;
-import jams.ExceptionHandler;
 import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.meta.ComponentDescriptor;
@@ -40,8 +39,6 @@ import jams.meta.ModelDescriptor;
 import jams.meta.OutputDSDescriptor;
 import jams.runtime.JAMSRuntime;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
@@ -58,16 +55,13 @@ public class ModelLoader {
     private HashMap<String, Integer> idMap = new HashMap();
     private HashMap<Integer, String> versionMap = new HashMap();
     private int maxID = 0;
-    private Logger logger;
 
     public ModelLoader(JAMSRuntime rt) {
 
         loader = rt.getClassLoader();
         dataFactory = rt.getDataFactory();
-        logger = rt.getLogger();
         // create an empty model
         jamsModel = new JAMSModel(rt);
-
         // this context refers to itself
         jamsModel.setModel(jamsModel);
     }
@@ -141,7 +135,7 @@ public class ModelLoader {
 
             } catch (ModelSpecificationException iae) {
 
-                logger.log(Level.SEVERE, iae.getMessage(), iae);
+                jamsModel.getRuntime().handle(iae);                
 
             }
         }
@@ -267,8 +261,6 @@ public class ModelLoader {
 
                     JAMSVarDescription jvd = field.getAnnotation(JAMSVarDescription.class);
 
-                    String connType = null;
-
                     varValue = cdField.getValue();
 
                     // set the var object if value provided directly
@@ -318,8 +310,6 @@ public class ModelLoader {
                             jamsModel.getRuntime().getDataHandles().put(id, (JAMSData) data);
                         }
 
-                        connType = "value";
-
                     }
 
                     if (cdField.getContext() != null) {
@@ -353,8 +343,6 @@ public class ModelLoader {
                         }
 
                         nullFields.get(component).remove(field);
-
-                        connType = "link";
 
                     }
 
