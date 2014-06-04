@@ -38,6 +38,7 @@ import jamsui.juice.gui.JUICEFrame;
 import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.NotificationDlg;
 import jamsui.juice.gui.tree.LibTree;
+import jamsui.launcher.JAMSui;
 import java.io.File;
 import java.util.*;
 import java.util.logging.Handler;
@@ -65,8 +66,6 @@ public class JUICE {
     private static JAMSCmdLine cmdLine;
     private static LibTree libTree;
     private static WorkerDlg loadLibsDlg;
-    private static NotificationDlg notificationDlg;
-    private static Handler logHandler;
 
     public static void main(String args[]) {
 
@@ -100,12 +99,12 @@ public class JUICE {
 
             @Override
             public void update(Observable o, Object arg) {
-                List loggers = JAMSLogging.getInstance().getLoggers();
+                List loggers = JAMSLogging.getLoggers();
                 Logger logger = (Logger) arg;
                 if (loggers.contains(logger)) {
-                    JUICE.registerLogger(logger);
+                    JAMSui.registerLogger(logger);
                 } else {
-                    JUICE.unregisterLogger(logger);
+                    JAMSui.unregisterLogger(logger);
                 }
             }
         });
@@ -263,56 +262,8 @@ public class JUICE {
         return libTree;
     }
 
-    public static void registerLogger(Logger log) {
-        if (notificationDlg == null) {
-            notificationDlg = new NotificationDlg(null, JAMS.i18n("Info"));
-        }
-
-        if (logHandler == null) {
-            logHandler = new Handler() {
-                @Override
-                public void publish(LogRecord record) {
-                    if (record.getLevel().intValue() > Level.WARNING.intValue()) {
-//                        GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), record.getMessage(), JAMS.i18n("Error"));
-                    }
-                    String line[] = record.getMessage().split("\n");
-                    String level = JAMS.i18n(record.getLevel().toString());
-                    String msg = level + ": " + line[0];
-                    for (int i = 1; i < line.length; i++) {
-                        msg += "\n" + String.format("%0" + level.length() + "d", 0).replace("0", " ") + line[i];
-                    }
-                    if (record.getLevel() == Level.SEVERE && record.getThrown() != null && !(record.getThrown() instanceof JAMSException)) {
-                        msg += "\n" + record.getThrown().toString();
-                        msg += "\n" + StringTools.getStackTraceString(record.getThrown().getStackTrace());
-                    }
-                    notificationDlg.addNotification(msg + "\n\n");
-                }
-
-                @Override
-                public void flush() {
-                }
-
-                @Override
-                public void close() throws SecurityException {
-                }
-            };
-        }
-        log.addHandler(logHandler);
-        log.setUseParentHandlers(false);
-    }
-    
-    public static void unregisterLogger(Logger log) {
-        log.removeHandler(logHandler);
-        log.setUseParentHandlers(true);
-    }
-    
-
-//    public static Logger getLogger() {
-//        return log;
-//    }
-
     public static void focusNotificationDlg() {
-        if (notificationDlg != null)
-            notificationDlg.requestFocus();
+        if (JAMSui.notificationDlg != null)
+            JAMSui.notificationDlg.requestFocus();
     }
 }

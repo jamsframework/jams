@@ -565,6 +565,7 @@ public class ModelView {
 
             theExplorer.getExplorerFrame().setVisible(true);
         } catch (NoClassDefFoundError ncdfe) {
+            Logger.getLogger(ModelView.class.getName()).log(Level.SEVERE, ncdfe.getMessage(), ncdfe);
             GUIHelper.showInfoDlg(JUICE.getJuiceFrame(), jams.JAMS.i18n("ExplorerDisabled"), jams.JAMS.i18n("Info"));
         } catch (InvalidWorkspaceException ex) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), "\"" + workspaceFile + "\"" + JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));

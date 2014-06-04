@@ -27,6 +27,7 @@ import jams.SystemProperties;
 import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
 import jams.JAMSFileFilter;
+import jams.JAMSLogging;
 import jams.io.ParameterProcessor;
 import jams.tools.XMLTools;
 import jams.io.XMLProcessor;
@@ -54,7 +55,11 @@ import javax.swing.KeyStroke;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.net.URI;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Properties;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -95,6 +100,22 @@ public class JAMSFrame extends JAMSLauncher {
     public JAMSFrame(Frame parent, SystemProperties properties, String modelFilename, String cmdLineArgs, Properties jmpParameters) {
         //super(properties, modelFilename, cmdLineArgs);
         this(parent, properties);
+        
+        // take care of loggers
+        JAMSLogging.getInstance().addObserver(new Observer() {
+
+            @Override
+            public void update(Observable o, Object arg) {
+                List loggers = JAMSLogging.getLoggers();
+                Logger logger = (Logger) arg;
+                if (loggers.contains(logger)) {
+                    JAMSui.registerLogger(logger);
+                } else {
+                    JAMSui.unregisterLogger(logger);
+                }
+            }
+        });        
+        
         loadModelDefinition(modelFilename, StringTools.toArray(cmdLineArgs, ";"), jmpParameters);
         loadPath = new File(modelFilename);
     }
