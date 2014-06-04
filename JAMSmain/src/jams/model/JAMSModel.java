@@ -183,7 +183,6 @@ public class JAMSModel extends JAMSContext implements Model {
     }
 
     public boolean moveWorkspaceDirectory(String workspaceDirectory) {
-        //setWorkspacePath(workspaceDirectory); // das geht nicht, weil dann die current stores weg sind ..
         
         this.workspaceDirectory.setValue(workspaceDirectory);
         
