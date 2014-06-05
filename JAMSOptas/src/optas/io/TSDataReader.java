@@ -54,6 +54,8 @@ public class TSDataReader{
     private double missingDataValue = -9999;
 
     String[] name = null;
+    double statx[] = null;
+    double staty[] = null;
     String tres = null;
 
     int headerLineCount = 0;
@@ -63,6 +65,10 @@ public class TSDataReader{
         init();
     }
 
+    public int getColumnCount(){
+        return statx.length;
+    }
+    
     public ArrayList<Object> getNames(){        
         ArrayList<Object> attr = new ArrayList<Object>();
         for (int i=0;i<name.length;i++){
@@ -86,9 +92,7 @@ public class TSDataReader{
         double lowBound, uppBound;
 
 
-        double[] id = null;
-        double[] statx = null;
-        double[] staty = null;
+        double[] id = null;        
         double[] statelev = null;
 
         String line = "#";
@@ -204,6 +208,7 @@ public class TSDataReader{
         }catch(NumberFormatException nfe){
             throw new IOException(JAMS.i18n("not_a_valid_line_in_J2K_datafile "));
         }catch(NoSuchElementException nfe){
+            nfe.printStackTrace();
             throw new IOException(JAMS.i18n("not_a_valid_line_in_J2K_datafile "));
         }catch(NullPointerException npe){
             throw new IOException(JAMS.i18n("not_a_valid_J2K_datafile "));
@@ -285,6 +290,10 @@ public class TSDataReader{
         return t;
     }
 
+    public double[] getLocation(int i){
+        return new double[]{statx[i],staty[i]};
+    }
+    
     private static Attribute.Calendar parseJ2KTime(String timeString) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy HH:mm");

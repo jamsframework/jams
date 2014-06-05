@@ -142,6 +142,11 @@ public abstract class MCAT5Plot implements Observer{
         return this.data;
     }
 
+    public void reset(){
+        for (int i=0;i<ensembles.size();i++)
+            ensembles.set(i, null);
+    }
+    
     public void setData(String name, ArrayList<DataSet> data) {
         for (int i = 0; i < request.size(); i++) {
             if (name.equals(request.get(i).name)) {

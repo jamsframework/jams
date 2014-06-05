@@ -73,6 +73,7 @@ public class RegionalSensitivityAnalyser2 extends MCAT5Plot{
         return tmp_data;
     }
         
+    @Override
     public void refresh() throws NoDataException {
         if (!this.isRequestFulfilled()){
             return;
@@ -101,7 +102,10 @@ public class RegionalSensitivityAnalyser2 extends MCAT5Plot{
         int numberOfObjFct = eff.length;
         XYSeries dataset[] = new XYSeries[numberOfObjFct];
         //double sorted_data[][][] = new double[numberOfObjFct][][];
-                                        
+                  
+        for (int i=0;i<plot.getDatasetCount();i++){
+            plot.setDataset(i, null);
+        }
         for (int i=0;i<numberOfObjFct;i++){
             dataset[i] = new XYSeries(eff[i].name);
             EfficiencyEnsemble likelihood = eff[i].CalculateLikelihood();
@@ -142,7 +146,7 @@ public class RegionalSensitivityAnalyser2 extends MCAT5Plot{
             dataset[i].add(range_max,1.0);
             
             plot.setDataset(i, new XYSeriesCollection(dataset[i]));            
-        }                                                                                                                     
+        }   
         
         if (plot.getRangeAxis() != null)    plot.getRangeAxis().setAutoRange(true);
         if (plot.getDomainAxis() != null)   plot.getDomainAxis().setAutoRange(true);

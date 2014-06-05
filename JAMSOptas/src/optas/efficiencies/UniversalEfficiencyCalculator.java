@@ -287,7 +287,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
         if (r2==null || r2.length < m) r2 = new Attribute.Double[m];
         if (ave==null || ave.length < m) ave = new Attribute.Double[m];
         if (bias==null || bias.length < m) bias = new Attribute.Double[m];
-        if (e1_normalized==null || e1_normalized.length < m) e1 = new Attribute.Double[m];
+        if (e1_normalized==null || e1_normalized.length < m) e1_normalized = new Attribute.Double[m];
         if (e2_normalized==null || e2_normalized.length < m) e2_normalized = new Attribute.Double[m];
         if (le1_normalized==null || le1_normalized.length < m) le1_normalized = new Attribute.Double[m];
         if (le2_normalized==null || le2_normalized.length < m) le2_normalized = new Attribute.Double[m];

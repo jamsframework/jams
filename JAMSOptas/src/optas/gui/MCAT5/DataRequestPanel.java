@@ -4,7 +4,6 @@
  */
 package optas.gui.MCAT5;
 
-import jams.JAMS;
 import jams.gui.WorkerDlg;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -23,7 +22,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -67,6 +65,7 @@ public final class DataRequestPanel extends JPanel {
 
         public void removeLastBox() {
             boxes.remove(boxes.size() - 1);
+            updatePlot();
         }
 
         public boolean addBox() {
@@ -227,6 +226,7 @@ public final class DataRequestPanel extends JPanel {
             @Override
             public void run() {
                 try {
+                    plot.reset();
                     for (RequestGUI rGUI : requests) {
                         ArrayList<DataSet> list = new ArrayList<DataSet>();
                         for (JComboBox box : rGUI.boxes) {

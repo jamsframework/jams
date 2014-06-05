@@ -24,6 +24,7 @@ import optas.data.EfficiencyEnsemble;
 import optas.data.SimpleEnsemble;
 import optas.data.StateVariable;
 import optas.tools.PatchedChartPanel;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 
 /**
  *
@@ -54,9 +55,12 @@ public class GLUEVariableUncertainty extends MCAT5Plot {
         renderer3.setBaseLinesVisible(false);
         
         plot1.setRenderer(0,renderer1);   
-        plot1.setRenderer(1,renderer3);
-        plot2.setRenderer(new XYBarRenderer(0.0));                                
-                
+        plot1.setRenderer(1,renderer3);        
+        XYBarRenderer renderer = new XYBarRenderer(0.00);
+        renderer.setShadowVisible(false);
+        renderer.setBarPainter(new StandardXYBarPainter());
+        plot2.setRenderer(renderer);  
+        
         JFreeChart chart1 = new JFreeChart(plot1);
         JFreeChart chart2 = new JFreeChart(plot2);
         chart1.setTitle(JAMS.i18n("CUMULATIVE_DENSITY_PLOT"));

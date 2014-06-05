@@ -41,7 +41,7 @@ public class TimeSerie extends DataSet{
         this.range = range;
         timeLength = (int)range.getNumberOfTimesteps();
         if (set.length != timeLength){
-            throw new MismatchException("mismatch between timeInterval:" + range.toString() + " and provided number of data values:" + set.length);
+            throw new MismatchException("mismatch between timeInterval:" + range.toString() + " and provided number of data values:" + set.length + "(expected: " + timeLength + ")");
         }
     }
 
