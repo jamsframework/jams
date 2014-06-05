@@ -425,16 +425,20 @@ public class TSDataStore extends TableDataStore {
                                        
                     switch (type[i - 1]) {
                         case DOUBLE:
-                            value = new DoubleValue(valueString);
+                            value = new DoubleValue(0);
                             if (valueString.equals(this.getMissingDataValue())) {
                                 value.setDouble((Double) JAMS.getMissingDataValue(double.class));
+                            }else{
+                                value.setString(valueString);
                             }
                             break;
                         case LONG:
-                            value = new LongValue(valueString);
+                            value = new LongValue(0);
                             if (valueString.equals(this.getMissingDataValue())) {
                                 value.setLong((Long) JAMS.getMissingDataValue(long.class));
-                            }
+                            }else{
+                                value.setString(valueString);
+                            }                            
                             break;
                         case STRING:
                             value = new StringValue(valueString);
