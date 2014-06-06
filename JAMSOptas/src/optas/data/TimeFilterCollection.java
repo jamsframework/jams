@@ -101,7 +101,7 @@ public class TimeFilterCollection implements Serializable{
                             actStart.set(y, 0, 1, 1, 1, 1);
                         }
                         if (actEnd.get(Calendar.YEAR) < y){
-                            actStart.set(y, 11, 30, 23, 58, 58);
+                            actEnd.set(y, 11, 30, 23, 58, 58);
                         }
                     }
                 }
