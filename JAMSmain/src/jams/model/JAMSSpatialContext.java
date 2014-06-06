@@ -28,16 +28,20 @@ import jams.data.*;
  * @author S. Kralisch
  */
 @JAMSComponentDescription(title = "JAMS spatial context",
-author = "Sven Kralisch",
-date = "2005-08-02",
-version = "1.0_0",
-description = "This component represents a JAMS context which can be used to "
-+ "represent space in environmental models")
+        author = "Sven Kralisch",
+        date = "2005-08-02",
+        version = "1.0_0",
+        description = "This component represents a JAMS context which can be used to "
+        + "represent space in environmental models")
 public class JAMSSpatialContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "List of spatial entities")
+            description = "List of spatial entities")
     public Attribute.EntityCollection entities;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "Current entity")
+    public Attribute.Entity current;    
 
     @Override
     public Attribute.EntityCollection getEntities() {
@@ -47,5 +51,12 @@ public class JAMSSpatialContext extends JAMSContext {
     @Override
     public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
+    }
+
+    /**
+     * @param entity the entity to set
+     */
+    public void setEntity(Attribute.Entity entity) {
+        this.current.setId(entity.getId());
     }
 }

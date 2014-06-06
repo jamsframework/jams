@@ -217,7 +217,8 @@ public class JAMSContext extends JAMSComponent implements Context {
                 // entity and start with the new Component list again
                 if (!ce.hasNext() && ee.hasNext()) {
                     updateEntityData();
-                    ee.next();
+                    Attribute.Entity current = ee.next();
+                    setEntity(current);
                     
                     index++;
                     updateComponentData(index);
@@ -1218,6 +1219,13 @@ public class JAMSContext extends JAMSComponent implements Context {
     public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
     }
+
+    /**
+     * @param entity the entity to set
+     */
+    public void setEntity(Attribute.Entity entity) {
+
+    }    
 
     /*public void createMemoryStatistics(){
      HashMap<String, Long> memoryMap = new HashMap<String, Long>();
