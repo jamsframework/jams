@@ -77,7 +77,7 @@ public class ModelIO {
     public ModelDescriptor createModel() {
 
         ModelDescriptor md = new ModelDescriptor();
-        ContextDescriptor cd = new ContextDescriptor(JAMS.i18n("New_Model"), modelClazz, null, md);
+        ContextDescriptor cd = new ContextDescriptor(JAMS.i18n("NewModel"), modelClazz, null, md);
         ModelNode rootNode = nodeFactory.createNode(cd);
         rootNode.setType(ModelNode.MODEL_TYPE);
         md.setRootNode(rootNode);
