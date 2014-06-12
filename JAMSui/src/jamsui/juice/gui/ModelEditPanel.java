@@ -65,7 +65,7 @@ public class ModelEditPanel extends JPanel {
 
     private JTextPane description;
 
-    private JButton explorerButton;
+//    private JButton explorerButton;
 
     public ModelEditPanel(ModelView view) {
         super();
@@ -106,15 +106,15 @@ public class ModelEditPanel extends JPanel {
         scroll.setBorder(BorderFactory.createEtchedBorder());
         scroll.setPreferredSize(new Dimension(TEXTAREA_WIDTH, TEXTAREA_HEIGHT));
 
-        explorerButton = new JButton(JUICE.getJuiceFrame().getJADEAction());
-        explorerButton.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/images/Layers.png")).getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH)));
-        explorerButton.setText("");
-        explorerButton.setToolTipText(JAMS.i18n("DATA_EXPLORER"));
+//        explorerButton = new JButton(JUICE.getJuiceFrame().getJADEAction());
+//        explorerButton.setIcon(new ImageIcon(new ImageIcon(getClass().getResource("/resources/images/Layers.png")).getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH)));
+//        explorerButton.setText("");
+//        explorerButton.setToolTipText(JAMS.i18n("DATA_EXPLORER"));
 
         GUIHelper.addGBComponent(componentPanel, mainLayout, workspace.getComponent(), 2, 0, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
-        GUIHelper.addGBComponent(componentPanel, mainLayout, explorerButton, 3, 0, 1, 4, 1.0, 1.0,
-                GridBagConstraints.NONE, GridBagConstraints.WEST);
+//        GUIHelper.addGBComponent(componentPanel, mainLayout, explorerButton, 3, 0, 1, 4, 1.0, 1.0,
+//                GridBagConstraints.NONE, GridBagConstraints.WEST);
         GUIHelper.addGBComponent(componentPanel, mainLayout, author.getComponent(), 2, 1, 1, 1, 1.0, 1.0,
                 GridBagConstraints.NONE, GridBagConstraints.WEST);
         GUIHelper.addGBComponent(componentPanel, mainLayout, helpBaseURL.getComponent(), 2, 5, 1, 1, 1.0, 1.0,
