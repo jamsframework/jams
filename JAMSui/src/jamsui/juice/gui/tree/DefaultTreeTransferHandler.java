@@ -89,7 +89,7 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
                 position++;
             }
             if (draggedNode.getParent() != newParentNode) {
-                position++;
+//                position++;
             }
         } else {
             position = newParentNode.getChildCount();
