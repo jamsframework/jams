@@ -39,7 +39,7 @@ import java.util.ArrayList;
 @JAMSComponentDescription(title = "TSDataStoreReader",
         author = "Sven Kralisch",
         date = "2014-02-16",
-        version = "1.1_1",
+        version = "1.2",
         description = "This component can be used to obtain data from a time series "
         + "data store which contains only double values and a number of "
         + "station-specific metadata. Additional functions:\n"
@@ -51,7 +51,9 @@ import java.util.ArrayList;
     @VersionComments.Entry(version = "1.1", comment = "\n- Aggregation functions if time steps of data store and model differ\n"
             + "- Fixed wrong time shift in case of monthly data\n"),
     @VersionComments.Entry(version = "1.1_1", comment = "\n- Fixed bug that caused wrong forward skipping "
-            + "if time offset was very long (> 68 years of daily data)")
+            + "if time offset was very long (> 68 years of daily data)"),
+    @VersionComments.Entry(version = "1.2", comment = "Added attributes to output"
+            + " column names and columns IDs for further use")
 })
 public class TSDataStoreReader extends JAMSComponent {
 
@@ -62,21 +64,6 @@ public class TSDataStoreReader extends JAMSComponent {
             description = "Datastore ID")
     public Attribute.String id;
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "The time interval within which the component shall read "
-            + "data from the datastore")
-    public Attribute.TimeInterval timeInterval;
-
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "Aggregate multiple datastore entries to averages or sums?",
-            defaultValue = "true")
-    public Attribute.Boolean calcAvg;
-
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "The current model time - needed in case of aggregation over irregular time steps (e.g. months). "
-                    + "Aggregation is disabled if this value is not set.")
-    public Attribute.Calendar time;
-
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
             description = "Descriptive name of the dataset (equals datastore ID)")
     public Attribute.String dataSetName;
@@ -85,6 +72,14 @@ public class TSDataStoreReader extends JAMSComponent {
             description = "Array of double values received from the datastore. Order "
             + "according to datastore")
     public Attribute.DoubleArray dataArray;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "Array of column names")
+    public Attribute.StringArray name;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "Array of column IDs")
+    public Attribute.StringArray columnID;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
             description = "Array of station elevations")
@@ -101,6 +96,22 @@ public class TSDataStoreReader extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
             description = "Regression coefficients")
     public Attribute.DoubleArray regCoeff;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "The time interval within which the component shall read "
+            + "data from the datastore")
+    public Attribute.TimeInterval timeInterval;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Aggregate multiple datastore entries to averages or sums?",
+            defaultValue = "true")
+    public Attribute.Boolean calcAvg;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "The current model time - needed in case of aggregation over "
+            + "irregular time steps (e.g. months). Aggregation is disabled if "
+            + "this value is not set.")
+    public Attribute.Calendar time;
 
     private TSDataStore store;
     private double[] doubles;
@@ -168,6 +179,8 @@ public class TSDataStoreReader extends JAMSComponent {
         xCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("X")));
         yCoord.setValue(listToDoubleArray(dsDef.getAttributeValues("Y")));
         elevation.setValue(listToDoubleArray(dsDef.getAttributeValues("ELEVATION")));
+        name.setValue(listToStringArray(dsDef.getAttributeValues("NAME")));
+        columnID.setValue(listToStringArray(dsDef.getAttributeValues("ID")));
         elevationArray = elevation.getValue();
         dataSetName.setValue(id.getValue());
 
@@ -177,10 +190,26 @@ public class TSDataStoreReader extends JAMSComponent {
     }
 
     private double[] listToDoubleArray(ArrayList<Object> list) {
+        if (list == null) {
+            return null;
+        }
         double[] result = new double[list.size()];
         int i = 0;
         for (Object o : list) {
-            result[i] = ((Double) o).doubleValue();
+            result[i] = (Double) o;
+            i++;
+        }
+        return result;
+    }
+
+    private String[] listToStringArray(ArrayList<Object> list) {
+        if (list == null) {
+            return null;
+        }
+        String[] result = new String[list.size()];
+        int i = 0;
+        for (Object o : list) {
+            result[i] = o.toString();
             i++;
         }
         return result;
@@ -365,7 +394,6 @@ public class TSDataStoreReader extends JAMSComponent {
 //                s += doubles[i] + " ";
 //            }
 //            getModel().getRuntime().println(s, JAMS.VVERBOSE);
-
         }
 
     }
