@@ -450,11 +450,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         if (this.getState() == JAMSRuntime.STATE_RUN) {
-            model.cleanup();
-        }
-
-        if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.cleanupAll();
+        }
+        
+        if (this.getState() == JAMSRuntime.STATE_RUN) {
+            model.cleanup();
         }
 
         finishModelExecution(System.currentTimeMillis() - start);
