@@ -41,6 +41,10 @@ public class JAMSFullModelState implements FullModelState{
             this.classLoader = loader;
         }
         
+        public ClassLoader getClassLoader(){
+            return classLoader;
+        }
+        
         @Override
         protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
 

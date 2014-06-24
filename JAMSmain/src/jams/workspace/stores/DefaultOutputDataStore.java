@@ -178,7 +178,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
         if (writer != null)
             out.writeLong(writer.getPosition());
         else
-            out.writeLong(0L);
+            out.writeLong((long)0L);
     }
 
     @Override

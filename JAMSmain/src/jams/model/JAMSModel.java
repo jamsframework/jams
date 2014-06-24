@@ -263,7 +263,9 @@ public class JAMSModel extends JAMSContext implements Model {
     private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {
         objIn.defaultReadObject();
 
-        if (objIn.readBoolean()) {
+        
+        
+        if (objIn.readBoolean()) {            
             this.getRuntime().initGUI((String) objIn.readObject(),
                     objIn.readBoolean(),
                     objIn.readInt(), objIn.readInt());

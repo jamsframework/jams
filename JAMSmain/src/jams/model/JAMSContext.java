@@ -333,19 +333,7 @@ public class JAMSContext extends JAMSComponent implements Context {
      */
     @Override
     public void setModel(Model model) {
-        super.setModel(model);
-        JAMSRuntime rt = getModel().getRuntime();
-
-        rt.addStateObserver(new Observer() {
-            @Override
-            public void update(Observable obs, Object obj) {
-                if (getModel().getRuntime().getState() != JAMSRuntime.STATE_RUN) {
-                    JAMSContext.this.doRun = false;
-                } else {
-                    JAMSContext.this.doRun = true;
-                }
-            }
-        });
+        super.setModel(model);        
     }
 
     /**
@@ -1232,6 +1220,24 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     }    
 
+    @Override
+    public void setExecutionState(int state){
+        
+        switch (state){
+            case JAMSRuntime.STATE_RUN: doRun = true; break;
+            case JAMSRuntime.STATE_STOP: doRun = false; break;
+            case JAMSRuntime.STATE_PAUSE: doRun = false; break;
+        }
+        
+        ComponentEnumerator ce = this.getChildrenEnumerator();
+        while (ce.hasNext()){
+            Component comp = ce.next();
+            if (comp instanceof Context){
+                ((Context)comp).setExecutionState(state);
+            }
+        }
+    }
+    
     /*public void createMemoryStatistics(){
      HashMap<String, Long> memoryMap = new HashMap<String, Long>();
      ArrayList<Attribute.Entity> entityList = new ArrayList<Attribute.Entity>();

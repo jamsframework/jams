@@ -67,11 +67,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.w3c.dom.Document;
@@ -98,7 +97,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private SystemProperties properties = null;
     private int runState = -1;
     private HashMap<String, Integer> idMap;
-    transient private SmallModelState state = new JAMSSmallModelState();
+    transient private SmallModelState state = null;
     private DataFactory dataFactory = DefaultDataFactory.getDataFactory();  
     private String runtimeID = null;
     
@@ -133,7 +132,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             // ModelDescriptor object
             ModelIO modelIO = ModelIO.getStandardModelIO();
             ModelDescriptor md = modelIO.loadModelDescriptor(modelDocument, this.getClassLoader(), false);
-
+            this.state = new JAMSSmallModelState(this.getClassLoader());
+            
             boolean doAutoPreprocessing = Boolean.parseBoolean(properties.getProperty(JAMSProperties.AUTO_PREPROCESSING, "false"));
             if (doAutoPreprocessing) {
                 md.metaProcess(this);
@@ -378,7 +378,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     public void resume(SmallModelState state) throws Exception {
         this.state = state;
-
+        
         if (guiEnabled && (guiComponents.size() > 0)) {
             frame.setVisible(true);
         }
@@ -403,6 +403,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         if (this.getState() == JAMSRuntime.STATE_PAUSE) {
             this.model.getWorkspace().saveState(state);
         }
+        
         state.setExecutionTime(state.getExecutionTime() + (System.currentTimeMillis() - start));
 
         finishModelExecution(state.getExecutionTime());
@@ -468,7 +469,8 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     private void finishModelExecution(long executionTime) {
         if (this.getState() == JAMSRuntime.STATE_PAUSE) {
-            this.model.getWorkspace().saveState(state);
+            System.out.println("Save state ... ");
+            this.model.getWorkspace().saveState(state);            
         }
 
         if (model.getWorkspace() != null) {
@@ -564,7 +566,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
                 if (StandardRuntime.this.runState == JAMSRuntime.STATE_RUN) {
                     StandardRuntime.this.pause();
                     pauseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
-                    saveButton.setEnabled(true);
+                    saveButton.setEnabled(true);                    
                 } else if (StandardRuntime.this.runState == JAMSRuntime.STATE_PAUSE) {
                     Thread resumedModelThread = new Thread(new Runnable() {
                         public void run() {
@@ -654,7 +656,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             public void update(Observable obs, Object obj) {
                 if (StandardRuntime.this.getState() == JAMSRuntime.STATE_STOP) {
                     stopButton.setEnabled(false);
-                    closeButton.setEnabled(true);
+                    closeButton.setEnabled(true);                    
                 }
             }
         });
@@ -819,6 +821,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     private void setRunState(int state) {
         this.runState = state;
+        if (this.getModel() != null){
+            this.getModel().setExecutionState(state);
+        }
         this.setChanged();
         this.notifyObservers();
     }
@@ -913,4 +918,25 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     public synchronized void setRunCount(int n, Context c) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {        
+        /*if (objIn instanceof JAMSFullModelState.ClassLoaderObjectInputStream) {
+            this.classLoader = ((JAMSFullModelState.ClassLoaderObjectInputStream) objIn).getClassLoader();
+        }
+        if (objIn instanceof JAMSSmallModelState.ClassLoaderObjectInputStream) {
+            this.classLoader = ((JAMSSmallModelState.ClassLoaderObjectInputStream) objIn).getClassLoader();
+        }*/
+        objIn.defaultReadObject();           
+        if (objIn instanceof JAMSFullModelState.ClassLoaderObjectInputStream) {
+            this.classLoader = ((JAMSFullModelState.ClassLoaderObjectInputStream) objIn).getClassLoader();
+        }
+        if (objIn instanceof JAMSSmallModelState.ClassLoaderObjectInputStream) {
+            this.classLoader = ((JAMSSmallModelState.ClassLoaderObjectInputStream) objIn).getClassLoader();
+        }
+    }
+
+    private void writeObject(ObjectOutputStream objOut) throws IOException {
+        objOut.defaultWriteObject();        
+    }
+    
 }
