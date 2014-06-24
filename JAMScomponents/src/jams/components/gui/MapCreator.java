@@ -517,18 +517,21 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     /* Rendering different kinds of legend entries */
     public class NodeRenderer extends DefaultTreeCellRenderer {
 
-        private ImageIcon iconProject =
-                new ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/root.png"));
-        private ImageIcon iconRange =
-                new ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/map.png"));
+        private ImageIcon iconProject = null;                
+        private ImageIcon iconRange = null;
+                
         private Icon blatt;
         private Icon blatt2;
-
+        
+        public NodeRenderer(){
+            iconProject = new ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/root.png"));
+            iconRange   = new ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/map.png"));
+        }
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value,
                 boolean sel, boolean expanded, boolean leaf, int row,
                 boolean hasFocus) {
-
+            
             super.getTreeCellRendererComponent(tree, value, sel, expanded,
                     leaf,
                     row, hasFocus);

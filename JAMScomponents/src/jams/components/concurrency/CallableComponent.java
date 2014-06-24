@@ -22,13 +22,14 @@
 package jams.components.concurrency;
 
 import jams.model.Component;
+import java.io.Serializable;
 import java.util.concurrent.Callable;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-class CallableComponent implements Callable {
+class CallableComponent implements Callable, Serializable {
 
     Component comp;
 

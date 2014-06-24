@@ -22,10 +22,16 @@
 package jams.components.concurrency;
 
 import jams.model.Component;
+import jams.model.ComponentEnumerator;
+import jams.model.Context;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
+import jams.model.Model;
+import jams.runtime.JAMSRuntime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -41,8 +47,8 @@ author = "Sven Kralisch",
 description = "A context that executes its child components concurrently")
 public class ConcurrentContext extends JAMSContext {
 
-    private ExecutorService executor;
-    List<Callable<Component>> callables;
+    transient private ExecutorService executor;
+    transient List<Callable<Component>> callables;
 
     @Override
     public void init() {
@@ -63,7 +69,7 @@ public class ConcurrentContext extends JAMSContext {
 
             runEnumerator.reset();
             callables = new ArrayList();
-            while (runEnumerator.hasNext() && doRun) {
+            while (runEnumerator.hasNext()) {
                 Component comp = runEnumerator.next();
                 callables.add(new CallableComponent(comp));
             }
@@ -83,13 +89,36 @@ public class ConcurrentContext extends JAMSContext {
         } catch (InterruptedException ie) {
             this.getModel().getRuntime().handle(ie, this.getInstanceName());
         }
-
+                
         updateEntityData();
+        
+        System.out.println("Finish ConcContext ... ");
 
     }
     
     @Override
     public void cleanup() {
-        executor.shutdown();
+        if (executor != null) {
+            executor.shutdown();
+        }
+    }
+        
+    @Override
+    public void setExecutionState(int state){
+        
+        switch (state){
+            case JAMSRuntime.STATE_RUN: doRun = true; break;
+            case JAMSRuntime.STATE_STOP: doRun = false; break;
+            case JAMSRuntime.STATE_PAUSE: doRun = false; break;
+        }
+     
+        //do not propagate this information!!
+        /*ComponentEnumerator ce = this.getChildrenEnumerator();
+        while (ce.hasNext()){
+            Component comp = ce.next();
+            if (comp instanceof Context){
+                ((Context)comp).setExecutionState(state);
+            }
+        }*/
     }
 }
