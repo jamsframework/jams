@@ -250,6 +250,9 @@ public class JAMSFrame extends JAMSLauncher {
         loadModelExecutionStateAction = new AbstractAction(JAMS.i18n("Resume_Model_Execution")) {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (jfcSer == null){
+                    jfcSer = new JFileChooser();
+                }
                 jfcSer.setSelectedFile(new File(""));
                 int result = jfcSer.showOpenDialog(JAMSFrame.this);
 
