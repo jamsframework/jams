@@ -1118,6 +1118,11 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     @Override
     public void restore() {
+        //necessary to restore context of filters .. 
+        for (DataTracer t : this.dataTracers){
+            t.updateDataAccessors();
+        }
+        
         for (Component compArray : getCompArray()) {
             try {
                 compArray.restore();

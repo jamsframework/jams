@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  *
@@ -129,6 +130,15 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
         } else {
             return defaultValue;
         }
+    }
+    
+    /**
+     * Gets all properties 
+     *
+     * @return The property values
+     */
+    public Set<String> getKeys() {
+        return this.propertyMap.keySet();
     }
 
     /**

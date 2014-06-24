@@ -221,11 +221,11 @@ public class JAMSTools {
         for (Field f : fields) {
             try {
                 f.setAccessible(true);
-                Modifier m;
-                if (Modifier.isFinal(f.getModifiers())
-                        || Modifier.isStatic(f.getModifiers())) {
+                if (Modifier.isFinal(f.getModifiers()) || 
+                    Modifier.isStatic(f.getModifiers())
+                     ) {
                     continue;
-                }
+                }                
                 f.set(dst, f.get(src));
                 f.setAccessible(false);
             } catch (Exception e) {

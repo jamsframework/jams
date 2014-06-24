@@ -111,10 +111,12 @@ public class DefaultOutputDataStore implements OutputDataStore {
         }
     }
 
+    @Override
     public String[] getAttributes() {
         return attributes;
     }
 
+    @Override
     public void open(boolean append) throws IOException {
         File outputDirectory = ws.getOutputDataDirectory();
         outputDirectory.mkdirs();
@@ -160,8 +162,8 @@ public class DefaultOutputDataStore implements OutputDataStore {
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        long position = in.readLong();
+        in.defaultReadObject();        
+        long position = in.readLong(); 
         if (this.writer != null) {
             writer.close();
         }
@@ -173,11 +175,19 @@ public class DefaultOutputDataStore implements OutputDataStore {
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
-        out.writeLong(writer.getPosition());
+        if (writer != null)
+            out.writeLong(writer.getPosition());
+        else
+            out.writeLong(0L);
     }
 
+    @Override
     public DefaultFilter[] getFilters() {
         return filters;
+    }
+    
+    public void setFilters(DefaultFilter[] filters) {
+        this.filters = filters;
     }
 
     public boolean isValid() {
@@ -188,7 +198,7 @@ public class DefaultOutputDataStore implements OutputDataStore {
         }
     }
 
-    public class DefaultFilter implements Filter {
+    static public class DefaultFilter implements Filter {
 
         private String contextName, expression;
         private Context context = null;
@@ -260,6 +270,10 @@ public class DefaultOutputDataStore implements OutputDataStore {
             factory = new de.odysseus.el.ExpressionFactoryImpl(properties);
             valueExpr = factory.createValueExpression(exprContext, expression, boolean.class);
             idExpr = factory.createValueExpression(exprContext, "${id}", double.class);  
+        }
+        
+        private void writeObject(ObjectOutputStream out) throws IOException {
+            out.defaultWriteObject();
         }
     }
 }

@@ -590,6 +590,26 @@ public class JAMSWorkspace implements Workspace {
 
     /**
      *
+     * @return the id of this workspace
+     */
+    public int getID() {
+        String id = properties.getProperty("id");
+        if (id == null)
+            return -1;
+        else
+            return Integer.parseInt(id);
+    }
+    
+    /**
+     *
+     * @return sets the id of this workspace
+     */
+    public void setID(int id){
+        properties.setProperty("id", Integer.toString(id));
+        saveConfig();
+    }
+    /**
+     *
      * @return The default model path of the workspace
      */
     public String getModelFilename() {
