@@ -125,4 +125,6 @@ public interface Context extends Component {
     void updateComponentData(int index);
     
     void resume();            
+    
+    void setExecutionState(int state);
 }
