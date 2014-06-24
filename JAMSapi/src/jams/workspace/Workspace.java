@@ -216,6 +216,18 @@ public interface Workspace extends Serializable {
      * @return If the data output directory will be overwritten or not
      */
     boolean isPersistent();
+    
+    /**
+     *
+     * @return id of this workspace
+     */
+    int getID();
+    
+    /**
+     *
+     * @param id of this workspace
+     */
+    void setID(int id);
 
     /**
      * Loads the workspace config from the config file in the root of the
