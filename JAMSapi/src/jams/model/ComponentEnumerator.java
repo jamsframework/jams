@@ -30,11 +30,12 @@ import java.io.Serializable;
  *
  * @author S. Kralisch
  */
-public interface ComponentEnumerator extends Serializable{
+public interface ComponentEnumerator extends Serializable {
     
     boolean hasNext();
     boolean hasPrevious();
     Component next();
     Component previous();
-    void reset();        
+    void reset();
+    
 }

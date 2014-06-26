@@ -219,7 +219,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                     updateEntityData();
                     Attribute.Entity current = ee.next();
                     setEntity(current);
-                    
+
                     index++;
                     updateComponentData(index);
                     ce.reset();
@@ -262,7 +262,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     protected ComponentEnumerator getInitAllEnumerator() {
         return getRunEnumerator();
     }
-    
+
     /**
      *
      * @return An enumerator iterating over all child components depending on
@@ -270,7 +270,7 @@ public class JAMSContext extends JAMSComponent implements Context {
      */
     protected ComponentEnumerator getCleanupAllEnumerator() {
         return getRunEnumerator();
-    }    
+    }
 
     /**
      *
@@ -333,7 +333,7 @@ public class JAMSContext extends JAMSComponent implements Context {
      */
     @Override
     public void setModel(Model model) {
-        super.setModel(model);        
+        super.setModel(model);
     }
 
     /**
@@ -634,6 +634,22 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     }
 
+    SerializableThread incrementRunCountThread = new SerializableThread(new Runnable() {
+
+        @Override
+        public void run() {
+            getModel().incrementRunCount(1);
+        }
+    });
+    
+    class SerializableThread extends Thread implements Serializable {
+        
+        public SerializableThread(Runnable r) {
+            super(r);
+        }
+        
+    }
+
     private void createRunRunnable(boolean isProfiling) {
         // create the runnable object that is executed at each run stage of that context
         // this will differ depending on wether the child components' execution time should be
@@ -650,6 +666,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                         getModel().getRuntime().handle(e, currentComponent.getInstanceName());
                     }
                     getModel().measureTime(cStart, currentComponent);
+                    incrementRunCountThread.run();
                 }
             };
 
@@ -663,6 +680,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                     } catch (Exception e) {
                         getModel().getRuntime().handle(e, currentComponent.getInstanceName());
                     }
+                    incrementRunCountThread.run();
                 }
             };
 
@@ -737,8 +755,8 @@ public class JAMSContext extends JAMSComponent implements Context {
             };
 
         }
-    }    
-    
+    }
+
     private void createResumeRunnable(boolean isProfiling) {
         // create the runnable object that is executed at each run stage of that context
         // this will differ depending on wether the child components' execution time should be
@@ -1031,7 +1049,7 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         updateEntityData();
     }
-    
+
     @Override
     public void cleanupAll() {
 
@@ -1055,8 +1073,6 @@ public class JAMSContext extends JAMSComponent implements Context {
 
         updateEntityData();
     }
-
-    
 
     @Override
     public void resume() {
@@ -1107,10 +1123,10 @@ public class JAMSContext extends JAMSComponent implements Context {
     @Override
     public void restore() {
         //necessary to restore context of filters .. 
-        for (DataTracer t : this.dataTracers){
+        for (DataTracer t : this.dataTracers) {
             t.updateDataAccessors();
         }
-        
+
         for (Component compArray : getCompArray()) {
             try {
                 compArray.restore();
@@ -1218,26 +1234,32 @@ public class JAMSContext extends JAMSComponent implements Context {
      */
     public void setEntity(Attribute.Entity entity) {
 
-    }    
+    }
 
     @Override
-    public void setExecutionState(int state){
-        
-        switch (state){
-            case JAMSRuntime.STATE_RUN: doRun = true; break;
-            case JAMSRuntime.STATE_STOP: doRun = false; break;
-            case JAMSRuntime.STATE_PAUSE: doRun = false; break;
+    public void setExecutionState(int state) {
+
+        switch (state) {
+            case JAMSRuntime.STATE_RUN:
+                doRun = true;
+                break;
+            case JAMSRuntime.STATE_STOP:
+                doRun = false;
+                break;
+            case JAMSRuntime.STATE_PAUSE:
+                doRun = false;
+                break;
         }
-        
+
         ComponentEnumerator ce = this.getChildrenEnumerator();
-        while (ce.hasNext()){
+        while (ce.hasNext()) {
             Component comp = ce.next();
-            if (comp instanceof Context){
-                ((Context)comp).setExecutionState(state);
+            if (comp instanceof Context) {
+                ((Context) comp).setExecutionState(state);
             }
         }
     }
-    
+
     /*public void createMemoryStatistics(){
      HashMap<String, Long> memoryMap = new HashMap<String, Long>();
      ArrayList<Attribute.Entity> entityList = new ArrayList<Attribute.Entity>();

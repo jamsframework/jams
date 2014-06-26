@@ -99,11 +99,9 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private HashMap<String, Integer> idMap;
     transient private SmallModelState state = null;
     private DataFactory dataFactory = DefaultDataFactory.getDataFactory();  
-    private String runtimeID = null;
     
     public StandardRuntime(SystemProperties properties) {
         this.properties = properties;
-        runtimeID = this.toString();
         init(true);
     }
 
@@ -431,6 +429,15 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         // add this runtime to the runtime manager
         RuntimeManager.getInstance().addRuntime(this);
+        
+        model.addProgressObserver(new Observer() {
+
+            @Override
+            public void update(Observable o, Object arg) {
+                long[] progress = (long[]) arg;
+//                System.out.println(progress[0] + "/" + progress[1]);
+            }
+        });
 
         if (guiEnabled && (guiComponents.size() > 0)) {
             frame.setVisible(true);
@@ -469,7 +476,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     private void finishModelExecution(long executionTime) {
         if (this.getState() == JAMSRuntime.STATE_PAUSE) {
-            System.out.println("Save state ... ");
             this.model.getWorkspace().saveState(state);            
         }
 
@@ -920,12 +926,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     }
     
     private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {        
-        /*if (objIn instanceof JAMSFullModelState.ClassLoaderObjectInputStream) {
-            this.classLoader = ((JAMSFullModelState.ClassLoaderObjectInputStream) objIn).getClassLoader();
-        }
-        if (objIn instanceof JAMSSmallModelState.ClassLoaderObjectInputStream) {
-            this.classLoader = ((JAMSSmallModelState.ClassLoaderObjectInputStream) objIn).getClassLoader();
-        }*/
+
         objIn.defaultReadObject();           
         if (objIn instanceof JAMSFullModelState.ClassLoaderObjectInputStream) {
             this.classLoader = ((JAMSFullModelState.ClassLoaderObjectInputStream) objIn).getClassLoader();

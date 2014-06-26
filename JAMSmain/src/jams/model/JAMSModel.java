@@ -33,18 +33,21 @@ import jams.workspace.InvalidWorkspaceException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  *
  * @author S. Kralisch
  */
 @JAMSComponentDescription(title = "JAMS model",
-author = "Sven Kralisch",
-date = "2006-05-31",
-version = "1.0_0",
-description = "This component represents a JAMS model which is a special type of context component")
+        author = "Sven Kralisch",
+        date = "2006-05-31",
+        version = "1.0_0",
+        description = "This component represents a JAMS model which is a special type of context component")
 public class JAMSModel extends JAMSContext implements Model {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
@@ -55,7 +58,10 @@ public class JAMSModel extends JAMSContext implements Model {
     transient private HashMap<Component, ArrayList<Field>> nullFields;
     private HashMap<Component, Long> execTime = new HashMap<Component, Long>();
     private boolean profiling = false;
-        
+    private long[] progressData = {0, 0};
+    private SerializableObservable progressObservable = new SerializableObservable();
+    private long oldProgress, progressThreshold;
+
     public JAMSModel(JAMSRuntime runtime) {
         this.runtime = runtime;
     }
@@ -95,8 +101,7 @@ public class JAMSModel extends JAMSContext implements Model {
         runtime.println("", JAMS.STANDARD);
         runtime.println(JAMS.i18n("starting_simulation"), JAMS.STANDARD);
         runtime.println(JAMS.i18n("*************************************"), JAMS.STANDARD);
-        
-        
+
         // prepare the model's workspace
         try {
             if (workspace != null) {
@@ -105,7 +110,7 @@ public class JAMSModel extends JAMSContext implements Model {
         } catch (InvalidWorkspaceException iwe) {
             runtime.sendHalt(iwe.getMessage());
             return;
-        }        
+        }
 
         // check if workspace directory was specified
         if (workspaceDirectory.getValue() == null) {
@@ -121,6 +126,14 @@ public class JAMSModel extends JAMSContext implements Model {
         if (!doRun) {
             return;
         }
+
+        progressData[0] = 0;
+        progressData[1] = calcRunCount(this);
+        progressThreshold = Math.round(0.01 * progressData[1]);
+        oldProgress = 0;
+        progressObservable.setChanged();
+        progressObservable.notifyObservers(progressData);
+//        System.out.println("max run count: " + progressData[1]);
 
         if (!getNullFields().isEmpty() && (runtime.getDebugLevel() >= JAMS.VVERBOSE)) {
             runtime.println("");
@@ -146,11 +159,43 @@ public class JAMSModel extends JAMSContext implements Model {
     public void cleanup() {
         super.cleanup();
 
+        progressObservable.setChanged();
+        progressObservable.notifyObservers(progressData);
+
         if (profiling) {
             printExecTimes();
         }
     }
-                    
+
+    private long calcRunCount(Context c) {
+
+        long runCount = 0;
+
+        for (Component child : c.getComponents()) {
+
+            if (child instanceof Context) {
+                runCount += calcRunCount((Context) child) + 1;
+            } else {
+                runCount++;
+            }
+        }
+
+        return runCount * c.getNumberOfIterations();
+    }
+
+    @Override
+    public synchronized void incrementRunCount(int n) {
+
+        progressData[0] += n;
+
+        if (progressData[0] > oldProgress + progressThreshold) {
+            oldProgress = progressData[0];
+            progressObservable.setChanged();
+            progressObservable.notifyObservers(progressData);
+        }
+
+    }
+
     private void printExecTimes(Context context, String indent) {
 
         runtime.println(indent + context.getInstanceName() + "\t" + execTime.get(context));
@@ -183,9 +228,9 @@ public class JAMSModel extends JAMSContext implements Model {
     }
 
     public boolean moveWorkspaceDirectory(String workspaceDirectory) {
-        
+
         this.workspaceDirectory.setValue(workspaceDirectory);
-        
+
         // create output dir
         try {
             this.workspace.setDirectory(new File(workspaceDirectory));
@@ -254,8 +299,10 @@ public class JAMSModel extends JAMSContext implements Model {
 
     /**
      * Set static attribute profile which defines profiling for contexts
-     * @param profile Profile or not
+     *
+     * @param profiling Profile or not
      */
+    @Override
     public void setProfiling(boolean profiling) {
         this.profiling = profiling;
     }
@@ -263,9 +310,7 @@ public class JAMSModel extends JAMSContext implements Model {
     private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {
         objIn.defaultReadObject();
 
-        
-        
-        if (objIn.readBoolean()) {            
+        if (objIn.readBoolean()) {
             this.getRuntime().initGUI((String) objIn.readObject(),
                     objIn.readBoolean(),
                     objIn.readInt(), objIn.readInt());
@@ -284,4 +329,20 @@ public class JAMSModel extends JAMSContext implements Model {
             objOut.writeBoolean(false);
         }
     }
+
+    public void addProgressObserver(Observer o) {
+        progressObservable.addObserver(o);
+    }
+
+    public void deleteProgressObserver(Observer o) {
+        progressObservable.deleteObserver(o);
+    }
+
+    class SerializableObservable extends Observable implements Serializable {
+
+        public synchronized void setChanged() {
+            super.setChanged();
+        }
+    }
+
 }

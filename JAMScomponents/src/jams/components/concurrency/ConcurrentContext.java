@@ -22,16 +22,11 @@
 package jams.components.concurrency;
 
 import jams.model.Component;
-import jams.model.ComponentEnumerator;
-import jams.model.Context;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
-import jams.model.Model;
 import jams.runtime.JAMSRuntime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -90,10 +85,9 @@ public class ConcurrentContext extends JAMSContext {
             this.getModel().getRuntime().handle(ie, this.getInstanceName());
         }
                 
-        updateEntityData();
+        updateEntityData();       
+        getModel().incrementRunCount(1);
         
-        System.out.println("Finish ConcContext ... ");
-
     }
     
     @Override
@@ -111,14 +105,5 @@ public class ConcurrentContext extends JAMSContext {
             case JAMSRuntime.STATE_STOP: doRun = false; break;
             case JAMSRuntime.STATE_PAUSE: doRun = false; break;
         }
-     
-        //do not propagate this information!!
-        /*ComponentEnumerator ce = this.getChildrenEnumerator();
-        while (ce.hasNext()){
-            Component comp = ce.next();
-            if (comp instanceof Context){
-                ((Context)comp).setExecutionState(state);
-            }
-        }*/
     }
 }

@@ -21,14 +21,13 @@
  */
 package jams.model;
 
-import jams.data.Attribute;
-import jams.data.JAMSData;
 import jams.runtime.JAMSRuntime;
 import jams.workspace.Workspace;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Observer;
 
 /**
  *
@@ -59,4 +58,10 @@ public interface Model extends Context {
     public void measureTime(long startTime, Component c);
 
     public boolean isProfiling();        
+    
+    public void incrementRunCount(int n);
+    
+    public void addProgressObserver(Observer o);
+
+    public void deleteProgressObserver(Observer o);
 }

@@ -70,10 +70,6 @@ public class ModelIO {
         });
     }
 
-//    public ModelIO(ModelDescriptor md, JAMSClassLoader loader) {
-//        this.md = md;
-//        this.loader = loader;
-//    }
     public ModelDescriptor createModel() {
 
         ModelDescriptor md = new ModelDescriptor();
