@@ -83,7 +83,7 @@ public class ComponentDescriptor extends Observable {
 
                 for (Entry entry : vc.entries()) {
                     if (entry.version().compareTo(versionID) > 0) {
-                        message += "\n" + "            - version " + entry.version() + ": " + entry.comment();
+                        message += "\n" + "=== version " + entry.version() + " ===" + entry.comment();
                     }
                 }
             }

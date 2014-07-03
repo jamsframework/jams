@@ -65,6 +65,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     protected boolean isPaused = false;
     transient protected Runnable runRunnable, resumeRunnable, initAllRunnable, cleanupAllRunnable;
     transient protected Component currentComponent;
+    protected long runCount;
 
     /**
      * Creates a new context
@@ -634,13 +635,13 @@ public class JAMSContext extends JAMSComponent implements Context {
 
     }
 
-    SerializableThread incrementRunCountThread = new SerializableThread(new Runnable() {
-
-        @Override
-        public void run() {
-            getModel().incrementRunCount(1);
-        }
-    });
+//    SerializableThread incrementRunCountThread = new SerializableThread(new Runnable() {
+//
+//        @Override
+//        public void run() {
+//            getModel().incrementRunCount(1);
+//        }
+//    });
     
     class SerializableThread extends Thread implements Serializable {
         
@@ -666,7 +667,9 @@ public class JAMSContext extends JAMSComponent implements Context {
                         getModel().getRuntime().handle(e, currentComponent.getInstanceName());
                     }
                     getModel().measureTime(cStart, currentComponent);
-                    incrementRunCountThread.run();
+                    runCount++;
+
+//                    incrementRunCountThread.run();
                 }
             };
 
@@ -680,7 +683,8 @@ public class JAMSContext extends JAMSComponent implements Context {
                     } catch (Exception e) {
                         getModel().getRuntime().handle(e, currentComponent.getInstanceName());
                     }
-                    incrementRunCountThread.run();
+                runCount++;
+//                    incrementRunCountThread.run();
                 }
             };
 
@@ -969,6 +973,8 @@ public class JAMSContext extends JAMSComponent implements Context {
         createInitAllRunnable(getModel().isProfiling());
         createCleanupAllRunnable(getModel().isProfiling());
         createResumeRunnable(getModel().isProfiling());
+        
+        runCount = 0;
     }
 
     @Override
@@ -1206,6 +1212,11 @@ public class JAMSContext extends JAMSComponent implements Context {
     @Override
     public long getNumberOfIterations() {
         return getEntities().getEntities().size();
+    }
+    
+    @Override
+    public long getRunCount() {
+        return runCount;
     }
 
     class AttributeSpec implements Serializable {

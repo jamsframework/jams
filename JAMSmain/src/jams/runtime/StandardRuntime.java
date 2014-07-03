@@ -71,6 +71,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.w3c.dom.Document;
@@ -429,16 +432,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
         // add this runtime to the runtime manager
         RuntimeManager.getInstance().addRuntime(this);
-        
-        model.addProgressObserver(new Observer() {
-
-            @Override
-            public void update(Observable o, Object arg) {
-                long[] progress = (long[]) arg;
-//                System.out.println(progress[0] + "/" + progress[1]);
-            }
-        });
-
+            
         if (guiEnabled && (guiComponents.size() > 0)) {
             frame.setVisible(true);
         }
@@ -453,6 +447,15 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             model.initAll();
         }
 
+        // start monitoring run stage progress
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }, 0, 100, TimeUnit.MILLISECONDS);                
+        
         if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.run(); 
         }
@@ -464,7 +467,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.cleanup();
         }
-
+        
         finishModelExecution(System.currentTimeMillis() - start);
 
         if (this.getState() != JAMSRuntime.STATE_PAUSE) {

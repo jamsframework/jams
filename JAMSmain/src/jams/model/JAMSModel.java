@@ -33,11 +33,8 @@ import jams.workspace.InvalidWorkspaceException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  *
@@ -59,8 +56,6 @@ public class JAMSModel extends JAMSContext implements Model {
     private HashMap<Component, Long> execTime = new HashMap<Component, Long>();
     private boolean profiling = false;
     private long[] progressData = {0, 0};
-    private SerializableObservable progressObservable = new SerializableObservable();
-    private long oldProgress, progressThreshold;
 
     public JAMSModel(JAMSRuntime runtime) {
         this.runtime = runtime;
@@ -127,13 +122,7 @@ public class JAMSModel extends JAMSContext implements Model {
             return;
         }
 
-        progressData[0] = 0;
-        progressData[1] = calcRunCount(this);
-        progressThreshold = Math.round(0.01 * progressData[1]);
-        oldProgress = 0;
-        progressObservable.setChanged();
-        progressObservable.notifyObservers(progressData);
-//        System.out.println("max run count: " + progressData[1]);
+        updateProgress();
 
         if (!getNullFields().isEmpty() && (runtime.getDebugLevel() >= JAMS.VVERBOSE)) {
             runtime.println("");
@@ -159,41 +148,50 @@ public class JAMSModel extends JAMSContext implements Model {
     public void cleanup() {
         super.cleanup();
 
-        progressObservable.setChanged();
-        progressObservable.notifyObservers(progressData);
-
         if (profiling) {
             printExecTimes();
         }
     }
 
-    private long calcRunCount(Context c) {
+    private long getMaxRunCount(Context c) {
 
-        long runCount = 0;
+        long childCount = 0;
 
         for (Component child : c.getComponents()) {
 
             if (child instanceof Context) {
-                runCount += calcRunCount((Context) child) + 1;
+                childCount += getMaxRunCount((Context) child) + 1;
             } else {
-                runCount++;
+                childCount++;
             }
         }
 
-        return runCount * c.getNumberOfIterations();
+        return childCount * c.getNumberOfIterations();
     }
 
-    @Override
-    public synchronized void incrementRunCount(int n) {
+    private long getCurrentRunCount(Context c) {
 
-        progressData[0] += n;
+        long childCount = 0;
 
-        if (progressData[0] > oldProgress + progressThreshold) {
-            oldProgress = progressData[0];
-            progressObservable.setChanged();
-            progressObservable.notifyObservers(progressData);
+        for (Component child : c.getComponents()) {
+
+            if (child instanceof Context) {
+                childCount += getCurrentRunCount((Context) child);
+            }
         }
 
+        return childCount + c.getRunCount();
+    }
+    
+    @Override
+    public void updateProgress() {
+        progressData[1] = getMaxRunCount(this);
+    }
+    
+    @Override
+    public long[] getProgress() {
+        progressData[0] = getCurrentRunCount(this);
+        return progressData;
     }
 
     private void printExecTimes(Context context, String indent) {
@@ -329,20 +327,4 @@ public class JAMSModel extends JAMSContext implements Model {
             objOut.writeBoolean(false);
         }
     }
-
-    public void addProgressObserver(Observer o) {
-        progressObservable.addObserver(o);
-    }
-
-    public void deleteProgressObserver(Observer o) {
-        progressObservable.deleteObserver(o);
-    }
-
-    class SerializableObservable extends Observable implements Serializable {
-
-        public synchronized void setChanged() {
-            super.setChanged();
-        }
-    }
-
 }
