@@ -89,6 +89,8 @@ public interface Context extends Component {
 
     long getNumberOfIterations();
 
+    long getRunCount();
+
     /**
      *
      * @return A string representing the current state of the context

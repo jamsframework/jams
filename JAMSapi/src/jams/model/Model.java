@@ -59,9 +59,8 @@ public interface Model extends Context {
 
     public boolean isProfiling();        
     
-    public void incrementRunCount(int n);
+    public long[] getProgress();  
     
-    public void addProgressObserver(Observer o);
-
-    public void deleteProgressObserver(Observer o);
+    public void updateProgress();
+        
 }
