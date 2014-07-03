@@ -38,8 +38,8 @@ import java.util.concurrent.Future;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 @JAMSComponentDescription(title = "ConcurrentContext",
-author = "Sven Kralisch",
-description = "A context that executes its child components concurrently")
+        author = "Sven Kralisch",
+        description = "A context that executes its child components concurrently")
 public class ConcurrentContext extends JAMSContext {
 
     transient private ExecutorService executor;
@@ -53,7 +53,7 @@ public class ConcurrentContext extends JAMSContext {
     /*
      * Component run stages
      */
-    
+
     @Override
     public void run() {
 
@@ -74,36 +74,40 @@ public class ConcurrentContext extends JAMSContext {
         try {
 
             List<Future<Component>> futures = executor.invokeAll(callables);
-            
+
             for (Future f : futures) {
                 f.get();
+                runCount++;
             }
-            
+
         } catch (ExecutionException ee) {
             this.getModel().getRuntime().handle(ee, this.getInstanceName());
         } catch (InterruptedException ie) {
             this.getModel().getRuntime().handle(ie, this.getInstanceName());
         }
-                
-        updateEntityData();       
-        getModel().incrementRunCount(1);
-        
+
     }
-    
+
     @Override
     public void cleanup() {
         if (executor != null) {
             executor.shutdown();
         }
     }
-        
+
     @Override
-    public void setExecutionState(int state){
-        
-        switch (state){
-            case JAMSRuntime.STATE_RUN: doRun = true; break;
-            case JAMSRuntime.STATE_STOP: doRun = false; break;
-            case JAMSRuntime.STATE_PAUSE: doRun = false; break;
+    public void setExecutionState(int state) {
+
+        switch (state) {
+            case JAMSRuntime.STATE_RUN:
+                doRun = true;
+                break;
+            case JAMSRuntime.STATE_STOP:
+                doRun = false;
+                break;
+            case JAMSRuntime.STATE_PAUSE:
+                doRun = false;
+                break;
         }
     }
 }
