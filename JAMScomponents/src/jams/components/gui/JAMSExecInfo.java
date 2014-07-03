@@ -141,14 +141,21 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
         jamsProgressBar.setStringPainted(true);
         jamsProgressBar.setIndeterminate(false);
         jamsProgressBar.setFont(Font.decode("Monospaced"));
-        if (milliSeconds.getValue() == 42) {
+        if (milliSeconds.getValue() == 101) {
+            milliSeconds.setValue(20);
             jamsProgressBar.setUI(new CatProgressUI());
-            milliSeconds.setValue(20);
         }
-        if (milliSeconds.getValue() == 23) {
+        if (milliSeconds.getValue() == 7) {
             jamsProgressBar.setBackground(Color.darkGray);
-            jamsProgressBar.setUI(new PacmanProgressUI());
             milliSeconds.setValue(20);
+            jamsProgressBar.setUI(new PacmanProgressUI());
+        }
+        if (milliSeconds.getValue() == 42) {
+            jamsProgressBar.setBackground(Color.darkGray);
+            jamsProgressBar.setForeground(Color.white);
+//            jamsProgressBar.setStringPainted(false);
+            milliSeconds.setValue(20);
+            jamsProgressBar.setUI(new GhostProgressUI());
         }
         updatePBar = new Runnable() {
             public void run() {
@@ -320,7 +327,7 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
                 try {
                     InputStream is = getClass().getClassLoader().getResourceAsStream("jams/components/gui/resources/cat.png");
                     Image image = ImageIO.read(is);
-                    g2.drawImage(image, amountFull + b.left - 0, 15, null);
+                    g2.drawImage(image, amountFull + b.left - 30, 15, null);
                 } catch (IOException ex) {
                     Logger.getLogger(CatProgressUI.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -412,6 +419,90 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
                         barRectWidth, barRectHeight,
                         amountFull, b);
             }
+        }
+    }
+
+    private class GhostProgressUI extends BasicProgressBarUI {
+
+        private int range = -20, count = 0, i = 1;
+        private long max;
+
+        public GhostProgressUI() {
+            super();
+            max = Math.max(1, Math.round(100 / milliSeconds.getValue()));
+        }
+
+        @Override
+        protected void paintDeterminate(Graphics g, JComponent c) {
+
+            super.paintDeterminate(g, c);
+            if (!(g instanceof Graphics2D)) {
+                return;
+            }
+
+            Insets b = progressBar.getInsets(); // area for border
+            int barRectWidth = progressBar.getWidth() - (b.right + b.left);
+            int barRectHeight = progressBar.getHeight() - (b.top + b.bottom);
+
+            if (barRectWidth <= 0 || barRectHeight <= 0) {
+                return;
+            }
+
+            int cellLength = getCellLength();
+            int cellSpacing = getCellSpacing();
+            // amount of progress to draw
+            int amountFull = getAmountFull(b, barRectWidth, barRectHeight);
+
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setColor(progressBar.getForeground());
+
+            // draw the cells
+            if (cellSpacing == 0 && amountFull > 0) {
+                // draw one big Rect because there is no space between cells
+                g2.setStroke(new BasicStroke((float) barRectHeight,
+                        BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+            } else {
+                // draw each individual cell
+                g2.setStroke(new BasicStroke((float) barRectHeight,
+                        BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+                        0.f, new float[]{cellLength, cellSpacing}, 0.f));
+            }
+
+            g2.drawLine(b.left, (barRectHeight / 2) + b.top,
+                    amountFull + b.left, (barRectHeight / 2) + b.top);
+
+            if (count == range) {
+                i = 1;
+            }
+            if (count == 0) {
+                i = -1;
+            }
+            count += i;
+
+            try {
+                InputStream is = getClass().getClassLoader().getResourceAsStream("jams/components/gui/resources/ghosts.png");
+                Image image = ImageIO.read(is);
+                g2.drawImage(image, b.left + count, b.top + 3, null);
+            } catch (IOException ex) {
+                Logger.getLogger(CatProgressUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            // Deal with possible text painting 
+            if (progressBar.isStringPainted()) {
+                paintString(g, b.left, b.top,
+                        barRectWidth, barRectHeight,
+                        amountFull, b);
+            }
+        }
+
+        @Override
+        protected Color getSelectionForeground() {
+            return Color.BLACK;
+        }
+
+        @Override
+        protected Color getSelectionBackground() {
+            return Color.WHITE;
         }
     }
 }
