@@ -152,8 +152,7 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
         }
         if (milliSeconds.getValue() == 42) {
             jamsProgressBar.setBackground(Color.darkGray);
-            jamsProgressBar.setForeground(Color.white);
-//            jamsProgressBar.setStringPainted(false);
+            jamsProgressBar.setForeground(Color.lightGray);
             milliSeconds.setValue(20);
             jamsProgressBar.setUI(new GhostProgressUI());
         }
