@@ -21,6 +21,7 @@
  */
 package jams.data;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.*;
 import jams.JAMS;
 
@@ -37,9 +38,9 @@ public class JAMSEntityChecked extends JAMSEntity {
     @Override
     public void setFloat(String name, float attribute) {
         JAMSFloatChecked v = (JAMSFloatChecked) this.values.get(name);
-        try {
+        if (v!=null){
             v.setValue(attribute);
-        } catch (NullPointerException npe) {
+        }else{
             this.values.put(name, new JAMSFloatChecked(attribute));
         }
     }
@@ -47,9 +48,9 @@ public class JAMSEntityChecked extends JAMSEntity {
     @Override
     public void setDouble(String name, double attribute) {
         JAMSDoubleChecked v = (JAMSDoubleChecked) this.values.get(name);
-        try {
+        if (v!=null){
             v.setValue(attribute);
-        } catch (NullPointerException npe) {
+        }else{
             this.values.put(name, new JAMSDoubleChecked(attribute));
         }
     }
