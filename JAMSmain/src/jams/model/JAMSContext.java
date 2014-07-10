@@ -642,13 +642,12 @@ public class JAMSContext extends JAMSComponent implements Context {
 //            getModel().incrementRunCount(1);
 //        }
 //    });
-    
     class SerializableThread extends Thread implements Serializable {
-        
+
         public SerializableThread(Runnable r) {
             super(r);
         }
-        
+
     }
 
     private void createRunRunnable(boolean isProfiling) {
@@ -683,7 +682,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                     } catch (Exception e) {
                         getModel().getRuntime().handle(e, currentComponent.getInstanceName());
                     }
-                runCount++;
+                    runCount++;
 //                    incrementRunCountThread.run();
                 }
             };
@@ -973,7 +972,7 @@ public class JAMSContext extends JAMSComponent implements Context {
         createInitAllRunnable(getModel().isProfiling());
         createCleanupAllRunnable(getModel().isProfiling());
         createResumeRunnable(getModel().isProfiling());
-        
+
         runCount = 0;
     }
 
@@ -1213,7 +1212,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     public long getNumberOfIterations() {
         return getEntities().getEntities().size();
     }
-    
+
     @Override
     public long getRunCount() {
         return runCount;

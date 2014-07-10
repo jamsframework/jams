@@ -49,26 +49,29 @@ public class JAMSModel extends JAMSContext implements Model {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
     public Attribute.DirName workspaceDirectory = DefaultDataFactory.getDataFactory().createDirName();
-    private JAMSRuntime runtime;
+    private final JAMSRuntime runtime;
     private String name, author, date;
     public JAMSWorkspace workspace;
     transient private HashMap<Component, ArrayList<Field>> nullFields;
-    private HashMap<Component, Long> execTime = new HashMap<Component, Long>();
+    private final HashMap<Component, Long> execTime = new HashMap<Component, Long>();
     private boolean profiling = false;
-    private long[] progressData = {0, 0};
+    private final long[] progressData = {0, 0};
 
     public JAMSModel(JAMSRuntime runtime) {
         this.runtime = runtime;
     }
 
+    @Override
     public JAMSRuntime getRuntime() {
         return runtime;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
         this.setInstanceName(name);
@@ -156,6 +159,11 @@ public class JAMSModel extends JAMSContext implements Model {
     private long getMaxRunCount(Context c) {
 
         long childCount = 0;
+        long nIter = c.getNumberOfIterations();
+        
+        if (nIter < 1) {
+            return 1;
+        }
 
         for (Component child : c.getComponents()) {
 
@@ -166,7 +174,7 @@ public class JAMSModel extends JAMSContext implements Model {
             }
         }
 
-        return childCount * c.getNumberOfIterations();
+        return childCount * nIter;
     }
 
     private long getCurrentRunCount(Context c) {
@@ -242,6 +250,7 @@ public class JAMSModel extends JAMSContext implements Model {
         return true;
     }
 
+    @Override
     public void setWorkspacePath(String workspacePath) {
 
         if (StringTools.isEmptyString(workspacePath)) {
@@ -254,10 +263,12 @@ public class JAMSModel extends JAMSContext implements Model {
         }
     }
 
+    @Override
     public JAMSWorkspace getWorkspace() {
         return this.workspace;
     }
 
+    @Override
     public File getWorkspaceDirectory() {
         if (workspace == null) {
             return null;
@@ -266,18 +277,22 @@ public class JAMSModel extends JAMSContext implements Model {
         }
     }
 
+    @Override
     public String getWorkspacePath() {
         return workspaceDirectory.getValue();
     }
 
+    @Override
     public HashMap<Component, ArrayList<Field>> getNullFields() {
         return nullFields;
     }
 
+    @Override
     public void setNullFields(HashMap<Component, ArrayList<Field>> nullFields) {
         this.nullFields = nullFields;
     }
 
+    @Override
     public void measureTime(long startTime, Component c) {
         long time = System.currentTimeMillis() - startTime;
         Long current = execTime.get(c);
@@ -291,6 +306,7 @@ public class JAMSModel extends JAMSContext implements Model {
     /**
      * @return True, if the model is in profiling mode, false otherwise
      */
+    @Override
     public boolean isProfiling() {
         return profiling;
     }
