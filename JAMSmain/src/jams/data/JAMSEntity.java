@@ -40,9 +40,9 @@ public class JAMSEntity implements Attribute.Entity {
     @Override
     public void setFloat(String name, float attribute) {
         JAMSFloat v = (JAMSFloat) this.values.get(name);
-        try {
+        if (v!=null){
             v.setValue(attribute);
-        } catch (NullPointerException npe) {
+        }else{
             this.values.put(name, new JAMSFloat(attribute));
         }
     }
@@ -50,9 +50,9 @@ public class JAMSEntity implements Attribute.Entity {
     @Override
     public void setDouble(String name, double attribute) {
         JAMSDouble v = (JAMSDouble) this.values.get(name);
-        try {
+        if (v!=null){
             v.setValue(attribute);
-        } catch (NullPointerException npe) {
+        }else{
             this.values.put(name, new JAMSDouble(attribute));
         }
     }
@@ -60,21 +60,21 @@ public class JAMSEntity implements Attribute.Entity {
     @Override
     public void setInt(String name, int attribute) {
         JAMSInteger v = (JAMSInteger) this.values.get(name);
-        try {
+        if (v!=null){
             v.setValue(attribute);
-        } catch (NullPointerException npe) {
+        }else{
             this.values.put(name, new JAMSInteger(attribute));
-        }
+        }                
     }
 
     @Override
     public void setLong(String name, long attribute) {
         JAMSLong v = (JAMSLong) this.values.get(name);
-        try {
+        if (v!=null){
             v.setValue(attribute);
-        } catch (NullPointerException npe) {
+        }else{
             this.values.put(name, new JAMSLong(attribute));
-        }
+        }                
     }
 
     @Override
@@ -85,11 +85,11 @@ public class JAMSEntity implements Attribute.Entity {
     @Override
     public void setGeometry(String name, Geometry attribute) {
         JAMSGeometry v = (JAMSGeometry) this.values.get(name);
-        try {
+        if (v!=null){
             v.setValue(attribute);
-        } catch (NullPointerException npe) {
+        }else{
             this.values.put(name, new JAMSGeometry(attribute));
-        }
+        }                
     }
 
     @Override
@@ -148,15 +148,7 @@ public class JAMSEntity implements Attribute.Entity {
 
     @Override
     public boolean existsAttribute(String name) {
-        try {
-            if (values.containsKey(name)) {
-                return true;
-            } else {
-                return false;
-            }
-        } catch (NullPointerException e) {
-            return false;
-        }
+        return values.containsKey(name);
     }
 
     @Override
