@@ -76,7 +76,7 @@ import org.jfree.ui.RectangleEdge;
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
     @VersionComments.Entry(version = "1.0_1", comment = "Changed default cache size"),
-    @VersionComments.Entry(version = "1.0_2", comment = "\n- Aligned font sizes for left/right axis labels\n"
+    @VersionComments.Entry(version = "1.0_2", comment = "- Aligned font sizes for left/right axis labels\n"
             + "- Added horizotal grid line and display option\n"
             + "- Added legend positioning option")
 })

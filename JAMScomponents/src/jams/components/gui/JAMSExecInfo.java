@@ -52,7 +52,7 @@ import javax.swing.plaf.basic.BasicProgressBarUI;
         version = "1.1_0")
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
-    @VersionComments.Entry(version = "1.1_0", comment = "\n- Added output of estimated / recent runtime\n"
+    @VersionComments.Entry(version = "1.1_0", comment = "- Added output of estimated / recent runtime\n"
             + "- Uses getModel().getProgress() now, allowing for a more precise runtime estimation\n"
             + "- Can be used outside iteration context, causing smaller runtime footprint")
 })

@@ -30,33 +30,26 @@ import jams.model.*;
  */
 @JAMSComponentDescription(
         title = "SwitchContext",
-author = "Sven Kralisch",
-date = "12. November 2012",
-description = "This component represents a JAMS context which can be used to "
-+ "switch between alternative components. It executes child component number i "
-+ "if the the given attribute matches the i-th value. If no value matches, the "
-+ "i+1-th child component is executed (if existing).")
+        author = "Sven Kralisch",
+        date = "12. November 2012",
+        version = "1.0_1",
+        description = "This component represents a JAMS context which can be used to "
+        + "switch between alternative components. It executes child component number i "
+        + "if the the given attribute matches the i-th value. If no value matches, the "
+        + "i+1-th child component is executed (if existing).")
+@VersionComments(entries = @VersionComments.Entry(version = "1.0_1",
+        comment = "Fixed minor issue with wrong counting of run() invocations"))
 public class SwitchContext extends JAMSContext {
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-    description = "Double attribute to be compared with values")
+            description = "Double attribute to be compared with values")
     public Attribute.Double attribute;
-    
+
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-    description = "Double values to be compared which attribute")
+            description = "Double values to be compared which attribute")
     public Attribute.Double[] values;
-
-    public class DummyComponent extends JAMSComponent {
-
-        public void run() {
-            return;
-        }
-    }
-
-    public SwitchContext() {
-    }
 
     @Override
     public ComponentEnumerator getRunEnumerator() {
@@ -65,12 +58,23 @@ public class SwitchContext extends JAMSContext {
 
     @Override
     public long getNumberOfIterations() {
-        return 1;
+        return 0;
+    }
+
+    @Override
+    public long getRunCount() {
+        return 0;
     }
 
     public class RunEnumerator implements ComponentEnumerator {
 
-        final SwitchContext.DummyComponent dummy = new SwitchContext.DummyComponent();
+        final JAMSComponent dummy = new JAMSComponent() {
+
+            public void run() {
+                return;
+            }
+        };
+
         Component[] compArray = getCompArray();
         boolean next = true;
 

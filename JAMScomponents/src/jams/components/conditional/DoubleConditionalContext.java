@@ -28,25 +28,27 @@ import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
+import jams.model.VersionComments;
 
 /**
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription(title = "DoubleConditionalContext", author = "Sven Kralisch", date = "9. April 2008", description = "This component represents a JAMS context which can be used to "
-+ "conditionally execute components. This context must contain two components. If \"value1\" equals \"value2\", the first one will be executed, otherwise the second one.")
+@JAMSComponentDescription(title = "DoubleConditionalContext",
+        author = "Sven Kralisch",
+        date = "9. April 2008",
+        description = "This component represents a JAMS context which can be used to "
+        + "conditionally execute components. This context must contain two components. "
+        + "If \"value1\" equals \"value2\", the first one will be executed, otherwise the second one.",
+        version = "1.0_1")
+@VersionComments(entries = @VersionComments.Entry(version = "1.0_1",
+        comment = "Fixed minor issue with wrong counting of run() invocations"))
 public class DoubleConditionalContext extends JAMSContext {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Double attribute defining which component to execute")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Double attribute \"value1\"")
     public Attribute.Double value1;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Double attribute defining which component to execute")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Double attribute \"value2\"")
     public Attribute.Double value2;
-
-    public class DummyComponent extends JAMSComponent {
-        public void run() {
-            return;
-        }
-    }
 
     public DoubleConditionalContext() {
     }
@@ -58,12 +60,22 @@ public class DoubleConditionalContext extends JAMSContext {
 
     @Override
     public long getNumberOfIterations() {
-        return 1;
+        return 0;
     }
+    
+    @Override
+    public long getRunCount() {
+        return 0;
+    }    
 
     public class RunEnumerator implements ComponentEnumerator {
 
-        final DummyComponent dummy = new DummyComponent();
+        final JAMSComponent dummy = new JAMSComponent() {
+
+        @Override
+        public void run() {
+        }
+    };
         Component[] compArray = getCompArray();
         boolean next = true;
 
