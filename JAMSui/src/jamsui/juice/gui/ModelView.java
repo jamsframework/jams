@@ -61,7 +61,7 @@ import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.w3c.dom.Document;
-import reg.JAMSExplorer;
+import jams.explorer.JAMSExplorer;
 
 /**
  *

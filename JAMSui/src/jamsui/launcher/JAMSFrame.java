@@ -68,7 +68,7 @@ import javax.swing.WindowConstants;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import reg.JAMSExplorer;
+import jams.explorer.JAMSExplorer;
 
 /**
  *
