@@ -739,13 +739,33 @@ public class TimePeriodAggregator extends JAMSComponent {
                     Arrays.fill(entity[i].outerTimestepCounter,0);
                 }
             }
-        }
+        }        
+        //next time step begins
+        boolean nextTimeStep = currentTimeStep.getTimeInMillis() != time.getTimeInMillis();        
         //we are not yet within a custom time interval
-        if (currentOuterTimePeriod == null) {            
+        if (currentOuterTimePeriod == null) {
+            if (nextTimeStep) {
+                currentTimeStep = time.clone();
+                Attribute.Calendar tmp = time.clone();
+                tmp.add(interval.getTimeUnit(), interval.getTimeUnitCount());
+                boolean isLastTimeStep = tmp.after(interval.getEnd());
+                
+                if (isLastTimeStep & writeShpFile) {
+                    for (int i = 0; i < attributeNames.length; i++) {
+                        if (!isEnabled[i]) {
+                            continue;
+                        }
+                        getModel().getRuntime().sendInfoMsg("Transfering data to shapefile from dataset: " + outData[i].getFile().getName());
+                        try {
+                            shpStore[i].addDataToShpFiles(outData[i]);
+                        } catch (IOException ioe) {
+                            getModel().getRuntime().sendHalt("Can't write to output file:" + outData[i].getFile() + "\n" + ioe.toString());
+                        }
+                    }
+                }
+            }
             return;
         }
-        //next time step begins
-        boolean nextTimeStep = currentTimeStep.getTimeInMillis() != time.getTimeInMillis();
         if ( nextTimeStep ){            
             currentTimeStep = time.clone();
             //last time period was finished                        
