@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+    <title>TimePeriodAggregator</title>
+    <subtitle>A component for flexible temporal aggregation</subtitle>
+    <informaltable>
+        <tgroup cols="2">
+            <colspec colname="c1" colnum="1" colwidth="1*"/>
+            <colspec colname="c2" colnum="2" colwidth="3*"/>
+            <thead>
+                <row>
+                    <entry nameend="c2" namest="c1">Metainformation</entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry>Classification</entry>
+                    <entry>processing.aggregate</entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </informaltable>
+    <sect2>
+        <title>Variables</title>
+        <informaltable>
+            <tgroup cols="2">
+                <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+                <colspec colname="c2" colnum="2" colwidth="1.29*"/>
+                <thead>
+                    <row>
+                        <entry>Name</entry>
+                        <entry>Description</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>time</entry>
+                        <entry>current time</entry>
+                    </row>
+										<row>
+                        <entry>interval</entry>
+                        <entry>time interval which is used by the model</entry>
+                    </row>
+                    <row>
+                        <entry>id</entry>
+                        <entry>id of the spatial entity</entry>
+                    </row>
+                    <row>
+                        <entry>attributeNames</entry>
+                        <entry>names of those attributes which should be aggregated</entry>
+                    </row>
+                    <row>
+                        <entry>enabled</entry>
+                        <entry>enables or disables aggregation for each attribut</entry>
+                    </row>
+                    <row>
+                        <entry>value</entry>
+                        <entry>values of the attributes</entry>
+                    </row>
+                    <row>
+                        <entry>weight</entry>
+                        <entry>weight, which is multiplied with the aggregated values</entry>
+                    </row>
+                    <row>
+                        <entry>outerAggregationMode</entry>
+                        <entry>outer aggregation mode. The following values are valid: sum, avg
+                            (average), min (minimum), max (maximum)</entry>
+                    </row>
+                    <row>
+                        <entry>outerTimeUnit</entry>
+                        <entry>outer aggregation time unit.  The following values are valid: hourly,
+                            daily, monthly, seasonal, halfyear, hydhalfyear, yearly, decadly,
+                            custom</entry>
+                    </row>
+										<row>
+                        <entry>innerAggregationMode</entry>
+                        <entry>inner aggregation mode. The following values are valid:  sum, avg
+                            (average), min (minimum), max (maximum), ind (keeps each indivudual
+                            value)</entry>
+                    </row>
+                    <row>
+                        <entry>innerTimeUnit</entry>
+                        <entry>inner aggregation time unit.. The following values are valid: hourly,
+                            daily, monthly, seasonal, halfyear, hydhalfyear, yearly, decadly</entry>
+                    </row>
+                    <row>
+                        <entry>customOuterTimePeriod</entry>
+                        <entry>user definied time interval for outer aggregation. Is only used, when
+                            outerTimeUnit is set to custom</entry>
+                    </row>										                 
+                    <row>
+                        <entry>idFilters</entry>
+                        <entry>Aggregation can be filtered by this idFilters list. Is idFilters not
+                            set, aggregation will be performed for all ids. idFilters can be defined
+                            as list of single values or as list of id ranges. Values are separated
+                            by semicolon. For example "1;3;5-10" will select all IDs from 1 to 10
+                            with the exception of 2 and 4.</entry>
+                    </row>
+                    <row>
+                        <entry>shpFile</entry>
+                        <entry>relative path to a shape file. The aggregated values will be attached
+                            directly to a copy of that shape file</entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </informaltable>
+    </sect2>
+    <sect2>
+        <title>Description of the component</title>
+        <para>This component provides a function to aggregate one or more time-varying data values.
+            This component takes the current time step ( time ), the model time interval ( interval
+            ), the value(s) which should be aggregated ( value ) and a weight-value ( weight ) as
+            input, to calculate an aggregated value. This component allows also the calculation of
+            nested aggregates, such as the calculation of the average monthly precipitation within a
+            decade. Therefore it is an extension of the simple TemporalSumAggregator.</para>
+        <para>To allow nested aggregation, the component features an outer and inner aggregation
+            level. At first the values will be aggregated by the inner aggregation level. By
+                <emphasis role="italic">innerAggregationMode</emphasis> it can be defined if the<itemizedlist>
+                <listitem>
+                    <para>sum (<emphasis role="italic">sum</emphasis>), </para>
+                </listitem>
+                <listitem>
+                    <para>average <emphasis role="italic">avg</emphasis> or</para>
+                </listitem>
+                <listitem>
+                    <para>minimum(<emphasis role="italic">min</emphasis>) or</para>
+                </listitem>
+                <listitem>
+                    <para>maximum (<emphasis role="italic">max</emphasis>) </para>
+                </listitem>
+            </itemizedlist>should be calculated.</para>
+        <para>The <emphasis role="italic">innerTimeUnit</emphasis> defines the interval at the which
+            the values should be aggregated. Possible time units are<itemizedlist>
+                <listitem>
+                    <para>months (<emphasis role="italic">monthly</emphasis>), </para>
+                </listitem>
+                <listitem>
+                    <para>seasons (<emphasis role="italic">seasonal</emphasis>), </para>
+                </listitem>
+                <listitem>
+                    <para>half years <emphasis role="italic">halfyear</emphasis>, </para>
+                </listitem>
+                <listitem>
+                    <para>hydrological halfyears <emphasis role="italic">hydhalfyear</emphasis>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>years <emphasis role="italic">yearly</emphasis> or</para>
+                </listitem>
+                <listitem>
+                    <para>decades <emphasis role="italic">decadly</emphasis>
+                    </para>
+                </listitem>
+            </itemizedlist>Those aggregated values can now aggregated further by using the "outer"
+            aggregation level. The outer aggregation is defined by <emphasis role="italic"
+                >outerAggregationMode</emphasis> and <emphasis role="italic"
+                >outerAggregationTimePeriod</emphasis> in the same way as the inner aggregation was
+            defined.</para>
+        <para>Aggregated values will be stored immediatly in two textfiles, which are located in the
+            corresponding output directory. The name of those files is defined by "attributname
+            outer aggreation inner aggreation.dat" and "attributname outer aggreation inner
+            aggreation_SODS.dat". The first file is a structured as simple tabstop separated table,
+            such that the file can be opened and postprocessed in Excel (if the file is not to
+            large). The second file is a usual JAMS output file, such that it can be opened in JADE.
+            Another possible option is to transfer the aggregated values directly to a shapefile.
+            The shapefile must contain the corresponding spatial units, which can be matched by
+            their ID. The component expects the ID of the spatial unit to be in the first column of
+            the shape file. The relative path of the shapefile can be defined by the attribut
+                <emphasis role="italic">shpFile</emphasis> .</para>
+        <para>The parameter <emphasis role="italic">enabled</emphasis> allows to enable or disable
+            aggregation for individual attributes.</para>
+        <para>Aggregation can be filtered by this  <emphasis role="italic">idFilters</emphasis>
+            list. Is idFilters not set, aggregation will be performed for all ids. idFilters can be
+            defined as list of single values or as list of id ranges. Values are separated by
+            semicolon. For example "1;3;5-10" will select all IDs from 1 to 10 with the exception of
+            2 and 4.</para>
+        <para><emphasis role="bold">Use-Case 1</emphasis> average yearly Temperature of a daily
+            model</para>
+        <para><ns:code>&lt;component class="jams.components.aggregate.TimePeriodAggregator"
+                enabled="true" name="TimePeriodAggregator"> </ns:code>
+        </para>
+        <para><ns:code>&lt;var name="attributeNames" value="Temperature"/></ns:code></para>
+        <para><ns:code>&lt;var name="interval" context="J2000" attribute="modelTimeInterval"/>
+            </ns:code></para>
+        <para><ns:code>&lt;var attribute="ID" context="HRULoop" name="id"/> </ns:code></para>
+        <para><ns:code>&lt;var attribute="time" context="J2000" name="time"/> </ns:code></para>
+        <para><ns:code>&lt;var name="innerAggregationMode" value="avg"/> </ns:code></para>
+        <para><ns:code>&lt;var name="outerAggregationMode" value="avg"/> </ns:code></para>
+        <para><ns:code>&lt;var name="innerTimeUnit" value="daily"/> </ns:code></para>
+        <para><ns:code>&lt;var name="outerTimeUnit" value="yearly"/> </ns:code></para>
+        <para><ns:code>&lt;var attribute="tmean" context="HRULoop" name="value"/> </ns:code></para>
+        <para><ns:code>&lt;var value="/input/gis/myshapefile.shp" name="shpFile"/> </ns:code></para>
+        <para><ns:code>&lt;/component></ns:code></para>
+        <para><emphasis role="bold">Use-Case  2</emphasis> monthly sum of precipitation of a daily
+            model</para>
+        <para><ns:code>&lt;component class="jams.components.aggregate.TimePeriodAggregator"
+                enabled="true" name="TimePeriodAggregator"> </ns:code>
+        </para>
+        <para><ns:code>&lt;var name="attributeNames" value="Niederschlag"/></ns:code></para>
+        <para><ns:code>&lt;var name="interval" context="J2000" attribute="modelTimeInterval"/>
+            </ns:code></para>
+        <para><ns:code>&lt;var name="innerAggregationMode" value="avg"/> </ns:code></para>
+        <para><ns:code>&lt;var name="outerAggregationMode" value="sum"/> </ns:code></para>
+        <para><ns:code>&lt;var name="innerTimeUnit" value="daily"/> </ns:code></para>
+        <para><ns:code>&lt;var name="outerTimeUnit" value="monthly"/> </ns:code></para>
+        <para><ns:code>&lt;var attribute="ID" context="HRULoop" name="id"/> </ns:code></para>
+        <para><ns:code>&lt;var attribute="time" context="J2000" name="time"/> </ns:code></para>
+        <para><ns:code>&lt;var attribute="precip" context="HRULoop" name="value"/> </ns:code></para>
+        <para><ns:code>&lt;var value="/input/gis/myshapefile.shp" name="shpFile"/> </ns:code></para>
+        <para><ns:code>&lt;/component></ns:code></para>
+        <para><emphasis role="bold">Use case 3</emphasis> long-term monthly precipitation of a daily
+            model</para>
+        <para><ns:code>&lt;component class="jams.components.aggregate.TimePeriodAggregator"
+                enabled="true" name="TimePeriodAggregator"> </ns:code>
+        </para>
+        <para><ns:code>&lt;var name="attributeNames" value="Niederschlag"/></ns:code></para>
+        <para><ns:code>&lt;var name="interval" context="J2000" attribute="modelTimeInterval"/>
+            </ns:code></para>
+        <para><ns:code>&lt;var name="innerAggregationMode" value="sum"/> </ns:code></para>
+        <para><ns:code>&lt;var name="outerAggregationMode" value="ind"/> </ns:code></para>
+        <para><ns:code>&lt;var attribute="ID" context="HRULoop" name="id"/> </ns:code></para>
+        <para><ns:code>&lt;var attribute="time" context="J2000" name="time"/> </ns:code></para>
+        <para><ns:code>&lt;var name="outerTimeUnit" value="custom"/> </ns:code></para>
+        <para><ns:code>&lt;var name="innerTimeUnit" value="monthly"/></ns:code></para>
+        <para><ns:code>&lt;var name="customOuterTimePeriod" value="1971-01-01 2010-12-31"/>
+            </ns:code></para>
+        <para><ns:code>&lt;var attribute="tmean" context="HRULoop" name="value"/> </ns:code></para>
+        <para><ns:code>&lt;var value="/input/gis/myshapefile.shp" name="shpFile"/> </ns:code></para>
+        <para><ns:code>&lt;/component></ns:code></para>
+        <para><emphasis role="bold">Use case 4</emphasis> average yearly precipitation of each
+            decade</para>
+        <para><ns:code>&lt;component class="jams.components.aggregate.TimePeriodAggregator"
+                enabled="true" name="TimePeriodAggregator"> </ns:code>
+        </para>
+        <para><ns:code>&lt;var name="attributeNames" value="Niederschlag"/></ns:code></para>
+        <para><ns:code>&lt;var name="interval" context="J2000" attribute="modelTimeInterval"/>
+            </ns:code></para>
+        <para><ns:code>&lt;var name="innerAggregationMode" value="sum"/> </ns:code></para>
+        <para><ns:code>&lt;var name="outerAggregationMode" value="avg"/> </ns:code></para>
+        <para><ns:code>&lt;var attribute="ID" context="HRULoop" name="id"/> </ns:code></para>
+        <para><ns:code>&lt;var attribute="time" context="J2000" name="time"/> </ns:code></para>
+        <para><ns:code>&lt;var name="outerTimeUnit" value="decadly"/> </ns:code></para>
+        <para><ns:code>&lt;var name="innerTimeUnit" value="yearly"/></ns:code></para>
+        <para><ns:code>&lt;var attribute="tmean" context="HRULoop" name="value"/> </ns:code></para>
+        <para><ns:code>&lt;var value="/input/gis/myshapefile.shp" name="shpFile"/> </ns:code></para>
+        <para><ns:code>&lt;/component></ns:code></para>
+    </sect2>
+</sect1>

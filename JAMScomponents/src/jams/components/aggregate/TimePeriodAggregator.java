@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.logging.Level;
 
 /**
  *
@@ -92,6 +91,10 @@ public class TimePeriodAggregator extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "the shapefile to which data should be added.")
     public Attribute.String shpFile;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "the name of the id field in the shapefile.")
+    public Attribute.String idFieldName;
     
     private class SpatialAggregationEntity{
         double innerValue;
@@ -327,7 +330,38 @@ public class TimePeriodAggregator extends JAMSComponent {
     ArrayList<Attribute.TimeInterval> customTimePeriods = new ArrayList<Attribute.TimeInterval>();
         
     int n = 0;
-            
+    
+    public boolean checkConfiguration(){
+        //check for consistency
+        int n = attributeNames.length;
+        if (outerAggregationMode.length != n){
+            getModel().getRuntime().sendInfoMsg("Number of values in parameter \"outerAggregationMode\" does not match the number of attributes");
+            return false;
+        }
+        if (innerAggregationMode.length != n){
+            getModel().getRuntime().sendInfoMsg("Number of values in parameter \"innerAggregationMode\" does not match the number of attributes");
+            return false;
+        }
+        if (enabled != null && enabled.length != n){
+            getModel().getRuntime().sendInfoMsg("Number of values in parameter \"enabled\" does not match the number of attributes");
+            return false;
+        }
+        if (value.length != n){
+            getModel().getRuntime().sendInfoMsg("Number of values in parameter \"value\" does not match the number of attributes");
+            return false;
+        }
+        if (outerTimeUnitID == null){
+            getModel().getRuntime().sendInfoMsg("Unknown outer aggregation ID:" + outerTimeUnit);
+            return false;
+        }
+        if (innerTimeUnitID == null){
+            getModel().getRuntime().sendInfoMsg("Unknown inner aggregation ID:" + innerTimeUnit);
+            return false;
+        }
+        
+        return true;
+    }
+    
     @Override
     public void init(){
         getModel().getRuntime().sendInfoMsg("Init " + this.getInstanceName());
@@ -341,16 +375,13 @@ public class TimePeriodAggregator extends JAMSComponent {
                 
         writeShpFile = shpFile != null && shpFile.getValue() != null && !shpFile.getValue().isEmpty();
         
+        if (!checkConfiguration()){
+            getModel().getRuntime().sendHalt("Configuration of component " + getInstanceName() + " is not valid!");
+        }
+        
         outerTimeUnitID = getAggregationTimePeriodByString(outerTimeUnit.getValue());
         innerTimeUnitID = getAggregationTimePeriodByString(innerTimeUnit.getValue());
                         
-        if (outerTimeUnitID == null){
-            getModel().getRuntime().sendHalt("Unknown outer aggregation ID:" + outerTimeUnit);
-        }
-        if (innerTimeUnitID == null){
-            getModel().getRuntime().sendHalt("Unknown inner aggregation ID:" + innerTimeUnit);
-        }
-        
         //try to open file in the beginning. 
         for (int i = 0; i < n; i++) {
             isEnabled[i] = !(enabled != null && enabled[i] != null && !enabled[i].getValue());
@@ -360,7 +391,7 @@ public class TimePeriodAggregator extends JAMSComponent {
             }
             
             outerAggregationModeID[i] = getAggregationModeByString(outerAggregationMode[i].getValue());
-            String prefix = null;
+            String prefix;
             if (innerAggregationMode!=null){
                 innerAggregationModeID[i] = getAggregationModeByString(innerAggregationMode[i].getValue());
                 prefix = attributeNames[i].getValue() + " " + JAMS.i18n(outerTimeUnitID.name()) + " " + JAMS.i18n(outerAggregationModeID[i].name()) + " of " + JAMS.i18n(innerTimeUnitID.name()) + " " + JAMS.i18n(innerAggregationModeID[i].name());
@@ -757,7 +788,7 @@ public class TimePeriodAggregator extends JAMSComponent {
                         }
                         getModel().getRuntime().sendInfoMsg("Transfering data to shapefile from dataset: " + outData[i].getFile().getName());
                         try {
-                            shpStore[i].addDataToShpFiles(outData[i]);
+                            shpStore[i].addDataToShpFiles(outData[i], idFieldName.getValue());
                         } catch (IOException ioe) {
                             getModel().getRuntime().sendHalt("Can't write to output file:" + outData[i].getFile() + "\n" + ioe.toString());
                         }
@@ -812,7 +843,7 @@ public class TimePeriodAggregator extends JAMSComponent {
                         }
                         getModel().getRuntime().sendInfoMsg("Transfering data to shapefile from dataset: " + outData[i].getFile().getName());
                         try {
-                            shpStore[i].addDataToShpFiles(outData[i]);
+                            shpStore[i].addDataToShpFiles(outData[i], idFieldName.getValue());
                         } catch (IOException ioe) {
                             getModel().getRuntime().sendHalt("Can't write to output file:" + outData[i].getFile() + "\n" + ioe.toString());
                         }

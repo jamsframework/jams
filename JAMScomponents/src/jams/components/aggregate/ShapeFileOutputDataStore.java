@@ -113,7 +113,7 @@ public class ShapeFileOutputDataStore {
         }*/
     }
     
-    public void addDataToShpFiles(SimpleOutputDataStore store) throws IOException{
+    public void addDataToShpFiles(SimpleOutputDataStore store, String idFieldName) throws IOException{
         InputStream inputStream = null;
         DBFReader dbfReader = null;
         FileOutputStream outStream = null;
@@ -127,11 +127,18 @@ public class ShapeFileOutputDataStore {
             DBFField dbfFields[] = new DBFField[fields.length+dbfReader.getFieldCount()];
             int k = dbfReader.getFieldCount();
             int m = fields.length;
-            int n = k+m;
-            int idField = 0;
+            int n = k+m;  
             
+            int idFieldIndex = -1;
             for (int i=0;i<k;i++){
                 dbfFields[i] = dbfReader.getField(i);
+                if (idFieldName!=null && dbfFields[i].getName().compareToIgnoreCase(idFieldName)==0){
+                    idFieldIndex = i;
+                }
+            }
+            if (idFieldIndex == -1){
+                System.out.println("Error field with name " + idFieldName + " was not found in shapefile!");
+                idFieldIndex = 0;
             }
             for (int i=0;i<fields.length;i++){
                 dbfFields[i+k] = new DBFField();
@@ -152,7 +159,7 @@ public class ShapeFileOutputDataStore {
                 Object objIn[] = dbfReader.nextRecord();
                 Object objOut[] = new Object[n];
                 
-                double id = Double.parseDouble(objIn[idField].toString());
+                double id = Double.parseDouble(objIn[idFieldIndex].toString());
                 int position = store.getPositionOfEntity(id);//this.aggregatedValues.headMap(id).size();
                 
                 for (int i=0;i<k;i++){
