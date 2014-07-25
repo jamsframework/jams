@@ -207,7 +207,7 @@ public class TimePeriodAggregator extends JAMSComponent {
                 Attribute.Calendar time, Attribute.TimeInterval interval) {
             if (data == JAMS.getMissingDataValue()){
                 return;
-            }
+            }            
             switch(innerAggregationMode){
                 case AVERAGE:
                     this.innerValue += data/weight.getValue(); break;
@@ -223,6 +223,7 @@ public class TimePeriodAggregator extends JAMSComponent {
                     return;
                     
             }
+            //System.out.println("Consider at " + time.toString() + " value: " + data + " sum:" + innerValue);
             this.innerTimestepCounter += 1.0;
         }
         
@@ -297,6 +298,7 @@ public class TimePeriodAggregator extends JAMSComponent {
                     outerValue[0] = innerValue;
                     outerTimestepCounter[0]=1;
                 }
+                //System.out.println("Transfer to outer " + time.toString() + " value: " + innerValue + " sum:" + outerValue[0]);
                 initInnerAggregatedValueArray(innerAggregationMode);
         }
         
@@ -324,7 +326,7 @@ public class TimePeriodAggregator extends JAMSComponent {
     boolean isEnabled[] = null;
     HashSet<Double> selectedIds = null;
     
-    enum AggregationTimePeriod{DAILY, YEARLY, SEASONAL, MONTHLY, DECADLY, HALFYEAR, HYDHALFYEAR, CUSTOM};
+    enum AggregationTimePeriod{HOURLY, DAILY, YEARLY, SEASONAL, MONTHLY, DECADLY, HALFYEAR, HYDHALFYEAR, CUSTOM};
     enum AggregationMode{MINIMUM, MAXIMUM, AVERAGE, SUM, INDEPENDENT, LAST};
     
     ArrayList<Attribute.TimeInterval> customTimePeriods = new ArrayList<Attribute.TimeInterval>();
@@ -451,7 +453,9 @@ public class TimePeriodAggregator extends JAMSComponent {
     }
 
     private AggregationTimePeriod getAggregationTimePeriodByString(String mode){
-        if (mode.compareToIgnoreCase("daily")==0){
+        if (mode.compareToIgnoreCase("hourly")==0){
+            return AggregationTimePeriod.HOURLY;
+        }else if (mode.compareToIgnoreCase("daily")==0){
             return AggregationTimePeriod.DAILY;
         }else if (mode.compareToIgnoreCase("monthly")==0){
             return AggregationTimePeriod.MONTHLY;
@@ -495,6 +499,7 @@ public class TimePeriodAggregator extends JAMSComponent {
     private Attribute.Calendar roundToTimePeriod(Attribute.Calendar in, AggregationTimePeriod timeUnitID){
         Attribute.Calendar out = in.clone();
         switch (timeUnitID){
+            case HOURLY: out.removeUnsignificantComponents(Attribute.Calendar.HOUR_OF_DAY); break;
             case DAILY: out.removeUnsignificantComponents(Attribute.Calendar.DAY_OF_MONTH); break;
             case MONTHLY: out.removeUnsignificantComponents(Attribute.Calendar.MONTH); break;
             case YEARLY: out.removeUnsignificantComponents(Attribute.Calendar.YEAR); break;
@@ -585,7 +590,7 @@ public class TimePeriodAggregator extends JAMSComponent {
             try {                
                 int j=0;                
                                                 
-                if (buffers.size()==0){
+                if (buffers.isEmpty()){
                     buffers.add(new double[aggregatedValues.size()]);
                 }
                 
@@ -627,6 +632,10 @@ public class TimePeriodAggregator extends JAMSComponent {
                     if (outerAggregationMode[i] == AggregationMode.INDEPENDENT){
                         for (int k=0;k<buffers.size();k++){
                             Attribute.Calendar c = outerTimePeriod.clone();
+                            if (innerAggregationTimePeriod == AggregationTimePeriod.HOURLY ||
+                                outerAggregationTimePeriod == AggregationTimePeriod.HOURLY){                                
+                                getModel().getRuntime().sendHalt("Hourly time step is not supported in independent mode!!");                                
+                            }
                             if (innerAggregationTimePeriod == AggregationTimePeriod.DAILY && 
                                 outerAggregationTimePeriod == AggregationTimePeriod.MONTHLY){                                
                                 c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), k, 1, 0, 0);                                
@@ -765,6 +774,7 @@ public class TimePeriodAggregator extends JAMSComponent {
         }
         if (currentOuterTimePeriod == null){
             currentOuterTimePeriod = roundToTimePeriod(currentTimeStep, outerTimeUnitID);
+            currentInnerTimePeriod = roundToTimePeriod(currentTimeStep, innerTimeUnitID);
             for (int i=0;i<entity.length;i++){
                 if (isEnabled[i]) {
                     Arrays.fill(entity[i].outerTimestepCounter,0);
@@ -796,7 +806,7 @@ public class TimePeriodAggregator extends JAMSComponent {
                 }
             }
             return;
-        }
+        }        
         if ( nextTimeStep ){            
             currentTimeStep = time.clone();
             //last time period was finished                        
