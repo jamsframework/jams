@@ -1,5 +1,0 @@
-#
-# Account data for JAMSRemote server
-# <account>=<password>
-#
-user=password
