@@ -570,29 +570,29 @@ public class TimeSpaceDSPanel extends DSPanel {
         Image image;
         float scale = 0.8f;
 
-        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_mean.png")).getImage();
+        image = new ImageIcon(getClass().getResource("jams/explorer/resources/images/jade_mean.png")).getImage();
         image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
         label = new JLabel(new ImageIcon(image));
 //        label.setPreferredSize(labelDim);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 5, 1, 1, 0, 0);
 
-        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_sum.png")).getImage();
+        image = new ImageIcon(getClass().getResource("/jams/explorer/resources/images/jade_sum.png")).getImage();
         image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
         label = new JLabel(new ImageIcon(image));
 //        label.setPreferredSize(labelDim);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 11, 5, 1, 1, 0, 0);
 
-        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_x.png")).getImage();
+        image = new ImageIcon(getClass().getResource("/jams/explorer/resources/images/jade_x.png")).getImage();
         image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
         label = new JLabel(new ImageIcon(image));
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 12, 5, 1, 1, 0, 0);
 
-        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_xdiva.png")).getImage();
+        image = new ImageIcon(getClass().getResource("/jams/explorer/resources/images/jade_xdiva.png")).getImage();
         image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
         label = new JLabel(new ImageIcon(image));
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 13, 5, 1, 1, 0, 0);
 
-        image = new ImageIcon(getClass().getResource("/reg/resources/images/jade_xtimesa.png")).getImage();
+        image = new ImageIcon(getClass().getResource("/jams/explorer/resources/images/jade_xtimesa.png")).getImage();
         image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
         label = new JLabel(new ImageIcon(image));
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 14, 5, 1, 1, 0, 0);
