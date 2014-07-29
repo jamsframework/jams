@@ -24,6 +24,7 @@ package jams.gui;
 import jams.gui.tools.GUIHelper;
 import jams.gui.input.BooleanInput;
 import jams.gui.input.InputComponent;
+import jams.gui.input.IntegerInput;
 import jams.gui.input.TextInput;
 import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
@@ -51,6 +52,8 @@ public class WorkspaceDlg extends JDialog {
     private JAMSWorkspace ws;
 
     private InputComponent titleInput;
+    
+    private IntegerInput idInput;
 
     private JTextArea descriptionInput;
 
@@ -69,10 +72,14 @@ public class WorkspaceDlg extends JDialog {
 
         GUIHelper.addGBComponent(mainPanel, gbl, new JLabel("Title"), 10, 10, 1, 1, 1, 1);
         GUIHelper.addGBComponent(mainPanel, gbl, new JLabel("Description"), 10, 20, 1, 1, 1, 1);
+        GUIHelper.addGBComponent(mainPanel, gbl, new JLabel("ID"), 10, 30, 1, 1, 1, 1);
         GUIHelper.addGBComponent(mainPanel, gbl, new JLabel("Persistent"), 10, 30, 1, 1, 1, 1);
 
         titleInput = new TextInput();
         titleInput.setLength(40);
+        
+        idInput = new IntegerInput();
+        
         descriptionInput = new JTextArea();
         JScrollPane descriptionScroll = new JScrollPane(descriptionInput);
         descriptionScroll.setPreferredSize(new Dimension(200, 100));
@@ -80,6 +87,7 @@ public class WorkspaceDlg extends JDialog {
 
         GUIHelper.addGBComponent(mainPanel, gbl, titleInput.getComponent(), 20, 10, 1, 1, 1, 1);
         GUIHelper.addGBComponent(mainPanel, gbl, descriptionScroll, 20, 20, 1, 1, 1, 1);
+        GUIHelper.addGBComponent(mainPanel, gbl, idInput.getComponent(), 20, 20, 1, 1, 1, 1);
         GUIHelper.addGBComponent(mainPanel, gbl, persistenceInput.getComponent(), 20, 30, 1, 1, 1, 1);
 
         JButton okButton = new JButton("OK");
@@ -89,6 +97,7 @@ public class WorkspaceDlg extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 ws.setTitle(titleInput.getValue());
                 ws.setDescription(descriptionInput.getText());
+                ws.setID(Integer.parseInt(idInput.getValue()));
                 if (persistenceInput.getValue().equalsIgnoreCase("true")) {
                     ws.setPersistent(true);
                 } else {
@@ -129,6 +138,7 @@ public class WorkspaceDlg extends JDialog {
         this.ws = ws;
         this.setTitle("Workspace Properties" + " [" + ws.getDirectory().getPath() + "]");
         this.titleInput.setValue(ws.getTitle());
+        this.idInput.setValue(Integer.toString(ws.getID()));
         this.descriptionInput.setText(ws.getDescription());
         this.persistenceInput.setValue(Boolean.toString(ws.isPersistent()));
         setVisible(true);

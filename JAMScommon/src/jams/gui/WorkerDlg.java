@@ -24,6 +24,7 @@ package jams.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JDialog;
@@ -39,14 +40,14 @@ public class WorkerDlg extends JDialog {
 
     private Runnable task;
     private SwingWorker worker;
-    private Frame owner;
+    private Window owner;
     private JProgressBar progressBar;
     private JLabel label = null;
-    public WorkerDlg(Frame owner, String title) {
+    public WorkerDlg(Window owner, String title) {
         this(owner, title, "");
     }
 
-    public WorkerDlg(Frame owner, String title, String message) {
+    public WorkerDlg(Window owner, String title, String message) {
         super(owner);
 
         this.owner = owner;

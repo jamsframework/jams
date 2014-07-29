@@ -24,7 +24,7 @@ package jams.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Frame;
+import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Observable;
@@ -42,17 +42,18 @@ public class ObserverWorkerDlg extends JDialog implements Observer{
 
     private Runnable task;
     private SwingWorker worker;
-    private Frame owner;
+    private Window owner;
     private JProgressBar progressBar;
-
-    public ObserverWorkerDlg(Frame owner, String title) {
+    
+    public ObserverWorkerDlg(Window owner, String title) {
         this(owner, title, "");
     }
-
-    public ObserverWorkerDlg(Frame owner, String title, String message) {
+    
+    public ObserverWorkerDlg(Window owner, String title, String message) {
         super(owner);
 
         this.owner = owner;
+        
         this.setModal(true);
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         this.setTitle(title);
@@ -75,7 +76,7 @@ public class ObserverWorkerDlg extends JDialog implements Observer{
 
         this.pack();
     }
-
+        
     @Override
     public void update(Observable observable, Object o){
         progressBar.setString(o.toString());
