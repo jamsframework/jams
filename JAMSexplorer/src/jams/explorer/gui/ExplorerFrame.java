@@ -29,6 +29,10 @@ import jams.gui.WorkerDlg;
 import jams.gui.WorkspaceDlg;
 import jams.gui.tools.GUIHelper;
 import jams.io.XMLProcessor;
+import jams.server.client.Controller;
+import jams.server.client.gui.GraphicalClient;
+import jams.server.client.gui.BrowseJAMSCloudDlg;
+import jams.server.client.gui.SynchronizeDlg;
 import jams.tools.JAMSTools;
 import jams.tools.StringTools;
 import jams.workspace.InvalidWorkspaceException;
@@ -72,9 +76,9 @@ import optas.data.DataSet;
 import optas.io.NetCDFFileReader;
 import optas.io.NetCDFFileWriter;
 import org.w3c.dom.Document;
-import jams.explorer.DataCollectionViewController;
-import jams.explorer.JAMSExplorer;
-import jams.explorer.spreadsheet.STPConfigurator;
+import reg.DataCollectionViewController;
+import reg.JAMSExplorer;
+import reg.spreadsheet.STPConfigurator;
 //import reg.viewer.Viewer;
 
 /**
@@ -88,7 +92,7 @@ public class ExplorerFrame extends JFrame {
     protected JFileChooser jfc = GUIHelper.getJFileChooser();
     protected WorkerDlg openWSDlg;
     protected Action openWSAction, openSTPAction, exitAction, editWSAction, editPrefsAction,
-            sensitivityAnalysisAction, reloadWSAction, importDataAction;
+            sensitivityAnalysisAction, reloadWSAction, importDataAction, browseServerAction;
     protected JLabel statusLabel;
     protected JSplitPane mainSplitPane;
     protected JTabbedPane tPane;
@@ -96,7 +100,6 @@ public class ExplorerFrame extends JFrame {
     protected PropertyDlg propertyDlg;
     protected WorkspaceDlg wsDlg;
     protected Document modelDoc = null;    
-    protected RemoteDataRetrival remoteClient = null;
 
     private JMenuItem saveEnsembleItem;
 
@@ -149,6 +152,14 @@ public class ExplorerFrame extends JFrame {
             }
         };
         
+        browseServerAction = new AbstractAction(JAMS.i18n("Start_Remote_Control")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                browseJAMSCloud();
+            }
+        }; 
+                
         importDataAction = new AbstractAction(JAMS.i18n("IMPORT_DATA")) {
 
             public void actionPerformed(ActionEvent e) {
@@ -277,9 +288,14 @@ public class ExplorerFrame extends JFrame {
         openWSItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
         fileMenu.add(openWSItem);
 
+        fileMenu.addSeparator();
+        
+        JMenuItem browserServer = new JMenuItem(browseServerAction);
+        fileMenu.add(browserServer);
+        
         JMenuItem importData = new JMenuItem(importDataAction);
         fileMenu.add(importData);
-
+                        
         JMenuItem exitItem = new JMenuItem(exitAction);
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         fileMenu.add(exitItem);
@@ -489,14 +505,33 @@ public class ExplorerFrame extends JFrame {
     }
 
     protected void importData(){
-        if (remoteClient==null){
-            if (this.explorer.getWorkspace()==null){
-                JOptionPane.showMessageDialog(remoteClient, JAMS.i18n("PLEASE_OPEN_A_WORKSPACE_FIRST"));
-            }
-            remoteClient = new RemoteDataRetrival(new File(this.explorer.getWorkspace().getOutputDataDirectory().getParentFile() + "/download/"));
+        GraphicalClient client = new GraphicalClient(this, explorer.getProperties());
+        Controller ctrl = client.getClient();
+        
+        if (ctrl == null)
+            return;
+        
+        JAMSWorkspace ws = explorer.getWorkspace();      
+        try{
+            ws.init();
+        }catch(InvalidWorkspaceException iwe){
+            iwe.printStackTrace();
+            return;
         }
-        JDialog dlg = remoteClient.getDialog(this);
-        dlg.setVisible(true);
+        int id = ws.getID();
+        if (id == -1){
+            return;
+        }
+                
+        SynchronizeDlg synchronizer = new SynchronizeDlg(this, ctrl, ws);
+        synchronizer.setVisible(true);
+    }
+    
+    protected void browseJAMSCloud(){
+        BrowseJAMSCloudDlg gui = new BrowseJAMSCloudDlg(ExplorerFrame.this, ExplorerFrame.this.explorer.getProperties());
+        gui.init();                                
+        gui.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        gui.setVisible(true);
     }
 
     protected void open() {
@@ -530,6 +565,7 @@ public class ExplorerFrame extends JFrame {
         if (workspace == null) {
             editWSAction.setEnabled(false);
             reloadWSAction.setEnabled(false);
+            importDataAction.setEnabled(false);
         } else {
             workspace.updateDataStores();
             jfc.setSelectedFile(workspace.getDirectory());
@@ -537,6 +573,7 @@ public class ExplorerFrame extends JFrame {
 //            updateMainPanel(new JPanel());
             editWSAction.setEnabled(true);
             reloadWSAction.setEnabled(true);
+            importDataAction.setEnabled(true);
 
             explorer.getDisplayManager().getTreePanel().update();
             mainSplitPane.setDividerLocation(INOUT_PANE_WIDTH);
