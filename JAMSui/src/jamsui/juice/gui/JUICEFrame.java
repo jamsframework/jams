@@ -45,6 +45,8 @@ import jams.gui.PropertyDlg;
 import jams.gui.RuntimeManagerPanel;
 import jams.gui.WorkerDlg;
 import jams.meta.ModelDescriptor;
+import jams.server.client.gui.BrowseJAMSCloudDlg;
+import jams.server.client.gui.MsgBoxLogHandler;
 import jamsui.juice.*;
 import jamsui.juice.documentation.DocumentationWizard;
 import jamsui.juice.gui.tree.LibTree;
@@ -74,13 +76,14 @@ public class JUICEFrame extends JFrame {
     private JMenu windowMenu, modelMenu, recentMenu;
     private JMenuItem OptimizationWizardItem, ObjectiveWizardItem;
     private JLabel statusLabel;
-    private LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Info_Log"));
-    private LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Error_Log"));
+    private final LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Info_Log"));
+    private final LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Error_Log"));
     private Node modelProperties;
     private WorkerDlg loadModelDlg;
     private SearchDlg searchDlg;
     private String modelPath;
     private Action editPrefsAction;
+    private Action remoteControlAction;
     private Action reloadLibsAction;
     private Action newModelAction;
     private Action loadPrefsAction;
@@ -99,6 +102,7 @@ public class JUICEFrame extends JFrame {
     private Action loadModelParamAction;
     private Action saveModelParamAction;
     private Action runModelAction;
+    private Action runModelRemoteAction;
     private Action runModelFromLauncherAction;
     private Action explorerAction;
     private Action browserAction;
@@ -108,12 +112,14 @@ public class JUICEFrame extends JFrame {
     private Action outputDSAction;
 
     public JUICEFrame() {
+        MsgBoxLogHandler.registerLogger(Logger.getLogger(JUICEFrame.class.getName()));
+        MsgBoxLogHandler.registerLogger(Logger.getLogger(ModelView.class.getName()));
         init();
     }
 
     private void init() {
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
+        
         this.addWindowListener(new WindowListener() {
             @Override
             public void windowActivated(WindowEvent e) {
@@ -145,6 +151,21 @@ public class JUICEFrame extends JFrame {
             }
         });
 
+        remoteControlAction = new AbstractAction(JAMS.i18n("Start_Remote_Control")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BrowseJAMSCloudDlg gui = new BrowseJAMSCloudDlg(JUICEFrame.this, JUICE.getJamsProperties());                
+                GUIHelper.centerOnParent(gui, true);
+                gui.init();
+                gui.connect();
+                
+                if (gui.isConnected()) {                                        
+                    gui.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    gui.setVisible(true);
+                }
+            }
+        };
+        
         editPrefsAction = new AbstractAction(JAMS.i18n("Edit_Preferences...")) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -379,6 +400,14 @@ public class JUICEFrame extends JFrame {
                 view.runModel();
             }
         };
+        
+        runModelRemoteAction = new AbstractAction(JAMS.i18n("Run_Model_Remote")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = getCurrentView();
+                view.runModelInCloud();
+            }
+        };
 
         runModelFromLauncherAction = new AbstractAction(JAMS.i18n("Run_model_from_JAMS_Launcher")) {
             @Override
@@ -539,6 +568,12 @@ public class JUICEFrame extends JFrame {
         modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
         toolBar.add(modelGUIRunButton);
 
+        JButton modelRunRemoteButton = new JButton(runModelRemoteAction);
+        modelRunRemoteButton.setText("");
+        modelRunRemoteButton.setToolTipText(JAMS.i18n("Run_Model_Remote"));
+        modelRunRemoteButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunRemote.png")));
+        toolBar.add(modelRunRemoteButton);
+        
         JButton outputDSButton = new JButton(outputDSAction);
         outputDSButton.setText("");
         outputDSButton.setToolTipText(JAMS.i18n("Model_output"));
@@ -638,6 +673,13 @@ public class JUICEFrame extends JFrame {
         saveAsModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
         fileMenu.add(saveAsModelItem);
 
+        fileMenu.add(new JSeparator());
+        
+        JMenuItem remoteControlItem = new JMenuItem(remoteControlAction);
+        remoteControlItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        fileMenu.add(remoteControlItem);
+        
+        
         JMenuItem exitItem = new JMenuItem(exitAction);
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         fileMenu.add(exitItem);
@@ -677,6 +719,11 @@ public class JUICEFrame extends JFrame {
         runModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(runModelItem);
 
+        JMenuItem runModelRemoteItem = new JMenuItem(runModelRemoteAction);
+        runModelRemoteAction.setEnabled(false);
+        runModelRemoteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        modelMenu.add(runModelRemoteItem);
+        
         JMenuItem dsItem = new JMenuItem(outputDSAction);
         outputDSAction.setEnabled(false);
         dsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
@@ -724,6 +771,8 @@ public class JUICEFrame extends JFrame {
         ObjectiveWizardAction.setEnabled(false);
         modelMenu.add(ObjectiveWizardItem);
                 
+        modelMenu.add(new JSeparator());
+        
         JMenuItem GenerateDocumentationItem = new JMenuItem(GenerateDocumentationGUIAction);
         GenerateDocumentationGUIAction.setEnabled(true);
         modelMenu.add(GenerateDocumentationItem);
@@ -798,6 +847,7 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.saveModelAction.setEnabled(true);
                     JUICEFrame.this.outputDSAction.setEnabled(true);
                     JUICEFrame.this.runModelAction.setEnabled(true);
+                    JUICEFrame.this.runModelRemoteAction.setEnabled(true);
                     JUICEFrame.this.runModelFromLauncherAction.setEnabled(true);
                     JUICEFrame.this.explorerAction.setEnabled(true);
                     JUICEFrame.this.copyModelGUIAction.setEnabled(true);
@@ -808,6 +858,7 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.modelMenu.setEnabled(false);
                     JUICEFrame.this.outputDSAction.setEnabled(false);
                     JUICEFrame.this.runModelAction.setEnabled(false);
+                    JUICEFrame.this.runModelRemoteAction.setEnabled(false);
                     JUICEFrame.this.runModelFromLauncherAction.setEnabled(false);
                     JUICEFrame.this.explorerAction.setEnabled(false);
                     JUICEFrame.this.copyModelGUIAction.setEnabled(false);

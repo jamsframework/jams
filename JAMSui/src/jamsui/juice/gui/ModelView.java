@@ -24,7 +24,6 @@ package jamsui.juice.gui;
 import java.awt.BorderLayout;
 import java.beans.PropertyVetoException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
@@ -40,6 +39,7 @@ import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 import jams.JAMS;
 import jams.JAMSException;
+import jams.JAMSFileFilter;
 import jams.JAMSLogging;
 import jams.JAMSProperties;
 import jams.SystemProperties;
@@ -53,13 +53,21 @@ import jams.io.XMLProcessor;
 import jams.meta.ModelDescriptor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
+import jams.server.client.Controller;
+import jams.server.client.gui.GraphicalClient;
+import jams.server.entities.Job;
+import jams.server.entities.WorkspaceFileAssociation;
 import jams.workspace.InvalidWorkspaceException;
 import jamsui.juice.*;
 import jamsui.juice.gui.tree.ModelTree;
 import java.awt.Desktop;
+import java.awt.HeadlessException;
+import java.io.FileFilter;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import org.w3c.dom.Document;
 import jams.explorer.JAMSExplorer;
 
@@ -69,6 +77,8 @@ import jams.explorer.JAMSExplorer;
  */
 public class ModelView {
 
+    private static Logger log = Logger.getLogger(ModelView.class.getName());
+    
     private static final int TREE_PANE_WIDTH = 250;
     private JInternalFrame frame;
     private File savePath;
@@ -96,6 +106,7 @@ public class ModelView {
 
     public ModelView(String title, JDesktopPane parentPanel) {
         JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
+                
         this.parentPanel = parentPanel;
         modelEditPanel = new ModelEditPanel(this);
         compEditPanel = new ComponentPanel(this);
@@ -146,7 +157,7 @@ public class ModelView {
                     }
 
                 } catch (Exception e) {
-                    Logger.getLogger(ModelView.class.getName()).log(Level.SEVERE, e.getMessage(), e);
+                    log.log(Level.SEVERE, e.getMessage(), e);
                 }
             }
         };
@@ -318,8 +329,109 @@ public class ModelView {
         try {
             t.start();
         } catch (Exception e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage(), e);
+            log.log(Level.SEVERE, e.getMessage(), e);
         }
+    }
+    
+    private File getJAMSuiLib(){
+        File jamsuiLib = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+        if (jamsuiLib.getName().endsWith("classes")){
+            try{      
+                File distDir = new File(jamsuiLib.getParentFile(), "../dist");
+                while (!distDir.exists()){
+                    JFileChooser jfc = GUIHelper.getJFileChooser(JAMSFileFilter.getJarFilter());
+                    jfc.setDialogTitle(JAMS.i18n("Please_select_the_jams-ui.jar"));
+                    if (jfc.showOpenDialog(ModelView.this.frame) == JFileChooser.APPROVE_OPTION){
+                        jamsuiLib = jfc.getSelectedFile();
+                        if (jamsuiLib.exists()){
+                            distDir = new File(jamsuiLib.getParentFile(), "../dist");
+                        }
+                    }else{
+                        log.severe("Unable_to_locate_any_jams-ui.jar");
+                        return null;
+                    }                  
+                }
+                jamsuiLib = distDir.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File pathname) {
+                    return pathname.getName().endsWith(".jar");
+                }
+            })[0];            
+            }catch(HeadlessException t){
+                log.log(Level.SEVERE, "Unable_to_locate_any_jams-ui.jar", t);
+                return null;
+            }
+        }
+        return jamsuiLib;
+    }
+    
+    //TODO: function is too complex .. 
+    public Job runModelInCloud() {
+
+        //first logon to server
+        GraphicalClient connector = new GraphicalClient(this.frame, JUICE.getJamsProperties());
+        Controller client = connector.getClient();
+                        
+        if (client == null){
+            return null;
+        }
+        
+        // then load the model via the modelLoading runnable
+        loadModelDlg.setTask(modelLoading);
+        loadModelDlg.execute();
+
+        // check if runtime has been created successfully
+        if (runtime == null) {
+            return null;
+        }
+                
+        File workspaceDirectory = runtime.getModel().getWorkspace().getDirectory();
+        InputStream modelStream = null;
+        try {
+            modelStream = XMLTools.writeXmlFileToStream(initialDoc);
+        } catch (IOException ioe) {
+            log.log(Level.SEVERE, ioe.getMessage(), ioe);
+            return null;
+        }
+
+        String libs = JUICE.getJamsProperties().getProperty("libs");
+        String compLibArray[] = libs.split(";");
+        File compLibFile[] = new File[compLibArray.length];
+        for (int i=0;i<compLibArray.length;i++){
+            compLibFile[i] = new File(compLibArray[i]);
+        }
+        
+        File jamsuiLib = getJAMSuiLib();
+        String uploadFileFilter = JUICE.getJamsProperties().getProperty("uploadFileFilter");
+        if (uploadFileFilter == null){
+            uploadFileFilter = "(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*\\output\\.*)|.*\\.cdat|.*\\.log";
+        }
+        //get remote id of my workspace
+        runtime.getModel().getWorkspace().loadConfig();
+        int id = runtime.getModel().getWorkspace().getID();        
+        String title = runtime.getModel().getWorkspace().getTitle();        
+        jams.server.entities.Workspace ws = null;
+                
+        if (title == null) {
+            title = JOptionPane.showInputDialog(parentPanel, 
+                    JAMS.i18n("The_workspace_you_are_going_to_upload_has_no_name"), 
+                    JAMS.i18n("Name_of_workspace"), 
+                    JOptionPane.QUESTION_MESSAGE);
+            if (title == null) {
+                title = "unnamed";
+            } else {
+                runtime.getModel().getWorkspace().setTitle(title);
+            }
+        }
+        ws = connector.uploadWorkspace(id, title, workspaceDirectory, compLibFile, jamsuiLib, uploadFileFilter);
+        runtime.getModel().getWorkspace().setID(ws.getId());
+        
+        //upload model file
+        jams.server.entities.File f = client.getFileController().uploadFile(modelStream);
+        ws = client.getWorkspaceController().attachFile(ws, f, 
+                WorkspaceFileAssociation.ROLE_MODEL, ModelView.this.savePath.getName());
+                
+        return connector.startJob(ws, new File(ModelView.this.savePath.getName()));
     }
 
     public static String getNextViewName() {

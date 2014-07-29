@@ -328,10 +328,11 @@ public class JAMSFrame extends JAMSLauncher {
                 if (JUICE.getJuiceFrame() == null) {
                     JUICE.createJUICEFrame();
                 }
-                JUICE.getJuiceFrame().loadModel(JAMSFrame.this.modelFilename);
+                if (JAMSFrame.this.modelFilename!=null)
+                    JUICE.getJuiceFrame().loadModel(JAMSFrame.this.modelFilename);
             }
         };
-        editModelAction.setEnabled(false);
+        editModelAction.setEnabled(true);
 
         exitAction = new AbstractAction(JAMS.i18n("Exit")) {
             @Override
@@ -408,8 +409,7 @@ public class JAMSFrame extends JAMSLauncher {
             public void actionPerformed(ActionEvent e) {
                 openExplorer();
             }
-        };
-        explorerAction.setEnabled(false);
+        };        
 
         browserAction = new AbstractAction(JAMS.i18n("Browse_WS_Dir")) {
             @Override
@@ -774,7 +774,6 @@ public class JAMSFrame extends JAMSLauncher {
 
         } catch (NoClassDefFoundError ncdfe) {
             GUIHelper.showInfoDlg(this, JAMS.i18n("ExplorerDisabled"), JAMS.i18n("Info"));
-            explorerAction.setEnabled(false);
         } catch (InvalidWorkspaceException ex) {
             GUIHelper.showErrorDlg(this, "\"" + workspaceFile + "\"" + JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));
         }
