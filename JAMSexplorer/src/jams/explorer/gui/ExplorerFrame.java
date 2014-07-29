@@ -24,6 +24,9 @@ package jams.explorer.gui;
 
 import jams.JAMS;
 import jams.SystemProperties;
+import jams.explorer.DataCollectionViewController;
+import jams.explorer.JAMSExplorer;
+import jams.explorer.spreadsheet.STPConfigurator;
 import jams.gui.PropertyDlg;
 import jams.gui.WorkerDlg;
 import jams.gui.WorkspaceDlg;
@@ -76,9 +79,7 @@ import optas.data.DataSet;
 import optas.io.NetCDFFileReader;
 import optas.io.NetCDFFileWriter;
 import org.w3c.dom.Document;
-import reg.DataCollectionViewController;
-import reg.JAMSExplorer;
-import reg.spreadsheet.STPConfigurator;
+
 //import reg.viewer.Viewer;
 
 /**
