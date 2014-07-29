@@ -629,7 +629,7 @@ public class OptimizerConfiguration extends JPanel {
         if (activeOptimizer == null)
             return false;
         for (Parameter p : this.optimizationScheme.getParameter()){
-            if (p.getLowerBound() >= p.getUpperBound())
+            if (p.getLowerBound() >= p.getUpperBound()) 
                 return false;
             if (p.getStartValue() != null && p.getStartValue().length>0 && 
                     (p.getStartValue()[0] < p.getLowerBound() || p.getStartValue()[0] > p.getUpperBound()) )

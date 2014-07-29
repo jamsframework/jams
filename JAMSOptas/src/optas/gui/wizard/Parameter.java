@@ -140,29 +140,19 @@ public class Parameter extends Attribute{
     
     @Override
     public boolean equals(Object o){
-        if (o instanceof Parameter){
+        return compareTo(o)==0;
+        /*if (o instanceof Parameter){
             Parameter other = (Parameter)o;
             if (other.getAttributeName()==null){                
-                if (this.getAttributeName()==null)
-                    return true;            
-                else
-                    return false;
+                return this.getAttributeName()==null;
             }
-            if (this.getParentName()==null)
-                return false;
             if (other.getParentName()==null){                
-                if (this.getParentName()==null)
-                    return true;            
-                else
-                    return false;
+                return this.getParentName()==null;
             }
-            if (this.getParentName()==null)
-                return false;
             if (other.getAttributeName().equals(this.getAttributeName()))
                 if (other.getParentName().equals(this.getParentName()))
                     return true;
         }
-        return false;
-
+        return false;*/
     }
 }

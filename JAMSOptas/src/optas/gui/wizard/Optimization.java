@@ -82,7 +82,7 @@ public class Optimization implements Serializable {
     }
 
     public boolean removeParameter(Parameter p){
-        getParameter().remove(p);
+        getParameter().remove(p);        
         if (modifier == null)
             return true;
         
