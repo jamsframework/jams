@@ -24,7 +24,15 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>jams-client</foreign-project>
+                <foreign-project>jams-cloud-client</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
+                <foreign-project>jams-cloud-core</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
@@ -57,14 +65,6 @@
             </reference>
             <reference>
                 <foreign-project>jams-optas</foreign-project>
-                <artifact-type>jar</artifact-type>
-                <script>build.xml</script>
-                <target>jar</target>
-                <clean-target>clean</clean-target>
-                <id>jar</id>
-            </reference>
-            <reference>
-                <foreign-project>jams-server-core</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
