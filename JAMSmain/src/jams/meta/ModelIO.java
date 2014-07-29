@@ -33,9 +33,13 @@ import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelProperty;
 import jams.model.JAMSComponentDescription;
 import jams.tools.StringTools;
+import jams.tools.XMLTools;
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.logging.Filter;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -368,6 +372,53 @@ public class ModelIO {
         }
     }
 
+    
+    public boolean validateModelFile(File f){
+        if (f.isDirectory()) {
+            return false;
+        }
+        if (!f.exists()) {
+            return false;
+        }
+        if (!f.getName().endsWith(".xml") && !f.getName().endsWith(".jam")) {
+            return false;
+        }
+
+        //try to load model file
+        ModelIO io = ModelIO.getStandardModelIO();
+        Document d = XMLTools.getDocument(f.getAbsolutePath());
+        if (d == null) {
+            return false;
+        }
+        //deactive logs
+        Filter filterAll = new Filter() {
+            @Override
+            public boolean isLoggable(LogRecord record) {
+                return false;
+            }
+        };
+        Logger.getLogger(ModelIO.class.getName()).setFilter(filterAll);
+        Logger.getLogger(jams.meta.ModelDescriptor.class.getName()).setFilter(filterAll);
+        
+        try {                        
+            ModelDescriptor desc = io.loadModelDescriptor(d, null, true);
+            if (desc == null) {
+                return false;
+            }
+            if (desc.getModelName() == null || desc.getModelName().isEmpty()) {
+                return false;
+            }            
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return false;
+        } finally{
+            //reactive logs
+            Logger.getLogger(ModelIO.class.getName()).setFilter(null);
+            Logger.getLogger(jams.meta.ModelDescriptor.class.getName()).setFilter(null);
+        }        
+        return true;
+    }
+    
     // Create a XML document from the model tree
     public Document getModelDocument(ModelDescriptor md) {
 

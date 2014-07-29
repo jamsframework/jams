@@ -27,6 +27,7 @@ import jams.data.Attribute;
 import jams.model.Component;
 import java.awt.Image;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 
 /**
  *
@@ -250,33 +252,6 @@ public class JAMSTools {
         return FileTools.createAbsoluteFileName(dirName, fileName);
     }
 
-//    public static void copyFile(String srFile, String dtFile) {
-//        try {
-//            File f1 = new File(srFile);
-//            File f2 = new File(dtFile);
-//            InputStream in = new FileInputStream(f1);
-//
-//            //For Append the file.
-////      OutputStream out = new FileOutputStream(f2,true);
-//
-//            //For Overwrite the file.
-//            OutputStream out = new FileOutputStream(f2);
-//
-//            byte[] buf = new byte[1024];
-//            int len;
-//            while ((len = in.read(buf)) > 0) {
-//                out.write(buf, 0, len);
-//            }
-//            in.close();
-//            out.close();
-//            System.out.println("File copied.");
-//        } catch (FileNotFoundException ex) {
-//            System.out.println(ex.getMessage() + " in the specified directory.");
-//            System.exit(0);
-//        } catch (IOException e) {
-//            System.out.println(e.getMessage());
-//        }
-//    }
     /**
      * Add a new file name to the list of recent files
      *
@@ -364,6 +339,6 @@ public class JAMSTools {
             is64bit = (System.getProperty("os.arch").indexOf("64") != -1);
         }
         return is64bit;
-    }
+    }        
     
 }

@@ -230,6 +230,25 @@ public class XMLTools {
         return true;
     }
     
+    public static InputStream writeXmlFileToStream(Document doc) throws IOException {                        
+        try {
+            Transformer transformer = getTransformer(false);
+
+            DOMSource source = new DOMSource(doc);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            StreamResult result = new StreamResult(os);
+            transformer.transform(source, result);
+            os.close();
+            byte[] buffer = os.toByteArray();
+            ByteArrayInputStream in = new ByteArrayInputStream(buffer);
+            return in;
+        } catch (TransformerConfigurationException tce) {
+            return null;
+        } catch (TransformerException te) {
+            return null;
+        }
+    }
+    
     private static Transformer getTransformer(boolean omitXML) throws TransformerConfigurationException {
         
         TransformerFactory factory = TransformerFactory.newInstance();
