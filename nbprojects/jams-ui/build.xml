@@ -9,9 +9,7 @@
 <!-- in the project's Project Properties dialog box.-->
 <project name="jams-ui" default="default" basedir=".">
     <description>Builds, tests, and runs the project jams-ui.</description>
-    <import file="../../build/build-common.xml"/>
     <import file="nbproject/build-impl.xml"/>
-
     <!--
 
     There exist several targets which are by default empty and which can be 
@@ -53,8 +51,7 @@
       -init-macrodef-junit:     defines macro for junit execution
       -init-macrodef-debug:     defines macro for class debugging
       -init-macrodef-java:      defines macro for class execution
-      -do-jar-with-manifest:    JAR building (if you are using a manifest)
-      -do-jar-without-manifest: JAR building (if you are not using a manifest)
+      -do-jar:                  JAR building
       run:                      execution of project 
       -javadoc-build:           Javadoc generation
       test-report:              JUnit report generation
