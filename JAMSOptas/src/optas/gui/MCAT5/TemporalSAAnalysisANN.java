@@ -7,6 +7,7 @@ package optas.gui.MCAT5;
 import jams.JAMS;
 import jams.data.JAMSCalendar;
 import jams.gui.ObserverWorkerDlg;
+import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
@@ -165,9 +166,9 @@ public class TemporalSAAnalysisANN extends MCAT5Plot {
 
             @Override
             public void actionPerformed(ActionEvent e) {                
-                ObserverWorkerDlg progress = new ObserverWorkerDlg(null, "Calculating Sensitivity Indicies");
+                WorkerDlg progress = new WorkerDlg(null, "Calculating Sensitivity Indicies");
                 tsa.deleteObservers();
-                tsa.addObserver(progress);
+                tsa.addObserver(new ObserverWorkerDlg(progress));
 
                 progress.setInderminate(true);
                 progress.setTask(new Runnable() {
@@ -739,8 +740,8 @@ public class TemporalSAAnalysisANN extends MCAT5Plot {
         else
             scheme.setData(tsa.calculate(), p, e, obs);
                         
-        ObserverWorkerDlg progress = new ObserverWorkerDlg(null, "Calculating Optimization Scheme");
-        scheme.addObserver(progress);
+        WorkerDlg progress = new WorkerDlg(null, "Calculating Optimization Scheme");
+        scheme.addObserver(new ObserverWorkerDlg(progress));
 
         progress.setInderminate(true);
         progress.setTask(new Runnable() {
