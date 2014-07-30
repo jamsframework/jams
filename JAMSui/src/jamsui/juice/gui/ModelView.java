@@ -404,7 +404,7 @@ public class ModelView {
         File jamsuiLib = getJAMSuiLib();
         String uploadFileFilter = JUICE.getJamsProperties().getProperty("uploadFileFilter");
         if (uploadFileFilter == null){
-            uploadFileFilter = "(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*\\output\\.*)|.*\\.cdat|.*\\.log";
+            uploadFileFilter = "(.*\\.cache)|(.*\\.ser)|(.*\\.svn)|(.*/output/.*)|(.*\\.cdat)|(.*\\.log)";
         }
         //get remote id of my workspace
         runtime.getModel().getWorkspace().loadConfig();
@@ -424,6 +424,9 @@ public class ModelView {
             }
         }
         ws = connector.uploadWorkspace(id, title, workspaceDirectory, compLibFile, jamsuiLib, uploadFileFilter);
+        if (ws == null){
+            return null;
+        }
         runtime.getModel().getWorkspace().setID(ws.getId());
         
         //upload model file
@@ -716,5 +719,13 @@ public class ModelView {
             outputDSDlg = new OutputDSDlg(JUICE.getJuiceFrame(), this.getModelDescriptor());
         }
         return outputDSDlg;
+    }
+    
+    public static void main(String[] args) {        
+        String uploadFileFilter1 = "(.*\\.cache)|(.*\\.ser)|(.*\\.svn)|(.*/output/.*)|(.*\\.cdat)|(.*\\.log)";
+        String test = "Gehlberg/gehlberg.jam";
+                
+        System.out.println(test.matches(uploadFileFilter1));
+        
     }
 }

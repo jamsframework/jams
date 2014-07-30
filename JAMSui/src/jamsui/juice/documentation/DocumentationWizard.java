@@ -8,6 +8,7 @@ import jams.JAMS;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.gui.ObserverWorkerDlg;
+import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
 import jamsui.juice.JUICE;
 import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
@@ -149,7 +150,7 @@ public class DocumentationWizard extends Observable {
             }
         } catch (Exception e) {
             if (options != null) {
-                options.getLogger().error("Exception", e);
+                //options.getLogger().severe("Exception", e);
                 System.out.println(e.toString());
             }
             /*if (options.getOutputFile() != null) {
@@ -321,8 +322,8 @@ public class DocumentationWizard extends Observable {
         workspace = savePath.getParentFile();
         modelDocument = doc;
 
-        ObserverWorkerDlg progress = new ObserverWorkerDlg(parent, Bundle.resources.getString("Generating_Documentation"));
-        this.addObserver(progress);
+        WorkerDlg progress = new WorkerDlg(parent, Bundle.resources.getString("Generating_Documentation"));
+        this.addObserver(new ObserverWorkerDlg(progress));
 
         progress.setInderminate(true);
         progress.setTask(new Runnable() {

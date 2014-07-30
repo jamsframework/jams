@@ -79,7 +79,7 @@ public class JUICEFrame extends JFrame {
     private final LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Info_Log"));
     private final LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Error_Log"));
     private Node modelProperties;
-    private WorkerDlg loadModelDlg;
+    WorkerDlg loadModelDlg;
     private SearchDlg searchDlg;
     private String modelPath;
     private Action editPrefsAction;
