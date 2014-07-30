@@ -143,14 +143,21 @@ public class FileTools {
      *
      * @param directory
      * @param regex
+     * @param isPostiveRegEx
      * @return filearray
      */
-    public static Collection<File> getFilesByRegEx(File directory, String regex) {
+    public static Collection<File> getFilesByRegEx(File directory, String regex, boolean isPostiveRegEx) {
         ArrayList<File> list = new ArrayList<File>();
         for (File f : directory.listFiles()) {
+            String path = normalizePath(f.getPath());
             if (f.isDirectory()) {
-                list.addAll(getFilesByRegEx(f, regex));
-            } else if (regex == null || regex.isEmpty() || f.getName().toLowerCase().matches(regex)) {
+                list.addAll(getFilesByRegEx(f, regex, isPostiveRegEx));
+            } else if (                    
+                    regex == null || 
+                    regex.isEmpty() || 
+                    (isPostiveRegEx && path.toLowerCase().matches(regex)) ||
+                    (!isPostiveRegEx && !path.toLowerCase().matches(regex)) 
+                    ) {
                 list.add(f);
             }
         }
