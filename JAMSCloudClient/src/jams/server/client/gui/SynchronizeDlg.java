@@ -27,7 +27,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -75,7 +74,9 @@ public class SynchronizeDlg extends JDialog {
             syncNothing = new JButton(JAMS.i18n("none")), 
             invertSelection = new JButton(JAMS.i18n("invert_selection"));
         
-    ObserverWorkerDlg syncWorkspaceWorker = new ObserverWorkerDlg(SynchronizeDlg.this, JAMS.i18n("Synchronizing_Workspace"));
+    ObserverWorkerDlg syncWorkspaceWorker = new ObserverWorkerDlg(
+            new WorkerDlg(SynchronizeDlg.this, JAMS.i18n("Synchronizing_Workspace")));
+    
     ObservableLogHandler observable = new ObservableLogHandler(new Logger[]{Logger.getLogger(Controller.class.getName())});
     
     Jobs jobs = null;
@@ -358,8 +359,8 @@ public class SynchronizeDlg extends JDialog {
     }
 
     private void synchronize() {
-        syncWorkspaceWorker.setInderminate(true);
-        syncWorkspaceWorker.setTask(new Runnable() {
+        syncWorkspaceWorker.getWorkerDlg().setInderminate(true);
+        syncWorkspaceWorker.getWorkerDlg().setTask(new Runnable() {
 
             @Override
             public void run() {
@@ -375,7 +376,7 @@ public class SynchronizeDlg extends JDialog {
                 SynchronizeDlg.this.setVisible(false);
             }
         });        
-        syncWorkspaceWorker.execute();
+        syncWorkspaceWorker.getWorkerDlg().execute();
     }
 
     public static void main(String[] args) {

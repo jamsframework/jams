@@ -6,7 +6,9 @@
 
 package jams.server.client.gui;
 
+import jams.gui.CancelableWorkerDlg;
 import jams.gui.ObserverWorkerDlg;
+import jams.gui.WorkerDlg;
 import jams.server.client.Controller;
 import jams.server.client.ObservableLogHandler;
 import jams.server.client.WorkspaceController;
@@ -346,21 +348,25 @@ public class UploadWorkspaceDlg extends JDialog{
                 Component c = SwingUtilities.getRoot(mainPanel);
                 
                 if ( c instanceof Frame){
-                    worker = new ObserverWorkerDlg((Frame)c, "Uploading Workspace");
+                    worker = new ObserverWorkerDlg(
+                             new CancelableWorkerDlg(
+                             new WorkerDlg((Frame)c, "Uploading Workspace")).getWorkerDlg());
                 }else{
-                    worker = new ObserverWorkerDlg(null, "Uploading Workspace");
+                    worker = new ObserverWorkerDlg(
+                             new CancelableWorkerDlg(
+                             new WorkerDlg((Frame)c, "Uploading Workspace")).getWorkerDlg());
                 }
                 observable.deleteObservers();
                 observable.addObserver(worker);        
-                worker.setInderminate(true);
-                worker.setTask(new Runnable() {
+                worker.getWorkerDlg().setInderminate(true);
+                worker.getWorkerDlg().setTask(new Runnable() {
 
                     @Override
                     public void run() {
                         uploadWorkspace();                        
                     }
                 });
-               worker.execute();                              
+               worker.getWorkerDlg().execute();                              
             }
         });
         

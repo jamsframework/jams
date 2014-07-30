@@ -121,8 +121,7 @@ public class BrowseJAMSCloudDlg extends JDialog{
     JLabel statusLabel = new JLabel("status");
     
     GraphicalClient connector = null;
-    
-    ObserverWorkerDlg worker = new ObserverWorkerDlg(null, "Uploading Workspace");
+        
     ObservableLogHandler observable = new ObservableLogHandler(new Logger[]{Logger.getLogger(Controller.class.getName())});
     JButton connectButton = null;
     

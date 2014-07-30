@@ -192,7 +192,7 @@ public class WorkspaceController {
     private Collection<WorkspaceFile> findLibraries(File dir, int role) {
         TreeSet<WorkspaceFile> uploadList = new TreeSet<>();
 
-        Collection<File> libList = FileTools.getFilesByRegEx(dir, ".*\\.(jar)");
+        Collection<File> libList = FileTools.getFilesByRegEx(dir, ".*\\.(jar)", true);
 
         Path path = Paths.get(dir.getPath());
 
@@ -286,7 +286,7 @@ public class WorkspaceController {
         }
         
         //order is crucial 3. add other files
-        Collection<File> file = FileTools.getFilesByRegEx(workspaceDirectory, fileExclusion);
+        Collection<File> file = FileTools.getFilesByRegEx(workspaceDirectory, fileExclusion, false);
         for (File f : file) {
             WorkspaceFile wsfile = getWorkspaceFile(f, workspaceDirectory);            
             workspaceFileList.add(wsfile);            

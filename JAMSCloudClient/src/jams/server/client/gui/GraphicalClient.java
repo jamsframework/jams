@@ -6,6 +6,7 @@
 package jams.server.client.gui;
 
 import jams.SystemProperties;
+import jams.gui.CancelableWorkerDlg;
 import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
 import jams.server.client.Controller;
@@ -47,7 +48,10 @@ public class GraphicalClient extends Observable {
     
     SystemProperties p = null;
 
-    ObserverWorkerDlg worker = new ObserverWorkerDlg(null, "Uploading Workspace");
+    ObserverWorkerDlg worker = new ObserverWorkerDlg(
+            new CancelableWorkerDlg(
+            new WorkerDlg(null, "Uploading Workspace")).getWorkerDlg());
+    
     ObservableLogHandler observable = new ObservableLogHandler(
             new Logger[]{
                 Logger.getLogger(Controller.class.getName()),
@@ -231,6 +235,7 @@ public class GraphicalClient extends Observable {
                 WorkspaceController wsClient = client.getWorkspaceController();
                 ws = wsClient.uploadWorkspace(id, title, workspaceDirectory, compLibFile, uiLibFile, fileFilter);
             }catch(Throwable t){
+                log.log(Level.SEVERE, t.getMessage(), t);
                 t.printStackTrace();
             }
         }
@@ -264,11 +269,11 @@ public class GraphicalClient extends Observable {
          
         observable.deleteObserver(worker);
         observable.addObserver(worker);
-        worker.setInderminate(true);
-        worker.setModal(true);
+        worker.getWorkerDlg().setInderminate(true);
+        worker.getWorkerDlg().setModal(true);
         UploadWorkspaceRunnable uploadWsTask = new UploadWorkspaceRunnable(id, title, workspaceDirectory, compLibFile, uiLibFile, fileFilter);
-        worker.setTask(uploadWsTask);
-        worker.execute();
+        worker.getWorkerDlg().setTask(uploadWsTask);
+        worker.getWorkerDlg().execute();
 
         return uploadWsTask.getWorkspace();
     }
@@ -325,11 +330,11 @@ public class GraphicalClient extends Observable {
         
         observable.deleteObserver(worker);
         observable.addObserver(worker);
-        worker.setInderminate(true);
-        worker.setModal(true);
+        worker.getWorkerDlg().setInderminate(true);
+        worker.getWorkerDlg().setModal(true);
         StartJobRunnable task = new StartJobRunnable(ws, model);
-        worker.setTask(task);
-        worker.execute();        
+        worker.getWorkerDlg().setTask(task);
+        worker.getWorkerDlg().execute();        
         return task.getResult();
     }
 }

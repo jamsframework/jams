@@ -105,13 +105,9 @@ public class Controller{
     }
     
     public static void main(String[] args) throws IOException{
-        Controller client = new Controller(new HTTPClient(), "http://localhost:8080/jams-server/webresources");        
-        client.connect("Blubb", "test");
+        Controller client = new Controller(new HTTPClient(), "http://kirk.geogr.uni-jena.de:8080/jams-cloud-server/webresources");        
+        client.connect("Christian", "jamscloud");
 
-        client.cleanUp();
-        if (true){
-            return;
-        }
         User user = new User(5);
         user.setAdmin(1);
         user.setEmail("blubb@gmx.de");
