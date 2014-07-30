@@ -22,7 +22,12 @@
 
 package jams.server.service;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.core.Application;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
@@ -33,12 +38,33 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 @javax.ws.rs.ApplicationPath("webresources")
 public class ApplicationConfig extends Application {
 
-    public static final String SERVER_UPLOAD_DIRECTORY = "e:/test_server/uploaded/";
-    public static final String SERVER_TMP_DIRECTORY = "E:/test_server/tmp/";
-    public static final String SERVER_EXEC_DIRECTORY = "E:/test_server/exec/";
+    static Properties p = new Properties() {
+        {
+            Logger log = Logger.getLogger(ApplicationConfig.class.getName());                         
+            
+            log.severe("Try to set paths ..");
+            try {
+                load(new FileReader("settings.properties"));
+                SERVER_UPLOAD_DIRECTORY = getProperty("upload-directory");
+                SERVER_TMP_DIRECTORY = getProperty("tmp-directory");
+                SERVER_EXEC_DIRECTORY = getProperty("exec-directory");
+
+                log.severe("Setting of paths were successful" + "\n" + 
+                        SERVER_UPLOAD_DIRECTORY + "\n" + 
+                        SERVER_TMP_DIRECTORY + "\n" + 
+                        SERVER_EXEC_DIRECTORY);
+            } catch (Throwable ioe) {
+                log.log(Level.SEVERE, ioe.getMessage(), ioe);
+                ioe.printStackTrace();
+            }
+        }
+    };
+    public static String SERVER_UPLOAD_DIRECTORY;// = "e:/test_server/uploaded/";
+    public static String SERVER_TMP_DIRECTORY;// = "E:/test_server/tmp/";
+    public static String SERVER_EXEC_DIRECTORY;// = "E:/test_server/exec/";
     
     @Override
-    public Set<Class<?>> getClasses() {
+    public Set<Class<?>> getClasses() {                                        
         Set<Class<?>> resources = new java.util.HashSet<>();
         addRestResourceClasses(resources);
         if (!resources.contains(MultiPartFeature.class))

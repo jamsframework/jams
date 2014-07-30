@@ -81,10 +81,7 @@ public abstract class AbstractProcessManager implements ProcessManager {
         ProcessBuilder pb = getProcessBuilder(job);
         if (pb == null){
             return null;
-        }
-        pb.redirectError(new java.io.File(localExecDir, "error.nfo"));
-        pb.redirectOutput(new java.io.File(localExecDir, "run.nfo"));
-
+        }        
         pb.directory(localExecDir);
         Process process = pb.start();
 
@@ -115,7 +112,7 @@ public abstract class AbstractProcessManager implements ProcessManager {
         ws.detachAllFiles();
         
         if (dir.isDirectory()){
-            Collection<java.io.File> files = FileTools.getFilesByRegEx(dir, null);
+            Collection<java.io.File> files = FileTools.getFilesByRegEx(dir, null, true);
             for (java.io.File file : files){
                 Path filePath = file.toPath();                
                 String relPath = wsPath.relativize(filePath).toString();
