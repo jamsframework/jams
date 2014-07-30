@@ -23,12 +23,12 @@ package jams.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
@@ -38,11 +38,13 @@ import javax.swing.SwingWorker;
  */
 public class WorkerDlg extends JDialog {
 
-    private Runnable task;
-    private SwingWorker worker;
-    private Window owner;
-    private JProgressBar progressBar;
-    private JLabel label = null;
+    protected Runnable task;
+    protected SwingWorker worker;
+    protected Window owner;
+    protected JProgressBar progressBar;
+    protected JLabel label = null;
+    protected JPanel mainPanel = null;
+            
     public WorkerDlg(Window owner, String title) {
         this(owner, title, "");
     }
@@ -57,22 +59,32 @@ public class WorkerDlg extends JDialog {
 
         this.setLocationRelativeTo(owner);
 
-        this.setLayout(new BorderLayout());
+        mainPanel = new JPanel(new BorderLayout());        
         this.setResizable(false);
 
         if (!message.equals("")) {
             label = new JLabel(message);
-            this.add(label, BorderLayout.NORTH);
+            mainPanel.add(label, BorderLayout.NORTH);
         }
 
         progressBar = new JProgressBar();
         progressBar.setIndeterminate(true);
         progressBar.setPreferredSize(new Dimension(300, 20));
-        this.add(progressBar, BorderLayout.CENTER);
-
+        mainPanel.add(progressBar, BorderLayout.CENTER);
+        this.add(mainPanel);
         this.pack();
     }
-
+    
+    public JPanel getMainPanel(){
+        return mainPanel;
+    }
+    
+    public void setMainPanel(JPanel mainPanel){
+        this.remove(this.mainPanel);
+        this.mainPanel = mainPanel; 
+        this.add(mainPanel);
+    }
+    
     public void setInderminate(boolean value) {
         if (value) {
             progressBar.setStringPainted(false);

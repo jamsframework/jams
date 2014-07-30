@@ -22,58 +22,52 @@
  */
 package jams.gui;
 
-import java.awt.Dimension;
-import java.util.Observable;
-import java.util.Observer;
+import jams.JAMS;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 
 /**
  *
  * @author S. Kralisch
  */
-public class ObserverWorkerDlg extends WorkerDlgDecorator implements Observer{    
-    public ObserverWorkerDlg(WorkerDlg parent) {
-        super(parent);
-        
-        getWorkerDlg().progressBar.setStringPainted(true);
-        getWorkerDlg().progressBar.setString("test"); 
-        
-        getWorkerDlg().pack();
-    }
-            
-    @Override
-    public void update(Observable observable, Object o){   
-        getWorkerDlg().progressBar.setStringPainted(true);
-        getWorkerDlg().progressBar.setString(o.toString()); 
-    }    
+public class CancelableWorkerDlg extends WorkerDlgDecorator {
     
-    static private class XXX extends Observable{
-        public void change(){
-            setChanged();
-        }
-    }
+    JButton cancelButton = new JButton(JAMS.i18n("Cancel"));
+    
+    public CancelableWorkerDlg(WorkerDlg parent) {
+        super(parent);        
+        
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(getWorkerDlg().getMainPanel(), BorderLayout.CENTER);
+        //hmm das ist blöd .. 
+        mainPanel.add(cancelButton, BorderLayout.SOUTH);
+        getWorkerDlg().setMainPanel(mainPanel);
+        
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CancelableWorkerDlg.this.getWorkerDlg().worker.cancel(true);
+            }
+        });
+        getWorkerDlg().pack();
+    }     
     
     public static void main(String[] args) {
-        ObserverWorkerDlg dlg = new ObserverWorkerDlg(new CancelableWorkerDlg(new WorkerDlg(null, "test", "test")).getWorkerDlg());
-        
-        final XXX o = new XXX();
-        o.addObserver(dlg);
-        
+        CancelableWorkerDlg dlg = new CancelableWorkerDlg(new WorkerDlg(null, "test", "test"));
         dlg.getWorkerDlg().setTask(new Runnable() {
 
             @Override
             public void run(){
                 try{
-                    long i=0;
-                    while(i>=0){
-                        o.change();
-                        o.notifyObservers(i++);
-                    }
+                    Thread.sleep(10000);
                 }catch(Throwable t){
                     t.printStackTrace();
                 }                
             }
         });
-                                
         dlg.getWorkerDlg().execute();
     }
 }
