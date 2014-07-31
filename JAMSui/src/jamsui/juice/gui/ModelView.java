@@ -412,7 +412,7 @@ public class ModelView {
         String title = runtime.getModel().getWorkspace().getTitle();        
         jams.server.entities.Workspace ws = null;
                 
-        if (title == null) {
+        if (title == null || title.isEmpty()) {
             title = JOptionPane.showInputDialog(parentPanel, 
                     JAMS.i18n("The_workspace_you_are_going_to_upload_has_no_name"), 
                     JAMS.i18n("Name_of_workspace"), 

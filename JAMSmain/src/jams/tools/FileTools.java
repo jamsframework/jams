@@ -148,6 +148,19 @@ public class FileTools {
      */
     public static Collection<File> getFilesByRegEx(File directory, String regex, boolean isPostiveRegEx) {
         ArrayList<File> list = new ArrayList<File>();
+        if (directory.isFile()){
+            String path = normalizePath(directory.getPath());
+            if (                    
+                    regex == null || 
+                    regex.isEmpty() || 
+                    (isPostiveRegEx && path.toLowerCase().matches(regex)) ||
+                    (!isPostiveRegEx && !path.toLowerCase().matches(regex)) 
+                    ) {
+                list.add(directory);
+            }
+            return list;
+        }        
+        
         for (File f : directory.listFiles()) {
             String path = normalizePath(f.getPath());
             if (f.isDirectory()) {
