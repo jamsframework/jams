@@ -38,6 +38,10 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 @javax.ws.rs.ApplicationPath("webresources")
 public class ApplicationConfig extends Application {
 
+    public static String SERVER_UPLOAD_DIRECTORY = null;//"e:/test_server/uploaded/";
+    public static String SERVER_TMP_DIRECTORY=  null;//"E:/test_server/tmp/";
+    public static String SERVER_EXEC_DIRECTORY = null;//"E:/test_server/exec/";
+    
     static Properties p = new Properties() {
         {
             Logger log = Logger.getLogger(ApplicationConfig.class.getName());                         
@@ -58,11 +62,7 @@ public class ApplicationConfig extends Application {
                 ioe.printStackTrace();
             }
         }
-    };
-    public static String SERVER_UPLOAD_DIRECTORY;// = "e:/test_server/uploaded/";
-    public static String SERVER_TMP_DIRECTORY;// = "E:/test_server/tmp/";
-    public static String SERVER_EXEC_DIRECTORY;// = "E:/test_server/exec/";
-    
+    };        
     @Override
     public Set<Class<?>> getClasses() {                                        
         Set<Class<?>> resources = new java.util.HashSet<>();

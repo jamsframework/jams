@@ -61,7 +61,6 @@ public class LinuxProcessManager extends AbstractProcessManager {
         if (wfa == null)
             return null;
         String runnableFile = FileTools.normalizePath(wfa.getPath());
-        
         String command[] = {
             "java",
             "-Xms128M", 
@@ -75,6 +74,7 @@ public class LinuxProcessManager extends AbstractProcessManager {
             "-m",
             modelFile, 
             ">" + DEFAULT_INFO_LOG + " 2>&1&"};
+        
     
         logger.fine("start process: " + Arrays.toString(command));
         

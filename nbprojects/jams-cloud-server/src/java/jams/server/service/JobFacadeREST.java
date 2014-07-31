@@ -30,6 +30,8 @@ import jams.server.entities.WorkspaceFileAssociation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -45,6 +47,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
+
 
 /**
  *
@@ -140,8 +143,9 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             job = processManager.deploy(job);       
             em.persist(job);
             return Response.ok(job, MediaType.APPLICATION_XML_TYPE).build();
-        }catch(IOException ioe){
-            ioe.printStackTrace();
+        }catch(Throwable ioe){
+            Logger logger = Logger.getLogger(JobFacadeREST.class.getName());
+            logger.log(Level.SEVERE,ioe.getMessage(),ioe);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }                
     }

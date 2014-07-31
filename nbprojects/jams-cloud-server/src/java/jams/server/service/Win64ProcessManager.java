@@ -31,12 +31,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  *
  * @author christian
  */
 public class Win64ProcessManager extends AbstractProcessManager {
+    Logger logger = Logger.getLogger(LinuxProcessManager.class.getName());
     
     @Override
     protected Integer getProcessPid(Process process) throws IOException{
@@ -68,9 +71,24 @@ public class Win64ProcessManager extends AbstractProcessManager {
             return null;
         String runnableFile = FileTools.normalizePath(wfa.getPath());
         
-        String command = "java -Xms128M -Xmx2096M -Dsun.java2d.d3d=false -jar " + runnableFile + " -c " + DEFAULT_JAP_FILE + " -n -m " + modelFile + ">" + DEFAULT_INFO_LOG + " 2>&1&";
-
-        return new ProcessBuilder(new String[]{"cmd.exe", "/C", command});        
+        String command[] = {
+            "java",
+            "-Xms128M", 
+            "-Xmx"+DEFAULT_MAX_MEMORY, 
+            "-Dsun.java2d.d3d=false", 
+            "-jar", 
+            runnableFile, 
+            "-c", 
+            DEFAULT_JAP_FILE,
+            "-n",
+            "-m",
+            modelFile, 
+            ">" + DEFAULT_INFO_LOG + " 2>&1&"};
+        
+    
+        logger.severe("start process: " + Arrays.toString(command));
+        
+        return new ProcessBuilder(command);        
     }
    
     @Override
