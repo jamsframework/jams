@@ -120,7 +120,7 @@ public class SynchronizeDlg extends JDialog {
         bn.setFont(defaultFont);           
         bn.addMouseListener(ma);
         bn.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-        bn.putClientProperty("text", syncNewOnly.getText());
+        bn.putClientProperty("text", bn.getText());
     }
     
     private void init() {                
@@ -246,6 +246,7 @@ public class SynchronizeDlg extends JDialog {
         
         initActions();
         
+        setSize(new Dimension(640, 480));
         invalidate();
         pack();
     }
@@ -372,15 +373,14 @@ public class SynchronizeDlg extends JDialog {
                 if (root instanceof DirectorySync){
                     wc.synchronizeWorkspace((DirectorySync)root);
                 }
-                observable.deleteObserver(syncWorkspaceWorker);
-                SynchronizeDlg.this.setVisible(false);
+                observable.deleteObserver(syncWorkspaceWorker);                
             }
         });        
         syncWorkspaceWorker.getWorkerDlg().execute();
     }
 
     public static void main(String[] args) {
-        Controller client = new Controller(new HTTPClient(), "http://localhost:8080/jams-server/webresources");
+        Controller client = new Controller("http://localhost:8080/jams-server/webresources");
         client.connect("Blubb", "test");
 
         JAMSWorkspace wslocal = new JAMSWorkspace(new File("E:/ModelData/JAMS-Gehlberg"), new StandardRuntime(JAMSProperties.createProperties()));

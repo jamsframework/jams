@@ -339,7 +339,11 @@ public class WorkspaceController {
                 
         for (WorkspaceFileAssociation wfa : remoteWs.getFiles()) {
             //need to take this file, because wfa does not necessarly know the hash code
-            jams.server.entities.File f = lookupTable.get(wfa.getFile().getId());                        
+            jams.server.entities.File f = lookupTable.get(wfa.getFile().getId());
+            //set the workspace because this is not valid, when it is returned
+            if (wfa.getWorkspace()==null){
+                wfa.setWorkspace(remoteWs);
+            }
             wfa.getFile().setHash(f.getHash());
             rootSync.createSyncEntry(wfa.getPath(), wfa);            
         }
@@ -350,7 +354,7 @@ public class WorkspaceController {
     }
     
     public boolean synchronizeWorkspace(DirectorySync root){
-        log.log(Level.INFO, JAMS.i18n("Start_synchronization_of_%1")
+        log.log(Level.FINE, JAMS.i18n("Start_synchronization_of_%1")
                 .replace("%1",root.getLocalFileName()));
         if (!root.isDoSync())
             return true;
@@ -374,8 +378,10 @@ public class WorkspaceController {
         for (FileSync fs : root.getChildren()){
             success &= synchronizeWorkspace(fs);
         }
-        
-        log.log(Level.INFO, JAMS.i18n("Synchronization_of_%1_is_completed").replace("%1", root.getLocalFileName()));
+        if (root.getParent()==null)
+            log.log(Level.INFO, JAMS.i18n("Synchronization_of_%1_is_completed").replace("%1", root.getLocalFileName()));
+        else
+            log.log(Level.FINE, JAMS.i18n("Synchronization_of_%1_is_completed").replace("%1", root.getLocalFileName()));
         return success;
     }
     

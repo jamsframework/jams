@@ -67,7 +67,7 @@ public class HTTPClient{
             
     public Object connect(String urlStr, Class responseType) {
         log.log(Level.FINER, SEPARATOR + JAMS.i18n("SENDING_LOGIN_REQUEST:") + urlStr);
-        
+        sessionID = null;
         Object o = httpRequest(urlStr, null, null, responseType);        
         log.log(Level.FINER,JAMS.i18n("Request_send_successful!"));
         return o;

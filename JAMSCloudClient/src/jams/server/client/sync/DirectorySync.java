@@ -70,7 +70,7 @@ public class DirectorySync extends FileSync {
                 doSync |= fs.doSync;
             }
             File subDirectory = new File(getLocalFile(), subDirName);
-            this.children.add(new DirectorySync(wc, this, subDirectory));
+            addFileSync(new DirectorySync(wc, this, subDirectory));            
         }
     }
 
@@ -84,9 +84,10 @@ public class DirectorySync extends FileSync {
             }
         }
     }
-    
+            
     private void addFileSync(FileSync filesync) {
-        isFileModified |= filesync.isFileModified;
+        if (filesync.isModified())
+            markAsModified();
         this.children.add(filesync);
     }
 

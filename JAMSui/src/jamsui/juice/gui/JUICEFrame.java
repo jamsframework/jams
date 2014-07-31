@@ -37,6 +37,7 @@ import jams.JAMS;
 import jams.JAMSFileFilter;
 import jams.JAMSProperties;
 import jams.SystemProperties;
+import jams.explorer.gui.ExplorerFrame;
 import jams.tools.JAMSTools;
 import jams.gui.AboutDlg;
 import jams.gui.tools.GUIHelper;
@@ -70,6 +71,7 @@ public class JUICEFrame extends JFrame {
     private static final int TREE_PANE_WIDTH = 250, RT_MANAGER_HEIGHT = 600;
     private static final int DIVIDER_WIDTH = 8;
     private PropertyDlg propertyDlg;
+    private BrowseJAMSCloudDlg jamsCloudBrowser = null;
     private JFileChooser jfcProps, jfcParams, jfcModels;
     private TreePanel libTreePanel;
     private JDesktopPane modelPanel = new JDesktopPane();
@@ -154,15 +156,13 @@ public class JUICEFrame extends JFrame {
         remoteControlAction = new AbstractAction(JAMS.i18n("Start_Remote_Control")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BrowseJAMSCloudDlg gui = new BrowseJAMSCloudDlg(JUICEFrame.this, JUICE.getJamsProperties());                
-                GUIHelper.centerOnParent(gui, true);
-                gui.init();
-                gui.connect();
-                
-                if (gui.isConnected()) {                                        
-                    gui.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    gui.setVisible(true);
-                }
+                if ( jamsCloudBrowser == null ){
+                    jamsCloudBrowser = new BrowseJAMSCloudDlg(JUICEFrame.this, JUICE.getJamsProperties());
+                    jamsCloudBrowser.init();                    
+                    jamsCloudBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                }                                       
+                GUIHelper.centerOnParent(jamsCloudBrowser, true);
+                jamsCloudBrowser.setVisible(true);                
             }
         };
         

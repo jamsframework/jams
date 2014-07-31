@@ -101,7 +101,7 @@ public class ExplorerFrame extends JFrame {
     protected PropertyDlg propertyDlg;
     protected WorkspaceDlg wsDlg;
     protected Document modelDoc = null;    
-
+    protected BrowseJAMSCloudDlg jamsCloudBrowser = null;
     private JMenuItem saveEnsembleItem;
 
     public ExplorerFrame(JAMSExplorer explorer) {
@@ -525,14 +525,18 @@ public class ExplorerFrame extends JFrame {
         }
                 
         SynchronizeDlg synchronizer = new SynchronizeDlg(this, ctrl, ws);
+        GUIHelper.centerOnParent(synchronizer, false);
         synchronizer.setVisible(true);
     }
     
     protected void browseJAMSCloud(){
-        BrowseJAMSCloudDlg gui = new BrowseJAMSCloudDlg(ExplorerFrame.this, ExplorerFrame.this.explorer.getProperties());
-        gui.init();                                
-        gui.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        gui.setVisible(true);
+        if ( jamsCloudBrowser == null ){
+            jamsCloudBrowser = new BrowseJAMSCloudDlg(ExplorerFrame.this, ExplorerFrame.this.explorer.getProperties());
+            jamsCloudBrowser.init();
+            jamsCloudBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);            
+        }                
+        GUIHelper.centerOnScreen(jamsCloudBrowser, true);
+        jamsCloudBrowser.setVisible(true);        
     }
 
     protected void open() {

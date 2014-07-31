@@ -94,7 +94,7 @@ public class MCAT5Toolbar extends JToolBar {
         super();
         
 
-        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/reg/resources/images/dottyplot.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/dottyplot.png")),
                 JAMS.i18n("CREATE_DOTTY_PLOT"),
                 JAMS.i18n("DOTTY_PLOT"),
                 DottyPlot.class));
@@ -104,82 +104,82 @@ public class MCAT5Toolbar extends JToolBar {
                 "DottyPlot3D",
                 DottyPlot3D.class));*/
                
-        registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/reg/resources/images/sensitivity.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/sensitivity.png")),
                 "Sensitivityanalyzer",
                 JAMS.i18n("Sensitivity_Analysis"),
                 SensitivityToolbox.class));
 
-        registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/reg/resources/images/interaction.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/interaction.png")),
                 "Interaction Effects Analyzer",
                 JAMS.i18n("Interaction_analysis"),
                 ParameterInteractionAnalyser.class));
         
-        registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/reg/resources/images/temporal_sa.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/temporal_sa.png")),
                 JAMS.i18n("Temporal_Sensitivity_Analysis"),
                 JAMS.i18n("Temporal_Sensitivity_Analysis"),
                 TemporalSensitivityAnalysisGUI.class));
         
-        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/reg/resources/images/aposterioriplot.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/aposterioriplot.png")),
                 JAMS.i18n("CREATE_A_POSTERIORI_DISTRIBUTION_PLOT"),
                 JAMS.i18n("A_POSTERIO_PARAMETER_DISTRIBUTION"),
                 APosterioriPlot.class));
 
-        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/reg/resources/images/identifiabilityplot.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/identifiabilityplot.png")),
                 JAMS.i18n("IDENTIFIABILITY_PLOT"),
                 JAMS.i18n("IDENTIFIABILITY_PLOT"),
                 IdentifiabilityPlot.class));
 
-        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/reg/resources/images/bestpredictionplot.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/bestpredictionplot.png")),
                 JAMS.i18n("BEST_PREDICTION_PLOT"),
                 JAMS.i18n("BEST_PREDICTION_PLOT"),
                 BestPredictionPlot.class));
 
-        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/reg/resources/images/classplot.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/classplot.png")),
                 JAMS.i18n("CLASS_PLOT"),
                 JAMS.i18n("CLASS_PLOT"),
                 ClassPlot.class));
 
-        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/reg/resources/images/dyniaplot.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/dyniaplot.png")),
                 JAMS.i18n("DYNIA"),
                 JAMS.i18n("DYNIA"),
                 DYNIA.class));
 
-        registeredPlots.add(new PlotDesc(PlotType.Uncertainty,new ImageIcon(getClass().getResource("/reg/resources/images/ParetoOutPlot.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Uncertainty,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/ParetoOutPlot.png")),
                 JAMS.i18n("PARETO_OUTPUT_UNCERTAINITY"),
                 JAMS.i18n("PARETO_OUTPUT_UNCERTAINITY"),
                 ParetoOutputUncertainty.class));
 
-        registeredPlots.add(new PlotDesc(PlotType.Uncertainty,new ImageIcon(getClass().getResource("/reg/resources/images/GLUEOutPlot.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Uncertainty,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/GLUEOutPlot.png")),
                 JAMS.i18n("GLUE_OUTPUT_UNCERTAINITY"),
                 JAMS.i18n("OUTPUT_UNCERTAINTY_PLOT"),
                 GLUEOutputUncertainty.class));
 
-        registeredPlots.add(new PlotDesc(PlotType.Uncertainty,new ImageIcon(getClass().getResource("/reg/resources/images/GLUEVarPlot.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Uncertainty,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/GLUEVarPlot.png")),
                 JAMS.i18n("GLUE_VARIABLE_UNCERTAINITY"),
                 JAMS.i18n("CUMULATIVE_DENSITY_PLOT"),
                 GLUEVariableUncertainty.class));
 
-        registeredPlots.add(new PlotDesc(PlotType.Uncertainty,new ImageIcon(getClass().getResource("/reg/resources/images/normalisedparameter.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Uncertainty,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/normalisedparameter.png")),
                 JAMS.i18n("NORMALIZED_PARAMETER_RANGE_PLOT"),
                 JAMS.i18n("NORMALISED_PARAMETER_RANGE_PLOT"),
                 NormalisedParameterRangePlot.class));
         
-        registeredPlots.add(new PlotDesc(PlotType.Uncertainty,new ImageIcon(getClass().getResource("/reg/resources/images/ParetoBoxPlot.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Uncertainty,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/ParetoBoxPlot.png")),
                 JAMS.i18n("PARETO_BOX_PLOT"),
                 JAMS.i18n("PARETO_BOX_PLOT"),
                 ParetoBoxPlot.class));
                 
-        registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/regionalsensitivity.png")),
                 JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS"),
                 JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS"),
                 RegionalSensitivityAnalyser.class));
 
-        registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Sensitivity,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/regionalsensitivity2.png")),
                 JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS_II"),
                 JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS_II"),
                 RegionalSensitivityAnalyser2.class));
 
-        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/reg/resources/images/regionalsensitivity2.png")),
+        registeredPlots.add(new PlotDesc(PlotType.Basic,new ImageIcon(getClass().getResource("/jams/explorer/resources/images/regionalsensitivity2.png")),
                 JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS_II"),
                 JAMS.i18n("REGIONAL_SENSITIVITY_ANALYSIS_II"),
                 MultiObjectiveDecisionSupport.class));

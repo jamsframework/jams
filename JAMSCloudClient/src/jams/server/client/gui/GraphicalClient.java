@@ -92,6 +92,8 @@ public class GraphicalClient extends Observable {
             }
         }
         this.p = p;
+                
+        connect();        
     }
 
     public String[] getRecentURLs() {
@@ -103,16 +105,19 @@ public class GraphicalClient extends Observable {
     }
     
    public boolean isConnected(){
-       return client != null;
+       return client != null && client.isConnected();
    }
 
     public Controller getClient() {
-        if (client == null) {
-            return reconnect();
-        }
-        return client;
+        return connect();
     }
 
+    public Controller connect() {        
+        if (!isConnected()){
+            return reconnect();
+        }
+        return client;        
+    }
     public Controller reconnect() {        
         JLabel jServerName = new JLabel("Server");
         JComboBox serverUrls = new JComboBox(recentUrls);
@@ -159,7 +164,7 @@ public class GraphicalClient extends Observable {
                 }
             }            
             
-            client = new Controller(new HTTPClient(), serverUrls.getSelectedItem().toString() );
+            client = new Controller(serverUrls.getSelectedItem().toString() );
             if ( !client.connect(userNameValue, passwordValue) ){                
                 client = null;
             }

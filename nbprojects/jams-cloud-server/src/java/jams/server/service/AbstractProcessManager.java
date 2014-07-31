@@ -44,6 +44,8 @@ public abstract class AbstractProcessManager implements ProcessManager {
     final protected String DEFAULT_INFO_LOG = "info.log";
     final protected String DEFAULT_ERROR_LOG = "error.log";
     
+    final protected String DEFAULT_MAX_MEMORY = "24g";
+    
     protected abstract Integer getProcessPid(Process process) throws IOException;
     public abstract boolean isProcessActive(int pid) throws IOException;
     public abstract ProcessBuilder getProcessBuilder(Job job) throws IOException;
@@ -83,6 +85,8 @@ public abstract class AbstractProcessManager implements ProcessManager {
             return null;
         }        
         pb.directory(localExecDir);
+        pb.redirectOutput(new java.io.File(localExecDir + "/" + DEFAULT_INFO_LOG));
+        pb.redirectError(new java.io.File(localExecDir + "/" + DEFAULT_ERROR_LOG));
         Process process = pb.start();
 
         job.setPID(this.getProcessPid(process));        

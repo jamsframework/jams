@@ -119,6 +119,13 @@ public class FileSync implements Comparable {
         }
     }
     
+    protected void markAsModified(){
+        this.isFileModified = true;
+        if (this.parent!=null){            
+            this.parent.markAsModified();
+        }
+    }
+    
     public FileSync getRoot(){
         if (this.parent == null){
             return this;
@@ -128,7 +135,8 @@ public class FileSync implements Comparable {
     }
 
     public SyncMode[] getSyncOptions() {
-        if (parent == null || parent.getSyncMode() == null) {
+        if (parent == null || parent.getSyncMode() == null || 
+            parent.getSyncMode() == SyncMode.UPDATE) {
             if (!isModified()) {
                 return new SyncMode[]{SyncMode.NOTHING};
             } else if (isExisting()) {
@@ -137,23 +145,14 @@ public class FileSync implements Comparable {
                 return new SyncMode[]{SyncMode.CREATE};
             }
         }
+        if (parent.getSyncMode() == SyncMode.NOTHING){
+            return new SyncMode[]{SyncMode.NOTHING};
+        }
         if (parent.getSyncMode() == SyncMode.CREATE) {
             return new SyncMode[]{SyncMode.CREATE};
         }
         if (parent.getSyncMode() == SyncMode.DUPLICATE) {
             return new SyncMode[]{SyncMode.CREATE};
-        }
-        if (parent.getSyncMode() == SyncMode.NOTHING) {
-            return new SyncMode[]{SyncMode.NOTHING};
-        }
-        if (parent.getSyncMode() == SyncMode.UPDATE) {
-            if (!isModified()) {
-                return new SyncMode[]{SyncMode.NOTHING};
-            }else if (isExisting()){
-                return new SyncMode[]{SyncMode.UPDATE, SyncMode.DUPLICATE};
-            }else {
-                return new SyncMode[]{SyncMode.CREATE};
-            }            
         }
         return null;
     }

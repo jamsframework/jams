@@ -23,7 +23,6 @@ package jams.server.client.gui;
 
 import jams.JAMS;
 import jams.SystemProperties;
-import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
 import jams.server.client.Controller;
@@ -149,7 +148,7 @@ public class BrowseJAMSCloudDlg extends JDialog{
         MsgBoxLogHandler.registerLogger(Logger.getLogger(Controller.class.getName()));
         MsgBoxLogHandler.registerLogger(Logger.getLogger(BrowseJAMSCloudDlg.class.getName()));
         
-        connector = new GraphicalClient(mainPanel, p);
+        connector = new GraphicalClient(mainPanel, p);        
         this.p = p;
     }
      
@@ -288,6 +287,9 @@ public class BrowseJAMSCloudDlg extends JDialog{
         add(mainPanel);
         invalidate();
         pack();        
+        
+        client = connector.getClient();
+        updateData();
     }
     
     private void viewStream(WorkspaceFileAssociation wfa){
@@ -708,7 +710,7 @@ public class BrowseJAMSCloudDlg extends JDialog{
         if (connector == null){
             connector = new GraphicalClient(mainPanel ,p);
         }
-        client = connector.getClient();
+        client = connector.reconnect();
         
         if (client != null){
             observable.deleteObservers();

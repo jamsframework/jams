@@ -44,12 +44,14 @@ public class Controller{
     private static final Logger log = Logger.getLogger( Controller.class.getName() );
         
     String SEPARATOR = "***************************************************\n";
-    HTTPClient client;
+    HTTPClient client = null;
     User user = null;
     String serverURL;
     
-    public Controller(HTTPClient client, String serverURL){
-        this.client = client;
+    public Controller(String serverURL){
+        if (client == null){
+            client = new HTTPClient();
+        }
         this.serverURL = serverURL;                
         log.setLevel(Level.ALL);
     }
@@ -64,6 +66,10 @@ public class Controller{
         }
         log.fine(JAMS.i18n("Login_successful") + "\n");
         return true;
+    }
+    
+    public boolean isConnected(){
+        return client.isConnected();
     }
     
     public void cleanUp(){
@@ -105,8 +111,9 @@ public class Controller{
     }
     
     public static void main(String[] args) throws IOException{
-        Controller client = new Controller(new HTTPClient(), "http://kirk.geogr.uni-jena.de:8080/jams-cloud-server/webresources");        
-        client.connect("Christian", "jamscloud");
+        Controller client = new Controller("http://kirk.geogr.uni-jena.de:8080/jams-cloud-server/webresources");        
+        if (!client.isConnected())
+            client.connect("Christian", "jamscloud");
 
         User user = new User(5);
         user.setAdmin(1);

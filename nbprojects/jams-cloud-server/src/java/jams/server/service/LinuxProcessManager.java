@@ -65,7 +65,7 @@ public class LinuxProcessManager extends AbstractProcessManager {
         String command[] = {
             "java",
             "-Xms128M", 
-            "-Xmx2096M", 
+            "-Xmx"+DEFAULT_MAX_MEMORY, 
             "-Dsun.java2d.d3d=false", 
             "-jar", 
             runnableFile, 
@@ -78,9 +78,7 @@ public class LinuxProcessManager extends AbstractProcessManager {
     
         logger.fine("start process: " + Arrays.toString(command));
         
-        return new ProcessBuilder(command)
-                .redirectOutput(new File(DEFAULT_INFO_LOG))
-                .redirectOutput(new File(DEFAULT_ERROR_LOG));
+        return new ProcessBuilder(command);                
     }
    
     @Override
