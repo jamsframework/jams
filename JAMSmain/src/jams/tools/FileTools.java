@@ -408,8 +408,12 @@ public class FileTools {
                 dir.mkdirs();
             }
             if (!entry.isDirectory()) {
+                File f = new File(destDir, entryFileName);
+                if (f.isDirectory()){
+                    continue;
+                }
                 BufferedOutputStream bos = new BufferedOutputStream(
-                        new FileOutputStream(new File(destDir, entryFileName)));
+                        new FileOutputStream(f));
 
                 while ((len = zipFile.read(buffer)) > 0) {
                     bos.write(buffer, 0, len);
@@ -452,6 +456,22 @@ public class FileTools {
         removeSlashes(s);
         s = s.replace("\\", "/").replace("//", "/");
         return s;
+    }
+    
+    /**
+     * getParent from File's string representation
+     *     
+     * @param s - Path to a file, it is not necessary that the file exists or that the path is valid in current file system
+     * @return parent of file
+     */
+    public static String getParent(String s){
+        s = normalizePath(s);
+        int index = s.lastIndexOf("/");
+        if (index != -1){
+            return s.substring(0, index);
+        }else{
+            return "";
+        }
     }
     
     /**

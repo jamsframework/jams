@@ -32,6 +32,7 @@ import jams.server.entities.WorkspaceFileAssociation;
 import jams.server.entities.Workspaces;
 import jams.tools.FileTools;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -39,10 +40,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.jar.Attributes;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -189,22 +192,76 @@ public class WorkspaceController {
         return ws;
     }
 
+    private Collection<WorkspaceFile> getClassPathFromManifest(WorkspaceFile jar){
+        TreeSet<WorkspaceFile> uploadList = new TreeSet<>();
+        try{            
+            File directory = jar.getLocalFile().getParentFile();
+            JarInputStream jarStream = new JarInputStream(new FileInputStream(jar.getLocalFile()));
+            Manifest mf = jarStream.getManifest();
+            if (mf == null){
+                jarStream.close();
+                return uploadList;
+            }
+            Attributes mainAttributes = mf.getMainAttributes();
+            if (mainAttributes==null){
+                jarStream.close();
+                return uploadList;
+            }
+            if (mf.getMainAttributes().getValue("Class-Path")==null){
+                jarStream.close();
+                return uploadList;
+            }
+            
+            String classPaths[] = mf.getMainAttributes().getValue("Class-Path").split(" ");
+            for (String path : classPaths){
+                File f = new File(directory, path);
+                //make sure the file is existing
+                if (!f.exists() || f.isDirectory()){
+                    System.out.println("Missing library: " + f.getAbsolutePath() + " mentioned in manifest of " + jar.getLocalFile());
+                    continue;
+                }
+                //make relative path
+                String parent = FileTools.getParent(jar.getRelativePath());
+                String newPath = parent + "/" + path;
+                WorkspaceFile wsfile = new WorkspaceFile(f, jar.getRole(), newPath);
+                uploadList.add(wsfile);
+            }
+            jarStream.close();
+        }catch(Throwable t){
+            t.printStackTrace();            
+        }        
+        return uploadList;
+    }
+    
     private Collection<WorkspaceFile> findLibraries(File dir, int role) {
         TreeSet<WorkspaceFile> uploadList = new TreeSet<>();
 
-        Collection<File> libList = FileTools.getFilesByRegEx(dir, ".*\\.(jar)", true);
+        if (dir.isDirectory()) {
+            Collection<File> libList = FileTools.getFilesByRegEx(dir, ".*\\.(jar)", true);
 
-        Path path = Paths.get(dir.getPath());
+            Path path = Paths.get(dir.getPath());
 
-        for (File f : libList) {
-            Path p = Paths.get(f.getPath());
+            for (File f : libList) {
+                Path p = Paths.get(f.getPath());
 
-            String newPath = path.relativize(p).toString();
+                String newPath = path.relativize(p).toString();
 
-            WorkspaceFile wsfile = new WorkspaceFile(f, role, newPath);
+                WorkspaceFile wsfile = new WorkspaceFile(f, role, newPath);
 
+                uploadList.add(wsfile);
+                uploadList.addAll(getClassPathFromManifest(wsfile));
+            }
+        }else{
+            String newPath = dir.getName();
+            WorkspaceFile wsfile = new WorkspaceFile(dir, role, newPath);
             uploadList.add(wsfile);
+            uploadList.addAll(getClassPathFromManifest(wsfile));
         }
+        
+        //now read the manifest
+        
+        
+        
         return uploadList;
     }
                

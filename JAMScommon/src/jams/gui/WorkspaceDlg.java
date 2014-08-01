@@ -73,7 +73,7 @@ public class WorkspaceDlg extends JDialog {
         GUIHelper.addGBComponent(mainPanel, gbl, new JLabel("Title"), 10, 10, 1, 1, 1, 1);
         GUIHelper.addGBComponent(mainPanel, gbl, new JLabel("Description"), 10, 20, 1, 1, 1, 1);
         GUIHelper.addGBComponent(mainPanel, gbl, new JLabel("ID"), 10, 30, 1, 1, 1, 1);
-        GUIHelper.addGBComponent(mainPanel, gbl, new JLabel("Persistent"), 10, 30, 1, 1, 1, 1);
+        GUIHelper.addGBComponent(mainPanel, gbl, new JLabel("Persistent"), 10, 40, 1, 1, 1, 1);
 
         titleInput = new TextInput();
         titleInput.setLength(40);
@@ -87,8 +87,8 @@ public class WorkspaceDlg extends JDialog {
 
         GUIHelper.addGBComponent(mainPanel, gbl, titleInput.getComponent(), 20, 10, 1, 1, 1, 1);
         GUIHelper.addGBComponent(mainPanel, gbl, descriptionScroll, 20, 20, 1, 1, 1, 1);
-        GUIHelper.addGBComponent(mainPanel, gbl, idInput.getComponent(), 20, 20, 1, 1, 1, 1);
-        GUIHelper.addGBComponent(mainPanel, gbl, persistenceInput.getComponent(), 20, 30, 1, 1, 1, 1);
+        GUIHelper.addGBComponent(mainPanel, gbl, idInput.getComponent(), 20, 30, 1, 1, 1, 1);
+        GUIHelper.addGBComponent(mainPanel, gbl, persistenceInput.getComponent(), 20, 40, 1, 1, 1, 1);
 
         JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {

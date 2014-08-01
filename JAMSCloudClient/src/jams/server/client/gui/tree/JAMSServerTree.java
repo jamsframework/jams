@@ -35,7 +35,7 @@ import javax.swing.tree.TreePath;
 public abstract class JAMSServerTree extends JTree {
 
     ImageIcon folderIcon    = new ImageIcon(ClassLoader.getSystemResource("resources/images/folder.png"));
-    ImageIcon workingIcon      = new ImageIcon(ClassLoader.getSystemResource("resources/images/wait.gif"));
+    ImageIcon workingIcon      = new ImageIcon(ClassLoader.getSystemResource("resources/images/wait.png"));
     ImageIcon finishedIcon  = new ImageIcon(ClassLoader.getSystemResource("resources/images/Ok.png"));
     ImageIcon userIcon  = new ImageIcon(ClassLoader.getSystemResource("resources/images/user.png"));
     

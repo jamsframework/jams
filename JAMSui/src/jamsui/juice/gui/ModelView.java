@@ -382,9 +382,13 @@ public class ModelView {
 
         // check if runtime has been created successfully
         if (runtime == null) {
+            log.log(Level.SEVERE, "Unable to create runtime");
             return null;
         }
-                
+        if (runtime.getModel() == null) {
+            log.log(Level.SEVERE, "Unable to load model. Please make sure, your model can be run locally!");
+            return null;
+        }
         File workspaceDirectory = runtime.getModel().getWorkspace().getDirectory();
         InputStream modelStream = null;
         try {
