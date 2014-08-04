@@ -55,6 +55,7 @@ public class HydrographEvent implements Comparable {
         //construct triangle function
         double q1 = 0;
         for (int i = startIndex; i<endIndex;i++){
+            //scheint nicht zu funktionieren (im stundenmodus .. )
             double y = triangleFunction(lbx, lby, rbx, rby, tx, ty, i);
             double ystar = 0;
             if (i<peak.index)
@@ -62,6 +63,9 @@ public class HydrographEvent implements Comparable {
             else if (i > peak.index)
                 ystar = fallingEdge.at(i);
 
+            if (Double.isNaN(y) || Double.isInfinite(y))
+                continue;
+            
             if (ystar != 0.0)
                 q1 += Math.abs(y - ystar) / ystar;
         }
@@ -86,7 +90,7 @@ public class HydrographEvent implements Comparable {
         this.heightAboveGround = q2;
         this.triangeShapeIndex = (1.0 - q1);
 
-        this.quality = height*(heightAboveGround)*Math.exp(triangeShapeIndex);
+        this.quality = height*(heightAboveGround)*Math.max(Math.min(Math.exp(triangeShapeIndex),0.33),3);
 
         return true;
     }

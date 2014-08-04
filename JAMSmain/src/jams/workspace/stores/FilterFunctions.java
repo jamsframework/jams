@@ -122,6 +122,26 @@ public class FilterFunctions {
     
     /**
      *
+     * @param a
+     * @param b
+     * @return min(a,b)
+     */
+    public static double min(double a, double b){        
+        return Math.min(a, b);
+    }
+    
+        /**
+     *
+     * @param a
+     * @param b
+     * @return max(a,b)
+     */
+    public static double max(double a, double b){        
+        return Math.max(a, b);
+    }
+    
+    /**
+     *
      * @param c
      * @return
      */
@@ -198,6 +218,9 @@ public class FilterFunctions {
             context.setFunction("", "daysInMonth", FilterFunctions.class.getMethod("lastDayInMonth", Attribute.Calendar.class));           
             context.setFunction("", "isLastDayInMonth", FilterFunctions.class.getMethod("isLastDayInMonth", Attribute.Calendar.class));           
             context.setFunction("", "dateCompare", FilterFunctions.class.getMethod("dateCompare", Attribute.Calendar.class, Attribute.Calendar.class, int.class));   
+            
+            context.setFunction("", "min", FilterFunctions.class.getMethod("min", double.class));
+            context.setFunction("", "max", FilterFunctions.class.getMethod("max", double.class));
             
             context.setFunction("", "toCalendar", FilterFunctions.class.getMethod("toCalendar", String.class)); 
             context.setFunction("", "toTimeInterval", FilterFunctions.class.getMethod("toTimeInterval", String.class)); 

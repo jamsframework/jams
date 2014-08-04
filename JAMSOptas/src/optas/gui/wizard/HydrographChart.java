@@ -9,6 +9,9 @@ import jams.JAMS;
 import jams.gui.WorkerDlg;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.TimeZone;
 import javax.swing.SwingUtilities;
 import optas.data.TimeFilter;
 import optas.data.TimeFilterCollection;
@@ -24,6 +27,8 @@ import org.jfree.chart.renderer.xy.StackedXYBarRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.time.Day;
+import org.jfree.data.time.Hour;
+import org.jfree.data.time.Month;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.CategoryTableXYDataset;
@@ -33,6 +38,9 @@ import org.jfree.data.xy.CategoryTableXYDataset;
  * @author chris
  */
 public class HydrographChart {
+    static TimeZone GMT_TZ = TimeZone.getTimeZone("GMT");
+    static HashMap<Integer, TimeSeries> HydrographBuffer = new HashMap<Integer, TimeSeries>();
+    
     JFreeChart chart;
 
     TimeSeriesCollection datasetHydrograph = new TimeSeriesCollection();
@@ -271,9 +279,7 @@ public class HydrographChart {
                     return;
                 }
                                 
-                //System.out.println("Hydrograph Update!!");
-                TimeSeries seriesHydrograph = new TimeSeries("hydrograph");
-                
+                //System.out.println("Hydrograph Update!!");                                
                 long n = hydrograph.getTimeDomain().getNumberOfTimesteps();
 
                 long lastNonFiltered = 0;
@@ -298,14 +304,33 @@ public class HydrographChart {
                     }
                 }
                 TimeFilter combinedFilter2 = filtersWithoutSelection.combine();
-
-                for (int i = 0; i < n; i++) {
-                    if (hydrograph.getValue((int) i) == JAMS.getMissingDataValue()) {
-                        seriesHydrograph.add(new Day(hydrograph.getTime((int) i)), Double.NaN);
-                    } else {
-                        seriesHydrograph.add(new Day(hydrograph.getTime((int) i)), hydrograph.getValue((int) i));
+                                
+                int hashKey = hydrograph.hashCode();
+                TimeSeries seriesHydrograph = HydrographBuffer.get(hashKey);
+                if (seriesHydrograph == null){
+                    seriesHydrograph = new TimeSeries("Hydrograph");
+                    for (int i = 0; i < n; i++) {
+                        if (hydrograph.getValue((int) i) == JAMS.getMissingDataValue()) {
+                            if (hydrograph.getTimeDomain().getTimeUnit() == Calendar.MONTH) {
+                                seriesHydrograph.add(new Month(hydrograph.getTime((int) i), GMT_TZ), Double.NaN);
+                            } else if (hydrograph.getTimeDomain().getTimeUnit() == Calendar.DAY_OF_YEAR) {
+                                seriesHydrograph.add(new Day(hydrograph.getTime((int) i), GMT_TZ), Double.NaN);
+                            } else if (hydrograph.getTimeDomain().getTimeUnit() == Calendar.HOUR_OF_DAY) {
+                                seriesHydrograph.add(new Hour(hydrograph.getTime((int) i), GMT_TZ), Double.NaN);
+                            }
+                        } else {
+                            if (hydrograph.getTimeDomain().getTimeUnit() == Calendar.MONTH) {
+                                seriesHydrograph.add(new Month(hydrograph.getTime((int) i), GMT_TZ), hydrograph.getValue((int) i));
+                            } else if (hydrograph.getTimeDomain().getTimeUnit() == Calendar.DAY_OF_YEAR) {
+                                seriesHydrograph.add(new Day(hydrograph.getTime((int) i), GMT_TZ), hydrograph.getValue((int) i));
+                            } else if (hydrograph.getTimeDomain().getTimeUnit() == Calendar.HOUR_OF_DAY) {
+                                seriesHydrograph.add(new Hour(hydrograph.getTime((int) i), GMT_TZ), hydrograph.getValue((int) i));
+                            }
+                        }
                     }
-
+                    HydrographBuffer.put(hashKey, seriesHydrograph);
+                }
+                for (int i = 0; i < n; i++) {
                     if (filterMode != FilterMode.SINGLE_ROW) {
                         for (int j = 0; j < filters.size(); j++) {
                             if (filters.get(j) == null || filters.get(j).isFiltered(hydrograph.getTime((int) i))) {

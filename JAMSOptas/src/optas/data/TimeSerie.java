@@ -11,6 +11,7 @@ import jams.data.Attribute.TimeInterval;
 import jams.data.DefaultDataFactory;
 import jams.workspace.stores.J2KTSDataStore;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -56,7 +57,7 @@ public class TimeSerie extends DataSet{
             throw new MismatchException("mismatch between timeInterval:" + range + " and provided number of data values:" + set.length);
         }
     }
-
+        
     public void addTimeFilter(TimeFilter filter){
         this.filter.add(filter);
         buildTimeMapping();
@@ -167,6 +168,16 @@ public class TimeSerie extends DataSet{
         }
         
     }
+    
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Arrays.hashCode(this.set);
+        hash = 53 * hash + this.timeLength;
+        hash = 53 * hash + (this.range != null ? this.range.hashCode() : 0);
+        return hash;
+    }
+    
     @Override
     public String toString() {
         return name;// + JAMS.i18n("_TIMESTEPS:") + timeLength;

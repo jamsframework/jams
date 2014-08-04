@@ -12,8 +12,6 @@ import jams.data.Attribute.Entity;
 import jams.model.Context;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
-import jams.workspace.stores.FilterFunctions;
-import static jams.workspace.stores.FilterFunctions.longCompare;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 
@@ -63,7 +61,7 @@ public class EntityCalculator extends JAMSComponent {
 
         exprContext = getExpressionContext();
 
-        valueExpr = factory.createValueExpression(exprContext, this.expr.getValue(), double.class);                
+        valueExpr = factory.createValueExpression(exprContext, "${" + this.expr.getValue() + "}", double.class);                
         timeExpr = factory.createValueExpression(exprContext, "${time}", Calendar.class);
         intervalExpr = factory.createValueExpression(exprContext, "${I}", Attribute.TimeInterval.class);
         entityExpr = factory.createValueExpression(exprContext, "${E}", Attribute.Entity.class);
@@ -114,7 +112,9 @@ public class EntityCalculator extends JAMSComponent {
         for (Entity e : entities.getEntities()){
             entityExpr.setValue(exprContext, e);
             
-            valueExpr.getValue(exprContext);
+            Double d = (Double)valueExpr.getValue(exprContext);
+            
+            e.setDouble(targetAttribute.getValue(), d);
         }
         
         

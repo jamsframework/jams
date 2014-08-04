@@ -276,7 +276,7 @@ public class TSDataReader{
             interval.setTimeUnitCount(1);
         }
         if (tres.compareTo("h")==0){
-            interval.setTimeUnit(Calendar.HOUR);
+            interval.setTimeUnit(Calendar.HOUR_OF_DAY);
             interval.setTimeUnitCount(1);
         }
 

@@ -73,9 +73,9 @@ public class TimeFilterCollection implements Serializable{
         if (modelTimeInterval == null){
             actStart = DefaultDataFactory.getDataFactory().createCalendar();
             actEnd = DefaultDataFactory.getDataFactory().createCalendar();
-            
-            actStart.setTimeInMillis(Long.MAX_VALUE);
-            actEnd.setTimeInMillis(Long.MIN_VALUE);
+                        
+            actStart.set(10000, 1, 1, 1, 1, 1);
+            actEnd.set(-2000, 1, 1, 1, 1, 1);
             
             for (TimeFilter f : timeFilters){
                 if (f instanceof TimeFilterFactory.RangeTimeFilter){
@@ -105,7 +105,7 @@ public class TimeFilterCollection implements Serializable{
                         }
                     }
                 }
-                if (f instanceof TimeFilterFactory.EventFilter){
+                if (TimeFilterFactory.EventFilter.class.isAssignableFrom(f.getClass())){
                     TimeFilterFactory.EventFilter filter = (TimeFilterFactory.EventFilter)f;
                     if (actStart.getTimeInMillis() > filter.getFirstDate().getTime()){
                         actStart.setTime(filter.getFirstDate());

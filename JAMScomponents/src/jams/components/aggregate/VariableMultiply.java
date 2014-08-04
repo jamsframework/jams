@@ -28,6 +28,7 @@ import jams.data.*;
  *
  * @author S. Kralisch
  */
+@Deprecated
 public class VariableMultiply extends JAMSComponent {
 
     @JAMSVarDescription(
