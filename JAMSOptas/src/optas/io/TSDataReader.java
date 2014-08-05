@@ -181,7 +181,17 @@ public class TSDataReader{
                         for (int j = 0; j < nstat; j++) {
                             statx[j] = Double.parseDouble(cleanToken(strTok.nextToken()));
                         }
-                    } else if (desc.equalsIgnoreCase("y")) {
+                    } else if (desc.equalsIgnoreCase("lat")) {
+                        statx = new double[nstat];
+                        for (int j = 0; j < nstat; j++) {
+                            statx[j] = Double.parseDouble(cleanToken(strTok.nextToken()));
+                        }
+                    }else if (desc.equalsIgnoreCase("y")) {
+                        staty = new double[nstat];
+                        for (int j = 0; j < nstat; j++) {
+                            staty[j] = Double.parseDouble(cleanToken(strTok.nextToken()));
+                        }
+                    }else if (desc.equalsIgnoreCase("lon")) {
                         staty = new double[nstat];
                         for (int j = 0; j < nstat; j++) {
                             staty[j] = Double.parseDouble(cleanToken(strTok.nextToken()));

@@ -159,7 +159,11 @@ public class WorkspaceController {
         
         Workspace wsTmp = null;
         for (WorkspaceFile wf : files) { 
-            if (!wf.getLocalFile().exists() || wf.getLocalFile().getPath().startsWith("..")) {
+            if (!wf.getLocalFile().exists()) {
+                continue;
+            }
+            if (wf.getLocalFile().getPath().startsWith("..")){
+                log.log(Level.SEVERE, "relative path detected, which cannot be processed " + wf.getLocalFile().getPath());
                 continue;
             }
             jams.server.entities.File serverFile = mapping.get(wf.getLocalFile());
@@ -236,6 +240,9 @@ public class WorkspaceController {
     private Collection<WorkspaceFile> findLibraries(File dir, int role) {
         TreeSet<WorkspaceFile> uploadList = new TreeSet<>();
 
+        //make absolute .. 
+        dir = dir.getAbsoluteFile();
+        
         if (dir.isDirectory()) {
             Collection<File> libList = FileTools.getFilesByRegEx(dir, ".*\\.(jar)", true);
 
@@ -321,6 +328,7 @@ public class WorkspaceController {
         Path parent = Paths.get(jamsLibaries.getParentFile().getPath());
         
         boolean executableFound = false;
+        //order is crucial 1. add runtime libs
         for (File lib : uiLibs) {
             Path p = Paths.get(lib.getPath());
             String newPath = parent.relativize(p).toString();
@@ -339,7 +347,19 @@ public class WorkspaceController {
         //order is crucial 2. add component libs
         for (File path : componentLibaries) {
             Collection<WorkspaceFile> libList = findLibraries(path, jams.server.entities.WorkspaceFileAssociation.ROLE_COMPONENTSLIBRARY);
-            workspaceFileList.addAll(libList);
+            for (WorkspaceFile wf : libList){
+                if (workspaceFileList.contains(wf)){
+                    WorkspaceFile wf2 = workspaceFileList.ceiling(wf);
+                    //replace if newer and not part of the runtime library
+                    if (wf2.getRole() != jams.server.entities.WorkspaceFileAssociation.ROLE_RUNTIMELIBRARY &&
+                        wf2.getLocalFile().lastModified() < wf.getLocalFile().lastModified() ){
+                        workspaceFileList.remove(wf2);
+                        workspaceFileList.add(wf);
+                    }
+                }else{
+                    workspaceFileList.add(wf);
+                }
+            }            
         }
         
         //order is crucial 3. add other files

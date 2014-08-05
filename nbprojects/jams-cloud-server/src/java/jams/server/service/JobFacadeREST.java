@@ -57,6 +57,8 @@ import javax.ws.rs.core.StreamingOutput;
 @Path("job")
 public class JobFacadeREST extends AbstractFacade<Job> {
 
+    Logger logger = Logger.getLogger(JobFacadeREST.class.getName());
+    
     @PersistenceContext(unitName = "jams-serverPU")
     private EntityManager em;
     
@@ -89,6 +91,33 @@ public class JobFacadeREST extends AbstractFacade<Job> {
                 .getResultList();
     }
        
+    private Job updateJob(Job job){
+        if (job.getPID()==-1){
+            return job;
+        }
+        try{
+            JobState state = processManager.state(job);
+            if (!state.isActive()){
+                job.setPID(-1);
+            }
+            Workspace ws = processManager.updateWorkspace(job, em);
+            job.setWorkspace(ws);
+            em.persist(job);    
+            return job;
+        }catch(IOException ioe){
+            logger.log(Level.SEVERE,ioe.getMessage(),ioe);
+        }
+        return job;
+    }
+        
+    private List<Job> updateJobs(List<Job> jobs){
+        ArrayList<Job> returnList = new ArrayList<>();
+        for (Job job : jobs){
+            returnList.add(updateJob(job));
+        }
+        return returnList;
+    }
+    
     private Workspace duplicateWorkspace(Workspace ws){
         Workspace ws_clone = new Workspace(ws);        
         ws_clone.setReadOnly(true);
@@ -159,7 +188,9 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             return Response.status(Status.FORBIDDEN).build();
         }
         
-        List<Job> list = getJobsForUser(currentUser.getId());
+        List<Job> list = getJobsForUser(currentUser.getId());        
+        //do update
+        list = updateJobs(list);
         if (list == null){
             return Response.status(Status.NOT_FOUND).build();
         }        
@@ -197,19 +228,12 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             return Response.status(Status.NOT_FOUND).build();
         }
         ArrayList<Job> activeList = new ArrayList<Job>();
+        //do update
+        list = updateJobs(list);
+        
         for (Job job : list){
             if (job.getPID()>-1){
-                try {
-                    JobState state = processManager.state(job);
-                    if (!state.isActive()) {
-                        job.setPID(-1);
-                        em.persist(job);
-                    } else {
-                        activeList.add(job);
-                    }
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                }
+                activeList.add(job);
             }
         }
         
@@ -228,13 +252,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             return Response.status(Status.FORBIDDEN).build();
         
         List<Job> list = getAllJobs();
-        for (Job job : list){
-            if (job.getPID() != -1){
-                Workspace ws = processManager.updateWorkspace(job, em);
-                job.setWorkspace(ws);
-                em.persist(job);
-            }
-        }
+        list = updateJobs(list);        
         if (list == null || list.isEmpty()){
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -310,14 +328,8 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         }
         
         try{
+            updateJob(job);
             JobState state = processManager.state(job);
-
-            if (!state.isActive()){
-                job.setPID(-1);
-                Workspace ws = processManager.updateWorkspace(job, em);
-                job.setWorkspace(ws);
-                em.persist(job);
-            }
             return Response.ok(state, MediaType.APPLICATION_XML_TYPE).build();
         }catch(IOException ioe){
             ioe.printStackTrace();
@@ -344,10 +356,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         
         try{
             JobState state = processManager.kill(job);
-            if (!state.isActive()){
-                job.setPID(-1);
-                em.persist(job);
-            }
+            updateJob(job);
             return Response.ok(state, MediaType.APPLICATION_XML_TYPE).build();
         }catch(IOException ioe){
             ioe.printStackTrace();
@@ -405,8 +414,10 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (job.getOwner().getId() != currentUser.getId()){
             return Response.status(Status.FORBIDDEN).build();
         }
+
+        job = updateJob(job);
         
-        Workspace ws = processManager.updateWorkspace(job, em);
+        Workspace ws = job.getWorkspace();
         return Response.ok(ws).build();            
     }
     

@@ -219,8 +219,8 @@ public class FilterFunctions {
             context.setFunction("", "isLastDayInMonth", FilterFunctions.class.getMethod("isLastDayInMonth", Attribute.Calendar.class));           
             context.setFunction("", "dateCompare", FilterFunctions.class.getMethod("dateCompare", Attribute.Calendar.class, Attribute.Calendar.class, int.class));   
             
-            context.setFunction("", "min", FilterFunctions.class.getMethod("min", double.class));
-            context.setFunction("", "max", FilterFunctions.class.getMethod("max", double.class));
+            context.setFunction("", "min", FilterFunctions.class.getMethod("min", double.class, double.class));
+            context.setFunction("", "max", FilterFunctions.class.getMethod("max", double.class, double.class));
             
             context.setFunction("", "toCalendar", FilterFunctions.class.getMethod("toCalendar", String.class)); 
             context.setFunction("", "toTimeInterval", FilterFunctions.class.getMethod("toTimeInterval", String.class)); 
