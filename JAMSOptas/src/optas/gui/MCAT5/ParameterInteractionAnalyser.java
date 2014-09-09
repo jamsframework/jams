@@ -15,6 +15,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.AbstractAction;
@@ -297,7 +299,13 @@ public class ParameterInteractionAnalyser extends MCAT5Plot {
         uniSA.setUsingRegression(true);
         uniSA.setParameterNormalizationMethod(SimpleInterpolation.NormalizationMethod.Linear);
         uniSA.setObjectiveNormalizationMethod(SimpleInterpolation.NormalizationMethod.Linear);
-        uniSA.addObserver(this);
+        uniSA.addObserver(new Observer() {
+
+            @Override
+            public void update(Observable o, Object arg) {
+                setState(arg.toString());
+            }
+        });
         
         int n = counter;
         

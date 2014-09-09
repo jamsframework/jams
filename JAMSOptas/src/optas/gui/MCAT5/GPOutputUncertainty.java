@@ -53,7 +53,7 @@ import optas.data.DataSet;
 import optas.data.Measurement;
 import optas.data.TimeSerie;
 import optas.data.TimeSerieEnsemble;
-import optas.math.distributions.CDF_Normal;
+import jams.math.distributions.CDF_Normal;
 import optas.regression.GaussianProcessRegression;
 import optas.regression.gaussian.HyperParameter;
 import optas.regression.gaussian.cov.CovarianceFunction;

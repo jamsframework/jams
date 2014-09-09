@@ -92,11 +92,15 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import jams.components.io.ShapeTool;
+import jams.data.Attribute.Entity;
 import jams.model.JAMSComponentDescription;
 import java.io.Serializable;
 import java.util.HashSet;
+import javax.swing.tree.DefaultTreeModel;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.gui.swing.event.SelectionChangeListener;
 import org.geotools.gui.swing.event.SelectionChangedEvent;
+import org.opengis.feature.Feature;
 
 /**
  * Viewer component for JAMS entities and parameter. Each parameter map is implemented by
@@ -123,6 +127,12 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
         description = "Name of SLD-File containing layer style information"
         )
         public Attribute.String stylesFileName;
+    
+    @JAMSVarDescription(
+        access = JAMSVarDescription.AccessType.READ,
+        description = "current time step"
+        )
+        public Attribute.Calendar time;
 
     @JAMSVarDescription(
         access = JAMSVarDescription.AccessType.READ,
@@ -185,11 +195,12 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
         public Attribute.String baseShape;
 
     transient private JPanel panel, waitPanel;
+    transient private JLabel timeLabel;
     transient protected GISPanel gispanel;
     transient private DefaultMapLayer[] optLayers = new DefaultMapLayer[3];
     transient private MapCollection[] mc;
     private int numOfParams,  infoidx;
-    private String mapFTypeName = "mapFType";
+    private final String mapFTypeName = "mapFType";
     private DefaultMutableTreeNode top,  last;
     private JTree tree;
     private boolean finished = false;
@@ -206,7 +217,6 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     private Envelope fullExtent;
     private String[] otherLayers;
     private int div_hor;
-    private Style selectStyle;
 
     static StyleFactory styleFactory = CommonFactoryFinder.getStyleFactory(null);
 
@@ -217,7 +227,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     }
 
     @Override
-    public void run() {
+    public void init() {
         try {
             if (panel == null) {
                 return;
@@ -353,6 +363,15 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
         }
 
     }
+    
+    public void run() {
+        try{
+            updateCollections();
+            gispanel.update();
+        }catch(IOException ioe){
+            ioe.printStackTrace();
+        }
+    }
 
     @Override
     public JPanel getPanel() {
@@ -420,7 +439,34 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                 continue;
             }
             
-            mc[i] = new MapCollection(showAttr.getValue()[i], fc, s, rangeColor.getValue()[i], Integer.parseInt(numOfRanges.getValue()[i]), crs);
+            mc[i] = new MapCollection(showAttr.getValue()[i], fc, "newAt", rangeColor.getValue()[i], Integer.parseInt(numOfRanges.getValue()[i]), crs);                        
+        }
+    }
+    
+    private void updateCollections() throws IOException{
+        top.removeAllChildren();
+        top.removeFromParent(); 
+        
+        if (time != null && time.getValue() != null){
+            this.timeLabel.setText(time.toString());
+        }
+        
+        for (int i = 0; i <= numOfParams - 1; i++) {
+
+            FeatureIterator fi = mc[i].getMapContext().getLayer(0).getFeatureSource().getFeatures().features();
+            while(fi.hasNext()){
+                Feature f = fi.next();
+                if (f instanceof SimpleFeature){
+                    SimpleFeature sf = (SimpleFeature)f;
+                    int id = Integer.parseInt(sf.getID());
+                    
+                    Entity e = hrus.getEntity((long)id);
+                    double value = e.getDouble(showAttr.getValue()[i]);
+                    sf.setAttribute("newAt", value);
+                }
+            }            
+            mc[i].update();
+            
             DefaultMutableTreeNode mapNode = new DefaultMutableTreeNode(mc[i].getDesc());
             top.add(mapNode);
 
@@ -431,9 +477,8 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                 entry = new DefaultMutableTreeNode("<= " + Math.round((Double) nodeContent[j] * 100) / 100.0,
                         false);
                 mapNode.add(entry);
-            }
-        }
-        
+            }            
+        }      
         DefaultMutableTreeNode layerEntry = null;
         int i = 0;
         for (DefaultMapLayer l : optLayers) {
@@ -443,6 +488,9 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             }
             i++;
         }
+ 
+        tree.setModel(new DefaultTreeModel(top));
+        tree.invalidate();
     }
 
     /* Icon style for additional layers in legend */
@@ -498,7 +546,8 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             if (finished) {
                 g.drawRect(1, 1, 19, 14);
                 g.setColor(Color.BLACK);
-                g.setColor((Color) mc[a].getColors()[mc[a].getRanges().length - b - 1]);
+                if (mc[a].getRanges().length - b - 1 >= 0)
+                    g.setColor((Color) mc[a].getColors()[mc[a].getRanges().length - b - 1]);
                 g.fillRect(1, 1, 19, 14);
             } else {
                 tree.setVisible(false);
@@ -687,6 +736,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             final Cursor selectCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
             selectButton.addActionListener(new ActionListener() {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     mp.setCursor(selectCursor);
                     mp.setState(JMapPane.Select);
@@ -698,6 +748,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             JButton exportButton = new JButton(icon_export);
             exportButton.addActionListener(new ActionListener() {
 
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     mp.setCursor(defaultCursor);
                     try {
@@ -719,6 +770,11 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             this.add(buttons, BorderLayout.NORTH);
         }
 
+        public void update(){
+            mp.setReset(true);
+            mp.repaint();
+        }
+        
         public GISPanel() throws Exception {
             mp = new JMapPane();
             mp.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -768,7 +824,11 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             });
 
             treeView = new JScrollPane(tree);
-            legendPane.setTopComponent(treeView);
+            JPanel topPanel = new JPanel(new BorderLayout());
+            timeLabel = new JLabel();
+            topPanel.add(timeLabel, BorderLayout.NORTH);
+            topPanel.add(treeView, BorderLayout.CENTER);
+            legendPane.setTopComponent(topPanel);
             legendPane.setBottomComponent(info);
             this.setLayout(new BorderLayout());
 
@@ -833,24 +893,29 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
         }
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
         if (mp.getState() == JMapPane.Select) {
             JOptionPane.showMessageDialog(null, "selection");
         }
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

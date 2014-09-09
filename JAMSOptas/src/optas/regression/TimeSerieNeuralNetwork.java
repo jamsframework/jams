@@ -30,7 +30,8 @@ import org.encog.util.obj.SerializeObject;
 public class TimeSerieNeuralNetwork extends TimeSeriesInterpolation {
        
     boolean isTrained = false;
-
+    double error = 0;
+    
     BasicNetwork network;
 
     @Override
@@ -43,8 +44,8 @@ public class TimeSerieNeuralNetwork extends TimeSeriesInterpolation {
 
     //not necessary to call init .. but forces training
     @Override
-    public void init(){
-        trainNetwork();
+    public double init(){
+        return trainNetwork();
     }
 
     public boolean save(File f){
@@ -71,14 +72,14 @@ public class TimeSerieNeuralNetwork extends TimeSeriesInterpolation {
         return true;
     }
 
-    private void trainNetwork() {
+    private double trainNetwork() {
         if (isTrained) {
-            return;
+            return error;
         }
-        trainNetwork(new TreeSet<Integer>());        
+        return error = trainNetwork(new TreeSet<Integer>());        
     }
 
-    private void trainNetwork(TreeSet<Integer> leaveOutIndex) {
+    private double trainNetwork(TreeSet<Integer> leaveOutIndex) {
         log("Train Neural Network");
         this.setProgress(0.0);
 
@@ -151,6 +152,7 @@ public class TimeSerieNeuralNetwork extends TimeSeriesInterpolation {
 
         //System.out.println("After "+epoch+" iterations the error is " + backpropagation.getError());
         isTrained = true;
+        return 0;
     }
 
     @Override

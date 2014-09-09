@@ -62,6 +62,7 @@ public class Styled3DMapPane extends Applet {
         setLayout(new BorderLayout());
     }
     
+    @Override
     public void init() {
         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
         canvas3D = new Canvas3D(config);
@@ -72,6 +73,12 @@ public class Styled3DMapPane extends Applet {
         simpleU.getViewer().getView().setBackClipDistance(10.0);
         scene = createSceneGraph(simpleU);
         simpleU.addBranchGraph(scene);
+    }
+    
+    @Override
+    public void destroy(){
+        super.destroy();
+        simpleU.cleanup();
     }
     
     class MyScaleBehavior extends Behavior {

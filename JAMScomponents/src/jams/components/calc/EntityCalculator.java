@@ -12,6 +12,9 @@ import jams.data.Attribute.Entity;
 import jams.model.Context;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 
@@ -41,15 +44,16 @@ public class EntityCalculator extends JAMSComponent {
     description = "expression")
     public Attribute.String expr;
     
-    ExpressionFactory factory = null;
-    SimpleContext exprContext = new SimpleContext(new SimpleResolver());
+    transient ExpressionFactory factory = null;
+    transient SimpleContext exprContext = new SimpleContext(new SimpleResolver());
     ValueExpression entityExpr = null;
     ValueExpression valueExpr = null;
     ValueExpression timeExpr = null;
     ValueExpression intervalExpr = null;
-                                    
-    @Override
-    public void init() {
+
+    transient boolean isInit = false;
+    
+    public void reinit() {
         java.util.Properties properties = new java.util.Properties();
         properties.put("javax.el.cacheSize", "1000");
         properties.put("javax.el.methodInvocations", "false");
@@ -72,6 +76,7 @@ public class EntityCalculator extends JAMSComponent {
             contextExpr.setValue(exprContext, searchContext);
             searchContext = searchContext.getContext();                
         } 
+        isInit = true;
     }
 
     /**
@@ -91,7 +96,7 @@ public class EntityCalculator extends JAMSComponent {
     }
     
     private static SimpleContext getExpressionContext(){
-        SimpleContext context = ScalarFunctions.getContext();
+        SimpleContext context = DoubleFunctions.getContext();
         try{ 
             context.setFunction("", "getEntityAttribute", EntityCalculator.class.getMethod("getEntityAttribute", Entity.class, String.class)); 
         }catch(NoSuchMethodException nsme){            
@@ -100,7 +105,11 @@ public class EntityCalculator extends JAMSComponent {
         return context;
     }
     @Override
-    public void run() {                          
+    public void run() {     
+        //needs to be initialized
+        if (!isInit){
+            reinit();
+        }
         if (this.time != null && this.time.getValue() != null) {
             timeExpr.setValue(exprContext, time.getValue());
         }
@@ -116,7 +125,11 @@ public class EntityCalculator extends JAMSComponent {
             
             e.setDouble(targetAttribute.getValue(), d);
         }
+    }
+    
+    private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {
+        objIn.defaultReadObject();
         
-        
+        isInit = false;
     }
 }

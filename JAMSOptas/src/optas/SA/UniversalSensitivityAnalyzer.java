@@ -126,18 +126,25 @@ public class UniversalSensitivityAnalyzer extends Observable {
         this.usingRegression = flag;
     }
 
-    public void setup(SimpleEnsemble xData[], EfficiencyEnsemble yData) {
-        setup(xData, yData, new SimpleNeuralNetwork());
+    public double setup(SimpleEnsemble xData[], EfficiencyEnsemble yData) {
+        return setup(xData, yData, new SimpleNeuralNetwork());
     }
 
-    public void setup(SimpleEnsemble xData[], EfficiencyEnsemble yData, SimpleInterpolation interpolationAlgorithm) {
+    protected void setState(String state){
+        setChanged();
+        notifyObservers(state);
+    }
+    
+    public double setup(SimpleEnsemble xData[], EfficiencyEnsemble yData, SimpleInterpolation interpolationAlgorithm) {
 
-        notifyObservers("setup sensitivity analysis");
+        setState("setup sensitivity analysis");
         this.xData = xData;
         this.yData = yData;
         this.n = xData.length;
         this.range = new double[n][2];
 
+        double error = 0;
+        
         if (usingRegression) {
             this.I = interpolationAlgorithm;
             if (I == null) {
@@ -146,7 +153,7 @@ public class UniversalSensitivityAnalyzer extends Observable {
             I.setData(xData, yData);
             I.setxNormalizationMethod(parameterNormalizationMethod);
             I.setyNormalizationMethod(objectiveNormalizationMethod);
-            I.init();
+            error = I.init();
         }
 
         for (int i = 0; i < n; i++) {
@@ -263,7 +270,7 @@ public class UniversalSensitivityAnalyzer extends Observable {
             });
             sa.setSampleSize(this.yData.getSize());
         }
-
+        return error;
     }
 
     public SimpleEnsemble[] getXDataSet() {
@@ -275,7 +282,7 @@ public class UniversalSensitivityAnalyzer extends Observable {
     }
 
     public double[][][] getInteractionsUncertainty() {
-        notifyObservers("calculating uncertainty of interaction effects");
+        setState("calculating uncertainty of interaction effects");
 
         double result[][][] = new double[n][n][3];
 
@@ -301,8 +308,7 @@ public class UniversalSensitivityAnalyzer extends Observable {
         while (i++ < 10 || currentMaxError > maxAcceptedError) {
             //reset interpolator
             setup(xData, yData);
-            setChanged();
-            notifyObservers("<html>Calculating Interaction Effects ... <br>Iteration: " + i + "<br>Error: " + String.format(Locale.ENGLISH, "%.4f", currentMaxError) + " ( max: " + String.format(Locale.ENGLISH, "%.4f", maxAcceptedError) + ")</html>");
+            setState("<html>Calculating Interaction Effects ... <br>Iteration: " + i + "<br>Error: " + String.format(Locale.ENGLISH, "%.4f", currentMaxError) + " ( max: " + String.format(Locale.ENGLISH, "%.4f", maxAcceptedError) + ")</html>");
 
             double sensitivityIndex[][] = new double[n][n];
             sensitivityIndex = this.getInteractions();
@@ -399,66 +405,51 @@ public class UniversalSensitivityAnalyzer extends Observable {
 
     public double[][] getUncertaintyOfSensitivity() {
         double result[][] = new double[n][3];
-
-        ArrayList<double[]> statistics = new ArrayList<double[]>();
-
-        double mean[] = new double[n];
-        double sigma[] = new double[n];
-
         double currentMaxError = 1000.0;
         double maxAcceptedError = 0.025;
-        double min[] = new double[n];
-        double max[] = new double[n];
-
-        for (int i = 0; i < n; i++) {
-            min[i] = Double.MAX_VALUE;
-            max[i] = Double.MIN_VALUE;
-        }
 
         double z = 1.96;//CDF_Normal.xnormi(1.0-alpha); //should be 1.96
         int i = 0;
+        ErrorStatistics<Double> stat = new ErrorStatistics<Double>(n);
+        stat.setQuantileRange(0.0, 0.9);
+        
         while (i++ < 10 || currentMaxError > maxAcceptedError) {
             //reset interpolator
-            setup(xData, yData);
+            double error = setup(xData, yData);
 
-            setChanged();
-            notifyObservers("<html>Calculating Sensitivity Indicies ... <br>Iteration: " + i + "<br>Error: " + String.format(Locale.ENGLISH, "%.4f", currentMaxError) + " ( max: " + String.format(Locale.ENGLISH, "%.4f", maxAcceptedError) + ")</html>");
+            setState("<html>Calculating Sensitivity Indicies ... <br>Iteration: " + i + "<br>Error: " + String.format(Locale.ENGLISH, "%.4f", currentMaxError) + " ( max: " + String.format(Locale.ENGLISH, "%.4f", maxAcceptedError) + ")</html>");
             double sensitivityIndex[] = new double[n];
             for (int j = 0; j < n; j++) {
                 sensitivityIndex[j] = sa.getSensitivity(j);
             }
-            statistics.add(Arrays.copyOf(sensitivityIndex, n));
 
-            for (int j = 0; j < n; j++) {
-                mean[j] += sensitivityIndex[j];
-                sigma[j] = 0;
-                min[j] = Math.min(min[j], sensitivityIndex[j]);
-                max[j] = Math.max(max[j], sensitivityIndex[j]);
+            stat.add(error, sensitivityIndex);
+            
+            double mean[] = stat.getMean();
+            double sigma2[] = stat.getVariance();
+            int K = stat.getSize();
+            
+            if (K == 0){
+                continue;
             }
-
-            double K = statistics.size();
-
-            for (int k = 0; k < K; k++) {
-                for (int j = 0; j < n; j++) {
-                    double v = (statistics.get(k)[j] - (mean[j] / K));
-                    sigma[j] += v * v;
-                }
-            }
-
+                        
             currentMaxError = 0.0;
-            for (int j = 0; j < n; j++) {
-                sigma[j] /= (K - 1);
-                sigma[j] = Math.sqrt(sigma[j]);
-
-                double error_mean = z * sigma[j] / Math.sqrt(K);
+            for (int j = 0; j < n; j++) {                
+                double error_mean = z * Math.sqrt(sigma2[j]) / Math.sqrt(K);
                 currentMaxError = Math.max(error_mean / mean[j], currentMaxError);
             }
             System.out.println("current error:" + currentMaxError);
         }
 
-        for (int j = 0; j < n; j++) {
-            mean[j] /= statistics.size();
+        double mean[] = stat.getMean();
+        double min[] = stat.getMin();
+        double max[] = stat.getMax();
+        double sigma2[] = stat.getVariance();
+        double sigma[] = new double[n];
+        for (int j = 0; j < n; j++) {  
+            sigma[j] = Math.sqrt(sigma2[j]);
         }
+        
         System.out.println("******************************************");
         System.out.println("Uncertainty calculation finished");
         System.out.println("id\tmu\tsigma\tmin\tmax");
@@ -474,8 +465,7 @@ public class UniversalSensitivityAnalyzer extends Observable {
 
     public double calculateError() {
         if (usingRegression) {
-            setChanged();
-            notifyObservers("<html>Calculating Regression Error ... </html>");
+            setState("<html>Calculating Regression Error ... </html>");
             double error[] = I.estimateCrossValidationError(5, SimpleInterpolation.ErrorMethod.E2);
             double meanCrossValidationError = 0;
             for (int i = 0; i < error.length; i++) {

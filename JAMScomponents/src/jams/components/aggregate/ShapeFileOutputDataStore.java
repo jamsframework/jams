@@ -30,6 +30,10 @@ public class ShapeFileOutputDataStore {
         init(template, file);
     }
     
+    public File gteFile(){
+        return file;
+    }
+    
     private void init(File template, File file) throws IOException{
         this.template = template;
         
@@ -113,6 +117,92 @@ public class ShapeFileOutputDataStore {
         }*/
     }
     
+    public void addDataToShpFiles(NamedDataProvider<Double> I[], String idFieldName) throws IOException{
+        InputStream inputStream = null;
+        DBFReader dbfReader = null;
+        FileOutputStream outStream = null;
+        try {            
+            inputStream = new FileInputStream(new File(template.getParentFile(), template.getName().replace(".shp", ".dbf")));
+            dbfReader = new DBFReader(inputStream);
+
+            DBFWriter writer = new DBFWriter();
+            
+            DBFField dbfFields[] = new DBFField[dbfReader.getFieldCount()+I.length];
+            int k = dbfReader.getFieldCount();
+            int m = I.length;
+            int n = k+m;  
+            
+            int idFieldIndex = -1;
+            for (int i=0;i<k;i++){
+                dbfFields[i] = dbfReader.getField(i);
+                if (idFieldName!=null && dbfFields[i].getName().compareToIgnoreCase(idFieldName)==0){
+                    idFieldIndex = i;
+                }
+            }
+            if (idFieldIndex == -1){
+                System.out.println("Error field with name " + idFieldName + " was not found in shapefile!");
+                idFieldIndex = 0;
+            }
+            for (int i=0;i<I.length;i++){
+                dbfFields[i+k] = new DBFField();
+                String name = I[i].getName()
+                        .replaceAll(" [0-9][0-9]:[0-9][0-9]", "");
+                name = name.substring(0, Math.min(10, name.length()));
+                
+                dbfFields[i+k].setName(name);
+                dbfFields[i+k].setDataType(DBFField.FIELD_TYPE_N);
+                dbfFields[i+k].setFieldLength(12);
+                dbfFields[i+k].setDecimalCount(5);                
+            }
+            writer.setFields(dbfFields);
+            outStream = new FileOutputStream(file);
+            writer.write(outStream);
+            outStream.close();
+            outStream = null;
+            
+            writer = new DBFWriter(file);
+            
+            for (int j=0;j<dbfReader.getRecordCount();j++){
+                Object objIn[] = dbfReader.nextRecord();
+                Object objOut[] = new Object[n];
+                
+                double id = Double.parseDouble(objIn[idFieldIndex].toString());
+                                
+                for (int i=0;i<k;i++){
+                    objOut[i] = objIn[i];
+                }
+                
+                for (int i=0;i<m;i++){
+                    objOut[i+k] = I[i].get((int)id);
+                }
+                try{
+                    writer.addRecord(objOut);
+                }catch(jams.components.dbf.DBFException dbfe){
+                    System.out.println("Error writing field: " + dbfe.toString());
+                    System.out.println("Fields in question are: " + Arrays.toString(objOut));
+                }
+            }
+            writer.write();
+            writer = null;
+            
+        } catch (IOException ioe) {
+            //getModel().getRuntime().getLogger().log(Level.SEVERE, MessageFormat.format(JAMS.i18n("The following DBF File was not found: " + dbfFileOriginal), getInstanceName()));
+            ioe.printStackTrace();
+            throw new IOException("Could not write shape file, because of: " + ioe.toString());
+        } finally {
+            try {
+                if (inputStream!=null)
+                    inputStream.close();
+                if (outStream!=null)
+                    outStream.close();
+                if (writer!=null)
+                    writer.close();
+            } catch (IOException ioe2) {
+            }
+        }
+    }
+    
+    //TODO: rewrite this method by using the other one .. 
     public void addDataToShpFiles(SimpleOutputDataStore store, String idFieldName) throws IOException{
         InputStream inputStream = null;
         DBFReader dbfReader = null;

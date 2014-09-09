@@ -26,7 +26,14 @@ import jams.data.*;
 import jams.model.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import org.jscience.physics.units.*;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.util.Locale;
+import javax.measure.converter.UnitConverter;
+import javax.measure.unit.Unit;
+import javax.measure.unit.UnitFormat;
+
+
 
 /**
  *
@@ -65,15 +72,22 @@ public class JAMSUnitConverter extends JAMSComponent {
             public Attribute.Double[] outValue;
      
      transient Unit in, out;
-     transient Converter conv;
+     transient UnitConverter conv;
      
      public void init() {
-         in = Unit.valueOf(this.inUnit.getValue());
-         out = Unit.valueOf(this.outUnit.getValue());
-         if (!in.isCompatible(out)) {
-             getModel().getRuntime().sendHalt("Incompatible units: " + inUnit + " <-> " + outUnit);
+         Locale l = new Locale.Builder().setLanguage("en").setRegion("US").build();
+         
+         try{
+            in = UnitFormat.getInstance(l).parseProductUnit(this.inUnit.getValue(), new ParsePosition(0));
+            out = UnitFormat.getInstance(l).parseProductUnit(this.outUnit.getValue(), new ParsePosition(0));
+         //out = Unit.valueOf(this.outUnit.getValue());
+            if (!in.isCompatible(out)) {
+                 getModel().getRuntime().sendHalt("Incompatible units: " + inUnit + " <-> " + outUnit);
+            }
+            conv = in.getConverterTo(out);
+         }catch(ParseException pe){
+             pe.printStackTrace();
          }
-         conv = in.getConverterTo(out);
      }
      
      public void run() {

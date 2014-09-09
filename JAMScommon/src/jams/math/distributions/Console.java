@@ -26,7 +26,7 @@
  * @author Cay Horstmann
  */
 
-package optas.math.distributions;
+package jams.math.distributions;
 
 public class Console
 {  /**

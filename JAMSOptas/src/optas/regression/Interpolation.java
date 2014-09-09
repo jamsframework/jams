@@ -38,7 +38,7 @@ public abstract class Interpolation extends ObservableProgress{
 
     public abstract double getYData(int id, int index);
 
-    public void init(){}
+    public double init(){return 0;}
     
     protected double[] getX(int id){
         double row[] = new double[getN()];

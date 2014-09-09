@@ -52,9 +52,8 @@ Date        Translator        Changes
 */
 
 
-package optas.math.distributions;
-
-import optas.math.distributions.linear_algegra.Blas_f77;
+package jams.math.distributions;
+import jams.math.distributions.linear_algebra.Blas_f77;
 
 
 /**

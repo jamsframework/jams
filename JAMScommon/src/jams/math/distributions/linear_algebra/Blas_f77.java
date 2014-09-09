@@ -48,7 +48,7 @@ Date        Translator        Changes
 */
 
 
-package optas.math.distributions.linear_algegra;
+package jams.math.distributions.linear_algebra;
 
 
 /**

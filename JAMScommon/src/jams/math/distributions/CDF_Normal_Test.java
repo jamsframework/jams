@@ -1,26 +1,23 @@
-package optas.math.distributions;
+package jams.math.distributions;
 
 
 /**
 *
-*This class tests the Derf class.
+*This class tests the CDF_Normal class.
 *
 *@author Steve Verrill
-*@version .5 --- February 22, 2002
+*@version .5 --- April 9, 2002
 *
 */
 
 
-public class DerfTest extends Object {
+public class CDF_Normal_Test extends Object {
 
    public static void main (String args[]) {
 
       double x,ans;
 
-      int another;
-
-
-      another = 1;
+      int another = 1;
 
       while (another == 1) { 
 
@@ -33,9 +30,13 @@ public class DerfTest extends Object {
    
          x = Console.readDouble("\nWhat is the x value?  ");
 
-         ans = Derf.derf(x);
+         ans = CDF_Normal.normp(x);
 
-         System.out.print("\nThe derf value is " + ans + "\n");      
+         System.out.print("\nThe normp value is " + ans + "\n");
+
+         ans = CDF_Normal.xnormi(ans);
+
+         System.out.print("\nThe xnormi(normp(x)) value is " + ans + "\n");
 
          another = Console.readInt("\nAnother test?" +
          "   0 - no   1 - yes\n\n");

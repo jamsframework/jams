@@ -7,13 +7,13 @@ package optas.gui.MCAT5;
 
 
 import jams.JAMS;
+import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
 import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -28,7 +28,7 @@ import optas.data.Ensemble;
  *
  * @author chris
  */
-public abstract class MCAT5Plot implements Observer{
+public abstract class MCAT5Plot extends Observable{
     final int MAXIMUM_WIDTH = 2000;
     final int MAXIMUM_HEIGHT = 2000;
     
@@ -90,15 +90,14 @@ public abstract class MCAT5Plot implements Observer{
     private ArrayList<Result> ensembles = new ArrayList<Result>();
     private DataCollection data = null;
 
-    private WorkerDlg progress = null;
-    
-    @Override
-    public void update(Observable o, Object arg) {
-        if (progress != null) {
-            progress.setMessage(arg.toString());
-        }
-    }
+    private ObserverWorkerDlg progress = null;
+        
     public abstract void refresh() throws NoDataException;
+    public void setState(String state){        
+        this.setChanged();
+        this.notifyObservers(state);
+    }
+    
     public void redraw() {
         Frame parent = JFrame.getFrames().length > 0 ? JFrame.getFrames()[0] : null;
         while (progress != null){
@@ -107,9 +106,10 @@ public abstract class MCAT5Plot implements Observer{
             }catch(Exception e){}
         }
         
-        progress = new WorkerDlg(parent, "Updating plot", " ");
-        progress.setInderminate(true);
-        progress.setTask(new Runnable() {
+        progress = new ObserverWorkerDlg(new WorkerDlg(parent, "Updating plot"));
+        this.addObserver(progress);
+        progress.getWorkerDlg().setInderminate(true);
+        progress.getWorkerDlg().setTask(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -121,7 +121,8 @@ public abstract class MCAT5Plot implements Observer{
                 }
             }
         });
-        progress.execute();
+        progress.getWorkerDlg().execute();
+        this.deleteObserver(progress);
         progress = null;
 
     }

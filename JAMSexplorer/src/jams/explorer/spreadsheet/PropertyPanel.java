@@ -56,22 +56,12 @@ public class PropertyPanel {
 
     JFrame parent;
 
-    URL url1 = this.getClass().getResource("/reg/resources/images/arrowup.png");
-    ImageIcon up_icon = new ImageIcon(new ImageIcon(url1).getImage().getScaledInstance(6, 6, Image.SCALE_SMOOTH));
-
-    URL url2 = this.getClass().getResource("/reg/resources/images/arrowdown.png");
-    ImageIcon down_icon = new ImageIcon(new ImageIcon(url2).getImage().getScaledInstance(6, 6, Image.SCALE_SMOOTH));
-
-    URL url3 = this.getClass().getResource("/reg/resources/images/correct.png");
-    ImageIcon plot_icon = new ImageIcon(url3);
-
-    URL url4 = this.getClass().getResource("/reg/resources/images/add.png");
-    ImageIcon add_icon = new ImageIcon(url4);
-
-    URL url5 = this.getClass().getResource("/reg/resources/images/remove.png");
-    ImageIcon rem_icon = new ImageIcon(new ImageIcon(url5).getImage().getScaledInstance(8, 8, Image.SCALE_SMOOTH));
-    //ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/root.png
-
+    ImageIcon up_icon = JAMS.getScaledIcon("jams/explorer/resources/images/arrowup.png", 6, 6);
+    ImageIcon down_icon = JAMS.getScaledIcon("jams/explorer/resources/images/arrowdown.png", 6, 6);
+    ImageIcon plot_icon = JAMS.getIcon("jams/explorer/resources/images/correct.png");
+    ImageIcon add_icon = JAMS.getIcon("jams/explorer/resources/images/add.png");
+    ImageIcon rem_icon = JAMS.getScaledIcon("jams/explorer/resources/images/remove.png", 8, 8);
+    
     JScrollPane scpane;
 
     int index = 0;

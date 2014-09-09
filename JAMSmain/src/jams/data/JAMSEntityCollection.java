@@ -111,6 +111,7 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
             this.current = null;
         }
         //attention id changes after this point will do not have any effect
+        //do it now or never .. (late initialization can cause problem with multiple iterations .. )        
         idMap = new HashMap<Long, Attribute.Entity>();
         for (Attribute.Entity e : entities) {
             idMap.put(e.getId(), e);
@@ -140,8 +141,6 @@ public class JAMSEntityCollection implements Attribute.EntityCollection {
 
     @Override
     public Attribute.Entity getEntity(long id) {
-
-        //do it now or never .. (late initialization can cause problem with multiple iterations .. )        
         return idMap.get(id);
     }
 }

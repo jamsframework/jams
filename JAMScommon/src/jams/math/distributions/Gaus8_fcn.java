@@ -1,4 +1,4 @@
-package optas.math.distributions;
+package jams.math.distributions;
 
 public interface Gaus8_fcn {
 

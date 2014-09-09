@@ -11,6 +11,8 @@ import jams.data.Attribute;
 import jams.data.Attribute.Calendar;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 
@@ -18,7 +20,7 @@ import javax.el.ValueExpression;
  *
  * @author christian
  */
-public class VectorCalculator extends JAMSComponent {
+public class DoubleArrayCalculator extends JAMSComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "vector data1")
@@ -56,18 +58,18 @@ public class VectorCalculator extends JAMSComponent {
     description = "expression")
     public Attribute.String expr;
     
-    ExpressionFactory factory = null;
-    SimpleContext context = new SimpleContext(new SimpleResolver());
-    ValueExpression valueExpr = null;
+    transient ExpressionFactory factory = null;
+    transient SimpleContext context = new SimpleContext(new SimpleResolver());
+    transient ValueExpression valueExpr = null;
 
-    ValueExpression X1Expr = null;
-    ValueExpression X2Expr = null;
-    ValueExpression s1Expr = null;
-    ValueExpression s2Expr = null;
-    ValueExpression wExpr = null;
-    ValueExpression timeExpr = null;
-    ValueExpression intervalExpr = null;
-    ValueExpression yExpr = null;
+    transient ValueExpression X1Expr = null;
+    transient ValueExpression X2Expr = null;
+    transient ValueExpression s1Expr = null;
+    transient ValueExpression s2Expr = null;
+    transient ValueExpression wExpr = null;
+    transient ValueExpression timeExpr = null;
+    transient ValueExpression intervalExpr = null;
+    transient ValueExpression yExpr = null;
     
     @Override
     public void init() {
@@ -80,9 +82,9 @@ public class VectorCalculator extends JAMSComponent {
         
         factory = new de.odysseus.el.ExpressionFactoryImpl(properties);        
         
-        context = VectorFunctions.getContext();
+        context = DoubleArrayFunctions.getContext();
 
-        valueExpr = factory.createValueExpression(context, this.expr.getValue(), double[].class);
+        valueExpr = factory.createValueExpression(context, "${" + this.expr.getValue() + "}", double[].class);
         wExpr = factory.createValueExpression(context, "${w}", double.class);
         
         X1Expr = factory.createValueExpression(context, "${X1}", double[].class);
@@ -153,5 +155,11 @@ public class VectorCalculator extends JAMSComponent {
         for (int i=0;i<n;i++){
             this.y[i].setValue(y[i]);
         }
+    }
+    
+    private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {
+        objIn.defaultReadObject();
+        
+        init();
     }
 }

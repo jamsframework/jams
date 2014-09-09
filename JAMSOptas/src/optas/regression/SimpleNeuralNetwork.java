@@ -12,13 +12,13 @@ import java.util.logging.Level;
 import optas.data.SimpleEnsemble;
 import org.encog.engine.network.activation.ActivationLinear;
 import org.encog.engine.network.activation.ActivationSigmoid;
-import org.encog.engine.util.ErrorCalculation;
-import org.encog.engine.util.ErrorCalculationMode;
 import org.encog.neural.data.basic.BasicNeuralDataSet;
+import org.encog.neural.data.folded.FoldedDataSet;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.neural.networks.layers.BasicLayer;
 import org.encog.neural.networks.logic.FeedforwardLogic;
 import org.encog.neural.networks.training.Train;
+import org.encog.neural.networks.training.cross.CrossValidationKFold;
 import org.encog.neural.networks.training.propagation.resilient.ResilientPropagation;
 
 import org.encog.util.logging.Logging;
@@ -31,7 +31,8 @@ import org.encog.util.obj.SerializeObject;
 public class SimpleNeuralNetwork extends SimpleInterpolation {
        
     boolean isTrained = false;
-
+    double error = 0;
+    
     BasicNetwork network;
 
     @Override
@@ -67,14 +68,14 @@ public class SimpleNeuralNetwork extends SimpleInterpolation {
 
     //not necessary to call init .. but forces training
     @Override
-    public void init(){
-        trainNetwork();
+    public double init(){
+        return trainNetwork();
     }
-    private void trainNetwork() {
+    private double trainNetwork() {
         if (isTrained) {
-            return;
+            return error;
         }
-        trainNetwork(new TreeSet<Integer>());        
+        return error = trainNetwork(new TreeSet<Integer>());        
     }
 
     int complexityAdjustmentFactor = 3;
@@ -86,7 +87,7 @@ public class SimpleNeuralNetwork extends SimpleInterpolation {
         return this.complexityAdjustmentFactor;
     }
 
-    private void trainNetwork(TreeSet<Integer> leaveOutIndex) {
+    private double trainNetwork(TreeSet<Integer> leaveOutIndex) {
         log("Train Neural Network");
         this.setProgress(0.0);
 
@@ -134,14 +135,11 @@ public class SimpleNeuralNetwork extends SimpleInterpolation {
         BasicNeuralDataSet basicNDS = new BasicNeuralDataSet(xDataArray,yDataArray);
         basicNDS.setDescription("testdataset");
         
-        ErrorCalculation.setMode(ErrorCalculationMode.MSE);
         
-        Train backpropagation = new ResilientPropagation(network, basicNDS);
-        
-        //ErrorCalculation.setMode(ErrorCalculationMode.RMS);
-        //ErrorCalculation.setMode(ErrorCalculationMode.ARCTAN);
-        
-        
+        FoldedDataSet folded = new FoldedDataSet(basicNDS);
+        Train train = new ResilientPropagation(network, folded);
+        CrossValidationKFold trainFolded = new CrossValidationKFold(train,4);
+                
         int epoch = 1;
         int epochMax = 10000;
         double improvement = 1;
@@ -150,21 +148,21 @@ public class SimpleNeuralNetwork extends SimpleInterpolation {
         double errorLast=0;
         
         do {
-            backpropagation.iteration();
+            trainFolded.iteration();
             if (epoch % 100 == 0)
-                System.out.println("Epoch #" + epoch + " Error:" + backpropagation.getError() + " improvement " + improvement);
+                System.out.println("Epoch #" + epoch + " Error:" + trainFolded.getError() + " improvement " + improvement);
             epoch++;
             errorLast = errorNow;
-            errorNow  = backpropagation.getError();
+            errorNow  = trainFolded.getError();
             if (epoch>2){
                 improvement = 0.95*improvement + 0.05*(1.0-errorNow/errorLast);
             }
             
             setProgress((double)epoch / (double)epochMax);
-        } while (improvement > 0.0001 && !backpropagation.isTrainingDone() && epoch < epochMax);
+        } while (improvement > 0.0001 && !trainFolded.isTrainingDone() && epoch < epochMax);
 
-        //System.out.println("After "+epoch+" iterations the error is " + backpropagation.getError());
         isTrained = true;
+        return trainFolded.getError();
     }
 
     @Override

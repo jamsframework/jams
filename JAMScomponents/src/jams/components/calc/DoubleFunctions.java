@@ -13,7 +13,7 @@ import jams.workspace.stores.FilterFunctions;
  *
  * @author christian
  */
-public class ScalarFunctions {
+public class DoubleFunctions {
                                             
     public static double ifCondition(boolean condition, double a, double b){
         if (condition)
@@ -21,23 +21,15 @@ public class ScalarFunctions {
         else
             return b;
     }
-    
-    public static double min(double a, double b){        
-        return a<b ? a : b;
-    }
-    
-    public static double max(double a, double b){        
-        return a>b ? a : b;
-    }
-              
+                  
     public static SimpleContext getContext(){
         SimpleContext context = new SimpleContext();
          
         try{                                    
             context.setFunction("", "timestep_count", GeneralPurposeFunctions.class.getMethod("timestep_count", Attribute.TimeInterval.class));            
-            context.setFunction("", "if", ScalarFunctions.class.getMethod("ifCondition", boolean.class, double.class, double.class));   
-            context.setFunction("", "min", ScalarFunctions.class.getMethod("min", double.class, double.class));                    
-            context.setFunction("", "max", ScalarFunctions.class.getMethod("max", double.class, double.class));        
+            context.setFunction("", "if", DoubleFunctions.class.getMethod("ifCondition", boolean.class, double.class, double.class));   
+            context.setFunction("", "min", FilterFunctions.class.getMethod("min", double.class, double.class));                    
+            context.setFunction("", "max", FilterFunctions.class.getMethod("max", double.class, double.class));        
             
             context.setFunction("", "day", FilterFunctions.class.getMethod("day", Attribute.Calendar.class));
             context.setFunction("", "month", FilterFunctions.class.getMethod("month", Attribute.Calendar.class));

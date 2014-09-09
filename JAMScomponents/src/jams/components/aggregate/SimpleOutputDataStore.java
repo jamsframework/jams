@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeMap;
@@ -34,7 +36,7 @@ public class SimpleOutputDataStore {
         raf.setLength(0);
     }
     
-    public void setHeader(double[] ids) throws IOException {
+    public void setHeader(Collection<Double> ids) throws IOException {
         raf.writeBytes("date" + "\t");
 
         int position = 0;
@@ -104,15 +106,15 @@ public class SimpleOutputDataStore {
         
     static boolean text = true;
     StringBuffer strBuffer = new StringBuffer(5120000);
-    public void writeData(String entry, double values[]) throws IOException{
+    public void writeData(String entry, DataProvider<Double> values) throws IOException{
         raf.seek(raf.length());
         //write data
         entryMap.put(entry, raf.getFilePointer());
         strBuffer.delete(0, strBuffer.length());
         strBuffer.append(entry);
         //raf.writeBytes(entry);
-        for (int i=0;i<values.length;i++){
-            double x = values[i];//roundToSignificantFigures(,5);
+        for (int i=0;i<values.size();i++){
+            double x = values.get(i);//roundToSignificantFigures(,5);
             if (Double.isInfinite(x) || Double.isNaN(x)){
                 x = -9999;
             }            

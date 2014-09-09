@@ -1,6 +1,6 @@
 /*
- * DoubleConditionalContext.java
- * Created on 9. April 2008, 11:31
+ * BooleanConditionalContext.java
+ * Created on 7. Januar 2008, 09:34
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -28,56 +28,65 @@ import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
-import jams.model.VersionComments;
 
 /**
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription(title = "DoubleConditionalContext",
-        author = "Sven Kralisch",
-        date = "9. April 2008",
-        description = "This component represents a JAMS context which can be used to "
-        + "conditionally execute components. This context must contain two components. "
-        + "If \"value1\" equals \"value2\", the first one will be executed, otherwise the second one.",
-        version = "1.0_1")
-@VersionComments(entries = @VersionComments.Entry(version = "1.0_1",
-        comment = "Fixed minor issue with wrong counting of run() invocations"))
-public class DoubleConditionalContext extends JAMSContext {
+@JAMSComponentDescription(title = "BooleanConditionalContext", author = "Sven Kralisch", date = "7. January 2008", description = "This component represents a JAMS context which can be used to "
++ "conditionally execute components. This context must contain two components. If \"condition\" is true, the first one will be executed, otherwise the second one.")
+public class BooleanConditionalExecutionContext extends JAMSContext {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Double attribute \"value1\"")
-    public Attribute.Double value1;
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Double attribute \"value2\"")
-    public Attribute.Double value2;
-
-    public DoubleConditionalContext() {
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining if the component should be executed")
+    public Attribute.Boolean condition;
+    
+    public BooleanConditionalExecutionContext() {
     }
 
     @Override
+    public ComponentEnumerator getInitEnumerator() {        
+        if (condition.getValue()){
+            return super.getInitEnumerator();
+        }
+        return new EmptyEnumerator();
+    }
+    
+    @Override
+    public ComponentEnumerator getInitAllEnumerator() {        
+        if (condition.getValue()){
+            return super.getInitAllEnumerator();
+        }
+        return new EmptyEnumerator();
+    }
+    
+    @Override
     public ComponentEnumerator getRunEnumerator() {
-        return new RunEnumerator();
+        if (condition.getValue()){
+            return super.getRunEnumerator();
+        }
+        return new EmptyEnumerator();
+    }
+    
+    @Override
+    public ComponentEnumerator getCleanupEnumerator() {
+        if (condition.getValue()){
+            return super.getCleanupEnumerator();
+        }
+        return new EmptyEnumerator();
     }
 
     @Override
     public long getNumberOfIterations() {
-        return 0;
+        return 1;
     }
-    
-    @Override
-    public long getRunCount() {
-        return 0;
-    }    
 
-    public class RunEnumerator implements ComponentEnumerator {
+    class EmptyEnumerator implements ComponentEnumerator {
 
-        final JAMSComponent dummy = new JAMSComponent() {
-
-        @Override
-        public void run() {
-        }
-    };
-        Component[] compArray = getCompArray();
+        final DummyComponent dummy = new DummyComponent();        
         boolean next = true;
+
+        public class DummyComponent extends JAMSComponent {
+        }
 
         @Override
         public boolean hasNext() {
@@ -97,14 +106,7 @@ public class DoubleConditionalContext extends JAMSContext {
         @Override
         public Component next() {
             // if condition is true return first component, else second component
-            if (value1.getValue() == value2.getValue()) {
-                return compArray[0];
-            } else {
-                if (compArray.length < 2 || compArray[1] == null) {
-                    return dummy;
-                }
-                return compArray[1];
-            }
+            return dummy;
         }
 
         @Override

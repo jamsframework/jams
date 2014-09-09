@@ -15,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
@@ -315,7 +317,13 @@ public class SensitivityToolbox extends MCAT5Plot {
         uniSA.setUsingRegression(useANNRegression.isSelected());
         uniSA.setParameterNormalizationMethod((SimpleInterpolation.NormalizationMethod) this.parameterNormalizationMethod.getSelectedItem());
         uniSA.setObjectiveNormalizationMethod((SimpleInterpolation.NormalizationMethod) this.objectiveNormalizationMethod.getSelectedItem());
+        uniSA.addObserver(new Observer() {
 
+            @Override
+            public void update(Observable o, Object arg) {
+                setState(arg.toString());
+            }
+        });
         int n = counter;
         
         double sampleSize = 0;

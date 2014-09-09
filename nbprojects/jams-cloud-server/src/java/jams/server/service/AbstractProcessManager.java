@@ -28,6 +28,8 @@ import jams.server.entities.JobState;
 import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
 import jams.tools.FileTools;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -83,7 +85,21 @@ public abstract class AbstractProcessManager implements ProcessManager {
         ProcessBuilder pb = getProcessBuilder(job);
         if (pb == null){
             return null;
-        }        
+        } 
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(new java.io.File(localExecDir,"/start.sh")));
+            for (String cmdString : pb.command()) {
+                writer.write(cmdString + " ");
+            }
+            
+        } catch (Throwable t) {
+
+        } finally{
+            try {
+                writer.close();
+            }catch (Throwable t) {}
+        }
         pb.directory(localExecDir);
         pb.redirectOutput(new java.io.File(localExecDir + "/" + DEFAULT_INFO_LOG));
         pb.redirectError(new java.io.File(localExecDir + "/" + DEFAULT_ERROR_LOG));
@@ -91,7 +107,10 @@ public abstract class AbstractProcessManager implements ProcessManager {
 
         job.setPID(this.getProcessPid(process));        
         job.setStartTime(new Date());
-        
+        try{
+        }finally{
+            
+        }
         return job;
     }
     

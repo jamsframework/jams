@@ -113,14 +113,16 @@ public class MapLegend extends JPanel {
     }
 
     public static Map coloring(Set<Double> d, int numRanges, String rangeColor) {
+        final int RESOLUTION = 510;
+        
         Double val = Math.rint(new Double(510.0 / (d.size() - 1)) * 1000) / 1000.;
         Map<Integer, Double> colmap = new TreeMap<Integer, Double>();
         Object[] li = d.toArray();
         colmap.put(1, (Double) li[0]);
-        colmap.put(510, (Double) li[li.length - 1]);
+        colmap.put(RESOLUTION, (Double) li[li.length - 1]);
         if (val > 1.0) {
             int col = 1;
-            for (int v = 2; v <= 509; v++) {
+            for (int v = 2; v < RESOLUTION; v++) {
                 if (v < col * val) {
                     colmap.put(v, (Double) li[col - 1]);
                 } else {

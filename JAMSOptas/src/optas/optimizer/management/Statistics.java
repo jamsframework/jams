@@ -52,7 +52,7 @@ public class Statistics implements Serializable{
             min[i] = Double.POSITIVE_INFINITY;
             max[i] = Double.NEGATIVE_INFINITY;
         }
-        double omega = optas.math.distributions.CDF_Normal.xnormi(percentil);
+        double omega = jams.math.distributions.CDF_Normal.xnormi(percentil);
 
         for (int i=start;i<end;i++){
             Sample s = sampleList.get(i);

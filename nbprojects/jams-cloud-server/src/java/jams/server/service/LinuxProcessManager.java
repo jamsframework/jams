@@ -24,7 +24,8 @@ package jams.server.service;
 import jams.server.entities.Job;
 import jams.server.entities.WorkspaceFileAssociation;
 import jams.tools.FileTools;
-import java.io.File;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -61,11 +62,13 @@ public class LinuxProcessManager extends AbstractProcessManager {
         if (wfa == null)
             return null;
         String runnableFile = FileTools.normalizePath(wfa.getPath());
+        
         String command[] = {
             "java",
             "-Xms128M", 
             "-Xmx"+DEFAULT_MAX_MEMORY, 
             "-Dsun.java2d.d3d=false", 
+            "-Xbootclasspath/a:$(find "+"lib -name \\*jar | awk {'sub(/$/,\":\",$1); printf $1'})",
             "-jar", 
             runnableFile, 
             "-c", 
@@ -74,8 +77,7 @@ public class LinuxProcessManager extends AbstractProcessManager {
             "-m",
             modelFile, 
             ">" + DEFAULT_INFO_LOG + " 2>&1&"};
-        
-    
+                
         logger.fine("start process: " + Arrays.toString(command));
         
         return new ProcessBuilder(command);                

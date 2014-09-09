@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class SpatialOutputDataStore {
     File file = null;
     BufferedWriter writer = null;
                    
-    Set<Double> ids = null;
+    Collection<Double> ids = null;
     
     public SpatialOutputDataStore(File file) throws IOException{
         this.file = file;        
@@ -63,7 +64,7 @@ public class SpatialOutputDataStore {
         }
     }*/
             
-    public void setHeader(Set<Double> ids) throws IOException {
+    public void setHeader(Collection<Double> ids) throws IOException {
         writer.write("@context\n");
         writer.write("jams.model.JAMSSpatialContext	HRULoop	" + ids.size() + "\n") ;
         writer.write("@ancestors\n");
@@ -100,14 +101,14 @@ public class SpatialOutputDataStore {
     }
         
     static boolean text = true;
-    public void writeData(String entry, double values[]) throws IOException{
+    public void writeData(String entry, DataProvider<Double> values) throws IOException{
         writer.write("TimeLoop	" + entry + "\n");
         writer.write("@start\n");
 
         Iterator<Double> iter = ids.iterator();
         
-        for (int i=0;i<values.length;i++){
-            double x = values[i];//roundToSignificantFigures(,5);
+        for (int i=0;i<values.size();i++){
+            double x = values.get(i);//roundToSignificantFigures(,5);
             if (Double.isInfinite(x) || Double.isNaN(x)){
                 x = -9999;
             }

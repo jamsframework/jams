@@ -95,6 +95,8 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import jams.JAMS;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 /**
  * Viewer component for JAMS entities and parameter. Each parameter map is implemented by
@@ -406,7 +408,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
                 continue;
             }            
             
-            mc[i] = new MapCollection(showAttr.getValue()[i], fc, s, rangeColor.getValue()[i], Integer.parseInt(numOfRanges.getValue()[i]), crs);
+            mc[i] = new MapCollection(showAttr.getValue()[i], fc, "newAt", rangeColor.getValue()[i], Integer.parseInt(numOfRanges.getValue()[i]), crs);
             DefaultMutableTreeNode mapNode = new DefaultMutableTreeNode(mc[i].getDesc());
             top.add(mapNode);
 

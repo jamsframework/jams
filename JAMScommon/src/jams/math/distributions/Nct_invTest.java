@@ -1,9 +1,9 @@
-package optas.math.distributions;
+package jams.math.distributions;
 
 
 /**
 *
-*This class tests the noncentral t cdf in CDF_nct_Amos.
+*This class tests the noncentral t cdf inverse in CDF_nct_Amos.
 *
 *@author Steve Verrill
 *@version .5 --- February 26, 2002
@@ -11,11 +11,11 @@ package optas.math.distributions;
 */
 
 
-public class NctTest extends Object {
+public class Nct_invTest extends Object {
 
    public static void main (String args[]) {
 
-      double x,delta,dof,ans;
+      double p,delta,dof,ans;
 
       int another;
 
@@ -31,13 +31,13 @@ public class NctTest extends Object {
 
 */
    
-         x = Console.readDouble("\nWhat is the x value?  ");
+         p = Console.readDouble("\nWhat is the p value?  ");
          delta = Console.readDouble("\nWhat is the noncentrality parameter?  ");
          dof = Console.readDouble("\nWhat is the dof?  ");
 
-         ans = CDF_nct_Amos.fnct(x,delta,dof);
+         ans = CDF_nct_Amos.fnct_inv(p,delta,dof);
 
-         System.out.print("\nThe fnct value is " + ans + "\n");      
+         System.out.print("\nThe fnct_inv value is " + ans + "\n");      
 
          another = Console.readInt("\nAnother test?" +
          "   0 - no   1 - yes\n\n");

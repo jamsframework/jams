@@ -23,14 +23,17 @@ package jams;
 
 import jams.meta.HelpComponent;
 import java.awt.Font;
+import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -82,6 +85,11 @@ public class JAMS {
      * Default output formatting for floating point data
      */  
     private static String floatFormat = "%f";
+    /**
+     * Default icon which is used when an icon is missing
+     */  
+    private static ImageIcon defaultIcon = new ImageIcon("/resouces/images/help.png");
+    
     
     /**
      * Return a localized string 
@@ -95,6 +103,25 @@ public class JAMS {
             Logger.getLogger(JAMS.class.getName()).log(Level.INFO, "Could not find i18n key \"" + key + "\", using the key as result!");
             return key;
         }
+    }
+    
+    /**
+     * @param path url to icon
+     * @return icon from path
+     */
+    public static ImageIcon getIcon(String path) {
+        URL url = ClassLoader.getSystemClassLoader().getResource(path);
+        try{
+            ImageIcon icon = new ImageIcon(url);
+            return icon;
+        }catch(NullPointerException npe){
+            Logger.getLogger(JAMS.class.getName()).log(Level.INFO, "Could not find image icon from " + path + " ;using default icon.");
+            return defaultIcon;
+        }
+    }
+    
+    public static ImageIcon getScaledIcon(String path, int width, int height) {
+        return new ImageIcon(getIcon(path).getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));
     }
     
     public static HelpComponent getHelpDocument(String key){                

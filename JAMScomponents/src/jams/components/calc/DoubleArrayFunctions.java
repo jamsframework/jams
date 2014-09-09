@@ -11,7 +11,7 @@ import jams.data.Attribute;
  *
  * @author christian
  */
-public class VectorFunctions {
+public class DoubleArrayFunctions {
             
     public static double[] add(double a[], double b[]){
         int n = a.length;
@@ -120,25 +120,25 @@ public class VectorFunctions {
         SimpleContext context = new SimpleContext();
          
         try{            
-            context.setFunction("", "select", VectorFunctions.class.getMethod("select", double[].class, int.class));
-            context.setFunction("", "zero", VectorFunctions.class.getMethod("zero", double[].class));
+            context.setFunction("", "select", DoubleArrayFunctions.class.getMethod("select", double[].class, int.class));
+            context.setFunction("", "zero", DoubleArrayFunctions.class.getMethod("zero", double[].class));
             context.setFunction("", "timestep_count", GeneralPurposeFunctions.class.getMethod("timestep_count", Attribute.TimeInterval.class));
             context.setFunction("", "day", GeneralPurposeFunctions.class.getMethod("day", Attribute.Calendar.class));
             context.setFunction("", "month", GeneralPurposeFunctions.class.getMethod("month", Attribute.Calendar.class));
             context.setFunction("", "year", GeneralPurposeFunctions.class.getMethod("year", Attribute.Calendar.class));
             context.setFunction("", "daysInMonth", GeneralPurposeFunctions.class.getMethod("daysInMonth", Attribute.Calendar.class));            
             
-            context.setFunction("", "if", VectorFunctions.class.getMethod("ifCondition", boolean.class, double[].class, double[].class));   
+            context.setFunction("", "if", DoubleArrayFunctions.class.getMethod("ifCondition", boolean.class, double[].class, double[].class));   
             
-            context.setFunction("", "array_acc", VectorFunctions.class.getMethod("acc", double[].class, double[].class));
-            context.setFunction("", "array_mac", VectorFunctions.class.getMethod("mac", double[].class, double[].class, double.class));
-            context.setFunction("", "array_add", VectorFunctions.class.getMethod("add", double[].class, double[].class));
-            context.setFunction("", "array_mul", VectorFunctions.class.getMethod("mul", double[].class, double[].class));                    
-            context.setFunction("", "array_min", VectorFunctions.class.getMethod("min", double[].class, double[].class));                    
-            context.setFunction("", "array_max", VectorFunctions.class.getMethod("max", double[].class, double[].class));        
+            context.setFunction("", "array_acc", DoubleArrayFunctions.class.getMethod("acc", double[].class, double[].class));
+            context.setFunction("", "array_mac", DoubleArrayFunctions.class.getMethod("mac", double[].class, double[].class, double.class));
+            context.setFunction("", "array_add", DoubleArrayFunctions.class.getMethod("add", double[].class, double[].class));
+            context.setFunction("", "array_mul", DoubleArrayFunctions.class.getMethod("mul", double[].class, double[].class));                    
+            context.setFunction("", "array_min", DoubleArrayFunctions.class.getMethod("min", double[].class, double[].class));                    
+            context.setFunction("", "array_max", DoubleArrayFunctions.class.getMethod("max", double[].class, double[].class));        
             
-            context.setFunction("", "scalar_mul", VectorFunctions.class.getMethod("mul", double[].class, double.class));        
-            context.setFunction("", "scalar_div", VectorFunctions.class.getMethod("div", double[].class, double.class)); 
+            context.setFunction("", "scalar_mul", DoubleArrayFunctions.class.getMethod("mul", double[].class, double.class));        
+            context.setFunction("", "scalar_div", DoubleArrayFunctions.class.getMethod("div", double[].class, double.class)); 
         }catch(NoSuchMethodException nsme){
             nsme.printStackTrace();
         }

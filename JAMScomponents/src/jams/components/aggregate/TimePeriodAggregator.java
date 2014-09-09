@@ -28,7 +28,7 @@ import java.util.HashSet;
         title = "TimePeriodAggregator",
         author = "Christian Fischer",
         description = "Aggregates timeseries values to a given time period of day, month, year or dekade")
-
+@Deprecated
 public class TimePeriodAggregator extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "current time")
@@ -93,7 +93,8 @@ public class TimePeriodAggregator extends JAMSComponent {
     public Attribute.String shpFile;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "the name of the id field in the shapefile.")
+    description = "the name of the id field in the shapefile.",
+    defaultValue="ID")
     public Attribute.String idFieldName;
     
     private class SpatialAggregationEntity{
@@ -333,6 +334,21 @@ public class TimePeriodAggregator extends JAMSComponent {
         
     int n = 0;
     
+    private class ArrayDataProvider implements DataProvider<Double>{
+        double buffer[];
+        public ArrayDataProvider(double[] buffer){
+            this.buffer = buffer;
+        }
+        @Override
+        public int size(){
+            return buffer.length;
+        }
+        @Override
+        public Double get(int i){
+            return buffer[i];
+        }
+    }
+    
     public boolean checkConfiguration(){
         //check for consistency
         int n = attributeNames.length;
@@ -340,7 +356,7 @@ public class TimePeriodAggregator extends JAMSComponent {
             getModel().getRuntime().sendInfoMsg("Number of values in parameter \"outerAggregationMode\" does not match the number of attributes");
             return false;
         }
-        if (innerAggregationMode.length != n){
+        if (innerAggregationMode != null && innerAggregationMode.length != n){
             getModel().getRuntime().sendInfoMsg("Number of values in parameter \"innerAggregationMode\" does not match the number of attributes");
             return false;
         }
@@ -653,12 +669,12 @@ public class TimePeriodAggregator extends JAMSComponent {
                             if (innerAggregationTimePeriod == AggregationTimePeriod.YEARLY){
                                 c.add(Calendar.YEAR, k);
                             }
-                            outData[i].writeData(c.toString(), buffers.get(k));
-                            outData2[i].writeData(c.toString(), buffers.get(k));
+                            outData[i].writeData(c.toString(), new ArrayDataProvider(buffers.get(k)));
+                            outData2[i].writeData(c.toString(), new ArrayDataProvider(buffers.get(k)));
                         }
                     }else{
-                        outData[i].writeData(outerTimePeriod.toString(), buffer);
-                        outData2[i].writeData(outerTimePeriod.toString(), buffer);
+                        outData[i].writeData(outerTimePeriod.toString(), new ArrayDataProvider(buffer));
+                        outData2[i].writeData(outerTimePeriod.toString(), new ArrayDataProvider(buffer));
                     }
                 }
             }catch (IOException ioe) {

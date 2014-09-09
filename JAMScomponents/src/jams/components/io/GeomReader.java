@@ -21,23 +21,17 @@
 package jams.components.io;
 
 import com.vividsolutions.jts.geom.Geometry;
-import jams.JAMS;
 import jams.JAMS.*;
 import jams.data.Attribute;
 import org.geotools.data.shapefile.ShapefileDataStore;
 
-import jams.data.Attribute.EntityCollection;
-import jams.data.Attribute.String;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
@@ -85,13 +79,17 @@ public class GeomReader extends JAMSComponent {
         public Attribute.String baseShape;
 
     @Override
-    public void run() {
+    public void init() {
         try {
             java.net.URL shapeUrl = (new java.io.File(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue()).toURI().toURL());
             ShapefileDataStore shapefile = new ShapefileDataStore(shapeUrl);
             List<Name> featureNames = shapefile.getNames();
-            FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = shapefile.getFeatureSource(featureNames.get(0));
-            
+            FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = null;
+            try{
+            featureSource = shapefile.getFeatureSource(featureNames.get(0));
+            }catch(Throwable t){
+                t.printStackTrace();
+            }
             baseShape.setValue(getModel().getWorkspaceDirectory().getPath() + "/" + shapeFileName.getValue() + ";" + idName);
             
             FeatureIterator<SimpleFeature> iterator = featureSource.getFeatures().features();

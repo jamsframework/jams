@@ -51,6 +51,7 @@ public class DayOfYear extends JAMSComponent {
             
             if (input[i].getValue()==1.0){
                 day[i].setValue(time.get(Attribute.Calendar.DAY_OF_YEAR));
+                
                 if (time.get(Attribute.Calendar.DAY_OF_YEAR) <= 182){
                     dayFirstHalfYear[i].setValue(time.get(Attribute.Calendar.DAY_OF_YEAR));
                 }else{

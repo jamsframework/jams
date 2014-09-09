@@ -134,11 +134,7 @@ public final class DataRequestPanel extends JPanel {
             RequestGUI rGUI = new RequestGUI(r);
             requests.add(rGUI);
         }
-        JScrollPane datasetScroll = new JScrollPane(dataPanel);
-        /*datasetScroll.setSize(defaultDatasetTableDimension);
-         datasetScroll.setMinimumSize(defaultDatasetTableDimension);
-         datasetScroll.setPreferredSize(defaultDatasetTableDimension);*/
-
+        JScrollPane datasetScroll = new JScrollPane(dataPanel);        
         dataPanel.setLayout(new GridBagLayout());
         layouting();
 
@@ -220,7 +216,7 @@ public final class DataRequestPanel extends JPanel {
 
     public void updatePlot() {
         Frame parent = JFrame.getFrames().length > 0 ? JFrame.getFrames()[0] : null;
-        WorkerDlg progress = new WorkerDlg(parent, "Collecting data", " ");
+        WorkerDlg progress = new WorkerDlg(parent, "Collecting data");
         progress.setInderminate(true);
         progress.setTask(new Runnable() {
             @Override
