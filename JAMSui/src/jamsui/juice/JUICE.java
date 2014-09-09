@@ -260,10 +260,5 @@ public class JUICE {
      */
     public static LibTree getLibTree() {
         return libTree;
-    }
-
-    public static void focusNotificationDlg() {
-        if (JAMSui.notificationDlg != null)
-            JAMSui.notificationDlg.requestFocus();
-    }
+    }    
 }

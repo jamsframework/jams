@@ -22,6 +22,7 @@
 package jams.server.client.gui;
 
 import jams.JAMS;
+import jams.JAMSLogging;
 import jams.SystemProperties;
 import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
@@ -145,8 +146,8 @@ public class BrowseJAMSCloudDlg extends JDialog{
     public BrowseJAMSCloudDlg(Window w, SystemProperties p){      
         super(w, JAMS.i18n("JAMS-Cloud"));
         
-        MsgBoxLogHandler.registerLogger(Logger.getLogger(Controller.class.getName()));
-        MsgBoxLogHandler.registerLogger(Logger.getLogger(BrowseJAMSCloudDlg.class.getName()));
+        JAMSLogging.registerLogger(Logger.getLogger(Controller.class.getName()));
+        JAMSLogging.registerLogger(Logger.getLogger(BrowseJAMSCloudDlg.class.getName()));
         
         connector = new GraphicalClient(mainPanel, p);        
         this.p = p;

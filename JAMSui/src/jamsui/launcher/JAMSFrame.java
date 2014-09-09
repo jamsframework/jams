@@ -95,11 +95,6 @@ public class JAMSFrame extends JAMSLauncher {
 
     public JAMSFrame(Frame parent, SystemProperties properties) {
         super(parent, properties);
-    }
-
-    public JAMSFrame(Frame parent, SystemProperties properties, String modelFilename, String cmdLineArgs, Properties jmpParameters) {
-        //super(properties, modelFilename, cmdLineArgs);
-        this(parent, properties);
         
         // take care of loggers
         JAMSLogging.getInstance().addObserver(new Observer() {
@@ -114,8 +109,13 @@ public class JAMSFrame extends JAMSLauncher {
                     JAMSui.unregisterLogger(logger);
                 }
             }
-        });        
-        
+        });  
+    }
+
+    public JAMSFrame(Frame parent, SystemProperties properties, String modelFilename, String cmdLineArgs, Properties jmpParameters) {
+        //super(properties, modelFilename, cmdLineArgs);
+        this(parent, properties);
+                              
         loadModelDefinition(modelFilename, StringTools.toArray(cmdLineArgs, ";"), jmpParameters);
         loadPath = new File(modelFilename);
     }

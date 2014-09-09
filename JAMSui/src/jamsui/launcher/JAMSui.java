@@ -29,20 +29,17 @@ import javax.swing.UIManager;
 import jams.runtime.*;
 import jams.io.*;
 import jams.JAMS;
-import jams.JAMSException;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.model.JAMSFullModelState;
 import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
-import jamsui.juice.JUICE;
-import jamsui.juice.gui.NotificationDlg;
+import jamsui.juice.gui.MsgBoxLog;
+import jamsui.juice.gui.NotificationLog;
 import java.awt.GraphicsEnvironment;
 import java.util.Properties;
-import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -55,8 +52,6 @@ public class JAMSui {
 
     private static File baseDir = new File(System.getProperty("user.dir"));
     public static final String APP_TITLE = "JAMS";
-    private static Handler logHandler;
-    public static NotificationDlg notificationDlg;
     protected SystemProperties properties;
     static final Logger logger = Logger.getLogger(JAMSui.class.getName());
 
@@ -280,45 +275,32 @@ public class JAMSui {
         return baseDir;
     }
     
-
+    private static boolean isNotificationLogHandling(String logName){
+        return !isMsgBoxLogHandling(logName);
+    }
+    
+    private static boolean isMsgBoxLogHandling(String logName){
+        if (logName.contains("jams.server"))
+            return true;
+        if (logName.contains("JUICEFrame"))
+            return true;
+        if (logName.contains("ModelView"))
+            return true;
+        return false;
+    }
+    
     public static void registerLogger(Logger log) {
-        if (notificationDlg == null) {
-            notificationDlg = new NotificationDlg(null, JAMS.i18n("Info"));
+        if (isNotificationLogHandling(log.getName())){
+            log.addHandler(NotificationLog.getInstance());
         }
-        if (logHandler == null) {
-            logHandler = new Handler() {
-                @Override
-                public void publish(LogRecord record) {
-                    if (record.getLevel().intValue() > Level.WARNING.intValue()) {
-                    }
-                    String[] line = record.getMessage().split("\n");
-                    String level = JAMS.i18n(record.getLevel().toString());
-                    String msg = level + ": " + line[0];
-                    for (int i = 1; i < line.length; i++) {
-                        msg += "\n" + String.format("%0" + level.length() + "d", 0).replace("0", " ") + line[i];
-                    }
-                    if (record.getLevel() == Level.SEVERE && record.getThrown() != null && !(record.getThrown() instanceof JAMSException)) {
-                        msg += "\n" + record.getThrown().toString();
-                        msg += "\n" + StringTools.getStackTraceString(record.getThrown().getStackTrace());
-                    }
-                    notificationDlg.addNotification(msg + "\n\n");
-                }
-
-                @Override
-                public void flush() {
-                }
-
-                @Override
-                public void close() throws SecurityException {
-                }
-            };
+        if (isMsgBoxLogHandling(log.getName())){
+            log.addHandler(MsgBoxLog.getInstance());
         }
-        log.addHandler(logHandler);
         log.setUseParentHandlers(false);
     }
 
     public static void unregisterLogger(Logger log) {
-        log.removeHandler(logHandler);
+        log.removeHandler(NotificationLog.getInstance());
         log.setUseParentHandlers(true);
     }    
 }

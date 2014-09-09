@@ -5,12 +5,12 @@
  */
 package jams.server.client.gui;
 
+import jams.JAMSLogging;
 import jams.SystemProperties;
 import jams.gui.CancelableWorkerDlg;
 import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
 import jams.server.client.Controller;
-import jams.server.client.HTTPClient;
 import jams.server.client.ObservableLogHandler;
 import jams.server.client.WorkspaceController;
 import jams.server.entities.Job;
@@ -60,9 +60,9 @@ public class GraphicalClient extends Observable {
     static Handler defaultMsgHandler = null;
         
     public GraphicalClient(Component parent, SystemProperties p) {  
-        MsgBoxLogHandler.registerLogger(Logger.getLogger( GraphicalClient.class.getName()));
-        MsgBoxLogHandler.registerLogger(Logger.getLogger(Controller.class.getName()));
-        //MsgBoxLogHandler.registerLogger(Logger.getLogger(HTTPClient.class.getName()));
+        JAMSLogging.registerLogger(Logger.getLogger(Controller.class.getName()));
+        JAMSLogging.registerLogger(Logger.getLogger(GraphicalClient.class.getName()));
+                
         //init logs
         observable.deleteObservers();
         observable.getHandler().setFilter(new Filter() {

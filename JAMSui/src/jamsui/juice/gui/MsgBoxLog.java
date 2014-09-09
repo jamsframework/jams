@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jams.server.client.gui;
+package jamsui.juice.gui;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,16 +17,19 @@ import javax.swing.JOptionPane;
  *
  * @author christian
  */
-public class MsgBoxLogHandler extends Handler {
+public class MsgBoxLog extends Handler {
 
-    private static final HashSet<Logger> loggers = new HashSet<>();
-    private static final HashSet<Level> msgDialogHandling = new HashSet<>();
-    private static final HashMap<Level, String> msgDialogTitle = new HashMap<>();
-    private static final HashMap<Level, Integer> msgDialogIcon = new HashMap<>();
+    private static final HashSet<Level> msgDialogHandling = new HashSet<Level>();
+    private static final HashMap<Level, String> msgDialogTitle = new HashMap<Level, String>();
+    private static final HashMap<Level, Integer> msgDialogIcon = new HashMap<Level, Integer>();
 
-    static final MsgBoxLogHandler instance = new MsgBoxLogHandler();
+    static final MsgBoxLog instance = new MsgBoxLog();
+
+    static public MsgBoxLog getInstance(){
+        return instance;
+    }
     
-    private MsgBoxLogHandler() {
+    private MsgBoxLog() {
         msgDialogHandling.add(Level.INFO);
         msgDialogHandling.add(Level.SEVERE);
         msgDialogHandling.add(Level.WARNING);
@@ -69,33 +72,5 @@ public class MsgBoxLogHandler extends Handler {
 
     @Override
     public void close() throws SecurityException {
-    }
-
-    public static void setLogState(Level lvl, boolean state) {
-        if (state) {
-            msgDialogHandling.add(lvl);
-        } else {
-            msgDialogHandling.remove(lvl);
-        }
-    }
-
-    public static void clear(){
-        for (Logger logger : loggers){
-            unregisterLogger(logger);
-        }
-    }
-    
-    public static void unregisterLogger(Logger logger){
-        logger.removeHandler(instance);
-        loggers.remove(logger);
-    }
-    
-    public static void registerLogger(Logger logger){
-        loggers.add(logger);
-        //make sure handler is only registered once
-        logger.removeHandler(instance);
-        logger.addHandler(instance);
-    }
-    
-    
+    }    
 }

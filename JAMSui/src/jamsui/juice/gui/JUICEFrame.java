@@ -37,7 +37,6 @@ import jams.JAMS;
 import jams.JAMSFileFilter;
 import jams.JAMSProperties;
 import jams.SystemProperties;
-import jams.explorer.gui.ExplorerFrame;
 import jams.tools.JAMSTools;
 import jams.gui.AboutDlg;
 import jams.gui.tools.GUIHelper;
@@ -47,7 +46,6 @@ import jams.gui.RuntimeManagerPanel;
 import jams.gui.WorkerDlg;
 import jams.meta.ModelDescriptor;
 import jams.server.client.gui.BrowseJAMSCloudDlg;
-import jams.server.client.gui.MsgBoxLogHandler;
 import jamsui.juice.*;
 import jamsui.juice.documentation.DocumentationWizard;
 import jamsui.juice.gui.tree.LibTree;
@@ -114,8 +112,6 @@ public class JUICEFrame extends JFrame {
     private Action outputDSAction;
 
     public JUICEFrame() {
-        MsgBoxLogHandler.registerLogger(Logger.getLogger(JUICEFrame.class.getName()));
-        MsgBoxLogHandler.registerLogger(Logger.getLogger(ModelView.class.getName()));
         init();
     }
 
@@ -948,7 +944,7 @@ public class JUICEFrame extends JFrame {
             }
         });
         loadModelDlg.execute();
-        JUICE.focusNotificationDlg();
+        //JUICE.focusNotificationDlg();
     }
 
     private void saveModelAs(ModelView view) {
