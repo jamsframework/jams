@@ -9,6 +9,7 @@
 <!-- in the project's Project Properties dialog box.-->
 <project name="jams-cloud-core" default="default" basedir=".">
     <description>Builds, tests, and runs the project jams-cloud-core.</description>
+		<import file="../../build/build-common.xml"/>
     <import file="nbproject/build-impl.xml"/>
     <!--
 

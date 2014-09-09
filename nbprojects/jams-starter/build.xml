@@ -15,13 +15,13 @@
     <target name="-pre-jar" unless="no.deps">
         <ant antfile="../jams-api/build.xml" inheritall="false" target="jar"/>
         <ant antfile="../jams-main/build.xml" inheritall="false" target="jar"/>
-        <ant antfile="../jams-common/build.xml" inheritall="false" target="jar"/>
-        <ant antfile="../jams-components/build.xml" inheritall="false" target="jar"/>
-        <ant antfile="../jams-optas/build.xml" inheritall="false" target="jar"/>
+        <ant antfile="../jams-common/build.xml" inheritall="false" target="jar"/>        
+        <ant antfile="../jams-optas/build.xml" inheritall="false" target="jar"/>        
+        <ant antfile="../jams-worldwind/build.xml" inheritall="false" target="jar"/>
         <ant antfile="../jams-cloud-core/build.xml" inheritall="false" target="jar"/>
         <ant antfile="../jams-cloud-client/build.xml" inheritall="false" target="jar"/>
-        <ant antfile="../jams-worldwind/build.xml" inheritall="false" target="jar"/>
         <ant antfile="../jams-explorer/build.xml" inheritall="false" target="jar"/>
+				<ant antfile="../jams-components/build.xml" inheritall="false" target="jar"/>        
         <ant antfile="../jams-ui/build.xml" inheritall="false" target="jar"/>
         <!--<ant antfile="../jams-remote/build.xml" inheritall="false" target="jar"/>-->
     </target>
@@ -38,6 +38,8 @@
         <ant antfile="../jams-common/build.xml" inheritall="false" target="clean"/>
         <ant antfile="../jams-components/build.xml" inheritall="false" target="clean"/>
         <ant antfile="../jams-optas/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="../jams-cloud-core/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="../jams-cloud-client/build.xml" inheritall="false" target="clean"/>
         <ant antfile="../jams-worldwind/build.xml" inheritall="false" target="clean"/>
         <ant antfile="../jams-explorer/build.xml" inheritall="false" target="clean"/>
         <ant antfile="../jams-ui/build.xml" inheritall="false" target="clean"/>
