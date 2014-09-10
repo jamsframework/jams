@@ -81,7 +81,7 @@ public class ContextAttributeDlg extends JDialog {
         super(owner);
         this.setLayout(new BorderLayout());
         this.setLocationRelativeTo(owner);
-        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setModal(true);
 
         mainLayout = new GridBagLayout();
