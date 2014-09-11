@@ -6,6 +6,7 @@
 
 package jams.components.statistics;
 
+import jams.components.aggregate.DataSupplier;
 import jams.data.Attribute;
 import jams.data.Attribute.Calendar;
 import jams.math.distributions.CDF_Normal;
@@ -25,6 +26,11 @@ public class MannKendall extends JAMSComponent{
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
                         description = "time interval for trend estimation")
     public Attribute.TimeInterval period;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+                        description = "window size",
+                        defaultValue = "100000")        
+    public Attribute.Integer windowSize;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
                         description = "value of trend")        
@@ -55,18 +61,49 @@ public class MannKendall extends JAMSComponent{
     public Attribute.Double[] r2;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-                        description = "variationskoeffizient")        
+                        description = "coefficient of variation")        
     public Attribute.Double[] V;
     
     Calendar lastTimeStep = null;
     float timeserie[][] = null;
 
     int counter = 0;
+    boolean isFull = false;
+    
     int n,m;
+    
+    WrappedDataSupplier supplier = new WrappedDataSupplier();
+    
+    private class WrappedDataSupplier implements DataSupplier<Double>{
+
+        int counter = 0;
+        float srcData[] = null;
+        
+        public void setSourceData(float srcData[], int counter){
+            this.srcData = srcData;
+            this.counter = counter;
+        }
+        
+        @Override
+        public int size() {
+            return n;
+        }
+
+        @Override
+        public Double get(int i) {
+            return (double)srcData[(counter+i)%n];
+        }
+    }
+    
     @Override
-    public void init(){
-        n = (int)period.getNumberOfTimesteps();
+    public void init(){        
+        if (period == null){
+            n = windowSize.getValue();
+        }else{
+            n = Math.min((int)period.getNumberOfTimesteps(), windowSize.getValue());
+        }
         m = 0;
+        isFull = false;
         
         for (int i=0;i<y.length;i++){
             if (isEnabled(i))
@@ -112,17 +149,23 @@ public class MannKendall extends JAMSComponent{
             if (isEnabled(i))
                 timeserie[c++][counter] = (float)y[i].getValue();
         }
-        counter++;        
+        //wrap at the end
+        counter = (counter+1) % n;
+        
+        if (counter == 0){
+            isFull = true;
+        }
         
         //no further timesteps available
         time.add(period.getTimeUnit(), period.getTimeUnitCount());
-        if (counter>=n || !time.before(period.getEnd())){
+        if (isFull || !time.before(period.getEnd())){
             for (int i=0;i<y.length;i++){
                 double resultKendall[] = new double[5];
                 double resultLinReg[] = new double[4];
-                if (isEnabled(i)){
-                    resultKendall = Kendall(timeserie[i]);
-                    resultLinReg  = LinearRegression(timeserie[i]);
+                if (isEnabled(i)){            
+                    supplier.setSourceData(timeserie[i], counter);
+                    resultKendall = Kendall(supplier);
+                    resultLinReg  = LinearRegression(supplier);
                 }
                 if (this.tau != null)
                     this.tau[i].setValue(resultKendall[0]);
@@ -141,8 +184,8 @@ public class MannKendall extends JAMSComponent{
         time.add(period.getTimeUnit(), -period.getTimeUnitCount());
     }
     
-    public static double[] LinearRegression(float y[]){
-        int n=y.length;
+    public static double[] LinearRegression(DataSupplier<Double> y){
+        int n=y.size();
         
         // sum(xi) / sum(yi)
         double sx = 0;
@@ -151,7 +194,7 @@ public class MannKendall extends JAMSComponent{
         // values of time series are summed up (sy)
         for (int i = 0; i < n; i++) {                           
             sx += i;
-            sy += y[i];
+            sy += y.get(i);
         }
         double xm = sx / n;
         double ym = sy / n;
@@ -165,9 +208,9 @@ public class MannKendall extends JAMSComponent{
             
         // calculation of slope a, coefficient of variation V [%] and coefficient of determination r_squared
         for (int i = 0; i < n; i++) {                           
-            numerator += (i - xm)*(y[i]-ym);
+            numerator += (i - xm)*(y.get(i)-ym);
             denominator += (i-xm)*(i-xm);
-            sum_for_V +=(y[i]-ym)*(y[i]-ym);
+            sum_for_V +=(y.get(i)-ym)*(y.get(i)-ym);
         }
         
         double a = numerator/denominator;
@@ -194,8 +237,8 @@ public class MannKendall extends JAMSComponent{
     // REFERENCE: M.G. KENDALL, "RANK CORRELATION METHODS" PUBLISHED BY
     //            GRIFFIN & CO.
     //
-    public static double[] Kendall(float y[]) throws ArithmeticException, IllegalArgumentException {
-        int n = y.length;
+    public static double[] Kendall(DataSupplier<Double> y) throws ArithmeticException, IllegalArgumentException {
+        int n = y.size();
 
         boolean sw, swy, ties = false; //this is potentially a bug in the originial code!!
         double iw[] = new double[n];
@@ -214,7 +257,7 @@ public class MannKendall extends JAMSComponent{
         swy = true;
 
         for (int i = 1; i < n; i++) {
-            if (y[i] != y[i - 1]) {
+            if (y.get(i) != y.get(i-1)) {
                 swy = false;
             }
         }
@@ -229,7 +272,7 @@ public class MannKendall extends JAMSComponent{
 
         for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
-                s += scoreK(i, y[i], j, y[j]);
+                s += scoreK(i, y.get(i), j, y.get(j));
             }
         }
 
@@ -242,7 +285,7 @@ public class MannKendall extends JAMSComponent{
         for (int i = 0; i < n - 1; i++) {
             double tmp = 1.0;
             for (int j = i + 1; j < n; j++) {
-                if (y[i] == y[j]) {
+                if (y.get(i) == y.get(j)) {
                     if (iw[j] != 1) {
                         iw[j] = 1;
                         tmp++;

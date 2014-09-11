@@ -8,16 +8,14 @@ package jams.components.statistics;
 
 import jams.data.Attribute;
 import jams.data.Attribute.Calendar;
-import jams.math.distributions.CDF_Normal;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
-import java.util.Arrays;
 
 /**
  *
  * @author christian
  */
-public class MovingAverages extends JAMSComponent{    
+public class MovingAverage extends JAMSComponent{    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
                         description = "current time interval")
     public Attribute.Calendar time;
@@ -46,6 +44,7 @@ public class MovingAverages extends JAMSComponent{
     float timeserie[][] = null;
     int n=0,m=0;
     int counter=0;
+    boolean isFull=false;
     
     @Override
     public void init(){
@@ -60,6 +59,7 @@ public class MovingAverages extends JAMSComponent{
         timeserie = new float[m][n];
         counter = 0;
         lastTimeStep = null;
+        isFull = true;
     }
     
     private boolean isEnabled(int i){
@@ -95,9 +95,14 @@ public class MovingAverages extends JAMSComponent{
                 for (int j=0;j<n;j++){
                     avg += timeserie[c][j];
                 }
-                movingAvg[i].setValue(avg);                
+                if (isFull){
+                    movingAvg[i].setValue(avg);                
+                }
                 c++;
             }                        
+        }
+        if (counter == n-1){
+            isFull = true;
         }
         counter = (counter+1) % n;        
     }    

@@ -21,7 +21,7 @@
  */
 package jams.components.io;
 
-import jams.components.aggregate.DataProvider;
+import jams.components.aggregate.DataSupplier;
 import jams.components.aggregate.ShapeFileOutputDataStore;
 import jams.components.aggregate.SimpleOutputDataStore;
 import jams.components.aggregate.SpatialOutputDataStore;
@@ -92,7 +92,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
     Attribute.Calendar lastTimeStep = null;
     int n = 0;
     
-    private class EntityDataProvider implements DataProvider<Double>{
+    private class EntityDataProvider implements DataSupplier<Double>{
         String name = "";
         public EntityDataProvider(String name){
             this.name = name;

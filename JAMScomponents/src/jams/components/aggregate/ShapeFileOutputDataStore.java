@@ -117,7 +117,7 @@ public class ShapeFileOutputDataStore {
         }*/
     }
     
-    public void addDataToShpFiles(NamedDataProvider<Double> I[], String idFieldName) throws IOException{
+    public void addDataToShpFiles(NamedDataSupplier<Double> I[], String idFieldName) throws IOException{
         InputStream inputStream = null;
         DBFReader dbfReader = null;
         FileOutputStream outStream = null;

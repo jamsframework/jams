@@ -21,7 +21,7 @@
  */
 package jams.components.io;
 
-import jams.components.aggregate.NamedDataProvider;
+import jams.components.aggregate.NamedDataSupplier;
 import jams.components.aggregate.ShapeFileOutputDataStore;
 import jams.data.Attribute;
 import jams.model.JAMSComponent;
@@ -79,7 +79,7 @@ public class ShapeEntityWriter extends JAMSComponent {
         
     int n = 0;
     
-    private class NamedEntityDataProvider implements NamedDataProvider<Double>{
+    private class NamedEntityDataProvider implements NamedDataSupplier<Double>{
         String name = "";
         public NamedEntityDataProvider(String name){
             this.name = name;

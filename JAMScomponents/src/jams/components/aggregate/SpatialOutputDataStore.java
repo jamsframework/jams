@@ -101,7 +101,7 @@ public class SpatialOutputDataStore {
     }
         
     static boolean text = true;
-    public void writeData(String entry, DataProvider<Double> values) throws IOException{
+    public void writeData(String entry, DataSupplier<Double> values) throws IOException{
         writer.write("TimeLoop	" + entry + "\n");
         writer.write("@start\n");
 

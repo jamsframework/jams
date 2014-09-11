@@ -334,7 +334,7 @@ public class TimePeriodAggregator extends JAMSComponent {
         
     int n = 0;
     
-    private class ArrayDataProvider implements DataProvider<Double>{
+    private class ArrayDataProvider implements DataSupplier<Double>{
         double buffer[];
         public ArrayDataProvider(double[] buffer){
             this.buffer = buffer;

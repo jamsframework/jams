@@ -106,7 +106,7 @@ public class SimpleOutputDataStore {
         
     static boolean text = true;
     StringBuffer strBuffer = new StringBuffer(5120000);
-    public void writeData(String entry, DataProvider<Double> values) throws IOException{
+    public void writeData(String entry, DataSupplier<Double> values) throws IOException{
         raf.seek(raf.length());
         //write data
         entryMap.put(entry, raf.getFilePointer());
