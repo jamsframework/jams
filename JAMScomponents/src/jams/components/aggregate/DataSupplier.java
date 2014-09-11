@@ -10,6 +10,7 @@ package jams.components.aggregate;
  *
  * @author christian
  */
-public interface NamedDataProvider<T> extends DataProvider<T>{
-    abstract String getName();
+public interface DataSupplier<T> {
+    abstract public int size();
+    abstract T get(int i);
 }
