@@ -84,7 +84,7 @@ import javax.swing.tree.DefaultTreeModel;
  * @author christian
  */
 public class BrowseJAMSCloudDlg extends JDialog{
-    private static final Logger log = Logger.getLogger( BrowseJAMSCloudDlg.class.getName() );
+    private static final Logger log = Logger.getLogger(BrowseJAMSCloudDlg.class.getName() );
     
     final String infoLogFile = "info.log";
     final String errorLog = "error.log";
@@ -715,6 +715,7 @@ public class BrowseJAMSCloudDlg extends JDialog{
         
         if (client != null){
             observable.deleteObservers();
+            observable.setThreadID(Thread.currentThread().getId());
             observable.addObserver(new Observer() {
                 @Override
                 public void update(Observable o, Object arg) {

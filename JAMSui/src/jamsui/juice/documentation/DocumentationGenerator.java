@@ -27,6 +27,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;
@@ -39,7 +41,8 @@ import org.w3c.dom.NodeList;
  * @author sa63kul
  */
 public class DocumentationGenerator {
-
+    static final Logger log = Logger.getLogger(DocumentationGenerator.class.getName());
+    
     private static final String DEFAULT_PACKAGE_ID = "<default package>";
     private final String AnnotationFileName = "Component_Annotation.";
     private final String templateFileName = "template";
@@ -120,7 +123,7 @@ public class DocumentationGenerator {
     }
 
     private void processAnnotations(File documentationOutputDir, File jarFile) throws DocumentationException {
-        DocumentationWizard.log("generating annotation documentation");
+        log.fine("generating annotation documentation");
 
         JarFile jFile = null;
         String jarFileName = jarFile.getName();
@@ -162,9 +165,9 @@ public class DocumentationGenerator {
                         automaticComponentDescriptions.put(clazz.getName(), desc);
                     }
                 } catch (java.lang.NoClassDefFoundError e) {
-                    DocumentationWizard.log("Warning: Could not load class " + className + " of jar file " + jarFileName);
+                    log.log(Level.WARNING, "Could not load class " + className + " of jar file " + jarFileName, e);
                 } catch (ClassNotFoundException cnfe) {
-                    DocumentationWizard.log("Warning: Class not found for entry: " + entry.getName() + " in jar file " + jarFileName);
+                    log.log(Level.WARNING, "Class not found for entry: " + entry.getName() + " in jar file " + jarFileName);
                 }
             }
         }
@@ -311,15 +314,15 @@ public class DocumentationGenerator {
         }
 
         if (modelName == null) {
-            DocumentationWizard.log("warning: model is not named");
+            log.log(Level.INFO, "warning: model is not named");
             modelName = "unknown";
         }
         if (modelAuthor == null) {
-            DocumentationWizard.log("warning: model author is not named");
+            log.log(Level.INFO, "warning: model author is not named");
             modelAuthor = "unknown";
         }
         if (modelDescription == null) {
-            DocumentationWizard.log("warning: model date is not named");
+            log.log(Level.INFO, "warning: model date is not named");
         }
 
 
@@ -389,16 +392,16 @@ public class DocumentationGenerator {
         String[] libList = StringTools.toArray(JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER), ";");
         ArrayList<File> list = Tools.getJarList(libList);
         for (File f : list) {
-            DocumentationWizard.log("lib : " + f);
+            log.finest("lib : " + f);
             processAnnotations(documentationOutputDir, f);
         }
         //write automatic annotations
         for (String component : automaticComponentDescriptions.keySet()) {
             String value = automaticComponentDescriptions.get(component);
 
-            DocumentationWizard.log("-" + component);
+            log.log(Level.FINER, "-" + component);
             if (value == null) {
-                DocumentationWizard.log("warning: no annotations for component:" + component);
+                log.warning("warning: no annotations for component:" + component);
             }
 
             String template = Tools.getTemplate("componentAnnotation.xml");
@@ -460,14 +463,14 @@ public class DocumentationGenerator {
         try {
             languageIndependentComponentDescription = XMLTools.getDocument(languageIndependentComponentDescriptionFile.getAbsolutePath());
         } catch (JAMSException fnfe) {
-            DocumentationWizard.log("warning: the documentation of " + componentName + " is incomplete");
+            log.log(Level.WARNING, "the documentation of " + componentName + " is incomplete", fnfe);
             return null;
         }
 
         //read lag indepent description (based on annotations)
         NodeList tableList = languageIndependentComponentDescription.getElementsByTagName("informaltable");
         if (tableList.getLength() != 2) {
-            DocumentationWizard.log("Error Annotation Document must have exaclty two tables, found " + tableList.getLength() + "!");
+            log.info("Error Annotation Document must have exaclty two tables, found " + tableList.getLength() + "!");
             return null;
         }
 
@@ -508,7 +511,7 @@ public class DocumentationGenerator {
             Element row = (Element) rows.item(i);
             NodeList entries = row.getElementsByTagName("entry");
             if (entries.getLength() != 7) {
-                DocumentationWizard.log("Invalid Annotation");
+                log.log(Level.WARNING, "Invalid Annotation: {0}", entries.toString());
             } else {
                 Variable v = new Variable();
                 v.variable = StringEscapeUtils.escapeXml(entries.item(0).getTextContent());
@@ -533,7 +536,7 @@ public class DocumentationGenerator {
         try {
             languageDependentComponentDescription = XMLTools.getDocument(languageDependentComponentDescriptionFile.getAbsolutePath());
         } catch (JAMSException fnfe) {
-            DocumentationWizard.log("warning: the documentation of " + componentName + " is incomplete");
+            log.log(Level.WARNING, "The documentation of " + componentName + " is incomplete", fnfe);
             return;
         }
 
@@ -543,7 +546,7 @@ public class DocumentationGenerator {
 
         NodeList subTitleList = languageDependentComponentDescription.getElementsByTagName("subtitle");
         if (subTitleList.getLength() != 1) {
-            DocumentationWizard.log("warning: wrong number of subtitles in descriptions of component: " + componentName);
+            log.log(Level.WARNING, "Wrong number of subtitles in descriptions of component: " + componentName);
         } else {
             component.subtitle = StringEscapeUtils.escapeXml(subTitleList.item(0).getTextContent());
         }
@@ -557,7 +560,7 @@ public class DocumentationGenerator {
 
         NodeList sect2List = languageDependentComponentDescription.getElementsByTagName("sect2");
         if (sect2List.getLength() < 2) {
-            DocumentationWizard.log("warning: wrong number of sect2 blocks in descriptions of component: " + componentName);
+            log.log(Level.WARNING, "wrong number of sect2 blocks in descriptions of component: {0}", componentName);
             return;
         } else {
             Element variableBlock = (Element) sect2List.item(0);

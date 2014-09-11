@@ -10,6 +10,7 @@ import jams.SystemProperties;
 import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
+import jams.server.client.ObservableLogHandler;
 import jamsui.juice.JUICE;
 import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
 import java.awt.Frame;
@@ -22,7 +23,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.Observable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOPException;
@@ -35,39 +37,25 @@ import org.apache.fop.cli.CommandLineOptions;
  *
  * @author chris
  */
-public class DocumentationWizard extends Observable {
+public class DocumentationWizard {
 
+    static final Logger log = Logger.getLogger(DocumentationWizard.class.getName());
+    
     final String DOCUMENTATION_DIRECTORY = "/documentation/";
-
-    static void log(String msg) {
-
-        int debug = Integer.parseInt(JUICE.getJamsProperties().getProperty(JAMSProperties.DEBUG_IDENTIFIER, "1"));
-
-        if (debug >= JAMS.VVERBOSE) {
-            JUICE.getJuiceFrame().getInfoDlg().appendText(msg);
-            System.out.println(msg);
-        }
-    }
-
-    private void stateMessage(String msg) {
-        this.setChanged();
-        this.notifyObservers(msg);
-    }
-
+    
     private void runXSLTProcessor(String docBookHome, String documentationHome, String outputXML) throws DocumentationException {
-        stateMessage("running xsltproc");
+        log.fine("running xsltproc");
 
         if (!(new File(docBookHome + "/docbook/fo/docbook.xsl")).exists()) {
             throw new DocumentationException(DocumentationExceptionCause.docBookXSLNotExisting);
         }
 
-//            log(docBookHome + "/xsltproc.exe" + "--xinclude" + "--output" + documentationHome + "/tmp.fo" + docBookHome + "/docbook/fo/docbook.xsl" + outputXML);
         ProcessBuilder pb = new ProcessBuilder(docBookHome + "/xsltproc.exe", "--xinclude", "--output", documentationHome + "/tmp.fo",
                 docBookHome + "/docbook/fo/docbook.xsl", outputXML);
 
         pb.redirectErrorStream(true);
         for (String s : pb.command()) {
-            log("argument of xsltproc:" + s + "\n");
+            log.finest("argument of xsltproc:" + s + "\n");
         }
 
         Process process = null;
@@ -77,7 +65,7 @@ public class DocumentationWizard extends Observable {
             try {
                 process.exitValue();
             } catch (Exception e) {
-                stateMessage("waiting for xsltproc");
+                log.fine("waiting on xsltproc");
                 try {
                     Thread.sleep(300);
                 } catch (Exception e2) {
@@ -93,10 +81,10 @@ public class DocumentationWizard extends Observable {
         BufferedReader br = new BufferedReader(isr);
         String line;
 
-        log("xslt-proc messages:");
+        log.fine("xslt-proc messages:");
         try {
             while ((line = br.readLine()) != null) {
-                log(line);
+                log.fine(line);
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -179,9 +167,9 @@ public class DocumentationWizard extends Observable {
     }
 
     private String runApacheFOP(String inputFile, String outputFile, String optionalLibaries) throws DocumentationException{
-        stateMessage("running Apache FOP");
+        log.fine("running Apache FOP");
         System.setProperty("fop.optional.lib", optionalLibaries);
-        log(System.getProperty("java.class.path"));
+        log.finest(System.getProperty("java.class.path"));
         
         String args[] = new String[]{System.getProperty("java.class.path"), "-fo", inputFile, "-pdf", outputFile};
 
@@ -190,7 +178,7 @@ public class DocumentationWizard extends Observable {
         PrintStream ps = System.err;
         //System.setErr(new PrintStream(baos));
         if (org.apache.fop.cli.Main.checkDependencies()) {
-            log("startFOP");
+            log.fine("startFOP");
             startFOP(args);
         }else{
             throw new DocumentationException(DocumentationExceptionCause.FOPDependenciesIncomplete);
@@ -218,7 +206,7 @@ public class DocumentationWizard extends Observable {
     DocumentationException innerException = null;
 
     private void openPDF(final File f) throws DocumentationException {
-        stateMessage("showing pdf");
+        log.fine("showing pdf");
         innerException = null;
         Thread thread = new Thread(new Runnable() {
 
@@ -239,7 +227,7 @@ public class DocumentationWizard extends Observable {
             thread.isAlive();
 
         } catch (Exception e) {
-            stateMessage("opening pdf");
+            log.fine("opening pdf");
             if (innerException != null) {
                 throw innerException;
             }
@@ -253,7 +241,8 @@ public class DocumentationWizard extends Observable {
     }
 
     public void runDocumentationProcess(File workspace, Document modelDocument, String docBookHome) throws DocumentationException {
-        stateMessage("initializing");
+        log.entering(DocumentationWizard.class.toString(), "runDocumentationProcess");
+        log.fine("initializing");
 
         if (workspace == null) {
             throw new DocumentationException(DocumentationExceptionCause.workspaceNull);
@@ -264,7 +253,7 @@ public class DocumentationWizard extends Observable {
         String documentationOutputXML = documentationOutputDir + "/" + Bundle.resources.getString("Filename") + ".xml";
         documentationOutputDir.mkdirs();
 
-        log("docbook-home:" + docBookHome);
+        log.finest("docbook-home:" + docBookHome);
 
         if (docBookHome == null) {
             throw new DocumentationException(DocumentationExceptionCause.docBookPathNull);
@@ -282,9 +271,9 @@ public class DocumentationWizard extends Observable {
             throw new DocumentationException(DocumentationExceptionCause.docBookPathNull);
         }
 
-        log("working in workspace:" + workspace);
+        log.finest("working in workspace:" + workspace);
 
-        stateMessage("creating documentation");
+        log.fine("creating documentation");
 
         DocumentationGenerator generator = new DocumentationGenerator();
         generator.createDocumentation(documentationHome, documentationOutputDir, modelDocument);
@@ -295,7 +284,7 @@ public class DocumentationWizard extends Observable {
             runApacheFOP(documentationOutputDir + "/tmp.fo", documentationHome + "/" + Bundle.resources.getString("Filename") + ".pdf", this.properties.getProperty("libs"));
 
         } catch (Throwable t) {
-            t.printStackTrace();
+            log.log(Level.SEVERE, "Error during XLST processing", t);
         } finally {
 
             // cleanup
@@ -309,24 +298,32 @@ public class DocumentationWizard extends Observable {
 
         openPDF(new File(documentationHome, Bundle.resources.getString("Filename") + ".pdf"));
 
-        stateMessage("finished");
+        log.fine("finished");
+        log.exiting(DocumentationWizard.class.toString(), "runDocumentationProcess");
     }
     
     private JAMSProperties properties = null;
     private File workspace = null;
     private Document modelDocument = null;
-
+    private final ObservableLogHandler observable = 
+            new ObservableLogHandler(new Logger[]{
+                Logger.getLogger(DocumentationWizard.class.getName()),
+                Logger.getLogger(DocumentationGenerator.class.getName())
+            });
+    
     public void createDocumentation(Frame parent, Document doc, JAMSProperties props, File savePath) {
         properties = props;
         // ok hier gibt es mehrere möglichkeiten
         workspace = savePath.getParentFile();
         modelDocument = doc;
 
-        WorkerDlg progress = new WorkerDlg(parent, Bundle.resources.getString("Generating_Documentation"));
-        this.addObserver(new ObserverWorkerDlg(progress));
+        ObserverWorkerDlg progress = new ObserverWorkerDlg(new WorkerDlg(parent, Bundle.resources.getString("Generating_Documentation")));
+        observable.deleteObservers();
+        observable.addObserver(progress);
+        observable.setLogLevel(Level.FINE);
 
-        progress.setInderminate(true);
-        progress.setTask(new Runnable() {
+        progress.getWorkerDlg().setInderminate(true);
+        progress.getWorkerDlg().setTask(new Runnable() {
 
             @Override
             public void run() {
@@ -337,6 +334,6 @@ public class DocumentationWizard extends Observable {
                 }
             }
         });
-        progress.execute();
+        progress.getWorkerDlg().execute();
     }
 }
