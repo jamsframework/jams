@@ -44,6 +44,7 @@ import javax.swing.tree.DefaultTreeModel;
 import optas.data.DataCollection;
 import jams.explorer.JAMSExplorer;
 import jams.explorer.gui.ImportMonteCarloDataPanel;
+import jams.gui.WorkerDlg;
 
 /**
  *
@@ -252,9 +253,17 @@ public class DSTree extends JAMSTree {
         JOptionPane.showInputDialog(popupDS, "Please select merging mode!", "Merge mode selection", JOptionPane.QUESTION_MESSAGE, null, values, values[0] );
         dc.mergeDataCollections(src);
     }
-
+    
     private void displayDSData() {
-        explorer.getDisplayManager().displayDS((DSTreeNode) getLastSelectedPathComponent());
+        WorkerDlg dlg = new WorkerDlg(explorer.getExplorerFrame(), JAMS.i18n("Opening_Datastore"));
+        dlg.setInderminate(true);
+        dlg.setTask(new Runnable() {
+            @Override
+            public void run() {
+                explorer.getDisplayManager().displayDS((DSTreeNode) getLastSelectedPathComponent());
+            }
+        });
+        dlg.execute();
     }
 
     private void deleteDSFile(){

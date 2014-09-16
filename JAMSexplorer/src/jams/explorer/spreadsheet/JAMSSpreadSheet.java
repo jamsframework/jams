@@ -434,14 +434,14 @@ public class JAMSSpreadSheet extends JPanel {
             } else { //AB hier Das gleich nur Transponiert
 
                 TreeMap<String, Integer> map = new TreeMap<String, Integer>();
-                
+
                 for (int j = 0; j < colcount; j++) {
                     String col_string = columnNames[j];
                     map.put(col_string, j);
                 }
                 for (int c = 0; c < write_col_cnt; c++) {
-                    Integer i = map.get(write_headers[c]);                    
-                    col_index[c] = i;                                        
+                    Integer i = map.get(write_headers[c]);
+                    col_index[c] = i;
                 }
                 filewriter.write(SpreadsheetConstants.LOAD_DATA + "\n");
 
@@ -457,7 +457,7 @@ public class JAMSSpreadSheet extends JPanel {
                 filewriter.write(SpreadsheetConstants.LOAD_END);
                 filewriter.close();
             }
-        } catch (IOException ex) {            
+        } catch (IOException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(parent_frame, "Sorry, something went wrong!");
         }
@@ -843,9 +843,16 @@ public class JAMSSpreadSheet extends JPanel {
             headers[i++] = (String) o;
         }
 
+        DefaultDataSet ds = null;
         // read table values from store
         while (store.hasNext()) {
-            DefaultDataSet ds = store.getNext();
+
+            try {
+                ds = store.getNext();
+            } catch (Exception e) {
+                GUIHelper.showErrorDlg(this, JAMS.i18n("Trying_to_read_past_end_of_datastore"), JAMS.i18n("ERROR"));
+                return;
+            }
 
             DataValue[] rowData = ds.getData();
 
