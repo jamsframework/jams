@@ -35,7 +35,7 @@ public class JAMSLogging extends Observable {
 
     private static final List<Logger> loggers = new ArrayList();
     private static final JAMSLogging instance = new JAMSLogging();
-
+    
     /**
      * Register a new logger to common log handling
      *
