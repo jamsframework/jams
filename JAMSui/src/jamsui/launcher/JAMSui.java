@@ -72,7 +72,7 @@ public class JAMSui {
             }
         }
 
-        //create a JAMSui default set of property values
+        //create a JAMS default set of property values
         properties = JAMSProperties.createProperties();
 
         String propertyFileName;

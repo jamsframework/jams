@@ -106,6 +106,7 @@ public class JAMSCmdLine {
     public String getSnapshotFileName() {
         return this.snapshotFileName;
     }
+    
     /**
      * Return all additional arguments
      * @return The list of additional arguments as String array
