@@ -215,7 +215,7 @@ public class GUIHelper {
      * @param message
      */
     public static void showInfoDlg(Component owner, String message) {
-        JOptionPane.showMessageDialog(owner, message, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"), JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(owner, message, JAMS.i18n("INFO"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -236,7 +236,7 @@ public class GUIHelper {
      * @param message
      */
     public static void showErrorDlg(Component owner, String message) {
-        JOptionPane.showMessageDialog(owner, message, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(owner, message, JAMS.i18n("ERROR"), JOptionPane.ERROR_MESSAGE);
     }
 
     /**
@@ -374,9 +374,9 @@ public class GUIHelper {
                     }
                 }
                 if (record.getLevel().intValue() <= Level.INFO.intValue()) {
-                    GUIHelper.showInfoDlg(owner, msg, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("INFO"));
+                    GUIHelper.showInfoDlg(owner, msg, JAMS.i18n("INFO"));
                 } else if (record.getLevel().intValue() <= Level.SEVERE.intValue()) {
-                    GUIHelper.showErrorDlg(owner, msg, java.util.ResourceBundle.getBundle("reg/resources/JADEBundle").getString("ERROR"));
+                    GUIHelper.showErrorDlg(owner, msg, JAMS.i18n("ERROR"));
                 }
             }
 

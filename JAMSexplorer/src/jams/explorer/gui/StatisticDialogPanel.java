@@ -61,8 +61,8 @@ public class StatisticDialogPanel extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("reg/resources/JADEBundle"); // NOI18N
-        setTitle(bundle.getString("STATISTIK")); // NOI18N
+//        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("reg/resources/JAMSBundle"); // NOI18N
+        setTitle(JAMS.i18n("STATISTIK")); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
@@ -74,7 +74,7 @@ public class StatisticDialogPanel extends javax.swing.JDialog {
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        okButton.setText(bundle.getString("OK")); // NOI18N
+        okButton.setText(JAMS.i18n("OK")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
