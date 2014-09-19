@@ -1,5 +1,5 @@
 #JAMS-Konfigurationsdatei
-#Thu Jun 26 15:15:08 CEST 2014
+#Fri Sep 19 16:07:36 CEST 2014
 infolog=
 libs=.;lib
 guiconfig=true
