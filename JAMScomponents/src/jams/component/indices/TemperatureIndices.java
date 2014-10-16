@@ -2,12 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jams.components.aggregate;
+package jams.component.indices;
 
 import jams.data.Attribute;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
+import java.util.Calendar;
 
 /**
  *
@@ -17,7 +18,7 @@ import jams.model.JAMSVarDescription;
         title = "KlimaKennwerte",
         author = "Christian Fischer",
         description = "Calculated standard Klimakennwerte for J2000Klima")
-public class KlimaKennwerte extends JAMSComponent {
+public class TemperatureIndices extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Current time")
     public Attribute.Calendar time;
@@ -36,45 +37,25 @@ public class KlimaKennwerte extends JAMSComponent {
     description = "daily max temperatur",
     unit="°C")
     public Attribute.Double tmax;
-
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "daily precipitation",
-    unit="L")
-    public Attribute.Double precip;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "daily windspeed",
-    unit="m/s")
-    public Attribute.Double wind;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "daily pot. evapotranspiration",
-    unit="L")
-    public Attribute.Double potET;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "size of hru",
-    unit="m²")
-    public Attribute.Double area;
-    
+        
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "1 if hitzetag")
     public Attribute.Double isHotDay;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    description = "number of hitzetage without interruption")
+    description = "number of hot days without interruption")
     public Attribute.Double successiveHotDays;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "1 if hitzeperiode has just started")
+    description = "1 if hot period (more than 5 hot days) has just started")
     public Attribute.Double isBeginningOfHotPeriod;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "1 if hitzeperiode")
+    description = "1 if hot period (more than 5 hot days)")
     public Attribute.Double isHotPeriod;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "threshold for hitzetage",
+    description = "threshold for hot days",
     defaultValue = "30",
     unit="°C")
     public Attribute.Double hotDayThreshold;
@@ -90,27 +71,31 @@ public class KlimaKennwerte extends JAMSComponent {
     public Attribute.Double tropicalNightThreshold;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "1 if sommertag")
+    description = "1 if summerday")
     public Attribute.Double isSummerDay;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "threshold for sommertag",
+    description = "threshold for summerday",
     defaultValue = "25",
     unit="°C")
     public Attribute.Double summerDayThreshold;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "1 if frosttag")
+    description = "1 if day is attractive for tourists (temp > 15 and < 30) and less than 0.5 mm rain TODO")
+    public Attribute.Double isTouristDay;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    description = "1 if frostday")
     public Attribute.Double isFrostDay;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "threshold for frosttag",
+    description = "threshold for frostday",
     defaultValue = "0",
     unit="°C")
     public Attribute.Double frostDayThreshold;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "threshold for frosttag",
+    description = "threshold for frostday",
     defaultValue = "-5",
     unit="°C")
     public Attribute.Double permanentFrostDayThreshold;
@@ -132,7 +117,7 @@ public class KlimaKennwerte extends JAMSComponent {
     public Attribute.Double isIceDay;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "threshold for eistag",
+    description = "threshold for iceday",
     defaultValue = "0",
     unit="°C")
     public Attribute.Double iceDayThreshold;
@@ -146,11 +131,11 @@ public class KlimaKennwerte extends JAMSComponent {
     public Attribute.Double isFrostDefrostChange;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "calculates kuehlgradtage")
+    description = "calculates cooling degree days")
     public Attribute.Double coolingDegreeDays;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "calculates heiztage where tmean is below 15°C")
+    description = "calculates heating days where tmean is below 15°C")
     public Attribute.Double isHeatDay;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
@@ -164,75 +149,24 @@ public class KlimaKennwerte extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     description = "calculates if we are in the forest vegetation period")
     public Attribute.Double isForestVegetationPeriodTrigger;
-                
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "calculates if a dry period has started")
-    public Attribute.Double isBeginningOfDryPeriod;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "calculates if we are within a dry period")
-    public Attribute.Double isDryPeriod;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "calculates if more than 20mm precip did occur")
-    public Attribute.Double isPrecipHigher20mm;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "calculates if more than 30mm precip did occur")
-    public Attribute.Double isPrecipHigher30mm;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "calculates if more than 40mm precip did occur")
-    public Attribute.Double isPrecipHigher40mm;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "calculates if more than 50mm precip did occur")
-    public Attribute.Double isPrecipHigher50mm;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    description = "calculates the number of successive days where precip is zero")
-    public Attribute.Double successiveDaysWithoutRain;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    description = "calculates if windspeed is higher than 28m/s")
-    public Attribute.Double isHeavyStorm;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    description = "calculates if windspeed is between 8 and 18m/s")
-    public Attribute.Double isProductiveWindday;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    description = "calculates the climatic water balance (P-potET)")
-    public Attribute.Double KWB;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    description = "calculates the climatic water balance (P-potET) during thermal vegetation period")
-    public Attribute.Double KWBinThermalVegetationPeriod;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    description = "calculates the climatic water balance (P-potET) during thermal vegetation period (see thermal vegetation period2)")
-    public Attribute.Double KWBinThermalVegetationPeriod2;
-
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
-    description = "calculates the klimatische wasserbilanz (P-potET) during forstlicher vegetation period")
-    public Attribute.Double KWBinForestVegetationPeriod;
-    
+                    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
     description = "tmp variables")
     public Attribute.DoubleArray tmp;
     
-    final int INDEX_successiveDaysWithTmeanAboveFiveDegree = 0;
-    final int INDEX_successiveDaysWithTmeanAboveTenDegree = 1;
-    final int INDEX_successiveDaysWithTmeanBelowFiveDegree = 2;
-    final int INDEX_successiveDaysWithTmeanBelowTenDegree = 3;
-    final int INDEX_KWB_in_thermal_vegetation_period = 4;
-    final int INDEX_KWB_in_forest_vegetation_period = 5;
-    final int INDEX_KWB_in_thermal_vegetation_period2 = 6;
-    final int INDEX_KWB_window_position = 7;
-    final int INDEX_KWB_window = 8;
-    final int INDEX_SIZE = 38;
+    private final int INDEX_successiveDaysWithTmeanAboveFiveDegree = 0;
+    private final int INDEX_successiveDaysWithTmeanAboveTenDegree = 1;
+    private final int INDEX_successiveDaysWithTmeanBelowFiveDegree = 2;
+    private final int INDEX_successiveDaysWithTmeanBelowTenDegree = 3;    
+    private final int INDEX_KWB_window_position = 4;
+    private final int INDEX_KWB_window = 5;    
+    private final int KWB_WINDOW_SIZE = 30;
+    private final int INDEX_SIZE = INDEX_KWB_window+KWB_WINDOW_SIZE;
+    
     @Override
-    public void run(){
+    public void run(){        
+        int day = time.get(Attribute.Calendar.DAY_OF_YEAR);
+        
         isFrostDefrostChange.setValue(0.0);
         isHotDay.setValue(0.0);
         isHotPeriod.setValue(0.0);
@@ -241,19 +175,11 @@ public class KlimaKennwerte extends JAMSComponent {
         isTropicalNight.setValue(0.0);
         isFrostDay.setValue(0.0);
         isPermanentFrostPeriod.setValue(0.0);
-        this.isBeginningOfPermanentFrostPeriod.setValue(0.0);
+        isBeginningOfPermanentFrostPeriod.setValue(0.0);
         isIceDay.setValue(0.0);
-        isHeatDay.setValue(0.0);
+        isHeatDay.setValue(0.0);                
+        isTouristDay.setValue(0.0);
         
-        isDryPeriod.setValue(0);
-        isBeginningOfDryPeriod.setValue(0);
-        isPrecipHigher20mm.setValue(0.0);
-        isPrecipHigher30mm.setValue(0.0);
-        isPrecipHigher40mm.setValue(0.0);
-        isPrecipHigher50mm.setValue(0.0);        
-        isHeavyStorm.setValue(0.0);
-        isProductiveWindday.setValue(0.0);
-                        
         if (tmp.getValue() == null){
             tmp.setValue(new double[INDEX_SIZE]);
         }
@@ -263,7 +189,7 @@ public class KlimaKennwerte extends JAMSComponent {
         if (isTempBelowZero.getValue() == 1.0 && tmin.getValue() > 0.0){
             isFrostDefrostChange.setValue(1.0); 
         }
-        
+                        
         isTempBelowZero.setValue(0.0);
         
         //Standardwerte .. Frosttage, Tropische Nächte .. 
@@ -271,16 +197,16 @@ public class KlimaKennwerte extends JAMSComponent {
             isTempBelowZero.setValue(1.0);
         }
         
-        if (tmax.getValue() > summerDayThreshold.getValue()){
-            isSummerDay.setValue(1.0);
+        if (tmax.getValue() >= summerDayThreshold.getValue()){
+            isSummerDay.setValue(1.0);            
         }
                 
-        if (tmin.getValue() > tropicalNightThreshold.getValue()){
+        if (tmin.getValue() >= tropicalNightThreshold.getValue()){
             isTropicalNight.setValue(1.0);
         }
         
         //Hitzeperioden und Hitzetage
-        if (tmax.getValue() > hotDayThreshold.getValue()){
+        if (tmax.getValue() >= hotDayThreshold.getValue()){
             isHotDay.setValue(1.0);
             successiveHotDays.setValue(successiveHotDays.getValue()+1);
             if (successiveHotDays.getValue()==5.0){
@@ -306,9 +232,9 @@ public class KlimaKennwerte extends JAMSComponent {
         if (tmin.getValue() < permanentFrostDayThreshold.getValue()){            
             successivePermanentFrostDay.setValue(successivePermanentFrostDay.getValue()+1);
             if (successivePermanentFrostDay.getValue()==3.0){
-                isPermanentFrostPeriod.setValue(3.0);
+                isPermanentFrostPeriod.setValue(3.0); //3 days in permanent frost period
                 isBeginningOfPermanentFrostPeriod.setValue(1.0);
-            }else if (successivePermanentFrostDay.getValue()>3.0){
+            }else if (successivePermanentFrostDay.getValue()>=3.0){
                 isPermanentFrostPeriod.setValue(1.0);
             }
         }else{
@@ -344,9 +270,7 @@ public class KlimaKennwerte extends JAMSComponent {
         }else{
             inTmp[INDEX_successiveDaysWithTmeanAboveTenDegree]=0;
             inTmp[INDEX_successiveDaysWithTmeanBelowTenDegree]+=1;
-        }
-                
-        int day = time.get(Attribute.Calendar.DAY_OF_YEAR);
+        }                        
         
         if (inTmp[INDEX_successiveDaysWithTmeanAboveFiveDegree] >= 6){
             isThermalVegetationPeriodTrigger.setValue(1.0);
@@ -362,7 +286,7 @@ public class KlimaKennwerte extends JAMSComponent {
         
         int p = (int)inTmp[INDEX_KWB_window_position];
         inTmp[INDEX_KWB_window+p] = tmean.getValue();
-        p = (p+1)%30;
+        p = (p+1)%KWB_WINDOW_SIZE;
         double tSum = 0;
         for (int i=0;i<30;i++){
             tSum += inTmp[INDEX_KWB_window_position+i];
@@ -372,80 +296,9 @@ public class KlimaKennwerte extends JAMSComponent {
         }else if (tSum < 150 && inTmp[INDEX_KWB_window+p]<5 && day >180) {
             isThermalVegetationPeriodTrigger2.setValue(0.0);
         }
-        inTmp[INDEX_KWB_window_position] = p;
-        
-        //Niederschlagskenntage
-        if (precip != null) {
-            //Trockenperioden
-            if (precip.getValue() < 0.1) {
-                successiveDaysWithoutRain.setValue(successiveDaysWithoutRain.getValue() + 1);
-
-                if (successiveDaysWithoutRain.getValue() == 11.0) {
-                    isDryPeriod.setValue(11.0);
-                    isBeginningOfDryPeriod.setValue(1.0);
-                } else if (successiveDaysWithoutRain.getValue() > 11.0) {
-                    isDryPeriod.setValue(1.0);
-
-                }
-            } else {
-                successiveDaysWithoutRain.setValue(0.0);
-            }
-            //Starkniederschläge
-            double precip_mm = precip.getValue() / area.getValue();
-            if (precip_mm >= 20) {
-                isPrecipHigher20mm.setValue(1.0);
-            }
-            if (precip_mm >= 30) {
-                isPrecipHigher30mm.setValue(1.0);
-            }
-            if (precip_mm >= 40) {
-                isPrecipHigher40mm.setValue(1.0);
-            }
-            if (precip_mm >= 50) {
-                isPrecipHigher50mm.setValue(1.0);
-            }
-        }
-        
-        //Wind
-        if (wind != null){
-            if (wind.getValue() >= 28){
-                isHeavyStorm.setValue(1.0);
-            }
-            if (wind.getValue() >= 8 && wind.getValue() <= 18){
-                isProductiveWindday.setValue(1.0);
-            }
-        }
-        
-        //Klimatische Wasserbilanz
-        if (potET != null && precip != null){
-            double KWB_mm = (precip.getValue() - potET.getValue());
-            
-            KWB.setValue(KWB_mm);
-            
-            inTmp[INDEX_KWB_in_thermal_vegetation_period] += KWB_mm;
-            inTmp[INDEX_KWB_in_forest_vegetation_period] += KWB_mm;
-            inTmp[INDEX_KWB_in_thermal_vegetation_period2] += KWB_mm;
-            if (isThermalVegetationPeriodTrigger.getValue()==1){
-                KWBinThermalVegetationPeriod.setValue(KWBinThermalVegetationPeriod.getValue()+inTmp[INDEX_KWB_in_thermal_vegetation_period]);
-                inTmp[INDEX_KWB_in_thermal_vegetation_period] = 0;
-            }
-            if (isForestVegetationPeriodTrigger.getValue()==1){
-                KWBinForestVegetationPeriod.setValue(KWBinForestVegetationPeriod.getValue()+inTmp[INDEX_KWB_in_forest_vegetation_period]);
-                inTmp[INDEX_KWB_in_forest_vegetation_period] = 0;
-            }            
-            if (isThermalVegetationPeriodTrigger2.getValue()==1){
-                KWBinThermalVegetationPeriod2.setValue(KWBinThermalVegetationPeriod2.getValue()+inTmp[INDEX_KWB_in_thermal_vegetation_period2]);
-                inTmp[INDEX_KWB_in_thermal_vegetation_period2] = 0;
-            }
-        }
-        //reset counters .. 
-        if (time.get(Attribute.Calendar.DAY_OF_YEAR)==1){
-            KWBinThermalVegetationPeriod.setValue(0);
-            KWBinThermalVegetationPeriod2.setValue(0);
-            KWBinForestVegetationPeriod.setValue(0);
-            inTmp[INDEX_KWB_in_thermal_vegetation_period2] = 0;
-            inTmp[INDEX_KWB_in_forest_vegetation_period] = 0;
-            inTmp[INDEX_KWB_in_forest_vegetation_period] = 0;
-        }                
+        inTmp[INDEX_KWB_window_position] = p;        
     }
+    
+    
+    
 }
