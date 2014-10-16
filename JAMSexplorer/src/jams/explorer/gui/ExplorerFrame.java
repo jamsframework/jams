@@ -32,8 +32,6 @@ import jams.gui.WorkerDlg;
 import jams.gui.WorkspaceDlg;
 import jams.gui.tools.GUIHelper;
 import jams.io.XMLProcessor;
-import jams.server.client.Controller;
-import jams.server.client.gui.GraphicalClient;
 import jams.server.client.gui.BrowseJAMSCloudDlg;
 import jams.server.client.gui.SynchronizeDlg;
 import jams.tools.JAMSTools;
@@ -506,12 +504,6 @@ public class ExplorerFrame extends JFrame {
     }
 
     protected void importData(){
-        GraphicalClient client = new GraphicalClient(this, explorer.getProperties());
-        Controller ctrl = client.getClient();
-        
-        if (ctrl == null)
-            return;
-        
         JAMSWorkspace ws = explorer.getWorkspace();      
         try{
             ws.init();
@@ -523,10 +515,13 @@ public class ExplorerFrame extends JFrame {
         if (id == -1){
             return;
         }
-                
-        SynchronizeDlg synchronizer = new SynchronizeDlg(this, ctrl, ws);
-        GUIHelper.centerOnParent(synchronizer, false);
-        synchronizer.setVisible(true);
+        try{
+            SynchronizeDlg synchronizer = new SynchronizeDlg(this, ws, explorer.getProperties());            
+            GUIHelper.centerOnParent(synchronizer, false);
+            synchronizer.setVisible(true);
+        }catch(IOException ioe){
+            ioe.printStackTrace();
+        }
     }
     
     protected void browseJAMSCloud(){

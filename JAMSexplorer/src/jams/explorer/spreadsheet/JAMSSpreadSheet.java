@@ -216,7 +216,8 @@ public class JAMSSpreadSheet extends JPanel {
     public JAMSSpreadSheet(JAMSExplorer explorer) {
         this.explorer = explorer;
         this.parent_frame = (JFrame) explorer.getExplorerFrame();
-        JAMSLogging.registerLogger(Logger.getLogger(JAMSSpreadSheet.class.getName()));
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.Show,
+                Logger.getLogger(JAMSSpreadSheet.class.getName()));
     }
 
     private void close() {

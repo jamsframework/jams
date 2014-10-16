@@ -59,7 +59,8 @@ public class ShapeFileWriter {
     private double[][] data;
 
     public ShapeFileWriter() {
-        JAMSLogging.registerLogger(Logger.getLogger(ShapeFileWriter.class.getName()));
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.Show,
+                Logger.getLogger(ShapeFileWriter.class.getName()));
     }
 
     public String getTargetKeyName() {

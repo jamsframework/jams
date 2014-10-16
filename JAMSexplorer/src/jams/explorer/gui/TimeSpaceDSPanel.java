@@ -23,6 +23,7 @@ package jams.explorer.gui;
 
 import jams.JAMS;
 import jams.JAMSLogging;
+import jams.JAMSLogging.LogOption;
 import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
 import jams.tools.StringTools;
@@ -183,7 +184,8 @@ public class TimeSpaceDSPanel extends DSPanel {
 
     private void init() {
 
-        JAMSLogging.registerLogger(Logger.getLogger(TimeSpaceDSPanel.class.getName()));
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.Show,
+                Logger.getLogger(TimeSpaceDSPanel.class.getName()));
         
         for (Action a : actions) {
             a.setEnabled(false);
@@ -889,9 +891,11 @@ public class TimeSpaceDSPanel extends DSPanel {
                         }
 
                         // we want to log, but without graphical output..
-                        JAMSLogging.unregisterLogger(Logger.getLogger(JAMSSpreadSheet.class.getName()));
+                        JAMSLogging.unregisterLogger(LogOption.Show, 
+                                Logger.getLogger(JAMSSpreadSheet.class.getName()));
                         Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.INFO, "Using shape file >" + selectedShape + "< / KEY COLUMN: " + dataStore.getKeyColumn());
-                        JAMSLogging.registerLogger(Logger.getLogger(JAMSSpreadSheet.class.getName()));
+                        JAMSLogging.registerLogger(LogOption.Show, 
+                                Logger.getLogger(JAMSSpreadSheet.class.getName()));
 
                         transfer.setShapeFileDataStore(dataStore);
 
