@@ -41,7 +41,6 @@ import jams.worldwind.data.RandomNumbers;
 import jams.worldwind.data.shapefile.JamsShapeAttributes;
 import jams.worldwind.ui.ColorRamp;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -76,6 +75,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.Icon;
@@ -105,8 +105,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.Year;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 /**
  *
@@ -158,7 +157,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
     //<editor-fold desc="variables definition">
-    private static final Logger logger = LoggerFactory.getLogger(GlobeView.class);
+    private static final Logger logger = Logger.getLogger(GlobeView.class.getName());
     //reference to jams,worldwind.ui.model.Globe
     //private Globe theGlobeModel = Globe.getInstance();
 
@@ -396,10 +395,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         try {
             addData(d.getShapeFileDataStore());
         } catch (gov.nasa.worldwind.exception.WWRuntimeException wwrte) {
-            JAMSLogging.registerLogger(java.util.logging.Logger.getLogger(GlobeView.class.getName()));
-            java.util.logging.Logger.getLogger(GlobeView.class.getName()).log(Level.WARNING,
+            JAMSLogging.registerLogger(JAMSLogging.LogOption.Show, 
+                    Logger.getLogger(GlobeView.class.getName()));
+            Logger.getLogger(GlobeView.class.getName()).log(Level.WARNING,
                     "Cannot open Shapefile \"" + d.getShapeFileDataStore().getShapeFile().getAbsolutePath() + "\" due to unknown projection. Please correct!", wwrte);
-            JAMSLogging.unregisterLogger(java.util.logging.Logger.getLogger(GlobeView.class.getName()));
+            JAMSLogging.unregisterLogger(JAMSLogging.LogOption.Show, 
+                    Logger.getLogger(GlobeView.class.getName()));
             return false;
         }
         return true;
@@ -1008,7 +1009,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             ObjectInputStream ois = new ObjectInputStream(fin);
             data = (DataTransfer3D) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            logger.error(e.toString());
+            logger.severe(e.toString());
         }
     }
     //</editor-fold>
