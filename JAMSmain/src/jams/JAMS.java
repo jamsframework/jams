@@ -198,13 +198,13 @@ public class JAMS {
         return missingDataValue;
     }
     
-    public static Object getMissingDataValue(Class c){
-        if (c == double.class)
-            return new Double(getMissingDataValue());
-        else if (c == int.class)
-            return new Integer(Integer.MAX_VALUE);
-        else if (c == long.class)
-            return new Long(Long.MAX_VALUE);
+    public static <T> T getMissingDataValue(Class<T> c){
+        if (c == Double.class)
+            return (T)new Double(getMissingDataValue());
+        else if (c == Integer.class)
+            return (T)new Integer(Integer.MAX_VALUE);
+        else if (c == Long.class)
+            return (T)new Long(Long.MAX_VALUE);
         else if (c == String.class)
             return null;
         else

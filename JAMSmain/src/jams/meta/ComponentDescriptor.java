@@ -54,7 +54,8 @@ public class ComponentDescriptor extends Observable {
     private boolean enabled = true;
 
     public ComponentDescriptor(String instanceName, Class clazz) {
-        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow,
+                Logger.getLogger(this.getClass().getName()));
         if (clazz == null) {
             throw new NullClassException(JAMS.i18n("Could_not_find_class_for_component_") + instanceName + "_!", JAMS.i18n("Error"));
         }

@@ -22,6 +22,7 @@
 package jams;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -34,16 +35,20 @@ import java.util.logging.Logger;
 public class JAMSLogging extends Observable {
 
     private static final List<Logger> loggers = new ArrayList();
+    private static final HashMap<Logger, LogOption> optionMap = new HashMap<Logger, LogOption>();
     private static final JAMSLogging instance = new JAMSLogging();
     
+    public enum LogOption{CollectAndShow, Show}
     /**
      * Register a new logger to common log handling
      *
+     * @param option
      * @param logger
      */
-    public static void registerLogger(Logger logger) {
+    public static void registerLogger(LogOption option, Logger logger) {
+        optionMap.put(logger, option);
         if (!loggers.contains(logger)) {
-            loggers.add(logger);
+            loggers.add(logger);            
             instance.setChanged();
             instance.notifyObservers(logger);
         }
@@ -54,8 +59,10 @@ public class JAMSLogging extends Observable {
      *
      * @param logger
      */
-    public static boolean unregisterLogger(Logger logger) {
+    public static boolean unregisterLogger(LogOption option, Logger logger) {
         boolean result = loggers.remove(logger);
+        optionMap.remove(logger);
+        
         instance.setChanged();
         instance.notifyObservers(logger);
         return result;
@@ -68,6 +75,16 @@ public class JAMSLogging extends Observable {
         return loggers;
     }
 
+    /**
+     * Unregister a logger from common log handling
+     *
+     * @param logger
+     * @return the option for that logger
+     */
+    public static LogOption getLogOption(Logger logger){
+        return optionMap.get(logger);
+    }
+    
     @Override
     public void addObserver(Observer o) {
         instance.deleteObserver(o);

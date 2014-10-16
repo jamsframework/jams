@@ -21,8 +21,11 @@
  */
 package jams.tools;
 
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,10 +33,15 @@ import java.util.StringTokenizer;
  */
 public class StringTools {
 
+    /**
+     *
+     */
     public static final Locale STANDARD_LOCALE = Locale.US;
 
     /**
-     * Checks if a string is empty (i.e. if its null, has length 0 or contains only whitespaces
+     * Checks if a string is empty (i.e. if its null, has length 0 or contains
+     * only whitespaces
+     *
      * @param theString The string to be checked
      * @return True, if theString is empty, false otherwise
      */
@@ -49,6 +57,11 @@ public class StringTools {
         }
     }
 
+    /**
+     *
+     * @param theString
+     * @return
+     */
     public static boolean parseToBoolean(String theString) {
         if (isEmptyString(theString)) {
             return false;
@@ -67,6 +80,7 @@ public class StringTools {
 
     /**
      * Creates a string representation of a stack trace
+     *
      * @param stea The stack trace
      * @return The stack trace string
      */
@@ -81,8 +95,9 @@ public class StringTools {
 
     /**
      * Splits a string into tokens and fills a string array with them.
-     * Whitespaces will be used as delimiters, while subsequent whitespaces
-     * will be regarded as one.
+     * Whitespaces will be used as delimiters, while subsequent whitespaces will
+     * be regarded as one.
+     *
      * @param str The string to be splitted
      * @return A string array with the tokens
      */
@@ -92,8 +107,9 @@ public class StringTools {
 
     /**
      * Splits a string into tokens using {@link String#split}. If delim is null,
-     * whitespaces will be used as delimiters, while subsequent whitespaces
-     * will be regarded as one.
+     * whitespaces will be used as delimiters, while subsequent whitespaces will
+     * be regarded as one.
+     *
      * @param str The string to be splitted
      * @param delim A delimiter defining where to split
      * @return A string array with the tokens
@@ -115,7 +131,7 @@ public class StringTools {
      * get one special part of token
      *
      * @param theToken
-     * @param thePart   (int)
+     * @param thePart (int)
      * @param delimiter
      * @return string
      */
@@ -135,10 +151,20 @@ public class StringTools {
         return result;
     }
 
+    /**
+     *
+     * @param attribName
+     * @return
+     */
     public static String getGetterName(String attribName) {
         return "get" + attribName.substring(0, 1).toUpperCase(STANDARD_LOCALE) + attribName.substring(1);
     }
 
+    /**
+     *
+     * @param attribName
+     * @return
+     */
     public static String getSetterName(String attribName) {
         return "set" + attribName.substring(0, 1).toUpperCase(STANDARD_LOCALE) + attribName.substring(1);
     }
@@ -158,5 +184,38 @@ public class StringTools {
             System.out.println("could not parse " + aString + " to double.");
         }
         return isDouble;
+    }
+
+    /**
+     * applies MessageFormat.format and catches possible execptions
+     *
+     * @param msg
+     * @param arguments
+     * @return
+     */
+    public static String format(String msg, Object... arguments) {
+        try {
+            return MessageFormat.format(msg, arguments);
+        } catch (Throwable t) {
+            Logger.getLogger(StringTools.class.getName()).log(Level.WARNING, t.toString(), t);
+            return msg;
+        }
+    }
+
+    /**
+     * formats a file size value into a human readable string
+     *
+     * @param bytes number to be formated
+     * @param si yes if output should be formated as si unit
+     * @return the formatted string
+     */
+    public static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) {
+            return bytes + " B";
+        }
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }

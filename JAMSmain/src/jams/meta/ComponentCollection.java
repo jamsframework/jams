@@ -28,8 +28,9 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 /**
- * This class represents a collection of components which can either be
- * managed by component repository or a model
+ * This class represents a collection of components which can either be managed
+ * by component repository or a model
+ *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class ComponentCollection {
@@ -47,12 +48,13 @@ public class ComponentCollection {
             componentDescriptors.remove(oldName);
         }
         componentDescriptors.put(newNewName, cd);
-        
+
         if (!newName.equals(newNewName)) {
-            JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
+            JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow,
+                    Logger.getLogger(this.getClass().getName()));
             Logger.getLogger(this.getClass().getName()).fine(MessageFormat.format(JAMS.i18n("Component_name_is_already_in_use._Renamed_component_to_"), newName, newNewName));
-        }        
-        
+        }
+
         return newNewName;
     }
 

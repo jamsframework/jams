@@ -56,12 +56,14 @@ public class ModelDescriptor extends ComponentCollection {
     private ModelNode rootNode;
 
     public ModelDescriptor() {
-        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow,
+                Logger.getLogger(this.getClass().getName()));
         modelProperties = new ModelProperties();
     }
 
     public ModelDescriptor(ModelDescriptor md) {
-        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow,
+                Logger.getLogger(this.getClass().getName()));
         this.author = md.author; //is deep copy
         this.date = md.date;
         this.description = md.description;

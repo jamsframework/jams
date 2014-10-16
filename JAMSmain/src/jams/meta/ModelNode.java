@@ -41,7 +41,8 @@ public class ModelNode extends DefaultMutableTreeNode {
 
     public ModelNode(Object o) {
         super(o);
-        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow,
+                Logger.getLogger(this.getClass().getName()));
         if (ComponentDescriptor.class.isAssignableFrom(o.getClass())) {
             ((ComponentDescriptor) o).setNode(this);
         }

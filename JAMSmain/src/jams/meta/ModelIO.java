@@ -58,10 +58,11 @@ public class ModelIO {
     private static final Class modelClazz = jams.model.JAMSModel.class;
     private ClassLoader loader;
     private String modelName;
-    private NodeFactory nodeFactory;
+    private final NodeFactory nodeFactory;
 
-    public ModelIO(NodeFactory nodeFactory) {
-        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
+    public ModelIO(NodeFactory nodeFactory) {    
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, 
+                Logger.getLogger(getClass().getName()));
         this.nodeFactory = nodeFactory;
     }
 
