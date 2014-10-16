@@ -196,6 +196,8 @@ public class WorkspaceFileAssociation implements Serializable, Comparable<Worksp
         int hash = 0;
         hash += (ws_id != null ? ws_id : 0);
         hash += (file_id != null ? file_id : 0);
+        hash += (id != null ? id : 0);
+        hash += (path != null ? path.hashCode() : 0);
         return hash;
     }
 
@@ -215,6 +217,9 @@ public class WorkspaceFileAssociation implements Serializable, Comparable<Worksp
 
     @Override
     public int compareTo(WorkspaceFileAssociation o) {
+        if (this.getID()==null || o.getID()==null){
+            return Integer.compare(this.hashCode(), o.hashCode());
+        }
         return Integer.compare(this.getID(), o.getID());
     }
 }

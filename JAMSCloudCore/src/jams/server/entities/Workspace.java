@@ -103,7 +103,7 @@ public class Workspace implements Serializable, Comparable<Workspace> {
     
     public Workspace(Workspace ws) {
         this.creation = new Date();
-        this.files = new ArrayList<WorkspaceFileAssociation>(Arrays.asList(ws.files.toArray(new WorkspaceFileAssociation[0])));
+        this.files = new ArrayList<>(Arrays.asList(ws.files.toArray(new WorkspaceFileAssociation[0])));
         this.id = 0;
         this.name = ws.getName();
         this.readOnly = ws.readOnly;
