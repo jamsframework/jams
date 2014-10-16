@@ -62,6 +62,11 @@ public class Win64ProcessManager extends AbstractProcessManager {
         return -1;
     }
 
+    //todo
+    @Override
+    public double getLoad(){
+        return 0.0;
+    }
     @Override
     public ProcessBuilder getProcessBuilder(Job job) throws IOException {
 

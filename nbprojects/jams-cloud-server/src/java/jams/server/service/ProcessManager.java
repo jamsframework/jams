@@ -37,6 +37,7 @@ public interface ProcessManager {
     Job deploy(Job job) throws IOException;
     JobState state(Job job) throws IOException;
     JobState kill(Job job) throws IOException;
+    double getLoad();
     StreamingOutput streamInfoLog(Job job) throws IOException;
     StreamingOutput streamErrorLog(Job job) throws IOException;
     Workspace updateWorkspace(Job job, EntityManager em);

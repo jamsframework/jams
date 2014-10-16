@@ -211,7 +211,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
                 remove(job);
             }
         }        
-        return Response.ok().build();
+        return Response.ok("Successful", MediaType.APPLICATION_XML_TYPE).build();
     }
     
     @GET
@@ -335,6 +335,19 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    
+    @GET
+    @Path("load")
+    @Produces({"application/xml"})
+    public Response load(@Context HttpServletRequest req) {
+        User currentUser = getCurrentUser(req);
+        if (currentUser == null) {
+            return Response.status(Status.FORBIDDEN).build();
+        }
+        
+        double load = processManager.getLoad();
+        return Response.ok(Double.toString(load), MediaType.APPLICATION_XML_TYPE).build();        
     }
     
     @GET

@@ -170,6 +170,16 @@ public class UserFacadeREST extends AbstractFacade<User> {
             return Response.status(Status.FORBIDDEN).build();            
         }
     }
+    
+    @GET
+    @Path("isConnected")
+    @Produces({"application/xml"})
+    public Response isConnected(@Context HttpServletRequest req) {
+        if (!isLoggedIn(req)) {
+            return Response.ok(Boolean.toString(false), MediaType.APPLICATION_XML_TYPE).build();
+        }        
+        return Response.ok(Boolean.toString(true), MediaType.APPLICATION_XML_TYPE).build();
+    }
 
     private List findByNameAndPassword(String login, String password) {
         return em.createQuery(

@@ -25,18 +25,21 @@ import jams.server.entities.File;
 import jams.server.entities.User;
 import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
+import jams.server.entities.WorkspaceFileAssociations;
 import jams.server.entities.Workspaces;
 import static jams.server.service.FileFacadeREST.removeUnusedFiles;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NamedQuery;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -58,7 +61,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
 
     @PersistenceContext(unitName = "jams-serverPU")
     private EntityManager em;
-    
+
     public WorkspaceFacadeREST() {
         super(Workspace.class);
     }
@@ -73,8 +76,8 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
             return Response.status(Status.FORBIDDEN).build();
         }
         entity.setUser(currentUser);
-        super.create(entity);        
-        if (entity.getId()==null) {
+        super.create(entity);
+        if (entity.getId() == null) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
         return Response.ok(entity, MediaType.APPLICATION_XML_TYPE).build();
@@ -92,9 +95,10 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         if (ws == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
-        if (ws.isReadOnly())
+        if (ws.isReadOnly()) {
             return Response.status(Status.FORBIDDEN).build();
-        
+        }
+
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
             super.edit(entity);
             return Response.ok(ws).build();
@@ -120,9 +124,10 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         if (ws == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
-        if (ws.isReadOnly())
+        if (ws.isReadOnly()) {
             return Response.status(Status.FORBIDDEN).build();
-        
+        }
+
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
             //check if files are still in use
             List<WorkspaceFileAssociation> files = ws.getFiles();
@@ -147,12 +152,13 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         if (user == null) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
+        Workspaces workspaces = new Workspaces();
         Workspace ws = find(id);
-        if (ws == null) {
-            return Response.status(Status.NOT_FOUND).build();
+        if (ws != null) {
+            workspaces.add(ws);
         }
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
-            return Response.ok(ws, MediaType.APPLICATION_XML).build();
+            return Response.ok(workspaces, MediaType.APPLICATION_XML).build();
         }
         return Response.status(Status.FORBIDDEN).build();
     }
@@ -162,60 +168,61 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
     @Produces({"application/xml", "application/json"})
     public Response findAll(@QueryParam("name") String name, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
-                
+
         List<Workspace> workspaces = em.createNamedQuery("Workspace.findByUserId")
                 .setParameter("id", user.getId())
                 .getResultList();
 
-        List<Workspace> filteredList = new ArrayList<Workspace>();
-        if (name != null){
-            for (Workspace ws : workspaces){
-                if (ws.getName().equals(name))
+        List<Workspace> filteredList = new ArrayList<>();
+        if (name != null) {
+            for (Workspace ws : workspaces) {
+                if (ws.getName().equals(name)) {
                     filteredList.add(ws);
+                }
             }
-        }else{
+        } else {
             filteredList = workspaces;
         }
-        
+
         return Response.ok(new Workspaces(filteredList), MediaType.APPLICATION_XML).build();
     }
-            
-    @GET
+
+    @POST
     @Path("{id}/assign")
+    @Consumes({"application/xml", "application/json"})
     @Produces({"application/xml"})
     public Response assignFile(@PathParam("id") Integer wsID,
-            @QueryParam("FILE_ID") Integer fileID,
-            @QueryParam("ROLE") Integer role,
-            @QueryParam("RELATIVE_PATH") String path, @Context HttpServletRequest req) {
+            WorkspaceFileAssociations entity, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
         if (user == null) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         Workspace ws = find(wsID);
-        if (ws == null){
+        if (ws == null) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Workspace with ID {0} not found", wsID);
             return Response.status(Status.NOT_FOUND).build();
         }
-        if (ws.isReadOnly())
+        if (ws.isReadOnly()) {
             return Response.status(Status.FORBIDDEN).build();
-        
-        File f = findFileByID(fileID);
-
-        if (f == null) {
-            return Response.status(Status.NOT_FOUND).build();
         }
-        if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
-            ws.assignFile(f, role, path);
-            getEntityManager().flush();                                    
-            try{
-            return Response.ok(ws).build();
-            }catch(Throwable t){
-                t.printStackTrace();
+
+        for (WorkspaceFileAssociation wfa : entity.getWorkspaceFileAssociations()) {
+            File f = wfa.getFile();//findFileByID(wfa.);
+
+            if (f == null) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "File with ID {0} not found", wfa.getID());
+                return Response.status(Status.NOT_FOUND).build();
+            }
+            if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
+                ws.assignFile(f, wfa.getRole(), wfa.getPath());
+            }else{
+                return Response.status(Status.FORBIDDEN).build();
             }
         }
-
-        return Response.status(Status.FORBIDDEN).build();
+        getEntityManager().flush();
+        return Response.ok(ws).build();
     }
-    
+
     @GET
     @Path("{id}/detach")
     @Produces({"application/xml", "application/json"})
@@ -226,22 +233,50 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         Workspace ws = find(wsID);
-        if (ws.isReadOnly())
-            return Response.status(Status.FORBIDDEN).build();
-        
-        if (ws == null){
+
+        if (ws == null) {
             return Response.status(Status.NOT_FOUND).build();
+        }
+
+        if (ws.isReadOnly()) {
+            return Response.status(Status.FORBIDDEN).build();
         }
         
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
             File f = ws.detachFile(path);
-            if (f == null)
+            if (f == null) {
                 return Response.status(Status.NOT_FOUND).build();
+            }
             return Response.ok(ws).build();
         }
         return Response.status(Status.FORBIDDEN).build();
     }
+
+    @GET
+    @Path("{id}/detachAll")
+    @Produces({"application/xml", "application/json"})
+    public Response detachAllFiles(@PathParam("id") Integer wsID,
+            @Context HttpServletRequest req) {
+        User user = getCurrentUser(req);
+        if (user == null) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        Workspace ws = find(wsID);
+        if (ws == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
         
+        if (ws.isReadOnly()) {
+            return Response.status(Status.FORBIDDEN).build();
+        }
+        
+        if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
+            ws.detachAllFiles();            
+            return Response.ok(ws).build();
+        }
+        return Response.status(Status.FORBIDDEN).build();
+    }
+    
     @GET
     @Path("reset")
     @Produces({"application/xml", "application/json"})
@@ -253,15 +288,16 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         List<Workspace> workspaces = em.createNamedQuery("Workspace.findByUserId")
                 .setParameter("id", user.getId())
                 .getResultList();
-        
-        for (Workspace ws :workspaces){
-            if (!ws.isReadOnly())
+
+        for (Workspace ws : workspaces) {
+            if (!ws.isReadOnly()) {
                 remove(ws);
+            }
         }
         removeUnusedFiles(em);
-        return Response.ok().build();
+        return Response.ok("Successful", MediaType.APPLICATION_XML_TYPE).build();
     }
-    
+
     @GET
     @Path("download/{id_ws}/{id_wfa}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -276,7 +312,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         if (ws == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        
+
         File f = null;
         WorkspaceFileAssociation wfa = null;
         for (WorkspaceFileAssociation wfa2 : ws.getFiles()) {
@@ -290,21 +326,21 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         if (f == null || wfa == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        
-        if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {            
+
+        if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
             final java.io.File file = new java.io.File(f.getLocation());
 
-            try{
+            try {
                 StreamingOutput so = Utilities.streamFile(file);
                 return Response.ok(so).header("fileName", wfa.getPath()).build();
-            }catch(IOException ioe){
+            } catch (IOException ioe) {
                 ioe.printStackTrace();
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
         }
         return Response.status(Response.Status.FORBIDDEN).build();
     }
-    
+
     @GET
     @Path("download/{id}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -319,14 +355,14 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
-            try{
+            try {
                 java.io.File target = new java.io.File(ApplicationConfig.SERVER_TMP_DIRECTORY + "/workspace_" + ws.getId());
                 StreamingOutput so = Utilities.streamWorkspace(target, ws);
-                if (so == null){
+                if (so == null) {
                     return Response.status(Response.Status.NOT_FOUND).build();
                 }
                 return Response.ok(so).header("fileName", ws.getName() + ".zip").build();
-            }catch(Throwable ioe){
+            } catch (Throwable ioe) {
                 ioe.printStackTrace();
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
