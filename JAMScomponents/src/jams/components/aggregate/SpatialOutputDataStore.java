@@ -4,6 +4,7 @@
  */
 package jams.components.aggregate;
 
+import jams.data.DataSupplier;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -107,10 +108,9 @@ public class SpatialOutputDataStore {
 
         Iterator<Double> iter = ids.iterator();
         
-        for (int i=0;i<values.size();i++){
-            double x = values.get(i);//roundToSignificantFigures(,5);
+        for (double x : values){
             if (Double.isInfinite(x) || Double.isNaN(x)){
-                x = -9999;
+                x = -9999.;
             }
             //make sure that every entry has exactly the size of 13 bytes!!
             String result = df2EPos.format(x);

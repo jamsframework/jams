@@ -4,6 +4,7 @@
  */
 package jams.components.aggregate;
 
+import jams.data.DataSupplier;
 import gnu.trove.map.hash.THashMap;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -113,10 +114,9 @@ public class SimpleOutputDataStore {
         strBuffer.delete(0, strBuffer.length());
         strBuffer.append(entry);
         //raf.writeBytes(entry);
-        for (int i=0;i<values.size();i++){
-            double x = values.get(i);//roundToSignificantFigures(,5);
+        for (Double x : values){
             if (Double.isInfinite(x) || Double.isNaN(x)){
-                x = -9999;
+                x = -9999.;
             }            
             //make sure that every entry has exactly the size of 13 bytes!!
             String result = df2EPos.format(x);

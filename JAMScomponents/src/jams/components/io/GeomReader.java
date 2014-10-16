@@ -103,7 +103,12 @@ public class GeomReader extends JAMSComponent {
                     getModel().getRuntime().sendInfoMsg("Could not access attribute " + idName.getValue() + ". Please check your shapefile!");
                     return;
                 }
-                Long id = new Long(attribute.toString());
+                Long id = null;
+                try{
+                    id = new Long(attribute.toString());
+                }catch(NumberFormatException nfe){
+                    id = (long)Double.parseDouble(attribute.toString());
+                }
                 geomMap.put(id, (Geometry) f.getDefaultGeometry());
             }
             

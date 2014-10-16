@@ -21,10 +21,11 @@
  */
 package jams.components.io;
 
-import jams.components.aggregate.DataSupplier;
+import jams.JAMS;
 import jams.components.aggregate.ShapeFileOutputDataStore;
 import jams.components.aggregate.SimpleOutputDataStore;
 import jams.components.aggregate.SpatialOutputDataStore;
+import jams.data.AbstractDataSupplier;
 import jams.data.Attribute;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
@@ -92,18 +93,19 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
     Attribute.Calendar lastTimeStep = null;
     int n = 0;
     
-    private class EntityDataProvider implements DataSupplier<Double>{
+    private class EntityDataProvider extends AbstractDataSupplier<Double, Attribute.EntityCollection>{
         String name = "";
-        public EntityDataProvider(String name){
+        public EntityDataProvider(String name, Attribute.EntityCollection input){
+            super(input);
             this.name = name;
         }
         @Override
         public int size(){
-            return entities.getEntities().size();
+            return input.getEntities().size();
         }
         @Override
         public Double get(int i){
-            return entities.getEntities().get(i).getDouble(name);
+            return input.getEntities().get(i).getDouble(name);
         }
     }
     
@@ -166,7 +168,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
                     
             File f = new File(FileTools.createAbsoluteFileName(path,fileName + ".dat"));
             File f2 = new File(FileTools.createAbsoluteFileName(path,fileName + "_SODS.dat"));
-            entityDataProviders[i] = new EntityDataProvider(this.attributes[i].getValue());
+            entityDataProviders[i] = new EntityDataProvider(this.attributes[i].getValue(), entities);
             try {
                 outData[i] = new SimpleOutputDataStore(f);
                 outData2[i] = new SpatialOutputDataStore(f2);
@@ -188,11 +190,14 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
                            
     @Override
     public void run(){
-        if (lastTimeStep==null){
+        /*if (lastTimeStep==null){
             lastTimeStep = time.getValue();
             return;
+        }*/
+        if (this.time.getTimeInMillis() == JAMS.getMissingDataValue(Long.class)){
+            return;
         }
-        if (this.time.getTimeInMillis() == lastTimeStep.getTimeInMillis()){
+        if (lastTimeStep != null && this.time.getTimeInMillis() == lastTimeStep.getTimeInMillis()){
             return;
         }
         lastTimeStep = time.getValue();
@@ -226,11 +231,13 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
     
     public void cleanup() {
         for (int i = 0; i < n; i++) {
-            getModel().getRuntime().sendInfoMsg("Transfering data to shapefile from dataset: " + outData[i].getFile().getName());
-            try {
-                shpStore[i].addDataToShpFiles(outData[i], this.idName.getValue());
-            } catch (IOException ioe) {
-                getModel().getRuntime().sendHalt("Can't write to output file:" + outData[i].getFile() + "\n" + ioe.toString());
+            if (isEnabled[i].getValue()) {
+                getModel().getRuntime().sendInfoMsg("Transfering data to shapefile from dataset: " + outData[i].getFile().getName());
+                try {
+                    shpStore[i].addDataToShpFiles(outData[i], this.idName.getValue());
+                } catch (IOException ioe) {
+                    getModel().getRuntime().sendHalt("Can't write to output file:" + outData[i].getFile() + "\n" + ioe.toString());
+                }
             }
         }
     }

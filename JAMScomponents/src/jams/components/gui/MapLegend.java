@@ -98,10 +98,10 @@ public class MapLegend extends JPanel {
                     "<Fill>" +
                     "<CssParameter name='fill'>" + hexColor + "</CssParameter>" +
                     "</Fill>" +
-                    "<Stroke>" +
+                    /*"<Stroke>" +
                     "<CssParameter name='stroke'>#000000</CssParameter>" +
                     "<CssParameter name='stroke-width'>1</CssParameter>" +
-                    "</Stroke>" +
+                    "</Stroke>" +*/
                     "</PolygonSymbolizer>" +
                     "</rule>";
         }

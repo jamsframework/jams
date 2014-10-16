@@ -49,7 +49,7 @@ public class DoubleConditionalContext extends JAMSContext {
     public Attribute.Double value1;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Double attribute \"value2\"")
     public Attribute.Double value2;
-
+        
     public DoubleConditionalContext() {
     }
 
@@ -60,14 +60,9 @@ public class DoubleConditionalContext extends JAMSContext {
 
     @Override
     public long getNumberOfIterations() {
-        return 0;
+        return 1;
     }
-    
-    @Override
-    public long getRunCount() {
-        return 0;
-    }    
-
+     
     public class RunEnumerator implements ComponentEnumerator {
 
         final JAMSComponent dummy = new JAMSComponent() {
@@ -96,6 +91,7 @@ public class DoubleConditionalContext extends JAMSContext {
 
         @Override
         public Component next() {
+            runCount++;
             // if condition is true return first component, else second component
             if (value1.getValue() == value2.getValue()) {
                 return compArray[0];

@@ -4,26 +4,17 @@
  */
 package jams.components.aggregate;
 
-import it.unimi.dsi.fastutil.doubles.Double2ObjectAVLTreeMap;
 import jams.JAMS;
 import jams.aggregators.Aggregator.AggregationMode;
 
-import jams.aggregators.BasicTemporalAggregator;
-import jams.aggregators.CompoundTemporalAggregator;
-import jams.aggregators.DoubleArrayAggregator;
-import jams.aggregators.MultiTemporalAggregator;
-import jams.aggregators.TemporalAggregator;
 import jams.aggregators.TemporalAggregator.AggregationTimePeriod;
 import jams.data.Attribute;
-import jams.data.Attribute.Calendar;
 import jams.data.DefaultDataFactory;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  *
@@ -42,24 +33,11 @@ public abstract class TemporalAggregatorBase extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "current time")
     public Attribute.TimeInterval interval;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "id of e.g. the spatial unit",
-    defaultValue = "1")
-    public Attribute.Double id;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Calculate the average value? If average is false, the sum will be calculated.")
-    public Attribute.String[] attributeNames;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "The value(s) to be aggregated")
-    public Attribute.Double[] value;
-            
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+                    
+    /*@JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "A weight to be used to calculate the weighted aggregate",
     defaultValue="1")
-    public Attribute.Double weight;
+    public Attribute.Double weight;*/
         
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "aggregationMode: sum; avg; min; max; ind;")
@@ -88,59 +66,40 @@ public abstract class TemporalAggregatorBase extends JAMSComponent {
     defaultValue = "")
     public Attribute.String customOuterTimePeriod;
         
-    Double2ObjectAVLTreeMap<TemporalAggregator> aggregators = new Double2ObjectAVLTreeMap<TemporalAggregator>();
-    ArrayList<Attribute.TimeInterval> customTimePeriods = new ArrayList<Attribute.TimeInterval>();
+    protected final ArrayList<Attribute.TimeInterval> customTimePeriods = new ArrayList<Attribute.TimeInterval>();
     
-    AggregationTimePeriod outerTimeUnitID = AggregationTimePeriod.YEARLY;
-    AggregationTimePeriod innerTimeUnitID = AggregationTimePeriod.DAILY;
-    AggregationMode outerAggregationModeID[] = null;
-    AggregationMode innerAggregationModeID[] = null;                    
-    boolean isEnabled[] = null;
-        
-    int n = 0;
-    
-    @Override
-    public void initAll(){
-        //create aggreagators
-        for (int i=0;i<n;i++){
-            AggregationMode innerMode = innerAggregationModeID[i];
-            AggregationMode outerMode = outerAggregationModeID[i];
-            
-            BasicTemporalAggregator innerAggregator = new BasicTemporalAggregator(
-                    DoubleArrayAggregator.create(innerMode, n), 
-                    innerTimeUnitID);
-            
-            TemporalAggregator outerAggregator;
-            if (outerMode != AggregationMode.INDEPENDENT){                
-               outerAggregator = new CompoundTemporalAggregator(
-                                    DoubleArrayAggregator.create(outerMode, n),
-                                    innerAggregator,                                
-                                    outerTimeUnitID,
-                                    customTimePeriods);
-            }else{
-                outerAggregator = new MultiTemporalAggregator(                                    
-                                    innerAggregator,                                
-                                    outerTimeUnitID,
-                                    customTimePeriods);
-            }
-            
-            outerAggregator.addConsumer(new TemporalAggregator.Consumer<double[]>() {
-                @Override
-                public void consume(Attribute.Calendar c, double[] v) {
-                    try{
-                        writeData(c,v);
-                    }catch(IOException ioe){
-                        ioe.printStackTrace();
-                    }
-                }
-            });
-            aggregators.put(this.id.getValue(), outerAggregator);
-        }                
+    private AggregationTimePeriod outerTimeUnitID = AggregationTimePeriod.YEARLY;
+    private AggregationTimePeriod innerTimeUnitID = AggregationTimePeriod.DAILY;
+    private AggregationMode outerAggregationModeID[] = null;
+    private AggregationMode innerAggregationModeID[] = null;                    
+    private boolean isEnabled[] = null;
+    private int n = 0;
+
+    boolean isEnabled(int i){
+        return isEnabled[i];
     }
     
-    public boolean checkConfiguration(){
-        //check for consistency
-        int n = attributeNames.length;
+    protected AggregationMode getOuterAggregationModeID(int i){
+        return outerAggregationModeID[i];
+    }
+    protected AggregationMode getInnerAggregationModeID(int i){
+        return innerAggregationModeID[i];
+    }
+    
+    protected AggregationTimePeriod getInnerTimeUnitID(){
+        return innerTimeUnitID;
+    }
+    
+    protected AggregationTimePeriod getOuterTimeUnitID(){
+        return outerTimeUnitID;
+    }
+    
+    protected int getNumberOfAttributes(){
+        return n;
+    }
+    
+    private boolean checkConfiguration(){
+        //check for consistency        
         if (outerAggregationMode != null && outerAggregationMode.length != n){
             getModel().getRuntime().sendInfoMsg("Number of values in parameter \"outerAggregationMode\" does not match the number of attributes");
             return false;
@@ -153,10 +112,10 @@ public abstract class TemporalAggregatorBase extends JAMSComponent {
             getModel().getRuntime().sendInfoMsg("Number of values in parameter \"enabled\" does not match the number of attributes");
             return false;
         }
-        if (value.length != n){
+        /*if (value.length != n){
             getModel().getRuntime().sendInfoMsg("Number of values in parameter \"value\" does not match the number of attributes");
             return false;
-        }
+        }*/
         if (outerTimeUnitID == null){
             getModel().getRuntime().sendInfoMsg("Unknown outer aggregation ID:" + outerTimeUnit);
             return false;
@@ -178,15 +137,15 @@ public abstract class TemporalAggregatorBase extends JAMSComponent {
     }
         
     @Override
-    public void init(){
+    public void init(){        
         getModel().getRuntime().sendInfoMsg("Init " + this.getInstanceName());
-        n = attributeNames.length;               
-        initEnableArray();
-                                
+        n = outerAggregationMode.length;
         if (!checkConfiguration()){
             getModel().getRuntime().sendHalt("Configuration of component " + getInstanceName() + " is not valid!");
         }
         
+        initEnableArray();
+                                                
         outerTimeUnitID = AggregationTimePeriod.fromString(outerTimeUnit.getValue());
         innerTimeUnitID = AggregationTimePeriod.fromString(innerTimeUnit.getValue());
         
@@ -207,7 +166,6 @@ public abstract class TemporalAggregatorBase extends JAMSComponent {
                 innerAggregationModeID[i] = AggregationMode.AVERAGE;
             }
         }
-        
         customTimePeriods.clear();
         if (!customOuterTimePeriod.getValue().isEmpty()) {
             String periods[] = customOuterTimePeriod.getValue().split(";");
@@ -234,43 +192,5 @@ public abstract class TemporalAggregatorBase extends JAMSComponent {
                 }
             }
         }  
-    }
-
-    abstract void writeData(Calendar c, double [] values ) throws IOException;
-                               
-    private void finish(){
-        for (TemporalAggregator a : aggregators.values()){
-            a.finish();
-        }
-        //do whatever is now necessary .. 
-    }
-    
-    private double buffer[] = null;//
-    @Override
-    public void run(){        
-        //get id of entity
-        double iid = id.getValue();
-                
-        TemporalAggregator aggregator = aggregators.get(iid);
-        //should never happen
-        if (aggregator == null)
-            return;
-                        
-        if (buffer==null){
-            buffer = new double[n];
-        }
-        for (int i=0;i<n;i++){
-            buffer[i] = value[i].getValue() / weight.getValue();
-        }
-        aggregator.aggregate(time, buffer);
-                        
-        //recheck if this is the last timestep, if so output data        
-        //avoid cloning calendars!!
-        time.add(interval.getTimeUnit(), interval.getTimeUnitCount());
-        boolean isLastTimeStep = time.after(interval.getEnd());
-        if (isLastTimeStep){
-            finish();
-        }        
-        time.add(interval.getTimeUnit(), -interval.getTimeUnitCount());
     }
 }

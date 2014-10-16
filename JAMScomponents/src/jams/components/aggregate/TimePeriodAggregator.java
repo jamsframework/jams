@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.doubles.Double2ObjectAVLTreeMap;
 import jams.JAMS;
 import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
+import jams.data.DoubleArrayDataSupplier;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
@@ -334,21 +335,6 @@ public class TimePeriodAggregator extends JAMSComponent {
         
     int n = 0;
     
-    private class ArrayDataProvider implements DataSupplier<Double>{
-        double buffer[];
-        public ArrayDataProvider(double[] buffer){
-            this.buffer = buffer;
-        }
-        @Override
-        public int size(){
-            return buffer.length;
-        }
-        @Override
-        public Double get(int i){
-            return buffer[i];
-        }
-    }
-    
     public boolean checkConfiguration(){
         //check for consistency
         int n = attributeNames.length;
@@ -669,12 +655,12 @@ public class TimePeriodAggregator extends JAMSComponent {
                             if (innerAggregationTimePeriod == AggregationTimePeriod.YEARLY){
                                 c.add(Calendar.YEAR, k);
                             }
-                            outData[i].writeData(c.toString(), new ArrayDataProvider(buffers.get(k)));
-                            outData2[i].writeData(c.toString(), new ArrayDataProvider(buffers.get(k)));
+                            outData[i].writeData(c.toString(), new DoubleArrayDataSupplier(buffers.get(k)));
+                            outData2[i].writeData(c.toString(), new DoubleArrayDataSupplier(buffers.get(k)));
                         }
                     }else{
-                        outData[i].writeData(outerTimePeriod.toString(), new ArrayDataProvider(buffer));
-                        outData2[i].writeData(outerTimePeriod.toString(), new ArrayDataProvider(buffer));
+                        outData[i].writeData(outerTimePeriod.toString(), new DoubleArrayDataSupplier(buffer));
+                        outData2[i].writeData(outerTimePeriod.toString(), new DoubleArrayDataSupplier(buffer));
                     }
                 }
             }catch (IOException ioe) {

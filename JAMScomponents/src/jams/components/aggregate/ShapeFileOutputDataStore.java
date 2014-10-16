@@ -4,6 +4,7 @@
  */
 package jams.components.aggregate;
 
+import jams.data.NamedDataSupplier;
 import jams.components.dbf.DBFField;
 import jams.components.dbf.DBFReader;
 import jams.components.dbf.DBFWriter;
@@ -51,10 +52,10 @@ public class ShapeFileOutputDataStore {
                     
                     if (Files.exists(dest)) {                        
                         if (Files.size(dest) != Files.size(src)) {
-                            Files.copy(Paths.get(srcFile.getAbsolutePath()), dest, StandardCopyOption.REPLACE_EXISTING);
+                            Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
                         }
                     }else{
-                        Files.copy(Paths.get(srcFile.getAbsolutePath()), dest, StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(src, dest, StandardCopyOption.REPLACE_EXISTING);
                     }
                 } catch (IOException ioe) {
                     ioe.printStackTrace();

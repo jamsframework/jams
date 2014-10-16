@@ -77,7 +77,10 @@ public class BooleanConditionalExecutionContext extends JAMSContext {
 
     @Override
     public long getNumberOfIterations() {
-        return 1;
+        if (condition.getValue())
+            return 1;
+        else
+            return 0;
     }
 
     class EmptyEnumerator implements ComponentEnumerator {
