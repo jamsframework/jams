@@ -20,6 +20,9 @@ import javax.swing.tree.DefaultTreeModel;
  */
 public class JobsTree extends JAMSServerTree {
     
+    /**
+     *
+     */
     public JobsTree() {
         super();
     }
@@ -33,6 +36,10 @@ public class JobsTree extends JAMSServerTree {
         return top;
     }
     
+    /**
+     *
+     * @param job
+     */
     public void updateNode(Job job){
         DefaultMutableTreeNode newNode = createJobNode(job);        
         DefaultMutableTreeNode oldNode = findNode(getRoot(), job);
@@ -45,6 +52,10 @@ public class JobsTree extends JAMSServerTree {
         parent.insert(newNode, index);        
     }
                     
+    /**
+     *
+     * @return
+     */
     public Job getSelectedJob() {
         if (!this.isShowing())
             return null;
@@ -56,6 +67,12 @@ public class JobsTree extends JAMSServerTree {
         return null;
     }
             
+    /**
+     *
+     * @param root
+     * @param object
+     * @return
+     */
     public JobNode findNode(SortedMutableTreeNode root, Job object){
         Object o = root.getUserObject();
         if (o.equals(object)){
@@ -70,6 +87,11 @@ public class JobsTree extends JAMSServerTree {
         return null;
     }
         
+    /**
+     *
+     * @param user
+     * @param jobs
+     */
     public void generateModel(User user, Jobs jobs) {
         SortedMutableTreeNode root = JAMSServerTreeNodes.getNode(user);
 

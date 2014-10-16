@@ -25,20 +25,36 @@ public class JAMSServerTreeNodes {
      */
     public static class SortedMutableTreeNode extends DefaultMutableTreeNode implements Comparable<SortedMutableTreeNode> {
 
+        /**
+         *
+         * @param o
+         */
         public SortedMutableTreeNode(Object o) {
             super(o);
         }
 
+        /**
+         *
+         * @param newChild
+         */
         public void add(DefaultMutableTreeNode newChild) {
             super.add(newChild);
             Collections.sort(this.children, nodeComparator);
         }
 
+        /**
+         *
+         * @param newChild
+         * @param childIndex
+         */
         public void insert(DefaultMutableTreeNode newChild, int childIndex) {
             super.insert(newChild, childIndex);
             Collections.sort(this.children, nodeComparator);
         }
         
+        /**
+         *
+         */
         protected Comparator nodeComparator = new Comparator() {
             @Override
             public int compare(Object o1, Object o2) {
@@ -68,6 +84,9 @@ public class JAMSServerTreeNodes {
         }
     }
 
+    /**
+     *
+     */
     static public class UserNode extends SortedMutableTreeNode {        
         private UserNode(User user) {
             super(user);
@@ -79,12 +98,23 @@ public class JAMSServerTreeNodes {
         }                
     }
         
-    static public class WorkspaceNode extends SortedMutableTreeNode {        
-        
+    /**
+     *
+     */
+    static public class WorkspaceNode extends SortedMutableTreeNode {
+
+        /**
+         *
+         * @param ws
+         */
         public WorkspaceNode(Workspace ws) {
             super(ws);
         }
         
+        /**
+         *
+         * @return
+         */
         public Workspace getWorkspace(){
             return (Workspace)userObject;
         }
@@ -109,12 +139,23 @@ public class JAMSServerTreeNodes {
         }
     }
 
+    /**
+     *
+     */
     static public class JobNode extends SortedMutableTreeNode {    
 
+        /**
+         *
+         * @param job
+         */
         public JobNode(Job job) {
             super(job);
         }
 
+        /**
+         *
+         * @return
+         */
         public Job getJob(){
             return (Job)getUserObject();
         }
@@ -140,12 +181,19 @@ public class JAMSServerTreeNodes {
         }
     }
 
+    /**
+     *
+     */
     static public class WFANode extends SortedMutableTreeNode {    
 
         WorkspaceFileAssociation wfa;
         String fileName;
         String subdirs[];
 
+        /**
+         *
+         * @param wfa
+         */
         public WFANode(WorkspaceFileAssociation wfa) {
             super(wfa);
             
@@ -162,14 +210,26 @@ public class JAMSServerTreeNodes {
             }
         }
 
+        /**
+         *
+         * @return
+         */
         public WorkspaceFileAssociation getWFA(){
             return wfa;
         }
         
+        /**
+         *
+         * @return
+         */
         public String[] getSubdirs() {
             return subdirs;
         }
 
+        /**
+         *
+         * @return
+         */
         public String getFileName() {
             return fileName;
         }
@@ -180,18 +240,47 @@ public class JAMSServerTreeNodes {
         }
     }
     
+    /**
+     *
+     * @param user
+     * @return
+     */
     static public SortedMutableTreeNode getNode(User user){
         return new UserNode(user);
     }
+
+    /**
+     *
+     * @param ws
+     * @return
+     */
     static public SortedMutableTreeNode getNode(Workspace ws){
         return new WorkspaceNode(ws);
     }
+
+    /**
+     *
+     * @param wfa
+     * @return
+     */
     static public SortedMutableTreeNode getNode(WorkspaceFileAssociation wfa){
         return new WFANode(wfa);
     }
+
+    /**
+     *
+     * @param job
+     * @return
+     */
     static public SortedMutableTreeNode getNode(Job job){
         return new JobNode(job);
     }
+
+    /**
+     *
+     * @param string
+     * @return
+     */
     static public SortedMutableTreeNode getNode(String string){
         return new SortedMutableTreeNode(string);
     }

@@ -21,6 +21,9 @@ import javax.swing.tree.TreePath;
  */
 public class WorkspaceTree extends JAMSServerTree {
 
+    /**
+     *
+     */
     public WorkspaceTree() {
         super();
     }
@@ -34,6 +37,10 @@ public class WorkspaceTree extends JAMSServerTree {
         return top;
     }
         
+    /**
+     *
+     * @return
+     */
     public SortedMutableTreeNode getSelectedNode(){
         TreePath path = getSelectionPath();
         if (path == null)
@@ -45,6 +52,10 @@ public class WorkspaceTree extends JAMSServerTree {
         return null;
     }
         
+    /**
+     *
+     * @return
+     */
     public Workspace getSelectedWorkspace(){
         if (!isShowing())
             return null;
@@ -56,6 +67,12 @@ public class WorkspaceTree extends JAMSServerTree {
         return null;
     }
     
+    /**
+     *
+     * @param root
+     * @param object
+     * @return
+     */
     public WorkspaceNode findNode(SortedMutableTreeNode root, Workspace object){
         Object o = root.getUserObject();
         if (o.equals(object)){
@@ -70,6 +87,11 @@ public class WorkspaceTree extends JAMSServerTree {
         return null;
     }
            
+    /**
+     *
+     * @param user
+     * @param workspaces
+     */
     public void generateModel(User user, Workspaces workspaces) {
         SortedMutableTreeNode root = JAMSServerTreeNodes.getNode(user);
 

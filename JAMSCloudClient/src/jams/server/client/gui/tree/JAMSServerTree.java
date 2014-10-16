@@ -158,10 +158,18 @@ public abstract class JAMSServerTree extends JTree {
         }
     }
 
+    /**
+     *
+     */
     public JAMSServerTree() {
         setCellRenderer(new WorkspaceCellRenderer());
     }
 
+    /**
+     *
+     * @param wfa
+     * @param top
+     */
     protected void attachWFAtoTree(WorkspaceFileAssociation wfa, SortedMutableTreeNode top) {
         WFANode node = new WFANode(wfa);
 
@@ -189,6 +197,10 @@ public abstract class JAMSServerTree extends JTree {
         }
     }
               
+    /**
+     *
+     * @return
+     */
     public SortedMutableTreeNode getSelectedNode(){
         TreePath path = getSelectionPath();
         if (path == null)
@@ -200,10 +212,19 @@ public abstract class JAMSServerTree extends JTree {
         return null;
     }
                     
+    /**
+     *
+     * @return
+     */
     public SortedMutableTreeNode getRoot(){
         return (SortedMutableTreeNode)this.getModel().getRoot();
     }
 
+    /**
+     *
+     * @param e
+     * @return
+     */
     public Object getUserObjectAtLocation(MouseEvent e) {
         TreePath p = getClosestPathForLocation(e.getX(), e.getY());
         if (p != null) {

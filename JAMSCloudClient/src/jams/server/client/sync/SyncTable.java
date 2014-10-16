@@ -7,8 +7,8 @@ package jams.server.client.sync;
 
 import jams.JAMS;
 import jams.server.client.Controller;
-import jams.server.client.Utilities;
 import jams.server.entities.Workspace;
+import jams.tools.StringTools;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -45,6 +45,11 @@ public class SyncTable extends JTable {
 
     final int SYNCMODE_COLUMN = 3;
 
+    /**
+     *
+     * @param ctrl
+     * @param defaultFont
+     */
     public SyncTable(Controller ctrl, Font defaultFont) {
         super(10, 5);
         this.ctrl = ctrl;
@@ -54,20 +59,36 @@ public class SyncTable extends JTable {
         }
     }
 
+    /**
+     *
+     * @param localWorkspace
+     */
     public void setLocalWorkspace(File localWorkspace) {
         this.localWorkspace = localWorkspace;
         initModel();
     }
 
+    /**
+     *
+     * @return
+     */
     public File getLocalWorkspace() {
         return this.localWorkspace;
     }
 
+    /**
+     *
+     * @param serverWorkspace
+     */
     public void setServerWorkspace(Workspace serverWorkspace) {
         this.serverWorkspace = serverWorkspace;
         initModel();
     }
 
+    /**
+     *
+     * @return
+     */
     public Workspace getServerWorkspace() {
         return this.serverWorkspace;
     }
@@ -82,7 +103,7 @@ public class SyncTable extends JTable {
         setDefaultRenderer(String.class, renderer);
         setDefaultRenderer(Long.class, renderer);
         getColumnModel().getColumn(SYNCMODE_COLUMN).setCellRenderer(renderer);
-        
+
         getColumnModel().getColumn(SYNCMODE_COLUMN).setCellEditor(new SyncModeEditor());
 
         setShowHorizontalLines(false);
@@ -91,35 +112,53 @@ public class SyncTable extends JTable {
             getColumnModel().getColumn(i).setPreferredWidth(COLUMN_SIZE[i]);
         }
     }
-    
+
     @Override
     public SyncTableModel getModel() {
-        if (super.getModel() instanceof SyncTableModel)
+        if (super.getModel() instanceof SyncTableModel) {
             return (SyncTableModel) super.getModel();
-        else 
+        } else {
             return null;
+        }
     }
 
+    /**
+     *
+     */
     public class SyncTableModel extends AbstractTableModel {
 
         ArrayList<FileSync> syncList = null;
 
+        /**
+         *
+         * @param ctrl
+         * @param localWsDirectory
+         * @param remoteWs
+         */
         public SyncTableModel(Controller ctrl, File localWsDirectory, Workspace remoteWs) {
             if (ctrl == null
                     || localWsDirectory == null
                     || remoteWs == null) {
                 syncList = new ArrayList<>();
             } else {
-                syncList = ctrl.getWorkspaceController()
+                syncList = ctrl.workspaces()
                         .getSynchronizationList(localWsDirectory, remoteWs)
                         .getList(null);
             }
         }
 
+        /**
+         *
+         * @return
+         */
         public List<FileSync> getSyncList() {
             return syncList;
         }
 
+        /**
+         *
+         * @return
+         */
         public FileSync getRoot() {
             if (syncList == null || syncList.isEmpty()) {
                 return null;
@@ -266,10 +305,10 @@ public class SyncTable extends JTable {
             setForeground(Color.BLACK);
 
             if (value instanceof Long) {
-                setText(Utilities.formatSize((Long) value));
+                setText(StringTools.humanReadableByteCount((Long) value, false));
                 setHorizontalAlignment(JLabel.RIGHT);
             } else if (value instanceof Integer) {
-                setText(Utilities.formatSize((Integer) value));
+                setText(StringTools.humanReadableByteCount((Integer) value, false));
                 setHorizontalAlignment(JLabel.RIGHT);
             } else {
                 setText(value.toString());
@@ -318,7 +357,7 @@ public class SyncTable extends JTable {
                     tableSyncModeCells[i].setForeground(Color.white);
                 }
 
-                ((JLabel) tableSyncModeCells[i]).setOpaque(true);                
+                ((JLabel) tableSyncModeCells[i]).setOpaque(true);
             } else {
                 JComboBox box = new JComboBox(fs.getSyncOptions());
                 box.putClientProperty("row", new Integer(i));
@@ -335,7 +374,7 @@ public class SyncTable extends JTable {
                 tableSyncModeCells[i].setBackground(Color.WHITE);
                 tableSyncModeCells[i].setForeground(Color.BLACK);
             }
-            tableSyncModeCells[i].setFont(defaultFont);            
+            tableSyncModeCells[i].setFont(defaultFont);
         }
     }
 

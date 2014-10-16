@@ -43,6 +43,12 @@ public class ViewStreamDlg extends JDialog{
     int currentView = 0;
     int currentRead = 0;
     
+    /**
+     *
+     * @param owner
+     * @param is
+     * @param title
+     */
     public ViewStreamDlg(Dialog owner, InputStream is, String title){
         super(owner);
         this.setTitle(title);
@@ -129,6 +135,10 @@ public class ViewStreamDlg extends JDialog{
         super.setVisible(isShown);
     }
     
+    /**
+     *
+     * @return
+     */
     public String next(){
         try{
             String s = reader.readLine();
@@ -140,6 +150,10 @@ public class ViewStreamDlg extends JDialog{
         }
         return null;        
     }    
+
+    /**
+     *
+     */
     public void fillBuffer(){
         String s = null;
         while (currentRead < currentView && (s = next()) != null)

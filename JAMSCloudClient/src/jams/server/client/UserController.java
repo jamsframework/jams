@@ -22,36 +22,78 @@
 
 package jams.server.client;
 
+import jams.JAMS;
 import jams.server.entities.User;
 import jams.server.entities.Users;
+import static jams.tools.LogTools.log;
+import java.util.logging.Level;
 
 /**
  *
- * @author christian
+ * @author Christian Fischer <christian.fischer.2@uni-jena.de>
  */
 public class UserController {
-    Controller ctrl;
+    private final HTTPClient client;
+    private final String urlStr;
+
+    /**
+     * ensures the construction of a working JobController
+     * @param ctrl parent controller
+     */
     public UserController(Controller ctrl){
-        this.ctrl = ctrl;
+        this.client = ctrl.getClient();
+        this.urlStr = ctrl.getServerURL();
     }
     
-    public Users getAllUsers() {
-        return (Users) ctrl.getClient().httpGet(ctrl.getServerURL() + "/user/all", Users.class);
+    /**
+     * retrieves a list of all users
+     * admin priveledges required
+     * @return a list of all users
+     */
+    public Users findAll() {
+        log(getClass(), Level.FINE, JAMS.i18n("Retrieving_list_of_users"));
+        return client.httpGet(urlStr + "/user/all", Users.class);
     }
 
-    public Users getUsersInRange(int from, int to) {
-        return (Users)ctrl.getClient().httpGet(ctrl.getServerURL() + "/user/" + from + "/" + to, Users.class);
+    /**
+     * retrieves a list of all users in the range from "from" to "to" 
+     * admin priveledges required
+     * @param from lowest index (including) that should be retrieved
+     * @param to highest index (including) that should be retrieved
+     * @return a list of all users in the range from "from" to "to" 
+     */
+    public Users findInRange(int from, int to) {
+        log(getClass(), Level.FINE, JAMS.i18n("Retrieving_list_of_users_from_{0}_to_{1}"), from, to);
+        return client.httpGet(urlStr + "/user/" + from + "/" + to, Users.class);
     }
 
-    public User getUser(int id) {
-        return (User) ctrl.getClient().httpGet(ctrl.getServerURL() + "/user/" + id, User.class);
+    /**
+     * finds a user with a specific id
+     * @param id to be searched for
+     * @return the user with the specific id
+     */
+    public User find(int id) {
+        log(getClass(), Level.FINE, JAMS.i18n("Retrieving_user_with_id_{0}"), id);
+        return client.httpGet(urlStr + "/user/" + id, User.class);
     }
 
-    public User removeUser(int id) {
-        return (User)ctrl.getClient().httpPost(ctrl.getServerURL() + "/user/" + id, "DELETE", null, User.class);
+    /**
+     * deletes a user
+     * @param id of the user to be deleted
+     * @return the deleted user
+     */
+    public User delete(int id) {
+        log(getClass(), Level.FINE, JAMS.i18n("Deleting_user_with_id_{0}"), id);
+        return client.httpPost(urlStr + "/user/" + id, "DELETE", null, User.class);
     }
 
+    /**
+     * creates a new user
+     * @param user object, id of this object is not valid
+     * @return the new user with updated id
+     */
     public User createUser(User user) {
-        return (User)ctrl.getClient().httpPost(ctrl.getServerURL() + "/user/create", "PUT", user, User.class);        
+        log(getClass(), Level.FINE, JAMS.i18n("Creating_new_user"));
+        return client.httpPost(urlStr + "/user/create", "PUT", user, User.class);        
     }
 }

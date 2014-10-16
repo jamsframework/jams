@@ -28,110 +28,173 @@ import jams.server.entities.Jobs;
 import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
 import jams.tools.FileTools;
+import static jams.tools.LogTools.log;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.ws.rs.ProcessingException;
 
 /**
  *
- * @author christian
+ * @author Christian Fischer <christian.fischer.2@uni-jena.de>
  */
 public class JobController {
-    private static final Logger log = Logger.getLogger( Controller.class.getName() );
-    
-    Controller ctrl = null;
-    FileController fileController = null;
 
+    private final Controller ctrl;
+    private final HTTPClient client;
+    private final String urlStr;
+
+    /**
+     * ensures the construction of a working JobController
+     *
+     * @param ctrl the parent controller
+     */
     public JobController(Controller ctrl) {
         this.ctrl = ctrl;
+        this.client = ctrl.getClient();
+        this.urlStr = ctrl.getServerURL();
+    }
 
-        fileController = ctrl.getFileController();
-    }
-    
+    /**
+     * creates a new job from a workspace and a model file
+     *
+     * @param ws the workspace from which the job is created
+     * @param wfa the model file
+     * @return the new Job
+     */
     public Job create(Workspace ws, WorkspaceFileAssociation wfa) {
-        log.fine(JAMS.i18n("creating_job_for_workspace%1_and_model%2")
-                .replace("%1", "\n" + ws.getName() + "\n")
-                .replace("%2", wfa.getPath()));                
-        return (Job) ctrl.getClient().httpGet(ctrl.getServerURL() + "/job/create?workspace=" + ws.getId() + "&file=" + wfa.getFile().getId(), Job.class);
+        log(this.getClass(),
+                Level.FINE, JAMS.i18n("creating_job_from_workspace_{0}_with_model_{1}"),
+                ws.getName(), wfa.getFileName());
+        return client.httpGet(urlStr + "/job/create?workspace=" + ws.getId() + "&file=" + wfa.getFile().getId(), Job.class);
     }
-    
+
+    /**
+     * finds all jobs associated with the user
+     *
+     * @return the jobs of the user
+     */    
     public Jobs find() {
-        log.fine(JAMS.i18n("retrieving_jobs_of_user"));
-        return (Jobs) ctrl.getClient().httpGet(ctrl.getServerURL() + "/job/find", Jobs.class);
-    }
-    
-    public Jobs getActiveJobs() {
-        log.fine(JAMS.i18n("retrieving_active_jobs_of_user"));        
-        return (Jobs) ctrl.getClient().httpGet(ctrl.getServerURL() + "/job/findActive", Jobs.class);
-    }
-    
-    public Jobs findAll() {
-        log.fine(JAMS.i18n("retrieving_all_jobs"));
-        if (ctrl.user.getAdmin()==0){
-            log.severe(JAMS.i18n("operation_denied_since_user_is_not_an_admin"));
-            return null;
-        }
-        return (Jobs) ctrl.getClient().httpGet(ctrl.getServerURL() + "/job/findAll", Jobs.class);
-    }
-    
-    public JobState getState(Job job) {
-        log.fine(JAMS.i18n("getting_state_of_job") + " " + job.getId());
-        return (JobState) ctrl.getClient().httpGet(ctrl.getServerURL() + "/job/" + job.getId() + "/state", JobState.class);
-    }
-    
-    public JobState kill(Job job) {
-        log.fine(JAMS.i18n("killing_job") + " " + job.getId());
-        return (JobState) ctrl.getClient().httpGet(ctrl.getServerURL() + "/job/" + job.getId() + "/kill", JobState.class);
-    }
-    
-    public Job remove(Job job) {
-        log.fine(JAMS.i18n("deleting_job") + " " + job.getId());
-        return (Job) ctrl.getClient().httpGet(ctrl.getServerURL() + "/job/" + job.getId() + "/delete", Job.class);
-    }
-    
-    public void removeAll() {        
-        ctrl.getClient().httpGet(ctrl.getServerURL() + "/job/reset", String.class);
-        return;
+        log(this.getClass(), Level.FINE, JAMS.i18n("retrieving_jobs_of_user"));
+        return client.httpGet(urlStr + "/job/find", Jobs.class);
     }
         
-    public String getInfoLog(Job job, int offset, int size) {
-        log.fine(JAMS.i18n("retrieving_info_log_stream_of_job") + " " + job.getId());
-        InputStream is = ctrl.getClient().getStream(ctrl.getServerURL() + "/job/" + job.getId() + "/infolog");
-        try {
-            return FileTools.streamToString(is, offset, size);
-        } catch (IOException ioe) {
-            log.log(Level.SEVERE, ioe.toString(), ioe);
-        } finally {
-            try {
-                is.close();
-            } catch (IOException ioe) {
-            }
-        }
-        return null;
+    /**
+     * finds all jobs associated with the user which are running
+     *
+     * @return the active jobs of the user
+     */  
+    public Jobs findActive() {
+        log(this.getClass(), Level.FINE, JAMS.i18n("retrieving_active_jobs_of_user"));
+        return client.httpGet(urlStr + "/job/findActive", Jobs.class);
     }
-    
-    public String getErrorLog(Job job, int offset, int size) {
-        log.fine(JAMS.i18n("retrieving_error_log_stream_of_job") + " " + job.getId());
-        InputStream is = ctrl.getClient().getStream(ctrl.getServerURL() + "/job/" + job.getId() + "/errorlog");
+
+     /**
+     * finds all jobs of all users, requires administration rights
+     *
+     * @return the jobs of all user
+     */  
+    public Jobs findAll() {
+        log(this.getClass(), Level.FINE, JAMS.i18n("retrieving_all_jobs"));
+        if (ctrl.getUser().getAdmin() == 0) {
+            throw new ProcessingException(JAMS.i18n("operation_denied_since_user_is_not_an_admin"));
+        }
+        return client.httpGet(urlStr + "/job/findAll", Jobs.class);
+    }
+     /**
+     * retrieves the state of a job
+     *
+     * @param job the job in question
+     * @return the jobs state
+     */  
+    public JobState getState(Job job) {
+        log(this.getClass(), Level.FINE, JAMS.i18n("getting_the_state_of_job:{0}"), job.getId());
+        return client.httpGet(urlStr + "/job/" + job.getId() + "/state", JobState.class);
+    }
+
+    /**
+     * stops execution of a job
+     * @param job in question
+     * @return the state of the job which was killed
+     */
+    public JobState kill(Job job) {
+        log(this.getClass(), Level.FINE, JAMS.i18n("killing_the_job_with_id_{0}"), job.getId());
+        return client.httpGet(urlStr + "/job/" + job.getId() + "/kill", JobState.class);
+    }
+
+    /**
+     * deletes a job 
+     * @param job in question
+     * @return the job which was deleted
+     */
+    public Job delete(Job job) {
+        log(this.getClass(), Level.FINE, JAMS.i18n("deleting_the_job_with_id_{0}"), job.getId());
+        return client.httpGet(urlStr + "/job/" + job.getId() + "/delete", Job.class);
+    }
+
+    /**
+     * deletes all jobs of the user
+     */
+    public void deleteAll() {
+        log(this.getClass(), Level.FINE, JAMS.i18n("deleting_all_jobs"));
+        client.httpGet(urlStr + "/job/reset", String.class);
+    }
+
+    /**
+     * retrieves a part from the jobs inflolog
+     * @param job of which the infolog is retrieved
+     * @param offset from start
+     * @param size maximum size in bytes which should be retrieved 
+     * @return a string representation of the infolog
+     * @throws IOException
+     */
+    public String infolog(Job job, int offset, int size) throws IOException {
+        log(this.getClass(), Level.FINE, JAMS.i18n("retrieving_info_log_stream_of_job_{0}"), job.getId());
+        InputStream is = client.getStream(urlStr + "/job/" + job.getId() + "/infolog");
         try {
             return FileTools.streamToString(is, offset, size);
-        } catch (IOException ioe) {
-            log.log(Level.SEVERE, ioe.toString(), ioe);
         } finally {
             try {
                 is.close();
             } catch (IOException ioe) {
+                log(this.getClass(), Level.WARNING, ioe, ioe.toString());
             }
         }
-        return null;        
-    }   
-    
-    public File downloadWorkspace(File target, Job job) {
-        log.fine(JAMS.i18n("downloading_workspace_of_job") + " " + job.getId());
-        Workspace ws = (Workspace)ctrl.getClient().httpGet(ctrl.getServerURL() + "/job/"+job.getId()+ "/refresh/", Workspace.class);
-                
-        return ctrl.getWorkspaceController().downloadWorkspace(target, ws);
+    }
+
+    /**
+     * retrieves a part from the jobs errorlog
+     * @param job of which the error is retrieved
+     * @param offset from start
+     * @param size maximum size in bytes which should be retrieved 
+     * @return a string representation of the errorlog
+     * @throws IOException
+     */
+    public String errorlog(Job job, int offset, int size) throws IOException {
+        log(this.getClass(), Level.FINE, JAMS.i18n("retrieving_error_log_stream_of_job_{0}"), job.getId());
+        InputStream is = client.getStream(urlStr + "/job/" + job.getId() + "/errorlog");
+        try {
+            return FileTools.streamToString(is, offset, size);
+        } finally {
+            try {
+                is.close();
+            } catch (IOException ioe) {
+                log(this.getClass(), Level.WARNING, ioe, ioe.toString());
+            }
+        }
+    }
+
+    /**
+     * downloads the workspace of the job
+     * @param target location in local file system
+     * @param job which should be downloaded
+     * @return file object where the job was saved to
+     * @throws IOException
+     */
+    public File download(File target, Job job) throws IOException {
+        log(this.getClass(), Level.FINE, JAMS.i18n("downloading_workspace_of_job_{0}"), job.getId());
+        Workspace ws = client.httpGet(urlStr + "/job/" + job.getId() + "/refresh/", Workspace.class);
+        return ctrl.workspaces().downloadWorkspace(target, ws);
     }
 }

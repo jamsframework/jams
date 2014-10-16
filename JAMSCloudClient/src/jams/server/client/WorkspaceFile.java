@@ -6,7 +6,6 @@
 package jams.server.client;
 
 import java.io.File;
-import java.util.Collection;
 
 /**
  *
@@ -18,20 +17,38 @@ public class WorkspaceFile implements Comparable<WorkspaceFile> {
     private final String relativPath;
     private final int role;
 
+    /**
+     *
+     * @param localFile
+     * @param role
+     * @param relativePath
+     */
     public WorkspaceFile(File localFile, int role, String relativePath) {
         this.localFile = localFile;
         this.relativPath = relativePath;
         this.role = role;
     }
 
+    /**
+     *
+     * @return
+     */
     public File getLocalFile() {
         return localFile;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getRole() {
         return role;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getRelativePath() {
         return relativPath;
     }
@@ -47,14 +64,5 @@ public class WorkspaceFile implements Comparable<WorkspaceFile> {
     @Override
     public int compareTo(WorkspaceFile o) {
         return this.getRelativePath().compareToIgnoreCase(o.getRelativePath());
-    }
-    
-    static public File[] convertWorkspaceFileToFile(Collection<WorkspaceFile> files){
-        File list[] = new File[files.size()];
-        int i=0;
-        for (WorkspaceFile wf : files) {
-            list[i++] = wf.getLocalFile();
-        }
-        return list;
     }
 }

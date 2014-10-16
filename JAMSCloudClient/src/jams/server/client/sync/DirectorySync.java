@@ -21,6 +21,12 @@ public class DirectorySync extends FileSync {
 
     TreeSet<FileSync> children = new TreeSet<>();
 
+    /**
+     *
+     * @param wc
+     * @param parent
+     * @param localDirectory
+     */
     public DirectorySync(WorkspaceController wc, DirectorySync parent, File localDirectory) {
         this.parent = parent;
         this.wc = wc;
@@ -37,6 +43,11 @@ public class DirectorySync extends FileSync {
         this.isFileModified = false;                
     }
 
+    /**
+     *
+     * @param list
+     * @return
+     */
     @Override
     public ArrayList<FileSync> getList(ArrayList<FileSync> list){
         if (list == null){
@@ -49,16 +60,25 @@ public class DirectorySync extends FileSync {
         return list;
     }
     
+    /**
+     *
+     * @return
+     */
     public Set<FileSync> getChildren() {
         return children;
     }
 
+    /**
+     *
+     * @param path
+     * @param serverFile
+     */
     public void createSyncEntry(String path, jams.server.entities.WorkspaceFileAssociation serverFile) {
         path = FileTools.normalizePath(path);
         int index = path.indexOf("/");
                         
         if (index == -1) {
-            addFileSync(new FileSync(wc, this, serverFile, path));
+            addFileSync(new FileSync(client, this, serverFile, path));
         } else {
             String subDirName = path.substring(0, index);
             doSync = false;
@@ -74,6 +94,11 @@ public class DirectorySync extends FileSync {
         }
     }
 
+    /**
+     *
+     * @param doSync
+     * @param recursive
+     */
     @Override
     public void setDoSync(boolean doSync, boolean recursive) {
         super.setDoSync(doSync, recursive);
@@ -91,6 +116,10 @@ public class DirectorySync extends FileSync {
         this.children.add(filesync);
     }
 
+    /**
+     *
+     * @param filter
+     */
     @Override
     public void applySyncFilter(SyncFilter filter){
         setDoSync(filter.isFiltered(this), false);
@@ -100,6 +129,11 @@ public class DirectorySync extends FileSync {
         }
     }
     
+    /**
+     *
+     * @param mode
+     * @return
+     */
     @Override
     public boolean setSyncMode(SyncMode mode) {
         SyncMode options[] = getSyncOptions();

@@ -5,12 +5,16 @@
  */
 package jams.server.client.sync;
 
+import jams.server.client.Controller;
 import jams.server.client.WorkspaceController;
 import jams.server.entities.WorkspaceFileAssociation;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,8 +22,34 @@ import java.util.Date;
  */
 public class FileSync implements Comparable {
 
-    public enum SyncMode{CREATE, UPDATE, DUPLICATE, NOTHING};
+    Logger logger = Logger.getLogger(FileSync.class.getName());
     
+    /**
+     *
+     */
+    public enum SyncMode{
+
+        /**
+         *
+         */
+        CREATE,
+
+        /**
+         *
+         */
+        UPDATE,
+
+        /**
+         *
+         */
+        DUPLICATE,
+
+        /**
+         *
+         */
+        NOTHING};
+    
+    Controller client = null;
     WorkspaceController wc = null;
     DirectorySync parent;
     
@@ -35,17 +65,46 @@ public class FileSync implements Comparable {
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
 
+    /**
+     *
+     */
     public static abstract class SyncFilter{
+
+        /**
+         *
+         */
         public SyncFilter(){}
+
+        /**
+         *
+         * @param fs
+         * @return
+         */
         abstract public boolean isFiltered(FileSync fs);
+
+        /**
+         *
+         * @param ds
+         * @return
+         */
         abstract public boolean isFiltered(DirectorySync ds);
     }
     
+    /**
+     *
+     */
     public FileSync() {
     }
 
-    public FileSync(WorkspaceController wc, DirectorySync parent, jams.server.entities.WorkspaceFileAssociation serverFile, String localFileName) {
-        this.wc = wc;
+    /**
+     *
+     * @param client
+     * @param parent
+     * @param serverFile
+     * @param localFileName
+     */
+    public FileSync(Controller client, DirectorySync parent, jams.server.entities.WorkspaceFileAssociation serverFile, String localFileName) {
+        this.wc = client.workspaces();
         this.parent = parent;
         this.serverFile = serverFile;   
         
@@ -53,15 +112,23 @@ public class FileSync implements Comparable {
         setTargetFileName(localFileName);
     }
         
+    /**
+     *
+     * @return
+     */
     public boolean isModified(){
         return isFileModified;
     }
     
+    /**
+     *
+     * @return
+     */
     public boolean isExisting(){
         return isFileExisting;
     }
     
-    private boolean isIdenticalFile() {
+    private boolean isIdenticalFile() throws IOException{
         if (isFileExisting) {
             String localHashCode = getLocalHashCode();
             String remoteHashCode = serverFile.getFile().getHash();
@@ -77,26 +144,43 @@ public class FileSync implements Comparable {
         return false;
     }
 
-    private String getLocalHashCode() {
+    private String getLocalHashCode() throws IOException{
         File f = getLocalFile();
         if (f.exists() && f.isFile()) {
-            return wc.getController().getFileController().getHashCode(f);
+            return client.files().getHashCode(f);
         }
         return null;
     }
 
+    /**
+     *
+     * @return
+     */
     final protected boolean isLocalFileExisting() {
         return getLocalFile().exists();
     }
 
+    /**
+     *
+     * @return
+     */
     public DirectorySync getParent() {
         return parent;
     }
     
+    /**
+     *
+     * @param filter
+     */
     public void applySyncFilter(SyncFilter filter){
         setDoSync(filter.isFiltered(this), false);                
     }
     
+    /**
+     *
+     * @param list
+     * @return
+     */
     public ArrayList<FileSync> getList(ArrayList<FileSync> list){
         if (list == null){
             list = new ArrayList<FileSync>();
@@ -105,10 +189,19 @@ public class FileSync implements Comparable {
         return list;
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean isDoSync() {
         return doSync;
     }
 
+    /**
+     *
+     * @param doSync
+     * @param recursive
+     */
     public void setDoSync(boolean doSync, boolean recursive) {
         this.doSync = doSync;
         
@@ -119,6 +212,9 @@ public class FileSync implements Comparable {
         }
     }
     
+    /**
+     *
+     */
     protected void markAsModified(){
         this.isFileModified = true;
         if (this.parent!=null){            
@@ -126,6 +222,10 @@ public class FileSync implements Comparable {
         }
     }
     
+    /**
+     *
+     * @return
+     */
     public FileSync getRoot(){
         if (this.parent == null){
             return this;
@@ -134,6 +234,10 @@ public class FileSync implements Comparable {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public SyncMode[] getSyncOptions() {
         if (parent == null || parent.getSyncMode() == null || 
             parent.getSyncMode() == SyncMode.UPDATE) {
@@ -157,6 +261,9 @@ public class FileSync implements Comparable {
         return null;
     }
 
+    /**
+     *
+     */
     public void updateSyncMode(){
         SyncMode options[] = getSyncOptions();
         
@@ -168,6 +275,11 @@ public class FileSync implements Comparable {
         setSyncMode(options[0]);
     }
     
+    /**
+     *
+     * @param mode
+     * @return
+     */
     public boolean setSyncMode(SyncMode mode) {
         SyncMode options[] = getSyncOptions();
 
@@ -186,14 +298,27 @@ public class FileSync implements Comparable {
         return false;
     }
 
+    /**
+     *
+     * @return
+     */
     public SyncMode getSyncMode() {
         return syncMode;
     }
 
+    /**
+     *
+     * @param localFileName
+     */
     public void setLocalFileName(String localFileName) {
         this.localFileName = localFileName;
         this.isFileExisting = isLocalFileExisting();
-        this.isFileModified = !isIdenticalFile();
+        try{
+            this.isFileModified = !isIdenticalFile();
+        }catch(IOException ioe){
+            logger.log(Level.WARNING, ioe.toString(), ioe);
+            this.isFileModified = true;
+        }
         
         doSync = false;
         if (isFileExisting && isFileModified){
@@ -203,18 +328,34 @@ public class FileSync implements Comparable {
             doSync = true;                
     }
     
+    /**
+     *
+     * @param targetFileName
+     */
     public void setTargetFileName(String targetFileName){
         this.targetFileName = targetFileName;
     }
     
+    /**
+     *
+     * @return
+     */
     public String getTargetFileName(){
         return targetFileName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getLocalFileName() {
         return localFileName;
     }
 
+    /**
+     *
+     * @return
+     */
     public File getLocalFile() {
         if (parent != null)
             return (new File(parent.getLocalFile(), localFileName));
@@ -223,6 +364,10 @@ public class FileSync implements Comparable {
         }
     }
     
+    /**
+     *
+     * @return
+     */
     public File getTargetFile() {
         if (parent != null)
             return (new File(parent.getTargetFile(), targetFileName));
@@ -231,10 +376,19 @@ public class FileSync implements Comparable {
         }
     }   
 
+    /**
+     *
+     * @return
+     */
     public WorkspaceFileAssociation getServerFile() {
         return serverFile;
     }
 
+    /**
+     *
+     * @param root
+     * @return
+     */
     public boolean synchronizeWorkspace(FileSync root) {
         return true;
     }

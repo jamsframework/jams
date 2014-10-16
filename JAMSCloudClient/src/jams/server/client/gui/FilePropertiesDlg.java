@@ -7,9 +7,9 @@
 package jams.server.client.gui;
 
 import jams.JAMS;
-import jams.server.client.Utilities;
 import jams.server.entities.File;
 import jams.server.entities.WorkspaceFileAssociation;
+import jams.tools.StringTools;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
@@ -84,6 +84,10 @@ public class FilePropertiesDlg extends JDialog{
     WorkspaceFileAssociation wfa;
     SimpleDateFormat sdf = new SimpleDateFormat("E MMM dd, yyyy hh:mm:ss X");
     
+    /**
+     *
+     * @param w
+     */
     public FilePropertiesDlg(Window w){
         super(w);
         
@@ -93,17 +97,26 @@ public class FilePropertiesDlg extends JDialog{
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
             
+    /**
+     *
+     * @return
+     */
     public WorkspaceFileAssociation getFile(){
         return wfa;
     }
     
+    /**
+     *
+     * @param wfa
+     */
     public void setFile(WorkspaceFileAssociation wfa){
         this.wfa = wfa;
         
         fileTypeLabel.setText(wfa.getFileExtension());                
         fileNameLabel.setText(wfa.getFileName());
         fileLocationLabel.setText(wfa.getFileDirectory());       
-        fileSizeLabel.setText(Utilities.formatSize(wfa.getFile().getFileSize()));
+        fileSizeLabel.setText(StringTools.humanReadableByteCount(
+                wfa.getFile().getFileSize(), false));
         fileCreatedLabel.setText(sdf.format(wfa.getFile().getCreationDate()));
         
         applyButton.setEnabled(false);
@@ -292,6 +305,10 @@ public class FilePropertiesDlg extends JDialog{
         this.pack();        
     }
             
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         WorkspaceFileAssociation wfa = new WorkspaceFileAssociation();
         File f = new File();

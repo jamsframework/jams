@@ -23,6 +23,7 @@ package jams.server.client;
 
 import jams.JAMS;
 import jams.tools.FileTools;
+import static jams.tools.StringTools.format;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,248 +48,310 @@ import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import static jams.tools.LogTools.log;
 
 /**
  *
- * @author Sven Kralisch <sven.kralisch at uni-jena.de>
+ * @author Christian Fischer <christian.fischer.2@uni-jena.de>
  */
-public class HTTPClient{
+public class HTTPClient {
 
-    private static final Logger log = Logger.getLogger( HTTPClient.class.getName() );
-    
-    String SEPARATOR = "**********************\n";
-    String sessionID = null;    
-    Client client = ClientBuilder.newClient();       
-    
-    public HTTPClient(){
-        log.setLevel(Level.ALL);
+    private String sessionID = null;
+
+    /**
+     * The Standard-Constructor
+     *
+     */
+    public HTTPClient() {
+        Logger.getLogger(this.getClass().getName()).setLevel(Level.ALL);
         System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
     }
-            
-    public Object connect(String urlStr, Class responseType) {
-        log.log(Level.FINER, SEPARATOR + JAMS.i18n("SENDING_LOGIN_REQUEST:") + urlStr);
+
+    /**
+     * connects to a server and saves the session cookie
+     * @param <T> the expected type of the result
+     * @param urlStr url to server
+     * @param responseType the expected type of the result
+     * @return the object returned by the request
+     */
+    public <T> T connect(String urlStr, Class<T> responseType) {
+        log(this.getClass(),Level.FINER, JAMS.i18n("LOGIN_TO_{1}"), urlStr);
         sessionID = null;
-        Object o = httpRequest(urlStr, null, null, responseType);        
-        log.log(Level.FINER,JAMS.i18n("Request_send_successful!"));
-        return o;
+        return httpRequest(urlStr, "GET", null, responseType);
     }
     
-    public Object httpGet(String urlStr, Class responseType) {
-        log.log(Level.FINER, SEPARATOR + JAMS.i18n("SENDING_GET_REQUEST:") + urlStr);
-        if (!isConnected()) {
-            log.log(Level.SEVERE, JAMS.i18n("User_not_logged_in!"));
-            return null;
+    /**
+     * disconnects from the server i.e. the session cookie is deleted
+     *     
+     */
+    public void disconnect() {
+        log(this.getClass(),Level.FINER, JAMS.i18n("DISCONNECT"));
+        sessionID = null;
+    }
+
+     /**
+     * sends a http-get request to a given url
+     * @param <T> the expected type of the result
+     * @param urlStr url to server
+     * @param responseType the expected type of the result
+     * @return the object returned by the request
+     */
+    public <T> T httpGet(String urlStr, Class<T> responseType) {        
+        return httpRequest(urlStr, "GET", null, responseType);
+    }
+
+    /**
+     * sends a http-post request to a given url
+     *
+     * @param <T> the expected type of the result
+     * @param urlStr url to server
+     * @param method post method (POST, DELETE, ..)
+     * @param obj object to be send by this request
+     * @param responseType the expected type of the result
+     * @return the object returned by the request
+     */
+    public <T> T httpPost(String urlStr, String method, Object obj, Class<T> responseType) {                
+        return httpRequest(urlStr, method, obj, responseType);
+    }
+
+    /**
+     * responds to the server status if status is not OK (200) an exception is thrown
+     *
+     * @param urlStr url to server
+     * @param status status of the response
+     * throws ProcessingException, when status is not OK
+     */
+    private void respondToResponse(String urlStr, int status) throws ProcessingException{
+        String msg = null;
+        switch (status) {
+            case 403:
+                msg = JAMS.i18n("Error_403:_Request_is_forbidden.") + "\n" + urlStr; break;
+            case 404:
+                msg = JAMS.i18n("Error_404:_Resource_not_found.") + "\n" + urlStr;   break;                              
+            case 405:
+                msg = JAMS.i18n("Error_405:_Method_not_allowed.") + "\n" + urlStr;   break;   
+            case 500:
+                msg = JAMS.i18n("Error_500:_Internal_server_error.") + "\n" + urlStr; break;                        
         }
-
-        Object o = httpRequest(urlStr, null, null, responseType);        
-        log.log(Level.FINER,JAMS.i18n("Request_send_successful!"));
-        return o;
-    }
-    
-    public Object httpPost(String urlStr, String method, Object o, Class type) {
-        log.log(Level.FINER, SEPARATOR + "\nSENDING "+method+" REQUEST:" + urlStr);
-        if (!isConnected()) {
-            log.log(Level.SEVERE, JAMS.i18n("User_not_logged_in!"));
+        if (msg != null){
+            throw new ProcessingException(msg);
         }
-
-        Object obj = httpRequest(urlStr, method, o, type);        
-        log.log(Level.FINER,JAMS.i18n("Request_send_successful!"));
-        return obj;
-    }
-
-    public boolean isConnected(){
-        return sessionID != null;
-    }
-    
-    private boolean respondToResponse(String url, int status){
-        switch(status){
-            case 403: log.log(Level.SEVERE, JAMS.i18n("Error_403:_Request_is_forbidden.") + " " + url); return false;
-            case 404: log.log(Level.SEVERE, JAMS.i18n("Error_404:_Resource_not_found.") + " " + url); return false;
-            case 500: log.log(Level.SEVERE, JAMS.i18n("Error_500:_Internal_server_error.") + " " + url); return false;
-            default: return true;
-        }        
     }
             
-    public Object httpFileUpload(String urlStr, File f, Class clazz) {        
-        if (!client.getConfiguration().isRegistered(MultiPartFeature.class))
+    /**
+     * uploads a file to a given url
+     * 
+     * @param <T> the expected type of the result
+     * @param urlStr url to server
+     * @param multipart multipart containing the file (either fileObject or stream)
+     * @param type typ of class which should be returned
+     * throws ProcessingException under various conditions
+     */
+    private <T> T httpFileUpload(String urlStr, MultiPart multipart, Class<T> responseType) {
+        Client client = ClientBuilder.newClient();
+        if (!client.getConfiguration().isRegistered(MultiPartFeature.class)) {
             client.register(MultiPartFeature.class);
-        // MediaType of the body part will be derived from the file.
-        final FileDataBodyPart filePart = new FileDataBodyPart("file", f);
- 
-        MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
-                
-        Response response = null;
-        try {            
-            response = client.target(urlStr).request().
-                    header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")).
-                    post(Entity.entity(multipart, multipart.getMediaType()));
-        } catch (UnsupportedEncodingException uee) {
-            log.log(Level.SEVERE, uee.toString(), uee);
         }
-        if (response == null || !respondToResponse(urlStr, response.getStatus())){
-            return null;
-        }
-        
-        if (response.getMediaType().equals(MediaType.TEXT_HTML_TYPE)){            
-            return response.readEntity(String.class);
-        }else if (response.getMediaType().equals(MediaType.APPLICATION_XML_TYPE)){
-            return response.readEntity(clazz);
-        }else
-            return response.readEntity(String.class);        
-    }
-    
-    public Object httpFileUpload(String urlStr, InputStream in, Class clazz) {        
-        if (!client.getConfiguration().isRegistered(MultiPartFeature.class))
-            client.register(MultiPartFeature.class);
-        // MediaType of the body part will be derived from the file.
-        final StreamDataBodyPart filePart = new StreamDataBodyPart("file",in);
- 
-        MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
-                
-        Response response = null;
-        try {            
-            response = client.target(urlStr).request().
-                    header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")).
-                    post(Entity.entity(multipart, multipart.getMediaType()));
-        } catch (UnsupportedEncodingException uee) {
-            log.log(Level.SEVERE, uee.toString(), uee);
-        }
-        if (response == null || !respondToResponse(urlStr, response.getStatus())){
-            return null;
-        }
-        
-        if (response.getMediaType().equals(MediaType.TEXT_HTML_TYPE)){            
-            return response.readEntity(String.class);
-        }else if (response.getMediaType().equals(MediaType.APPLICATION_XML_TYPE)){
-            return response.readEntity(clazz);
-        }else
-            return response.readEntity(String.class);        
-    }
-    
-    public File download(String urlStr, File location) {        
-        HttpGet get = new HttpGet(urlStr);
-        try{
-            get.addHeader(new BasicHeader("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")));
-        }catch(UnsupportedEncodingException uee){
-            uee.printStackTrace();
-        }
-        HttpClient httpclient = HttpClientBuilder.create().build();
-        HttpResponse httpResponse = null;
-        try{
-            httpResponse = httpclient.execute(get);
-            if (!this.respondToResponse(urlStr, httpResponse.getStatusLine().getStatusCode())){
-                return null;
-            }
-
-            InputStream is = httpResponse.getEntity().getContent();
-            Header name[] = httpResponse.getHeaders("fileName");
-            if (!location.getParentFile().exists()) {
-                location.getParentFile().mkdirs();
-            }
-            if (location.isDirectory()) {
-                if (name.length > 0 && name[0].getValue() != null) {
-                    location = new File(location, name[0].getValue());
-                } else {
-                    location = new File(location, "unnamed");
-                }
-            }           
-            FileTools.streamToFile(location, is);
-            is.close();            
-        }catch(IOException | IllegalStateException jee){
-            log.log(Level.SEVERE, jee.toString(), jee);
-            return null;
-        }
-        return location;               
-    }
-    
-    public InputStream getStream(String urlStr) {
-        HttpGet get = new HttpGet(urlStr);
-        try{
-            get.addHeader(new BasicHeader("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")));
-        }catch(UnsupportedEncodingException uee){
-            uee.printStackTrace();
-        }
-        HttpClient httpclient = HttpClientBuilder.create().build();
-        HttpResponse httpResponse = null;
-        try{                  
-            httpResponse = httpclient.execute(get);
-            if (!this.respondToResponse(urlStr, httpResponse.getStatusLine().getStatusCode())){
-                return null;
-            }
-
-            InputStream is = httpResponse.getEntity().getContent();     
-            return is;            
-        }catch(IOException | IllegalStateException jee){
-            log.log(Level.SEVERE, jee.toString(), jee);
-            return null;
-        }
-    }
-    
-    public Object httpRequest(String urlStr, String requestMethod, Object param, Class clazz) {
 
         Response response = null;
         try {
-            if (requestMethod != null) {
+            response = client.target(urlStr).request().
+                    header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")).
+                    post(Entity.entity(multipart, multipart.getMediaType()));
+        } catch (UnsupportedEncodingException uee) {
+            throw new ProcessingException(uee);
+        }
+        
+        if (response == null) {            
+            throw new ProcessingException(
+                    format(JAMS.i18n("There_was_no_response_from_{0}"), urlStr));
+        }
+        
+        try {
+            respondToResponse(urlStr, response.getStatus());
+
+            if (response.getMediaType().equals(MediaType.APPLICATION_XML_TYPE)) {
+                return response.readEntity(responseType);
+            }else if (response.getMediaType().equals(MediaType.TEXT_HTML_TYPE)) {
+                String msg = response.readEntity(String.class);
+                throw new ProcessingException(
+                    format(JAMS.i18n("The_response_from_{0}_was_a_text_message_with_the_content_{1}"), urlStr, msg));                                
+            }else{
+                throw new ProcessingException(
+                    format(JAMS.i18n("The_response_from_{0}_was_a_message_with_not_supported_mediatype_{1}"), urlStr, response.getMediaType()));                 
+            }
+        } finally {
+            response.close();
+            client.close();
+        }
+        
+    }
+
+    /**
+     * uploads a file to a given url
+     *
+     * @param <T> type of class which should be returned
+     * @param urlStr url to server
+     * @param f file that should be uploaded
+     * @param responseType type of class which should be returned
+     * throws ProcessingException under various conditions
+     * @return the result of the request
+     */
+    public <T> T httpFileUpload(String urlStr, File f, Class<T> responseType) {
+        if (!f.exists() || f.isDirectory()) {
+            throw new ProcessingException(
+                format(JAMS.i18n("{0}_cannot_be_uploaded,_since_it_is_either_not_existing_or_a_directory"), f.toString()));
+        }
+        final FileDataBodyPart filePart = new FileDataBodyPart("file", f);
+        MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
+
+        return httpFileUpload(urlStr, multipart, responseType);
+    }
+    
+    /**
+     * uploads a file to a given url
+     *
+     * @param <T> type of class which should be returned
+     * @param urlStr url to server
+     * @param in inputstream that should be uploaded
+     * @param responseType type of class which should be returned
+     * throws ProcessingException under various conditions
+     * @return the result of the request
+     * @throws java.io.IOException
+     */
+    public <T> T httpFileUpload(String urlStr, InputStream in, Class<T> responseType) throws IOException {
+        final StreamDataBodyPart filePart = new StreamDataBodyPart("file", in);
+        MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
+        return httpFileUpload(urlStr, multipart, responseType);
+    }
+
+    /**
+     * downloads the result of the request to a given location
+     *
+     * @param urlStr url to server
+     * @param location target location     
+     * @return the target file
+     * @throws java.io.IOException
+     * @throws ProcessingException under various conditions
+     */
+    public File download(String urlStr, File location) throws IOException {
+        HttpClient httpclient = HttpClientBuilder.create().build();
+        HttpGet get = new HttpGet(urlStr);
+        try {
+            get.addHeader(new BasicHeader("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")));
+        } catch (UnsupportedEncodingException uee) {
+            throw new ProcessingException(uee);
+        }
+
+        HttpResponse httpResponse = httpclient.execute(get);
+        respondToResponse(urlStr, httpResponse.getStatusLine().getStatusCode());
+
+        try (InputStream is = httpResponse.getEntity().getContent()) {
+            Header name[] = httpResponse.getHeaders("fileName");
+            FileTools.assertDirectory(location.getAbsolutePath());
+            if (name.length > 0 && name[0].getValue() != null) {
+                location = new File(location, name[0].getValue());
+            } else {
+                location = new File(location, "unnamed");
+            }
+
+            FileTools.streamToFile(location, is);
+        }
+        return location;
+    }
+
+     /**
+     * return the content stream of a specific url
+     *
+     * @param urlStr url to server  
+     * @return the content stream
+     * @throws java.io.IOException
+     * @throws ProcessingException under various conditions
+     */
+    public InputStream getStream(String urlStr) throws IOException {
+        HttpClient httpclient = HttpClientBuilder.create().build();
+        HttpGet get = new HttpGet(urlStr);
+        try {
+            get.addHeader(new BasicHeader("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")));
+        } catch (UnsupportedEncodingException uee) {
+            throw new ProcessingException(uee);
+        }
+
+        HttpResponse httpResponse = httpclient.execute(get);
+        respondToResponse(urlStr, httpResponse.getStatusLine().getStatusCode());
+        return httpResponse.getEntity().getContent();
+    }
+
+    /**
+     * processes a httpRequest
+     *
+     * @param <T> the expected type of the result
+     * @param urlStr url to server  
+     * @param requestMethod  
+     * @param param  
+     * @param responseType the expected type of the result 
+     * @return the response of the server
+     * @throws ProcessingException under various conditions
+     */
+    protected <T> T httpRequest(String urlStr, String requestMethod, Object param, Class<T> responseType) {                        
+        Client client = ClientBuilder.newClient();
+
+        Response response;
+        log(this.getClass(),Level.FINER, JAMS.i18n("SENDING_{0}-REQUEST_TO_{1}"), requestMethod, urlStr);
+        try {            
+            if (requestMethod.compareTo("GET")!=0) {                
                 response = client.target(urlStr).request().
                         header("Access-Control-Request-Method", requestMethod).
                         header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")).
                         method(requestMethod, Entity.entity(param, MediaType.APPLICATION_XML));
             } else {
                 response = client.target(urlStr).request().
-                        header("Access-Control-Request-Method", "GET").
+                        header("Access-Control-Request-Method", requestMethod).
                         header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")).
                         get();
             }
-        }catch(  UnsupportedEncodingException | ProcessingException uee){
-            log.log(Level.SEVERE, uee.toString(), uee);            
-            return null;
+        } catch (UnsupportedEncodingException uee) {
+            throw new ProcessingException(uee);
         }
 
-        if (response == null){
-            log.log(Level.INFO, "There was no response from the server!");            
-            return null;
+        if (response == null) {
+            throw new ProcessingException(
+                    format(JAMS.i18n("There_was_no_response_from_{0}"), urlStr));
         }
-        if (sessionID == null){
-            if (response.getHeaders()==null || response.getHeaders().get("set-cookie")==null)
-                return null;
+        if (sessionID == null) {
+            if (response.getHeaders() == null || response.getHeaders().get("set-cookie") == null) {
+                String msg = null;
+                try{
+                    msg = response.readEntity(String.class);                    
+                }catch(Throwable t){
+                    throw new ProcessingException(JAMS.i18n("did not get any session id!"));
+                }
+                throw new ProcessingException(msg);                
+            }
             String result = response.getHeaders().get("set-cookie").toString();
             result = result.split(";")[0];
             sessionID = result.split("=")[1];
         }
 
-        if (!respondToResponse(urlStr, response.getStatus())){
-            return null;
+        try {
+            respondToResponse(urlStr, response.getStatus());
+            if (response.getMediaType()==null){
+                
+            }
+            if (response.getMediaType().equals(MediaType.APPLICATION_XML_TYPE)) {
+                log(this.getClass(),Level.FINER, JAMS.i18n("Request_send_successful!"));
+                return response.readEntity(responseType);
+            }else if (response.getMediaType().equals(MediaType.TEXT_HTML_TYPE)) {
+                String msg = response.readEntity(String.class);
+                throw new ProcessingException(
+                    format(JAMS.i18n("The_response_from_{0}_was_a_text_message_with_the_content_{1}"), urlStr, msg));                                
+            }else{
+                throw new ProcessingException(
+                    format(JAMS.i18n("The_response_from_{0}_was_a_message_with_not_supported_mediatype_{1}"), urlStr, response.getMediaType()));                 
+            }            
+        } finally {
+            response.close();
+            client.close();
         }
-        
-        if (response.getMediaType().equals(MediaType.TEXT_HTML_TYPE)){    
-            if (clazz.isAssignableFrom(String.class))
-                return response.readEntity(String.class);
-            else{
-                log.log(Level.SEVERE, 
-                        JAMS.i18n("Conversion_Error:_Expected_class:_%1_found_class_%2_\nContent_is:%3")
-                                .replace("%1", clazz.toString())
-                                .replace("%2", String.class.toString())
-                                .replace("%3", response.readEntity(String.class)));
-                return null;
-            }
-        }else if (response.getMediaType().equals(MediaType.APPLICATION_XML_TYPE)){
-            Object o = null;
-            try{
-                o = response.readEntity(clazz);
-            }catch(ProcessingException pe){
-                pe.printStackTrace();
-            }
-            response.close();
-            return o;
-        }else if (response.getMediaType().equals(MediaType.APPLICATION_OCTET_STREAM_TYPE)){
-            response.readEntity(Object.class);
-            response.close();
-            return null;
-        }else
-            return response.readEntity(String.class);
-    }
-    
-    public void close(){
-        this.client.close();        
     }
 }

@@ -9,9 +9,12 @@ package jams.server.client.gui;
 import jams.gui.CancelableWorkerDlg;
 import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
+import jams.runtime.StandardRuntime;
 import jams.server.client.Controller;
-import jams.server.client.ObservableLogHandler;
+import jams.server.client.JAMSWorkspaceUploader;
 import jams.server.client.WorkspaceController;
+import jams.tools.LogTools.ObservableLogHandler;
+import jams.workspace.JAMSWorkspace;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -20,6 +23,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -68,6 +72,11 @@ public class UploadWorkspaceDlg extends JDialog{
     ObservableLogHandler observable = new ObservableLogHandler(new Logger[]{Logger.getLogger(Controller.class.getName())});
     boolean uploadSuccessful = false;
     
+    /**
+     *
+     * @param w
+     * @param controller
+     */
     public UploadWorkspaceDlg(Window w, Controller controller){
         super(w, "Upload Workspace");        
         this.controller = controller;
@@ -77,6 +86,11 @@ public class UploadWorkspaceDlg extends JDialog{
         setResizable(false);
     }
     
+    /**
+     *
+     * @param w
+     * @param controller
+     */
     public UploadWorkspaceDlg(Frame w, Controller controller){
         super(w, "Upload Workspace");
         this.controller = controller;
@@ -86,6 +100,11 @@ public class UploadWorkspaceDlg extends JDialog{
         setResizable(false);
     }
     
+    /**
+     *
+     * @param w
+     * @param controller
+     */
     public UploadWorkspaceDlg(Dialog w, Controller controller){
         super(w, "Upload Workspace");
         this.controller = controller;
@@ -363,7 +382,11 @@ public class UploadWorkspaceDlg extends JDialog{
 
                     @Override
                     public void run() {
-                        uploadWorkspace();                        
+                        try{
+                            uploadWorkspace();                        
+                        }catch(IOException ioe){
+                            ioe.printStackTrace();
+                        }
                     }
                 });
                worker.getWorkerDlg().execute();                              
@@ -382,7 +405,7 @@ public class UploadWorkspaceDlg extends JDialog{
         return mainPanel;
     }
     
-    private void uploadWorkspace(){
+    private void uploadWorkspace() throws IOException{
         uploadSuccessful = false;
         if (!validateInput()){
             JOptionPane.showMessageDialog(this.mainPanel, "Unable to upload workspace! Paths are incorrect!");
@@ -392,12 +415,17 @@ public class UploadWorkspaceDlg extends JDialog{
         File uiLibFile     = new File(uiLibPath.getText());   
         String name = wsName.getText();
         
-        WorkspaceController wsClient = this.controller.getWorkspaceController();
-        wsClient.uploadWorkspace(-1, name, workspaceDirectory, new File[]{compLibFile}, uiLibFile, "");
+        JAMSWorkspace workspace = new JAMSWorkspace(workspaceDirectory, new StandardRuntime(null));
+        JAMSWorkspaceUploader uploader = new JAMSWorkspaceUploader(controller);
+        uploader.uploadWorkspace(workspace, new File[]{compLibFile}, uiLibFile, "");
         
         uploadSuccessful=true;
     }
     
+    /**
+     *
+     * @return
+     */
     public boolean validateInput(){
         File workspaceFile = new File(wsPath.getText());
         File compLibFile   = new File(compLibPath.getText());

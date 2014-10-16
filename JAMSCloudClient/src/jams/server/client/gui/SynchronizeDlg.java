@@ -5,23 +5,21 @@
  */
 package jams.server.client.gui;
 
+import jams.ErrorCatchingRunnable;
 import jams.JAMS;
-import jams.JAMSProperties;
+import jams.SystemProperties;
 import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
-import jams.runtime.StandardRuntime;
 import jams.server.client.Controller;
 import jams.server.client.sync.DirectorySync;
 import jams.server.client.sync.FileSync;
-import jams.server.client.HTTPClient;
-import jams.server.client.ObservableLogHandler;
 import jams.server.client.WorkspaceController;
 import jams.server.client.sync.SyncTable;
 import jams.server.entities.Job;
 import jams.server.entities.Jobs;
 import jams.server.entities.Workspace;
-import jams.workspace.JAMSWorkspace;
+import jams.tools.LogTools.ObservableLogHandler;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -33,7 +31,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -51,51 +50,150 @@ import javax.swing.SwingWorker;
  * @author christian
  */
 public class SynchronizeDlg extends JDialog {
-
-    Font defaultFont = new Font("Times New Roman", Font.PLAIN, 10);
-    SyncTable syncTable = null;
+    static Logger log = Logger.getLogger(SynchronizeDlg.class.getName());
     
-    JButton okButton = new JButton(JAMS.i18n("Synchronize"));
-    JButton cancelButton = new JButton(JAMS.i18n("Cancel"));
+    /**
+     *
+     */
+    protected Font defaultFont = new Font("Times New Roman", Font.PLAIN, 10);
 
-    JCheckBox showAllJobs = new JCheckBox("show all jobs from user");
+    /**
+     *
+     */
+    protected SyncTable syncTable = null;
     
-    jams.workspace.Workspace localWorkspace = null;
-    Workspace remoteWs = null;
+    /**
+     *
+     */
+    protected JButton okButton = new JButton(JAMS.i18n("Synchronize"));
 
-    Controller ctrl;
+    /**
+     *
+     */
+    protected JButton cancelButton = new JButton(JAMS.i18n("Cancel"));
 
-    Component tableSyncModeCells[];
+    /**
+     *
+     */
+    protected JCheckBox showAllJobs = new JCheckBox("show all jobs from user");
     
-    JLabel checkLabel = new JLabel("<html>"+JAMS.i18n("check")+"</html>");
-    JComboBox<Job> jobChooser = new JComboBox();
-    JButton syncNewOnly = new JButton(JAMS.i18n("only_new")), 
-            syncAll     = new JButton(JAMS.i18n("all")), 
-            syncNothing = new JButton(JAMS.i18n("none")), 
-            invertSelection = new JButton(JAMS.i18n("invert_selection"));
+    /**
+     *
+     */
+    protected jams.workspace.Workspace localWorkspace = null;
+
+    /**
+     *
+     */
+    protected Workspace remoteWs = null;
+
+    /**
+     *
+     */
+    protected Component tableSyncModeCells[];
+    
+    /**
+     *
+     */
+    protected JLabel checkLabel = new JLabel("<html>"+JAMS.i18n("check")+"</html>");
+
+    /**
+     *
+     */
+    protected JComboBox<Job> jobChooser = new JComboBox();
+
+    /**
+     *
+     */
+    protected JButton syncNewOnly = new JButton(JAMS.i18n("only_new")),
+ 
+    /**
+     *
+     */
+    syncAll     = new JButton(JAMS.i18n("all")),
+
+    /**
+     *
+     */
+    syncNothing = new JButton(JAMS.i18n("none")),
+
+    /**
+     *
+     */
+    invertSelection = new JButton(JAMS.i18n("invert_selection"));
         
-    ObserverWorkerDlg syncWorkspaceWorker = new ObserverWorkerDlg(
+    /**
+     *
+     */
+    protected ObserverWorkerDlg syncWorkspaceWorker = new ObserverWorkerDlg(
             new WorkerDlg(SynchronizeDlg.this, JAMS.i18n("Synchronizing_Workspace")));
     
-    ObservableLogHandler observable = new ObservableLogHandler(new Logger[]{Logger.getLogger(Controller.class.getName())});
+    /**
+     *
+     */
+    protected ObservableLogHandler observable = new ObservableLogHandler(new Logger[]{Logger.getLogger(Controller.class.getName())});
     
-    Jobs jobs = null;
-    Job selectedJob = null;
-    int localWorkspaceID = -1;
+    /**
+     *
+     */
+    protected Jobs jobs = null;
+
+    /**
+     *
+     */
+    protected Job selectedJob = null;
+
+    /**
+     *
+     */
+    protected int localWorkspaceID = -1;
     
+    /**
+     *
+     */
+    protected JAMSCloudGraphicalController connector = null;
+
+    /**
+     *
+     */
+    protected SystemProperties p;
+    
+    /**
+     *
+     * @param w
+     * @param localWorkspace
+     * @param p
+     * @throws IOException
+     */
     @SuppressWarnings("LeakingThisInConstructor")
-    public SynchronizeDlg(Window w, Controller ctrl, jams.workspace.Workspace localWorkspace) {
+    public SynchronizeDlg(Window w, jams.workspace.Workspace localWorkspace, SystemProperties p) throws IOException{
         super(w,"Synchronize Workspace");
-        this.ctrl = ctrl;
+        this.p = p;
+        connector = JAMSCloudGraphicalController.createInstance(p);          
         this.localWorkspace = localWorkspace;
                                 
-        GUIHelper.centerOnParent(this, rootPaneCheckingEnabled);
-        
-        init();
-        
-        GUIHelper.centerOnParent(this, rootPaneCheckingEnabled);
+        GUIHelper.centerOnParent(this, rootPaneCheckingEnabled);                      
+        init();        
+        GUIHelper.centerOnParent(this, rootPaneCheckingEnabled);        
     }
         
+    @Override
+    public void setVisible(boolean flag){
+        if (flag == true){
+            try{                
+                if (!connector.isConnected()){
+                    connector.reconnect();
+                }
+            }catch(IOException ioe){
+                log.log(Level.SEVERE, "Unable to connect", ioe);
+                return;
+            }
+        }else{
+            
+        }                
+        super.setVisible(flag);
+    }
+    
     private void setupSelectionButton(JButton bn){
         MouseAdapter ma = new MouseAdapter() {
             @Override
@@ -123,7 +221,7 @@ public class SynchronizeDlg extends JDialog {
         bn.putClientProperty("text", bn.getText());
     }
     
-    private void init() {                
+    private void init() throws IOException{                
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
 
@@ -135,10 +233,10 @@ public class SynchronizeDlg extends JDialog {
         if (localWorkspaceID == -1){
             showAllJobs.setSelected(true);
         }
-        jobs = ctrl.getJobController().findAll();
+        jobs = connector.getClient().jobs().find();
         for (Job job : jobs.getJobs()){
             Workspace ancestor = job.getWorkspace().getAncestor();
-            if (ancestor!=null && ancestor.getId() == localWorkspaceID){
+            if (ancestor!=null && ancestor.getName().equals(localWorkspace.getTitle())){
                 jobChooser.addItem(job);
             }
         }
@@ -181,7 +279,7 @@ public class SynchronizeDlg extends JDialog {
             }
         });
         
-        syncTable = new SyncTable(ctrl, defaultFont);
+        syncTable = new SyncTable(connector.getClient(), defaultFont);
         syncTable.setLocalWorkspace(localWorkspace.getDirectory());
         
         if (jobChooser.getItemCount()>0)
@@ -361,13 +459,13 @@ public class SynchronizeDlg extends JDialog {
 
     private void synchronize() {
         syncWorkspaceWorker.getWorkerDlg().setInderminate(true);
-        syncWorkspaceWorker.getWorkerDlg().setTask(new Runnable() {
+        syncWorkspaceWorker.getWorkerDlg().setTask(new ErrorCatchingRunnable() {
 
             @Override
-            public void run() {
+            public void safeRun() {
                 FileSync root = syncTable.getModel().getRoot();
                 
-                WorkspaceController wc = ctrl.getWorkspaceController();
+                WorkspaceController wc = connector.getClient().workspaces();
                 
                 observable.addObserver(syncWorkspaceWorker);
                 if (root instanceof DirectorySync){
@@ -379,8 +477,12 @@ public class SynchronizeDlg extends JDialog {
         syncWorkspaceWorker.getWorkerDlg().execute();
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
-        Controller client = new Controller("http://localhost:8080/jams-server/webresources");
+        /*Controller client = new Controller("http://localhost:8080/jams-server/webresources");
         client.connect("Blubb", "test");
 
         JAMSWorkspace wslocal = new JAMSWorkspace(new File("E:/ModelData/JAMS-Gehlberg"), new StandardRuntime(JAMSProperties.createProperties()));
@@ -389,7 +491,7 @@ public class SynchronizeDlg extends JDialog {
         SynchronizeDlg dlg = new SynchronizeDlg((Window) null, client, wslocal);
         dlg.setSize(new Dimension(640, 480));
         dlg.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dlg.setVisible(true);
+        dlg.setVisible(true);*/
 
     }
 }
