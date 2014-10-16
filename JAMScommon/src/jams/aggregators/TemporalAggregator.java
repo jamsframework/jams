@@ -11,7 +11,6 @@ import jams.data.Attribute.TimeInterval;
 import jams.data.DefaultDataFactory;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 /**
  *
@@ -23,7 +22,6 @@ public abstract class TemporalAggregator<T>{
     AggregationTimePeriod timePeriod;
     ArrayList<Consumer> consumers = new ArrayList<Consumer>();    
     Collection<TimeInterval> customTimePeriods;
-    
     public enum AggregationTimePeriod{
         HOURLY, 
         DAILY, 
@@ -66,19 +64,39 @@ public abstract class TemporalAggregator<T>{
     
     public TemporalAggregator(AggregationTimePeriod timePeriod, Collection<TimeInterval> customTimePeriods){
         this.timePeriod = timePeriod;
+        
         this.customTimePeriods = customTimePeriods;
+        if (timePeriod == AggregationTimePeriod.CUSTOM){
+            for (TimeInterval ti : customTimePeriods) {
+                ti.getStart().removeUnsignificantComponents(ti.getTimeUnit());
+                ti.getEnd().removeUnsignificantComponents(ti.getTimeUnit());
+            }
+            //check for overlapping
+            for (TimeInterval ti1 : customTimePeriods) {
+                for (TimeInterval ti2 : customTimePeriods) {
+                    if (ti1 == ti2)
+                        continue;
+                    if (( ti1.getStart().getTimeInMillis() < ti2.getEnd().getTimeInMillis() && 
+                          ti1.getStart().getTimeInMillis() > ti2.getStart().getTimeInMillis() ) || 
+                        ( ti1.getEnd().getTimeInMillis() < ti2.getEnd().getTimeInMillis() && 
+                          ti1.getEnd().getTimeInMillis() > ti2.getStart().getTimeInMillis() )  ){
+                        throw new IllegalArgumentException("Time-Intervals " + ti1 + " and " + ti2 + " do overlap");
+                    }                    
+                }
+            }
+        }
     }
     
-    public void addConsumer(Consumer consumer){
+    public void addConsumer(Consumer<T> consumer){
         this.consumers.add(consumer);
     }
-    public void removeConsumer(Consumer consumer){
+    public void removeConsumer(Consumer<T> consumer){
         this.consumers.remove(consumer);
     }
             
     protected void consume(Calendar time, T v) {
         //is there anything to consume?
-        if (time == null)
+        if (time == null || roundToTimePeriod(time, timePeriod) == null )
             return;
         for (Consumer c : consumers) {
             c.consume(time, v);
@@ -92,9 +110,9 @@ public abstract class TemporalAggregator<T>{
     public abstract void aggregate(Calendar timeStep, T next);
     
     public boolean isNextTimeStep(Calendar timeStep){
-        Calendar newTime = roundToTimePeriod(timeStep, timePeriod);
+        Calendar newTime = roundToTimePeriod(timeStep, timePeriod);        
         //outside of time intervals, so skip it anyway
-        if (newTime == null){
+        if (newTime == null){ 
             return true;
         }
         if (time == null){
@@ -108,6 +126,8 @@ public abstract class TemporalAggregator<T>{
     
     public void setTimeStep(Calendar timeStep){
         time = roundToTimePeriod(timeStep, timePeriod);
+        if (time == null)
+            time = timeStep.clone();
     }   
     
     public void finish(){
@@ -119,7 +139,7 @@ public abstract class TemporalAggregator<T>{
     }
     
     protected Calendar currentTimeStep(){
-        return time;
+        return time;// == null ? null : time.clone();
     }
             
     protected TimeInterval getTotalTimePeriod(){
@@ -139,22 +159,11 @@ public abstract class TemporalAggregator<T>{
             }
         }
         return totalTimePeriod;
-    }
-    //TODO find a better caching mechanism
-    static HashMap<AggregationTimePeriod, Calendar[]> cacheMap = new HashMap<AggregationTimePeriod, Calendar[]>();
-    
+    }    
     //cloning of calendar is expansive
-    protected Attribute.Calendar roundToTimePeriod(Calendar in, AggregationTimePeriod timeUnitID){
-        Calendar cache[] = cacheMap.get(timeUnitID);
-        if (cache != null && in.getTimeInMillis() == cache[0].getTimeInMillis()){
-            return cache[1];
-        }
-        if (cache == null){
-            cache = new Calendar[2];
-            cacheMap.put(timeUnitID, cache);
-        }
+    protected Attribute.Calendar roundToTimePeriod(Calendar in, AggregationTimePeriod timeUnitID){        
         Attribute.Calendar out = in.clone();
-        cache[0] = in.clone();        
+
         switch (timeUnitID){
             case HOURLY: out.removeUnsignificantComponents(Attribute.Calendar.HOUR_OF_DAY); break;
             case DAILY: out.removeUnsignificantComponents(Attribute.Calendar.DAY_OF_MONTH); break;
@@ -204,20 +213,23 @@ public abstract class TemporalAggregator<T>{
                     }}
                 break;
             case CUSTOM:{
-                boolean isConsidered = false;
+                boolean isConsidered = false;                
                 for (Attribute.TimeInterval ti : customTimePeriods){
-                    if (!ti.getStart().after(in) && !ti.getEnd().before(in)){
+                    //clone would be better but expensive
+                    out.removeUnsignificantComponents(ti.getTimeUnit());
+                    if (!(ti.getStart().getTimeInMillis()>out.getTimeInMillis()) && 
+                        !(ti.getEnd().getTimeInMillis()  <out.getTimeInMillis()) ){
                         out.setValue(ti.getStart().toString());
                         isConsidered = true;
                         break;
                     }
                 }
-                if (!isConsidered)
+                if (!isConsidered){
                     return null;
+                }
                 break;
             }
         }
-        cache[1] = out;
         return out;
     }
 }

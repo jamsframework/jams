@@ -75,7 +75,8 @@ public abstract class DoubleArrayAggregator extends Aggregator<double[]> {
         @Override
         public void consider(double x[]) {
             for (int i = 0; i < v.length; i++) {
-                v[i] += x[i];
+                if (!Double.isNaN(x[i]))
+                    v[i] += x[i];
             }
         }
     }
@@ -99,7 +100,8 @@ public abstract class DoubleArrayAggregator extends Aggregator<double[]> {
         @Override
         public void consider(double x[]) {
             for (int i = 0; i < v.length; i++) {
-                v[i] = Math.min(x[i], v[i]);
+                if (!Double.isNaN(x[i]))
+                    v[i] = Math.min(x[i], v[i]);
             }
         }
     }
@@ -123,19 +125,22 @@ public abstract class DoubleArrayAggregator extends Aggregator<double[]> {
         @Override
         public void consider(double x[]) {
             for (int i = 0; i < v.length; i++) {
-                v[i] = Math.max(x[i], v[i]);
+                if (!Double.isNaN(x[i]))
+                    v[i] = Math.max(x[i], v[i]);
             }
         }
     }
     
     //Take averages of values
     static class AverageAggregator extends DoubleArrayAggregator {
-        int counter = 0;
+        int counter[];
         public AverageAggregator(AverageAggregator copy){
             super(copy);
+            counter = Arrays.copyOf(copy.counter, copy.counter.length);
         }
         public AverageAggregator(int n){
             super(n);
+            counter = new int[n];
         }
         @Override
         public DoubleArrayAggregator copy(){
@@ -145,31 +150,39 @@ public abstract class DoubleArrayAggregator extends Aggregator<double[]> {
         public void init() {
             super.init();
             Arrays.fill(v, 0);
-            counter = 0;
+            Arrays.fill(counter, 0);
         }
         
         @Override
         public void consider(double x[]) {
             for (int i = 0; i < v.length; i++) {
-                v[i] += x[i];
+                if (!Double.isNaN(x[i])){
+                    v[i] += x[i];
+                    counter[i]++;
+                }
             }
-            counter++;
+            
         }
         
         @Override
         public void finish() {
             super.finish();
             for (int i = 0; i < v.length; i++) {
-                v[i] /= (double)counter;
+                if (counter[i]>0){
+                    v[i] /= (double)counter[i];
+                }else{
+                    v[i] = Double.NaN;
+                }
+                //calling finish several times should not change the result
+                counter[i] = 1; 
             }
-            counter = 1;
         }
     }
     
     //calculates the variance of the values
     static class VarianceAggregator extends DoubleArrayAggregator {
         double mean[];
-        int counter=0;
+        int counter[];
         public VarianceAggregator(VarianceAggregator copy){
             super(copy);
             mean = Arrays.copyOf(copy.mean, copy.mean.length);
@@ -179,7 +192,7 @@ public abstract class DoubleArrayAggregator extends Aggregator<double[]> {
         public VarianceAggregator(int n){
             super(n);
             mean = new double[n];
-            counter=0;
+            counter = new int[n];
         }
         @Override
         public DoubleArrayAggregator copy(){
@@ -190,16 +203,19 @@ public abstract class DoubleArrayAggregator extends Aggregator<double[]> {
         public void init() {
             super.init();
             Arrays.fill(v, 0);            
-            Arrays.fill(mean, 0);            
+            Arrays.fill(mean, 0); 
+            Arrays.fill(counter, 0); 
         }
         
         @Override
         public void consider(double x[]) {
-            counter++;
-            for (int i=0;i<n();i++){
-                double delta = x[i]-mean[i];
-                mean[i] = mean[i] + delta / counter;
-                v[i] = v[i] + delta*(x[i]-mean[i]);
+            for (int i = 0; i < n(); i++) {
+                if (!Double.isNaN(x[i])) {
+                    counter[i]++;
+                    double delta = x[i] - mean[i];
+                    mean[i] = mean[i] + delta / counter[i];
+                    v[i] = v[i] + delta * (x[i] - mean[i]);                    
+                }
             }
         }
         
@@ -207,8 +223,13 @@ public abstract class DoubleArrayAggregator extends Aggregator<double[]> {
         public void finish() {
             super.finish();
             for (int i=0;i<n();i++){
-                v[i] /= (double)(counter-1.);
-            }
+                if (counter[i]>1)
+                    v[i] /= (double)(counter[i]-1.);
+                else
+                    v[i] = Double.NaN;
+                
+                counter[i]=2;
+            }            
         }
     }
             
@@ -235,7 +256,8 @@ public abstract class DoubleArrayAggregator extends Aggregator<double[]> {
         public void consider(double x[]) {
             if (isFirst) {
                 for (int i = 0; i < v.length; i++) {
-                    v[i] += x[i];
+                    if (!Double.isNaN(x[i]))
+                        v[i] += x[i];
                 }
                 isFirst = false;
             }
@@ -259,7 +281,11 @@ public abstract class DoubleArrayAggregator extends Aggregator<double[]> {
         }
         @Override
         public void consider(double x[]) {
-            System.arraycopy(x, 0, v, 0, v.length);
+            for (int i = 0; i < v.length; i++) {
+                if (!Double.isNaN(x[i])) {
+                    v[i] = x[i];
+                }
+            }
         }
     }
     

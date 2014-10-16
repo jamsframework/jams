@@ -22,7 +22,6 @@
  */
 package jams.gui;
 
-import java.awt.Dimension;
 import java.util.Observable;
 import java.util.Observer;
 
