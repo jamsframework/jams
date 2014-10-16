@@ -54,7 +54,7 @@ import jams.meta.ModelDescriptor;
 import jams.runtime.JAMSRuntime;
 import jams.runtime.StandardRuntime;
 import jams.server.client.Controller;
-import jams.server.client.gui.GraphicalClient;
+import jams.server.client.gui.JAMSCloudGraphicalController;
 import jams.server.entities.Job;
 import jams.server.entities.WorkspaceFileAssociation;
 import jams.workspace.InvalidWorkspaceException;
@@ -70,6 +70,7 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import org.w3c.dom.Document;
 import jams.explorer.JAMSExplorer;
+import jams.workspace.Workspace;
 
 /**
  *
@@ -78,7 +79,7 @@ import jams.explorer.JAMSExplorer;
 public class ModelView {
 
     private static Logger log = Logger.getLogger(ModelView.class.getName());
-    
+
     private static final int TREE_PANE_WIDTH = 250;
     private JInternalFrame frame;
     private File savePath;
@@ -105,8 +106,8 @@ public class ModelView {
     }
 
     public ModelView(String title, JDesktopPane parentPanel) {
-        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
-                
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.Show, log);
+
         this.parentPanel = parentPanel;
         modelEditPanel = new ModelEditPanel(this);
         compEditPanel = new ComponentPanel(this);
@@ -121,8 +122,6 @@ public class ModelView {
                 try {
                     // create the runtime
                     runtime = new StandardRuntime(JUICE.getJamsProperties());
-                    
-//                    JUICE.registerLogger(runtime.getLogger());
 
                     // add info and error log output
                     runtime.addInfoLogObserver(new Observer() {
@@ -213,7 +212,6 @@ public class ModelView {
          */
 //        JToolBar toolBar = new JToolBar();
         //toolBar.setPreferredSize(new Dimension(0, JAMS.TOOLBAR_HEIGHT));
-
 //        modelRunButton = new JButton(JUICE.getJuiceFrame().getRunModelAction());
 //        modelRunButton.setText("");
 //        modelRunButton.setToolTipText(JAMS.i18n("Run_Model"));
@@ -281,7 +279,7 @@ public class ModelView {
     }
 
     /**
-     * This method will create a JAMSLauncher window with the current model 
+     * This method will create a JAMSLauncher window with the current model
      * loaded
      */
     public void runModelFromLauncher() {
@@ -294,9 +292,8 @@ public class ModelView {
 
         // first check if provided parameter values are valid
         /*if (!launcherPanel.verifyInputs()) {
-        return;
-        }*/
-
+         return;
+         }*/
         // then load the model via the modelLoading runnable
         loadModelDlg.setTask(modelLoading);
         loadModelDlg.execute();
@@ -332,50 +329,49 @@ public class ModelView {
             log.log(Level.SEVERE, e.getMessage(), e);
         }
     }
-    
-    private File getJAMSuiLib(){
+
+    private File getJAMSuiLib() {
         File jamsuiLib = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
-        if (jamsuiLib.getName().endsWith("classes")){
-            try{      
+        if (jamsuiLib.getName().endsWith("classes")) {
+            try {
                 File distDir = new File(jamsuiLib.getParentFile(), "../dist");
-                while (!distDir.exists()){
+                while (!distDir.exists()) {
                     JFileChooser jfc = GUIHelper.getJFileChooser(JAMSFileFilter.getJarFilter());
                     jfc.setDialogTitle(JAMS.i18n("Please_select_the_jams-ui.jar"));
-                    if (jfc.showOpenDialog(ModelView.this.frame) == JFileChooser.APPROVE_OPTION){
+                    if (jfc.showOpenDialog(ModelView.this.frame) == JFileChooser.APPROVE_OPTION) {
                         jamsuiLib = jfc.getSelectedFile();
-                        if (jamsuiLib.exists()){
+                        if (jamsuiLib.exists()) {
                             distDir = new File(jamsuiLib.getParentFile(), "../dist");
                         }
-                    }else{
+                    } else {
                         log.severe("Unable_to_locate_any_jams-ui.jar");
                         return null;
-                    }                  
+                    }
                 }
                 jamsuiLib = distDir.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File pathname) {
-                    return pathname.getName().endsWith(".jar");
-                }
-            })[0];            
-            }catch(HeadlessException t){
+                    @Override
+                    public boolean accept(File pathname) {
+                        return pathname.getName().endsWith(".jar");
+                    }
+                })[0];
+            } catch (HeadlessException t) {
                 log.log(Level.SEVERE, "Unable_to_locate_any_jams-ui.jar", t);
                 return null;
             }
         }
         return jamsuiLib;
     }
-    
+
     //TODO: function is too complex .. 
-    public Job runModelInCloud() {
+    public Job runModelInCloud() throws IOException {
 
         //first logon to server
-        GraphicalClient connector = new GraphicalClient(this.frame, JUICE.getJamsProperties());
-        Controller client = connector.getClient();
-                        
-        if (client == null){
-            return null;
+        JAMSCloudGraphicalController connector = JAMSCloudGraphicalController.createInstance(JUICE.getJamsProperties());
+        if (!connector.isConnected()){
+            connector.reconnect();
         }
-        
+        Controller client = connector.getClient();
+
         // then load the model via the modelLoading runnable
         loadModelDlg.setTask(modelLoading);
         loadModelDlg.execute();
@@ -389,37 +385,30 @@ public class ModelView {
             log.log(Level.SEVERE, "Unable to load model. Please make sure, your model can be run locally!");
             return null;
         }
-        File workspaceDirectory = runtime.getModel().getWorkspace().getDirectory();
-        InputStream modelStream = null;
-        try {
-            modelStream = XMLTools.writeXmlFileToStream(initialDoc);
-        } catch (IOException ioe) {
-            log.log(Level.SEVERE, ioe.getMessage(), ioe);
-            return null;
-        }
-
+        Workspace jamsWorkspace = runtime.getModel().getWorkspace();
+        
         String libs = JUICE.getJamsProperties().getProperty("libs");
         String compLibArray[] = libs.split(";");
         File compLibFile[] = new File[compLibArray.length];
-        for (int i=0;i<compLibArray.length;i++){
+        for (int i = 0; i < compLibArray.length; i++) {
             compLibFile[i] = new File(compLibArray[i]);
         }
-        
+
         File jamsuiLib = getJAMSuiLib();
         String uploadFileFilter = JUICE.getJamsProperties().getProperty("uploadFileFilter");
-        if (uploadFileFilter == null){
+        if (uploadFileFilter == null) {
             uploadFileFilter = "(.*\\.cache)|(.*\\.ser)|(.*\\.svn)|(.*/output/.*)|(.*\\.cdat)|(.*\\.log)";
         }
         //get remote id of my workspace
-        runtime.getModel().getWorkspace().loadConfig();
-        int id = runtime.getModel().getWorkspace().getID();        
-        String title = runtime.getModel().getWorkspace().getTitle();        
+        jamsWorkspace.loadConfig();
+
+        String title = jamsWorkspace.getTitle();
         jams.server.entities.Workspace ws = null;
-                
+
         if (title == null || title.isEmpty()) {
-            title = JOptionPane.showInputDialog(parentPanel, 
-                    JAMS.i18n("The_workspace_you_are_going_to_upload_has_no_name"), 
-                    JAMS.i18n("Name_of_workspace"), 
+            title = JOptionPane.showInputDialog(parentPanel,
+                    JAMS.i18n("The_workspace_you_are_going_to_upload_has_no_name"),
+                    JAMS.i18n("Name_of_workspace"),
                     JOptionPane.QUESTION_MESSAGE);
             if (title == null) {
                 title = "unnamed";
@@ -427,17 +416,18 @@ public class ModelView {
                 runtime.getModel().getWorkspace().setTitle(title);
             }
         }
-        ws = connector.uploadWorkspace(id, title, workspaceDirectory, compLibFile, jamsuiLib, uploadFileFilter);
+        ws = connector.uploadWorkspace(jamsWorkspace, compLibFile, jamsuiLib, uploadFileFilter);
         if (ws == null){
             return null;
         }
-        runtime.getModel().getWorkspace().setID(ws.getId());
         
-        //upload model file
-        jams.server.entities.File f = client.getFileController().uploadFile(modelStream);
-        ws = client.getWorkspaceController().attachFile(ws, f, 
-                WorkspaceFileAssociation.ROLE_MODEL, ModelView.this.savePath.getName());
-                
+        runtime.getModel().getWorkspace().setID(ws.getId());
+
+        InputStream modelStream = XMLTools.writeXmlFileToStream(initialDoc);
+        jams.server.entities.File f = client.files().uploadFile(modelStream);
+        ws = client.workspaces().attachFile(ws, 
+                new WorkspaceFileAssociation(ws, f, WorkspaceFileAssociation.ROLE_MODEL, 
+                        ModelView.this.savePath.getName()));
         return connector.startJob(ws, new File(ModelView.this.savePath.getName()));
     }
 
@@ -567,6 +557,7 @@ public class ModelView {
 
     /**
      * Return an XML document describing the model.
+     *
      * @return The XML document describing the model.
      */
     public Document getModelDoc() {
@@ -580,6 +571,7 @@ public class ModelView {
 
     /**
      * Loads a JAMS model from file
+     *
      * @param fileName The file containing the models XML document.
      */
     public void loadModel(String fileName) {
@@ -604,7 +596,7 @@ public class ModelView {
             e.printStackTrace();
         }
     }
-    
+
     public void loadModel(Document doc) {
         try {
             // first do search&replace on the input xml file
@@ -635,18 +627,18 @@ public class ModelView {
     }
 
     /*
-    public DataRepository getDataRepository(ComponentDescriptor context) {
-    DataRepository repo = dataRepositories.get(context);
-    if (repo == null) {
-    repo = new DataRepository(context);
-    dataRepositories.put(context, repo);
-    }
-    return repo;
-    }
+     public DataRepository getDataRepository(ComponentDescriptor context) {
+     DataRepository repo = dataRepositories.get(context);
+     if (repo == null) {
+     repo = new DataRepository(context);
+     dataRepositories.put(context, repo);
+     }
+     return repo;
+     }
     
-    public HashMap<ComponentDescriptor, DataRepository> getDataRepositories() {
-    return dataRepositories;
-    }
+     public HashMap<ComponentDescriptor, DataRepository> getDataRepositories() {
+     return dataRepositories;
+     }
      */
     public void setInitialState() {
         this.initialDoc = tree.getModelDocument(getModelDescriptor());
@@ -724,12 +716,12 @@ public class ModelView {
         }
         return outputDSDlg;
     }
-    
-    public static void main(String[] args) {        
+
+    public static void main(String[] args) {
         String uploadFileFilter1 = "(.*\\.cache)|(.*\\.ser)|(.*\\.svn)|(.*/output/.*)|(.*\\.cdat)|(.*\\.log)";
         String test = "Gehlberg/gehlberg.jam";
-                
+
         System.out.println(test.matches(uploadFileFilter1));
-        
+
     }
 }

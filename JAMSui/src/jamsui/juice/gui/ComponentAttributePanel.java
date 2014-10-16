@@ -95,7 +95,8 @@ public class ComponentAttributePanel extends JPanel {
 
     public ComponentAttributePanel() {
 
-        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, 
+                Logger.getLogger(this.getClass().getName()));
 
         this.setLayout(new BorderLayout());
 

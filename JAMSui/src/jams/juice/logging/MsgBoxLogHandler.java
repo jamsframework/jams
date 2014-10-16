@@ -3,33 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jamsui.juice.gui;
-
+package jams.juice.logging;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author christian
  */
-public class MsgBoxLog extends Handler {
+public class MsgBoxLogHandler extends Handler {
 
     private static final HashSet<Level> msgDialogHandling = new HashSet<Level>();
     private static final HashMap<Level, String> msgDialogTitle = new HashMap<Level, String>();
     private static final HashMap<Level, Integer> msgDialogIcon = new HashMap<Level, Integer>();
 
-    static final MsgBoxLog instance = new MsgBoxLog();
+    static final MsgBoxLogHandler instance = new MsgBoxLogHandler();
 
-    static public MsgBoxLog getInstance(){
+    static public MsgBoxLogHandler getInstance(){
         return instance;
     }
     
-    private MsgBoxLog() {
+    private MsgBoxLogHandler() {
         msgDialogHandling.add(Level.INFO);
         msgDialogHandling.add(Level.SEVERE);
         msgDialogHandling.add(Level.WARNING);
@@ -56,9 +54,9 @@ public class MsgBoxLog extends Handler {
 
     @Override
     public void publish(LogRecord record) {
-        if (record.getThrown() != null) {
+        /*if (record.getThrown() != null) {
             return;
-        }
+        }*/
         if (msgDialogHandling.contains(record.getLevel())) {
             JOptionPane.showMessageDialog(null, record.getMessage(),
                     msgDialogTitle.get(record.getLevel()),

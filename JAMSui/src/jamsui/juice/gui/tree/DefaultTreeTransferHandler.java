@@ -26,7 +26,8 @@ public class DefaultTreeTransferHandler extends AbstractTreeTransferHandler {
 
     public DefaultTreeTransferHandler(JAMSTree tree, int action) {
         super(tree, action, true);
-        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, 
+                Logger.getLogger(this.getClass().getName()));
     }
 
     public boolean canPerformAction(JAMSTree target, JAMSNode draggedNode, int action, Point location) {

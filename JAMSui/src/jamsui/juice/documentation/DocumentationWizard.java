@@ -10,7 +10,7 @@ import jams.SystemProperties;
 import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
-import jams.server.client.ObservableLogHandler;
+import jams.tools.LogTools.ObservableLogHandler;
 import jamsui.juice.JUICE;
 import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
 import java.awt.Frame;

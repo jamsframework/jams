@@ -1,4 +1,4 @@
-package jamsui.juice.gui;
+package jams.juice.logging;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -10,6 +10,7 @@ package jamsui.juice.gui;
 import jams.JAMS;
 import jams.JAMSException;
 import jams.tools.StringTools;
+import jamsui.juice.gui.NotificationDlg;
 import jamsui.juice.gui.NotificationDlg;
 import java.util.logging.Handler;
 import java.util.logging.Level;

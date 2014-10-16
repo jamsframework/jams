@@ -29,14 +29,16 @@ import javax.swing.UIManager;
 import jams.runtime.*;
 import jams.io.*;
 import jams.JAMS;
+import jams.JAMSLogging.LogOption;
+import static jams.JAMSLogging.LogOption.CollectAndShow;
 import jams.JAMSProperties;
 import jams.SystemProperties;
+import jams.juice.logging.MsgBoxLogHandler;
 import jams.model.JAMSFullModelState;
 import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
-import jamsui.juice.gui.MsgBoxLog;
-import jamsui.juice.gui.NotificationLog;
+import jams.juice.logging.NotificationLog;
 import java.awt.GraphicsEnvironment;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -53,8 +55,7 @@ public class JAMSui {
     private static File baseDir = new File(System.getProperty("user.dir"));
     public static final String APP_TITLE = "JAMS";
     protected SystemProperties properties;
-    static final Logger logger = Logger.getLogger(JAMSui.class.getName());
-
+    static final Logger logger = Logger.getLogger(JAMSui.class.getName());    
     /**
      * JAMSui contructor
      *
@@ -275,32 +276,19 @@ public class JAMSui {
         return baseDir;
     }
     
-    private static boolean isNotificationLogHandling(String logName){
-        return !isMsgBoxLogHandling(logName);
-    }
-    
-    private static boolean isMsgBoxLogHandling(String logName){
-        if (logName.contains("jams.server"))
-            return true;
-        if (logName.contains("JUICEFrame"))
-            return true;
-        if (logName.contains("ModelView"))
-            return true;
-        return false;
-    }
-    
-    public static void registerLogger(Logger log) {
-        if (isNotificationLogHandling(log.getName())){
-            log.addHandler(NotificationLog.getInstance());
-        }
-        if (isMsgBoxLogHandling(log.getName())){
-            log.addHandler(MsgBoxLog.getInstance());
-        }
-        log.setUseParentHandlers(false);
+    public static void registerLogger(LogOption option, Logger log) {
+        switch(option){
+            case CollectAndShow: log.addHandler(NotificationLog.getInstance()); log.setUseParentHandlers(false); break;
+            case Show: log.addHandler(MsgBoxLogHandler.getInstance()); log.setUseParentHandlers(true); break;
+        }        
+        
     }
 
-    public static void unregisterLogger(Logger log) {
-        log.removeHandler(NotificationLog.getInstance());
+    public static void unregisterLogger(LogOption option, Logger log) {
+        switch(option){
+            case CollectAndShow: log.removeHandler(NotificationLog.getInstance()); break;
+            case Show: log.addHandler(MsgBoxLogHandler.getInstance()); break;
+        }          
         log.setUseParentHandlers(true);
     }    
 }

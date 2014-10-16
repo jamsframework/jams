@@ -67,7 +67,8 @@ public class LibTree extends JAMSTree {
 
     public LibTree(ComponentCollection componentCollection, int maxClasses) {
         super(componentCollection);
-        JAMSLogging.registerLogger(Logger.getLogger(this.getClass().getName()));
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow,
+                Logger.getLogger(this.getClass().getName()));
         setEditable(false);
         new DefaultTreeTransferHandler(this, DnDConstants.ACTION_COPY);
         this.maxClasses = maxClasses;

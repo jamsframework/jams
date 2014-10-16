@@ -35,6 +35,7 @@ import java.util.*;
 import javax.swing.*;
 import jams.JAMS;
 import jams.JAMSFileFilter;
+import jams.JAMSLogging;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.tools.JAMSTools;
@@ -44,8 +45,10 @@ import jams.gui.LogViewDlg;
 import jams.gui.PropertyDlg;
 import jams.gui.RuntimeManagerPanel;
 import jams.gui.WorkerDlg;
+import jams.juice.logging.MsgBoxLogHandler;
 import jams.meta.ModelDescriptor;
 import jams.server.client.gui.BrowseJAMSCloudDlg;
+import jams.server.client.gui.JAMSCloudToolbar;
 import jamsui.juice.*;
 import jamsui.juice.documentation.DocumentationWizard;
 import jamsui.juice.gui.tree.LibTree;
@@ -53,6 +56,7 @@ import jamsui.juice.gui.tree.ModelTree;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import optas.gui.wizard.ObjectiveConfiguration;
 import optas.gui.wizard.OptimizerConfiguration;
@@ -65,7 +69,7 @@ import org.w3c.dom.Node;
  * @author S. Kralisch
  */
 public class JUICEFrame extends JFrame {
-
+    static final Logger log = Logger.getLogger(JUICEFrame.class.getName());
     private static final int TREE_PANE_WIDTH = 250, RT_MANAGER_HEIGHT = 600;
     private static final int DIVIDER_WIDTH = 8;
     private PropertyDlg propertyDlg;
@@ -76,6 +80,7 @@ public class JUICEFrame extends JFrame {
     private JMenu windowMenu, modelMenu, recentMenu;
     private JMenuItem OptimizationWizardItem, ObjectiveWizardItem;
     private JLabel statusLabel;
+    private JAMSCloudToolbar jamsServerToolbar = null;
     private final LogViewDlg infoDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Info_Log"));
     private final LogViewDlg errorDlg = new LogViewDlg(this, 400, 400, JAMS.i18n("Error_Log"));
     private Node modelProperties;
@@ -111,7 +116,8 @@ public class JUICEFrame extends JFrame {
     private Action onlineAction;
     private Action outputDSAction;
 
-    public JUICEFrame() {
+    public JUICEFrame() {        
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.Show, log);
         init();
     }
 
@@ -401,7 +407,11 @@ public class JUICEFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
-                view.runModelInCloud();
+                try{
+                    view.runModelInCloud();
+                }catch(IOException ioe){
+                    log.log(Level.SEVERE, ioe.toString(), ioe);
+                }
             }
         };
 
@@ -564,12 +574,12 @@ public class JUICEFrame extends JFrame {
         modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
         toolBar.add(modelGUIRunButton);
 
-        JButton modelRunRemoteButton = new JButton(runModelRemoteAction);
+        JButton modelRunRemoteButton = new JButton(runModelRemoteAction);        
         modelRunRemoteButton.setText("");
         modelRunRemoteButton.setToolTipText(JAMS.i18n("Run_Model_Remote"));
         modelRunRemoteButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunRemote.png")));
         toolBar.add(modelRunRemoteButton);
-        
+                
         JButton outputDSButton = new JButton(outputDSAction);
         outputDSButton.setText("");
         outputDSButton.setToolTipText(JAMS.i18n("Model_output"));
@@ -622,7 +632,9 @@ public class JUICEFrame extends JFrame {
         exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
         toolBar.add(exitButton);
 
-
+        jamsServerToolbar = new JAMSCloudToolbar(JUICE.getJamsProperties());
+        toolBar.add(jamsServerToolbar);
+                
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
 

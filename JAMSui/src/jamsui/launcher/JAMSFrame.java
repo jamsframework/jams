@@ -28,6 +28,7 @@ import jams.tools.JAMSTools;
 import jams.gui.tools.GUIHelper;
 import jams.JAMSFileFilter;
 import jams.JAMSLogging;
+import jams.JAMSLogging.LogOption;
 import jams.io.ParameterProcessor;
 import jams.tools.XMLTools;
 import jams.io.XMLProcessor;
@@ -103,10 +104,11 @@ public class JAMSFrame extends JAMSLauncher {
             public void update(Observable o, Object arg) {
                 List loggers = JAMSLogging.getLoggers();
                 Logger logger = (Logger) arg;
+                LogOption option = JAMSLogging.getLogOption(logger);
                 if (loggers.contains(logger)) {
-                    JAMSui.registerLogger(logger);
+                    JAMSui.registerLogger(option, logger);
                 } else {
-                    JAMSui.unregisterLogger(logger);
+                    JAMSui.unregisterLogger(option, logger);
                 }
             }
         });  

@@ -22,8 +22,8 @@
 package jamsui.juice;
 
 import jams.JAMS;
-import jams.JAMSException;
 import jams.JAMSLogging;
+import jams.JAMSLogging.LogOption;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.gui.WorkerDlg;
@@ -36,14 +36,10 @@ import jams.tools.StringTools;
 import jamsui.cmdline.JAMSCmdLine;
 import jamsui.juice.gui.JUICEFrame;
 import jamsui.juice.gui.ModelView;
-import jamsui.juice.gui.NotificationDlg;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.launcher.JAMSui;
 import java.io.File;
 import java.util.*;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -101,10 +97,11 @@ public class JUICE {
             public void update(Observable o, Object arg) {
                 List loggers = JAMSLogging.getLoggers();
                 Logger logger = (Logger) arg;
+                LogOption option = JAMSLogging.getLogOption(logger);
                 if (loggers.contains(logger)) {
-                    JAMSui.registerLogger(logger);
+                    JAMSui.registerLogger(option, logger);
                 } else {
-                    JAMSui.unregisterLogger(logger);
+                    JAMSui.unregisterLogger(option, logger);
                 }
             }
         });
