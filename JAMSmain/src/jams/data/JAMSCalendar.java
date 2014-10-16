@@ -129,6 +129,9 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
 
     @Override
     public void removeUnsignificantComponents(int accuracy) {
+        if (accuracy < Attribute.Calendar.MILLISECOND) {
+            this.set(Attribute.Calendar.MILLISECOND, 0);
+        }
         if (accuracy < Attribute.Calendar.SECOND) {
             this.set(Attribute.Calendar.SECOND, 0);
         }
