@@ -25,6 +25,8 @@ package jams.server.service;
 import jams.server.entities.File;
 import jams.server.entities.Job;
 import jams.server.entities.JobState;
+import jams.server.entities.Jobs;
+import jams.server.entities.User;
 import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
 import jams.tools.FileTools;
@@ -66,6 +68,42 @@ public abstract class AbstractProcessManager implements ProcessManager {
             }
         }
         f.delete();
+    }
+    
+    //make sure there no zombies in exec directory
+    @Override
+    public void cleanUp(User user, Jobs jobs){
+        if (user == null || jobs == null)
+            return;
+        
+        java.io.File target = new java.io.File(ApplicationConfig.SERVER_EXEC_DIRECTORY + "/" + user.getLogin());
+        //never ever climb up
+        if (user.getLogin().contains("..")){
+            return;
+        }
+        if (!target.exists())
+            return;
+        for (java.io.File dir : target.listFiles()){
+            if (!dir.isDirectory()){
+                continue;
+            }
+            
+            String name = dir.getName();
+            int id = 0;
+            try{
+                id = Integer.parseInt(name);
+            }catch(NumberFormatException nfe){
+                continue;
+            }
+            
+            Job job = jobs.find(id);
+            //directory still valid so keep it
+            if (job != null)
+                continue;
+            
+            //otherwise delete directoy
+            FileTools.deleteRecursive(dir);
+        }
     }
     
     @Override

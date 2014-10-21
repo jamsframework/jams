@@ -36,10 +36,16 @@ import java.util.logging.Logger;
  *
  * @author christian
  */
-public class LinuxProcessManager extends AbstractProcessManager {
+public class MultiLinuxProcessManager extends AbstractProcessManager {
     
-    Logger logger = Logger.getLogger(LinuxProcessManager.class.getName());
+    Logger logger = Logger.getLogger(MultiLinuxProcessManager.class.getName());
         
+    
+    
+    public MultiLinuxProcessManager(){
+        
+    }
+    
     @Override
     protected Integer getProcessPid(Process process) throws IOException {
         logger.fine("obtaining process id");

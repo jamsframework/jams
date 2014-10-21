@@ -145,6 +145,13 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             return Response.status(Status.FORBIDDEN).build();
         }
         
+        //perform cleanup at first
+        try{
+            processManager.cleanUp(currentUser, new Jobs(findAll()));
+        }catch(IOException ioe){
+            Logger.getLogger(getClass().getName()).warning(ioe.toString());
+        }
+        
         List<Workspace> list = getWorkspaceWithID(wsID);
         if (list == null || list.isEmpty()){
             return Response.status(Status.NOT_FOUND).build();
@@ -401,7 +408,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             }else{
                 Workspace ws = job.getWorkspace();                
                 super.remove(job);                
-                Utilities.deleteWorkspace(ws);
+                Utilities.deleteWorkspace(currentUser, ws);
                 em.remove(ws);                
             }
             return Response.ok(job, MediaType.APPLICATION_XML_TYPE).build();

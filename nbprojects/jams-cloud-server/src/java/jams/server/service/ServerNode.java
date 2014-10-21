@@ -1,6 +1,6 @@
 /*
- * ProcessManager.java
- * Created on 23.04.2014, 18:11:51
+ * ServerNode.java
+ * Created on 16.10.2014, 21:27:32
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -22,26 +22,19 @@
 
 package jams.server.service;
 
-import jams.server.entities.Job;
-import jams.server.entities.JobState;
-import jams.server.entities.Jobs;
-import jams.server.entities.User;
-import jams.server.entities.Workspace;
-import java.io.IOException;
-import javax.persistence.EntityManager;
-import javax.ws.rs.core.StreamingOutput;
+import java.io.File;
 
 /**
  *
  * @author christian
  */
-public interface ProcessManager {    
-    Job deploy(Job job) throws IOException;
-    JobState state(Job job) throws IOException;
-    JobState kill(Job job) throws IOException;
-    void cleanUp(User user, Jobs jobs) throws IOException;
-    double getLoad();
-    StreamingOutput streamInfoLog(Job job) throws IOException;
-    StreamingOutput streamErrorLog(Job job) throws IOException;
-    Workspace updateWorkspace(Job job, EntityManager em);
+public class ServerNode {
+    String nodeName;
+    File localMountingPoint;
+    String user;
+    String password;
+    
+    public ServerNode(String nodeName, File localMount, String user, String password){
+        this.nodeName = nodeName;
+    }
 }

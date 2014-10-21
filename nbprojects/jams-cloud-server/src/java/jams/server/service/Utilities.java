@@ -23,6 +23,8 @@
 package jams.server.service;
 
 import jams.JAMSProperties;
+import jams.server.entities.Job;
+import jams.server.entities.User;
 import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
 import jams.tools.FileTools;
@@ -204,18 +206,17 @@ public class Utilities {
         }
     }
             
-    static public void deleteWorkspace(Workspace ws){
-        for (WorkspaceFileAssociation wfa : ws.getFiles()){
-            if (wfa.getFile().getHash().length()<5){
-                java.io.File file = new File(wfa.getFile().getLocation());
-                if (!file.delete()){
-                    System.out.println("Delete failed:" + file.getAbsolutePath());
-                }
-                //delete parent directories
-                while ( (file = file.getParentFile()) != null && file.isDirectory() && file.listFiles().length == 0 ){
-                    file.delete();                    
-                }
-            }                    
+    static public void deleteWorkspace(User user, Workspace ws){
+        if (user == null || ws == null)
+            return;
+        
+        java.io.File target = new java.io.File(ApplicationConfig.SERVER_EXEC_DIRECTORY + "/" + user.getLogin() + "/" + ws.getId());
+        //never ever climb up
+        if (user.getLogin().contains("..")){
+            return;
         }
+        if (!target.exists())
+            return;
+        FileTools.deleteRecursive(target);        
     }            
 }
