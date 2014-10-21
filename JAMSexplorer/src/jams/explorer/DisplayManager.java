@@ -22,6 +22,7 @@
 package jams.explorer;
 
 import jams.JAMS;
+import jams.JAMSLogging;
 import jams.gui.tools.GUIHelper;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
@@ -67,6 +68,7 @@ public class DisplayManager implements Observer {
         treePanel = new TreePanel(explorer);
         inputDSInfoPanel = new InputDSInfoPanel();
         treePanel.getTree().addObserver(this);
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.Show, Logger.getLogger(DisplayManager.class.getName()));
     }
 
     // handle selection of tree nodes and show metadata
