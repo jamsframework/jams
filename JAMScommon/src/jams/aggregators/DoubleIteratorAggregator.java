@@ -197,6 +197,7 @@ public abstract class DoubleIteratorAggregator extends Aggregator<Iterable<Doubl
 
         public AverageAggregator(AverageAggregator copy) {
             super(copy);
+            counter = new int[copy.v.length];
         }
 
         public AverageAggregator(int n) {
@@ -206,7 +207,7 @@ public abstract class DoubleIteratorAggregator extends Aggregator<Iterable<Doubl
 
         @Override
         public DoubleIteratorAggregator copy() {
-            return new AverageAggregator(this);
+            return new AverageAggregator(this);            
         }
 
         @Override

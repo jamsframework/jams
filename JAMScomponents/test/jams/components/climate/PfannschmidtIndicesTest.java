@@ -10,7 +10,7 @@ import jams.aggregators.BasicTemporalAggregator;
 import jams.aggregators.CompoundTemporalAggregator;
 import jams.aggregators.DoubleAggregator;
 import jams.aggregators.TemporalAggregator;
-import jams.component.indices.PfannschmidtIndices;
+import jams.components.indices.PfannschmidtIndices;
 import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
 import java.io.BufferedReader;

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jams.component.indices;
+package jams.components.indices;
 
 import jams.data.Attribute;
 import jams.model.JAMSComponent;

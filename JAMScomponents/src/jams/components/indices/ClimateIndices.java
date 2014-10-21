@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jams.component.indices;
+package jams.components.indices;
 
 import jams.data.Attribute;
 import jams.model.JAMSComponent;
@@ -200,7 +200,7 @@ public class ClimateIndices extends JAMSComponent {
         inTmp[INDEX_KWB_window+p] = tmean.getValue();
         p = (p+1)%KWB_WINDOW_SIZE;
         double tSum = 0;
-        for (int i=0;i<30;i++){
+        for (int i=0;i<KWB_WINDOW_SIZE;i++){
             tSum += inTmp[INDEX_KWB_window_position+i];
         }
         if (tSum > 150 && inTmp[INDEX_KWB_window+p]>5) {

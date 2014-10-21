@@ -5,7 +5,7 @@
  */
 package jams.components.climate;
 
-import jams.component.indices.TemperatureIndices;
+import jams.components.indices.TemperatureIndices;
 import jams.data.DefaultDataFactory;
 import java.io.BufferedReader;
 import java.io.IOException;

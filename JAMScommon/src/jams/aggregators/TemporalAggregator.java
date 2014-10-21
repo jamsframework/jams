@@ -154,7 +154,7 @@ public abstract class TemporalAggregator<T>{
             if (totalTimePeriod.getStart().after(ti.getStart())){
                 totalTimePeriod.setStart(ti.getStart().clone());
             }
-            if (totalTimePeriod.getEnd().after(ti.getEnd())){
+            if (totalTimePeriod.getEnd().before(ti.getEnd())){
                 totalTimePeriod.setEnd(ti.getEnd().clone());
             }
         }

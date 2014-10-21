@@ -65,6 +65,7 @@ public class SpatioTemporalAggregator extends TemporalAggregatorBase {
                 aggregationTime.setValue(c);
             }
             Iterator<Double> iter = v.iterator();
+            
             for (Attribute.Entity e : entities.getEntities()){
                 double d = iter.next();
                 if (Double.isNaN(d))
@@ -91,11 +92,18 @@ public class SpatioTemporalAggregator extends TemporalAggregatorBase {
             AggregationMode outerMode = getOuterAggregationModeID(i);
             AggregationTimePeriod innerTimeUnitID = getInnerTimeUnitID();
             AggregationTimePeriod outerTimeUnitID = getOuterTimeUnitID();
-            
-            BasicTemporalAggregator<Iterable<Double>> innerAggregator = 
-                    new BasicTemporalAggregator<Iterable<Double>>(
+                        
+            BasicTemporalAggregator<Iterable<Double>> innerAggregator = null;
+            if (innerTimeUnitID.equals(AggregationTimePeriod.CUSTOM)){
+                innerAggregator = new BasicTemporalAggregator<Iterable<Double>>(
+                  DoubleIteratorAggregator.create(innerMode, N), 
+                        innerTimeUnitID, customTimePeriods);
+            }else{
+                innerAggregator = new BasicTemporalAggregator<Iterable<Double>>(
                   DoubleIteratorAggregator.create(innerMode, N), 
                         innerTimeUnitID);
+            }
+                    
             
             TemporalAggregator<Iterable<Double>> outerAggregator;
             if (outerMode != AggregationMode.INDEPENDENT){                
