@@ -182,7 +182,8 @@ public class SynchronizeDlg extends JDialog {
         if (flag == true){
             try{                
                 if (!connector.isConnected()){
-                    connector.reconnect();
+                    if ( connector.reconnect() == null )
+                        return;
                 }
             }catch(IOException ioe){
                 log.log(Level.SEVERE, "Unable to connect", ioe);

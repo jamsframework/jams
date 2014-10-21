@@ -368,7 +368,8 @@ public class ModelView {
         //first logon to server
         JAMSCloudGraphicalController connector = JAMSCloudGraphicalController.createInstance(JUICE.getJamsProperties());
         if (!connector.isConnected()){
-            connector.reconnect();
+            if (connector.reconnect()==null)
+                return null;
         }
         Controller client = connector.getClient();
 

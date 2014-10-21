@@ -32,7 +32,6 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -94,7 +93,7 @@ public class Workspace implements Serializable, Comparable<Workspace> {
     @JoinColumn(name = "ancestor")
     private Workspace ancestor;
         
-    @OneToMany(mappedBy="ws", cascade = {CascadeType.PERSIST}, orphanRemoval=true)
+    @OneToMany(mappedBy="ws", cascade = {CascadeType.ALL})
     private List<WorkspaceFileAssociation> files = new ArrayList<WorkspaceFileAssociation>();
                 
     public Workspace() {

@@ -65,11 +65,11 @@ public class Job implements Serializable, Comparable<Job> {
     @Column(name = "ownerID", insertable = false, updatable = false)
     private Integer ownerID;
     
-    @OneToOne(cascade=CascadeType.REMOVE)
+    @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="workspaceID")
     private Workspace workspace;
     
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.EAGER, cascade={CascadeType.REFRESH, CascadeType.PERSIST})
     @JoinColumn(name="modelFileID")
     private WorkspaceFileAssociation modelFile;
         

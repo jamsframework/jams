@@ -6,7 +6,6 @@
 package jams.server.client.gui;
 
 import jams.ErrorCatchingRunnable;
-import jams.JAMS;
 import jams.JAMSLogging;
 import jams.SystemProperties;
 import jams.gui.CancelableWorkerDlg;
@@ -30,6 +29,7 @@ import java.util.logging.Filter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -231,6 +231,7 @@ public class JAMSCloudGraphicalController extends Observable{
             }
             recentUrls = curS + ";" + recentUrls;
             p.setProperty("jams_server_recent_urls", recentUrls);
+            ((DefaultComboBoxModel)serverUrls.getModel()).insertElementAt(curS,0);
             try {
                 p.save();
             } catch (IOException ioe) {
@@ -274,7 +275,10 @@ public class JAMSCloudGraphicalController extends Observable{
             this.notifyObservers(JAMSCloudEvents.CONNECT);            
             return client;
         }else {
-            throw new IOException("User canceled connection!");
+            this.setChanged();
+            this.notifyObservers(JAMSCloudEvents.DISCONNECT);
+            return null;
+            //throw new IOException("User canceled connection!");
         }
     }
 

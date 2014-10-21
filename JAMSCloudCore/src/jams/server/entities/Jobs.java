@@ -59,8 +59,17 @@ public class Jobs {
     public void setJobs(List<Job> files){
         this.jobs = files;
     }
+    
     public List<Job> getJobs() {
         return jobs;
+    }
+    
+    public Job find(int id){
+        for (Job job : jobs){
+            if (job.getId() == id)
+                return job;
+        }
+        return null;
     }
  
     @Override

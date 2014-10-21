@@ -21,6 +21,7 @@
  */
 package jams.server.client.gui;
 
+import jams.ErrorCatchingRunnable;
 import jams.JAMS;
 import jams.JAMSLogging;
 import jams.SystemProperties;
@@ -51,7 +52,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -70,6 +71,7 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -81,6 +83,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -155,6 +158,19 @@ public class BrowseJAMSCloudDlg extends JDialog {
             showErrorLogAction = null;
 
     SystemProperties p = null;
+    WorkerDlg worker = new WorkerDlg(this, "Request is being processed .. ");
+
+    Observer myObserver = new Observer() {
+        @Override
+        public void update(Observable o, Object arg) {
+            if (arg == JAMSCloudEvents.CONNECT) {
+                connect();
+            }
+            if (arg == JAMSCloudEvents.DISCONNECT) {
+                setVisible(false);
+            }
+        }
+    };
 
     /**
      *
@@ -303,8 +319,9 @@ public class BrowseJAMSCloudDlg extends JDialog {
     @Override
     public void setVisible(boolean flag) {
         if (flag == true) {
-            connect();
-            updateView();
+            if (connect() == false)
+                return;
+            updateViewAction();
         } else {
             disconnect();
         }
@@ -360,14 +377,15 @@ public class BrowseJAMSCloudDlg extends JDialog {
         }
         if (!ws.isReadOnly()) {
             try {
-
+                connector.getClient().workspaces().delete(ws);
+                updateData();
             } catch (ProcessingException ioe) {
                 log.log(Level.SEVERE, "Unable to delete workspace", ioe);
             }
         } else {
             log.severe(JAMS.i18n("Workspace_with_id:%1_was_not_deleted,_since it_is_read-only!")
                     .replace("%1", Integer.toString(ws.getId())));
-        }
+        }     
     }
 
     private void deleteJob(Job job) {
@@ -377,7 +395,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
         try {
             connector.getClient().jobs().delete(job);
             log.info(JAMS.i18n("Job_deleted!"));
-            updateView();
+            updateData();
         } catch (ProcessingException ioe) {
             log.log(Level.SEVERE, JAMS.i18n("Failed_to_delete_job!"), ioe);
         }
@@ -396,7 +414,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
             try {
                 connector.getClient().jobs().deleteAll();
                 log.info(JAMS.i18n("All_jobs_were_deleted"));
-                updateView();
+                updateData();
             } catch (ProcessingException ioe) {
                 log.log(Level.SEVERE, ("Failed_to_delete_jobs!"), ioe);
             }
@@ -416,7 +434,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
             try {
                 connector.getClient().workspaces().deleteAll();
                 log.info(JAMS.i18n("All_workspaces_were_deleted"));
-                updateView();
+                updateData();
             } catch (ProcessingException ioe) {
                 log.log(Level.SEVERE, ("Failed_to_delete_workspaces!"), ioe);
             }
@@ -431,7 +449,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
             connector.getClient().jobs().kill(job);
             log.info(JAMS.i18n("Job_with_id:%1_was_killed!")
                     .replace("%1", Integer.toString(job.getId())));
-            updateView();
+            updateData();
         } catch (ProcessingException ioe) {
             log.log(Level.SEVERE,
                     JAMS.i18n("Failed_to_kill_job_with_id:%1!")
@@ -448,13 +466,46 @@ public class BrowseJAMSCloudDlg extends JDialog {
         jobsTree.updateNode(state.getJob());
     }
 
+    private void updateViewAction() {
+        if (connector == null) {
+            return;
+        }
+
+        WorkerDlg dlg = new WorkerDlg(null, JAMS.i18n("Retrieving_data"));
+        dlg.setInderminate(true);
+        dlg.setTask(new Runnable() {
+
+            @Override
+            public void run() {
+                updateData();
+            }
+        });
+        dlg.execute();
+    }
+
     private void initActions() {
+        abstract class ParameterizedRunnable<T> extends ErrorCatchingRunnable {
+
+            T arg;
+
+            ParameterizedRunnable(T t) {
+                this.arg = t;
+            }
+        }
+
         deleteJobAction = new AbstractAction(JAMS.i18n("Delete")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Job job = jobsTree.getSelectedJob();
                 if (job != null) {
-                    deleteJob(job);
+                    worker.setTask(new ParameterizedRunnable<Job>(job) {
+
+                        @Override
+                        public void safeRun() throws Exception {
+                            deleteJob(arg);
+                        }
+                    });
+                    worker.execute();
                 }
             }
         };
@@ -462,7 +513,14 @@ public class BrowseJAMSCloudDlg extends JDialog {
         deleteAllJobsAction = new AbstractAction(JAMS.i18n("Remove_all")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteAllJobs();
+                worker.setTask(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        deleteAllJobs();
+                    }
+                });
+                worker.execute();
             }
         };
 
@@ -471,7 +529,13 @@ public class BrowseJAMSCloudDlg extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 Job job = jobsTree.getSelectedJob();
                 if (job != null) {
-                    killJob(job);
+                    worker.setTask(new ParameterizedRunnable<Job>(job) {
+                        @Override
+                        public void safeRun() throws Exception {
+                            killJob(arg);
+                        }
+                    });
+                    worker.execute();
                 }
             }
         };
@@ -481,7 +545,13 @@ public class BrowseJAMSCloudDlg extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 Job job = jobsTree.getSelectedJob();
                 if (job != null) {
-                    updateJob(job);
+                    worker.setTask(new ParameterizedRunnable<Job>(job) {
+                        @Override
+                        public void safeRun() throws Exception {
+                            updateJob(arg);
+                        }
+                    });
+                    worker.execute();
                 }
             }
         };
@@ -512,7 +582,13 @@ public class BrowseJAMSCloudDlg extends JDialog {
                 WorkspaceFileAssociation wfa = getSelectedFile();
                 if (wfa != null) {
                     if (wfa.getRole() == WorkspaceFileAssociation.ROLE_MODEL) {
-                        startJob(wfa.getWorkspace(), wfa);
+                        worker.setTask(new ParameterizedRunnable<WorkspaceFileAssociation>(wfa) {
+                            @Override
+                            public void safeRun() throws Exception {
+                                startJob(arg.getWorkspace(), arg);
+                            }
+                        });
+                        worker.execute();
                     }
                 }
             }
@@ -531,13 +607,20 @@ public class BrowseJAMSCloudDlg extends JDialog {
                 if (ws == null) {
                     return;
                 }
-                jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                int result = jfc.showSaveDialog(jfc);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File target = jfc.getSelectedFile();
-                    connector.downloadWorkspace(ws, target);
-                    log.info(JAMS.i18n("Download_complete"));
-                }
+                worker.setTask(new ParameterizedRunnable<Workspace>(ws) {
+                    @Override
+                    public void safeRun() throws Exception {
+                        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                        int result = jfc.showSaveDialog(jfc);
+                        if (result == JFileChooser.APPROVE_OPTION) {
+                            File target = jfc.getSelectedFile();
+                            connector.downloadWorkspace(arg, target);
+                            log.info(JAMS.i18n("Download_complete"));
+                        }
+                    }
+                });
+                worker.execute();
+
             }
         };
 
@@ -548,14 +631,20 @@ public class BrowseJAMSCloudDlg extends JDialog {
                 if (wfa == null) {
                     return;
                 }
+                worker.setTask(new ParameterizedRunnable<WorkspaceFileAssociation>(wfa) {
+                    @Override
+                    public void safeRun() throws Exception {
+                        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                        int result = jfc.showSaveDialog(jfc);
+                        if (result == JFileChooser.APPROVE_OPTION) {
+                            File target = jfc.getSelectedFile();
+                            connector.downloadFile(arg, target);
+                            log.info(JAMS.i18n("Download_complete"));
+                        }
+                    }
+                });
+                worker.execute();
 
-                jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                int result = jfc.showSaveDialog(jfc);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File target = jfc.getSelectedFile();
-                    connector.downloadFile(wfa, target);
-                    log.info(JAMS.i18n("Download_complete"));
-                }
             }
         };
 
@@ -566,14 +655,27 @@ public class BrowseJAMSCloudDlg extends JDialog {
                 if (ws == null) {
                     return; //should never happen
                 }
-                deleteWorkspace(ws);
+                worker.setTask(new ParameterizedRunnable<Workspace>(ws) {
+                    @Override
+                    public void safeRun() throws Exception {
+                        deleteWorkspace(arg);
+                    }
+                });
+                worker.execute();
+
             }
         };
 
         deleteAllWorkspacesAction = new AbstractAction(JAMS.i18n("Remove_all")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteAllWorkspaces();
+                worker.setTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        deleteAllWorkspaces();
+                    }
+                });
+                worker.execute();
             }
         };
 
@@ -584,7 +686,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
                 dialog.setModal(true);
                 dialog.setVisible(true);
                 if (dialog.getUploadSuccessful()) {
-                    updateView();
+                    updateViewAction();
                 }
             }
         };
@@ -632,7 +734,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
                     wsName.setText(ws.getName());
                     wsCreation.setText(sdf.format(ws.getCreationDate()));
                     wsSize.setText(StringTools.humanReadableByteCount(
-                            ws.getWorkspaceSize(),false));
+                            ws.getWorkspaceSize(), false));
                 }
             }
         }
@@ -651,7 +753,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
                         jobCreation.setText(JAMS.i18n("not_started"));
                     }
                     jobSize.setText(StringTools.humanReadableByteCount(
-                            job.getWorkspace().getWorkspaceSize(),false));
+                            job.getWorkspace().getWorkspaceSize(), false));
                 } else {
                     JAMSServerTreeNodes.SortedMutableTreeNode node = jobsTree.getSelectedNode();
                     if (node instanceof WFANode) {
@@ -760,36 +862,23 @@ public class BrowseJAMSCloudDlg extends JDialog {
             }
         });
 
-        this.addKeyListener(new KeyAdapter() {
+        this.getRootPane().registerKeyboardAction(new ActionListener() {
             @Override
-            public void keyReleased(KeyEvent e) {
-                int keyCode = e.getKeyCode();
-                if (keyCode == KeyEvent.VK_F5) {
-                    updateView();
-                }
+            public void actionPerformed(ActionEvent e) {
+                updateViewAction();
             }
-        });
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
-
-    Observer myObserver = new Observer() {
-        @Override
-        public void update(Observable o, Object arg) {
-            if (arg == JAMSCloudEvents.CONNECT) {
-                connect();
-            }
-            if (arg == JAMSCloudEvents.DISCONNECT) {
-                setVisible(false);
-            }
-        }
-    };
 
     private boolean connect() {
         try {
             if (!connector.isConnected()) {
                 isConnected = false;
-                connector.reconnect();
+                if (connector.reconnect() == null) {
+                    return false;
+                }
                 isConnected = true;
-            }else{
+            } else {
                 isConnected = true;
             }
         } catch (IOException ioe) {
@@ -805,13 +894,13 @@ public class BrowseJAMSCloudDlg extends JDialog {
                 statusLabel.setText(arg.toString());
             }
         });
-        updateView();
+        updateViewAction();
         return true;
     }
 
     private void disconnect() {
         if (isConnected) {
-            
+
         }
     }
 
@@ -835,29 +924,12 @@ public class BrowseJAMSCloudDlg extends JDialog {
         return null;
     }
 
-    private void updateView() {
-        if (connector == null) {
-            return;
-        }
-
-        WorkerDlg dlg = new WorkerDlg(null, JAMS.i18n("Retrieving_data"));
-        dlg.setInderminate(true);
-        dlg.setTask(new Runnable() {
-
-            @Override
-            public void run() {
-                updateData();
-            }
-        });
-        dlg.execute();
-    }
-
     private void updateData() {
         if (!isConnected) {
             return;
         }
         jobs = connector.getClient().jobs().find();
-        
+
         //refresh states .. 
         for (Job job : jobs.getJobs()) {
             if (job.getPID() > 0) {

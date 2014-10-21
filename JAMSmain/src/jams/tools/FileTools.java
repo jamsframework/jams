@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -68,6 +70,23 @@ public class FileTools {
         }
     }
 
+    /**
+     * delete all given files
+     *
+     * @param theFile
+     */
+    public static void deleteRecursive(File theFile) {
+        if (theFile.isDirectory()){
+            for (File f : theFile.listFiles()){
+                deleteRecursive(f);
+            }
+        }
+        Logger log = Logger.getLogger(FileTools.class.getName());    
+        log.setLevel(Level.ALL);
+        log.log(Level.INFO, "Deleted the file during cleanUp {0}", theFile.getAbsolutePath());
+        theFile.delete();
+    }
+    
     /**
      * get array of files
      *
