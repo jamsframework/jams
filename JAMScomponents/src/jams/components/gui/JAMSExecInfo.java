@@ -78,7 +78,7 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
     private transient ScheduledExecutorService exec;
     private boolean runonce = false;
     private JAMSRuntime rt;
-
+    private double divisor = 1;
     public JPanel getPanel() {
         if (this.panel == null) {
             createPanel();
@@ -89,7 +89,9 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
     @Override
     public void init() {
         if (panel != null) {
-            jamsProgressBar.setMaximum((int) this.getContext().getNumberOfIterations());
+            long max = this.getContext().getNumberOfIterations();
+            divisor = Math.max(0, max / (long)Integer.MAX_VALUE)+1;               // account for max int
+            jamsProgressBar.setMaximum((int) (max/divisor) );
         } else {
             updatePBar = new Runnable() {
                 public void run() {
@@ -102,7 +104,9 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
     @Override
     public void initAll() {
         if (!runonce && panel != null) {
-            jamsProgressBar.setMaximum((int) getModel().getProgress()[1]);
+            long max = this.getModel().getProgress()[1];
+            divisor = Math.max(0, max / (long)Integer.MAX_VALUE)+1;    // account for max int        
+            jamsProgressBar.setMaximum((int) (max/divisor));
             rt = getModel().getRuntime();
             runonce = true;
         }
@@ -162,7 +166,7 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
                     exec.shutdown();
                     return;
                 }
-                jamsProgressBar.setValue((int) getModel().getProgress()[0]);
+                jamsProgressBar.setValue((int) (getModel().getProgress()[0] / divisor));
                 long eTime = System.currentTimeMillis() - startTime;
 
                 double progress = jamsProgressBar.getPercentComplete();
@@ -231,7 +235,7 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
                     exec.shutdown();
                     return;
                 }
-                jamsProgressBar.setValue((int) getModel().getProgress()[0]);
+                jamsProgressBar.setValue((int) (getModel().getProgress()[0]/divisor));
                 long eTime = System.currentTimeMillis() - startTime;
 
                 double progress = jamsProgressBar.getPercentComplete();
