@@ -427,7 +427,7 @@ public class TSDataStore extends TableDataStore {
                         case DOUBLE:
                             value = new DoubleValue(0);
                             if (valueString.equals(this.getMissingDataValue())) {
-                                value.setDouble((Double) JAMS.getMissingDataValue(double.class));
+                                value.setDouble((Double) JAMS.getMissingDataValue(Double.class));
                             }else{
                                 value.setString(valueString);
                             }
@@ -435,7 +435,7 @@ public class TSDataStore extends TableDataStore {
                         case LONG:
                             value = new LongValue(0);
                             if (valueString.equals(this.getMissingDataValue())) {
-                                value.setLong((Long) JAMS.getMissingDataValue(long.class));
+                                value.setLong((Long) JAMS.getMissingDataValue(Long.class));
                             }else{
                                 value.setString(valueString);
                             }                            
