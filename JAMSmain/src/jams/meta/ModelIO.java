@@ -108,7 +108,6 @@ public class ModelIO {
         ModelDescriptor md = new ModelDescriptor();
 
         //get model name, description, author and date
-
         docRoot = modelDoc.getDocumentElement();
         modelName = docRoot.getAttribute("name");
         md.setAuthor(docRoot.getAttribute("author"));
@@ -137,9 +136,7 @@ public class ModelIO {
 //                exHandler.handle(ex);
 //            }
 //        }
-
         //handle all contextcomponent and component nodes
-
         NodeList children = docRoot.getChildNodes();
         for (int index = 0; index < children.getLength(); index++) {
             node = children.item(index);
@@ -160,6 +157,14 @@ public class ModelIO {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
                 }
 
+            } else if (node.getNodeName().equals("attributetemplate")) {
+
+                try {
+                    addAttributeTemplate(cd, (Element) node);
+                } catch (JAMSException mle) {
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
+                }
+
             } else if (node.getNodeName().equals("var")) {
 
                 element = (Element) node;
@@ -172,7 +177,6 @@ public class ModelIO {
 
 //        GUI
 //        view.getModelEditPanel().updatePanel();
-
         if (processEditors) {
 
             //handle the launcher node
@@ -199,7 +203,6 @@ public class ModelIO {
         String componentName = "", className = "", version = "";
         ModelNode rootNode = null;
         boolean enabled = true;
-
 
         componentName = rootElement.getAttribute("name");
         className = rootElement.getAttribute("class");
@@ -233,7 +236,6 @@ public class ModelIO {
         }
 
         //ModelNode rootNode = new ModelNode(rootElement.getAttribute("name"));
-
         String type = rootElement.getNodeName();
 
         if (type.equals("component")) {
@@ -289,7 +291,6 @@ public class ModelIO {
         }
 
         //cd.getUnsetAttributes();
-
         return rootNode;
     }
 
@@ -327,12 +328,17 @@ public class ModelIO {
              Class attributeType = cd.getComponentAttributes().get(name).type;
              context.getDataRepository().addAttribute(new ContextAttribute(attribute, attributeType, context));
              }*/
-
         } else if (e.hasAttribute("value")) {
 
             field.setValue(e.getAttribute("value"));
 
         }
+    }
+
+    private void addAttributeTemplate(ContextDescriptor cd, Element e) {
+        String templateName = e.getAttribute("name");
+        String templateType = e.getAttribute("elementclass");
+        Class type;
     }
 
     //add attribute that is defined by a context component
@@ -373,8 +379,7 @@ public class ModelIO {
         }
     }
 
-    
-    public boolean validateModelFile(File f){
+    public boolean validateModelFile(File f) {
         if (f.isDirectory()) {
             return false;
         }
@@ -400,26 +405,26 @@ public class ModelIO {
         };
         Logger.getLogger(ModelIO.class.getName()).setFilter(filterAll);
         Logger.getLogger(jams.meta.ModelDescriptor.class.getName()).setFilter(filterAll);
-        
-        try {                        
+
+        try {
             ModelDescriptor desc = io.loadModelDescriptor(d, null, true);
             if (desc == null) {
                 return false;
             }
             if (desc.getModelName() == null || desc.getModelName().isEmpty()) {
                 return false;
-            }            
+            }
         } catch (Throwable t) {
             t.printStackTrace();
             return false;
-        } finally{
+        } finally {
             //reactive logs
             Logger.getLogger(ModelIO.class.getName()).setFilter(null);
             Logger.getLogger(jams.meta.ModelDescriptor.class.getName()).setFilter(null);
-        }        
+        }
         return true;
     }
-    
+
     // Create a XML document from the model tree
     public Document getModelDocument(ModelDescriptor md) {
 
@@ -519,13 +524,11 @@ public class ModelIO {
             }
             rootElement.appendChild(element);
 
-
 //                    //handle the metaprocessors node
 //        NodeList metaProcessorNodes = docRoot.getElementsByTagName("metaprocessor");
 //        if (metaProcessorNodes != null) {
 //            md.setMetaProcessorNodes(metaProcessorNodes);
 //        }      
-
             if (cd instanceof ContextDescriptor) {
                 ContextDescriptor context = (ContextDescriptor) cd;
 

@@ -198,7 +198,7 @@ public class JAMS {
         return missingDataValue;
     }
     
-    public static <T> T getMissingDataValue(Class<T> c){
+        public static <T> T getMissingDataValue(Class<T> c){
         if (c == Double.class)
             return (T)new Double(getMissingDataValue());
         else if (c == Integer.class)

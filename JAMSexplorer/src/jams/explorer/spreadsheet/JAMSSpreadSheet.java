@@ -851,6 +851,7 @@ public class JAMSSpreadSheet extends JPanel {
             try {
                 ds = store.getNext();
             } catch (Exception e) {
+                e.printStackTrace();
                 GUIHelper.showErrorDlg(this, JAMS.i18n("Trying_to_read_past_end_of_datastore"), JAMS.i18n("ERROR"));
                 return;
             }

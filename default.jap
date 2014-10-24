@@ -1,23 +1,31 @@
-#JAMS-Konfigurationsdatei
-#Fri Sep 19 16:07:36 CEST 2014
+#JAMS configuration file
+#Fri Oct 24 11:45:52 CEST 2014
+progressfilename=
 infolog=
 libs=.;lib
 guiconfig=true
+docbook-home=
+debugmode=false
 model=
 charset=
+username=
+progressperiod=-1
 profiling=false
 defaultworkspace=true
 windowenable=true
 errordlg=true
 maxlibclasses=10000
+windowontop=false
+forcelocale=en
 windowheight=600
 verbose=false
 maxrecentfiles=5
-recentfiles=
-debug=1
+recentfiles=D\:\\jamsmodeldata\\J2K_Rhone\\J2K_Rhone_R_ch.jam|D\:\\jamsapplication\\JAMS-Gehlberg\\j2k_gehlberg.jam|D\:\\jamsmodeldata\\J2K_Rhone\\J2K_Rhone_R.jam|C\:\\jams\\data\\j2k_gehlberg\\j2k_gehlberg.jam|D\:\\jamsmodeldata\\J2K_umvoti_SK\\j2k_umvoti.jam
+debug=3
 guiconfigheight=600
 windowwidth=900
 guiconfigwidth=600
 preprocessing=true
 errorlog=
+helpbaseurl=
 floatformat=%f

@@ -71,7 +71,7 @@ import jams.model.*;
     
     public void run() {
 
-        if(!target.getValue().isEmpty()){
+        if(!target.isEmpty()){
             int i = 0;
             for (Attribute.Double value : values) {                
                 target.setDouble(inNames[i].getValue(), value.getValue() + target.getDouble(inNames[i].getValue()));

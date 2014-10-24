@@ -77,6 +77,25 @@ public class ModelDescriptor extends ComponentCollection {
         this.preprocessors = (ArrayList<MetaProcessorDescriptor>) md.getPreprocessors().clone();
         this.rootNode = md.getRootNode().clone(this, true, new HashMap<ContextDescriptor, ContextDescriptor>());
     }
+    
+//    public ContextAttribute addAttributeTemplate(String name, Class type, String[] values) {
+//
+//        ContextAttribute ca = staticAttributes.get(name);
+//
+//        // info wenn attribut mit gleichem namen schon existent und dann zum repo adden!!!
+//        if (ca != null) {
+//
+//            throw new JAMSException(JAMS.i18n("Error_adding_context_attribute") + "\n" + MessageFormat.format(JAMS.i18n("Context_attribute_does_already_exist"), name));
+//
+//        } else {
+//            ca = new ContextAttribute(name, type, this);
+//            staticAttributes.put(name, ca);
+//        }
+//
+//        ca.setValue(value);
+//
+//        return ca;
+//    }    
 
     /*
      * Create a new name for a component instance. If possible, use the given
@@ -264,8 +283,6 @@ public class ModelDescriptor extends ComponentCollection {
                 }
             }
         }
-
-        return;
     }
 
     private void setHelpComponent(Element theElement, ModelElement theModelElement) throws DOMException {
