@@ -34,27 +34,59 @@ import java.util.ArrayList;
  * @author S. Kralisch
  */
 @JAMSComponentDescription(title = "JAMS spatial context",
-author = "Sven Kralisch",
-date = "2012-07-06",
-version = "1.0_0",
-description = "This component represents a filtered JAMS context which can be "
-+ "used to represent space in environmental models")
+        author = "Sven Kralisch",
+        date = "2012-07-06",
+        version = "1.0_0",
+        description = "This component represents a filtered JAMS context which can be "
+        + "used to represent space in environmental models")
 public class FilteredSpatialContext extends JAMSSpatialContext {
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Double attribute to filter")
+            description = "Double attribute to filter")
     public Attribute.String attributeName;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "Attribute values to match")
+            description = "Attribute values to match")
     public Attribute.String[] attributeValues;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Attribute values to match")
+    public Attribute.StringArray attributeValuesAlternative;
+
+    private class StringArrayDataSupplier extends AbstractDataSupplier<String, Attribute.String[]> {
+
+        public StringArrayDataSupplier(Attribute.String[] input) {
+            super(input);
+        }
+
+        @Override
+        public int size() {
+            return input.length;
+        }
+
+        @Override
+        public String get(int i) {
+            return input[i].getValue();
+        }
+    }
 
     @Override
     public void init() {
-        
-        if (attributeName == null || attributeValues == null || attributeValues.length == 0) {
+
+        if (attributeName == null || ((attributeValuesAlternative == null || attributeValuesAlternative.getValue().length == 0)
+                && (attributeValues == null || attributeValues.length == 0))) {
             super.init();
             return;
+        }
+
+        Iterable<String> attributeValuesIter = null;
+        if (attributeValues != null && attributeValuesAlternative != null) {
+            getModel().getRuntime().sendErrorMsg(getInstanceName() + ":Either attributeValues must be set or attributeValuesAlternative, but not both at the same time");
+        }
+        if (attributeValues != null) {
+            attributeValuesIter = new StringArrayDataSupplier(attributeValues);
+        }else{
+            attributeValuesIter = new ArrayDataSupplier<String>(attributeValuesAlternative.getValue());
         }
 
         ArrayList<Entity> entityList = new ArrayList<Entity>();
@@ -62,17 +94,17 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
         for (Entity e : entities.getEntities()) {
             try {
                 if (e.existsAttribute(attributeName.getValue())) {
-                    
+
                     Object o = e.getObject(attributeName.getValue());
                     boolean found = false;
-                    
-                    for (Attribute.String value : attributeValues) {
-                        if (o.toString().startsWith(value.getValue())) {
+
+                    for (String value : attributeValuesIter) {
+                        if (o.toString().startsWith(value)) { //potential problem: what if filtered context contains 11 and entityset contains a 111 ??
                             found = true;
                             break;
                         }
                     }
-                    
+
                     if (found) {
                         entityList.add(e);
                     }

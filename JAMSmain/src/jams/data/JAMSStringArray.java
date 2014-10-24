@@ -57,7 +57,7 @@ public class JAMSStringArray implements Attribute.StringArray {
     }
 
     public void setValue(String value) {
-        StringTokenizer st = new StringTokenizer(value, ";");
+        StringTokenizer st = new StringTokenizer(value, ";,");
         String[] values = new String[st.countTokens()];
         for (int i = 0; i < values.length; i++) {
             values[i] = st.nextToken().trim();
