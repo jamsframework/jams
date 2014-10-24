@@ -18,11 +18,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.DateAxis;
@@ -56,12 +61,16 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
     JPanel mainPanel = null;
     JTextField thresholdField;
     JTextField percentilField;
+    JSlider thresholdSlider;
+    JSlider percentileSlider;
     JLabel dataRange;
     JButton exportMeanButton;
     JButton exportMedianButton;
     double threshold = 0.0;
     double percentil = 0.95;
+    double minValue, maxValue;
     boolean isShowMean = true, isShowMedian = false;
+    EfficiencyEnsemble eff = null;
 
     double dataCount = 0;
 
@@ -85,33 +94,70 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         redraw();
     }
 
-    private double getThreshold() {
+    boolean isCalled1 = false;
+    
+    private void updateThreshold(double threshold) {
+        if (isCalled1) //call only once!!
+            return;
+        try{
+        isCalled1 = true;
+        double tOld = 0, rOld = 0;
+
+        double r = (threshold - minValue) / (maxValue - minValue);
+        double t = threshold;
+        if (r < 0) {
+            r = 0;
+        };
+        if (r > 1) {
+            r = 1;
+        };
+                
         try {
-            threshold = Double.parseDouble(thresholdField.getText());            
-            redraw();
+            tOld = Double.parseDouble(thresholdField.getText());
         } catch (NumberFormatException nfe) {
-            System.out.println(nfe.toString());
-            nfe.printStackTrace();
+        }        
+        rOld = thresholdSlider.getValue() / 100.;
+
+        if (Math.abs(r - rOld) > 0.01) {
+            thresholdSlider.setValue((int) (r * 100.));
         }
-        return threshold;
+        if (Math.abs(t - tOld) > 0.01) {
+            thresholdField.setText(String.format("%.2f", t));
+        }        
+        this.threshold = t;
+        }finally{isCalled1 = false;}        
     }
 
-    private double getPercentil() {
+    boolean isCalled2 = false;
+    private void updateQuantile(double q) {
+        if (isCalled2) //call only once!!
+            return;
+        try{
+        isCalled2 = true;
+        double qOld = 0, pOld = 0;
+        
+        if (q < 0) {
+            q = 0;
+        };
+        if (q > 1) {
+            q = 1;
+        };
+                
         try {
-            percentil = Double.parseDouble(percentilField.getText());
-            if (percentil < 0) {
-                percentil = 0.0;
-                percentilField.setText("0.0");
-            } else if (percentil > 1) {
-                percentil = 1.0;
-                percentilField.setText("1.0");
-            }
-            redraw();
+            pOld = Double.parseDouble(percentilField.getText());
         } catch (NumberFormatException nfe) {
-            System.out.println(nfe.toString());
-            nfe.printStackTrace();
+        }        
+        qOld = percentileSlider.getValue() / 100.;
+        double p = q*100;
+        
+        if (Math.abs(p - pOld) > 0.01) {
+            percentileSlider.setValue((int) (p));
         }
-        return percentil;
+        if (Math.abs(q - qOld) > 0.01) {
+            percentilField.setText(String.format("%.2f", q));
+        }        
+        this.percentil = q;
+        }finally{isCalled2 = false;}
     }
 
     private void init() {
@@ -127,12 +173,12 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         plot1 = chart1.getXYPlot();
         chart1.getPlot().setBackgroundPaint(Color.white);
         chart1.getXYPlot().setDomainGridlinePaint(Color.black);
-        
+
         XYDifferenceRenderer renderer1 = new XYDifferenceRenderer(Color.LIGHT_GRAY, Color.LIGHT_GRAY, false);
         XYLineAndShapeRenderer renderer2 = new XYLineAndShapeRenderer();
         XYLineAndShapeRenderer renderer_mean = new XYLineAndShapeRenderer();
         XYLineAndShapeRenderer renderer_median = new XYLineAndShapeRenderer();
-                
+
         renderer1.setBaseFillPaint(Color.LIGHT_GRAY);
         renderer1.setPaint(Color.BLACK);
 
@@ -173,30 +219,72 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
 
         chartPanel1 = new PatchedChartPanel(chart1, true);
 
-        chartPanel1.setMinimumDrawWidth( 0 );
-        chartPanel1.setMinimumDrawHeight( 0 );
-        chartPanel1.setMaximumDrawWidth( MAXIMUM_WIDTH );
-        chartPanel1.setMaximumDrawHeight( MAXIMUM_HEIGHT );
-        
+        chartPanel1.setMinimumDrawWidth(0);
+        chartPanel1.setMinimumDrawHeight(0);
+        chartPanel1.setMaximumDrawWidth(MAXIMUM_WIDTH);
+        chartPanel1.setMaximumDrawHeight(MAXIMUM_HEIGHT);
+
         mainPanel = new JPanel(new BorderLayout());
         JPanel panel2 = new JPanel(new FlowLayout());
 
         mainPanel.add(chartPanel1, BorderLayout.NORTH);
 
         this.thresholdField = new JTextField("0.0", 5);
+        this.thresholdSlider = new JSlider(0, 100, 100);
+        thresholdSlider.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider source = (JSlider) e.getSource();
+                double t = (source.getValue() * 0.01*(maxValue - minValue)) + minValue;
+                updateThreshold(t);
+                if (!source.getValueIsAdjusting() && !isCalled1) {
+                    redraw();
+                }
+            }
+        });
         thresholdField.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                getThreshold();
+                try {
+                    double t = Double.parseDouble(thresholdField.getText());
+                    updateThreshold(t);
+                    if (!isCalled1) {
+                        redraw();
+                    }
+                } catch (NumberFormatException nfe) {
+
+                }
             }
         });
 
         this.percentilField = new JTextField("0.95", 5);
+        this.percentileSlider = new JSlider(0, 100, 100);
+        percentileSlider.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider source = (JSlider) e.getSource();
+                double t = source.getValue();
+                updateQuantile(t / 100.);
+                if (!source.getValueIsAdjusting() && !isCalled2) {
+                    redraw();
+                }
+            }
+        });
         percentilField.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                getPercentil();
+                try {
+                    double q = Double.parseDouble(percentilField.getText());
+                    updateQuantile(q);
+                    if (!isCalled2) {
+                        redraw();
+                    }
+                } catch (NumberFormatException nfe) {
+
+                }
             }
         });
 
@@ -220,14 +308,40 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
             }
         });
         this.dataRange = new JLabel("range");
-        
-        panel2.add(new JLabel("threshold"));
-        panel2.add(thresholdField);
-        panel2.add(new JLabel("percentil"));
-        panel2.add(percentilField);
-        panel2.add(exportMeanButton);
-        panel2.add(exportMedianButton);
-        
+
+        JLabel thresholdLabel = new JLabel("threshold");
+        JLabel percentileLabel = new JLabel("quantile");
+
+        JPanel filterPanel = new JPanel();
+        filterPanel.setBorder(BorderFactory.createTitledBorder("Filter Settings"));
+        GroupLayout layout = new GroupLayout(filterPanel);
+        filterPanel.setLayout(layout);
+        layout.setHorizontalGroup(layout.createParallelGroup()
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(thresholdLabel)
+                        .addComponent(thresholdSlider)
+                        .addComponent(thresholdField)
+                )
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(percentileLabel)
+                        .addComponent(percentileSlider)
+                        .addComponent(percentilField)
+                )
+        );
+
+        layout.setVerticalGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(thresholdLabel)
+                        .addComponent(thresholdSlider)
+                        .addComponent(thresholdField)
+                )
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(percentileLabel)
+                        .addComponent(percentileSlider)
+                        .addComponent(percentilField)
+                )
+        );
+
         JCheckBox meanBox = new JCheckBox("show mean");
         meanBox.addActionListener(new ActionListener() {
 
@@ -244,11 +358,37 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
             }
         });
 
+        JPanel displayPanel = new JPanel();
+        displayPanel.setBorder(BorderFactory.createTitledBorder("Display Settings"));
+        layout = new GroupLayout(displayPanel);
+        displayPanel.setLayout(layout);
+        layout.setHorizontalGroup(layout.createParallelGroup()
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(meanBox)
+                        .addComponent(exportMeanButton)
+                )
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(medianBox)
+                        .addComponent(exportMedianButton)
+                )
+        );
+
+        layout.setVerticalGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(meanBox)
+                        .addComponent(exportMeanButton)
+                )
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(medianBox)
+                        .addComponent(exportMedianButton)
+                )
+        );
+
         meanBox.setSelected(isShowMean);
         medianBox.setSelected(isShowMedian);
 
-        panel2.add(meanBox);
-        panel2.add(medianBox);
+        panel2.add(filterPanel);
+        panel2.add(displayPanel);
 
         JPanel panel3 = new JPanel(new BorderLayout());
         panel3.add(dataRange, BorderLayout.SOUTH);
@@ -310,8 +450,9 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         Arrays.sort(tmp_data, new ArrayComparator(1, true));
         return tmp_data;
     }
-    
+
     boolean showAll = true;
+
     @Override
     public void refresh() throws NoDataException {
         if (!this.isRequestFulfilled()) {
@@ -327,27 +468,31 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         TimeSerieEnsemble ts = (TimeSerieEnsemble) p[0].get(0);
         EfficiencyEnsemble eff = (EfficiencyEnsemble) p[1].get(0);
         Measurement obs = null;
-        if (p[2].size()>0){
+        if (p[2].size() > 0) {
             obs = (Measurement) p[2].get(0);
         }
-                
+
+        this.eff = eff;
+        minValue = eff.getMin();
+        maxValue = eff.getMax();
+
         TimeSeries dataset1 = new TimeSeries(JAMS.i18n("LOWER_CONFIDENCE_BOUND"));
         TimeSeries dataset2 = new TimeSeries(JAMS.i18n("UPPER_CONFIDENCE_BOUND"));
-        if (obs!=null){
+        if (obs != null) {
             TimeSeries dataset3 = new TimeSeries(obs.name);
-            for (int i=0;i<obs.getTimesteps();i++){
+            for (int i = 0; i < obs.getTimesteps(); i++) {
                 Day d = new Day(obs.getTime((int) i));
                 dataset3.add(d, obs.getValue(i));
             }
             TimeSeriesCollection obs_runoff = new TimeSeriesCollection();
             obs_runoff.addSeries(dataset3);
             plot1.setDataset(0, obs_runoff);
-        }else{
+        } else {
             plot1.setDataset(0, null);
         }
         TimeSeries dataset4 = new TimeSeries(JAMS.i18n("MEAN"));
         TimeSeries dataset5 = new TimeSeries(JAMS.i18n("MEDIAN"));
-                
+
         if (showAll) {
             TimeSeries dataset_full[] = new TimeSeries[ts.getSize()];
             TimeSeriesCollection ensemble_full = new TimeSeriesCollection();
@@ -370,30 +515,33 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         double conf = 1.0 - percentil;
         double max_diff = 0;
 
+        DecimalFormat df = new DecimalFormat("0.00");
         Integer sortedIds[] = eff.sort();
-        int iter=0;
+        int iter = 0;
         if (eff.isPositiveBest()) {
-            while((iter<sortedIds.length && eff.getValue(sortedIds[iter])>=threshold) || iter==0 ) {
+            while ((iter < sortedIds.length && eff.getValue(sortedIds[iter]) >= threshold) || iter == 0) {
                 iter++;
             }
-        }
-        else {
-            while((iter<sortedIds.length && eff.getValue(sortedIds[iter])<=threshold) || iter==0 ) {
+            dataRange.setText("<html><body>the data ranges from " + df.format(eff.getValue(sortedIds[sortedIds.length - 1])) + " to "
+                + df.format(eff.getValue(sortedIds[0])) + "<br>" + iter + " datasets are taken into account</body></html>");
+        } else {
+            while ((iter < sortedIds.length && eff.getValue(sortedIds[iter]) <= threshold) || iter == 0) {
                 iter++;
             }
+            dataRange.setText("<html><body>the data ranges from " + df.format(eff.getValue(sortedIds[0])) + " to "
+                + df.format(eff.getValue(sortedIds[sortedIds.length - 1])) + "<br>" + iter + " datasets are taken into account</body></html>");
         }
-        
+
         int limit = iter;//(int) (threshold * n);
         dataCount = limit;
 
-        DecimalFormat df = new DecimalFormat( "0.00" );
-        dataRange.setText("<html><body>the data ranges from " + df.format(eff.getValue(sortedIds[sortedIds.length-1])) + " to " +
-                df.format(eff.getValue(sortedIds[0])) + "<br>" + iter + " datasets are taken into account</body></html>");
+        
+        
 
         for (int i = 0; i < ts.getTimesteps(); i++) {
             double mean = 0, median;
             int counter = 0;
-            int index_low = 0, index_high =limit ;
+            int index_low = 0, index_high = limit;
 
             double reducedOutputSet[] = new double[limit];
             for (int j = 0; j < limit; j++) {
@@ -438,10 +586,9 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
             dataset1.add(d, low_conf[i]);
             dataset2.add(d, high_conf[i]);
 
-
             dataset4.add(d, mean);
             meanString += sdf.format(ts.getDate((int) i)) + "\t" + mean + "\n";
-            medianString += sdf.format(ts.getDate((int) i)) + "\t" + median + "\n";         
+            medianString += sdf.format(ts.getDate((int) i)) + "\t" + median + "\n";
             System.out.println(sdf.format(ts.getDate((int) i)) + "\t" + low_conf[i] + "\t" + high_conf[i] + "\t" + mean);
             dataset5.add(d, median);
         }
@@ -449,16 +596,16 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
         TimeSeriesCollection interval = new TimeSeriesCollection();
         interval.addSeries(dataset1);
         interval.addSeries(dataset2);
-        
+
         TimeSeriesCollection mean_ensemble = new TimeSeriesCollection();
         mean_ensemble.addSeries(dataset4);
-        
+
         TimeSeriesCollection median_ensemble = new TimeSeriesCollection();
         median_ensemble.addSeries(dataset5);
-        
-        plot1.setDataset(3, interval);        
+
+        plot1.setDataset(3, interval);
         if (!showAll) {
-        plot1.setDataset(3, interval);        
+            plot1.setDataset(3, interval);
             if (this.isShowMean) {
                 plot1.setDataset(1, mean_ensemble);
             } else {
@@ -475,8 +622,8 @@ public class GLUEOutputUncertainty extends MCAT5Plot {
 
     public JPanel getPanel() {
         /*JPanel completePanel = new JPanel(new BorderLayout());
-        completePanel.add(mainPanel,BorderLayout.NORTH);
-        completePanel.add(chartPanel2,BorderLayout.SOUTH);*/
+         completePanel.add(mainPanel,BorderLayout.NORTH);
+         completePanel.add(chartPanel2,BorderLayout.SOUTH);*/
         return mainPanel;
     }
 
