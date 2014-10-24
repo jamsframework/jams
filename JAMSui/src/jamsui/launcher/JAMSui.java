@@ -55,7 +55,8 @@ public class JAMSui {
     private static File baseDir = new File(System.getProperty("user.dir"));
     public static final String APP_TITLE = "JAMS";
     protected SystemProperties properties;
-    static final Logger logger = Logger.getLogger(JAMSui.class.getName());    
+    static final Logger logger = Logger.getLogger(JAMSui.class.getName());
+
     /**
      * JAMSui contructor
      *
@@ -96,7 +97,7 @@ public class JAMSui {
         } catch (IOException ioe) {
             logger.log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + propertyFileName, ioe);
         }
-        
+
         JAMSTools.configureLocaleEncoding(properties);
 
         if (cmdLine.isNogui() || GraphicsEnvironment.isHeadless()) {
@@ -152,7 +153,6 @@ public class JAMSui {
 
                 // if GUI is disabled and a model file provided, then run
                 // the model directly
-
                 //check if file exists
                 File file = new File(modelFileName);
                 if (!file.exists()) {
@@ -204,7 +204,6 @@ public class JAMSui {
 //                        runtime.getModel().setWorkspacePath(dir);
 //                        runtime.sendInfoMsg(JAMS.i18n("no_workspace_defined_use_loadpath") + dir);
 //                    }
-
                     if (!info.equals("")) {
                         runtime.println(info);
                     }
@@ -275,20 +274,35 @@ public class JAMSui {
     public static File getBaseDir() {
         return baseDir;
     }
-    
+
     public static void registerLogger(LogOption option, Logger log) {
-        switch(option){
-            case CollectAndShow: log.addHandler(NotificationLog.getInstance()); log.setUseParentHandlers(false); break;
-            case Show: log.addHandler(MsgBoxLogHandler.getInstance()); log.setUseParentHandlers(true); break;
-        }        
-        
+        switch (option) {
+            case CollectAndShow:
+                log.addHandler(NotificationLog.getInstance());
+                log.setUseParentHandlers(false);
+                break;
+            case Show:
+                log.addHandler(MsgBoxLogHandler.getInstance());
+                log.setUseParentHandlers(true);
+                break;
+        }
+
     }
 
     public static void unregisterLogger(LogOption option, Logger log) {
-        switch(option){
-            case CollectAndShow: log.removeHandler(NotificationLog.getInstance()); break;
-            case Show: log.addHandler(MsgBoxLogHandler.getInstance()); break;
-        }          
+        if (option == null) {
+            log.removeHandler(NotificationLog.getInstance());
+            log.removeHandler(MsgBoxLogHandler.getInstance());
+        } else {
+            switch (option) {
+                case CollectAndShow:
+                    log.removeHandler(NotificationLog.getInstance());
+                    break;
+                case Show:
+                    log.removeHandler(MsgBoxLogHandler.getInstance());
+                    break;
+            }
+        }
         log.setUseParentHandlers(true);
-    }    
+    }
 }
