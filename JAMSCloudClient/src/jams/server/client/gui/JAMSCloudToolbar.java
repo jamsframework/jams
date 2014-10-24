@@ -88,7 +88,7 @@ public class JAMSCloudToolbar extends JToolBar {
                         setLoad(load);
                     }
                 } catch (Throwable t) {
-                    LogTools.log(JAMSCloudToolbar.class, Level.WARNING, t, t.toString());
+                    //LogTools.log(JAMSCloudToolbar.class, Level.WARNING, t, t.toString());
                 }
             }
         }, 5000, 5000);

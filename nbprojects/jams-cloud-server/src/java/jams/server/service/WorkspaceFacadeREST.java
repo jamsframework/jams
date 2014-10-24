@@ -156,11 +156,13 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         Workspace ws = find(id);
         if (ws != null) {
             workspaces.add(ws);
+        }else{
+            return Response.ok(workspaces, MediaType.APPLICATION_XML).build();
         }
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
             return Response.ok(workspaces, MediaType.APPLICATION_XML).build();
         }
-        return Response.status(Status.FORBIDDEN).build();
+        return Response.ok(workspaces, MediaType.APPLICATION_XML).build();
     }
 
     @GET
