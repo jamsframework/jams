@@ -27,6 +27,7 @@ import jams.data.Attribute.Entity.NoSuchAttributeException;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSSpatialContext;
 import jams.model.JAMSVarDescription;
+import jams.model.VersionComments;
 import java.util.ArrayList;
 
 /**
@@ -36,9 +37,15 @@ import java.util.ArrayList;
 @JAMSComponentDescription(title = "JAMS spatial context",
         author = "Sven Kralisch",
         date = "2012-07-06",
-        version = "1.0_0",
+        version = "1.1_0",
         description = "This component represents a filtered JAMS context which can be "
         + "used to represent space in environmental models")
+@VersionComments(entries = {
+    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.1_0", comment = "added attribute \"attributeValuesAlternative\" as alternative "
+            + "for \"attributeValues\". Version 1.0_0 compared attributeValues with startsWith function. "
+            + "This is now changed to compareTo function.")
+})
 public class FilteredSpatialContext extends JAMSSpatialContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -52,7 +59,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Attribute values to match")
     public Attribute.StringArray attributeValuesAlternative;
-
+            
     private class StringArrayDataSupplier extends AbstractDataSupplier<String, Attribute.String[]> {
 
         public StringArrayDataSupplier(Attribute.String[] input) {
@@ -99,7 +106,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
                     boolean found = false;
 
                     for (String value : attributeValuesIter) {
-                        if (o.toString().startsWith(value)) { //potential problem: what if filtered context contains 11 and entityset contains a 111 ??
+                        if (o.toString().compareTo(value)==0) { 
                             found = true;
                             break;
                         }
