@@ -125,7 +125,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
         entities = getModel().getRuntime().getDataFactory().createEntityCollection();
         entities.setEntities(entityList);
 
-        super.init();
+        super.initAll();
     }
 
     @Override

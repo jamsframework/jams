@@ -37,10 +37,10 @@ import jams.model.JAMSVarDescription;
 + "conditionally execute components. This context must contain two components. If \"condition\" is true, the first one will be executed, otherwise the second one.")
 public class BooleanConditionalContext extends JAMSContext {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Boolean attribute defining which component to execute", defaultValue = "1")
     public Attribute.Boolean condition;
     
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining which component to execute")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Boolean attribute defining which component to execute", defaultValue = "1")
     public Attribute.Boolean initCondition;
 
     public BooleanConditionalContext() {
@@ -98,7 +98,7 @@ public class BooleanConditionalContext extends JAMSContext {
             if (condition.getValue()) {
                 return compArray[0];
             } else {
-                if (compArray.length < 1 || compArray[1] == null) {
+                if (compArray.length < 2 || compArray[1] == null) {
                     return dummy;
                 }
                 return compArray[1];
