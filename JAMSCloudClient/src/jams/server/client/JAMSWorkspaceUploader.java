@@ -168,7 +168,7 @@ public class JAMSWorkspaceUploader {
 
         Path basePath = Paths.get(baseDirectory.toString());
         for (File localFile : mapping.keySet()) {
-            Path path = Paths.get(localFile.getPath());
+            Path path = Paths.get(localFile.getAbsolutePath());
             String relativePath = basePath.relativize(path).toString();
             jams.server.entities.File serverFile = mapping.get(localFile);
             if (serverFile == null){
@@ -250,7 +250,7 @@ public class JAMSWorkspaceUploader {
         for (File componentLibrary : componentLibaries) {
             Map<File, jams.server.entities.File> list = fileMapping.get(componentLibrary);
 
-            ws = attachFilesToWorkspace(ws, componentLibrary.getParentFile(),
+            ws = attachFilesToWorkspace(ws, componentLibrary.getAbsoluteFile().getParentFile(),
                     list, WorkspaceFileAssociation.ROLE_COMPONENTSLIBRARY);
         }
 
