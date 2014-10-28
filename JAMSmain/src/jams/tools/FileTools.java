@@ -22,6 +22,8 @@
 package jams.tools;
 
 import jams.JAMS;
+import jams.meta.ModelDescriptor;
+import jams.meta.ModelIO;
 import java.io.*;
 import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
@@ -29,11 +31,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.logging.Filter;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -505,4 +510,50 @@ public class FileTools {
         }
         return s;
     }
+    
+    public static boolean validateModelFile(File f) {
+        if (f.isDirectory()) {
+            return false;
+        }
+        if (!f.exists()) {
+            return false;
+        }
+        if (!f.getName().endsWith(".xml") && !f.getName().endsWith(".jam")) {
+            return false;
+        }
+
+        //try to load model file
+        ModelIO io = ModelIO.getStandardModelIO();
+        Document d = XMLTools.getDocument(f.getAbsolutePath());
+        if (d == null) {
+            return false;
+        }
+        //deactive logs
+        Filter filterAll = new Filter() {
+            @Override
+            public boolean isLoggable(LogRecord record) {
+                return false;
+            }
+        };
+        Logger.getLogger(ModelIO.class.getName()).setFilter(filterAll);
+        Logger.getLogger(jams.meta.ModelDescriptor.class.getName()).setFilter(filterAll);
+
+        try {
+            ModelDescriptor desc = io.loadModelDescriptor(d, null, true);
+            if (desc == null) {
+                return false;
+            }
+            if (desc.getModelName() == null || desc.getModelName().isEmpty()) {
+                return false;
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return false;
+        } finally {
+            //reactive logs
+            Logger.getLogger(ModelIO.class.getName()).setFilter(null);
+            Logger.getLogger(jams.meta.ModelDescriptor.class.getName()).setFilter(null);
+        }
+        return true;
+    }    
 }

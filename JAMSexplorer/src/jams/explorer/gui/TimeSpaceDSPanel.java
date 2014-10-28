@@ -152,9 +152,9 @@ public class TimeSpaceDSPanel extends DSPanel {
             }
         }
     };
-    private final Action timePoint = actions[0], timeMean = actions[1], 
-            spacePoint = actions[2], spaceMean = actions[3], 
-            crossProduct = actions[4], toWW = actions[5], 
+    private final Action timePoint = actions[0], timeMean = actions[1],
+            spacePoint = actions[2], spaceMean = actions[3],
+            crossProduct = actions[4], toWW = actions[5],
             monthMean = actions[6], yearMean = actions[7];
     private final Action cacheReset = new AbstractAction(JAMS.i18n("RESET_CACHES")) {
 
@@ -186,7 +186,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
         JAMSLogging.registerLogger(JAMSLogging.LogOption.Show,
                 Logger.getLogger(TimeSpaceDSPanel.class.getName()));
-        
+
         for (Action a : actions) {
             a.setEnabled(false);
         }
@@ -866,7 +866,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                 java.awt.EventQueue.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        
+
                         if (transfer == null) {
                             return;
                         }
@@ -891,10 +891,10 @@ public class TimeSpaceDSPanel extends DSPanel {
                         }
 
                         // we want to log, but without graphical output..
-                        JAMSLogging.unregisterLogger(LogOption.Show, 
+                        JAMSLogging.unregisterLogger(LogOption.Show,
                                 Logger.getLogger(JAMSSpreadSheet.class.getName()));
                         Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.INFO, "Using shape file >" + selectedShape + "< / KEY COLUMN: " + dataStore.getKeyColumn());
-                        JAMSLogging.registerLogger(LogOption.Show, 
+                        JAMSLogging.registerLogger(LogOption.Show,
                                 Logger.getLogger(JAMSSpreadSheet.class.getName()));
 
                         transfer.setShapeFileDataStore(dataStore);

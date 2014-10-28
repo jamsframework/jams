@@ -22,7 +22,6 @@
 package jams.server.client;
 
 import jams.JAMS;
-import jams.meta.ModelIO;
 import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
 import jams.tools.FileTools;
@@ -153,7 +152,7 @@ public class JAMSWorkspaceUploader {
             role = jams.server.entities.WorkspaceFileAssociation.ROLE_OUTPUT;
         } else if (relativePath.endsWith("config.txt")) {
             role = jams.server.entities.WorkspaceFileAssociation.ROLE_CONFIG;
-        } else if (ModelIO.getStandardModelIO().validateModelFile(f)) {
+        } else if (FileTools.validateModelFile(f)) {
             role = jams.server.entities.WorkspaceFileAssociation.ROLE_MODEL;
         }
 
