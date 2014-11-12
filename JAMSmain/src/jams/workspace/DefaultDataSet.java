@@ -62,7 +62,7 @@ public class DefaultDataSet implements DataSet {
         
         for (int i = 1; i < data.length; i++) {
             String s = data[i].getString();
-            if (s.equals("NaN") || s.isEmpty()) {
+            if (s.equals("NaN") || s.equals("Infinity") || s.isEmpty()) {
                 s = missingValueIndetifier;
             }
             result += "\t" + s;
