@@ -59,7 +59,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Attribute values to match")
     public Attribute.StringArray attributeValuesAlternative;
-            
+
     private class StringArrayDataSupplier extends AbstractDataSupplier<String, Attribute.String[]> {
 
         public StringArrayDataSupplier(Attribute.String[] input) {
@@ -78,7 +78,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
     }
 
     @Override
-    public void initAll() {
+    public void init() {
 
         if (attributeName == null || ((attributeValuesAlternative == null || attributeValuesAlternative.getValue().length == 0)
                 && (attributeValues == null || attributeValues.length == 0))) {
@@ -92,7 +92,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
         }
         if (attributeValues != null) {
             attributeValuesIter = new StringArrayDataSupplier(attributeValues);
-        }else{
+        } else {
             attributeValuesIter = new ArrayDataSupplier<String>(attributeValuesAlternative.getValue());
         }
 
@@ -103,10 +103,12 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
                 if (e.existsAttribute(attributeName.getValue())) {
 
                     Object o = e.getObject(attributeName.getValue());
+                    double p = Double.parseDouble(o.toString());
                     boolean found = false;
 
                     for (String value : attributeValuesIter) {
-                        if (o.toString().compareTo(value)==0) { 
+                        double q = Double.parseDouble(value);
+                        if (p == q) {
                             found = true;
                             break;
                         }
@@ -125,7 +127,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
         entities = getModel().getRuntime().getDataFactory().createEntityCollection();
         entities.setEntities(entityList);
 
-        super.initAll();
+        super.init();
     }
 
     @Override
@@ -137,7 +139,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
     public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
     }
-    
+
 //    @Override
 //    public long getNumberOfIterations() {
 //        return 1;
