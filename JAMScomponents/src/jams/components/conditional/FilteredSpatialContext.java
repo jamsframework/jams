@@ -78,7 +78,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
     }
 
     @Override
-    public void init() {
+    public void initAll() {
 
         if (attributeName == null || ((attributeValuesAlternative == null || attributeValuesAlternative.getValue().length == 0)
                 && (attributeValues == null || attributeValues.length == 0))) {
@@ -127,7 +127,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
         entities = getModel().getRuntime().getDataFactory().createEntityCollection();
         entities.setEntities(entityList);
 
-        super.init();
+        super.initAll();
     }
 
     @Override
