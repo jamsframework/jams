@@ -72,30 +72,33 @@ public class TSDataStore extends TableDataStore {
     protected Attribute.Calendar[] startDates;
     protected boolean[] endReached;
 
-    public class RingBuffer<T>{
+    public class RingBuffer<T> {
+
         int index = 0;
         int size = 0;
         int fillsize = 0;
 
         ArrayList<T> ring = null;
-        public RingBuffer(int size){
+
+        public RingBuffer(int size) {
             this.size = size;
             ring = new ArrayList<T>(size);
-            for (int i=0;i<size;i++){
+            for (int i = 0; i < size; i++) {
                 ring.add(null);
             }
         }
 
-        public T get(int relativIndex){
-            if (relativIndex<0){
-                relativIndex += ((int)(-relativIndex/size)+1)*(size);
+        public T get(int relativIndex) {
+            if (relativIndex < 0) {
+                relativIndex += ((int) (-relativIndex / size) + 1) * (size);
             }
-            return ring.get((index+relativIndex)%size);
+            return ring.get((index + relativIndex) % size);
         }
-        public void push(T o){
-            index = (index+1)%size;
+
+        public void push(T o) {
+            index = (index + 1) % size;
             ring.set(index, o);
-            fillsize = Math.min(size, fillsize+1);
+            fillsize = Math.min(size, fillsize + 1);
         }
     }
 
@@ -106,7 +109,7 @@ public class TSDataStore extends TableDataStore {
         currentDate = DefaultDataFactory.getDataFactory().createCalendar();
         calendar = new CalendarValue(currentDate);
     }
-    
+
     @SuppressWarnings("unchecked")
     public TSDataStore(JAMSWorkspace ws, String id, Document doc) throws IOException, ClassNotFoundException {
         super(ws, id, doc);
@@ -142,21 +145,29 @@ public class TSDataStore extends TableDataStore {
             bufferSize = 2;
         }
         //if no cache should be read, access datastore directy
-        if (!readCache()){           
-            
+        if (!readCache()) {
+
             latestTimesteps = new RingBuffer[dataIOArray.length];
             startDates = new Attribute.Calendar[dataIOArray.length];
             endReached = new boolean[dataIOArray.length];
 
             for (int i = 0; i < dataIOArray.length; i++) {
-            
+
                 latestTimesteps[i] = new RingBuffer<Long>(2);
 
                 fillBuffer(i);
-                long timeStamp = dataIOArray[i].getData()[0].getData()[0].getLong();
+
                 startDates[i] = DefaultDataFactory.getDataFactory().createCalendar();
-                startDates[i].setTimeInMillis(timeStamp * 1000);
-                endReached[i] = false;
+
+                DataSet[] ds = dataIOArray[i].getData();
+                if (ds.length == 0) {
+                    startDates[i].setTimeInMillis(Long.MAX_VALUE);
+                    endReached[i] = true;
+                } else {
+                    long timeStamp = ds[0].getData()[0].getLong();
+                    startDates[i].setTimeInMillis(timeStamp * 1000);
+                    endReached[i] = false;
+                }
 
             }
         }
@@ -172,14 +183,14 @@ public class TSDataStore extends TableDataStore {
             writeCache = false;
         }
         //override setting if cache should be read
-        if (readCache()){
+        if (readCache()) {
             File file = new File(ws.getLocalDumpDirectory(), getID() + ".dump");
             this.dumpFileReader = new SerializableBufferedReader((file));
             this.dsd = getDSDFromDumpFile();
         }
 
         bufferSize = oldBufferSize;
-        
+
     }
 
     //TODO: we should add some checks if dump file is consistent with xml description
@@ -259,7 +270,7 @@ public class TSDataStore extends TableDataStore {
         }
         return def;
     }
-    
+
     private Object getDataValue(Class clazz, String valueString) {
 
         Object o = null;
@@ -285,18 +296,18 @@ public class TSDataStore extends TableDataStore {
         return o;
     }
 
-    public void skip(int count) {                
+    public void skip(int count) {
         if (this.accessMode != InputDataStore.CACHE_MODE) {
             //todo .. make this step efficient
-            for (int i=0;i<count;i++) {
+            for (int i = 0; i < count; i++) {
                 getNext();
             }
         } else {
             try {
-                for (int i=0;i<count;i++) {
+                for (int i = 0; i < count; i++) {
                     dumpFileReader.readLine();
                 }
-                currentDate.add(timeUnit, timeUnitCount*count);
+                currentDate.add(timeUnit, timeUnitCount * count);
                 if (currentDate.after(stopDate)) {
                     return;
                 }
@@ -310,7 +321,7 @@ public class TSDataStore extends TableDataStore {
     /*
      * checks for correct step size of the data, i.e. for a unique time interval
      */
-    private boolean checkStepSize(int i){
+    private boolean checkStepSize(int i) {
         // check interval size for all columns
         //get the timestamps of the first two rows (in seconds)
         this.latestTimesteps[i].push(dataIOArray[i].getData()[currentPosition[i]].getData()[0].getLong());
@@ -349,26 +360,25 @@ public class TSDataStore extends TableDataStore {
         if (currentDate.after(stopDate)) {
             return false;
         }
-        
-//        boolean allEndReached = true;
 
+//        boolean allEndReached = true;
         if (!readCache()) {
-            
+
             for (int i = 0; i < dataIOArray.length; i++) {
 
                 if (!(startDates[i].after(currentDate)) && (currentPosition[i] >= maxPosition[i])) {
                     fillBuffer(i);
                     if (currentPosition[i] >= maxPosition[i]) {
                         endReached[i] = true;
-                    }                    
+                    }
                 }
 //                allEndReached &= endReached[i];
             }
         }
-        
+
         return true;
-    }    
-    
+    }
+
     @Override
     public DefaultDataSet getNext() {
 
@@ -383,27 +393,27 @@ public class TSDataStore extends TableDataStore {
 
             result = new DefaultDataSet(positionArray.length + 1);
             result.setData(0, calendar);
-            
+
             for (int i = 0; i < dataIOArray.length; i++) {
 
                 boolean outOfInterval = startDates[i].after(currentDate) || endReached[i];
 
                 if (outOfInterval) {
-                    
-                    result.setData(i + 1, new DoubleValue(JAMS.getMissingDataValue()));
-                    
+
+                    result.setData(i + 1, new DoubleValue(this.getMissingDataValue()));
+
                 } else {
-                    
+
                     DataSet ds = dataIOArray[i].getData()[currentPosition[i]];
                     DataValue[] values = ds.getData();
                     result.setData(i + 1, values[positionArray[i]]);
                     checkStepSize(i);
                     currentPosition[i]++;
-                    
+
                 }
 
             }
-          
+
         } else {
 
             try {
@@ -414,21 +424,21 @@ public class TSDataStore extends TableDataStore {
 
                 result = new DefaultDataSet(a.length);
                 result.setData(0, calendar);
-                if (a.length > type.length+1){
-                    ws.getRuntime().sendErrorMsg("dump file:" + id + "\nnumber of values in line " + str + "\ndoes not match header information" );
+                if (a.length > type.length + 1) {
+                    ws.getRuntime().sendErrorMsg("dump file:" + id + "\nnumber of values in line " + str + "\ndoes not match header information");
                 }
                 // dump date since this is not evaluated!
                 for (int i = 1; i < a.length; i++) {
 
                     DataValue value;
                     String valueString = a[i];
-                                       
+
                     switch (type[i - 1]) {
                         case DOUBLE:
                             value = new DoubleValue(0);
                             if (valueString.equals(this.getMissingDataValue())) {
                                 value.setDouble((Double) JAMS.getMissingDataValue(Double.class));
-                            }else{
+                            } else {
                                 value.setString(valueString);
                             }
                             break;
@@ -436,9 +446,9 @@ public class TSDataStore extends TableDataStore {
                             value = new LongValue(0);
                             if (valueString.equals(this.getMissingDataValue())) {
                                 value.setLong((Long) JAMS.getMissingDataValue(Long.class));
-                            }else{
+                            } else {
                                 value.setString(valueString);
-                            }                            
+                            }
                             break;
                         case STRING:
                             value = new StringValue(valueString);
@@ -453,7 +463,7 @@ public class TSDataStore extends TableDataStore {
                         default:
                             value = new ObjectValue(valueString);
                     }
-                    
+
                     result.setData(i, value);
                 }
 
@@ -461,7 +471,7 @@ public class TSDataStore extends TableDataStore {
                 ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore" + id);
                 return null;
             }
-        }      
+        }
         return result;
     }
 
@@ -491,75 +501,79 @@ public class TSDataStore extends TableDataStore {
 
     @Override
     public void close() {
-        if (this.dumpFileReader!=null){
-            try{
+        if (this.dumpFileReader != null) {
+            try {
                 this.dumpFileReader.close();
-            }catch(IOException ioe){
+            } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
         }
     }
-    
-    private static void convertTSDataStoreToJ2KFile(Workspace ws, String id){
+
+    private static void convertTSDataStoreToJ2KFile(Workspace ws, String id) {
         InputDataStore store = ws.getInputDataStore(id);
         //writing j2k file
-        File outputFile = new File(ws.getLocalDumpDirectory(), id+".dat");
-        File xmlDescFile = new File(ws.getLocalDumpDirectory(), id+".xml");
-        if (outputFile.exists()){
+        File outputFile = new File(ws.getLocalDumpDirectory(), id + ".dat");
+        File xmlDescFile = new File(ws.getLocalDumpDirectory(), id + ".xml");
+        if (outputFile.exists()) {
             System.out.println("Output file allready existing!");
             return;
         }
-        if (!(store instanceof TSDataStore)){
+        if (!(store instanceof TSDataStore)) {
             System.out.println("Store is not a TSDataStore!");
             return;
         }
-            
+
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.YYYY hh:mm");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        
-        TSDataStore tsStore = (TSDataStore)store;        
+
+        TSDataStore tsStore = (TSDataStore) store;
         DataSetDefinition dsd = store.getDataSetDefinition();
         BufferedWriter writer = null;
         BufferedWriter xmlWriter = null;
-        try{
+        try {
             writer = new BufferedWriter(new FileWriter(outputFile));
             xmlWriter = new BufferedWriter(new FileWriter(xmlDescFile));
-            
+
             writer.write("@dataValueAttribs\n");
             writer.write(tsStore.getDisplayName() + "\t" + Double.MIN_VALUE + "\t" + Double.MAX_VALUE + "\t?\n");
-            writer.write("@dataSetAttribs\n");    
-            writer.write("missingDataVal\t"+tsStore.getMissingDataValue()+"\n");    
-            writer.write("dataStart\t"+dateFormat.format(tsStore.getStartDate().getTime())+"\n");    
-            writer.write("dataEnd\t"+dateFormat.format(tsStore.getEndDate().getTime())+"\n");    
-            if (tsStore.getTimeUnit()==6)
-                writer.write("tres\td\n");    
-            if (tsStore.getTimeUnit()==2)
-                writer.write("tres\tm\n");    
-            if (tsStore.getTimeUnit()==1)
-                writer.write("tres\ty\n");    
-            if (tsStore.getTimeUnit()==11)
-                writer.write("tres\th\n");    
-            writer.write("@statAttribVal\n");    
+            writer.write("@dataSetAttribs\n");
+            writer.write("missingDataVal\t" + tsStore.getMissingDataValue() + "\n");
+            writer.write("dataStart\t" + dateFormat.format(tsStore.getStartDate().getTime()) + "\n");
+            writer.write("dataEnd\t" + dateFormat.format(tsStore.getEndDate().getTime()) + "\n");
+            if (tsStore.getTimeUnit() == 6) {
+                writer.write("tres\td\n");
+            }
+            if (tsStore.getTimeUnit() == 2) {
+                writer.write("tres\tm\n");
+            }
+            if (tsStore.getTimeUnit() == 1) {
+                writer.write("tres\ty\n");
+            }
+            if (tsStore.getTimeUnit() == 11) {
+                writer.write("tres\th\n");
+            }
+            writer.write("@statAttribVal\n");
             String stationNames = "name";
-            String stationIDs   = "ID";
+            String stationIDs = "ID";
             String stationElevation = "elevation";
-            String stationX           = "x";
-            String stationY           = "y";
-            String dataColumn         = "dataColumn";
-            
+            String stationX = "x";
+            String stationY = "y";
+            String dataColumn = "dataColumn";
+
             ArrayList<Object> xList = dsd.getAttributeValues("X");
             ArrayList<Object> yList = dsd.getAttributeValues("Y");
             ArrayList<Object> elevList = dsd.getAttributeValues("ELEVATION");
             ArrayList<Object> nameList = dsd.getAttributeValues("NAME");
             ArrayList<Object> idList = dsd.getAttributeValues("ID");
-            
-            for (int i=0;i<dsd.getColumnCount();i++){
+
+            for (int i = 0; i < dsd.getColumnCount(); i++) {
                 stationNames += "\t" + nameList.get(i);
                 stationIDs += "\t" + idList.get(i);
                 stationElevation += "\t" + elevList.get(i);
                 stationX += "\t" + xList.get(i);
                 stationY += "\t" + yList.get(i);
-                dataColumn += "\t" + (i+1);
+                dataColumn += "\t" + (i + 1);
             }
             writer.write(stationNames + "\n");
             writer.write(stationIDs + "\n");
@@ -567,68 +581,67 @@ public class TSDataStore extends TableDataStore {
             writer.write(stationX + "\n");
             writer.write(stationY + "\n");
             writer.write(dataColumn + "\n");
-            
-            writer.write("@dataVal\n");    
-            
+
+            writer.write("@dataVal\n");
+
             DefaultDataSet dds = null;
-            while ((dds = tsStore.getNext())!=null){
+            while ((dds = tsStore.getNext()) != null) {
                 String line = "";
-                for (int i=0;i<dds.getData().length;i++){
-                    if (i==0){
-                        line += dateFormat.format(dds.getData()[i].getCalendar().getTime()) + "\t";                        
-                    }else{
+                for (int i = 0; i < dds.getData().length; i++) {
+                    if (i == 0) {
+                        line += dateFormat.format(dds.getData()[i].getCalendar().getTime()) + "\t";
+                    } else {
                         line += dds.getData()[i].getObject() + "\t";
                     }
                 }
                 line += "\n";
                 writer.write(line);
             }
-            xmlWriter.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>\n" +
-                            "<j2ktsdatastore>\n"+                            
-                            "<parsetime value=\"false\" />\n"+
-                            "<dumptimeformat value=\"yyyy-MM-dd HH:mm\" />"+
-                            "<charset value=\"ISO-8859-1\" />"+
-                            "</j2ktsdatastore>");
-        }catch(IOException ioe){
+            xmlWriter.write("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"no\"?>\n"
+                    + "<j2ktsdatastore>\n"
+                    + "<parsetime value=\"false\" />\n"
+                    + "<dumptimeformat value=\"yyyy-MM-dd HH:mm\" />"
+                    + "<charset value=\"ISO-8859-1\" />"
+                    + "</j2ktsdatastore>");
+        } catch (IOException ioe) {
             System.out.println("Error while writing file!");
             return;
-        }finally{
-            try{
+        } finally {
+            try {
                 writer.close();
                 xmlWriter.close();
-            }catch(IOException ioe){
-                
+            } catch (IOException ioe) {
+
             }
         }
     }
-    
+
     //convert dump into j2k file
     public static void main(String[] args) {
-        if (args.length < 1){
+        if (args.length < 1) {
             System.out.println("Usage dump2j2kFile workspaceDir [id]");
         }
-        File workspaceDirectory = new File(args[0]);        
-        if (!workspaceDirectory.exists()){
+        File workspaceDirectory = new File(args[0]);
+        if (!workspaceDirectory.exists()) {
             System.out.println("Error: directory " + workspaceDirectory.getAbsolutePath() + " does not exist!");
             return;
         }
         JAMSRuntime runtime = new StandardRuntime(JAMSProperties.createProperties());
         Workspace ws = new JAMSWorkspace(workspaceDirectory, runtime, false);
-        try{
+        try {
             ws.init();
-        }catch(InvalidWorkspaceException iwe){
+        } catch (InvalidWorkspaceException iwe) {
             System.out.println("Invalid workspace!\n" + iwe.toString());
         }
-        if (args.length>1){
+        if (args.length > 1) {
             String id = args[1];
             convertTSDataStoreToJ2KFile(ws, id);
-        }else{
+        } else {
             Set<String> inputDataStores = ws.getInputDataStoreIDs();
-            for (String id : inputDataStores){
+            for (String id : inputDataStores) {
                 convertTSDataStoreToJ2KFile(ws, id);
             }
         }
-        
+
     }
 }
-

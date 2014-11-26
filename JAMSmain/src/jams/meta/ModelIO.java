@@ -60,8 +60,8 @@ public class ModelIO {
     private String modelName;
     private final NodeFactory nodeFactory;
 
-    public ModelIO(NodeFactory nodeFactory) {    
-        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, 
+    public ModelIO(NodeFactory nodeFactory) {
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow,
                 Logger.getLogger(getClass().getName()));
         this.nodeFactory = nodeFactory;
     }
@@ -157,10 +157,10 @@ public class ModelIO {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
                 }
 
-            } else if (node.getNodeName().equals("attributetemplate")) {
+            } else if (node.getNodeName().equals("attributelist")) {
 
                 try {
-                    addAttributeTemplate(cd, (Element) node);
+                    addAttributeList(cd, (Element) node);
                 } catch (JAMSException mle) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
                 }
@@ -335,10 +335,25 @@ public class ModelIO {
         }
     }
 
-    private void addAttributeTemplate(ContextDescriptor cd, Element e) {
-        String templateName = e.getAttribute("name");
-        String templateType = e.getAttribute("elementclass");
+    private void addAttributeList(ContextDescriptor cd, Element e) {
+        String listName = e.getAttribute("name");
+        String elementClass = e.getAttribute("elementclass");
+
         Class type;
+
+        try {
+            type = Class.forName(elementClass);
+        } catch (ClassNotFoundException ex) {
+            throw new JAMSException("Given type " + elementClass + " for attribute list "
+                    + listName + " in context " + cd.getInstanceName() + " does not exist!", ex);
+        }
+
+        NodeList elements = e.getElementsByTagName("element");
+        for (int i = 0; i < elements.getLength(); i++) {
+            Element element = (Element) elements.item(i);
+            cd.addToAttributeList(listName, type, element.getAttribute("value"));
+        }
+
     }
 
     //add attribute that is defined by a context component
