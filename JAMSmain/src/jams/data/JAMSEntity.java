@@ -103,11 +103,11 @@ public class JAMSEntity implements Attribute.Entity {
 
     @Override
     public double getDouble(String name) throws JAMSEntity.NoSuchAttributeException {
-        if (values.containsKey(name)) {
-            return ((JAMSDouble) values.get(name)).getValue();
-        } else {
+        Object o = values.get(name);
+        if (o == null){
             throw new JAMSEntity.NoSuchAttributeException(JAMS.i18n("Attribute_") + name + JAMS.i18n("_(double)_not_found!"));
         }
+        return ((JAMSDouble)o).getValue(); 
     }
 
     @Override
