@@ -33,12 +33,12 @@ import jams.JAMSLogging.LogOption;
 import static jams.JAMSLogging.LogOption.CollectAndShow;
 import jams.JAMSProperties;
 import jams.SystemProperties;
-import jams.juice.logging.MsgBoxLogHandler;
+import jams.logging.MsgBoxLogHandler;
 import jams.model.JAMSFullModelState;
 import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
-import jams.juice.logging.NotificationLog;
+import jams.logging.NotificationLog;
 import java.awt.GraphicsEnvironment;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -63,17 +63,6 @@ public class JAMSui {
      * @param cmdLine A JAMSCmdLine object containing the command line arguments
      */
     public JAMSui(JAMSCmdLine cmdLine) {
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception lnfe) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            } catch (Exception ex) {
-                logger.log(Level.SEVERE, ex.getMessage(), ex);
-            }
-        }
-
         //create a JAMS default set of property values
         properties = JAMSProperties.createProperties();
 

@@ -40,6 +40,7 @@ import jamsui.juice.gui.tree.LibTree;
 import jamsui.launcher.JAMSui;
 import java.io.File;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -64,17 +65,6 @@ public class JUICE {
     private static WorkerDlg loadLibsDlg;
 
     public static void main(String args[]) {
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception lnfe) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            } catch (Exception ex) {
-                JAMSTools.handle(ex);
-            }
-        }
 
         boolean os64 = JAMSTools.is64Bit();
         boolean vm64 = System.getProperty("os.arch").endsWith("64");
@@ -122,6 +112,30 @@ public class JUICE {
                 File file = new File(defaultFile);
                 if (file.exists()) {
                     getJamsProperties().load(defaultFile);
+                }
+            }
+
+            String desiredLookAndFeel = getJamsProperties().getProperty("LookAndFeel");
+
+            try {
+                boolean successful = false;
+                if (desiredLookAndFeel != null) {
+                    for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if (desiredLookAndFeel.equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            successful = true;
+                            break;
+                        }
+                    }
+                }
+                if (!successful) {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                }
+            } catch (Exception lnfe) {
+                try {
+                    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                } catch (Exception ex) {
+                    JAMSTools.handle(ex);
                 }
             }
 
@@ -257,5 +271,5 @@ public class JUICE {
      */
     public static LibTree getLibTree() {
         return libTree;
-    }    
+    }
 }

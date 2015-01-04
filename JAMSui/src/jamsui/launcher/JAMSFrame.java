@@ -70,6 +70,9 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import jams.explorer.JAMSExplorer;
+import jams.explorer.ensembles.gui.EnsembleControlPanel;
+import javax.swing.JFrame;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -79,7 +82,7 @@ public class JAMSFrame extends JAMSLauncher {
 
     private JMenuBar mainMenu;
     private JMenu logsMenu, modelMenu, recentMenu;
-    private JMenuItem saveItem, saveAsItem;
+    private JMenuItem saveItem, saveAsItem, startEnsembleManagerItem;
     private JFileChooser jfcProps, jfcSer, jfcModel, jfcParam;
     private JDialog rtManagerDlg;
     private PropertyDlg propertyDlg;
@@ -91,12 +94,12 @@ public class JAMSFrame extends JAMSLauncher {
             aboutAction, loadModelParamAction, saveModelParamAction,
             loadModelExecutionStateAction, rtManagerAction, infoLogAction,
             errorLogAction, onlineAction, explorerAction, browserAction,
-            editModelAction;
+            editModelAction, startEnsembleManagerAction;
     private static JAMSExplorer theExplorer;
 
     public JAMSFrame(Frame parent, SystemProperties properties) {
         super(parent, properties);
-        
+
         // take care of loggers
         JAMSLogging.getInstance().addObserver(new Observer() {
 
@@ -111,13 +114,13 @@ public class JAMSFrame extends JAMSLauncher {
                     JAMSui.unregisterLogger(option, logger);
                 }
             }
-        });  
+        });
     }
 
     public JAMSFrame(Frame parent, SystemProperties properties, String modelFilename, String cmdLineArgs, Properties jmpParameters) {
         //super(properties, modelFilename, cmdLineArgs);
         this(parent, properties);
-                              
+
         loadModelDefinition(modelFilename, StringTools.toArray(cmdLineArgs, ";"), jmpParameters);
         loadPath = new File(modelFilename);
     }
@@ -195,6 +198,7 @@ public class JAMSFrame extends JAMSLauncher {
         //GUIHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
     }
 
+    @Override
     protected void init() throws HeadlessException, DOMException, NumberFormatException {
 
         super.init();
@@ -252,7 +256,7 @@ public class JAMSFrame extends JAMSLauncher {
         loadModelExecutionStateAction = new AbstractAction(JAMS.i18n("Resume_Model_Execution")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (jfcSer == null){
+                if (jfcSer == null) {
                     jfcSer = new JFileChooser();
                 }
                 jfcSer.setSelectedFile(new File(""));
@@ -320,6 +324,13 @@ public class JAMSFrame extends JAMSLauncher {
         };
         saveAsModelAction.setEnabled(false);
 
+        startEnsembleManagerAction = new AbstractAction(JAMS.i18n("Start Ensemble Manager")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openEnsembleManager();
+            }
+        };
+
         editModelAction = new AbstractAction(JAMS.i18n("Edit_Model...")) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -330,8 +341,9 @@ public class JAMSFrame extends JAMSLauncher {
                 if (JUICE.getJuiceFrame() == null) {
                     JUICE.createJUICEFrame();
                 }
-                if (JAMSFrame.this.modelFilename!=null)
+                if (JAMSFrame.this.modelFilename != null) {
                     JUICE.getJuiceFrame().loadModel(JAMSFrame.this.modelFilename);
+                }
             }
         };
         editModelAction.setEnabled(true);
@@ -411,7 +423,7 @@ public class JAMSFrame extends JAMSLauncher {
             public void actionPerformed(ActionEvent e) {
                 openExplorer();
             }
-        };        
+        };
 
         browserAction = new AbstractAction(JAMS.i18n("Browse_WS_Dir")) {
             @Override
@@ -422,7 +434,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         // create additional dialogs
         this.propertyDlg = new PropertyDlg(this, getProperties());
-        
+
         jfcProps = GUIHelper.getJFileChooser(JAMSFileFilter.getPropertyFilter());
         jfcProps.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfcProps.setCurrentDirectory(JAMSui.getBaseDir());
@@ -434,7 +446,6 @@ public class JAMSFrame extends JAMSLauncher {
         jfcParam = GUIHelper.getJFileChooser(JAMSFileFilter.getParameterFilter());
         jfcParam.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfcParam.setCurrentDirectory(JAMSui.getBaseDir());
-
 
         // runtime manager dlg
         rtManagerDlg = new JDialog(this, JAMS.i18n("Runtime_Manager"));
@@ -452,7 +463,6 @@ public class JAMSFrame extends JAMSLauncher {
             }
         });
         rtManagerPanel.getButtonPanel().add(closeButton);
-
 
         // menu stuff
         mainMenu = new JMenuBar();
@@ -475,6 +485,14 @@ public class JAMSFrame extends JAMSLauncher {
         saveAsItem = new JMenuItem(saveAsModelAction);
         saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
         fileMenu.add(saveAsItem);
+
+        if (isEnsembleManagerEnabled) {
+            startEnsembleManagerItem = new JMenuItem(startEnsembleManagerAction);
+            startEnsembleManagerItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+            fileMenu.add(new JSeparator());
+            fileMenu.add(startEnsembleManagerItem);
+            fileMenu.add(new JSeparator());
+        }
 
         JMenuItem exitItem = new JMenuItem(exitAction);
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
@@ -610,7 +628,6 @@ public class JAMSFrame extends JAMSLauncher {
         exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
         getToolBar().add(exitButton);
 
-
     }
 
     public void loadParams(File paramsFile) {
@@ -740,6 +757,26 @@ public class JAMSFrame extends JAMSLauncher {
         } catch (IOException ex) {
             GUIHelper.showErrorDlg(JAMSFrame.this, "\"" + workspaceFile + "\"" + JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));
         }
+    }
+
+    private void openEnsembleManager() {
+        SwingWorker worker = new SwingWorker() {
+
+            @Override
+            protected Object doInBackground() throws Exception {
+                EnsembleControlPanel ecp = new EnsembleControlPanel(JAMSFrame.this);
+                JFrame frame = new JFrame("Ensemble Manager");
+                
+                //setCurrentDirectory("C:/Arbeit/Projekte/J2000Klima/JAMS/data/Ensembe Hasel");
+                frame.add(ecp);
+                frame.pack();
+                frame.setVisible(true);
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                return null;
+            }
+        };
+        worker.run();
+        
     }
 
     private void openExplorer() {

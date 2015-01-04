@@ -45,7 +45,7 @@ import jams.gui.LogViewDlg;
 import jams.gui.PropertyDlg;
 import jams.gui.RuntimeManagerPanel;
 import jams.gui.WorkerDlg;
-import jams.juice.logging.MsgBoxLogHandler;
+import jams.logging.MsgBoxLogHandler;
 import jams.meta.ModelDescriptor;
 import jams.server.client.gui.BrowseJAMSCloudDlg;
 import jams.server.client.gui.JAMSCloudToolbar;
