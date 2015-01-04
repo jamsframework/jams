@@ -61,13 +61,12 @@ public class MovingAverage extends JAMSComponent {
 
     @Override
     public void initAll() {
-        Calendar lastTimeStep = null;
         float timeserie[][] = new float[m][n];;
         int counter = 0;
         boolean isFull = false;
 
         state.setObject("timeserie", timeserie);
-        state.setObject("lastTimeStep", lastTimeStep);
+        state.setObject("lastTimeStep", Long.MIN_VALUE);
         state.setObject("counter", counter);
         state.setObject("isFull", isFull);
     }
@@ -78,7 +77,7 @@ public class MovingAverage extends JAMSComponent {
 
     @Override
     public void run() {
-        Calendar lastTimeStep = (Calendar) state.getObject("lastTimeStep");
+        Long lastTimeStep = (Long)state.getObject("lastTimeStep");
         float timeserie[][] = (float[][]) state.getObject("timeserie");
         int counter = (Integer) state.getObject("counter");
         boolean isFull = (Boolean) state.getObject("isFull");
@@ -88,11 +87,10 @@ public class MovingAverage extends JAMSComponent {
             if (time.getTimeInMillis() == JAMS.getMissingDataValue(Long.class)){
                 return;
             }
-            if (lastTimeStep != null
-                    && lastTimeStep.getTimeInMillis() == time.getTimeInMillis()) {
+            if (lastTimeStep == time.getTimeInMillis()) {
                 considerData = false;
             } else {
-                lastTimeStep = time.getValue();
+                lastTimeStep = time.getTimeInMillis();
             }
             if (period != null) {
                 if (time.before(period.getStart())
