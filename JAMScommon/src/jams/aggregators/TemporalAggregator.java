@@ -93,6 +93,9 @@ public abstract class TemporalAggregator<T>{
     public void removeConsumer(Consumer<T> consumer){
         this.consumers.remove(consumer);
     }
+    public void removeConsumers(){
+        this.consumers.clear();
+    }
             
     protected void consume(Calendar time, T v) {
         //is there anything to consume?

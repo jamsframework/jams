@@ -5,6 +5,9 @@
  */
 package jams.aggregators;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  *
  * @author christian
@@ -50,10 +53,11 @@ public abstract class DoubleAggregator extends Aggregator<Double> {
                 return new MaximumAggregator();
             case VARIANCE:
                 return new VarianceAggregator();
-            case INDEPENDENT:
+            case MEDIAN:
+                return new MedianAggregator();
+            default:
                 throw new UnsupportedOperationException();
-        }
-        throw new IllegalArgumentException(mode + " is not a valid aggregation mode");
+        }        
     }
 
     //implementations
@@ -86,6 +90,74 @@ public abstract class DoubleAggregator extends Aggregator<Double> {
         }
     }
 
+    //implementations
+    //Sum up values
+    public static class MedianAggregator extends DoubleAggregator {
+
+        ArrayList<Double> set = new ArrayList<Double>();
+        public MedianAggregator() {
+            super();
+        }
+
+        public MedianAggregator(MedianAggregator copy) {
+            super(copy);
+            set = (ArrayList)copy.set.clone();            
+        }
+
+        @Override
+        public DoubleAggregator copy() {
+            return new MedianAggregator(this);
+        }
+
+        @Override
+        public void init() {
+            super.init();
+            v = 0;
+            set = new ArrayList<Double>();
+        }
+
+        @Override
+        public void consider(Double x) {
+            if (!Double.isNaN(x)){
+                set.add(x);
+            }                
+        }
+        
+        public double getQuantile(Double p) {
+            if (set.size()>0){
+                double index  = (p * (double)(set.size()-1.));
+                double index0 = Math.floor(index);
+                double index1 = Math.ceil(index);
+                
+                if (index0 == index1){
+                    return set.get((int)index0);
+                }
+                double t1 = index - index0;
+                double t2 = index1 - index;
+                double v1 = set.get((int)index0);
+                double v2 = set.get((int)index1);
+                
+                double interpolation = v1*t2 + v2*t1;
+                return interpolation;
+            }else{
+                return Double.NaN;
+            }
+        }
+        
+        @Override
+        public void finish() {
+            Collections.sort(set);
+            if (set.size()>0){
+                if (set.size()%2 == 0)
+                    v = (set.get( (set.size()/2)-1 ) + set.get( (set.size()/2) ))/2.0;
+                if (set.size()%2 == 1)
+                    v = set.get( (set.size()-1)/2 );
+            }else{
+                v = Double.NaN;
+            }
+        }
+    }
+    
     //minimum
     static class MinimumAggregator extends DoubleAggregator {
 
@@ -216,6 +288,7 @@ public abstract class DoubleAggregator extends Aggregator<Double> {
             super.init();
             v = 0;
             mean = 0;
+            counter = 0;
         }
 
         @Override

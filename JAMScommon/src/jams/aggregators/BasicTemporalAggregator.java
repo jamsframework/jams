@@ -7,10 +7,7 @@ package jams.aggregators;
 
 import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
-import jams.data.DefaultDataFactory;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 
 /**
  *

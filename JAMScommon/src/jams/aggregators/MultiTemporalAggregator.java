@@ -162,6 +162,10 @@ public class MultiTemporalAggregator<T> extends TemporalAggregator<T> {
         innerAggregator[index].aggregate(timeStep, next);
     }
 
+    //TODO Problem tritt auf, wenn alle Ergebnisse des Finish durch Attribute weiterverarbeitet werden sollen.
+    //Das Attribut kann nur ein Ergebnis speichern, aber nicht alle .. 
+    //d.h. streng genommen muss für die Anwendung des MTA das Modellierungszeitintervall mit dem äußeren Zeitintervall
+    //zusammen fallen.
     @Override
     public void finish() {
         for (int k=0;k<K;k++){

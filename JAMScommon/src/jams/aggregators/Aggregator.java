@@ -18,6 +18,7 @@ public abstract class Aggregator<T> {
         SUM, 
         VARIANCE, 
         INDEPENDENT, 
+        MEDIAN,
         LAST;
     
         public String toAbbreviation(){
@@ -29,6 +30,7 @@ public abstract class Aggregator<T> {
                 case SUM: return "sum";
                 case INDEPENDENT: return "ind";
                 case VARIANCE: return "var";
+                case MEDIAN: return "med";
                 default: return null;
             }
         }    

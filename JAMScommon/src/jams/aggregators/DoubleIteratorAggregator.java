@@ -115,7 +115,7 @@ public abstract class DoubleIteratorAggregator extends Aggregator<Iterable<Doubl
         @Override
         public void consider(Iterable<Double> in) {
             int i = 0;
-            for (Double x : in) {
+            for (double x : in) {
                 if (!Double.isNaN(x)){
                     v[i] += x;
                 }
@@ -220,7 +220,7 @@ public abstract class DoubleIteratorAggregator extends Aggregator<Iterable<Doubl
         @Override
         public void consider(Iterable<Double> in) {
             int i = 0;
-            for (Double x : in) {
+            for (double x : in) {
                 if (!Double.isNaN(x)){
                     v[i] += x;
                     counter[i]++;
