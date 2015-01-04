@@ -19,7 +19,7 @@
  * along with JAMS. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package jamsui.juice.gui;
+package jams.gui.input;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

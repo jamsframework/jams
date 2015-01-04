@@ -3,7 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jams.juice.logging;
+package jams.logging;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.logging.Handler;
@@ -57,10 +60,29 @@ public class MsgBoxLogHandler extends Handler {
         /*if (record.getThrown() != null) {
             return;
         }*/
-        if (msgDialogHandling.contains(record.getLevel())) {
-            JOptionPane.showMessageDialog(null, record.getMessage(),
-                    msgDialogTitle.get(record.getLevel()),
-                    msgDialogIcon.get(record.getLevel()));
+        if (msgDialogHandling.contains(record.getLevel())) {                        
+            if (record.getThrown() != null){               
+                StringWriter w = new StringWriter();
+                record.getThrown().printStackTrace(new PrintWriter(w));
+            
+                MessageBoxWithDetails.showMessageBoxWithDetails(
+                        null, 
+                        record.getMessage() == null ? record.getThrown().toString() : record.getMessage(),
+                        msgDialogTitle.get(record.getLevel()),
+                        w.toString(),
+                        msgDialogIcon.get(record.getLevel()));
+                try{
+                    w.close();
+                }catch(IOException ioe){
+                    ioe.printStackTrace();
+                }
+            }else{
+                MessageBoxWithDetails.showMessageBoxWithDetails(
+                        null, record.getMessage(),
+                        msgDialogTitle.get(record.getLevel()),
+                        null,
+                        msgDialogIcon.get(record.getLevel()));
+            }
         }
     }
 
