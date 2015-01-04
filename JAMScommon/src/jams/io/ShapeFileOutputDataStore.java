@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jams.components.aggregate;
+package jams.io;
 
 import jams.data.NamedDataSupplier;
-import jams.components.dbf.DBFField;
-import jams.components.dbf.DBFReader;
-import jams.components.dbf.DBFWriter;
+import jams.io.dbf.DBFField;
+import jams.io.dbf.DBFReader;
+import jams.io.dbf.DBFWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,7 +31,7 @@ public class ShapeFileOutputDataStore {
         init(template, file);
     }
     
-    public File gteFile(){
+    public File getFile(){
         return file;
     }
     
@@ -63,59 +63,6 @@ public class ShapeFileOutputDataStore {
                 }
             }
         }
-
-        /*InputStream inputStream = null;
-        DBFReader dbfReader = null;
-        try {
-            inputStream = new FileInputStream(new File(template.getParentFile(), template.getName().replace(".shp", ".dbf")));
-            dbfReader = new DBFReader(inputStream);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-            if (inputStream != null){
-                inputStream.close();
-            }
-            throw new IOException("The dbf-file " + template.getAbsolutePath() + " could not be read properly!\n" + ioe.toString());
-        }
-        
-        writer = new DBFWriter();
-
-        DBFField fields[] = null;
-        try {
-            fields = new DBFField[dbfReader.getFieldCount()];
-            for (int j = 0; j < fields.length; j++) {
-                fields[j] = dbfReader.getField(j);
-            }
-        } catch (DBFException dbfe) {
-            dbfe.printStackTrace();
-            if (inputStream != null){
-                inputStream.close();
-            }
-            throw new IOException("The dbf-file " + template.getAbsolutePath() + " could not be read properly!\n" + dbfe.toString());
-        }
-        OutputStream out = null;
-        try {
-            writer.setFields(fields);
-            for (int j = 0; j < dbfReader.getRecordCount(); j++) {
-                Object objs[] = dbfReader.nextRecord();
-                writer.addRecord(objs);
-            }
-            out = new FileOutputStream(file);
-            writer.write(out);            
-            out.flush();                  
-        } catch (IOException dbfe) {
-            dbfe.printStackTrace();                                  
-            throw new IOException("The dbf-file " + file.getAbsolutePath() + " could not be written!\n" + dbfe.toString());
-        }finally{            
-            if (out != null){
-                out.close();
-            }
-            if (inputStream != null){
-                inputStream.close();
-            }
-            if (writer!=null){
-                writer.close();
-            }
-        }*/
     }
     
     public void addDataToShpFiles(NamedDataSupplier<Double> I[], String idFieldName) throws IOException{
@@ -178,7 +125,7 @@ public class ShapeFileOutputDataStore {
                 }
                 try{
                     writer.addRecord(objOut);
-                }catch(jams.components.dbf.DBFException dbfe){
+                }catch(jams.io.dbf.DBFException dbfe){
                     System.out.println("Error writing field: " + dbfe.toString());
                     System.out.println("Fields in question are: " + Arrays.toString(objOut));
                 }
@@ -267,7 +214,7 @@ public class ShapeFileOutputDataStore {
                 }
                 try{
                     writer.addRecord(objOut);
-                }catch(jams.components.dbf.DBFException dbfe){
+                }catch(jams.io.dbf.DBFException dbfe){
                     System.out.println("Error writing field: " + dbfe.toString());
                     System.out.println("Fields in question are: " + Arrays.toString(objOut));
                 }

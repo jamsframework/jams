@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jams.components.aggregate;
+package jams.io;
 
 import jams.data.DataSupplier;
 import gnu.trove.map.hash.THashMap;
@@ -13,7 +13,6 @@ import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeMap;
@@ -31,10 +30,27 @@ public class SimpleOutputDataStore {
     TreeMap<String, Long> entryMap = new TreeMap<String, Long>();
     THashMap<Double, Integer> entityMap = new THashMap<Double, Integer>();
             
+    static StringBuffer strGlobalBuffer;
+    StringBuffer strBuffer = null;
+    
+    
+    
     public SimpleOutputDataStore(File file) throws IOException{
+        this(file, true);
+    }
+    
+    public SimpleOutputDataStore(File file, boolean threadSafe) throws IOException{
         this.file = file;        
         raf = new RandomAccessFile(file, "rw");        
         raf.setLength(0);
+        
+        if (threadSafe){
+            strBuffer = new StringBuffer();
+        }else{
+            if (strGlobalBuffer==null)
+                strGlobalBuffer = new StringBuffer(5120000);
+            strBuffer = strGlobalBuffer;
+        }
     }
     
     public void setHeader(Collection<Double> ids) throws IOException {
@@ -91,22 +107,7 @@ public class SimpleOutputDataStore {
     //DO NOT Change this format! 
     DecimalFormat df2EPos = new DecimalFormat( "+0.00000E000;-0.00000E000", new DecimalFormatSymbols(Locale.ENGLISH) );
     DecimalFormat df2ENeg = new DecimalFormat( "+0.00000E00;-0.00000E00", new DecimalFormatSymbols(Locale.ENGLISH) );
-    
-    private double roundToSignificantFigures(double num, int n) {
-        if (num == 0) {
-            return 0;
-        }
-
-        final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
-        final int power = n - (int) d;
-
-        final double magnitude = Math.pow(10, power);
-        final long shifted = Math.round(num * magnitude);
-        return shifted / magnitude;
-    }
-        
-    static boolean text = true;
-    StringBuffer strBuffer = new StringBuffer(5120000);
+                
     public void writeData(String entry, DataSupplier<Double> values) throws IOException{
         raf.seek(raf.length());
         //write data
@@ -123,7 +124,7 @@ public class SimpleOutputDataStore {
             if (result.contains("E-"))
                 result = df2ENeg.format(x);
             //raf.writeBytes("\t" + result);            
-            strBuffer.append("\t" + result);
+            strBuffer.append("\t").append(result);
         }
         strBuffer.append("\n");
         raf.writeBytes(strBuffer.toString());          
