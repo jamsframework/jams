@@ -22,27 +22,33 @@
  */
 package jams.gui;
 
+import java.awt.BorderLayout;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.JLabel;
 
 /**
  *
  * @author S. Kralisch
  */
 public class ObserverWorkerDlg extends WorkerDlgDecorator implements Observer{    
+    JLabel progressBarLabel = new JLabel();
+    
     public ObserverWorkerDlg(WorkerDlg parent) {
         super(parent);
         
-        getWorkerDlg().progressBar.setStringPainted(true);
-        getWorkerDlg().progressBar.setString("test"); 
+        getWorkerDlg().progressBar.setLayout(new BorderLayout(5, 5));
+        getWorkerDlg().progressBar.add(progressBarLabel, BorderLayout.CENTER);        
+        //progressBarLabel.setStringPainted(true);
+        progressBarLabel.setText("test"); 
         
         getWorkerDlg().pack();
     }
             
     @Override
     public void update(Observable observable, Object o){   
-        getWorkerDlg().progressBar.setStringPainted(true);
-        getWorkerDlg().progressBar.setString(o.toString()); 
+        //getWorkerDlg().progressBarLabel.setStringPainted(true);
+        progressBarLabel.setText(o.toString()); 
     }    
     
     static private class XXX extends Observable{

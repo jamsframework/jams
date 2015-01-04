@@ -440,4 +440,14 @@ public class GUIHelper {
         }
         child.setLocation(x, y);
     }
+
+    public static Window findWindow(Component c) {
+        if (c == null) {
+            return JOptionPane.getRootFrame();
+        } else if (c instanceof Window) {
+            return (Window) c;
+        } else {
+            return findWindow(c.getParent());
+        }
+    }
 }

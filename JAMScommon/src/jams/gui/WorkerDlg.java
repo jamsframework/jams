@@ -158,7 +158,7 @@ public class WorkerDlg extends JDialog {
      * the event dispatching thread
      * @param worker The SwingWorker
      */
-    public void setTask(SwingWorker worker) {
+    public synchronized void setTask(SwingWorker worker) {
         this.worker = worker;
     }
     
