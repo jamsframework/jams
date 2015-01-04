@@ -22,11 +22,13 @@
 package jams.tools;
 
 import jams.JAMS;
+import java.beans.ExceptionListener;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 import jams.meta.ModelDescriptor;
 import jams.meta.ModelIO;
 import java.io.*;
 import java.io.OutputStreamWriter;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,6 +40,12 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
+import javax.xml.bind.util.ValidationEventCollector;
 import org.w3c.dom.Document;
 
 /**
@@ -45,24 +53,6 @@ import org.w3c.dom.Document;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class FileTools {
-
-    public static void copyFile(String inFile, String outFile) throws IOException {
-
-        FileChannel inChannel = new FileInputStream(new File(inFile)).getChannel();
-        FileChannel outChannel = new FileOutputStream(new File(outFile)).getChannel();
-        try {
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-        } catch (IOException e) {
-            throw e;
-        } finally {
-            if (inChannel != null) {
-                inChannel.close();
-            }
-            if (outChannel != null) {
-                outChannel.close();
-            }
-        }
-    }
 
     /**
      * delete all given files
@@ -81,17 +71,17 @@ public class FileTools {
      * @param theFile
      */
     public static void deleteRecursive(File theFile) {
-        if (theFile.isDirectory()){
-            for (File f : theFile.listFiles()){
+        if (theFile.isDirectory()) {
+            for (File f : theFile.listFiles()) {
                 deleteRecursive(f);
             }
         }
-        Logger log = Logger.getLogger(FileTools.class.getName());    
+        Logger log = Logger.getLogger(FileTools.class.getName());
         log.setLevel(Level.ALL);
         log.log(Level.INFO, "Deleted the file during cleanUp {0}", theFile.getAbsolutePath());
         theFile.delete();
     }
-    
+
     /**
      * get array of files
      *
@@ -172,35 +162,31 @@ public class FileTools {
      */
     public static Collection<File> getFilesByRegEx(File directory, String regex, boolean isPostiveRegEx) {
         ArrayList<File> list = new ArrayList<File>();
-        if (directory.isFile()){
+        if (directory.isFile()) {
             String path = normalizePath(directory.getPath());
-            if (                    
-                    regex == null || 
-                    regex.isEmpty() || 
-                    (isPostiveRegEx && path.toLowerCase().matches(regex)) ||
-                    (!isPostiveRegEx && !path.toLowerCase().matches(regex)) 
-                    ) {
+            if (regex == null
+                    || regex.isEmpty()
+                    || (isPostiveRegEx && path.toLowerCase().matches(regex))
+                    || (!isPostiveRegEx && !path.toLowerCase().matches(regex))) {
                 list.add(directory);
             }
             return list;
-        }        
-        
+        }
+
         for (File f : directory.listFiles()) {
             String path = normalizePath(f.getPath());
             if (f.isDirectory()) {
                 list.addAll(getFilesByRegEx(f, regex, isPostiveRegEx));
-            } else if (                    
-                    regex == null || 
-                    regex.isEmpty() || 
-                    (isPostiveRegEx && path.toLowerCase().matches(regex)) ||
-                    (!isPostiveRegEx && !path.toLowerCase().matches(regex)) 
-                    ) {
+            } else if (regex == null
+                    || regex.isEmpty()
+                    || (isPostiveRegEx && path.toLowerCase().matches(regex))
+                    || (!isPostiveRegEx && !path.toLowerCase().matches(regex))) {
                 list.add(f);
             }
         }
         return list;
     }
-    
+
     /**
      * Asserts that the given directory is existing
      *
@@ -244,8 +230,10 @@ public class FileTools {
         in.close();
         return result;
     }
+
     /**
      * Reads a file and returns its content as string
+     *
      * @param fileName The name of the file
      * @return The file content
      */
@@ -269,8 +257,10 @@ public class FileTools {
     public static String streamToString(InputStream in) throws IOException {
         return streamToString(in, JAMS.getCharset());
     }
+
     /**
      * Reads from a stream and returns its content as string
+     *
      * @param in The stream
      * @param encoding
      * @return The stream content
@@ -286,9 +276,10 @@ public class FileTools {
 
         return content;
     }
-    
+
     /**
      * Reads from a stream and returns its content as string
+     *
      * @param in The stream
      * @param offset number of bytes to be skipped in the beginning
      * @param size total size to be read
@@ -306,11 +297,12 @@ public class FileTools {
         }
         return t;
     }
-    
+
     /**
      * Reads from a stream and returns its content as string
+     *
      * @param target target file
-     * @param in The stream  
+     * @param in The stream
      * @throws java.io.IOException
      */
     public static void streamToFile(File target, InputStream in) throws IOException {
@@ -369,6 +361,7 @@ public class FileTools {
         }
         return false;
     }
+
     /**
      * zip a file to a zipoutputstream
      *
@@ -380,7 +373,7 @@ public class FileTools {
     public static void zipFile(java.io.File file, String fileName, ZipOutputStream zipOut) throws IOException {
         FileInputStream inFile = new FileInputStream(file);
         zipOut.putNextEntry(new ZipEntry(fileName));
-        
+
         byte[] buf = new byte[65536];
         int len;
         // Der Inhalt der Datei wird in die Zip-Datei kopiert.
@@ -390,9 +383,10 @@ public class FileTools {
         zipOut.closeEntry();
         inFile.close();
     }
-    
+
     /**
-     * buildDirectoryHierarchyFor .. creates directories which are necessary to unzip a file
+     * buildDirectoryHierarchyFor .. creates directories which are necessary to
+     * unzip a file
      *
      * @param entryName name of entry in zip
      * @param File destDir
@@ -406,7 +400,7 @@ public class FileTools {
         //System.out.println("extract to_:" + internalPathToEntry + " file:" + entryFileName);
         return new File(destDir, internalPathToEntry);
     }
-    
+
     /**
      * unzip a file to a directory
      *
@@ -433,7 +427,7 @@ public class FileTools {
             }
             if (!entry.isDirectory()) {
                 File f = new File(destDir, entryFileName);
-                if (f.isDirectory()){
+                if (f.isDirectory()) {
                     continue;
                 }
                 BufferedOutputStream bos = new BufferedOutputStream(
@@ -448,15 +442,16 @@ public class FileTools {
             }
         }
         zipFile.close();
-        if (deleteZip)
+        if (deleteZip) {
             zip.delete();
+        }
     }
-    
+
     /**
      * getDirectorySize
-     *     
+     *
      * @param directory
-     * @return 
+     * @return
      */
     static public long getDirectorySize(java.io.File directory) {
         long length = 0;
@@ -469,46 +464,105 @@ public class FileTools {
         }
         return length;
     }
-    
+
     /**
      * normalizePath
-     *     
+     *
      * @param s
-     * @return 
+     * @return
      */
-    public static String normalizePath(String s){
+    public static String normalizePath(String s) {
         removeSlashes(s);
         s = s.replace("\\", "/").replace("//", "/");
         return s;
     }
-    
+
     /**
      * getParent from File's string representation
-     *     
-     * @param s - Path to a file, it is not necessary that the file exists or that the path is valid in current file system
+     *
+     * @param s - Path to a file, it is not necessary that the file exists or
+     * that the path is valid in current file system
      * @return parent of file
      */
-    public static String getParent(String s){
+    public static String getParent(String s) {
         s = normalizePath(s);
         int index = s.lastIndexOf("/");
-        if (index != -1){
+        if (index != -1) {
             return s.substring(0, index);
-        }else{
+        } else {
             return "";
         }
     }
-    
+
     /**
      * removeSlashes
-     *     
+     *
      * @param s
-     * @return 
+     * @return
      */
-    private static String removeSlashes(String s){
-        while (s.startsWith("/") || s.startsWith("\\")){
+    private static String removeSlashes(String s) {
+        while (s.startsWith("/") || s.startsWith("\\")) {
             s = s.substring(1);
         }
         return s;
+    }
+
+    public static <T> void serializeObjectToXMLwithJAXB(T o, File file) throws Exception {
+        FileWriter writer = new FileWriter(file);
+        JAXBContext context = JAXBContext.newInstance(o.getClass());
+        Marshaller m = context.createMarshaller();
+        m.setEventHandler(new ValidationEventHandler() {
+
+            @Override
+            public boolean handleEvent(ValidationEvent event) {
+                System.out.println(event.getMessage());
+                return false;
+            }
+        });
+        m.marshal(o, writer);
+        writer.close();
+    }
+
+    public static <T> T deserializeObjectFromXMLwithJAXB(File file, Class<T> c) throws Exception {
+        FileReader reader = new FileReader(file);
+        JAXBContext context = JAXBContext.newInstance(c);
+        Unmarshaller um = context.createUnmarshaller();
+        um.setEventHandler(new ValidationEventHandler() {
+
+            @Override
+            public boolean handleEvent(ValidationEvent event) {
+                System.out.println(event.getMessage());
+                return false;
+            }
+        });
+        T o = (T) um.unmarshal(reader);
+        reader.close();
+        return o;
+    }
+
+    public static <T> void serializeObjectToXML(T o, File file) throws Exception {
+        XMLEncoder encoder
+                = new XMLEncoder(
+                        new BufferedOutputStream(
+                                new FileOutputStream(file)));
+        encoder.setExceptionListener(new ExceptionListener() {
+
+            @Override
+            public void exceptionThrown(Exception e) {
+                e.printStackTrace();
+            }
+        });
+        encoder.writeObject(o);
+        encoder.close();
+    }
+
+    public static <T> T deserializeObjectFromXML(File file) throws Exception {
+        XMLDecoder decoder
+                = new XMLDecoder(new BufferedInputStream(
+                                new FileInputStream(file)));
+        T o = (T) decoder.readObject();
+        decoder.close();
+        return o;
     }
     
     public static boolean validateModelFile(File f) {
