@@ -1215,9 +1215,15 @@ public class TimeSpaceDSPanel extends DSPanel {
                 } catch (SQLException ex) {
                     Logger.getLogger(TimeSpaceDSPanel.class
                             .getName()).log(Level.SEVERE, null, ex);
+                    cancel();
                 } catch (IOException ex) {
                     Logger.getLogger(TimeSpaceDSPanel.class
                             .getName()).log(Level.SEVERE, null, ex);
+                    cancel();
+                } catch (Throwable t) {
+                    Logger.getLogger(TimeSpaceDSPanel.class
+                                .getName()).log(Level.SEVERE, "An error occured during data extraction!", t);
+                    cancel();
                 }
                 return null;
             }
@@ -1228,16 +1234,15 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                 if (m == null) {
 
-                    if (weightAttribIndex < 0) {
+                    /*if (weightAttribIndex < 0) {
                         Logger.getLogger(TimeSpaceDSPanel.class
                                 .getName()).log(Level.WARNING, "A weight attribute must be chosen!");
-                    } else {
-                        Logger.getLogger(TimeSpaceDSPanel.class
-                                .getName()).log(Level.WARNING, "An error occured during data extraction!");
-                    }
+                    } else {*/
+                        
+                    //}
+                } else {
+                    loadData(m, true);
                 }
-
-                loadData(m, true);
             }
 
             public int cancel() {
