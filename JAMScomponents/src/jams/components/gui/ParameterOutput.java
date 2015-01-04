@@ -29,6 +29,7 @@ import java.awt.BorderLayout;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TreeSet;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -79,6 +80,7 @@ public class ParameterOutput extends JAMSGUIComponent {
 
             HashMap<String, HashMap<String, Element>> componentHash = ParameterProcessor.getAttributeHash(getModel().getRuntime().getModelDocument());
 
+            TreeSet<String> values = new TreeSet<String>();
             for (String componentName : componentHash.keySet()) {
                 HashMap<String, Element> attributeHash = componentHash.get(componentName);
 
@@ -87,9 +89,12 @@ public class ParameterOutput extends JAMSGUIComponent {
                     String aName = attribute.getAttribute("name");
                     if (!componentName.equals(aName)) {
                         String s = String.format("%" + -indent.getValue() + "s= ", componentName+"."+aName) + attribute.getAttribute("value") + "\n";
-                        logArea.append(s);
+                        values.add(s);                        
                     }
                 }
+            }
+            for (String s : values){
+                logArea.append(s);
             }
         }
     }

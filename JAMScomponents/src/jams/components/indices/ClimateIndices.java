@@ -49,6 +49,11 @@ public class ClimateIndices extends JAMSComponent {
     public Attribute.Double wind;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    description = "relative humidity",
+    unit="-")
+    public Attribute.Double relHum;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "daily pot. evapotranspiration",
     unit="L")
     public Attribute.Double potET;
@@ -125,7 +130,7 @@ public class ClimateIndices extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
     description = "calculates the klimatische wasserbilanz (P-potET) during forstlicher vegetation period")
     public Attribute.Double KWBinForestVegetationPeriod;
-    
+        
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
     description = "tmp variables")
     public Attribute.DoubleArray tmp;
@@ -148,6 +153,8 @@ public class ClimateIndices extends JAMSComponent {
     public void run(){
         int day = time.get(Attribute.Calendar.DAY_OF_YEAR);
         
+        double tmean = this.tmean.getValue();
+                
         isDryPeriod.setValue(0);
         isBeginningOfDryPeriod.setValue(0);
         isPrecipHigher20mm.setValue(0.0);
@@ -162,13 +169,9 @@ public class ClimateIndices extends JAMSComponent {
             tmp.setValue(new double[INDEX_SIZE]);
         }
         double inTmp[] = tmp.getValue();
-                                                          
-        if (tmin.getValue()>tmean.getValue()){
-            System.out.println("Ups .. tmin (" + tmin + ") ist größer als tmean (" + tmean + ")");
-        }
-                              
+                                                                                        
         //Vegetationsperioden
-        if (tmean.getValue() > 5.0){
+        if (tmean > 5.0){
             inTmp[INDEX_successiveDaysWithTmeanAboveFiveDegree]+=1.0;
             inTmp[INDEX_successiveDaysWithTmeanBelowFiveDegree]=0.0;
         }else{
@@ -176,7 +179,7 @@ public class ClimateIndices extends JAMSComponent {
             inTmp[INDEX_successiveDaysWithTmeanAboveFiveDegree]=0;
         }
         
-        if (tmean.getValue() > 10.0){
+        if (tmean > 10.0){
             inTmp[INDEX_successiveDaysWithTmeanAboveTenDegree]+=1;
             inTmp[INDEX_successiveDaysWithTmeanBelowTenDegree]=0;
         }else{
@@ -197,7 +200,7 @@ public class ClimateIndices extends JAMSComponent {
         }
         
         int p = (int)inTmp[INDEX_KWB_window_position];
-        inTmp[INDEX_KWB_window+p] = tmean.getValue();
+        inTmp[INDEX_KWB_window+p] = tmean;
         p = (p+1)%KWB_WINDOW_SIZE;
         double tSum = 0;
         for (int i=0;i<KWB_WINDOW_SIZE;i++){
@@ -242,7 +245,7 @@ public class ClimateIndices extends JAMSComponent {
                 successiveDaysWithoutRain.setValue(0.0);
             }
             
-            if (tmean.getValue() >= 15.0 && tmean.getValue() <= 30.0 && precip_mm < 0.5){
+            if (tmean >= 15.0 && tmean <= 30.0 && precip_mm < 0.5){
                 isTouristDay.setValue(1.0);
             }
             

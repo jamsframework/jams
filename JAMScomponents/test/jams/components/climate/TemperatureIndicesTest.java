@@ -60,7 +60,6 @@ public class TemperatureIndicesTest {
         T.iceDayThreshold.setValue(0.0);
         T.isBeginningOfHotPeriod = DefaultDataFactory.getDataFactory().createDouble();
         T.isBeginningOfPermanentFrostPeriod = DefaultDataFactory.getDataFactory().createDouble();
-        T.isForestVegetationPeriodTrigger = DefaultDataFactory.getDataFactory().createDouble();
         T.isFrostDay = DefaultDataFactory.getDataFactory().createDouble();
         T.isFrostDefrostChange = DefaultDataFactory.getDataFactory().createDouble();
         T.isHeatDay = DefaultDataFactory.getDataFactory().createDouble();
@@ -70,8 +69,6 @@ public class TemperatureIndicesTest {
         T.isPermanentFrostPeriod = DefaultDataFactory.getDataFactory().createDouble();
         T.isSummerDay = DefaultDataFactory.getDataFactory().createDouble();
         T.isTempBelowZero = DefaultDataFactory.getDataFactory().createDouble();
-        T.isThermalVegetationPeriodTrigger = DefaultDataFactory.getDataFactory().createDouble();
-        T.isThermalVegetationPeriodTrigger2 = DefaultDataFactory.getDataFactory().createDouble();
         T.isTouristDay = DefaultDataFactory.getDataFactory().createDouble();
         T.permanentFrostDayThreshold = DefaultDataFactory.getDataFactory().createDouble();
         T.permanentFrostDayThreshold.setValue(-5);
@@ -83,10 +80,11 @@ public class TemperatureIndicesTest {
         T.tmax = DefaultDataFactory.getDataFactory().createDouble();
         T.tmean = DefaultDataFactory.getDataFactory().createDouble();
         T.tmin = DefaultDataFactory.getDataFactory().createDouble();
-        T.tmp = DefaultDataFactory.getDataFactory().createDoubleArray();
         T.tropicalNightThreshold = DefaultDataFactory.getDataFactory().createDouble();
         T.tropicalNightThreshold.setValue(20);
         T.isTropicalNight = DefaultDataFactory.getDataFactory().createDouble();
+        T.absHum = DefaultDataFactory.getDataFactory().createDouble();
+        T.relHum = DefaultDataFactory.getDataFactory().createDouble();
     }
 
     @AfterClass
@@ -114,7 +112,7 @@ public class TemperatureIndicesTest {
             T.tmax.setValue(tmax);
             T.tmean.setValue(tmean);
             T.tmin.setValue(tmin);
-
+            T.relHum.setValue(90);
             T.run();
 
             summerDays += (int) T.isSummerDay.getValue();
@@ -125,6 +123,7 @@ public class TemperatureIndicesTest {
             successiveHotDays += (int)T.successiveHotDays.getValue();
             hotPeriods += (int)T.isBeginningOfHotPeriod.getValue();
             permanentFrostPeriods += (int)T.isBeginningOfPermanentFrostPeriod.getValue();
+            System.out.println(T.absHum.getValue());
         }
 
         assert summerDays == 2393+hotDays;

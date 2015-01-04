@@ -21,7 +21,7 @@
  */
 package jams.components.io;
 
-import jams.components.aggregate.ShapeFileOutputDataStore;
+import jams.io.ShapeFileOutputDataStore;
 import jams.data.AbstractDataSupplier;
 import jams.data.Attribute;
 import jams.data.NamedDataSupplier;
@@ -174,7 +174,7 @@ public class ShapeEntityWriter extends JAMSComponent {
 
     @Override
     public void cleanup() {
-        getModel().getRuntime().sendInfoMsg("Write shapefile: " + shpStore.gteFile());
+        getModel().getRuntime().sendInfoMsg("Write shapefile: " + shpStore.getFile());
         try {
             shpStore.addDataToShpFiles(entityDataProviders, this.idName.getValue());
         } catch (IOException ioe) {

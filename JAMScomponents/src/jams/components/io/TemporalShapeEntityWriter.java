@@ -22,8 +22,8 @@
 package jams.components.io;
 
 import jams.JAMS;
-import jams.components.aggregate.ShapeFileOutputDataStore;
-import jams.components.aggregate.SimpleOutputDataStore;
+import jams.io.ShapeFileOutputDataStore;
+import jams.io.SimpleOutputDataStore;
 import jams.components.aggregate.SpatialOutputDataStore;
 import jams.data.AbstractDataSupplier;
 import jams.data.Attribute;
@@ -170,7 +170,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
             File f2 = new File(FileTools.createAbsoluteFileName(path,fileName + "_SODS.dat"));
             entityDataProviders[i] = new EntityDataProvider(this.attributes[i].getValue(), entities);
             try {
-                outData[i] = new SimpleOutputDataStore(f);
+                outData[i] = new SimpleOutputDataStore(f, false);
                 outData2[i] = new SpatialOutputDataStore(f2);
             } catch (IOException ioe) {
                 getModel().getRuntime().sendHalt("Can't write to output file:" + f);
@@ -229,6 +229,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
         }
     }
     
+    @Override
     public void cleanup() {
         for (int i = 0; i < n; i++) {
             if (isEnabled[i].getValue()) {
@@ -239,6 +240,18 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
                     getModel().getRuntime().sendHalt("Can't write to output file:" + outData[i].getFile() + "\n" + ioe.toString());
                 }
             }
+        }
+        try {
+            for (int i = 0; i < n; i++) {
+                if (!isEnabled[i].getValue()) {
+                    continue;
+                }
+                          
+                outData[i].close();
+                outData2[i].close();
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
     }
 }

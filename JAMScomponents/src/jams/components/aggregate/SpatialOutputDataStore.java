@@ -31,40 +31,7 @@ public class SpatialOutputDataStore {
         this.file = file;        
         writer = new BufferedWriter(new FileWriter(file));
     }
-    
-    /*public void setHeader(double[] ids) throws IOException {
-        writer.write("@context\n");
-        writer.write("jams.model.JAMSSpatialContext	HRULoop	" + ids.length + "\n") ;
-        writer.write("@ancestors\n");
-        writer.write("jams.model.JAMSTemporalContext	TimeLoop	9999\n");
-        writer.write("@filters\n");
-        writer.write("@attributes\n");
-        writer.write("ID	value\n");
-        writer.write("@types\n");
-        writer.write("JAMSLong	JAMSDouble\n");
-        writer.write("@data\n");
-
-        this.ids = ids;   
-    }*/
-    
-    /*public void setHeader(int maxID) throws IOException {
-        writer.write("@context\n");
-        writer.write("jams.model.JAMSSpatialContext	HRULoop	" + ids.length + "\n") ;
-        writer.write("@ancestors\n");
-        writer.write("jams.model.JAMSTemporalContext	TimeLoop	9999\n");
-        writer.write("@filters\n");
-        writer.write("@attributes\n");
-        writer.write("ID	value\n");
-        writer.write("@types\n");
-        writer.write("JAMSLong	JAMSDouble\n");
-        writer.write("@data\n");
-
-        this.ids = new double[maxID];
-        for (int i=0;i<maxID;i++){
-            ids[i] = i;
-        }
-    }*/
-            
+                
     public void setHeader(Collection<Double> ids) throws IOException {
         writer.write("@context\n");
         writer.write("jams.model.JAMSSpatialContext	HRULoop	" + ids.size() + "\n") ;
@@ -87,20 +54,7 @@ public class SpatialOutputDataStore {
     //DO NOT Change this format! 
     DecimalFormat df2EPos = new DecimalFormat( "+0.00000E000;-0.00000E000", new DecimalFormatSymbols(Locale.ENGLISH) );
     DecimalFormat df2ENeg = new DecimalFormat( "+0.00000E00;-0.00000E00", new DecimalFormatSymbols(Locale.ENGLISH) );
-    
-    private double roundToSignificantFigures(double num, int n) {
-        if (num == 0) {
-            return 0;
-        }
-
-        final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
-        final int power = n - (int) d;
-
-        final double magnitude = Math.pow(10, power);
-        final long shifted = Math.round(num * magnitude);
-        return shifted / magnitude;
-    }
-        
+            
     static boolean text = true;
     public void writeData(String entry, DataSupplier<Double> values) throws IOException{
         writer.write("TimeLoop	" + entry + "\n");
@@ -119,7 +73,8 @@ public class SpatialOutputDataStore {
             if (iter.hasNext())
                 writer.write(iter.next().longValue() + "\t" + result + "\n");
         }
-        writer.write("@end\n");        
+        writer.write("@end\n");     
+        writer.flush();
     }
             
     public void close() throws IOException{
