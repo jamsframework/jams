@@ -10,7 +10,7 @@
 
     $Id: DBFWriter.java,v 1.9 2004/03/31 10:57:16 anil Exp $
 */
-package jams.components.dbf;
+package jams.io.dbf;
 import java.io.*;
 import java.util.*;
 

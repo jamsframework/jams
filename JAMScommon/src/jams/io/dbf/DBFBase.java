@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jams.components.dbf;
+package jams.io.dbf;
 
 /*
     $Id: DBFBase.java,v 1.3 2004/03/31 15:59:40 anil Exp $

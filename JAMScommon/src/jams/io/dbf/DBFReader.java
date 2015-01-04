@@ -11,7 +11,7 @@
   $Id: DBFReader.java,v 1.8 2004/03/31 10:54:03 anil Exp $
 */
 
-package jams.components.dbf;
+package jams.io.dbf;
 
 import java.io.*;
 import java.util.*;

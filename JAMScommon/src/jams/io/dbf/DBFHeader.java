@@ -11,7 +11,7 @@
  $Id$
 */
 
-package jams.components.dbf;
+package jams.io.dbf;
 
 import java.io.*;
 import java.util.*;

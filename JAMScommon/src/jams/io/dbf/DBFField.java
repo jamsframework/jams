@@ -10,7 +10,7 @@
   $Id: DBFField.java,v 1.7 2004/03/31 10:50:11 anil Exp $
 */
 
-package jams.components.dbf;
+package jams.io.dbf;
 import java.io.*;
 
 /**
