@@ -4,6 +4,8 @@
  */
 package jams.components.aggregate;
 
+import jams.io.SimpleOutputDataStore;
+import jams.io.ShapeFileOutputDataStore;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectAVLTreeMap;
 import jams.JAMS;
 import jams.data.Attribute;
@@ -408,7 +410,7 @@ public class TimePeriodAggregator extends JAMSComponent {
             File f2 = new File(FileTools.createAbsoluteFileName(getModel().getWorkspace().getOutputDataDirectory().getAbsolutePath(), prefix + "_SODS.dat"));
             
             try {
-                outData[i] = new SimpleOutputDataStore(f);
+                outData[i] = new SimpleOutputDataStore(f, false);
                 outData2[i] = new SpatialOutputDataStore(f2);
             } catch (IOException ioe) {
                 getModel().getRuntime().sendHalt("Can't write to output file:" + f);
