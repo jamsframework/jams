@@ -157,7 +157,10 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
         if ((properties.getProperty(key) == null) || (!properties.getProperty(key).equals(value))) {
             //something has changed
-            properties.setProperty(key, value);
+            if (value != null)
+                properties.setProperty(key, value);
+            else
+                properties.remove(key);
             property.setChanged();
             property.notifyObservers();
         }

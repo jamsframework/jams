@@ -681,7 +681,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                         currentComponent.run();
                     } catch (Exception e) {
                         getModel().getRuntime().handle(e, currentComponent.getInstanceName());
-                    }
+                    };
                     runCount++;
 //                    incrementRunCountThread.run();
                 }
@@ -1202,7 +1202,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     @Override
     public void updateComponentData(int index) {
         for (DataAccessor dataAccessor : dataAccessors) {
-            dataAccessor.setIndex(index);
+            dataAccessor.setIndex(index); 
             //read entity data before execution
             dataAccessor.read();
         }

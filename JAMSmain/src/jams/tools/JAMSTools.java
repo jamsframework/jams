@@ -27,7 +27,6 @@ import jams.data.Attribute;
 import jams.model.Component;
 import java.awt.Image;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +38,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
 
 /**
  *
