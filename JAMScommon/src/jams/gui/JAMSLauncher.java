@@ -61,7 +61,8 @@ import jams.gui.input.InputComponentFactory;
 import jams.model.JAMSFullModelState;
 import jams.model.Model;
 import jams.tools.JAMSTools;
-import java.awt.Frame;
+import java.awt.Window;
+import java.awt.event.WindowAdapter;
 import java.io.File;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -94,18 +95,20 @@ public class JAMSLauncher extends JFrame {
     private Action runModelAction;
     private JToolBar toolBar;
     protected JAMSFullModelState state = null;
+    protected boolean isEnsembleManagerEnabled;
 
-    public JAMSLauncher(Frame parent, SystemProperties properties) {
+    public JAMSLauncher(Window parent, SystemProperties properties) {
         this.properties = properties;
+
         init();
     }
 
-    public JAMSLauncher(Frame parent, SystemProperties properties, Document modelDocument) {
+    public JAMSLauncher(Window parent, SystemProperties properties, Document modelDocument) {
         this(parent, properties);
         loadModelDefinition(modelDocument);
     }
 
-    public JAMSLauncher(Frame parent, SystemProperties properties, Document modelDocument, File loadPath) {
+    public JAMSLauncher(Window parent, SystemProperties properties, Document modelDocument, File loadPath) {
         this(parent, properties, modelDocument);
         this.loadPath = loadPath;
     }
@@ -117,10 +120,12 @@ public class JAMSLauncher extends JFrame {
     }
 
     protected void init() throws HeadlessException, DOMException, NumberFormatException {
+       
+        modelLoading = new ErrorCatchingRunnable() {
 
-        modelLoading = new Runnable() {
-
-            public void run() {
+            @Override
+            public void safeRun() {
+          
                 if (state != null) {
                     Model model = state.getModel();
                     runtime = model.getRuntime();
@@ -214,28 +219,11 @@ public class JAMSLauncher extends JFrame {
         this.setIconImages(JAMSTools.getJAMSIcons());
         this.setTitle(BASE_TITLE);
 
-        this.addWindowListener(new WindowListener() {
+        this.addWindowListener(new WindowAdapter() {
 
-            public void windowActivated(WindowEvent e) {
-            }
-
-            public void windowClosed(WindowEvent e) {
-            }
-
+            @Override
             public void windowClosing(WindowEvent e) {
                 exit();
-            }
-
-            public void windowDeactivated(WindowEvent e) {
-            }
-
-            public void windowDeiconified(WindowEvent e) {
-            }
-
-            public void windowIconified(WindowEvent e) {
-            }
-
-            public void windowOpened(WindowEvent e) {
             }
         });
 
@@ -253,6 +241,13 @@ public class JAMSLauncher extends JFrame {
         toolBar.add(runButton);
 
         getContentPane().add(toolBar, BorderLayout.NORTH);
+
+        String value = getProperties().getProperty("EnsembleManager");
+        if (value != null) {
+            isEnsembleManagerEnabled = (Boolean.parseBoolean(value) == true);
+        } else {
+            isEnsembleManagerEnabled = false;
+        }
 
         pack();
     }
@@ -300,8 +295,8 @@ public class JAMSLauncher extends JFrame {
     protected void fillTabbedPane(final Document doc) {
 
         // create the component hash
-        HashMap<String, HashMap<String, Element>> componentHash =
-                ParameterProcessor.getAttributeHash(getModelDocument());
+        HashMap<String, HashMap<String, Element>> componentHash
+                = ParameterProcessor.getAttributeHash(getModelDocument());
 
         tabbedPane.removeAll();
 
@@ -405,17 +400,17 @@ public class JAMSLauncher extends JFrame {
 
         // check type of property
         if (componentAttributeName.equals(ParameterProcessor.COMPONENT_ENABLE_VALUE)) {
-            
+
             // case 1: "enable" property of a component is referred
             elementAttributeName = "enabled";
             targetElement = attributeMap.get(componentName);
-            
+
         } else {
-            
+
             // case 2: attribute is referred
             elementAttributeName = "value";
             targetElement = attributeMap.get(componentAttributeName);
-            
+
         }
 
         // check if attribute is existing
@@ -435,7 +430,6 @@ public class JAMSLauncher extends JFrame {
 //            property.removeAttribute("value");
 //            property.removeAttribute("default");
 //        }
-
         // create a label with the property's name and some space in front of it
         JLabel nameLabel = new JLabel(property.getAttribute("name"));
         nameLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
@@ -555,7 +549,7 @@ public class JAMSLauncher extends JFrame {
         t.start();
     }
 
-    protected SystemProperties getProperties() {
+    public SystemProperties getProperties() {
         return properties;
     }
 
