@@ -39,6 +39,7 @@ import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
 import jams.logging.NotificationLog;
+import static jamsui.juice.JUICE.getJamsProperties;
 import java.awt.GraphicsEnvironment;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -85,6 +86,30 @@ public class JAMSui {
             }
         } catch (IOException ioe) {
             logger.log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + propertyFileName, ioe);
+        }
+
+        String desiredLookAndFeel = getJamsProperties().getProperty("LookAndFeel");
+
+        try {
+            boolean successful = false;
+            if (desiredLookAndFeel != null) {
+                for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                    if (desiredLookAndFeel.equals(info.getName())) {
+                        UIManager.setLookAndFeel(info.getClassName());
+                        successful = true;
+                        break;
+                    }
+                }
+            }
+            if (!successful) {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        } catch (Exception lnfe) {
+            try {
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            } catch (Exception ex) {
+                JAMSTools.handle(ex);
+            }
         }
 
         JAMSTools.configureLocaleEncoding(properties);
