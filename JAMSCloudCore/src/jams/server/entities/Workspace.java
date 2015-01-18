@@ -45,6 +45,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import static javax.persistence.TemporalType.DATE;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -127,6 +128,7 @@ public class Workspace implements Serializable, Comparable<Workspace> {
         setCreationDate(new Date());        
     }
     
+    @XmlAttribute
     public Integer getId() {
         return id;
     }
@@ -135,6 +137,7 @@ public class Workspace implements Serializable, Comparable<Workspace> {
         this.id = id;
     }
 
+    @XmlAttribute
     public String getName() {
         return name;
     }
@@ -143,6 +146,7 @@ public class Workspace implements Serializable, Comparable<Workspace> {
         this.name = name;
     }
 
+    @XmlElement
     public Date getCreationDate(){
         return this.creation;
     }
@@ -155,10 +159,12 @@ public class Workspace implements Serializable, Comparable<Workspace> {
         this.user = u;
     }
     
+    @XmlElement
     public User getUser(){
         return user;
     }
     
+    @XmlAttribute
     public boolean isReadOnly(){
         return readOnly!=null&&readOnly>0;
     }
@@ -219,6 +225,7 @@ public class Workspace implements Serializable, Comparable<Workspace> {
         } 
     }
         
+    @XmlElement
     public Workspace getAncestor(){
         return ancestor;
     }
@@ -236,6 +243,7 @@ public class Workspace implements Serializable, Comparable<Workspace> {
         }
     }
     
+    @XmlAttribute
     public long getWorkspaceSize(){        
         if (workspaceSize==null)
             updateSize();

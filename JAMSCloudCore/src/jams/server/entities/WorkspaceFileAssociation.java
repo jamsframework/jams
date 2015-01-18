@@ -36,9 +36,12 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
 
 /**
  *
@@ -55,7 +58,7 @@ public class WorkspaceFileAssociation implements Serializable, Comparable<Worksp
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
+    @Column(name = "id")    
     private Integer id;
     
     @Column(name = "ws_id")
@@ -72,8 +75,7 @@ public class WorkspaceFileAssociation implements Serializable, Comparable<Worksp
     @Size(min = 0, max = 1000)
     @Basic(optional = false)
     private String path;
-    
-    @XmlTransient
+        
     @ManyToOne
     @PrimaryKeyJoinColumn(name="ws_id", referencedColumnName="ID")
     private Workspace ws;
@@ -113,7 +115,7 @@ public class WorkspaceFileAssociation implements Serializable, Comparable<Worksp
         setPath(path);
     }
 
-    @XmlTransient //this is important to avoid cyclic references in workspace!!
+    @XmlTransient //this is important to avoid cyclic references in workspace, will be set by afterUnmarshal method
     public Workspace getWorkspace() {
         return ws;
     }
@@ -124,6 +126,11 @@ public class WorkspaceFileAssociation implements Serializable, Comparable<Worksp
             this.ws_id = ws.getId();
         else
             this.ws_id = 0;
+    }
+    
+    public void afterUnmarshal(Unmarshaller u, Object parent) {
+        if (parent != null && parent instanceof Workspace)
+            this.ws = (Workspace)parent;
     }
 
     public Integer getID(){
@@ -151,7 +158,7 @@ public class WorkspaceFileAssociation implements Serializable, Comparable<Worksp
     public void setRole(int role){
         this.role = role;
     }
-    
+    @XmlAttribute
     public int getRole(){
         return role;
     }

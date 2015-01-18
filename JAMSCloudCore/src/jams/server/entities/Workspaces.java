@@ -35,9 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 @XmlRootElement(name = "workspaces")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class Workspaces {    
-    @XmlElement(name = "workspaces", type = Workspace.class)
+@XmlAccessorType(XmlAccessType.PUBLIC_MEMBER)
+public class Workspaces {        
     private List<Workspace> workspaces = new ArrayList<Workspace>();
  
     public Workspaces() {}
@@ -53,11 +52,12 @@ public class Workspaces {
     public void add(Workspace workspace){
         workspaces.add(workspace);
     }
-        
+            
     public void setWorkspaces(List<Workspace> workspaces){
         this.workspaces = workspaces;
     }
     
+    @XmlElement(name = "workspaces", type = Workspace.class)
     public List<Workspace> getWorkspaces() {
         return workspaces;
     }
