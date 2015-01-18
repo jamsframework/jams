@@ -81,6 +81,7 @@ public class ApplicationConfig extends Application {
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(jams.server.service.FileFacadeREST.class);
         resources.add(jams.server.service.JobFacadeREST.class);
+        resources.add(jams.server.service.ServerInformationREST.class);
         resources.add(jams.server.service.UserFacadeREST.class);
         resources.add(jams.server.service.WorkspaceFacadeREST.class);
     }

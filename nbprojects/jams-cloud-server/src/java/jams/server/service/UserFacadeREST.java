@@ -44,7 +44,7 @@ import javax.ws.rs.core.Response.Status;
 
 /**
  *
- * @author Sven Kralisch <sven.kralisch at uni-jena.de>
+ * @author Christian Fischer <christian.fischer.2@uni-jena.de>
  */
 @Stateless
 @Path("user")
