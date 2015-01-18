@@ -49,6 +49,8 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 import static jams.tools.LogTools.log;
+import javax.ws.rs.client.ResponseProcessingException;
+import org.apache.http.client.HttpResponseException;
 
 /**
  *
@@ -113,30 +115,6 @@ public class HTTPClient {
     public <T> T httpPost(String urlStr, String method, Object obj, Class<T> responseType) {                
         return httpRequest(urlStr, method, obj, responseType);
     }
-
-    /**
-     * responds to the server status if status is not OK (200) an exception is thrown
-     *
-     * @param urlStr url to server
-     * @param status status of the response
-     * throws ProcessingException, when status is not OK
-     */
-    private void respondToResponse(String urlStr, int status) throws ProcessingException{
-        String msg = null;
-        switch (status) {
-            case 403:
-                msg = JAMS.i18n("Error_403:_Request_is_forbidden.") + "\n" + urlStr; break;
-            case 404:
-                msg = JAMS.i18n("Error_404:_Resource_not_found.") + "\n" + urlStr;   break;                              
-            case 405:
-                msg = JAMS.i18n("Error_405:_Method_not_allowed.") + "\n" + urlStr;   break;   
-            case 500:
-                msg = JAMS.i18n("Error_500:_Internal_server_error.") + "\n" + urlStr; break;                        
-        }
-        if (msg != null){
-            throw new ProcessingException(msg);
-        }
-    }
             
     /**
      * uploads a file to a given url
@@ -168,17 +146,17 @@ public class HTTPClient {
         }
         
         try {
-            respondToResponse(urlStr, response.getStatus());
+            if (response.getStatus()>=400)
+                throw new ResponseProcessingException(response, "Request failed!");
 
             if (response.getMediaType().equals(MediaType.APPLICATION_XML_TYPE)) {
                 return response.readEntity(responseType);
             }else if (response.getMediaType().equals(MediaType.TEXT_HTML_TYPE)) {
                 String msg = response.readEntity(String.class);
-                throw new ProcessingException(
-                    format(JAMS.i18n("The_response_from_{0}_was_a_text_message_with_the_content_{1}"), urlStr, msg));                                
+                throw new ResponseProcessingException(response, format(JAMS.i18n("The_response_from_{0}_was_a_text_message_with_the_content_{1}"), urlStr, msg));
             }else{
-                throw new ProcessingException(
-                    format(JAMS.i18n("The_response_from_{0}_was_a_message_with_not_supported_mediatype_{1}"), urlStr, response.getMediaType()));                 
+                throw new ResponseProcessingException(response, format(JAMS.i18n("The_response_from_{0}_was_a_message_with_not_supported_mediatype_{1}"), urlStr, response.getMediaType()));     
+                                
             }
         } finally {
             response.close();
@@ -244,8 +222,9 @@ public class HTTPClient {
         }
 
         HttpResponse httpResponse = httpclient.execute(get);
-        respondToResponse(urlStr, httpResponse.getStatusLine().getStatusCode());
-
+        if (httpResponse.getStatusLine().getStatusCode()>=400){
+            throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), urlStr);
+        }
         try (InputStream is = httpResponse.getEntity().getContent()) {
             Header name[] = httpResponse.getHeaders("fileName");
             FileTools.assertDirectory(location.getAbsolutePath());
@@ -266,7 +245,7 @@ public class HTTPClient {
      * @param urlStr url to server  
      * @return the content stream
      * @throws java.io.IOException
-     * @throws ProcessingException under various conditions
+     * @throws HttpResponseException under various conditions
      */
     public InputStream getStream(String urlStr) throws IOException {
         HttpClient httpclient = HttpClientBuilder.create().build();
@@ -278,7 +257,9 @@ public class HTTPClient {
         }
 
         HttpResponse httpResponse = httpclient.execute(get);
-        respondToResponse(urlStr, httpResponse.getStatusLine().getStatusCode());
+        if (httpResponse.getStatusLine().getStatusCode() >=400){
+            throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), urlStr);
+        }
         return httpResponse.getEntity().getContent();
     }
 
@@ -318,13 +299,16 @@ public class HTTPClient {
             throw new ProcessingException(
                     format(JAMS.i18n("There_was_no_response_from_{0}"), urlStr));
         }
+        if (response.getStatus() >= 400){
+            throw new ResponseProcessingException(response, "Request failed");
+        }
         if (sessionID == null) {
             if (response.getHeaders() == null || response.getHeaders().get("set-cookie") == null) {
                 String msg = null;
                 try{
                     msg = response.readEntity(String.class);                    
                 }catch(Throwable t){
-                    throw new ProcessingException(JAMS.i18n("did not get any session id!"));
+                    throw new ProcessingException(JAMS.i18n("Unable to receive any session id!"),t);
                 }
                 throw new ProcessingException(msg);                
             }
@@ -334,7 +318,7 @@ public class HTTPClient {
         }
 
         try {
-            respondToResponse(urlStr, response.getStatus());
+            
             if (response.getMediaType()==null){
                 
             }

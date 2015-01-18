@@ -22,6 +22,7 @@
 package jams.server.client;
 
 import jams.JAMS;
+import jams.server.client.error.ErrorHandler;
 import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
 import jams.tools.FileTools;
@@ -196,21 +197,23 @@ public class JAMSWorkspaceUploader {
         return ws;
     }
 
-    private Workspace uploadWorkspaceFiles(Workspace ws, File wsDirectory, String fileExclusion) throws IOException {
+    
+    
+    private Workspace uploadWorkspaceFiles(Workspace ws, File wsDirectory, String fileExclusion, ErrorHandler<File> handler) throws IOException {
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Workspace_Files"), JAMS.i18n("Collecting"));
         Collection<File> workspaceFiles
                 = FileTools.getFilesByRegEx(wsDirectory, fileExclusion, false);
 
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Workspace_Files"), JAMS.i18n("Uploading"));
         Map<File, jams.server.entities.File> wsFileMapping
-                = fileController.uploadFile(workspaceFiles);
+                = fileController.uploadFile(workspaceFiles, handler);
 
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Workspace_Files"), JAMS.i18n("Attaching"));
         ws = attachFilesToWorkspace(ws, wsDirectory, wsFileMapping, -1);
         return ws;
     }
 
-    private Workspace uploadRuntimeLibs(Workspace ws, File jamsExecutable) throws IOException {
+    private Workspace uploadRuntimeLibs(Workspace ws, File jamsExecutable, ErrorHandler<File> handler) throws IOException {
         //collect all files
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Runtime_Libraries"), JAMS.i18n("Collecting"));
         Collection<File> jamsRuntimeLibs
@@ -219,7 +222,7 @@ public class JAMSWorkspaceUploader {
         //upload all files to server
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Runtime_Libraries"), JAMS.i18n("Uploading"));
         Map<File, jams.server.entities.File> runtimeLibMapping
-                = fileController.uploadFile(jamsRuntimeLibs);
+                = fileController.uploadFile(jamsRuntimeLibs, handler);
 
         //now do the mapping
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Runtime_Libraries"), JAMS.i18n("Attaching"));
@@ -233,7 +236,7 @@ public class JAMSWorkspaceUploader {
         return ws;
     }
 
-    private Workspace uploadComponentLibs(Workspace ws, File componentLibaries[]) throws IOException {
+    private Workspace uploadComponentLibs(Workspace ws, File componentLibaries[], ErrorHandler<File> handler) throws IOException {
         //collect all files
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Component_Libraries"), JAMS.i18n("Collecting"));
         Map<File, Collection<File>> librarySet = findDependendLibraries(componentLibaries);
@@ -242,7 +245,7 @@ public class JAMSWorkspaceUploader {
         Map<File, Map<File, jams.server.entities.File>> fileMapping = new HashMap<>();
         for (File file : componentLibaries) {
             Collection<File> fileList = librarySet.get(file);
-            fileMapping.put(file, fileController.uploadFile(fileList));
+            fileMapping.put(file, fileController.uploadFile(fileList, handler));
         }
         //attach files
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Component_Libraries"), JAMS.i18n("Attaching"));
@@ -268,16 +271,17 @@ public class JAMSWorkspaceUploader {
     public Workspace uploadWorkspace(
             jams.workspace.Workspace jamsWorkspace,
             File componentLibaries[],
-            File jamsExecutable, String fileExclusion) throws IOException {
+            File jamsExecutable, String fileExclusion, 
+            ErrorHandler<File> handler) throws IOException {
 
         Workspace ws = getWorkspace(jamsWorkspace);
         File wsDirectory = jamsWorkspace.getDirectory();
 
         ws = workspaceController.detachAll(ws);
         
-        ws = uploadWorkspaceFiles(ws, wsDirectory, fileExclusion);
-        ws = uploadComponentLibs(ws, componentLibaries);
-        ws = uploadRuntimeLibs(ws, jamsExecutable);
+        ws = uploadWorkspaceFiles(ws, wsDirectory, fileExclusion, handler);
+        ws = uploadComponentLibs(ws, componentLibaries, handler);
+        ws = uploadRuntimeLibs(ws, jamsExecutable, handler);
 
         //potentielle probleme die noch abfangen werden müssten
         //a) doppelte bibliotheken, sortierung nach neuester bibo??

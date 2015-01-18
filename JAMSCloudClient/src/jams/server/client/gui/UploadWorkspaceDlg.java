@@ -12,7 +12,7 @@ import jams.gui.WorkerDlg;
 import jams.runtime.StandardRuntime;
 import jams.server.client.Controller;
 import jams.server.client.JAMSWorkspaceUploader;
-import jams.server.client.WorkspaceController;
+import jams.server.client.error.DefaultFileUploadErrorHandling;
 import jams.tools.LogTools.ObservableLogHandler;
 import jams.workspace.JAMSWorkspace;
 import java.awt.Color;
@@ -417,7 +417,8 @@ public class UploadWorkspaceDlg extends JDialog{
         
         JAMSWorkspace workspace = new JAMSWorkspace(workspaceDirectory, new StandardRuntime(null));
         JAMSWorkspaceUploader uploader = new JAMSWorkspaceUploader(controller);
-        uploader.uploadWorkspace(workspace, new File[]{compLibFile}, uiLibFile, "");
+        uploader.uploadWorkspace(workspace, new File[]{compLibFile}, uiLibFile, "", 
+                new DefaultFileUploadErrorHandling() );
         
         uploadSuccessful=true;
     }

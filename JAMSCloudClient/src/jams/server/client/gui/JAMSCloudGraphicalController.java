@@ -17,6 +17,7 @@ import jams.server.client.JAMSWorkspaceUploader;
 import jams.server.client.JobController;
 import jams.server.client.UserController;
 import jams.server.client.WorkspaceController;
+import jams.server.client.error.DefaultFileUploadErrorHandling;
 import jams.server.entities.Job;
 import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
@@ -37,18 +38,19 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.ws.rs.ProcessingException;
+import javax.ws.rs.client.ResponseProcessingException;
 
 /**
  *
  * @author christian
  */
-public class JAMSCloudGraphicalController extends Observable{
+public class JAMSCloudGraphicalController extends Observable {
 
     private static final Logger log = Logger.getLogger(JAMSCloudGraphicalController.class.getName());
 
     //saved data
-    private String[] recentUrls = {"http://localhost:8080/jams-server/webresources"};
-    private String user = "Blubb", pw = "test", serverUrl = "";
+    private String[] recentUrls = {"http://localhost:8080/jams-cloud-server/webresources"};
+    private String user = "Christian", pw = "jamscloud", serverUrl = "";
     private boolean saveAccount = true;
     private SystemProperties p;
     private Controller client;
@@ -56,18 +58,21 @@ public class JAMSCloudGraphicalController extends Observable{
     private ObserverWorkerDlg worker = new ObserverWorkerDlg(
             new CancelableWorkerDlg(
                     new WorkerDlg(null, "Uploading Workspace")).getWorkerDlg());
-    
+
     private ObservableLogHandler observable = new ObservableLogHandler(new Logger[]{
         Logger.getLogger(Controller.class.getName()),
         Logger.getLogger(FileController.class.getName()),
         Logger.getLogger(WorkspaceController.class.getName()),
         Logger.getLogger(JobController.class.getName()),
         Logger.getLogger(UserController.class.getName())});
-    
+
     private static JAMSCloudGraphicalController instance = null;
 
-    enum JAMSCloudEvents{CONNECT,CONNECTING,DISCONNECT};
-    
+    enum JAMSCloudEvents {
+
+        CONNECT, CONNECTING, DISCONNECT
+    };
+
     private JAMSCloudGraphicalController(SystemProperties p) {
         this.p = p;
         JAMSLogging.registerLogger(JAMSLogging.LogOption.Show,
@@ -82,7 +87,7 @@ public class JAMSCloudGraphicalController extends Observable{
                 return record.getLevel() == Level.FINE
                         || record.getLevel() == Level.INFO;
             }
-        });        
+        });
         observable.addObserver(worker);
 
         if (p != null) {
@@ -100,7 +105,7 @@ public class JAMSCloudGraphicalController extends Observable{
             if (s != null) {
                 recentUrls = s.split(";");
             }
-        }        
+        }
     }
 
     /**
@@ -166,7 +171,7 @@ public class JAMSCloudGraphicalController extends Observable{
     /**
      *
      */
-    public void disconnect() {        
+    public void disconnect() {
         client.close();
         client = null;
         setChanged();
@@ -175,8 +180,7 @@ public class JAMSCloudGraphicalController extends Observable{
 
     /**
      *
-     * @return
-     * @throws IOException
+     * @return @throws IOException
      */
     public Controller connect() throws IOException {
         if (!isConnected()) {
@@ -210,9 +214,9 @@ public class JAMSCloudGraphicalController extends Observable{
         pw = password.getText();
         serverUrl = serverUrls.getSelectedItem().toString();
         saveAccount = cred.isSelected();
-                
+
         if (p != null) {
-            if (saveAccount){
+            if (saveAccount) {
                 p.setProperty("jams_server_user", user);
                 p.setProperty("jams_server_pw", pw);
             }
@@ -231,7 +235,7 @@ public class JAMSCloudGraphicalController extends Observable{
             }
             recentUrls = curS + ";" + recentUrls;
             p.setProperty("jams_server_recent_urls", recentUrls);
-            ((DefaultComboBoxModel)serverUrls.getModel()).insertElementAt(curS,0);
+            ((DefaultComboBoxModel) serverUrls.getModel()).insertElementAt(curS, 0);
             try {
                 p.save();
             } catch (IOException ioe) {
@@ -240,41 +244,47 @@ public class JAMSCloudGraphicalController extends Observable{
         }
         return true;
     }
-    
+
     /**
      *
-     * @return
-     * @throws IOException
+     * @return @throws IOException
      */
     public Controller reconnect() throws IOException {
-        try{
+        try {
             if (isConnected()) {
                 disconnect();
             }
-        }catch(Throwable t){
+        } catch (Throwable t) {
             LogTools.log(getClass(), Level.WARNING, t, t.toString());
         }
         this.setChanged();
         this.notifyObservers(JAMSCloudEvents.CONNECTING);
-        if (showReconnectDialog()){
-            try{
+        if (showReconnectDialog()) {
+            try {
                 client = new Controller(serverUrl, user, pw);
-            }catch(ProcessingException pe){
-                //TODO: need function processingException to Log
-                if (pe.toString().contains("Error 403")){
+            }catch (ResponseProcessingException pe) { 
+                if (pe.getResponse().getStatus()==403){
                     LogTools.log(getClass(), Level.SEVERE, pe, "You provided a wrong username and/or password or you are not allowed to access this server");
-                }else if (pe.toString().contains("The requested resource is not available.")){
-                    LogTools.log(getClass(), Level.SEVERE, pe, "The requested resource is not available.");
+                if (pe.getResponse().getStatus()==404){
+                    LogTools.log(getClass(), Level.SEVERE, pe, "The url %1 was not found!".replace("%1", serverUrl));
+                }
                 }else{
-                    LogTools.log(getClass(), Level.SEVERE, pe, pe.toString());
+                    LogTools.log(getClass(), Level.SEVERE, pe, pe.getResponse().getStatusInfo().getReasonPhrase());
+                }
+            }catch (ProcessingException pe) {
+                //TODO: need function processingException to Log
+                if (pe.toString().contains("Connection refused")) {
+                    LogTools.log(getClass(), Level.SEVERE, pe, "Connection was refused.");
+                } else {
+                    LogTools.log(getClass(), Level.SEVERE, pe, pe.getMessage().isEmpty() ? pe.toString() : pe.getMessage());
                 }
                 this.setChanged();
                 this.notifyObservers(JAMSCloudEvents.DISCONNECT);
             }
             this.setChanged();
-            this.notifyObservers(JAMSCloudEvents.CONNECT);            
+            this.notifyObservers(JAMSCloudEvents.CONNECT);
             return client;
-        }else {
+        } else {
             this.setChanged();
             this.notifyObservers(JAMSCloudEvents.DISCONNECT);
             return null;
@@ -352,7 +362,7 @@ public class JAMSCloudGraphicalController extends Observable{
         @Override
         public void safeRun() throws Exception {
             JAMSWorkspaceUploader uploader = new JAMSWorkspaceUploader(client);
-            ws = uploader.uploadWorkspace(jamsWorkspace, compLibFile, uiLibFile, fileFilter);
+            ws = uploader.uploadWorkspace(jamsWorkspace, compLibFile, uiLibFile, fileFilter, new DefaultFileUploadErrorHandling());
         }
 
         public Workspace getWorkspace() {
@@ -370,10 +380,10 @@ public class JAMSCloudGraphicalController extends Observable{
      * @throws IOException
      */
     public Workspace uploadWorkspace(
-                jams.workspace.Workspace jamsWorkspace,
-                File[] compLibFile, File uiLibFile, 
-                String fileFilter) throws IOException{
-        
+            jams.workspace.Workspace jamsWorkspace,
+            File[] compLibFile, File uiLibFile,
+            String fileFilter) throws IOException {
+
         if (!isConnected()) {
             throw new IOException("Not connected to server!");
         }
@@ -412,7 +422,7 @@ public class JAMSCloudGraphicalController extends Observable{
                 log.log(Level.SEVERE, t.toString(), t);
             }
             if (job != null && job.getId() != -1) {
-                log.log(Level.INFO, "Job was started successfully! It has ID = " + job.getId() + ". You can check the execution state of this job in Dialog \"Remote Control\"");
+                log.log(Level.INFO, "Job was started successfully! It has ID = %1.".replace("%1", job.getId().toString()) );
             } else {
                 log.log(Level.INFO, "Failed to start job!");
             }

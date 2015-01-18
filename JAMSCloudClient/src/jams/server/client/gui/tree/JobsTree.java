@@ -30,7 +30,7 @@ public class JobsTree extends JAMSServerTree {
     private DefaultMutableTreeNode createJobNode(Job job) {
         SortedMutableTreeNode top = JAMSServerTreeNodes.getNode(job);
 
-        for (WorkspaceFileAssociation wfa : job.getWorkspace().getFiles()) {
+        for (WorkspaceFileAssociation wfa : job.getWorkspace().getFiles()) {            
             attachWFAtoTree(wfa, top);
         }
         return top;

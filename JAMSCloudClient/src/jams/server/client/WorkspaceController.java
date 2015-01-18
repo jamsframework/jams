@@ -132,6 +132,7 @@ public class WorkspaceController {
         } else {
             return client.httpGet(urlStr + "/workspace/find?name=" + name, Workspaces.class);
         }
+
     }
 
     /**

@@ -24,6 +24,7 @@ package jams.server.client;
 import jams.JAMS;
 import jams.data.ArrayDataSupplier;
 import jams.runtime.StandardRuntime;
+import jams.server.client.error.ErrorHandler;
 import jams.server.entities.Job;
 import jams.server.entities.User;
 import jams.server.entities.Users;
@@ -51,7 +52,8 @@ public class Controller {
     private User user;
     private final String urlStr;
 
-    //public enum ControllerEvents{CONNECT,CONNECTING,DISCONNECT};
+    public final String VERSION = "0.1.0.1";
+
     /**
      * the constructor ensures the construction of a working controller
      *
@@ -74,9 +76,26 @@ public class Controller {
      * @throws ProcessingException
      */
     private void connect(String userName, String password) {
-        log(this.getClass(),Level.FINE, "{0}{1} {2}", SEPARATOR, JAMS.i18n("Trying_to_connect_with"), urlStr);
-        user = (User) client.connect(urlStr + "/user/login?login=" + userName + "&password=" + password, User.class);
-        log(this.getClass(),Level.FINE, "{0}\n", JAMS.i18n("Login_successful"));
+        log(this.getClass(), Level.FINE, "{0}{1} {2}", SEPARATOR, JAMS.i18n("Trying_to_connect_with"), urlStr);
+        String serverVersion = client.httpGet(urlStr + "/version", String.class);
+        if (isCompatibleWithServer(serverVersion)) {
+            user = (User) client.connect(urlStr + "/user/login?login=" + userName + "&password=" + password, User.class);
+            log(this.getClass(), Level.FINE, "{0}\n", JAMS.i18n("Login_successful"));
+        } else {
+            throw new ProcessingException(JAMS.i18n("Client (Version: %1 is not compatible with Server (Version: %2")
+                    .replace("%1", VERSION)
+                    .replace("%2", serverVersion));
+        }
+    }
+
+    /**
+     * determines if the client is compatible with a jamscloud server
+     *
+     * @param serverVersion : JAMSCloud version
+     * @return true if it is compatible otherwise false
+     */
+    public boolean isCompatibleWithServer(String serverVersion) {
+        return VERSION.compareTo(serverVersion) == 0;
     }
 
     /**
@@ -110,7 +129,7 @@ public class Controller {
      * @throws ProcessingException
      */
     public void cleanUp() {
-        log(this.getClass(),Level.FINE, "{0}{1}", SEPARATOR, JAMS.i18n("Clean_up_JAMSCloud"));
+        log(this.getClass(), Level.FINE, "{0}{1}", SEPARATOR, JAMS.i18n("Clean_up_JAMSCloud"));
         client.httpGet(urlStr + "/file/clean", String.class);
     }
 
@@ -129,6 +148,7 @@ public class Controller {
             return Double.NaN;
         }
     }
+
     /**
      * @return the url to jamscloud
      *
@@ -140,11 +160,11 @@ public class Controller {
     /**
      * @return the HTTPClient
      *
-     */    
+     */
     public HTTPClient getClient() {
         return client;
     }
-    
+
     /**
      * @return the user
      *
@@ -152,31 +172,31 @@ public class Controller {
     public User getUser() {
         return user;
     }
-    
+
     /**
      * @return a new FileController instance
-     */    
+     */
     public FileController files() {
         return new FileController(this);
     }
 
     /**
      * @return a new WorkspaceController instance
-     */        
+     */
     public WorkspaceController workspaces() {
         return new WorkspaceController(this);
     }
 
     /**
      * @return a new UserController instance
-     */        
+     */
     public UserController users() {
         return new UserController(this);
     }
 
     /**
      * @return a new JobController instance
-     */        
+     */
     public JobController jobs() {
         return new JobController(this);
     }
@@ -224,7 +244,15 @@ public class Controller {
         File f3 = new File("E:/tmp/successful.php");
         Map<File, jams.server.entities.File> map = null;
         try {
-            map = client.files().uploadFile(new ArrayDataSupplier(new File[]{f2, f3}));
+            map = client.files().uploadFile(new ArrayDataSupplier(new File[]{f2, f3}),
+                    new ErrorHandler<File>() {
+                        @Override
+                        public boolean handleError(File o, Throwable ex) {
+                            System.out.println("Unable to upload " + o);
+                            return true;
+                        }
+                    }
+            );
         } catch (IOException ioe) {
             System.out.println("File with ids " + map.get(f2).getId() + "/" + map.get(f3).getId() + " were uploaded successfully!");
         }
@@ -250,7 +278,14 @@ public class Controller {
 
         JAMSWorkspaceUploader uploader = new JAMSWorkspaceUploader(client);
         jams.workspace.Workspace workspace = new JAMSWorkspace(new File("E:\\ModelData\\JAMS-Gehlberg"), new StandardRuntime(null));
-        Workspace ws2 = uploader.uploadWorkspace(workspace, new File[]{new File("E:\\JAMS_rep\\JAMS\\lib")}, new File("E:\\JAMS_rep\\JAMS\\nbprojects\\jams-ui\\dist\\jams-ui.jar"),"");        
+        Workspace ws2 = uploader.uploadWorkspace(workspace, new File[]{new File("E:\\JAMS_rep\\JAMS\\lib")}, new File("E:\\JAMS_rep\\JAMS\\nbprojects\\jams-ui\\dist\\jams-ui.jar"), "",
+                new ErrorHandler<File>() {
+                    @Override
+                    public boolean handleError(File o, Throwable ex) {
+                        System.out.println("Unable to upload " + o);
+                        return true;
+                    }
+                });
         if (ws2 != null) {
             System.out.println("Number of files: " + ws2.getFiles().size());
             System.out.println("Workspace of Wilde Gera Model was uploaded successfully with id " + ws2.getId());

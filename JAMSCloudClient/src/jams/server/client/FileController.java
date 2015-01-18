@@ -23,6 +23,7 @@ package jams.server.client;
 
 import jams.JAMS;
 import jams.data.SingleDataSupplier;
+import jams.server.client.error.ErrorHandler;
 import jams.server.entities.Files;
 import java.io.File;
 import java.io.FileInputStream;
@@ -104,11 +105,12 @@ public class FileController {
      * uploades the content of an inputstream to the server
      *
      * @param files a list of files to be uploaded
+     * @param handler : error handling when a file cannot be uploaded for some reason
      * @return a mapping between local files and corresponding files on the
      * server
      * @throws java.io.IOException
      */
-    public Map<File, jams.server.entities.File> uploadFile(Iterable<File> files) throws IOException {
+    public Map<File, jams.server.entities.File> uploadFile(Iterable<File> files, ErrorHandler<File> handler) throws IOException {
         //check which files are already existing on the server
         Map<File, jams.server.entities.File> mapping = find(files);
 
@@ -116,11 +118,14 @@ public class FileController {
             //upload those files which are not on the server yet
             if (!mapping.containsKey(f)) {
                 log(this.getClass(), Level.FINE, JAMS.i18n("uploading_file_{0}"), f.getName());
+                //catch all exception, because we don't want to stop uploading process if just
+                //one file can't be uploaded TODO introduce interface for error handling
                 try {
                     mapping.put(f, uploadFile(f));
                 } catch (Throwable t) {
-                    log(this.getClass(), Level.WARNING, t, JAMS.i18n("Unable_to_upload_{0}_since_{1}"),
-                            f.getAbsolutePath(), t.toString());
+                    if (!handler.handleError(f, t)){
+                        throw t;
+                    }
                 }
             }
         }
