@@ -5,6 +5,7 @@
  */
 package jams.server.client.sync;
 
+import jams.server.client.Controller;
 import jams.server.client.WorkspaceController;
 import jams.tools.FileTools;
 import java.io.File;
@@ -30,7 +31,7 @@ public class DirectorySync extends FileSync {
     public DirectorySync(WorkspaceController wc, DirectorySync parent, File localDirectory) {
         this.parent = parent;
         this.wc = wc;
-        
+
         if (parent != null){
             this.localFileName = localDirectory.getName();
         }else{
@@ -78,7 +79,7 @@ public class DirectorySync extends FileSync {
         int index = path.indexOf("/");
                         
         if (index == -1) {
-            addFileSync(new FileSync(client, this, serverFile, path));
+            addFileSync(new FileSync(wc, this, serverFile, path));
         } else {
             String subDirName = path.substring(0, index);
             doSync = false;

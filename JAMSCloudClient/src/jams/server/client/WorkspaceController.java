@@ -373,4 +373,8 @@ public class WorkspaceController {
         }
         return true;
     }
+    
+    public FileController getFileController(){
+        return fileController;
+    }
 }

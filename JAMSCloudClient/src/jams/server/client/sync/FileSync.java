@@ -49,7 +49,6 @@ public class FileSync implements Comparable {
          */
         NOTHING};
     
-    Controller client = null;
     WorkspaceController wc = null;
     DirectorySync parent;
     
@@ -103,8 +102,8 @@ public class FileSync implements Comparable {
      * @param serverFile
      * @param localFileName
      */
-    public FileSync(Controller client, DirectorySync parent, jams.server.entities.WorkspaceFileAssociation serverFile, String localFileName) {
-        this.wc = client.workspaces();
+    public FileSync(WorkspaceController wc, DirectorySync parent, jams.server.entities.WorkspaceFileAssociation serverFile, String localFileName) {
+        this.wc = wc;
         this.parent = parent;
         this.serverFile = serverFile;   
         
@@ -147,7 +146,7 @@ public class FileSync implements Comparable {
     private String getLocalHashCode() throws IOException{
         File f = getLocalFile();
         if (f.exists() && f.isFile()) {
-            return client.files().getHashCode(f);
+            return wc.getFileController().getHashCode(f);
         }
         return null;
     }
