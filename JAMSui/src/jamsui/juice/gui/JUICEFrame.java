@@ -45,7 +45,6 @@ import jams.gui.LogViewDlg;
 import jams.gui.PropertyDlg;
 import jams.gui.RuntimeManagerPanel;
 import jams.gui.WorkerDlg;
-import jams.logging.MsgBoxLogHandler;
 import jams.meta.ModelDescriptor;
 import jams.server.client.gui.BrowseJAMSCloudDlg;
 import jams.server.client.gui.JAMSCloudToolbar;
@@ -577,7 +576,7 @@ public class JUICEFrame extends JFrame {
         JButton modelRunRemoteButton = new JButton(runModelRemoteAction);        
         modelRunRemoteButton.setText("");
         modelRunRemoteButton.setToolTipText(JAMS.i18n("Run_Model_Remote"));
-        modelRunRemoteButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunRemote.png")));
+        modelRunRemoteButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunCloud.png")));
         toolBar.add(modelRunRemoteButton);
                 
         JButton outputDSButton = new JButton(outputDSAction);
@@ -972,6 +971,7 @@ public class JUICEFrame extends JFrame {
             File savePath = new File(path);
             view.setSavePath(savePath);
             saveModel(view);
+            JAMSTools.addToRecentFiles(JUICE.getJamsProperties(), SystemProperties.RECENT_FILES, path);
         }
     }
 

@@ -28,6 +28,8 @@ import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
+import jams.logging.MsgBoxLogHandler;
+import jams.logging.NotificationLogHandler;
 import jams.meta.ComponentCollection;
 import jams.runtime.JAMSClassLoader;
 import jams.runtime.RuntimeLogger;
@@ -167,6 +169,9 @@ public class JUICE {
 
     public static void createJUICEFrame() {
         juiceFrame = new JUICEFrame();
+        
+//        MsgBoxLogHandler.getInstance().setParent(juiceFrame);
+//        NotificationLogHandler.getInstance().setParent(juiceFrame);
 
         juiceFrame.setVisible(true);
 

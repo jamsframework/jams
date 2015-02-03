@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package jams.logging;
+import java.awt.Frame;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -23,12 +24,17 @@ public class MsgBoxLogHandler extends Handler {
     private static final HashSet<Level> msgDialogHandling = new HashSet<Level>();
     private static final HashMap<Level, String> msgDialogTitle = new HashMap<Level, String>();
     private static final HashMap<Level, Integer> msgDialogIcon = new HashMap<Level, Integer>();
+    private Frame parent;
 
     static final MsgBoxLogHandler instance = new MsgBoxLogHandler();
 
     static public MsgBoxLogHandler getInstance(){
         return instance;
     }
+    
+//    public void setParent(Frame parent) {
+//        this.parent = parent;
+//    }        
     
     private MsgBoxLogHandler() {
         msgDialogHandling.add(Level.INFO);
@@ -63,10 +69,13 @@ public class MsgBoxLogHandler extends Handler {
         if (msgDialogHandling.contains(record.getLevel())) {                        
             if (record.getThrown() != null){               
                 StringWriter w = new StringWriter();
+                if (record.getThrown().getCause() != null) {
+                    record.setThrown(record.getThrown().getCause());
+                }
                 record.getThrown().printStackTrace(new PrintWriter(w));
             
-                MessageBoxWithDetails.showMessageBoxWithDetails(
-                        null, 
+                MessageBoxWithDetailsDlg.showMessageBoxWithDetails(
+                        parent, 
                         record.getMessage() == null ? record.getThrown().toString() : record.getMessage(),
                         msgDialogTitle.get(record.getLevel()),
                         w.toString(),
@@ -77,8 +86,8 @@ public class MsgBoxLogHandler extends Handler {
                     ioe.printStackTrace();
                 }
             }else{
-                MessageBoxWithDetails.showMessageBoxWithDetails(
-                        null, record.getMessage(),
+                MessageBoxWithDetailsDlg.showMessageBoxWithDetails(
+                        parent, record.getMessage(),
                         msgDialogTitle.get(record.getLevel()),
                         null,
                         msgDialogIcon.get(record.getLevel()));

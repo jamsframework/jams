@@ -7,7 +7,6 @@ package jams.explorer.ensembles.gui;
 
 import jams.JAMS;
 import jams.JAMSFileFilter;
-import static jams.explorer.ensembles.gui.ClimateDataOverviewTab.logger;
 import jams.explorer.ensembles.implementation.ClimateEnsemble;
 import jams.explorer.ensembles.implementation.ClimateModel;
 import jams.gui.JAMSLauncher;

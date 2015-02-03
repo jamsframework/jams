@@ -21,6 +21,7 @@
  */
 package jams.gui.input;
 
+import jams.tools.JAMSTools;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -40,6 +41,7 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
+import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 
 /**
@@ -52,15 +54,16 @@ public class NotificationDlg extends JDialog {
 
     public NotificationDlg(Frame owner, String title) {
 
-        super(owner);
+        super(owner, title);
+        
+        setIconImages(JAMSTools.getJAMSIcons());
         setModal(false);
         setAlwaysOnTop(true);
-        this.setLocationByPlatform(true);
-        this.setTitle(title);
-        this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        this.setLayout(new BorderLayout());
+        setLocationByPlatform(true);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        setLayout(new BorderLayout());
 
-        this.addComponentListener(new ComponentListener() {
+        addComponentListener(new ComponentListener() {
             @Override
             public void componentResized(ComponentEvent e) {
             }
@@ -121,16 +124,16 @@ public class NotificationDlg extends JDialog {
         pane.getActionMap().put("ESCAPE", cancelAction);
         pane.getActionMap().put("ENTER", cancelAction);
 
-        this.add(buttonPanel, BorderLayout.SOUTH);
-        this.setPreferredSize(new Dimension(400, 500));
-        this.pack();
+        add(buttonPanel, BorderLayout.SOUTH);
+        setPreferredSize(new Dimension(400, 500));
+        pack();
     }
 
     public void addNotification(String text) {
 
         textArea.append(text);
         setVisible(true);
-        requestFocus();
+        requestFocus();   
 
     }
 }

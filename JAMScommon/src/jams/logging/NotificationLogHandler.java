@@ -11,6 +11,7 @@ import jams.JAMS;
 import jams.JAMSException;
 import jams.gui.input.NotificationDlg;
 import jams.tools.StringTools;
+import java.awt.Frame;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -19,17 +20,21 @@ import java.util.logging.LogRecord;
  *
  * @author christian
  */
-public class NotificationLog extends Handler {
+public class NotificationLogHandler extends Handler {
     public static NotificationDlg notificationDlg;
-    static NotificationLog instance = new NotificationLog();
+    static NotificationLogHandler instance = new NotificationLogHandler();
     
-    private NotificationLog(){
+    private NotificationLogHandler(){
         notificationDlg = new NotificationDlg(null, JAMS.i18n("Info"));
     }
     
-    public static NotificationLog getInstance(){
+    public static NotificationLogHandler getInstance(){
         return instance;
     }
+    
+//    public void setParent(Frame parent) {
+//        notificationDlg = new NotificationDlg(parent, JAMS.i18n("Info"));
+//    }
     
     @Override
     public void publish(LogRecord record) {

@@ -71,6 +71,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import jams.explorer.JAMSExplorer;
 import jams.explorer.ensembles.gui.EnsembleControlPanel;
+import jams.logging.MsgBoxLogHandler;
+import jams.logging.NotificationLogHandler;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 
@@ -99,6 +101,9 @@ public class JAMSFrame extends JAMSLauncher {
 
     public JAMSFrame(Frame parent, SystemProperties properties) {
         super(parent, properties);
+
+//        MsgBoxLogHandler.getInstance().setParent(this);
+//        NotificationLogHandler.getInstance().setParent(this);
 
         // take care of loggers
         JAMSLogging.getInstance().addObserver(new Observer() {
@@ -766,7 +771,7 @@ public class JAMSFrame extends JAMSLauncher {
             protected Object doInBackground() throws Exception {
                 EnsembleControlPanel ecp = new EnsembleControlPanel(JAMSFrame.this);
                 JFrame frame = new JFrame("Ensemble Manager");
-                
+
                 //setCurrentDirectory("C:/Arbeit/Projekte/J2000Klima/JAMS/data/Ensembe Hasel");
                 frame.add(ecp);
                 frame.pack();
@@ -776,7 +781,7 @@ public class JAMSFrame extends JAMSLauncher {
             }
         };
         worker.run();
-        
+
     }
 
     private void openExplorer() {

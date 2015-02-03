@@ -38,8 +38,9 @@ import jams.model.JAMSFullModelState;
 import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
-import jams.logging.NotificationLog;
+import jams.logging.NotificationLogHandler;
 import static jamsui.juice.JUICE.getJamsProperties;
+import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -292,7 +293,7 @@ public class JAMSui {
     public static void registerLogger(LogOption option, Logger log) {
         switch (option) {
             case CollectAndShow:
-                log.addHandler(NotificationLog.getInstance());
+                log.addHandler(NotificationLogHandler.getInstance());
                 log.setUseParentHandlers(false);
                 break;
             case Show:
@@ -305,12 +306,12 @@ public class JAMSui {
 
     public static void unregisterLogger(LogOption option, Logger log) {
         if (option == null) {
-            log.removeHandler(NotificationLog.getInstance());
+            log.removeHandler(NotificationLogHandler.getInstance());
             log.removeHandler(MsgBoxLogHandler.getInstance());
         } else {
             switch (option) {
                 case CollectAndShow:
-                    log.removeHandler(NotificationLog.getInstance());
+                    log.removeHandler(NotificationLogHandler.getInstance());
                     break;
                 case Show:
                     log.removeHandler(MsgBoxLogHandler.getInstance());
