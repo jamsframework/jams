@@ -24,7 +24,6 @@ package jams.server.service;
 import jams.server.entities.User;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -47,8 +46,8 @@ public class ServerInformationREST  {
     @GET
     @Path("version")
     @Produces({"application/xml"})
-    public Response version(User entity, @Context HttpServletRequest req) {     
-        HttpSession session = req.getSession(true);
+    public Response version(User entity, @Context HttpServletRequest req) {    
+        req.getSession();
         return Response.ok(VERSION).build();
     }
 }

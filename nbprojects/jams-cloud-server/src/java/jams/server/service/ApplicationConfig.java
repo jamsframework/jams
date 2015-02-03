@@ -23,7 +23,6 @@
 package jams.server.service;
 
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Level;
