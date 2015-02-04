@@ -18,7 +18,6 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package jams.components.gui;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -103,105 +102,104 @@ import org.geotools.gui.swing.event.SelectionChangedEvent;
 import org.opengis.feature.Feature;
 
 /**
- * Viewer component for JAMS entities and parameter. Each parameter map is implemented by
- * a MapContext to add up in a stack of thematic maps. On the top a set of optional vector layers
- * could be drawn.
- * Based on GeoTools 2.5.2 (gt-mappane-2.5.5 - not part of standard geotools distribution, so
- * unsupported)
- * Note: In future and stable GeoTools 2.6 JMapPane will be rewritten and change to MapWidget...
+ * Viewer component for JAMS entities and parameter. Each parameter map is
+ * implemented by a MapContext to add up in a stack of thematic maps. On the top
+ * a set of optional vector layers could be drawn. Based on GeoTools 2.5.2
+ * (gt-mappane-2.5.5 - not part of standard geotools distribution, so
+ * unsupported) Note: In future and stable GeoTools 2.6 JMapPane will be
+ * rewritten and change to MapWidget...
  *
  * @author C. Schwartze
  */
-
 @JAMSComponentDescription(
-        title="MapCreator",
-        author="Christian Schwartze",
-        description="Viewer component for JAMS entities, parameter and optional vector layers.",
-        date="2010-10-22"
-        )
+        title = "MapCreator",
+        author = "Christian Schwartze",
+        description = "Viewer component for JAMS entities, parameter and optional vector layers.",
+        date = "2010-10-22"
+)
 
 public class MapCreator extends JAMSGUIComponent implements MouseListener {
 
     @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "Name of SLD-File containing layer style information"
-        )
-        public Attribute.String stylesFileName;
-    
-    @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "current time step"
-        )
-        public Attribute.Calendar time;
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Name of SLD-File containing layer style information"
+    )
+    public Attribute.String stylesFileName;
 
     @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "ID of a style in the SLD-File"
-        )
-        public Attribute.Integer styleID;
+            access = JAMSVarDescription.AccessType.READ,
+            description = "current time step"
+    )
+    public Attribute.Calendar time;
 
     @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "Collection of hru objects"
-        )
-        public Attribute.EntityCollection hrus;
+            access = JAMSVarDescription.AccessType.READ,
+            description = "ID of a style in the SLD-File"
+    )
+    public Attribute.Integer styleID;
 
     @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "Name of hru attribute to add for mapping"
-        )
-        public Attribute.StringArray showAttr;
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Collection of hru objects"
+    )
+    public Attribute.EntityCollection hrus;
 
     @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "Number of ranges for classification attribute"
-        )
-        public Attribute.StringArray numOfRanges;
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Name of hru attribute to add for mapping"
+    )
+    public Attribute.StringArray showAttr;
 
     @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "Color shading the ranges"
-        )
-        public Attribute.StringArray rangeColor;
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Number of ranges for classification attribute"
+    )
+    public Attribute.StringArray numOfRanges;
 
     @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "Name of shapefile to add as a layer to the map"
-        )
-        public Attribute.String shapeFileName1;
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Color shading the ranges"
+    )
+    public Attribute.StringArray rangeColor;
 
     @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "Name of shapefile to add as a layer to the map"
-        )
-        public Attribute.String shapeFileName2;
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Name of shapefile to add as a layer to the map"
+    )
+    public Attribute.String shapeFileName1;
 
     @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "Name of shapefile to add as a layer to the map"
-        )
-        public Attribute.String shapeFileName3;
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Name of shapefile to add as a layer to the map"
+    )
+    public Attribute.String shapeFileName2;
 
     @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "Colors for extra shapefiles"
-        )
-        public Attribute.StringArray shapeColors;
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Name of shapefile to add as a layer to the map"
+    )
+    public Attribute.String shapeFileName3;
 
     @JAMSVarDescription(
-        access = JAMSVarDescription.AccessType.READ,
-        description = "Original shape file name"
-        )
-        public Attribute.String baseShape;
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Colors for extra shapefiles"
+    )
+    public Attribute.StringArray shapeColors;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Original shape file name"
+    )
+    public Attribute.String baseShape;
 
     transient private JPanel panel, waitPanel;
     transient private JLabel timeLabel;
     transient protected GISPanel gispanel;
     transient private DefaultMapLayer[] optLayers = new DefaultMapLayer[3];
     transient private MapCollection[] mc;
-    private int numOfParams,  infoidx;
+    private int numOfParams, infoidx;
     private final String mapFTypeName = "mapFType";
-    private DefaultMutableTreeNode top,  last;
+    private DefaultMutableTreeNode top, last;
     private JTree tree;
     private boolean finished = false;
     transient private DefaultMapContext map;
@@ -222,7 +220,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
 
     Set<SelectionChangeListener> listenerSet = new HashSet<SelectionChangeListener>();
 
-    public void addSelectionChangeListener(SelectionChangeListener listener){
+    public void addSelectionChangeListener(SelectionChangeListener listener) {
         this.listenerSet.add(listener);
     }
 
@@ -232,19 +230,19 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             if (panel == null) {
                 return;
             }
-            
+
             java.net.URL shp = new java.io.File(baseShape.getValue().split(";")[0]).toURI().toURL();
             ShapefileDataStore shpDs = new ShapefileDataStore(shp);
             crs = shpDs.getSchema().getGeometryDescriptor().getCoordinateReferenceSystem();
-            
-            if (crs==null) {
-                ((JLabel)waitPanel.getComponents()[0]).setText("<html><center>No *.PRJ file found for<br>"+shp.getFile()+"<center><html>");
-                ((JLabel)waitPanel.getComponents()[0]).setIcon(new ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/error.png")));
+
+            if (crs == null) {
+                ((JLabel) waitPanel.getComponents()[0]).setText("<html><center>No *.PRJ file found for<br>" + shp.getFile() + "<center><html>");
+                ((JLabel) waitPanel.getComponents()[0]).setIcon(new ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/error.png")));
                 return;
             }
-            
+
             gispanel.removeAll();
-            
+
             if (shapeFileName1 == null) {
                 shapeFileName1 = getModel().getRuntime().getDataFactory().createString();
             }
@@ -254,9 +252,9 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             if (shapeFileName3 == null) {
                 shapeFileName3 = getModel().getRuntime().getDataFactory().createString();
             }
-            
+
             otherLayers = new String[]{shapeFileName1.getValue(), shapeFileName2.getValue(), shapeFileName3.getValue()};
-            
+
             /* Reading additional shapefiles */
             int j = 0;
             for (String s : otherLayers) {
@@ -268,7 +266,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                         ShapefileDataStore ds = new ShapefileDataStore(shpUrl);
                         List<Name> featureNames = ds.getNames();
                         FeatureSource<SimpleFeatureType, SimpleFeature> featureSource = ds.getFeatureSource(featureNames.get(0));
-                        
+
                         String geoType = featureSource.getSchema().getGeometryDescriptor().getType().getName().toString();
                         if (geoType.equals("LineString") || geoType.equals("MultiLineString")) {
                             layer = new DefaultMapLayer(featureSource, gispanel.getLineStyle(shapeColors.getValue()[j]));
@@ -281,20 +279,20 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                         optLayers[j] = layer;
                     } catch (Exception e) {
                         this.getModel().getRuntime().handle(e);
-                        
+
                     }
                 }
                 j++;
             }
-            
+
             mp.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (mp.getState() == JMapPane.Select) {
                         try {
                             gispanel.getFeatureInfo(e.getX(), e.getY());
-                            for (SelectionChangeListener l : listenerSet){
-                                l.selectionChanged(new SelectionChangedEvent(mp,null));
+                            for (SelectionChangeListener l : listenerSet) {
+                                l.selectionChanged(new SelectionChangedEvent(mp, null));
                             }
                         } catch (CQLException ex) {
                             MapCreator.this.getModel().getRuntime().handle(ex);
@@ -304,9 +302,9 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                     }
                 }
             });
-            
+
             gispanel.addToolbar();
-            
+
             /* Define a set of maps (MapCollection) and add them to MapPanel */
             numOfParams = showAttr.getValue().length;
             mc = new MapCollection[numOfParams];
@@ -318,20 +316,20 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                 gispanel.addMap(mc[i]);
                 infoidx = i;
             }
-            
+
             /* Add additional maps to topmap context */
             for (DefaultMapLayer l : optLayers) {
                 if ((l != null) && (topmap != null)) {
                     topmap.addLayer(l);
                 }
             }
-            
+
             for (int i = 0; i < tree.getRowCount(); i++) {
                 tree.expandRow(i);
             }
-            
+
             finished = true;
-            
+
             if (topmap == null) {
                 panel.removeAll();
                 JLabel label = new JLabel("No geometry features found in entity set!", SwingConstants.CENTER);
@@ -343,32 +341,35 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                 panel.updateUI();
                 return;
             }
-            
+
             fullExtent = topmap.getAreaOfInterest();
-            
+
             mp.setMapArea(topmap.getLayerBounds());
-            
+
             div_hor = gispanel.getSize().width - mainSplitPane.getInsets().right - mainSplitPane.getDividerSize() - 150;
             int div_ver = gispanel.getSize().height - mainSplitPane.getInsets().bottom - mainSplitPane.getDividerSize() - 150;
-            
+
             mainSplitPane.setLeftComponent(mp);
             mainSplitPane.setRightComponent(legendPane);
             mainSplitPane.setDividerLocation(div_hor);
             legendPane.setDividerLocation(div_ver);
-            
+
             gispanel.add(mainSplitPane);
         } catch (IOException ex) {
-            getModel().getRuntime().sendErrorMsg("An error occured while trying to load geometries from " + new java.io.File(baseShape.getValue().split(";")[0]).getAbsolutePath() + 
-                    " (" + ex.getMessage() + ")");
+            getModel().getRuntime().sendErrorMsg("An error occured while trying to load geometries from " + new java.io.File(baseShape.getValue().split(";")[0]).getAbsolutePath()
+                    + " (" + ex.getMessage() + ")");
         }
 
     }
-    
+
     public void run() {
-        try{
+        if (panel == null) {
+            return;
+        }
+        try {
             updateCollections();
             gispanel.update();
-        }catch(IOException ioe){
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
     }
@@ -381,7 +382,6 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             panel.setLayout(new BorderLayout());
             panel.add(gispanel, BorderLayout.CENTER);
         } catch (Exception e) {
-            e.printStackTrace();
             this.getModel().getRuntime().handle(e);
         }
 
@@ -419,66 +419,69 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             while (hrusIterate.hasNext()) {
 
                 e = hrusIterate.next();
-                
+
                 if (!e.existsAttribute("geom")) {
                     continue;
                 }
-                
+
                 SimpleFeature f = SimpleFeatureBuilder.template(mapFType, new Integer(
                         new Double(e.getDouble("ID")).intValue()).toString());
-                if (e.getGeometry("geom") == null){
+                if (e.getGeometry("geom") == null) {
                     getModel().getRuntime().sendHalt("no geometry for HRU:" + e.getDouble("ID"));
                 }
-                f.setAttribute("geo", e.getGeometry("geom"));                
+                f.setAttribute("geo", e.getGeometry("geom"));
                 f.setAttribute("newAt", e.getDouble(showAttr.getValue()[i]));
                 fc.add(f);
                 s.add(e.getDouble(showAttr.getValue()[i]));
             }
-            
+
             if (fc.isEmpty()) {
                 continue;
             }
-            
-            mc[i] = new MapCollection(showAttr.getValue()[i], fc, "newAt", rangeColor.getValue()[i], Integer.parseInt(numOfRanges.getValue()[i]), crs);                        
+
+            mc[i] = new MapCollection(showAttr.getValue()[i], fc, "newAt", rangeColor.getValue()[i], Integer.parseInt(numOfRanges.getValue()[i]), crs);
         }
     }
-    
-    private void updateCollections() throws IOException{
+
+    private void updateCollections() throws IOException {
         top.removeAllChildren();
-        top.removeFromParent(); 
-        
-        if (time != null && time.getValue() != null){
+        top.removeFromParent();
+
+        if (time != null && time.getValue() != null) {
             this.timeLabel.setText(time.toString());
         }
-        
+
         for (int i = 0; i <= numOfParams - 1; i++) {
 
             FeatureIterator fi = mc[i].getMapContext().getLayer(0).getFeatureSource().getFeatures().features();
-            while(fi.hasNext()){
+            while (fi.hasNext()) {
                 Feature f = fi.next();
-                if (f instanceof SimpleFeature){
-                    SimpleFeature sf = (SimpleFeature)f;
+                if (f instanceof SimpleFeature) {
+                    SimpleFeature sf = (SimpleFeature) f;
                     int id = Integer.parseInt(sf.getID());
-                    
-                    Entity e = hrus.getEntity((long)id);
+
+                    Entity e = hrus.getEntity((long) id);
                     double value = e.getDouble(showAttr.getValue()[i]);
                     sf.setAttribute("newAt", value);
                 }
-            }            
+            }
             mc[i].update();
-            
+
             DefaultMutableTreeNode mapNode = new DefaultMutableTreeNode(mc[i].getDesc());
             top.add(mapNode);
 
             Object[] nodeContent = mc[i].getRanges();
             DefaultMutableTreeNode entry = null;
-           
+
             for (int j = 1; j <= nodeContent.length - 1; j++) {
+                if (nodeContent[j] == null) {
+                    nodeContent[j] = nodeContent[j-1];
+                }
                 entry = new DefaultMutableTreeNode("<= " + Math.round((Double) nodeContent[j] * 100) / 100.0,
                         false);
                 mapNode.add(entry);
-            }            
-        }      
+            }
+        }
         DefaultMutableTreeNode layerEntry = null;
         int i = 0;
         for (DefaultMapLayer l : optLayers) {
@@ -488,7 +491,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             }
             i++;
         }
- 
+
         tree.setModel(new DefaultTreeModel(top));
         tree.invalidate();
     }
@@ -535,7 +538,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     /* Colored Icon style for parameter ranges in map legend */
     class MyIcon implements Icon, Serializable {
 
-        private Integer a,  b;
+        private Integer a, b;
 
         public MyIcon(Integer a, Integer b) {
             this.a = a;
@@ -546,8 +549,9 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             if (finished) {
                 g.drawRect(1, 1, 19, 14);
                 g.setColor(Color.BLACK);
-                if (mc[a].getRanges().length - b - 1 >= 0)
+                if (mc[a].getRanges().length - b - 1 >= 0) {
                     g.setColor((Color) mc[a].getColors()[mc[a].getRanges().length - b - 1]);
+                }
                 g.fillRect(1, 1, 19, 14);
             } else {
                 tree.setVisible(false);
@@ -566,21 +570,22 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
     /* Rendering different kinds of legend entries */
     public class NodeRenderer extends DefaultTreeCellRenderer {
 
-        private ImageIcon iconProject = null;                
+        private ImageIcon iconProject = null;
         private ImageIcon iconRange = null;
-                
+
         private Icon blatt;
         private Icon blatt2;
-        
-        public NodeRenderer(){
+
+        public NodeRenderer() {
             iconProject = new ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/root.png"));
-            iconRange   = new ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/map.png"));
+            iconRange = new ImageIcon(getModel().getRuntime().getClassLoader().getResource("jams/components/gui/resources/map.png"));
         }
+
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value,
                 boolean sel, boolean expanded, boolean leaf, int row,
                 boolean hasFocus) {
-            
+
             super.getTreeCellRendererComponent(tree, value, sel, expanded,
                     leaf,
                     row, hasFocus);
@@ -639,7 +644,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             sb = new StyleBuilder();
             Mark pointMarker = sb.createMark(StyleBuilder.MARK_SQUARE, Color.decode("#" + c));
             PointSymbolizer ps = sb.createPointSymbolizer(sb.createGraphic(null, pointMarker,
-                    null,0,7,0));
+                    null, 0, 7, 0));
             return sb.createStyle(ps);
         }
 
@@ -753,10 +758,15 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
                     mp.setCursor(defaultCursor);
                     try {
                         int idx;
-                        if (last == null || last.isRoot()) idx = 0;
-                        else if (last.isLeaf()) idx = top.getIndex(last.getParent());
-                        else if (top.isNodeChild(last)) idx = top.getIndex(last);
-                        else idx = top.getIndex(top);
+                        if (last == null || last.isRoot()) {
+                            idx = 0;
+                        } else if (last.isLeaf()) {
+                            idx = top.getIndex(last.getParent());
+                        } else if (top.isNodeChild(last)) {
+                            idx = top.getIndex(last);
+                        } else {
+                            idx = top.getIndex(top);
+                        }
                         JPanel exportPanel = new ShapeTool(mc[idx], baseShape, legendPane);
                         mainSplitPane.setRightComponent(exportPanel);
                         mainSplitPane.setDividerLocation(div_hor);
@@ -770,11 +780,11 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
             this.add(buttons, BorderLayout.NORTH);
         }
 
-        public void update(){
+        public void update() {
             mp.setReset(true);
             mp.repaint();
         }
-        
+
         public GISPanel() throws Exception {
             mp = new JMapPane();
             mp.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -920,7 +930,7 @@ public class MapCreator extends JAMSGUIComponent implements MouseListener {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException{
+    private void readObject(java.io.ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
         optLayers = new DefaultMapLayer[3];
     }
