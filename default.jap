@@ -1,5 +1,5 @@
 #JAMS configuration file
-#Sun Feb 15 09:21:33 CET 2015
+#Sun Feb 15 09:21:45 CET 2015
 progressfilename=
 infolog=
 libs=.;lib
@@ -20,8 +20,8 @@ forcelocale=en
 windowheight=600
 verbose=false
 maxrecentfiles=5
-recentfiles=D\:\\jamsmodeldata\\J2K_Rhone\\J2K_Rhone_R_ch.jam|D\:\\jamsapplication\\JAMS-Gehlberg\\j2k_gehlberg.jam|D\:\\jamsmodeldata\\J2K_Rhone\\J2K_Rhone_R.jam|C\:\\jams\\data\\j2k_gehlberg\\j2k_gehlberg.jam|D\:\\jamsmodeldata\\J2K_umvoti_SK\\j2k_umvoti.jam
-debug=3
+recentfiles=
+debug=1
 guiconfigheight=600
 windowwidth=900
 guiconfigwidth=600
