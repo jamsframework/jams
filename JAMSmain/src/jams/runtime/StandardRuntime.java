@@ -69,8 +69,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.Executors;
@@ -81,9 +79,7 @@ import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import org.w3c.dom.Document;
 
@@ -963,8 +959,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             File modelFile = new File(this.model.getWorkspace().getOutputDataDirectory().getPath()
                     + File.separator + JAMS.DEFAULT_MODEL_PARAMETER_FILENAME);
             modelFile.getParentFile().mkdirs();
-
-            //            ParameterProcessor.saveParams(this.modelDescriptor, modelFile, this.properties.getProperty("username"), null);
             ParameterProcessor.saveParams(this.modelDocument, modelFile, this.properties.getProperty(SystemProperties.USERNAME_IDENTIFIER), null);
         } catch (IOException ioe) {
             getModel().getRuntime().handle(ioe);
@@ -984,16 +978,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     @Override
     public ClassLoader getClassLoader() {
         return classLoader;
-    }
-
-    @Override
-    public synchronized void incrementRunCount(int n) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public synchronized void setRunCount(int n, Context c) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void readObject(ObjectInputStream objIn) throws IOException, ClassNotFoundException {

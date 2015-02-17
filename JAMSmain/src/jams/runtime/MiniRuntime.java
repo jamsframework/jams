@@ -253,14 +253,4 @@ public class MiniRuntime implements JAMSRuntime {
         return null;
     }
 
-    @Override
-    public void incrementRunCount(int n) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setRunCount(int n, Context c) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }

@@ -162,7 +162,7 @@ public class JAMSModel extends JAMSContext implements Model {
         long nIter = c.getNumberOfIterations();
         
         if (nIter < 1) {
-            return 1;
+            return 0;
         }
 
         for (Component child : c.getComponents()) {
@@ -198,6 +198,7 @@ public class JAMSModel extends JAMSContext implements Model {
     
     @Override
     public long[] getProgress() {
+        System.out.println(progressData[0] + " / " + progressData[1]);
         progressData[0] = getCurrentRunCount(this);
         return progressData;
     }
