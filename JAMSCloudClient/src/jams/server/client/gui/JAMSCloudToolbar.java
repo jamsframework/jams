@@ -7,9 +7,7 @@ package jams.server.client.gui;
 
 import jams.JAMSLogging;
 import jams.SystemProperties;
-import jams.server.client.Controller;
 import jams.server.client.gui.JAMSCloudGraphicalController.JAMSCloudEvents;
-import jams.tools.LogTools;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,8 +20,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JToolBar;
@@ -52,9 +50,13 @@ public class JAMSCloudToolbar extends JToolBar {
         this.p = p;
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Server-Load"));
-        panel.add(serverLoad, BorderLayout.CENTER);
-        panel.add(connectButton, BorderLayout.EAST);
+//        panel.setBorder(BorderFactory.createTitledBorder("Server-Load"));
+
+        JPanel loadPanel = new JPanel(new BorderLayout());
+        loadPanel.add(new JLabel("Server-Load"), BorderLayout.NORTH);
+        loadPanel.add(serverLoad, BorderLayout.CENTER);
+        panel.add(loadPanel, BorderLayout.CENTER);
+        panel.add(connectButton, BorderLayout.WEST);
         panel.setMaximumSize(new Dimension(300, 50));
         panel.setMinimumSize(new Dimension(150, 10));
         panel.setPreferredSize(new Dimension(200, 32));
