@@ -223,7 +223,8 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
 
     @Override
     public void cleanup() {
-        SwingUtilities.invokeLater(updatePBar);
+        updatePBar.run();
+//        SwingUtilities.invokeLater(updatePBar);
     }
 
     @Override
