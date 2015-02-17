@@ -42,6 +42,16 @@ public class BooleanConditionalExecutionContext extends JAMSContext {
     
     public BooleanConditionalExecutionContext() {
     }
+    
+    @Override
+    public long getNumberOfIterations() {
+        return 0;
+    }
+
+    @Override
+    public long getRunCount() {
+        return 0;
+    }    
 
     @Override
     public ComponentEnumerator getInitEnumerator() {        
@@ -73,14 +83,6 @@ public class BooleanConditionalExecutionContext extends JAMSContext {
             return super.getCleanupEnumerator();
         }
         return new EmptyEnumerator();
-    }
-
-    @Override
-    public long getNumberOfIterations() {
-        if (condition.getValue())
-            return 1;
-        else
-            return 0;
     }
 
     class EmptyEnumerator implements ComponentEnumerator {

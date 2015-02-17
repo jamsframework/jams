@@ -139,14 +139,15 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
     public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
     }
+    
+    @Override
+    public long getNumberOfIterations() {
+        return 0;
+    }
 
-//    @Override
-//    public long getNumberOfIterations() {
-//        return 1;
-//    }
-//
-//    @Override
-//    public long getRunCount() {
-//        return 1;
-//    }    
+    @Override
+    public long getRunCount() {
+        return 0;
+    }    
+
 }
