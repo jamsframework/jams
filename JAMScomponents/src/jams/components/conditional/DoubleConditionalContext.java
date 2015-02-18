@@ -57,17 +57,17 @@ public class DoubleConditionalContext extends JAMSContext {
     public ComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
     }
-
+     
     @Override
     public long getNumberOfIterations() {
-        return 0;
+        return -1;
     }
 
     @Override
     public long getRunCount() {
-        return 0;
-    }
-     
+        return -1;
+    }      
+    
     public class RunEnumerator implements ComponentEnumerator {
 
         final JAMSComponent dummy = new JAMSComponent() {

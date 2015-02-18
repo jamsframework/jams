@@ -61,8 +61,13 @@ public class BooleanConditionalContext extends JAMSContext {
 
     @Override
     public long getNumberOfIterations() {
-        return 1;
+        return -1;
     }
+
+    @Override
+    public long getRunCount() {
+        return -1;
+    }  
 
     class RunEnumerator implements ComponentEnumerator {
 

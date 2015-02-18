@@ -115,9 +115,5 @@ public interface JAMSRuntime extends Serializable {
     public ClassLoader getClassLoader();
 
     public void saveModelParameter();
-    
-    public void incrementRunCount(int n);
-    
-    public void setRunCount(int n, Context c);
 
 }

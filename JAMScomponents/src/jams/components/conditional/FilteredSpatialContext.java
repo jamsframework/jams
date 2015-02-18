@@ -142,12 +142,12 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
     
     @Override
     public long getNumberOfIterations() {
-        return 0;
+        return -1;
     }
 
     @Override
     public long getRunCount() {
-        return 0;
+        return -1;
     }    
 
 }

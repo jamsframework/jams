@@ -161,7 +161,7 @@ public class JAMSModel extends JAMSContext implements Model {
         long childCount = 0;
         long nIter = c.getNumberOfIterations();
 
-        if (nIter < 1) {
+        if (nIter <= 0) {
             return 0;
         }
 
@@ -181,7 +181,7 @@ public class JAMSModel extends JAMSContext implements Model {
 
         long rc = c.getRunCount();
 
-        if (rc < 1) {
+        if (rc <= 0) {
             return 0;
         }
 
