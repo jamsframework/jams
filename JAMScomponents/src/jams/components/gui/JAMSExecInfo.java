@@ -170,15 +170,13 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
                 long eTime = System.currentTimeMillis() - startTime;
 
                 double progress = jamsProgressBar.getPercentComplete();
-                long rtime;
+                long rTime;
                 if (progress > 0) {
-                    rtime = Math.round(eTime / progress) - eTime;
+                    rTime = Math.round(eTime / progress) - eTime;
                 } else {
-                    rtime = 0;
+                    rTime = 0;
                 }
-                String s = String.format("%3.0f%% [%02d:%02d:%02d] [%02d:%02d:%02d]", jamsProgressBar.getPercentComplete() * 100,
-                        rtime / 3600000, (rtime % 3600000) / 60000, (rtime % 60000) / 1000,
-                        eTime / 3600000, (eTime % 3600000) / 60000, (eTime % 60000) / 1000);
+                String s = getTimeString(rTime, eTime);
                 jamsProgressBar.setString(s);
             }
         };
@@ -216,6 +214,12 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
         this.getModel().getRuntime().addErrorLogObserver(errorLogObserver);
     }
 
+    private String getTimeString(long rTime, long eTime) {
+        return String.format("%3.0f%% [%02d:%02d:%02d]/[%02d:%02d:%02d]", jamsProgressBar.getPercentComplete() * 100,
+                        eTime / 3600000, (eTime % 3600000) / 60000, (eTime % 60000) / 1000,
+                        rTime / 3600000, (rTime % 3600000) / 60000, (rTime % 60000) / 1000);
+    }
+    
     @Override
     public void run() {
 
@@ -240,15 +244,13 @@ public class JAMSExecInfo extends JAMSGUIComponent implements Serializable {
                 long eTime = System.currentTimeMillis() - startTime;
 
                 double progress = jamsProgressBar.getPercentComplete();
-                long rtime;
+                long rTime;
                 if (progress > 0) {
-                    rtime = Math.round(eTime / progress) - eTime;
+                    rTime = Math.round(eTime / progress) - eTime;
                 } else {
-                    rtime = 0;
+                    rTime = 0;
                 }
-                String s = String.format("%3.0f%% [%02d:%02d:%02d] [%02d:%02d:%02d]", jamsProgressBar.getPercentComplete() * 100,
-                        rtime / 3600000, (rtime % 3600000) / 60000, (rtime % 60000) / 1000,
-                        eTime / 3600000, (eTime % 3600000) / 60000, (eTime % 60000) / 1000);
+                String s = getTimeString(rTime, eTime);
                 jamsProgressBar.setString(s);
             }
         };
