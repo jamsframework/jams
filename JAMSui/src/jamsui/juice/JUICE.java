@@ -117,30 +117,6 @@ public class JUICE {
                 }
             }
 
-            String desiredLookAndFeel = getJamsProperties().getProperty("LookAndFeel");
-
-            try {
-                boolean successful = false;
-                if (desiredLookAndFeel != null) {
-                    for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                        if (desiredLookAndFeel.equals(info.getName())) {
-                            UIManager.setLookAndFeel(info.getClassName());
-                            successful = true;
-                            break;
-                        }
-                    }
-                }
-                if (!successful) {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                }
-            } catch (Exception lnfe) {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                } catch (Exception ex) {
-                    JAMSTools.handle(ex);
-                }
-            }
-
             // configure local encoding
             JAMSTools.configureLocaleEncoding(getJamsProperties());
 
@@ -168,11 +144,34 @@ public class JUICE {
     }
 
     public static void createJUICEFrame() {
+
+        String desiredLookAndFeel = getJamsProperties().getProperty("lookandfeel");
+        try {
+            boolean successful = false;
+            if (desiredLookAndFeel != null) {
+                for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                    if (desiredLookAndFeel.equals(info.getName())) {
+                        UIManager.setLookAndFeel(info.getClassName());
+                        successful = true;
+                        break;
+                    }
+                }
+            }
+            if (!successful) {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        } catch (Exception lnfe) {
+            try {
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            } catch (Exception ex) {
+                JAMSTools.handle(ex);
+            }
+        }
+
         juiceFrame = new JUICEFrame();
-        
+
 //        MsgBoxLogHandler.getInstance().setParent(juiceFrame);
 //        NotificationLogHandler.getInstance().setParent(juiceFrame);
-
         juiceFrame.setVisible(true);
 
         int maxLibClasses = Integer.parseInt(getJamsProperties().getProperty(SystemProperties.MAX_LIB_CLASSES));

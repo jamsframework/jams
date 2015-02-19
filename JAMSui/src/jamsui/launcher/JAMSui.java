@@ -89,30 +89,6 @@ public class JAMSui {
             logger.log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + propertyFileName, ioe);
         }
 
-        String desiredLookAndFeel = getJamsProperties().getProperty("LookAndFeel");
-
-        try {
-            boolean successful = false;
-            if (desiredLookAndFeel != null) {
-                for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                    if (desiredLookAndFeel.equals(info.getName())) {
-                        UIManager.setLookAndFeel(info.getClassName());
-                        successful = true;
-                        break;
-                    }
-                }
-            }
-            if (!successful) {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            }
-        } catch (Exception lnfe) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            } catch (Exception ex) {
-                JAMSTools.handle(ex);
-            }
-        }
-
         JAMSTools.configureLocaleEncoding(properties);
 
         if (cmdLine.isNogui() || GraphicsEnvironment.isHeadless()) {
@@ -261,12 +237,40 @@ public class JAMSui {
             }
         }
     }
+    
+    private void setLaF() {
+        String desiredLookAndFeel = getJamsProperties().getProperty("lookandfeel");
+        try {
+            boolean successful = false;
+            if (desiredLookAndFeel != null) {
+                for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                    System.out.println(info.getName());
+                    if (desiredLookAndFeel.equals(info.getName())) {
+                        UIManager.setLookAndFeel(info.getClassName());
+                        successful = true;
+                        break;
+                    }
+                }
+            }
+            if (!successful) {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        } catch (Exception lnfe) {
+            try {
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            } catch (Exception ex) {
+                JAMSTools.handle(ex);
+            }
+        }
+    }
 
     protected void startGUI() {
+        setLaF();
         new JAMSFrame(null, properties).setVisible(true);
     }
 
     protected void startGUI(String modelFileName, String cmdLineParameterValues, Properties jmpParameters) {
+        setLaF();
         new JAMSFrame(null, properties, modelFileName, cmdLineParameterValues, jmpParameters).setVisible(true);
     }
 
