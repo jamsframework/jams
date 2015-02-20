@@ -1,5 +1,5 @@
 #JAMS configuration file
-#Sun Feb 15 09:21:45 CET 2015
+#Fri Feb 20 11:04:21 CET 2015
 progressfilename=
 infolog=
 libs=.;lib
@@ -16,7 +16,7 @@ windowenable=true
 errordlg=true
 maxlibclasses=10000
 windowontop=false
-forcelocale=en
+forcelocale=
 windowheight=600
 verbose=false
 maxrecentfiles=5
