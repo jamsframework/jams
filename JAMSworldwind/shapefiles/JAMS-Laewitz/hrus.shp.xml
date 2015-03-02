@@ -1,3 +1,0 @@
-<?xml version="1.0"?>
-<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
-<metadata xml:lang="de"><Esri><MetaID>{211BA406-F441-4B1D-8019-BBE6A2022DBA}</MetaID><CreaDate>20070420</CreaDate><CreaTime>10363500</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process Name="DeleteField_2" ToolSource="C:\Programme\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\DeleteField" Date="20070420" Time="103635">DeleteField C:\jamsmodels\JAMS-Application\JAMS-Laewitz\data\gis\hrus.shp HRU_ELIM_1 C:\jamsmodels\JAMS-Application\JAMS-Laewitz\data\gis\hrus.shp</Process></lineage></DataProperties></Esri></metadata>
