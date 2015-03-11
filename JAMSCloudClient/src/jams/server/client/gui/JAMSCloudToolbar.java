@@ -20,6 +20,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -35,8 +36,12 @@ public class JAMSCloudToolbar extends JToolBar {
     Logger log = Logger.getLogger(JAMSCloudToolbar.class.getName());
 
     SystemProperties p = null;
-    JButton connectButton = new JButton("Connect");
+    JButton connectButton = new JButton();
     JProgressBar serverLoad = new JProgressBar();
+
+    ImageIcon connect1 = new ImageIcon(getClass().getResource("/resources/images/connect1.png"));
+    ImageIcon connect2 = new ImageIcon(getClass().getResource("/resources/images/connect2.png"));
+    ImageIcon connect3 = new ImageIcon(getClass().getResource("/resources/images/connect3.png"));
 
     boolean isConnected = false;
     JAMSCloudGraphicalController connector = null;
@@ -120,15 +125,18 @@ public class JAMSCloudToolbar extends JToolBar {
         if (event.equals(JAMSCloudEvents.CONNECT)) {
             if (connector.isConnected()) {
                 setServerUrl(connector.getServerUrl());
-                connectButton.setText("Disconnect");
+                connectButton.setIcon(connect3);
+//                connectButton.setText("Disconnect");
             }
         } else if (event.equals(JAMSCloudEvents.CONNECTING)) {
             setServerUrl(connector.getServerUrl());
-            connectButton.setText("Connecting");
+            connectButton.setIcon(connect2);
+//            connectButton.setText("Connecting");
         } else if (event.equals(JAMSCloudEvents.DISCONNECT)) {
             setServerUrl("");
             setLoad(0.0);
-            connectButton.setText("Connect");
+            connectButton.setIcon(connect1);
+//            connectButton.setText("Connect");
         }
     }
 

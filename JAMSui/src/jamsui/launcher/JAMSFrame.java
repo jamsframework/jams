@@ -329,7 +329,7 @@ public class JAMSFrame extends JAMSLauncher {
         };
         saveAsModelAction.setEnabled(false);
 
-        startEnsembleManagerAction = new AbstractAction(JAMS.i18n("Start Ensemble Manager")) {
+        startEnsembleManagerAction = new AbstractAction(JAMS.i18n("Start_Ensemble_Manager")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 openEnsembleManager();
