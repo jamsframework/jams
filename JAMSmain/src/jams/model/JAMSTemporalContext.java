@@ -41,8 +41,8 @@ import jams.workspace.stores.Filter;
         + "represent iteration over discrete time steps typically used in conceptional"
         + "environmental models")
 @VersionComments(entries = {
-        @VersionComments.Entry(version = "1.0_0", comment = "Initial Version"),
-        @VersionComments.Entry(version = "1.1_0", comment = "Added time step output")
+    @VersionComments.Entry(version = "1.0_0", comment = "Initial Version"),
+    @VersionComments.Entry(version = "1.1_0", comment = "Added time step output")
 })
 public class JAMSTemporalContext extends JAMSContext {
 
@@ -55,11 +55,12 @@ public class JAMSTemporalContext extends JAMSContext {
     public Attribute.Calendar current;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "Print current time step?",
-            defaultValue = "false")
-    public Attribute.Boolean printTime;
+            description = "Print the current time every \"printTime\" time steps",
+            defaultValue = "0")
+    public Attribute.Integer printTime;
 
     private Attribute.Calendar lastValue;
+    private int counter = 0;
 
     public JAMSTemporalContext() {
         super();
@@ -193,8 +194,12 @@ public class JAMSTemporalContext extends JAMSContext {
                             dataTracer.trace();
                         }
                         current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
-                        if (printTime.getValue()) {
-                            getModel().getRuntime().println(getInstanceName() + " " + current, JAMS.SILENT);
+                        if (printTime.getValue() > 0) {
+                            if ((counter % printTime.getValue()) == 0) {
+                                counter = 0;
+                                getModel().getRuntime().println(getInstanceName() + " " + current, JAMS.SILENT);
+                            }
+                            counter++;
                         }
                         ce.reset();
                     }
