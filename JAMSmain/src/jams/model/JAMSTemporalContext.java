@@ -36,10 +36,14 @@ import jams.workspace.stores.Filter;
 @JAMSComponentDescription(title = "Temporal context",
         author = "Sven Kralisch",
         date = "2005-07-31",
-        version = "1.0_0",
+        version = "1.0_1",
         description = "This component represents a JAMS context which can be used to "
         + "represent iteration over discrete time steps typically used in conceptional"
         + "environmental models")
+@VersionComments(entries = {
+        @VersionComments.Entry(version = "1.0_0", comment = "Initial Version"),
+        @VersionComments.Entry(version = "1.1_0", comment = "Added time step output")
+})
 public class JAMSTemporalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -49,6 +53,11 @@ public class JAMSTemporalContext extends JAMSContext {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
             description = "Current date of temporal context")
     public Attribute.Calendar current;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Print current time step?",
+            defaultValue = "false")
+    public Attribute.Boolean printTime;
 
     private Attribute.Calendar lastValue;
 
@@ -122,7 +131,7 @@ public class JAMSTemporalContext extends JAMSContext {
     public void initAll() {
         super.initAll();
     }
-    
+
     @Override
     public void cleanupAll() {
         super.cleanupAll();
@@ -140,17 +149,17 @@ public class JAMSTemporalContext extends JAMSContext {
             }
         }
     }
-    
+
     @Override
     protected ComponentEnumerator getInitAllEnumerator() {
         return getInitEnumerator();
     }
-    
+
     @Override
     protected ComponentEnumerator getCleanupAllEnumerator() {
         return getInitEnumerator();
     }
-    
+
     @Override
     protected ComponentEnumerator getRunEnumerator() {
         // check if there are components to iterate on
@@ -177,13 +186,16 @@ public class JAMSTemporalContext extends JAMSContext {
 
                 @Override
                 public Component next() {
-            // check end of component elements list, if required switch to the next
+                    // check end of component elements list, if required switch to the next
                     // timestep start with the new Component list again
                     if (!ce.hasNext() && current.before(lastValue)) {
                         for (DataTracer dataTracer : dataTracers) {
                             dataTracer.trace();
                         }
                         current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
+                        if (printTime.getValue()) {
+                            getModel().getRuntime().println(getInstanceName() + " " + current, JAMS.SILENT);
+                        }
                         ce.reset();
                     }
                     return ce.next();
