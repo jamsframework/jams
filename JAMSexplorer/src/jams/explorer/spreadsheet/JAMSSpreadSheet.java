@@ -73,7 +73,7 @@ public class JAMSSpreadSheet extends JPanel {
 //    private JButton loadbutton = new JButton("Import Data");
     private JButton statButton = new JButton(JAMS.i18n("STATISTIK"));
     private JButton plotButton = new JButton(JAMS.i18n("TIME_PLOT"));
-    private JButton trendButton = new JButton(JAMS.i18n("Trend Estimation"));
+    private JButton trendButton = new JButton(JAMS.i18n("Trend_Estimation"));
     private JButton dataplotButton = new JButton(JAMS.i18n("DATA_PLOT"));
     private JButton closeButton = new JButton(JAMS.i18n("CLOSE_TAB"));
     private JCheckBox useTemplateButton = new JCheckBox(JAMS.i18n("USE_TEMPLATE"));
@@ -1251,7 +1251,7 @@ public class JAMSSpreadSheet extends JPanel {
         }
     };
 
-    Action trendAction = new AbstractAction(JAMS.i18n("Trend Estimation")) {
+    Action trendAction = new AbstractAction(JAMS.i18n("Trend_Estimation")) {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
