@@ -519,14 +519,18 @@ public class DataCollection extends DataSet implements Serializable{
     //this is highly inefficient!!
     // --> update time domain incrementally when new dataset is added?
     public void updateTimeDomain(){
-        
+        if (this.timeDomain == null) {
+            this.timeDomain = DefaultDataFactory.getDataFactory().createTimeInterval();
+        }
         this.timeDomain.getStart().set(1000, 1, 1, 1, 1, 1);
         this.timeDomain.getEnd().set(10000, 1, 1, 1, 1, 1);
 
         Set<String> datasets = this.getDatasets(TimeSerie.class);
         for (String dataset : datasets){
             TimeInterval t = ((TimeSerie)this.getDataSet(dataset)).getTimeDomain();
-
+            if (t == null)
+                continue;
+            
             if (this.timeDomain.getStart().after(t.getStart())) {
                 this.timeDomain.setStart(t.getStart().clone());
             }
@@ -769,8 +773,11 @@ public class DataCollection extends DataSet implements Serializable{
     }
     
     public TimeInterval getTimeDomain() {
-        if (timeDomain == null)
-            return null;
+        if (timeDomain == null){
+            updateTimeDomain();
+            if (timeDomain == null)
+                return null;
+        }            
         TimeInterval t = DefaultDataFactory.getDataFactory().createTimeInterval();
         t.setStart(timeDomain.getStart().clone());
         t.setEnd(timeDomain.getEnd().clone());
