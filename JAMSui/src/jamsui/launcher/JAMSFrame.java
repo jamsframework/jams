@@ -605,6 +605,7 @@ public class JAMSFrame extends JAMSLauncher {
         explorerButton.setText("");
         explorerButton.setToolTipText(JAMS.i18n("JADE"));
         explorerButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Layers_small.png")));
+        explorerAction.setEnabled(false);
         getToolBar().add(explorerButton);
 
         JButton juiceButton = new JButton(editModelAction);
