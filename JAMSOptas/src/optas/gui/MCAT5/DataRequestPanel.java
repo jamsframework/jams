@@ -39,7 +39,7 @@ import optas.data.EfficiencyEnsemble;
  */
 public final class DataRequestPanel extends JPanel {
 
-    Dimension defaultDatasetTableDimension = new Dimension(500, 150);
+
     MCAT5Plot plot;
     DataCollection data;
     JPanel dataPanel = new JPanel();
@@ -70,7 +70,7 @@ public final class DataRequestPanel extends JPanel {
 
         public boolean addBox() {
             JComboBox box = new JComboBox();
-            box.setPreferredSize(new Dimension(150, 30));
+            //box.setPreferredSize(new Dimension(150, 30));
             if (data.getDatasets(request.clazz).isEmpty() && request.min > 0) {
                 return false;
             }

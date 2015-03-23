@@ -90,7 +90,7 @@ public class ParallelExecution<X,Y> {
     private void unzipDirectory(byte[] zip, String destDirPath) throws IOException {
         File destDir = new File(destDirPath);
         if (!destDir.exists()) {
-            destDir.mkdir();
+            destDir.mkdirs();
         }
 
         ZipInputStream zipFile = new ZipInputStream(new ByteArrayInputStream(zip));
@@ -123,7 +123,7 @@ public class ParallelExecution<X,Y> {
         try {
             myWorkspace = zipDirectory(workspace.getAbsolutePath(), excludeFiles);
         } catch (Exception e) {
-            log("cant zip directory" + e.toString());
+            log("cant zip directory: " + e.toString());
             myWorkspace = null;
         }
     }
@@ -196,7 +196,7 @@ public class ParallelExecution<X,Y> {
                 unzipDirectory(myWorkspace, workingPath);
             } catch (IOException e) {
                 e.printStackTrace();
-                log("cant extract zip" + e.toString());
+                log("cant extract zip: " + e.toString());
                 return null;
             }
 

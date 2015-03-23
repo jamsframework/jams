@@ -52,10 +52,17 @@ public class TSDataReader{
     private JAMSTableDataStore store;
     private TimeSerie t;
     private double missingDataValue = -9999;
+    private String missingDataString = "-9999";
 
+    private String projection = "unknown";
+    private String x = "x";
+    private String y = "y";
+    
     String[] name = null;
+    double[] id = null;           
     double statx[] = null;
     double staty[] = null;
+    double[] statelev = null;
     String tres = null;
 
     int headerLineCount = 0;
@@ -76,7 +83,34 @@ public class TSDataReader{
         }
         return attr;
     }
+    
+    public void setElevation(double elev[]){
+        for (int i=0;i<elev.length;i++){
+            this.statelev[i] = elev[i];
+        }
+    }
 
+    public int getTimeUnit(){
+        if (tres == null)
+            return -1;
+        if (tres.compareTo("d")==0){
+            return 6;
+        }else if (tres.compareTo("h")==0){
+            return 11;
+        }else if (tres.compareTo("m")==0){
+            return 2;
+        }
+        return -1;
+    }
+    
+    public double getMissingDataValue(){
+        return this.missingDataValue;
+    }
+
+    public String getMissingDataString(){
+        return this.missingDataString;
+    }
+    
     private String cleanToken(String token){        
         while (token.endsWith(" ") || token.endsWith("\t")){
             token = token.substring(0, token.length()-1);
@@ -90,19 +124,19 @@ public class TSDataReader{
         String start = null;
         String end = null;
         double lowBound, uppBound;
-
-
-        double[] id = null;        
-        double[] statelev = null;
-
+            
         String line = "#";
 
         BufferedReader reader = new BufferedReader(new FileReader(dataFileName));
 
         //skip comment lines
-        while (line.charAt(0) == '#') {
+        while (line.length()==0 || line.charAt(0) == '#') {
+            if (line.contains(J2KTSDataStore.TAGNAME_DATAVALUEATTRIBS)){
+                line = J2KTSDataStore.TAGNAME_DATAVALUEATTRIBS;
+                break;
+            }
             line = reader.readLine();
-            headerLineCount++;
+            headerLineCount++;            
         }
         boolean dataValueAttribsValid = false, datasetAttribsValid = false, statAttribsValid = false;
         //metadata tags
@@ -110,7 +144,7 @@ public class TSDataReader{
         String token = cleanToken(strTok.nextToken());
         try{
         while (line!=null && token != null && !token.equalsIgnoreCase(J2KTSDataStore.TAGNAME_DATAVAL)) {
-            if (token.equalsIgnoreCase(J2KTSDataStore.TAGNAME_DATAVALUEATTRIBS)) {
+            if (token.equals(J2KTSDataStore.TAGNAME_DATAVALUEATTRIBS)) {
                 line = reader.readLine();                
                 headerLineCount++;
                 strTok = new StringTokenizer(line, SEPARATOR);
@@ -130,7 +164,8 @@ public class TSDataReader{
                     strTok = new StringTokenizer(line, "\t ");
                     String desc = cleanToken(strTok.nextToken());
                     if (desc.equalsIgnoreCase(J2KTSDataStore.TAGNAME_MISSINGDATAVAL)) {
-                        missingDataValue = Double.parseDouble(cleanToken(strTok.nextToken()));
+                        missingDataString = strTok.nextToken();
+                        missingDataValue = Double.parseDouble(cleanToken(missingDataString));
                     } else if (desc.equalsIgnoreCase(J2KTSDataStore.TAGNAME_DATASTART)) {
                         start = cleanToken(strTok.nextToken()); //date part
                         if (strTok.hasMoreTokens()) //potential time part
@@ -178,21 +213,25 @@ public class TSDataReader{
                         }
                     } else if (desc.equalsIgnoreCase("x")) {
                         statx = new double[nstat];
+                        x = "x";
                         for (int j = 0; j < nstat; j++) {
                             statx[j] = Double.parseDouble(cleanToken(strTok.nextToken()));
                         }
                     } else if (desc.equalsIgnoreCase("lat")) {
                         statx = new double[nstat];
+                        x = "lat";
                         for (int j = 0; j < nstat; j++) {
                             statx[j] = Double.parseDouble(cleanToken(strTok.nextToken()));
                         }
                     }else if (desc.equalsIgnoreCase("y")) {
                         staty = new double[nstat];
+                        y = "y";
                         for (int j = 0; j < nstat; j++) {
                             staty[j] = Double.parseDouble(cleanToken(strTok.nextToken()));
                         }
                     }else if (desc.equalsIgnoreCase("lon")) {
                         staty = new double[nstat];
+                        y = "lon";
                         for (int j = 0; j < nstat; j++) {
                             staty[j] = Double.parseDouble(cleanToken(strTok.nextToken()));
                         }
@@ -212,6 +251,8 @@ public class TSDataReader{
                     token = strTok.nextToken();
                 } else {
                     line = reader.readLine();
+                    strTok = new StringTokenizer(line, SEPARATOR);
+                    token = strTok.nextToken();
                 }
             }
         }
@@ -232,6 +273,10 @@ public class TSDataReader{
         endTime = parseJ2KTime(end);
     }
 
+    protected int getHeaderLineCount(){
+        return this.headerLineCount;
+    }
+    
     public TimeSerie getData(int column) throws OPTASWizardException{
 
         store = new GenericDataReader(this.dataFileName.getAbsolutePath(), false, headerLineCount+1);
@@ -304,6 +349,25 @@ public class TSDataReader{
         return new double[]{statx[i],staty[i]};
     }
     
+    public void setLocation(int i, double loc[]){
+        statx[i] = loc[0];
+        staty[i] = loc[1];        
+    }
+    
+    public void setStartTime(Date d){
+        this.startTime.setTime(d);
+    }
+    
+    public void setEndTime(Date d){
+        this.endTime.setTime(d);
+    }
+    
+    public void setProjection(String proj, String x, String y){
+        this.projection = proj;
+        this.x = x;
+        this.y = y;
+    }
+    
     private static Attribute.Calendar parseJ2KTime(String timeString) {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         SimpleDateFormat sdf2 = new SimpleDateFormat("dd.MM.yyyy HH:mm");
@@ -323,24 +387,97 @@ public class TSDataReader{
         Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
         cal.setTime(d);
         return cal;
-        //Array keeping values for year, month, day, hour, minute
-        /*String[] timeArray = new String[5];
-        timeArray[0] = "1";
-        timeArray[1] = "1";
-        timeArray[2] = "0";
-        timeArray[3] = "0";
-        timeArray[4] = "0";
-        
-        StringTokenizer st = new StringTokenizer(timeString, ".-/ :");
-        int n = st.countTokens();
-        
-        for (int i = 0; i < n; i++) {
-            timeArray[i] = st.nextToken();
+    } 
+    
+    protected SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd\tHH:mm"){{setTimeZone(TimeZone.getTimeZone("GMT"));}};    
+    protected SimpleDateFormat format2 = new SimpleDateFormat("dd.MM.yyyy\tHH:mm"){{setTimeZone(TimeZone.getTimeZone("GMT"));}};    
+    
+    public void write(File target) throws IOException{
+        StringBuilder content = new StringBuilder();
+        BufferedWriter writer = null;
+        try{            
+            Date firstDate = null;
+            Date lastDate = null;
+            store = new GenericDataReader(this.dataFileName.getAbsolutePath(), true, headerLineCount+1);
+            while(store.hasNext()){
+                JAMSTableDataArray dataset = store.getNext();
+                content.append("\n");
+                lastDate = dataset.getTime().getTime();
+                content.append(format.format(lastDate));
+                if (firstDate == null){
+                    firstDate = lastDate;
+                }
+                for (String s : dataset.getValues()){
+                    if (!s.contains(":"))
+                        content.append("\t" + s);        
+                }
+            }
+            setStartTime(firstDate);
+            setEndTime(lastDate);
+
+            String header = buildHeader();
+            
+            writer = new BufferedWriter(new FileWriter(target));
+            writer.write(header);
+            writer.write(content.substring(0));
+        }finally{
+            store.close();
+            writer.close();
         }
         
-        Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
-        cal.setValue(timeArray[2]+"-"+timeArray[1]+"-"+timeArray[0]+" "+timeArray[3]+":"+timeArray[4]);
-        return cal;*/
-    }    
+    }
+    public String buildHeader() {
+        String header = "#created by TSDataReader - projection is " + projection + "\n";
+        header += "@dataValueAttribs\ndata\t0.0\t0.0\t?\n";
+        header += "@dataSetAttribs\nmissingDataVal\t-9999\n";
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+        if (startTime != null) {
+            calendar.setTime(startTime.getTime());            
+            header += "dataStart\t" + format2.format(calendar.getTime()) + "\n";
+            calendar.setTime(endTime.getTime());
+            //largeValueCalendarAdd(calendar, timeUnit, (long) endTime);
+            calendar.setTime(endTime.getTime());
+            header += "dataEnd\t" + format2.format(calendar.getTime()) + "\n";                
+        } else {
+            header += "dataStart\t" + startTime + "\n";
+            header += "dataEnd\t" + endTime + "\n";
+        }
+
+        header += "tres\td\n";
+        header += "@statAttribVal\n";
+        String strStation = "name\t";
+        String strID = "ID\t";
+        String strElevation = "elevation\t";
+        String strX = x + "\t";
+        String strY = y + "\t";
+        String strDataColumn = "datacolumn\t";
+
+        //double grid[][][] = this.makeGrid(latArray, lonArray, transformer);
+
+        for (int i = 0; i < name.length; i++) {
+            strStation += name[i];
+            strID += id[i];
+            strElevation += statelev[i];
+                        
+            strX += statx[i];
+            strY += staty[i];
+            
+            strDataColumn += (i + 1);
+            if (i != name.length) {
+                strStation += "\t";
+                strID += "\t";
+                strElevation += "\t";
+                //changed coords .. 
+                strY += "\t";
+                strX += "\t";
+                strDataColumn += "\t";
+            }
+        }
+
+        header += strStation + "\n" + strID + "\n" + strElevation + "\n" + strX + "\n" + strY + "\n" + strDataColumn + "\n";
+        header += "@dataVal";
+        return header;
+    }
     
 }
