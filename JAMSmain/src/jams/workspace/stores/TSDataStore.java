@@ -71,6 +71,7 @@ public class TSDataStore extends TableDataStore {
     private RingBuffer<Long>[] latestTimesteps = null;
     protected Attribute.Calendar[] startDates;
     protected boolean[] endReached;
+    protected double missingDateValueAsDouble;
 
     public class RingBuffer<T> {
 
@@ -190,6 +191,7 @@ public class TSDataStore extends TableDataStore {
         }
 
         bufferSize = oldBufferSize;
+        missingDateValueAsDouble = Double.parseDouble(this.getMissingDataValue());
 
     }
 
@@ -420,6 +422,11 @@ public class TSDataStore extends TableDataStore {
 
                 String str = dumpFileReader.readLine();
 
+                // remove all empty trailing elements typically inserted by Excel
+                while (str.endsWith("\t")) {
+                    str = str.substring(0, str.length() - 1);
+                }
+
                 String a[] = str.split(SEPARATOR, -1);
 
                 result = new DefaultDataSet(a.length);
@@ -435,20 +442,28 @@ public class TSDataStore extends TableDataStore {
 
                     switch (type[i - 1]) {
                         case DOUBLE:
-                            value = new DoubleValue(0);
-                            if (valueString.equals(this.getMissingDataValue())) {
+                            value = new DoubleValue(valueString);
+                            if (value.getDouble() == missingDateValueAsDouble) {
                                 value.setDouble((Double) JAMS.getMissingDataValue(Double.class));
-                            } else {
-                                value.setString(valueString);
                             }
+//                            if (valueString.equals(this.getMissingDataValue())) {
+//                                value.setDouble((Double) JAMS.getMissingDataValue(Double.class));
+//                            } else {
+//                                value.setString(valueString);
+//                            }
+
                             break;
                         case LONG:
-                            value = new LongValue(0);
-                            if (valueString.equals(this.getMissingDataValue())) {
+                            value = new LongValue(valueString);
+                            if (value.getLong() == missingDateValueAsDouble) {
                                 value.setLong((Long) JAMS.getMissingDataValue(Long.class));
-                            } else {
-                                value.setString(valueString);
                             }
+//                            value = new LongValue(0);
+//                            if (valueString.equals(this.getMissingDataValue())) {
+//                                value.setLong((Long) JAMS.getMissingDataValue(Long.class));
+//                            } else {
+//                                value.setString(valueString);
+//                            }
                             break;
                         case STRING:
                             value = new StringValue(valueString);
