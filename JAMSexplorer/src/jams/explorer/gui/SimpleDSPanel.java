@@ -68,13 +68,13 @@ import jams.workspace.dsproc.SimpleSerieProcessor;
  */
 public class SimpleDSPanel extends DSPanel {
 
-    private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25),  LIST_DIMENSION = new Dimension(150, 250);
+    private static final Dimension ACTION_BUTTON_DIM = new Dimension(150, 25), LIST_DIMENSION = new Dimension(150, 250);
     private SimpleSerieProcessor proc;
     private GridBagLayout mainLayout;
-    private JList timeList,  monthList,  yearList;
+    private JList timeList, monthList, yearList;
     private JTextField timeField;
     private JPanel aggregationPanel;
-    private GridBagLayout aggregationLayout;    
+    private GridBagLayout aggregationLayout;
     private Action[] actions = {
         new AbstractAction(JAMS.i18n("SHOW_DATA")) {
 
@@ -105,7 +105,7 @@ public class SimpleDSPanel extends DSPanel {
             }
         }
     };
-    private Action showData = actions[0], mean = actions[1],  monthMean = actions[2],  yearMean = actions[3];
+    private Action showData = actions[0], mean = actions[1], monthMean = actions[2], yearMean = actions[3];
     private Action cacheReset = new AbstractAction(JAMS.i18n("RESET_CACHES")) {
 
         @Override
@@ -137,7 +137,7 @@ public class SimpleDSPanel extends DSPanel {
         for (Action a : actions) {
             a.setEnabled(false);
         }
-        
+
         freeTempMean.setEnabled(false);
         cacheReset.setEnabled(false);
         indexReset.setEnabled(false);
@@ -153,12 +153,12 @@ public class SimpleDSPanel extends DSPanel {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
                     if (timeList.getSelectedValues().length == 0) {
-                        mean.setEnabled(false); 
+                        mean.setEnabled(false);
                         showData.setEnabled(false);
-                    }else if (timeList.getSelectedValues().length == 1){
+                    } else if (timeList.getSelectedValues().length == 1) {
                         showData.setEnabled(true);
-                        mean.setEnabled(false);                        
-                    }else {
+                        mean.setEnabled(false);
+                    } else {
                         mean.setEnabled(true);
                         showData.setEnabled(true);
                     }
@@ -199,7 +199,7 @@ public class SimpleDSPanel extends DSPanel {
                 }
             }
         });
-        
+
         GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("ATTRIBUTE/AGGREGATION:")), 0, 10, 1, 1, 0, 0);
 
         aggregationLayout = new GridBagLayout();
@@ -261,33 +261,33 @@ public class SimpleDSPanel extends DSPanel {
 
         GUIHelper.addGBComponent(this, mainLayout, buttonPanelA, 40, 20, 1, 1, 0, 0);
         /*
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("MONTHS:")), 60, 10, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, monthListScroll, 60, 20, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("YEARS:")), 70, 10, 1, 1, 0, 0);
-        GUIHelper.addGBComponent(this, mainLayout, yearListScroll, 70, 20, 1, 1, 0, 0);
+         GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("MONTHS:")), 60, 10, 1, 1, 0, 0);
+         GUIHelper.addGBComponent(this, mainLayout, monthListScroll, 60, 20, 1, 1, 0, 0);
+         GUIHelper.addGBComponent(this, mainLayout, new JLabel(JAMS.i18n("YEARS:")), 70, 10, 1, 1, 0, 0);
+         GUIHelper.addGBComponent(this, mainLayout, yearListScroll, 70, 20, 1, 1, 0, 0);
 
-        JPanel buttonPanelB = new JPanel();
-        buttonPanelB.setPreferredSize(LIST_DIMENSION);
+         JPanel buttonPanelB = new JPanel();
+         buttonPanelB.setPreferredSize(LIST_DIMENSION);
 
-        for (int i = 2; i < actions.length; i++) {
-            Action a = actions[i];
-            button = new JButton(a);
-            button.setPreferredSize(ACTION_BUTTON_DIM);
-            buttonPanelB.add(button);
-        }
+         for (int i = 2; i < actions.length; i++) {
+         Action a = actions[i];
+         button = new JButton(a);
+         button.setPreferredSize(ACTION_BUTTON_DIM);
+         buttonPanelB.add(button);
+         }
 
-        buttonPanelB.add(new JPanel());
+         buttonPanelB.add(new JPanel());
 
-        button = new JButton(cacheReset);
-        button.setPreferredSize(ACTION_BUTTON_DIM);
-        buttonPanelB.add(button);
+         button = new JButton(cacheReset);
+         button.setPreferredSize(ACTION_BUTTON_DIM);
+         buttonPanelB.add(button);
 
-        button = new JButton(indexReset);
-        button.setPreferredSize(ACTION_BUTTON_DIM);
-        buttonPanelB.add(button);
+         button = new JButton(indexReset);
+         button.setPreferredSize(ACTION_BUTTON_DIM);
+         buttonPanelB.add(button);
 
-        GUIHelper.addGBComponent(this, mainLayout, buttonPanelB, 80, 20, 1, 1, 0, 0);
-*/
+         GUIHelper.addGBComponent(this, mainLayout, buttonPanelB, 80, 20, 1, 1, 0, 0);
+         */
     }
 
     /**
@@ -362,7 +362,7 @@ public class SimpleDSPanel extends DSPanel {
                 return dates[i];
             }
         });
-        
+
         yearList.setModel(new AbstractListModel() {
 
             int[] years = getProc().getYears();
@@ -442,7 +442,6 @@ public class SimpleDSPanel extends DSPanel {
             AttribRadioButton button1, button2, button3;
             button1 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_SUM);
             button2 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_MEAN);
-
 
 //            button3 = new AttribRadioButton(attrib, DataStoreProcessor.AttributeData.AGGREGATION_REL_WEIGHT);
             button1.setSelected(true);
@@ -544,11 +543,12 @@ public class SimpleDSPanel extends DSPanel {
         timeField.setEnabled(false);
         indexReset.setEnabled(false);
     }
-    
-    private void showData() {               
-        if (timeList.getSelectedValues().length == 0)                
+
+    private void showData() {
+        if (timeList.getSelectedValues().length == 0) {
             return;
-                
+        }
+
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
         workerDlg.setTask(new CancelableSwingWorker() {
@@ -556,7 +556,7 @@ public class SimpleDSPanel extends DSPanel {
             DataMatrix m = null;
 
             public Object doInBackground() {
-                try {                                                            
+                try {
                     SimpleSerieProcessor proc = getProc();
                     // check if number of selected ids is equal to all ids
                     // if so, we better derive temp avg from monthly means
@@ -567,7 +567,7 @@ public class SimpleDSPanel extends DSPanel {
                     for (Object o : objects) {
                         ids[c++] = o.toString();
                     }
-                    m = proc.getData(ids);                                                        
+                    m = proc.getData(ids);
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
@@ -586,7 +586,7 @@ public class SimpleDSPanel extends DSPanel {
         });
         workerDlg.execute();
     }
-    
+
     private void showMonthlyMean() {
 
         if (monthList.getSelectedValues().length == 0) {
@@ -605,7 +605,7 @@ public class SimpleDSPanel extends DSPanel {
                     int month = (Integer) monthList.getSelectedValue();
 
                     workerDlg.setInderminate(true);
-                        
+
                     m = getProc().getMonthlyMean(month);
 
                 } catch (SQLException ex) {
@@ -670,10 +670,11 @@ public class SimpleDSPanel extends DSPanel {
         workerDlg.execute();
     }
 
-    private void showMean() {               
-        if (timeList.getSelectedValues().length == 0)                
+    private void showMean() {
+        if (timeList.getSelectedValues().length == 0) {
             return;
-                
+        }
+
         workerDlg.setInderminate(false);
         workerDlg.setProgress(0);
         workerDlg.setTask(new CancelableSwingWorker() {
@@ -681,7 +682,7 @@ public class SimpleDSPanel extends DSPanel {
             DataMatrix m = null;
 
             public Object doInBackground() {
-                try {                                                            
+                try {
                     SimpleSerieProcessor proc = getProc();
                     // check if number of selected ids is equal to all ids
                     // if so, we better derive temp avg from monthly means
@@ -692,7 +693,7 @@ public class SimpleDSPanel extends DSPanel {
                     for (Object o : objects) {
                         ids[c++] = o.toString();
                     }
-                    m = proc.getMean(ids);                                                        
+                    m = proc.getMean(ids);
                 } catch (SQLException ex) {
                 } catch (IOException ex) {
                 }
@@ -711,7 +712,7 @@ public class SimpleDSPanel extends DSPanel {
         });
         workerDlg.execute();
     }
-    
+
     private void showFreeTempMean() {
 
         String filter = timeField.getText();
@@ -748,7 +749,7 @@ public class SimpleDSPanel extends DSPanel {
         });
         workerDlg.execute();
     }
-    
+
     private void toggleFreeTempMeanButton() {
         String filter = timeField.getText();
         if (!filter.contains("%") && !filter.contains("?")) {
@@ -760,10 +761,10 @@ public class SimpleDSPanel extends DSPanel {
 
     private void resetCaches() {
         /*try {
-            //getProc().deleteCache();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }*/
+         //getProc().deleteCache();
+         } catch (SQLException ex) {
+         ex.printStackTrace();
+         }*/
     }
 
     @Override

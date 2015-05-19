@@ -1,15 +1,11 @@
 package jams.logging;
 
-import jams.JAMS;
-import jams.gui.input.NotificationDlg;
 import jams.gui.tools.GUIHelper;
-import static jams.logging.NotificationLogHandler.notificationDlg;
 import jams.tools.JAMSTools;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Level;
