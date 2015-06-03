@@ -26,7 +26,6 @@ import java.util.HashMap;
 import jams.JAMS;
 import jams.data.DefaultDataFactory;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Map.Entry;
 
 /**
@@ -37,7 +36,6 @@ public class ContextDescriptor extends ComponentDescriptor {
 
     private HashMap<String, ContextAttribute> staticAttributes = new HashMap();
     private HashMap<String, ContextAttribute> dynamicAttributes = new HashMap();
-    private HashMap<String, AttributeList> attributeLists = new HashMap();
 
     public ContextDescriptor(String instanceName, Class clazz) {
         super(instanceName, clazz);
@@ -88,21 +86,6 @@ public class ContextDescriptor extends ComponentDescriptor {
         ca.setValue(value);
 
         return ca;
-    }
-
-    public AttributeList addToAttributeList(String name, Class type, String value) {
-
-        AttributeList list = attributeLists.get(name);
-
-        // get the list if existing or create a new one
-        if (list == null) {
-            list = new AttributeList();
-            attributeLists.put(name, list);
-        }
-            
-        list.add(value);
-        
-        return list;
     }
 
 //    public class ContextAttributeException extends JAMSException {

@@ -33,13 +33,9 @@ import jams.meta.ModelProperties.Group;
 import jams.meta.ModelProperties.ModelProperty;
 import jams.model.JAMSComponentDescription;
 import jams.tools.StringTools;
-import jams.tools.XMLTools;
-import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.logging.Filter;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -157,10 +153,10 @@ public class ModelIO {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
                 }
 
-            } else if (node.getNodeName().equals("attributelist")) {
+            } else if (node.getNodeName().equals("attributelists")) {
 
                 try {
-                    addAttributeList(cd, (Element) node);
+                    addAttributeList((Element) node, md);
                 } catch (JAMSException mle) {
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, mle.getMessage(), mle.getWrappedException());
                 }
@@ -304,9 +300,7 @@ public class ModelIO {
                     + JAMS.i18n("_component_attribute_") + fieldName + JAMS.i18n("_does_not_exist!"));
         }
 
-        if (e.hasAttribute("attribute")) {
-
-            String attribute = e.getAttribute("attribute");
+        if (e.hasAttribute("attribute") || e.hasAttribute("attributelist")) {
 
             String contextName = e.getAttribute("context");
             if (contextName.equals("")) {
@@ -319,7 +313,18 @@ public class ModelIO {
                         + JAMS.i18n("_context_") + contextName + JAMS.i18n("_does_not_exist!"));
             }
 
-            field.linkToAttribute(context, attribute);
+            if (e.hasAttribute("attributelist")) {
+                String attributeList = e.getAttribute("attributelist");
+                AttributeList aList = md.getAttributeLists().get(attributeList);
+                if (aList == null) {
+                    throw new JAMSException(MessageFormat.format(JAMS.i18n("Error_while_loading_component_{0}:_"
+                            + "attributelist_{1}_does_not_exist!"), cd.getInstanceName(), attributeList));
+                }
+                field.linkToAttributeList(context, aList);
+            } else {
+                String attribute = e.getAttribute("attribute");
+                field.linkToAttribute(context, attribute);
+            }
 
             //cd.linkComponentAttribute(name, view.getComponentDescriptor(context), attribute);
                 /*            }
@@ -335,25 +340,30 @@ public class ModelIO {
         }
     }
 
-    private void addAttributeList(ContextDescriptor cd, Element e) {
-        String listName = e.getAttribute("name");
-        String elementClass = e.getAttribute("elementclass");
+    private void addAttributeList(Element e, ModelDescriptor md) {
 
-        Class type;
+        NodeList listElements = e.getElementsByTagName("attributelist");
+        for (int i = 0; i < listElements.getLength(); i++) {
+            Element listElement = (Element) listElements.item(i);
 
-        try {
-            type = Class.forName(elementClass);
-        } catch (ClassNotFoundException ex) {
-            throw new JAMSException("Given type " + elementClass + " for attribute list "
-                    + listName + " in context " + cd.getInstanceName() + " does not exist!", ex);
+            String listName = listElement.getAttribute("name");
+            String elementClass = listElement.getAttribute("elementclass");
+
+            Class type;
+
+            try {
+                type = Class.forName(elementClass);
+            } catch (ClassNotFoundException ex) {
+                throw new JAMSException("Given type " + elementClass + " for attribute list "
+                        + listName + " does not exist!", ex);
+            }
+
+            NodeList elements = listElement.getElementsByTagName("element");
+            for (int j = 0; j < elements.getLength(); j++) {
+                Element element = (Element) elements.item(j);
+                md.addToAttributeList(listName, type, element.getAttribute("value"));
+            }
         }
-
-        NodeList elements = e.getElementsByTagName("element");
-        for (int i = 0; i < elements.getLength(); i++) {
-            Element element = (Element) elements.item(i);
-            cd.addToAttributeList(listName, type, element.getAttribute("value"));
-        }
-
     }
 
     //add attribute that is defined by a context component
@@ -493,6 +503,22 @@ public class ModelIO {
             }
             rootElement.appendChild(element);
 
+            //create attribute lists
+            element = (Element) document.createElement("attributelists");
+            for (String name : md.getAttributeLists().keySet()) {
+                AttributeList l = md.getAttributeLists().get(name);
+                Element listElement = (Element) document.createElement("attributelist");
+                listElement.setAttribute("name", name);
+                listElement.setAttribute("elementclass", l.getType().getName());
+                for (String elementString : l.getElements()) {
+                    Element elementElement = (Element) document.createElement("element");
+                    elementElement.setAttribute("value", elementString);
+                    listElement.appendChild(elementElement);
+                }
+                element.appendChild(listElement);
+            }
+            rootElement.appendChild(element);
+
 //                    //handle the metaprocessors node
 //        NodeList metaProcessorNodes = docRoot.getElementsByTagName("metaprocessor");
 //        if (metaProcessorNodes != null) {
@@ -601,16 +627,19 @@ public class ModelIO {
 
         for (ComponentField var : cd.getComponentFields().values()) {
 
-//            if (!StringTools.isEmptyString(var.getValue()) || ((var.getContext() != null) && !var.getAttribute().equals(""))) {
-            if ((var.getValue() != null) || ((var.getContext() != null) && !var.getAttribute().equals(""))) {
+            if ((var.getValue() != null) || ((var.getContext() != null) && !var.getAttribute().equals("")) || (var.getAttributeList() != null)) {
 
                 element = document.createElement("var");
                 element.setAttribute("name", var.getName());
-                if (!var.getAttribute().equals("")) {
+
+                if (var.getAttributeList() != null) {
+                    element.setAttribute("attributelist", var.getAttributeList().getName());
+                    element.setAttribute("context", var.getContext().getInstanceName());
+                } else if (!var.getAttribute().equals("")) {
                     element.setAttribute("attribute", var.getAttribute());
                     element.setAttribute("context", var.getContext().getInstanceName());
                 }
-//                if (!StringTools.isEmptyString(var.getValue())) {
+
                 if (var.getValue() != null) {
                     element.setAttribute("value", var.getValue());
                 }

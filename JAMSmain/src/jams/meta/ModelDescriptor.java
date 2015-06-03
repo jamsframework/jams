@@ -51,6 +51,7 @@ public class ModelDescriptor extends ComponentCollection {
 
     private HashMap<String, OutputDSDescriptor> outputDataStores;
     private ArrayList<MetaProcessorDescriptor> preprocessors = new ArrayList();
+    private HashMap<String, AttributeList> attributeLists = new HashMap();
     private ModelProperties modelProperties;
     private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "", modelName = "";
     private ModelNode rootNode;
@@ -473,6 +474,29 @@ public class ModelDescriptor extends ComponentCollection {
         }
 
     }
+    
+    public AttributeList addToAttributeList(String name, Class type, String value) {
+
+        AttributeList list = attributeLists.get(name);
+
+        // get the list if existing or create a new one
+        if (list == null) {
+            list = new AttributeList(this, name);
+            list.setType(type);
+            attributeLists.put(name, list);
+        }
+            
+        list.add(value);
+        
+        return list;
+    }
+    
+    /**
+     * @return the attributeLists
+     */
+    public HashMap<String, AttributeList> getAttributeLists() {
+        return attributeLists;
+    }    
 //    public static void main(String[] args) throws IOException {
 //
 //        SystemProperties properties = JAMSProperties.createProperties();

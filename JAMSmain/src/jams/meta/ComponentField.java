@@ -6,6 +6,8 @@ import jams.data.DefaultDataFactory;
 import jams.tools.StringTools;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 public class ComponentField implements Comparable {
 
@@ -17,7 +19,9 @@ public class ComponentField implements Comparable {
     private Class type = null;
     private int accessType;
     private ArrayList<ContextAttribute> contextAttributes = new ArrayList<ContextAttribute>();
+    private AttributeList attributeList = null;
     private ComponentDescriptor parent;
+    private ContextDescriptor context;
 
     public ComponentField(String name, Class type, int accessType, ComponentDescriptor parent) {
         super();
@@ -40,12 +44,13 @@ public class ComponentField implements Comparable {
     }
 
     public ContextDescriptor getContext() {
-        // @TODO: can have multiple attributes, but only one context :(
-        if (contextAttributes.size() > 0) {
-            return contextAttributes.get(0).getContext();
-        } else {
-            return null;
-        }
+//        // @TODO: can have multiple attributes, but only one context :(
+//        if (contextAttributes.size() > 0) {
+//            return contextAttributes.get(0).getContext();
+//        } else {
+//            return null;
+//        }
+        return context;
     }
 
     public ArrayList<ContextAttribute> getContextAttributes() {
@@ -54,6 +59,28 @@ public class ComponentField implements Comparable {
 
     public String getValue() {
         return value;
+    }
+
+    public void linkToAttributeList(ContextDescriptor context, AttributeList list) {
+        this.attributeList = list;
+        this.context = context;
+        
+        for (String attributeName : attributeList.getElements()) {
+            linkToAttribute(getContext(), attributeName, false);
+        }
+
+        this.attributeList.addObserver(new Observer() {
+
+            @Override
+            public void update(Observable o, Object o1) {
+                String attributeName = (String) o1;
+                if (getAttributeList().getElements().contains(o1)) {
+                    linkToAttribute(getContext(), attributeName, false);
+                } else {
+                    unlinkFromAttribute(attributeName);
+                }
+            }
+        });
     }
 
     public void unlinkFromAttribute() {
@@ -86,15 +113,15 @@ public class ComponentField implements Comparable {
     public void linkToAttribute(ContextDescriptor context, String attributeName) {
         linkToAttribute(context, attributeName, true);
     }
-    
+
     public void linkToAttribute(ContextDescriptor context, String attributeName, boolean removeOldLink) {
-        
+
         Class basicType;
-        
+
         if (removeOldLink) {
             unlinkFromAttribute();
         }
-        
+
         // if there is more than one attribute bound to this
         if (attributeName.contains(";")) {
             if (this.type.isArray()) {
@@ -125,15 +152,15 @@ public class ComponentField implements Comparable {
         if (attribute == null) {
             attribute = new ContextAttribute(attributeName, basicType, context);
             context.getDynamicAttributes().put(attributeName, attribute);
-            
+
 //            if (this.accessType == READ_ACCESS) {
 //                // add this attribute to the list of undeclared attributes
 //                System.out.println("undeclared in " + context.getInstanceName() + ": " + attributeName);
 //            }
-            
         }
         attribute.getFields().add(this);
         this.contextAttributes.add(attribute);
+        this.context = context;
     }
 
 //    public class AttributeLinkException extends JAMSException {
@@ -142,7 +169,6 @@ public class ComponentField implements Comparable {
 //            super(message, header);
 //        }
 //    }
-
     public void setValue(String value) {
         this.value = value;
     }
@@ -174,11 +200,19 @@ public class ComponentField implements Comparable {
     public int getAccessType() {
         return accessType;
     }
-    
-    public String toString(){
+
+    public String toString() {
         return this.parent.getInstanceName() + "." + this.name;
     }
-    public int compareTo(Object o){
+
+    public int compareTo(Object o) {
         return this.toString().compareTo(o.toString());
+    }
+
+    /**
+     * @return the attributeList
+     */
+    public AttributeList getAttributeList() {
+        return attributeList;
     }
 }

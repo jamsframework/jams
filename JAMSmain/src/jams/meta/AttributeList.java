@@ -19,18 +19,27 @@
  * along with JAMS. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package jams.meta;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class AttributeList extends ArrayList<String> {
-    
+public class AttributeList extends Observable {
+
     private Class type;
+    private List<String> elements = new ArrayList();
+    private ModelDescriptor md;
+    private String name;
+
+    public AttributeList(ModelDescriptor md, String name) {
+        this.md = md;
+        this.name = name;
+    }
 
     /**
      * @return the type
@@ -45,7 +54,38 @@ public class AttributeList extends ArrayList<String> {
     public void setType(Class type) {
         this.type = type;
     }
-    
-    
-    
+
+    public void add(String value) {
+        this.elements.add(value);
+        this.notifyObservers(value);
+    }
+
+    public void remove(String value) {
+        this.elements.remove(value);
+        this.notifyObservers(value);
+    }
+
+    /**
+     * @return the elements
+     */
+    public List<String> getElements() {
+        return elements;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.md.getAttributeLists().remove(this.name);
+        this.name = name;
+        this.md.getAttributeLists().put(this.name, this);
+    }
+
 }
