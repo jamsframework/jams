@@ -6,6 +6,7 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwindx.examples.util.ShapefileLoader;
+import jams.JAMS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,7 @@ public class JamsShapefileLoader extends ShapefileLoader {
     
     public JamsShapefileLoader() {
         super();
-        setNumPolygonsPerLayer(50000);
+        setNumPolygonsPerLayer(100000);
     }
     
     @Override
