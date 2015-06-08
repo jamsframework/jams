@@ -155,7 +155,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         }
         return instance;
     }
-
+    
     //<editor-fold desc="variables definition">
     private static final Logger logger = Logger.getLogger(GlobeView.class.getName());
     //reference to jams,worldwind.ui.model.Globe
@@ -413,10 +413,11 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         File file = shp.getShapeFile();
         if (!isShapefileAlreadyOpened(file)) {
             addShapefile(file);
-        } else {
-            removeShapefile(file);
-            addShapefile(file);
         }
+//        else {
+//            removeShapefile(file);
+//            addShapefile(file);
+//        }
     }
 
     private void setKeyboardShortcuts() {
@@ -867,7 +868,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
      * @param f
      */
     public void addShapefile(File f) {
-        String layerName = f.getName() + "|" + f.getAbsolutePath();
+        String layerName = f.getName() + " (" + f.getAbsolutePath() + ")";
         //Layer layer = new ShapefileLoader().createLayerFromShapefile(new Shapefile(f));
         Shapefile shp = new Shapefile(f);
 
@@ -898,7 +899,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
      * @param f
      */
     public void removeShapefile(File f) {
-        String layerName = f.getName() + "|" + f.getAbsolutePath();
+        String layerName = f.getName() + " (" + f.getAbsolutePath() + ")";
         Layer layer = getWorldWindow().getModel().getLayers().getLayerByName(layerName);
 
         if (layer != null) {
@@ -910,14 +911,14 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     private boolean isShapefileAlreadyOpened(File f) {
         //Check if Shapefile already loaded
-        String layerName = f.getName() + "|" + f.getAbsolutePath();
+        String layerName = f.getName() + " (" + f.getAbsolutePath() + ")";
         this.logger.info("Shapefile: " + layerName);
         Layer l = getWorldWindow().getModel().getLayers().getLayerByName(layerName);
         return l != null;
     }
 
     private boolean reloadShapefile(File f) {
-        String layerName = f.getName() + "|" + f.getAbsolutePath();
+        String layerName = f.getName() + " (" + f.getAbsolutePath() + ")";
         Layer layer = getWorldWindow().getModel().getLayers().getLayerByName(layerName);
         int result = JOptionPane.showConfirmDialog(null,
                 "Shapefile already loaded, reload?",

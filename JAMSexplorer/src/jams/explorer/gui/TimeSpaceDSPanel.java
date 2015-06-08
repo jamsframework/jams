@@ -25,6 +25,7 @@ import jams.JAMS;
 import jams.JAMSLogging;
 import jams.JAMSLogging.LogOption;
 import jams.data.JAMSCalendar;
+import jams.explorer.JAMSExplorer;
 import jams.gui.tools.GUIHelper;
 import jams.tools.StringTools;
 import jams.workspace.dsproc.AbstractDataStoreProcessor;
@@ -79,6 +80,7 @@ import java.beans.PropertyChangeListener;
 import java.net.URI;
 import javax.swing.SwingWorker;
 import jams.explorer.spreadsheet.JAMSSpreadSheet;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -777,8 +779,8 @@ public class TimeSpaceDSPanel extends DSPanel {
         workerDlg.setTask(new CancelableSwingWorker() {
 
             int progress;
-            DataMatrix[] m;
             DataTransfer3D transfer;
+            DataMatrix[] m;
             ArrayList<String> attributeNames = new ArrayList();
 
             @Override
@@ -812,9 +814,6 @@ public class TimeSpaceDSPanel extends DSPanel {
                     return null;
                 }
 
-                progress = 5;
-                setProgress(progress);
-
                 try {
 
                     Object[] entities = entityList.getSelectedValuesList().toArray();
@@ -845,12 +844,51 @@ public class TimeSpaceDSPanel extends DSPanel {
                                 attribute.setSelected(false);
                             }
                         }
-                        progress = progress + ((j + 1) * (50 - progress)) / attributeNames.size();
+
+                        progress = Math.round(((j + 1) * 100) / attributeNames.size());
                         setProgress(progress);
                     }
 
-                    transfer = new DataTransfer3D(m, entitiesString, dateIds, attribs);
                     setProgress(100);
+
+                    transfer = new DataTransfer3D(m, entitiesString, dateIds, attribs);
+
+                    ///new
+                    String selectedShape = (String) outputSpreadSheet.getShapeSelector().getSelectedItem();
+                    if (StringTools.isEmptyString(selectedShape)) {
+                        Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No shape selected.");
+                        return null;  // errorMessage?
+                    }
+
+                    ShapeFileDataStore dataStore = (ShapeFileDataStore) explorer.getWorkspace().getInputDataStore(selectedShape);
+                    if (dataStore == null) {
+                        Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No datastore found.");
+                        return null;
+                    }
+
+                    URI uri = dataStore.getUri();
+                    if (uri == null) {
+                        Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "error: can't access shapefile! path is: "
+                                + dataStore.getShapeFile().getAbsolutePath());
+                        return null;
+                    }
+
+                    // we want to log, but without graphical output..
+                    JAMSLogging.unregisterLogger(LogOption.Show,
+                            Logger.getLogger(JAMSSpreadSheet.class.getName()));
+                    Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.INFO, "Using Shapefile " + selectedShape + " / KEY COLUMN: " + dataStore.getKeyColumn());
+                    JAMSLogging.registerLogger(LogOption.Show,
+                            Logger.getLogger(JAMSSpreadSheet.class.getName()));
+
+                    transfer.setShapeFileDataStore(dataStore);
+
+                    workerDlg.setInderminate(true);
+
+                    GlobeView view = GlobeView.getInstance();
+                    boolean result = view.addJAMSExplorerData(transfer);
+                    if (result) {
+                        view.show();
+                    }
 
                 } catch (SQLException ex) {
                     explorer.getRuntime().handle(ex);
@@ -861,62 +899,11 @@ public class TimeSpaceDSPanel extends DSPanel {
             }
 
             @Override
-            public void done() {
-
-                java.awt.EventQueue.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if (transfer == null) {
-                            return;
-                        }
-
-                        String selectedShape = (String) outputSpreadSheet.getShapeSelector().getSelectedItem();
-                        if (StringTools.isEmptyString(selectedShape)) {
-                            Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No shape selected.");
-                            return;  // errorMessage?
-                        }
-
-                        ShapeFileDataStore dataStore = (ShapeFileDataStore) explorer.getWorkspace().getInputDataStore(selectedShape);
-                        if (dataStore == null) {
-                            Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "No datastore found.");
-                            return;
-                        }
-
-                        URI uri = dataStore.getUri();
-                        if (uri == null) {
-                            Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.WARNING, "error: can't access shapefile! path is: "
-                                    + dataStore.getShapeFile().getAbsolutePath());
-                            return;
-                        }
-
-                        // we want to log, but without graphical output..
-                        JAMSLogging.unregisterLogger(LogOption.Show,
-                                Logger.getLogger(JAMSSpreadSheet.class.getName()));
-                        Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.INFO, "Using shape file >" + selectedShape + "< / KEY COLUMN: " + dataStore.getKeyColumn());
-                        JAMSLogging.registerLogger(LogOption.Show,
-                                Logger.getLogger(JAMSSpreadSheet.class.getName()));
-
-                        transfer.setShapeFileDataStore(dataStore);
-
-                        //ShapeFileDataStore shapeDataStore = (ShapeFileDataStore) explorer.getWorkspace().;
-                        GlobeView view = GlobeView.getInstance();
-                        boolean result = view.addJAMSExplorerData(transfer);
-                        if (result) {
-                            view.show();
-                        }
-                    }
-                });
-
-            }
-
-            @Override
             public int cancel() {
                 proc.sendAbortOperation();
                 return 0;
             }
-        }
-        );
+        });
         workerDlg.execute();
     }
 
@@ -1222,7 +1209,7 @@ public class TimeSpaceDSPanel extends DSPanel {
                     cancel();
                 } catch (Throwable t) {
                     Logger.getLogger(TimeSpaceDSPanel.class
-                                .getName()).log(Level.SEVERE, "An error occured during data extraction!", t);
+                            .getName()).log(Level.SEVERE, "An error occured during data extraction!", t);
                     cancel();
                 }
                 return null;
@@ -1235,10 +1222,9 @@ public class TimeSpaceDSPanel extends DSPanel {
                 if (m == null) {
 
                     /*if (weightAttribIndex < 0) {
-                        Logger.getLogger(TimeSpaceDSPanel.class
-                                .getName()).log(Level.WARNING, "A weight attribute must be chosen!");
-                    } else {*/
-                        
+                     Logger.getLogger(TimeSpaceDSPanel.class
+                     .getName()).log(Level.WARNING, "A weight attribute must be chosen!");
+                     } else {*/
                     //}
                 } else {
                     loadData(m, true);

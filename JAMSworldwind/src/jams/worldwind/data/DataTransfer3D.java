@@ -49,14 +49,24 @@ public class DataTransfer3D implements Serializable {
                 //for alle timesteps
                 for (int k = 0; k < column.length; k++) {
                     this.data[i][j][k] = column[k];
-                    JAMSCalendar date = new JAMSCalendar();
-                    date.setValue(timesteps[k]);
-                    this.timeStepToIndex.put(date, k);
+//                    JAMSCalendar date = new JAMSCalendar();
+//                    date.setValue(timesteps[k]);
+//                    this.timeStepToIndex.put(date, k);
                 }
-                this.attributeToIndex.put(attribs[j], j);
+//                this.attributeToIndex.put(attribs[j], j);
             }
             this.hruIdToIndex.put(ids[i], i);
         }
+        
+        for (int j = 0; j < m.length; j++) {
+            this.attributeToIndex.put(attribs[j], j);
+        }        
+        
+        for (int k = 0; k < timesteps.length; k++) {
+            JAMSCalendar date = new JAMSCalendar();
+            date.setValue(timesteps[k]);
+            this.timeStepToIndex.put(date, k);
+        }        
 
     }
 
