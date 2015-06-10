@@ -48,8 +48,8 @@ public class ColorRampPanel extends JPanel {
     private ColorRamp colorRamp;
     private int numberOfColors;
 
-    private final String startColorAction = "STARTCOLOR";
-    private final String endColorAction = "ENDCOLOR";
+    private final String startColorAction = "Start Color";
+    private final String endColorAction = "End Color";
 
     public ColorRampPanel() {
         this.colorRamp = null;

@@ -24,7 +24,7 @@ public class SummaryStatisticsPanel extends JPanel {
 
     private void createGUI() {
         this.setLayout(new GridLayout(0,2,1,1));
-        this.setBorder(new TitledBorder("CLASSIFICATION STATISTICS"));
+        this.setBorder(new TitledBorder("Classification Statistics"));
         this.statisticLabels = new JLabel[16];
         for (int i = 0; i < this.statisticLabels.length; i++) {
             this.statisticLabels[i] = new JLabel();
@@ -32,14 +32,14 @@ public class SummaryStatisticsPanel extends JPanel {
                 this.statisticLabels[i].setHorizontalAlignment(JLabel.RIGHT);
             }
         }
-        this.statisticLabels[0].setText("COUNT:");
-        this.statisticLabels[2].setText("MINIMUM:");
-        this.statisticLabels[4].setText("MAXIMUM:");
-        this.statisticLabels[6].setText("SUM:");
-        this.statisticLabels[8].setText("MEAN:");
-        this.statisticLabels[10].setText("MEDIAN:");
-        this.statisticLabels[12].setText("STD. DEVIATION:");
-        this.statisticLabels[14].setText("VARIANCE:");
+        this.statisticLabels[0].setText("count:");
+        this.statisticLabels[2].setText("minimum:");
+        this.statisticLabels[4].setText("maximum:");
+        this.statisticLabels[6].setText("sum:");
+        this.statisticLabels[8].setText("mean:");
+        this.statisticLabels[10].setText("median:");
+        this.statisticLabels[12].setText("std. deviation:");
+        this.statisticLabels[14].setText("variance:");
         for (JLabel statisticLabel : this.statisticLabels) {
             this.add(statisticLabel);
         }

@@ -45,7 +45,7 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
         //Observer.getInstance().addPropertyChangeListener(this);
         this.layerModel = new LayerListModel();
 
-        theFrame = new JFrame("LAYERS");
+        theFrame = new JFrame("Layers");
         layers = new JList(layerModel);
 
         layers.setDragEnabled(
@@ -117,21 +117,18 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
 
                                 popup.show(e.getComponent(), e.getX(), e.getY());
                                 indexToRemove = list.locationToIndex(e.getPoint());
-                                System.out.println("Rechtsklick");
                             }
                     }
 
                     @Override
                     public void mouseReleased(MouseEvent e) {
                         //super.mouseReleased(e); //To change body of generated methods, choose Tools | Templates.
-                        System.out.println("mouseReleased()");
                         JPopupMenu popup = createPopupMenu();
                         JList list = (JList) e.getSource();
 
                         if (e.isPopupTrigger()) {
                             popup.show(e.getComponent(), e.getX(), e.getY());
                             indexToRemove = list.locationToIndex(e.getPoint());
-                            System.out.println("Rechtsklick");
                         }
                     }
 

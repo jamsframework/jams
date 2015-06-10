@@ -1,5 +1,6 @@
 package jams.worldwind.ui.view;
 
+import jams.tools.JAMSTools;
 import jams.worldwind.data.DataTransfer3D;
 import jams.worldwind.data.RandomNumbers;
 import jams.worldwind.ui.ColorRamp;
@@ -37,7 +38,8 @@ public class IntervallSettingsView {
     }
 */
     private void createGUI() {
-        this.intervallSettingsFrame = new JFrame("INTERVALL/CLASSIFIER FRAME");
+        this.intervallSettingsFrame = new JFrame("Classify Data");
+        this.intervallSettingsFrame.setIconImages(JAMSTools.getJAMSIcons());        
         this.intervallSettingsPanel = new IntervallSettingsPanel(this, dataValues, this.attributes);
 
         this.intervallSettingsFrame.add(this.intervallSettingsPanel);

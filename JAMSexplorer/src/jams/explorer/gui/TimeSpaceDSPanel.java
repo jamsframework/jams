@@ -137,6 +137,7 @@ public class TimeSpaceDSPanel extends DSPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 showInWorldWind();
+                GlobeView.getInstance().toTop();
             }
         },
         new AbstractAction(JAMS.i18n("MONTHLY_MEAN")) {

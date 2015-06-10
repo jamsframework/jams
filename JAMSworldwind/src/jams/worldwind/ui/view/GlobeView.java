@@ -106,7 +106,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.Year;
 
-
 /**
  *
  * @author Ronny Berndt <ronny.berndt at uni-jena.de>
@@ -132,6 +131,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 public void windowClosing(WindowEvent e) {
                     LayerList list = instance.getModel().getLayers();
                     list.remove(list.size() - 1);
+                    instance = null;
                 }
 
                 @Override
@@ -155,7 +155,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         }
         return instance;
     }
-    
+
     //<editor-fold desc="variables definition">
     private static final Logger logger = Logger.getLogger(GlobeView.class.getName());
     //reference to jams,worldwind.ui.model.Globe
@@ -385,6 +385,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.fillAttributesComboBox();
         createListener();
         timeSeriesSlider.setEnabled(false);
+        timeSeriesSlider.setValue(0);
         attributesComboBox.setEnabled(false);
         classifyButton.setEnabled(false);
         if (intervallView != null) {
@@ -395,11 +396,11 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         try {
             addData(d.getShapeFileDataStore());
         } catch (gov.nasa.worldwind.exception.WWRuntimeException wwrte) {
-            JAMSLogging.registerLogger(JAMSLogging.LogOption.Show, 
+            JAMSLogging.registerLogger(JAMSLogging.LogOption.Show,
                     Logger.getLogger(GlobeView.class.getName()));
             Logger.getLogger(GlobeView.class.getName()).log(Level.WARNING,
                     "Cannot open Shapefile \"" + d.getShapeFileDataStore().getShapeFile().getAbsolutePath() + "\" due to unknown projection. Please correct!", wwrte);
-            JAMSLogging.unregisterLogger(JAMSLogging.LogOption.Show, 
+            JAMSLogging.unregisterLogger(JAMSLogging.LogOption.Show,
                     Logger.getLogger(GlobeView.class.getName()));
             return false;
         }
@@ -413,6 +414,17 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         File file = shp.getShapeFile();
         if (!isShapefileAlreadyOpened(file)) {
             addShapefile(file);
+        } else {
+            String layerName = file.getName() + " (" + file.getAbsolutePath() + ")";
+
+            if (data != null) {
+                Layer l = getModel().getLayers().getLayerByName(layerName);
+                l.setValue(Events.DATATRANSFER3DDATA_APPEND, data);
+            }
+            intervallCollection = new List[this.data.getSortedAttributes().length];
+            colorRampCollection = new ColorRamp[this.data.getSortedAttributes().length];
+            activeLayerComboBox.setSelectedIndex(0);
+            activeLayerComboBox.setSelectedItem(layerName);
         }
 //        else {
 //            removeShapefile(file);
@@ -467,7 +479,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         showAttributeTableButton.setEnabled(false);
         //b.setText("OBJECTTABLE");
         //b.putClientProperty("TABLE", "OBJECTTABLE");
-        showAttributeTableButton.setToolTipText("SHOW OBJECT TABLE");
+        showAttributeTableButton.setToolTipText("Show Attribute Table");
 
         showAttributeTableButton.addActionListener(new ActionListener() {
             @Override
@@ -480,7 +492,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 theScreenSelector.disable();
                 selectObjectsToggleButton.setEnabled(false);
                 if (shapefileAttributesView == null) {
-                    shapefileAttributesView = new ShapefileAttributesView("ATTRIBUTESTABLE OF ACTIVE LAYER");;
+                    shapefileAttributesView = new ShapefileAttributesView("Attributes");;
                 }
                 if (!screenselectorList.isEmpty()) {
                     shapefileAttributesView.fillTableWithObjects(screenselectorList);
@@ -509,7 +521,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         activeLayerComboBox = new JComboBox();
         activeLayerComboBox.setSelectedIndex(-1);
         activeLayerComboBox.setName("ACTIVE_LAYER_COMBOBOX");
-        activeLayerComboBox.setBorder(new TitledBorder("ACTIVE LAYER"));
+        activeLayerComboBox.setBorder(new TitledBorder("Active Layer"));
         //activeLayerComboBox.setEnabled(false);
         //comboBox.setMaximumSize(new Dimension(150, 30));
         activeLayerComboBox.addItemListener(new ItemListener() {
@@ -569,13 +581,13 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
         JPanel sliderPanel1 = new JPanel();
         sliderPanel1.setLayout(new GridLayout(2, 1));
-        sliderPanel1.setBorder(new TitledBorder("OPACITY & EXAGGERATION"));
+        sliderPanel1.setBorder(new TitledBorder("Opacity & Exaggeration"));
         sliderPanel1.add(opacitySlider);
         sliderPanel1.add(exaggSlider);
 
         JPanel sliderPanel2 = new JPanel();
         sliderPanel2.setLayout(new GridLayout(2, 1));
-        sliderPanel2.setBorder(new TitledBorder("TIME SERIES DATA"));
+        sliderPanel2.setBorder(new TitledBorder("Time Steps"));
 
         timeSeriesSlider = new JSlider();
         //timeSeriesSlider.setBorder(new TitledBorder("TIME SERIES DATA"));
@@ -589,7 +601,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         });
 
-        this.timeSeriesSliderLabel = new JLabel("NO DATA", JLabel.CENTER);
+        this.timeSeriesSliderLabel = new JLabel("No Data", JLabel.CENTER);
         this.timeSeriesSliderLabel.setEnabled(true);
 
         sliderPanel2.add(timeSeriesSlider);
@@ -602,7 +614,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
         JPanel classifierPanel = new JPanel();
         classifierPanel.setLayout(new GridLayout(2, 1));
-        classifierPanel.setBorder(new TitledBorder("CLASSIFY DATA"));
+        classifierPanel.setBorder(new TitledBorder("Spatial Data"));
 
         this.attributesComboBox = new JComboBox<>();
         this.attributesComboBox.setEnabled(false);
@@ -614,7 +626,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         });
 
-        this.classifyButton = new JButton("CLASSIFY");
+        this.classifyButton = new JButton("Classify");
         this.classifyButton.setEnabled(false);
 
         this.classifyButton.addActionListener(new ActionListener() {
@@ -786,7 +798,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     // <editor-fold defaultstate="collapsed" desc="Menu-Action-Listeners"> 
     private void openShapefileActionlistener(ActionEvent e) {
-        JFileChooser fc = new JFileChooser("/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/input/local/gis/hrus/hrus.shp");
+        JFileChooser fc = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("ESRI Shapefile", "shp");
         fc.setFileFilter(filter);
 
@@ -883,7 +895,13 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
 
             layer.setValue(Events.BOUNDINGBOXOFSHAPEFILE, shp.getBoundingRectangle());
-            layer.setName(layerName + "_" + (i++));
+
+            if (i == 0) {
+                layer.setName(layerName);
+            } else {
+                layer.setName(layerName + "_" + i);
+            }
+            i++;
             getModel().getLayers().add(layer);
         }
         getPCS().firePropertyChange(Events.LAYER_ADDED, null, null);
@@ -946,6 +964,11 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.theFrame.setVisible(true);
     }
 
+    public void toTop() {
+        this.theFrame.toFront();
+        this.theFrame.repaint();
+    }
+
     private void fixMacOSX() {
         //Fix Mac OS X UI Bug Java Version 7 Update 40
         if (Configuration.isMacOS()) {
@@ -976,6 +999,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         }
         intervallView.show();
         lastClassifiedIndex = this.attributesComboBox.getSelectedIndex();
+
     }
 
     public void writeToDisk() {
@@ -1030,7 +1054,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        logger.info("Recieving Event: " + evt.getPropertyName());
+        logger.info("Receiving Event: " + evt.getPropertyName());
         int selectedIndex = -1;
         if (evt.getPropertyName().equals(Events.INTERVALL_CALCULATED)
                 || evt.getPropertyName().equals(Events.INTERVALL_COLORS_SET)) {
@@ -1069,9 +1093,10 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             if (this.intervallCollection[selectedIndex] != null
                     && this.colorRampCollection[selectedIndex] != null) {
                 timeSeriesSlider.setEnabled(true);
-                timeSeriesSlider.setValue(0);
+//                timeSeriesSlider.setValue(0);
             }
         }
+        timeSeriesSliderStateChanged(null);
     }
     //</editor-fold>
 
@@ -1121,6 +1146,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                      JOptionPane.OK_OPTION);
                      */
                     this.timeSeriesSlider.setEnabled(false);
+                } else {
+                    this.timeSeriesSlider.setEnabled(true);
+                    timeSeriesSliderStateChanged(null);
                 }
             }
         }
@@ -1169,7 +1197,6 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 timeSeriesSlider.setPaintTicks(true);
                 timeSeriesSlider.setSnapToTicks(true);
                 timeSeriesSlider.setPaintLabels(false);
-                //timeSeriesSlider.setValue(0);
                 timeSeriesSlider.setEnabled(false);
                 Integer value = timeSeriesSlider.getValue();
                 timeSeriesSliderLabel.setText(((JLabel) timeSeriesSlider.getLabelTable().get(value)).getText());

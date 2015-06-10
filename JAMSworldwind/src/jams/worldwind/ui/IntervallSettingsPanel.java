@@ -153,16 +153,16 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
         //this.breakPoints.setBorder(new TitledBorder("Intervall breakpoints"));
         JScrollPane breakPointsScrollPane = new JScrollPane(this.breakPoints);
         breakPointsScrollPane.setBackground(this.getBackground());
-        breakPointsScrollPane.setBorder(new TitledBorder("INTERVAL BREAKPOINTS"));
+        breakPointsScrollPane.setBorder(new TitledBorder("Interval Breakpoints"));
 
         this.colorPanel = new ColorRampPanel();
-        this.colorPanel.setBorder(new TitledBorder("SETTING COLORS FOR INTERVAL"));
+        this.colorPanel.setBorder(new TitledBorder("Color Settings"));
 
         chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
 
-        this.calculateButton = new JButton("CALCULATE");
-        this.applyButton = new JButton("APPLY");
+        this.calculateButton = new JButton("Calculate");
+        this.applyButton = new JButton("Apply");
 
         this.calculateButton.addActionListener(new ActionListener() {
 
