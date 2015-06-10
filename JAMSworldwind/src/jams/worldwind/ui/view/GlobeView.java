@@ -233,14 +233,20 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
     private void fillAttributesComboBox(int selectedIndex) {
+        
+        ItemListener[] listeners =  attributesComboBox.getItemListeners();
+        for (ItemListener il : listeners) {
+            attributesComboBox.removeItemListener(il);
+        }
+                
         this.attributesComboBox.removeAllItems();
         String[] attributes = data.getSortedAttributes();
         if (attributes != null) {
             int i = 0;
             for (String s : attributes) {
 
-                if (this.intervallCollection == null || this.colorRampCollection == null || 
-                        this.intervallCollection[i] == null || this.colorRampCollection[i] == null) {
+                if (this.intervallCollection == null || this.colorRampCollection == null
+                        || this.intervallCollection[i] == null || this.colorRampCollection[i] == null) {
                     this.attributesComboBox.addItem(s, true);
                 } else {
                     this.attributesComboBox.addItem(s);
@@ -251,7 +257,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             //this.attributesComboBox.setEnabled(true);
             //this.classifyButton.setEnabled(true);
         }
-    }
+        
+        for (ItemListener il : listeners) {
+            attributesComboBox.addItemListener(il);
+        }
+        
+    }  
 
     /**
      *
@@ -396,12 +407,15 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     public boolean addJAMSExplorerData(DataTransfer3D d) {
         this.data = d;
-        this.fillAttributesComboBox(-1);
+        intervallCollection = null;
+        colorRampCollection = null;
+//        this.fillAttributesComboBox(-1);
         createListener();
         timeSeriesSlider.setEnabled(false);
         timeSeriesSlider.setValue(0);
         attributesComboBox.setEnabled(false);
         classifyButton.setEnabled(false);
+
         if (intervallView != null) {
             intervallView.dispose();
             intervallView = null;
@@ -1103,6 +1117,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 this.colorRampCollection[selectedIndex] = colorRamp;
                 break;
         }
+        timeSeriesSlider.setEnabled(false);
         if (selectedIndex != -1) {
             if (this.intervallCollection[selectedIndex] != null
                     && this.colorRampCollection[selectedIndex] != null) {
@@ -1110,9 +1125,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 //                timeSeriesSlider.setValue(0);
             }
         }
-        timeSeriesSliderStateChanged(null);
         fillAttributesComboBox(selectedIndex);
-        
+        timeSeriesSliderStateChanged(null);
+
     }
     //</editor-fold>
 
@@ -1258,13 +1273,14 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     private void timeSeriesSliderStateChanged(ChangeEvent e) {
         //System.out.println("TIME: " + year);
-        if (timeSeriesSlider.isEnabled()) {
+        int selectedIndex = this.attributesComboBox.getSelectedIndex();
+        
+        if (timeSeriesSlider.isEnabled() && selectedIndex != -1) {
             Layer l = getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
 
             //only for Shapefile layers
             if (l.getClass().equals(RenderableLayer.class)) {
                 Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
-                int selectedIndex = this.attributesComboBox.getSelectedIndex();
 
                 List<Double> intervall_temp = new ArrayList<>(intervallCollection[selectedIndex]);
                 colorRamp = colorRampCollection[selectedIndex];
@@ -1353,7 +1369,11 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         private Set disabled_items = new HashSet();
 
         public void addItem(Object anObject, boolean disabled) {
+            try {
             super.addItem(anObject);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
             if (disabled) {
                 disabled_items.add(getItemCount() - 1);
             }
