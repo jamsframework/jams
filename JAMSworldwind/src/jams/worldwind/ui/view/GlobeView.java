@@ -72,10 +72,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static javax.management.Query.lt;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.Icon;
@@ -88,6 +91,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -98,11 +102,13 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.Year;
 
@@ -188,7 +194,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private JSlider timeSeriesSlider;
     private JLabel timeSeriesSliderLabel;
     private JComboBox<String> activeLayerComboBox;
-    private JComboBox<String> attributesComboBox;
+    private DisabledItemsComboBox attributesComboBox;
     private JToggleButton selectObjectsToggleButton;
     private JButton showAttributeTableButton;
     private JButton classifyButton;
@@ -226,14 +232,22 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.statusBar.setEventSource(window);
     }
 
-    private void fillAttributesComboBox() {
+    private void fillAttributesComboBox(int selectedIndex) {
         this.attributesComboBox.removeAllItems();
         String[] attributes = data.getSortedAttributes();
         if (attributes != null) {
+            int i = 0;
             for (String s : attributes) {
-                this.attributesComboBox.addItem(s);
+
+                if (this.intervallCollection == null || this.colorRampCollection == null || 
+                        this.intervallCollection[i] == null || this.colorRampCollection[i] == null) {
+                    this.attributesComboBox.addItem(s, true);
+                } else {
+                    this.attributesComboBox.addItem(s);
+                }
+                i++;
             }
-            this.attributesComboBox.setSelectedIndex(0);
+            this.attributesComboBox.setSelectedIndex(selectedIndex);
             //this.attributesComboBox.setEnabled(true);
             //this.classifyButton.setEnabled(true);
         }
@@ -382,7 +396,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     public boolean addJAMSExplorerData(DataTransfer3D d) {
         this.data = d;
-        this.fillAttributesComboBox();
+        this.fillAttributesComboBox(-1);
         createListener();
         timeSeriesSlider.setEnabled(false);
         timeSeriesSlider.setValue(0);
@@ -616,7 +630,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         classifierPanel.setLayout(new GridLayout(2, 1));
         classifierPanel.setBorder(new TitledBorder("Spatial Data"));
 
-        this.attributesComboBox = new JComboBox<>();
+        this.attributesComboBox = new DisabledItemsComboBox();
         this.attributesComboBox.setEnabled(false);
         this.attributesComboBox.addItemListener(new ItemListener() {
 
@@ -1097,6 +1111,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         }
         timeSeriesSliderStateChanged(null);
+        fillAttributesComboBox(selectedIndex);
+        
     }
     //</editor-fold>
 
@@ -1170,7 +1186,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 DataTransfer3D d = (DataTransfer3D) l.getValue(Events.DATATRANSFER3DDATA_APPEND);
                 if (d != null) {
                     logger.info("DATATRANSFER3D found...");
-                    fillAttributesComboBox();
+                    fillAttributesComboBox(-1);
                     classifyButton.setEnabled(true);
                     attributesComboBox.setEnabled(true);
                 } else {
@@ -1326,5 +1342,78 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             }
         }
     }
-    //</editor-fold>
+
+    private class DisabledItemsComboBox extends JComboBox {
+
+        public DisabledItemsComboBox() {
+            super();
+            super.setRenderer(new DisabledItemsRenderer());
+        }
+
+        private Set disabled_items = new HashSet();
+
+        public void addItem(Object anObject, boolean disabled) {
+            super.addItem(anObject);
+            if (disabled) {
+                disabled_items.add(getItemCount() - 1);
+            }
+        }
+
+        @Override
+        public void removeAllItems() {
+            super.removeAllItems();
+            disabled_items = new HashSet();
+        }
+
+        @Override
+        public void removeItemAt(final int anIndex) {
+            super.removeItemAt(anIndex);
+            disabled_items.remove(anIndex);
+        }
+
+        @Override
+        public void removeItem(final Object anObject) {
+            for (int i = 0; i < getItemCount(); i++) {
+                if (getItemAt(i) == anObject) {
+                    disabled_items.remove(i);
+                }
+            }
+            super.removeItem(anObject);
+        }
+
+        @Override
+        public void setSelectedIndex(int index) {
+            if (!disabled_items.contains(index)) {
+                super.setSelectedIndex(index);
+            }
+        }
+
+        private class DisabledItemsRenderer extends BasicComboBoxRenderer {
+
+            @Override
+            public Component getListCellRendererComponent(JList list,
+                    Object value,
+                    int index,
+                    boolean isSelected,
+                    boolean cellHasFocus) {
+
+                if (isSelected) {
+                    setBackground(list.getSelectionBackground());
+                    setForeground(list.getSelectionForeground());
+                } else {
+                    setBackground(list.getBackground());
+                    setForeground(list.getForeground());
+                }
+                if (disabled_items.contains(index)) {
+                    setBackground(list.getBackground());
+                    setForeground(UIManager.getColor("Label.disabledForeground"));
+                }
+                setFont(list.getFont());
+                setText((value == null) ? "" : value.toString());
+                return this;
+            }
+        }
+    }
+
+//</editor-fold>
 }
