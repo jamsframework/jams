@@ -79,8 +79,7 @@ public class Win64ProcessManager extends AbstractProcessManager {
         String command[] = {
             "java",
             "-Xms128M", 
-            "-Xmx"+DEFAULT_MAX_MEMORY, 
-            "-Dsun.java2d.d3d=false", 
+            "-Xmx"+DEFAULT_MAX_MEMORY,
             "-jar", 
             runnableFile, 
             "-c", 
