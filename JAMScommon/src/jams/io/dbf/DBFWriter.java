@@ -1,28 +1,29 @@
 /*
-    DBFWriter
-    Class for defining a DBF structure and addin data to that structure and
-    finally writing it to an OutputStream.
+ DBFWriter
+ Class for defining a DBF structure and addin data to that structure and
+ finally writing it to an OutputStream.
 
-    This file is part of JavaDBF packege.
+ This file is part of JavaDBF packege.
 
-    author: anil@linuxense.com
-    license: LGPL (http://www.gnu.org/copyleft/lesser.html)
+ author: anil@linuxense.com
+ license: LGPL (http://www.gnu.org/copyleft/lesser.html)
 
-    $Id: DBFWriter.java,v 1.9 2004/03/31 10:57:16 anil Exp $
-*/
+ $Id: DBFWriter.java,v 1.9 2004/03/31 10:57:16 anil Exp $
+ */
 package jams.io.dbf;
+
 import java.io.*;
 import java.util.*;
 
 /**
-    An object of this class can create a DBF file.
-
-    Create an object, <br>
-    then define fields by creating DBFField objects and<br>
-    add them to the DBFWriter object<br>
-    add records using the addRecord() method and then<br>
-    call write() method.
-*/
+ * An object of this class can create a DBF file.
+ *
+ * Create an object, <br>
+ * then define fields by creating DBFField objects and<br>
+ * add them to the DBFWriter object<br>
+ * add records using the addRecord() method and then<br>
+ * call write() method.
+ */
 public class DBFWriter extends DBFBase {
 
     /* other class variables */
@@ -30,76 +31,77 @@ public class DBFWriter extends DBFBase {
     Vector v_records = new Vector();
     int recordCount = 0;
     RandomAccessFile raf = null; /* Open and append records to an existing DBF */
+
     boolean appendMode = false;
 
     /**
-        Creates an empty Object.
-    */
+     * Creates an empty Object.
+     */
     public DBFWriter() {
 
         this.header = new DBFHeader();
     }
 
     /**
-         Creates a DBFWriter which can append to records to an existing DBF file.
-        @param dbfFile. The file passed in shouls be a valid DBF file.
-        @exception Throws DBFException if the passed in file does exist but not a valid DBF file, or if an IO error occurs.
+     * Creates a DBFWriter which can append to records to an existing DBF file.
+     *
+     * @param dbfFile. The file passed in shouls be a valid DBF file.
+     * @exception Throws DBFException if the passed in file does exist but not a
+     * valid DBF file, or if an IO error occurs.
      */
-    public DBFWriter( File dbfFile)
-    throws DBFException {
+    public DBFWriter(File dbfFile)
+            throws DBFException {
 
         try {
 
-            this.raf = new RandomAccessFile( dbfFile, "rw");
+            this.raf = new RandomAccessFile(dbfFile, "rw");
 
             /* before proceeding check whether the passed in File object
              is an empty/non-existent file or not.
              */
-            if( !dbfFile.exists() || dbfFile.length() == 0) {
+            if (!dbfFile.exists() || dbfFile.length() == 0) {
 
                 this.header = new DBFHeader();
                 return;
             }
 
             header = new DBFHeader();
-            this.header.read( raf);
+            this.header.read(raf);
 
             /* position file pointer at the end of the raf */
-            this.raf.seek( this.raf.length()-1 /* to ignore the END_OF_DATA byte at EoF */);
-        }
-        catch( FileNotFoundException e) {
+            this.raf.seek(this.raf.length() - 1 /* to ignore the END_OF_DATA byte at EoF */);
+        } catch (FileNotFoundException e) {
 
-            throw new DBFException( "Specified file is not found. " + e.getMessage());
-        }
-        catch( IOException e) {
+            throw new DBFException("Specified file is not found. " + e.getMessage());
+        } catch (IOException e) {
 
-            throw new DBFException( e.getMessage() + " while reading header");
+            throw new DBFException(e.getMessage() + " while reading header");
         }
 
         this.recordCount = this.header.numberOfRecords;
     }
 
     /**
-        Sets fields.
-    */
-    public void setFields( DBFField[] fields)
-    throws DBFException {
+     * Sets fields.
+     */
+    public void setFields(DBFField[] fields)
+            throws DBFException {
 
-        if( this.header.fieldArray != null) {
+        if (this.header.fieldArray != null) {
 
-            throw new DBFException( "Fields has already been set");
+            throw new DBFException("Fields has already been set");
         }
 
-        if( fields == null || fields.length == 0) {
+        if (fields == null || fields.length == 0) {
 
-            throw new DBFException( "Should have at least one field");
+            throw new DBFException("Should have at least one field");
         }
 
-        for( int i=0; i<fields.length; i++) {
+        for (int i = 0; i < fields.length; i++) {
 
-            if( fields[i] == null) {
+            if (fields[i] == null) {
 
-                throw new DBFException( "Field " + (i+1) + " is null");
+                throw new DBFException("Field " + (i + 1) + " is null");
             }
         }
 
@@ -107,226 +109,225 @@ public class DBFWriter extends DBFBase {
 
         try {
 
-            if( this.raf != null && this.raf.length() == 0) {
+            if (this.raf != null && this.raf.length() == 0) {
 
                 /*
-                  this is a new/non-existent file. So write header before proceeding
+                 this is a new/non-existent file. So write header before proceeding
                  */
-                this.header.write( this.raf);
+                this.header.write(this.raf);
             }
-        }
-        catch( IOException e) {
+        } catch (IOException e) {
 
-            throw new DBFException( "Error accesing file");
+            throw new DBFException("Error accesing file");
         }
     }
 
     /**
-        Add a record.
-    */
-    public void addRecord( Object[] values)
-    throws DBFException {
+     * Add a record.
+     */
+    public void addRecord(Object[] values)
+            throws DBFException {
 
-        if( this.header.fieldArray == null) {
+        if (this.header.fieldArray == null) {
 
-            throw new DBFException( "Fields should be set before adding records");
+            throw new DBFException("Fields should be set before adding records");
         }
 
-        if( values == null) {
+        if (values == null) {
 
-            throw new DBFException( "Null cannot be added as row");
+            throw new DBFException("Null cannot be added as row");
         }
 
-        if( values.length != this.header.fieldArray.length) {
+        if (values.length != this.header.fieldArray.length) {
 
-            throw new DBFException( "Invalid record. Invalid number of fields in row");
+            throw new DBFException("Invalid record. Invalid number of fields in row");
         }
 
-        for( int i=0; i<this.header.fieldArray.length; i++) {
+        for (int i = 0; i < this.header.fieldArray.length; i++) {
 
-            if( values[i] == null) {
+            if (values[i] == null) {
 
                 continue;
             }
 
-            switch( this.header.fieldArray[i].getDataType()) {
+            switch (this.header.fieldArray[i].getDataType()) {
 
                 case 'C':
-                    if( !(values[i] instanceof String)) {
-                        throw new DBFException( "Invalid value for field " + i);
+                    if (!(values[i] instanceof String)) {
+                        throw new DBFException("Invalid value for field " + i);
                     }
                     break;
 
                 case 'L':
-                    if( !( values[i] instanceof Boolean)) {
-                      throw new DBFException( "Invalid value for field " + i);
+                    if (!(values[i] instanceof Boolean)) {
+                        throw new DBFException("Invalid value for field " + i);
                     }
                     break;
 
                 case 'N':
-                    if( !( values[i] instanceof Double)) {
-                        throw new DBFException( "Invalid value for field " + i);
+                    if (!(values[i] instanceof Double)) {
+                        throw new DBFException("Invalid value for field " + i);
                     }
                     break;
 
                 case 'D':
-                    if( !( values[i] instanceof Date)) {
-                        throw new DBFException( "Invalid value for field " + i);
+                    if (!(values[i] instanceof Date)) {
+                        throw new DBFException("Invalid value for field " + i);
                     }
                     break;
 
                 case 'F':
-                    if( !(values[i] instanceof Double || values[i] instanceof Float)) {
+                    if (!(values[i] instanceof Double || values[i] instanceof Float)) {
 
-                        throw new DBFException( "Invalid value for field " + i);
+                        throw new DBFException("Invalid value for field " + i);
                     }
                     break;
             }
         }
 
-        if( this.raf == null) {
+        if (this.raf == null) {
 
-            v_records.addElement( values);
-        }
-        else {
+            v_records.addElement(values);
+        } else {
 
             try {
 
-                writeRecord( this.raf, values);
+                writeRecord(this.raf, values);
                 this.recordCount++;
-            }
-            catch( IOException e) {
+            } catch (IOException e) {
 
-                throw new DBFException( "Error occured while writing record. " + e.getMessage());
+                throw new DBFException("Error occured while writing record. " + e.getMessage());
             }
         }
     }
 
     /**
-        Writes the set data to the OutputStream.
-    */
-    public void write( OutputStream out)
-    throws DBFException {
+     * Writes the set data to the OutputStream.
+     */
+    public void write(OutputStream out)
+            throws DBFException {
 
         try {
 
-            if( this.raf == null) {
+            if (this.raf == null) {
 
-                DataOutputStream outStream = new DataOutputStream( out);
+                DataOutputStream outStream = new DataOutputStream(out);
 
                 this.header.numberOfRecords = v_records.size();
-                this.header.write( outStream);
+                this.header.write(outStream);
 
                 /* Now write all the records */
                 int t_recCount = v_records.size();
-                for( int i=0; i<t_recCount; i++) { /* iterate through records */
+                for (int i = 0; i < t_recCount; i++) { /* iterate through records */
 
-                    Object[] t_values = (Object[])v_records.elementAt( i);
+                    Object[] t_values = (Object[]) v_records.elementAt(i);
 
-                    writeRecord( outStream, t_values);
+                    writeRecord(outStream, t_values);
                 }
 
-                outStream.write( END_OF_DATA);
+                outStream.write(END_OF_DATA);
                 outStream.flush();
-            }
-            else {
+            } else {
 
                 /* everything is written already. just update the header for record count and the END_OF_DATA mark */
                 this.header.numberOfRecords = this.recordCount;
-                this.raf.seek( 0);
-                this.header.write( this.raf);
-                this.raf.seek( raf.length());
-                this.raf.writeByte( END_OF_DATA);
+                this.raf.seek(0);
+                this.header.write(this.raf);
+                this.raf.seek(raf.length());
+                this.raf.writeByte(END_OF_DATA);
                 this.raf.close();
             }
 
-        }
-        catch( IOException e) {
+        } catch (IOException e) {
 
-            throw new DBFException( e.getMessage());
+            throw new DBFException(e.getMessage());
         }
     }
 
     public void write()
-    throws DBFException {
+            throws DBFException {
 
-        this.write( null);
+        this.write(null);
     }
 
-    public void close(){
-        try{
-            if (raf!=null)
+    public void close() {
+        try {
+            if (raf != null) {
                 this.raf.close();
-        }catch(IOException ioe){}
+            }
+        } catch (IOException ioe) {
+        }
     }
-    
-    class Buffer{
+
+    class Buffer {
+
         final int BUFFERSIZE = 65536;
         byte buffer[] = new byte[BUFFERSIZE];
-        int p=0;
-        
-        Buffer(){
-            
+        int p = 0;
+
+        Buffer() {
+
         }
-        
-        void reset(){
+
+        void reset() {
             p = 0;
         }
-        
-        void add(byte[]x){
+
+        void add(byte[] x) {
             System.arraycopy(x, 0, buffer, p, x.length);
-            p+=x.length;
+            p += x.length;
         }
-        void add(byte x){
+
+        void add(byte x) {
             buffer[p++] = x;
         }
-        byte[] get(){
+
+        byte[] get() {
             return Arrays.copyOf(buffer, p);
         }
     }
-    
+
     Buffer buffer = new Buffer();
-    private void writeRecord( DataOutput dataOutput, Object []objectArray)
-    throws IOException {
-        
+
+    private void writeRecord(DataOutput dataOutput, Object[] objectArray)
+            throws IOException {
+
         //dataOutput.write( (byte)' ');
         buffer.reset();
-        buffer.add((byte)' ');
-        for( int j=0; j<this.header.fieldArray.length; j++) { /* iterate throught fields */
+        buffer.add((byte) ' ');
+        for (int j = 0; j < this.header.fieldArray.length; j++) { /* iterate throught fields */
 
-            switch( this.header.fieldArray[j].getDataType()) {
+            switch (this.header.fieldArray[j].getDataType()) {
 
                 case 'C':
-                    if( objectArray[j] != null) {
+                    if (objectArray[j] != null) {
 
                         String str_value = objectArray[j].toString();
                         //dataOutput.write( Utils.textPadding( str_value, characterSetName, this.header.fieldArray[j].getFieldLength()));
-                        buffer.add(Utils.textPadding( str_value, characterSetName, this.header.fieldArray[j].getFieldLength()));
-                    }
-                    else {
+                        buffer.add(Utils.textPadding(str_value, characterSetName, this.header.fieldArray[j].getFieldLength()));
+                    } else {
                         //dataOutput.write( Utils.textPadding( "", this.characterSetName, this.header.fieldArray[j].getFieldLength()));
-                        buffer.add(Utils.textPadding( "", this.characterSetName, this.header.fieldArray[j].getFieldLength()));
+                        buffer.add(Utils.textPadding("", this.characterSetName, this.header.fieldArray[j].getFieldLength()));
                     }
 
                     break;
 
                 case 'D':
-                    if( objectArray[j] != null) {
+                    if (objectArray[j] != null) {
 
                         GregorianCalendar calendar = new GregorianCalendar();
-                        calendar.setTime( (Date)objectArray[j]);
+                        calendar.setTime((Date) objectArray[j]);
                         //StringBuffer t_sb = new StringBuffer();
                         //dataOutput.write( String.valueOf( calendar.get( Calendar.YEAR)).getBytes());
                         //dataOutput.write( Utils.textPadding( String.valueOf( calendar.get( Calendar.MONTH)+1), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte)'0'));
                         //dataOutput.write( Utils.textPadding( String.valueOf( calendar.get( Calendar.DAY_OF_MONTH)), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte)'0'));
-                        buffer.add( String.valueOf( calendar.get( Calendar.YEAR)).getBytes());
-                        buffer.add( Utils.textPadding( String.valueOf( calendar.get( Calendar.MONTH)+1), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte)'0'));
-                        buffer.add( Utils.textPadding( String.valueOf( calendar.get( Calendar.DAY_OF_MONTH)), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte)'0'));
-                    }
-                    else {
+                        buffer.add(String.valueOf(calendar.get(Calendar.YEAR)).getBytes());
+                        buffer.add(Utils.textPadding(String.valueOf(calendar.get(Calendar.MONTH) + 1), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte) '0'));
+                        buffer.add(Utils.textPadding(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)), this.characterSetName, 2, Utils.ALIGN_RIGHT, (byte) '0'));
+                    } else {
 
                         //dataOutput.write( "        ".getBytes());
-                        buffer.add( "        ".getBytes());
+                        buffer.add("        ".getBytes());
                     }
 
                     break;
@@ -335,54 +336,51 @@ public class DBFWriter extends DBFBase {
 
                     /*if( objectArray[j] != null) {
 
-                        //dataOutput.write( Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
-                        buffer.add( Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
-                    }
-                    else {
-                        buffer.add( Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
-                        //dataOutput.write( Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
-                    }*/
+                     //dataOutput.write( Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
+                     buffer.add( Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
+                     }
+                     else {
+                     buffer.add( Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
+                     //dataOutput.write( Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
+                     }*/
                     buffer.add(
-                            Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
+                            Utils.doubleFormating((Double) objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
                     break;
 
                 case 'N':
 
                     buffer.add(
-                            Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
-                    
+                            Utils.doubleFormating((Double) objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
+
                     /*if( objectArray[j] != null) {
 
-                        //dataOutput.write(
-                        //    Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
+                     //dataOutput.write(
+                     //    Utils.doubleFormating( (Double)objectArray[j], this.characterSetName, this.header.fieldArray[j].getFieldLength(), this.header.fieldArray[j].getDecimalCount()));
                         
-                    }
-                    else {
+                     }
+                     else {
 
-                        buffer.add(
-                            Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
-                    }*/
-
+                     buffer.add(
+                     Utils.textPadding( "?", this.characterSetName, this.header.fieldArray[j].getFieldLength(), Utils.ALIGN_RIGHT));
+                     }*/
                     break;
                 case 'L':
 
-                    if( objectArray[j] != null) {
+                    if (objectArray[j] != null) {
 
-                        if( (Boolean)objectArray[j] == Boolean.TRUE) {
+                        if ((Boolean) objectArray[j] == Boolean.TRUE) {
 
                             //dataOutput.write( (byte)'T');
-                            buffer.add( (byte)'T');
-                        }
-                        else {
+                            buffer.add((byte) 'T');
+                        } else {
 
                             //dataOutput.write((byte)'F');
-                            buffer.add((byte)'F');
+                            buffer.add((byte) 'F');
                         }
-                    }
-                    else {
+                    } else {
 
                         //dataOutput.write( (byte)'?');
-                        buffer.add( (byte)'?');
+                        buffer.add((byte) '?');
                     }
 
                     break;
@@ -392,10 +390,31 @@ public class DBFWriter extends DBFBase {
                     break;
 
                 default:
-                    throw new DBFException( "Unknown field type " + this.header.fieldArray[j].getDataType());
+                    throw new DBFException("Unknown field type " + this.header.fieldArray[j].getDataType());
             }
         }    /* iterating through the fields */
+
         dataOutput.write(buffer.get());
         buffer.reset();
+    }
+
+    public static void main(String[] args) throws Exception {
+        DBFReader reader = new DBFReader(new FileInputStream(new File("C:\\Arbeit\\Projekte\\J2000Klima\\JAMS\\data\\J2000Klima Th\\input\\local\\gis\\hrus_th.dbf")));
+
+        DBFWriter writer = new DBFWriter((new File("C:\\Arbeit\\Projekte\\J2000Klima\\JAMS\\data\\J2000Klima Th\\input\\local\\gis\\hrus_neu.dbf")));
+        DBFField fields[] = new DBFField[reader.getFieldCount()];
+        for (int i = 0; i < fields.length; i++) {
+            fields[i] = reader.getField(i);
+        }
+        writer.setFields(fields);
+        for (int j = 0; j < reader.getRecordCount(); j++) {
+            System.out.println("Writing record " + j + " of " + reader.getRecordCount());
+            Object o[] = reader.nextRecord();
+            for (int i = 0; i < 2000; i++) {
+                writer.addRecord(o);
+            }
+        }
+        writer.write();
+        writer.close();
     }
 }

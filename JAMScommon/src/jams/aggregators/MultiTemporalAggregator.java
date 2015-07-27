@@ -193,10 +193,12 @@ public class MultiTemporalAggregator<T> extends TemporalAggregator<T> {
             }
         });
         
-        double v[] = new double[2];
-        for (int i=0;i<10000;i++){            
+        double v[] = new double[2];        
+        Calendar cEnd = DefaultDataFactory.getDataFactory().createCalendar();
+        cEnd.set(2091, 11, 31, 0, 1, 1);
+        while(c.before(cEnd)){
             v[0] = 1;
-            v[1] = i;
+            v[1] = 1;
             //System.out.println("i:" + i);
             OuterTempAggr.aggregate(c, v);
             c.add(Calendar.DAY_OF_YEAR, 1);

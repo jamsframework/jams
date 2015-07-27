@@ -72,6 +72,7 @@ public class MultiTemporalAggregatorTest {
         tempAggr.addConsumer(new TemporalAggregator.Consumer<double[]>() {
             @Override
             public void consume(Attribute.Calendar c, double[] v) {
+                System.out.println(c);
                 output1.put(c.getValue(), v.clone());
             }
         });

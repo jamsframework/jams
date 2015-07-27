@@ -25,29 +25,45 @@ import java.util.Arrays;
  */
 public class ShapeFileOutputDataStore {
     DBFWriter writer  = null;
-    File template, file;
+    File shapeFileTemplate, targetDirectory, targetFile;
     
-    public ShapeFileOutputDataStore(File template, File file) throws IOException{
-        init(template, file);
+    public ShapeFileOutputDataStore(File shapeFileTemplate, File targetDirectory) throws IOException{
+        init(shapeFileTemplate, targetDirectory);
     }
     
-    public File getFile(){
-        return file;
+    public File getTargetDirectory(){
+        return targetDirectory;
     }
     
-    private void init(File template, File file) throws IOException{
-        this.template = template;
+    private void init(File shapeFileTemplate, File targetDirectory) throws IOException{
+        //test precondition
+        if (shapeFileTemplate == null)
+            throw new IllegalArgumentException("ShapeFileOutputDateStore cannot be initialized, because shapeFileTemplate must not be null.");
+        if (!shapeFileTemplate.isFile() || !shapeFileTemplate.exists() || !shapeFileTemplate.getName().endsWith(".shp")){
+            throw new IllegalArgumentException("ShapeFileOutputDateStore cannot be initialized, because shapeFileTemplate (%1) is not a shapefile.".replace("%1", shapeFileTemplate.getAbsolutePath()));
+        }
+        this.shapeFileTemplate = shapeFileTemplate;
         
-        file = new File(file, template.getName().replace(".shp", ".dbf"));
+        if (targetDirectory == null){
+            throw new IllegalArgumentException("ShapeFileOutputDateStore cannot be initialized, because targetDirectory must not be null.");
+        }
+        if (!targetDirectory.isDirectory()){
+            throw new IllegalArgumentException("ShapeFileOutputDateStore cannot be initialized, because targetDirectory (%1) is not a directory.".replace("%1", targetDirectory.getAbsolutePath()));
+        }
+        this.targetDirectory = targetDirectory;  
+        if (!targetDirectory.exists()){
+            targetDirectory.mkdirs();
+        }
+        this.targetFile = new File(targetDirectory, shapeFileTemplate.getName().replace(".shp", ".dbf"));
         
-        this.file = file;
+
         //copy data .. 
-        File directory = template.getParentFile();
-        String name = template.getName().replace(".shp", "");
+        File directory = shapeFileTemplate.getParentFile();
+        String name = shapeFileTemplate.getName().replace(".shp", "");
         for (File srcFile : directory.listFiles()) {
             if (srcFile.getName().startsWith(name)) {
                 try {                    
-                    Path dest = Paths.get(file.getParentFile().getAbsolutePath()+"/"+srcFile.getName());
+                    Path dest = Paths.get(targetDirectory.getAbsolutePath()+"/"+srcFile.getName());
                     Path src  = Paths.get(srcFile.getAbsolutePath());
                     
                     if (Files.exists(dest)) {                        
@@ -65,12 +81,42 @@ public class ShapeFileOutputDataStore {
         }
     }
     
+    public String[] getFieldNames() throws IOException{
+        InputStream inputStream = null;
+        DBFReader dbfReader = null;
+        FileOutputStream outStream = null;
+        String fieldNames[] = null;
+        try {            
+            inputStream = new FileInputStream(new File(shapeFileTemplate.getParentFile(), shapeFileTemplate.getName().replace(".shp", ".dbf")));
+            dbfReader = new DBFReader(inputStream);
+            fieldNames = new String[dbfReader.getFieldCount()];
+            for (int i=0;i<dbfReader.getFieldCount();i++){
+                fieldNames[i] = dbfReader.getField(i).getName();
+            }
+        } catch (IOException ioe) {
+            //getModel().getRuntime().getLogger().log(Level.SEVERE, MessageFormat.format(JAMS.i18n("The following DBF File was not found: " + dbfFileOriginal), getInstanceName()));
+            ioe.printStackTrace();
+            throw new IOException("Could not write shape file, because of: " + ioe.toString());
+        } finally {
+            try {
+                if (inputStream!=null)
+                    inputStream.close();
+                if (outStream!=null)
+                    outStream.close();
+                if (writer!=null)
+                    writer.close();
+            } catch (IOException ioe2) {
+            }
+        }
+        return fieldNames;
+    }
+    
     public void addDataToShpFiles(NamedDataSupplier<Double> I[], String idFieldName) throws IOException{
         InputStream inputStream = null;
         DBFReader dbfReader = null;
         FileOutputStream outStream = null;
         try {            
-            inputStream = new FileInputStream(new File(template.getParentFile(), template.getName().replace(".shp", ".dbf")));
+            inputStream = new FileInputStream(new File(shapeFileTemplate.getParentFile(), shapeFileTemplate.getName().replace(".shp", ".dbf")));
             dbfReader = new DBFReader(inputStream);
 
             DBFWriter writer = new DBFWriter();
@@ -103,12 +149,12 @@ public class ShapeFileOutputDataStore {
                 dbfFields[i+k].setDecimalCount(5);                
             }
             writer.setFields(dbfFields);
-            outStream = new FileOutputStream(file);
+            outStream = new FileOutputStream(targetFile);
             writer.write(outStream);
             outStream.close();
             outStream = null;
             
-            writer = new DBFWriter(file);
+            writer = new DBFWriter(targetFile);
             
             for (int j=0;j<dbfReader.getRecordCount();j++){
                 Object objIn[] = dbfReader.nextRecord();
@@ -157,7 +203,7 @@ public class ShapeFileOutputDataStore {
         FileOutputStream outStream = null;
         try {
             String fields[] = store.getEntries();
-            inputStream = new FileInputStream(new File(template.getParentFile(), template.getName().replace(".shp", ".dbf")));
+            inputStream = new FileInputStream(new File(shapeFileTemplate.getParentFile(), shapeFileTemplate.getName().replace(".shp", ".dbf")));
             dbfReader = new DBFReader(inputStream);
 
             DBFWriter writer = new DBFWriter();
@@ -186,12 +232,12 @@ public class ShapeFileOutputDataStore {
                 dbfFields[i+k].setDecimalCount(5);                
             }
             writer.setFields(dbfFields);
-            outStream = new FileOutputStream(file);
+            outStream = new FileOutputStream(targetFile);
             writer.write(outStream);
             outStream.close();
             outStream = null;
             
-            writer = new DBFWriter(file);
+            writer = new DBFWriter(targetFile);
             
             for (int j=0;j<dbfReader.getRecordCount();j++){
                 Object objIn[] = dbfReader.nextRecord();

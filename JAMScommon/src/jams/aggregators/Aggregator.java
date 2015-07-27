@@ -19,7 +19,8 @@ public abstract class Aggregator<T> {
         VARIANCE, 
         INDEPENDENT, 
         MEDIAN,
-        LAST;
+        LAST,
+        INDEX;
     
         public String toAbbreviation(){
             switch(this){
@@ -31,6 +32,7 @@ public abstract class Aggregator<T> {
                 case INDEPENDENT: return "ind";
                 case VARIANCE: return "var";
                 case MEDIAN: return "med";
+                case INDEX: return "index";
                 default: return null;
             }
         }    

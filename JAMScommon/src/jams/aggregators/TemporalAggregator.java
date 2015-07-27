@@ -11,6 +11,7 @@ import jams.data.Attribute.TimeInterval;
 import jams.data.DefaultDataFactory;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -99,10 +100,15 @@ public abstract class TemporalAggregator<T>{
             
     protected void consume(Calendar time, T v) {
         //is there anything to consume?
-        if (time == null || roundToTimePeriod(time, timePeriod) == null )
+        if (time == null){
             return;
+        }
+        Calendar roundedTime = roundToTimePeriod(time, timePeriod);
+        if (roundedTime == null)
+            return;
+
         for (Consumer c : consumers) {
-            c.consume(time, v);
+            c.consume(roundedTime, v);
         }
     }
     
@@ -179,13 +185,17 @@ public abstract class TemporalAggregator<T>{
             case SEASONAL: {out.removeUnsignificantComponents(Attribute.Calendar.MONTH); 
                     int month = out.get(Attribute.Calendar.MONTH);
                     int year  = out.get(Attribute.Calendar.YEAR);
+                    //winter dez - feb (11,00,01)
                     if (month < 2){
-                        month = 12;
+                        month = 11;
                         year = year - 1;
+                    //spring mar - may (02,03,04)
                     }else if (month < 5){
                         month = 2;
+                    //spring jun,jul,aug (05,06,07)
                     }else if (month < 8){
                         month = 5;
+                    //spring sep,okt,nov (08,09,10)
                     }else if (month < 11){
                         month = 8;
                     }else{

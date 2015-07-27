@@ -55,6 +55,8 @@ public abstract class DoubleAggregator extends Aggregator<Double> {
                 return new VarianceAggregator();
             case MEDIAN:
                 return new MedianAggregator();
+            case INDEX:
+                return new IndexAggregator();
             default:
                 throw new UnsupportedOperationException();
         }        
@@ -155,6 +157,48 @@ public abstract class DoubleAggregator extends Aggregator<Double> {
             }else{
                 v = Double.NaN;
             }
+        }
+    }
+    
+    //implementations
+    //Sum up values
+    public static class IndexAggregator extends DoubleAggregator {
+
+        int selectionIndex = 0;
+        int currentIndex = 0;
+        public IndexAggregator() {
+            super();
+        }
+
+        public IndexAggregator(IndexAggregator copy) {
+            super(copy);
+            selectionIndex = copy.selectionIndex;     
+            currentIndex = copy.currentIndex;
+        }
+
+        @Override
+        public DoubleAggregator copy() {
+            return new IndexAggregator(this);
+        }
+
+        @Override
+        public void init() {
+            super.init();
+            v = Double.NaN;
+            currentIndex = 0;
+
+        }
+        public void setSelectionIndex(int selectionIndex){
+            this.selectionIndex = selectionIndex;
+        }
+        
+        @Override
+        public void consider(Double x) {
+            if ( currentIndex++ == selectionIndex){
+                if (!Double.isNaN(x)){
+                    v = x;
+                }
+            }              
         }
     }
     
