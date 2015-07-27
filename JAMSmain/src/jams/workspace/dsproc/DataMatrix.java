@@ -51,15 +51,41 @@ public class DataMatrix extends Matrix {
 
         for (int i = 0; i < colCount; i++) {
             result[i] = 0;
+            int counter = 0;
             for (int j = 0; j < rowCount; j++) {
-                result[i] += data[j][i];
+                if (data[j][i] != -9999 && Double.isFinite(data[j][i])){
+                    result[i] += data[j][i];
+                    counter++;
+                }
             }
-            result[i] /= rowCount;
+            result[i] /= counter;
         }
 
         return result;
     }
 
+    public double[] getAvgCol() {
+
+        double[] result = new double[this.getRowDimension()];
+        int colCount = this.getColumnDimension();
+        int rowCount = this.getRowDimension();
+        double[][] data = this.getArray();
+
+        for (int i = 0; i < rowCount; i++) {
+            result[i] = 0;
+            int counter = 0;
+            for (int j = 0; j < colCount; j++) {
+                if (data[i][j] != -9999 && Double.isFinite(data[i][j])){
+                    result[i] += data[i][j];
+                    counter++;
+                }
+            }
+            result[i] /= counter;
+        }
+
+        return result;
+    }
+    
     public double[] getSumRow() {
 
         double[] result = new double[this.getColumnDimension()];

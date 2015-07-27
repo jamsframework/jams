@@ -134,17 +134,30 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     public synchronized DataMatrix getCrossProduct(long[] entityIds, String[] dateIds) throws SQLException, IOException {
+        if (entityIds == null){
+            throw new NullPointerException("getCrossProduct: entityIds must not be null");
+        }
+        if (dateIds == null){
+            throw new NullPointerException("getCrossProduct: dateIds must not be null");
+        }
         double[][] matrix = new double[dateIds.length][entityIds.length];
         int idMap[] = null;
         Attribute.Calendar calendar = DefaultDataFactory.getDataFactory().createCalendar();
+        
         for (int i = 0; i < dateIds.length; i++) {
             calendar.setValue(dateIds[i]);
             DataMatrix col = getTemporalData(calendar);
+            if (col == null){
+                if (dsdb != null && dsdb.getFile() != null)
+                    throw new IOException("getCrossProduct: date " + calendar.toString() + " is not available in file " + this.dsdb.getFile().getAbsolutePath());
+                else
+                    throw new IOException("getCrossProduct: date " + calendar.toString() + " is not available");
+            }
             if (idMap == null) {
                 idMap = new int[entityIds.length];
-                //bad! quadratic time!!
+
                 for (int j = 0; j < entityIds.length; j++) {
-                    idMap[j] = col.getIDPosition(Long.toString(entityIds[j]));
+                    idMap[j] = col.getIDPosition(Long.toString(entityIds[j]));                    
                 }
             }
             double entities[] = col.getCol(0);

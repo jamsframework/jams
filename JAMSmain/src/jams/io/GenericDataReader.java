@@ -35,7 +35,7 @@ import jams.data.*;
 
 public class GenericDataReader implements JAMSTableDataStore, Serializable {
     
-    SerializableBufferedReader reader;
+    BufferedReader reader;
     String fileName;
     boolean timeParse;
     String nextString = "";
@@ -75,7 +75,7 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
     
     private void createReader() {
         try {
-            reader = new SerializableBufferedReader(new File(fileName));
+            reader = new BufferedReader(new FileReader(new File(fileName)));
         } catch (IOException ioe) {
             JAMSTools.handle(ioe);
         }
@@ -156,8 +156,12 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
         
         if (timeParse) {
             String timeString = st.nextToken();
-            timeString = timeString + " " + st.nextToken();
-            time = JAMSTableDataConverter.parseTime(timeString);
+            try{
+                time = JAMSTableDataConverter.parseTime(timeString);
+            }catch(Throwable t){
+                timeString = timeString + " " + st.nextToken();
+                time = JAMSTableDataConverter.parseTime(timeString);
+            }            
         } else {
             time = null;
         }
@@ -171,6 +175,15 @@ public class GenericDataReader implements JAMSTableDataStore, Serializable {
         this.current = new JAMSTableDataArray(time, values);
         return current;
     }
+    
+    public ArrayList<JAMSTableDataArray> getAll(){
+        ArrayList<JAMSTableDataArray> array = new ArrayList<JAMSTableDataArray>();        
+        while (hasNext()) {
+            array.add(getNext());
+        }
+        return array;
+    }
+    
     
     public boolean hasNext() {
         update();

@@ -21,6 +21,7 @@
  */
 package jams.workspace.dsproc;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -50,13 +51,22 @@ public abstract class Processor {
     public AbstractDataStoreProcessor getDataStoreProcessor() {
         return dsdb;
     }
-    
-    public void close() throws SQLException {        
+
+    public void close() throws SQLException {
         processingProgressObservable = null;
-        if (conn != null)
+        if (conn != null) {
             conn.close();
-        if (dsdb != null)
+        }
+        if (dsdb != null) {
             dsdb.close();
+        }
+    }
+
+    //try to close resource if that has not be done yet
+    @Override
+    public void finalize() throws Throwable {
+        super.finalize();
+        close();
     }
 
     public void addProcessingProgressObserver(Observer o) {
@@ -149,8 +159,8 @@ public abstract class Processor {
                         for (int j = 0; j < a.length; j++) {
                             result[j][i] = relWeights[j];
                         }
-                    }else if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) {
-                         if (relWeights == null) {
+                    } else if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) {
+                        if (relWeights == null) {
                             relWeights = new double[a.length];
                             double sum = 0;
                             for (int j = 0; j < a.length; j++) {
@@ -180,13 +190,13 @@ public abstract class Processor {
                         for (int j = 0; j < a.length; j++) {
                             result[j][i] = absWeights[j];
                         }
-                    }else if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) {
+                    } else if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) {
                         // if the absolute weights have not been calculated yet
                         // do so now
                         if (absWeights == null) {
                             absWeights = new double[a.length];
                             for (int j = 0; j < a.length; j++) {
-                                absWeights[j] = 1. /a[j][weightAttribIndex];
+                                absWeights[j] = 1. / a[j][weightAttribIndex];
                             }
                         }
 
@@ -248,6 +258,7 @@ public abstract class Processor {
 
     /**
      * Send a custom query to the database
+     *
      * @param query The query string
      * @return true, if the query was sent successfully, false otherwise
      * @throws java.sql.SQLException
@@ -260,6 +271,7 @@ public abstract class Processor {
 
     /**
      * Send a custom select-query to the database
+     *
      * @param query The query string
      * @return A JDBC result set
      * @throws java.sql.SQLException

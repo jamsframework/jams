@@ -455,6 +455,8 @@ public class FileTools {
      */
     static public long getDirectorySize(java.io.File directory) {
         long length = 0;
+        if (directory==null || directory.listFiles() == null)
+            return 0;
         for (java.io.File file : directory.listFiles()) {
             if (file.isFile()) {
                 length += file.length();

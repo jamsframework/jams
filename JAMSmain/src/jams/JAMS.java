@@ -208,7 +208,7 @@ public class JAMS {
         else if (c == String.class)
             return null;
         else
-            return null;
+            throw new JAMSException("No missing value defined for class type " + c.toString());
     }
           
 }
