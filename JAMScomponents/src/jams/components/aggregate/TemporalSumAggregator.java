@@ -53,7 +53,7 @@ public class TemporalSumAggregator extends JAMSComponent {
     description = "A time interval defining start and end of the weighted temporal aggregation")
     public Attribute.TimeInterval[] aggregationTimeInterval;    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "A time interval defining start and end of the weighted temporal aggregation")
+    description = "If months are listed, aggregation will be performed only during the listed months")
     public Attribute.Integer[] months;
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     description = "Calculate the average value? If average is false, the sum will be calculated.",

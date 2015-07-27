@@ -55,10 +55,14 @@ public class SpecificHumidityToRelativeHumidity extends JAMSComponent {
         double s = specHum.getValue();
         double p = 1013.;
         double T = tmean.getValue();
-        
+        /*
         double numerator = ((p*1000.) / ((1.+622.)/s));
         double denumerator = (6.107 * Math.pow(10, 7.48 * T / 237.3+T) );
-        double r = 100. * numerator / denumerator;
+        double r = 100. * numerator / denumerator;*/
+        //taken from: http://earthscience.stackexchange.com/questions/2360/how-do-i-convert-specific-humidity-to-relative-humidity
+        double es = 611. * Math.exp(17.67*T/(T+273.15-29.65));
+        double ws = 0.622* es / (100. * p);
+        double r = 100. * s / ws;
         
         relHum.setValue(r);
     }

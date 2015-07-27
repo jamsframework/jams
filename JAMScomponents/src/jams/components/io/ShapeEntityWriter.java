@@ -174,7 +174,7 @@ public class ShapeEntityWriter extends JAMSComponent {
 
     @Override
     public void cleanup() {
-        getModel().getRuntime().sendInfoMsg("Write shapefile: " + shpStore.getFile());
+        getModel().getRuntime().sendInfoMsg("Write shapefile to: " + shpStore.getTargetDirectory());
         try {
             shpStore.addDataToShpFiles(entityDataProviders, this.idName.getValue());
         } catch (IOException ioe) {
