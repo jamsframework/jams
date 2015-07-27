@@ -9,6 +9,7 @@ package jams.data;
 /**
  *
  * @author christian
+ * @param <T>
  */
 public interface DataSupplier<T> extends Iterable<T>{
     abstract public int size();
