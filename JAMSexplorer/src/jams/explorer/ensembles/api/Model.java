@@ -8,7 +8,6 @@ package jams.explorer.ensembles.api;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  *

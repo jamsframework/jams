@@ -29,7 +29,8 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import jams.workspace.dsproc.Processor;
 import javax.swing.JOptionPane;
-import optas.data.DataCollection;
+import optas.data.DefaultDataCollection;
+import optas.data.api.DataCollection;
 import optas.io.ImportMonteCarloData;
 import optas.io.ImportMonteCarloData.EnsembleType;
 import optas.io.ImportMonteCarloException;
@@ -121,7 +122,7 @@ public class ImportMonteCarloDataPanel extends JPanel {
         importer = new ImportMonteCarloData();
         finalEnsemble = dc;
         if (file.getAbsolutePath().endsWith("cdat")) {
-            importedCollection = DataCollection.createFromFile(file);
+            importedCollection = DefaultDataCollection.createFromFile(file);
         }
         init();
         if (!file.getAbsolutePath().endsWith("cdat")) {

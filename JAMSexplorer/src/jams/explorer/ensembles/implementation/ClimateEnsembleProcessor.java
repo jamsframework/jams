@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
@@ -98,8 +99,13 @@ public class ClimateEnsembleProcessor implements EnsembleProcessor<ClimateModel,
     @Override
     public Attribute.Calendar[] getTimeDomain() throws SQLException {
         TreeSet<Attribute.Calendar> result = new TreeSet<Attribute.Calendar>();
-        for (ClimateModel model : procs.keySet()) {
-            result.addAll(Arrays.asList(procs.get(model).getTimeSteps()));
+        if (!procs.isEmpty()){
+            result.addAll(Arrays.asList(procs.values().iterator().next().getTimeSteps()));
+        
+            for (ClimateModel model : procs.keySet()) {
+                //result.addAll(Arrays.asList(procs.get(model).getTimeSteps()));
+                result.retainAll(Arrays.asList(procs.get(model).getTimeSteps()));
+            }
         }
         return result.toArray(new Attribute.Calendar[0]);
     }
@@ -108,6 +114,7 @@ public class ClimateEnsembleProcessor implements EnsembleProcessor<ClimateModel,
     public double[][] getTimeSlice(long entityIds[], String dateIds) throws SQLException, IOException {
         double result[][] = new double[ensemble.getSize()][entityIds.length];
         int j = 0;
+        
         for (ClimateModel model : procs.keySet()) {
             TimeSpaceProcessor tsp = this.procs.get(model);
 
@@ -115,7 +122,7 @@ public class ClimateEnsembleProcessor implements EnsembleProcessor<ClimateModel,
                 for (AttributeData a : tsp.getDataStoreProcessor().getAttributes()) {
                     a.setSelected(true);
                 }
-
+                
                 DataMatrix matrix = procs.get(model).getCrossProduct(entityIds, new String[]{dateIds});
                 for (int i = 0; i < entityIds.length; i++) {
                     result[j][i] = matrix.get(0, i);
@@ -127,19 +134,60 @@ public class ClimateEnsembleProcessor implements EnsembleProcessor<ClimateModel,
         return result;
     }
 
+     private String date(){
+        return "[" + (new Date()).getTime() + "]";
+    }
+     
+    //@Override
+    public double[][] getModelSlice(ClimateModel model) throws SQLException, IOException {
+        System.out.println(date() + ":Working on getModelSlice ");
+        System.out.println(date() + ":getEntityIDs");
+        long entityIDs[] = getEntityIDs();
+        System.out.println(date() + ":getTimeDomain");
+        Attribute.Calendar dateIds[] = getTimeDomain();
+        String dateIdsAsString[] = new String[dateIds.length];
+        for (int i=0;i<dateIds.length;i++){
+            dateIdsAsString[i] = dateIds[i].toString();
+        }
+        double result[][] = new double[dateIdsAsString.length][entityIDs.length];
+
+        TimeSpaceProcessor tsp = this.procs.get(model);
+
+        if (tsp != null) {
+            for (AttributeData a : tsp.getDataStoreProcessor().getAttributes()) {
+                a.setSelected(true);
+            }
+            System.out.println(date() + ":getCrossProduct");
+            DataMatrix matrix = procs.get(model).getCrossProduct(entityIDs, dateIdsAsString);
+            System.out.println(date() + ":finished");
+            for (int i = 0; i < entityIDs.length; i++) {
+                for (int j = 0; j < dateIdsAsString.length; j++) {
+                    result[j][i] = matrix.get(j, i);
+                }
+            }
+        }
+
+        return result;
+    }
+    
     @Override
     public long[] getEntityIDs() throws SQLException, IOException {
         TreeSet<Long> result = new TreeSet<Long>();
-        for (ClimateModel model : procs.keySet()) {
-            result.addAll(Arrays.asList(procs.get(model).getEntityIDs()));
-        }
-
+        //do an AND over all Entity-IDs
+        if (!procs.keySet().isEmpty()){
+            result.addAll(Arrays.asList(procs.values().iterator().next().getEntityIDs()));
+            for (ClimateModel model : procs.keySet()) {
+                //much faster!
+                TreeSet<Long> sortedList = new TreeSet(Arrays.asList(procs.get(model).getEntityIDs()));
+                result.retainAll(sortedList);
+            }
+        }       
         long convResult[] = new long[result.size()];
         int i = 0;
         for (long l : result) {
             convResult[i++] = l;
         }
-        return convResult;
+        return convResult;        
     }
 
     @Override
@@ -164,8 +212,8 @@ public class ClimateEnsembleProcessor implements EnsembleProcessor<ClimateModel,
                     a.setSelected(true);
                 }
 
-                DataMatrix m = tsp.getCrossProduct(entityIDs, timeIDs);
-                double avg[] = m.getAvgRow();
+                DataMatrix m = tsp.getCrossProduct(entityIDs, timeIDs);               
+                double avg[] = m.getAvgCol();
                 System.arraycopy(avg, 0, result[i], 0, timeIDs.length);
             }
             i++;
@@ -189,5 +237,9 @@ public class ClimateEnsembleProcessor implements EnsembleProcessor<ClimateModel,
 
         DataMatrix m = tsp.getCrossProduct(entityIDs, timeIDs);
         return m.getAvgRow();
+    }
+    
+    public DataMatrix calculate(String s){
+        return null;
     }
 }

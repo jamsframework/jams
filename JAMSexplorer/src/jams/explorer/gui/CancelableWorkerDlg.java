@@ -29,15 +29,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class CancelableWorkerDlg extends WorkerDlg {
-
-    private CancelableSwingWorker task;
-
+    
+    SwingWorker subTask = null;
+    
     public CancelableWorkerDlg(Frame owner, String title) {
         super(owner, title);
 
@@ -45,7 +46,7 @@ public class CancelableWorkerDlg extends WorkerDlg {
         cancelButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                task.cancel();
+                ((CancelableSwingWorker)task).cancel();
             }
         });
 
@@ -56,8 +57,26 @@ public class CancelableWorkerDlg extends WorkerDlg {
         pack();
     }
 
-    public synchronized void setTask(CancelableSwingWorker task) {
-        this.task = task;
+    public synchronized void setTask(SwingWorker task) {
+        subTask = task;
+        
+        this.task = new CancelableSwingWorker() {            
+            @Override
+            public int cancel() {
+                this.cancel(true);
+                return 0;
+            }
+
+            @Override
+            protected Object doInBackground() throws Exception {
+                try{
+                    subTask.run();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
         super.setTask(task);
     }
 }

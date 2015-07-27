@@ -6,6 +6,7 @@
 package jams.explorer.ensembles.gui;
 
 import jams.aggregators.Aggregator.AggregationMode;
+import jams.data.Attribute.TimeInterval;
 import jams.explorer.ensembles.implementation.ClimateEnsemble.ClimateDataSupplier;
 import java.awt.BorderLayout;
 import java.util.Enumeration;
@@ -30,18 +31,20 @@ public class ClimateDataAggregationTab extends AbstractClimateDataTab {
 
     AggregationMode mode;
     Double modeParameter;
+    EnsembleControlPanel parent;
 
     static final Logger logger = Logger.getLogger(ClimateDataAggregationTab.class.getName());
     {
         EnsembleControlPanel.registerLogHandler(logger);
     }
 
-    public ClimateDataAggregationTab(String name, AggregationMode mode, Double modeParameter) {
+    public ClimateDataAggregationTab(String name, AggregationMode mode, Double modeParameter, EnsembleControlPanel parent) {
         super(name);
 
         this.mode = mode;
         this.modeParameter = modeParameter;
-
+        this.parent = parent;
+        
         table = new JTable();
         JScrollPane pane = new JScrollPane(table,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -59,7 +62,7 @@ public class ClimateDataAggregationTab extends AbstractClimateDataTab {
             table.setModel(new DefaultTableModel(1, 1));
         }
 
-        ClimateDataSupplier<Double>[] data = ensemble.aggregateEnsemble(output, mode, modeParameter);
+        ClimateDataSupplier<Double>[] data = ensemble.aggregateEnsemble(output, mode, modeParameter, parent.getRefPeriod());
         if (data == null) {
             return;
         }

@@ -9,6 +9,7 @@ import jams.aggregators.Aggregator;
 import jams.aggregators.DoubleAggregator;
 import jams.data.ArrayDataSupplier;
 import jams.data.Attribute;
+import jams.data.Attribute.TimeInterval;
 import jams.data.NamedDataSupplier;
 import jams.explorer.ensembles.api.Ensemble;
 import jams.explorer.ensembles.api.Model;
@@ -17,7 +18,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -39,16 +43,24 @@ public class ClimateEnsemble extends AbstractEnsemble<ClimateModel> {
 
     @XmlTransient
     DefaultTreeModel treeModel = null;
-    
+
     String relativePathToShapeFileTemplate;
 
     @XmlTransient
-    public File basePath = new File("");
-            
+    public File basePath = new File("").getAbsoluteFile();
+
     public class ClimateDataSupplier<T> extends ArrayDataSupplier<T> implements NamedDataSupplier<T> {
+
         String name;
         long entityIDs[];
         HashMap<Integer, Integer> indexMap = new HashMap<Integer, Integer>();
+
+        ClimateDataSupplier(ClimateDataSupplier<T> parent) {
+            super(parent.input);
+            this.name = parent.name;
+            this.indexMap = parent.indexMap;
+            this.entityIDs = parent.entityIDs;
+        }
 
         ClimateDataSupplier(String name, long entityIDs[], T values[]) {
             super(values);
@@ -60,6 +72,13 @@ public class ClimateEnsemble extends AbstractEnsemble<ClimateModel> {
             }
         }
 
+        public ClimateDataSupplier copy(String name, T values[]) {
+            ClimateDataSupplier<T> copy = new ClimateDataSupplier<T>(this);
+            copy.name = name;
+            copy.input = values;
+            return copy;
+        }
+
         @Override
         public String getName() {
             return ClimateDataSupplier.this.name;
@@ -69,8 +88,13 @@ public class ClimateEnsemble extends AbstractEnsemble<ClimateModel> {
             return entityIDs;
         }
 
+        @Override
         public T get(int id) {
-            return this.input[indexMap.get(id)];
+            Integer i = indexMap.get(id);
+            if (i == null) {
+                return null;
+            }
+            return this.input[i];
         }
     }
 
@@ -83,109 +107,161 @@ public class ClimateEnsemble extends AbstractEnsemble<ClimateModel> {
     }
 
     public void setShapeFileTemplate(File f) {
-        if (f == null){
+        if (f == null) {
             relativePathToShapeFileTemplate = null;
             return;
         }
-        Path p_shape = f.toPath();
-        Path p_base  = basePath.toPath();
-        
+        Path p_shape = f.toPath().toAbsolutePath();
+        Path p_base = basePath.toPath().toAbsolutePath();;
+
         String relativePath = p_base.relativize(p_shape).toString();
-        this.relativePathToShapeFileTemplate = relativePath;        
+        this.relativePathToShapeFileTemplate = relativePath;
     }
-    
+
     public void setRelativePathToShapeFileTemplate(String f) {
         this.relativePathToShapeFileTemplate = f;
     }
-    
-    public String getRelativePathToShapeFileTemplate() {        
+
+    public String getRelativePathToShapeFileTemplate() {
         return relativePathToShapeFileTemplate;
     }
 
     public File getShapeFileTemplate() {
-        if (relativePathToShapeFileTemplate == null)
+        if (relativePathToShapeFileTemplate == null) {
             return null;
-        
-        return new File(basePath, relativePathToShapeFileTemplate);
+        }
+
+        return new File(basePath.getAbsoluteFile(), relativePathToShapeFileTemplate);
     }
 
-    public void save(){
-        for (ClimateModel model : modelSet){
+    public void save() {
+        for (ClimateModel model : modelSet) {
             model.relocate(basePath);
             model.save();
         }
     }
-    
+
     //set base path and adjust relative paths
-    public void relocate(File newBasePath){               
+    public void relocate(File newBasePath) {
         File shapeFileTemplate = getShapeFileTemplate();
         basePath = newBasePath;
         setShapeFileTemplate(shapeFileTemplate);
-        
-        for (ClimateModel model : modelSet){
+
+        for (ClimateModel model : modelSet) {
             model.relocate(newBasePath);
         }
     }
-    
+
     //set base path and do NOT adjust relative paths
-    public void setBasePath(File newBasePath){
+    public void setBasePath(File newBasePath) {
         this.basePath = newBasePath;
-        
-        for (ClimateModel model : modelSet){
+
+        for (ClimateModel model : modelSet) {
             model.setBasePath(newBasePath);
         }
     }
-    
-    public void aggregateEnsembleToFile(File target, String output, 
-            Aggregator.AggregationMode mode, Double modeParameter) throws IOException{  
-        
-        ClimateDataSupplier<Double>[] result = aggregateEnsemble(output, mode, modeParameter);
-        
+
+    public void aggregateEnsembleToFile(File target, String output,
+            Aggregator.AggregationMode mode, Double modeParameter, TimeInterval refPeriod) throws IOException {
+
+        ClimateDataSupplier<Double>[] result = aggregateEnsemble(output, mode, modeParameter, refPeriod);
+
         String modeString = mode.toString();
-        if (modeParameter != null && mode == Aggregator.AggregationMode.MEDIAN){
-            modeString = "Q" + String.format("%.0f",modeParameter*100);
+        if (modeParameter != null && mode == Aggregator.AggregationMode.MEDIAN) {
+            modeString = "Q" + String.format("%.0f", modeParameter * 100);
         }
         File targetDir = new File(target, "/ensemble/" + modeString + "/" + output);
         targetDir.mkdirs();
-        
-        ShapeFileOutputDataStore shpStore = new ShapeFileOutputDataStore(
-                        new File(getShapeFileTemplate().getAbsolutePath()), targetDir);
 
-        shpStore.addDataToShpFiles(result, "ID");        
+        ShapeFileOutputDataStore shpStore = new ShapeFileOutputDataStore(
+                new File(getShapeFileTemplate().getAbsolutePath()), targetDir);
+
+        List<String> fieldNames = Arrays.asList(shpStore.getFieldNames());
+        if (fieldNames.contains("ID")) {
+            shpStore.addDataToShpFiles(result, "ID");
+        } else if (fieldNames.contains("OBJECTID")) {
+            shpStore.addDataToShpFiles(result, "OBJECTID");
+        } else {
+            throw new IOException("Unknown ID field name!");
+        }
+    }
+
+    private String date(){
+        return "[" + (new Date()).getTime() + "]";
     }
     
-    public ClimateDataSupplier<Double>[] aggregateEnsemble(String output, Aggregator.AggregationMode mode, Double modeParameter) {        
+    public ClimateDataSupplier<Double>[] aggregateEnsemble(String output, Aggregator.AggregationMode mode, Double modeParameter, TimeInterval refPeriod) {
+        System.out.println(date() + ": Start");
         ClimateEnsembleProcessor proc = new ClimateEnsembleProcessor(this, output);
-        
+
         try {
+            System.out.println(date() + ": Init");
             proc.init();
+            System.out.println(date() + ": getTimeDomain");
             Attribute.Calendar dates[] = proc.getTimeDomain();
+            System.out.println(date() + ": getEntityIDs");
             long entityIDs[] = proc.getEntityIDs();
 
-            int K = entityIDs.length;            
+            int K = entityIDs.length;
             int T = dates.length;
+            int m = this.getModelSet().size();
 
             ClimateDataSupplier[] result = new ClimateDataSupplier[T];
 
+            double refMean[][] = new double[m][K];
+
+            
+            if (refPeriod != null) {
+                System.out.println(date() + ": Working on reference period!");
+                int k=0;
+                for (ClimateModel model : proc.procs.keySet()) {
+                    System.out.println(date() + ":Working on model " + model.toString());
+                    double modelSlice[][] = proc.getModelSlice(model);
+                    System.out.println("Working on entities!");
+                    for (int j = 0; j < K; j++) {                        
+                        DoubleAggregator aggregator = DoubleAggregator.create(Aggregator.AggregationMode.AVERAGE);
+                        aggregator.init();
+                        for (int i = 0; i < T; i++) {
+                            if (dates[i].after(refPeriod.getStart()) && dates[i].before(refPeriod.getEnd()))                            
+                                aggregator.consider(modelSlice[i][j]);
+                        }
+                        aggregator.finish();
+                        refMean[k][j] = aggregator.get();
+                    }
+                    k++;
+                }                
+            }
+
+            System.out.println("Working on full time period!");
             for (int i = 0; i < T; i++) {
+                System.out.println("Working on timestep " + i + " of " + T);
                 double timeSlice[][] = proc.getTimeSlice(entityIDs, dates[i].toString());
                 DoubleAggregator aggregator = DoubleAggregator.create(mode);
 
+                if (modeParameter != null && aggregator instanceof DoubleAggregator.IndexAggregator) {
+                    ((DoubleAggregator.IndexAggregator)aggregator).setSelectionIndex(modeParameter.intValue());
+                }
                 Double tmp[] = new Double[K];
 
                 for (int j = 0; j < K; j++) {
                     aggregator.init();
-                    for (double[] timeSlice1 : timeSlice) {
-                        aggregator.consider(timeSlice1[j]);
+                    for (int k=0;k<timeSlice.length;k++) { //iteration of all models
+                        aggregator.consider(timeSlice[k][j] - refMean[k][j]);
                     }
                     aggregator.finish();
-                    double v = aggregator.get();
+                    double v = 0;
                     if (modeParameter != null && aggregator instanceof DoubleAggregator.MedianAggregator) {
                         v = ((DoubleAggregator.MedianAggregator) aggregator).getQuantile(modeParameter);
+                    } else {
+                        v = aggregator.get();
                     }
                     tmp[j] = v;
                 }
-                result[i] = new ClimateDataSupplier<Double>(dates[i].toString(), entityIDs, tmp);
+                if (i == 0) {
+                    result[i] = new ClimateDataSupplier<Double>(dates[i].toString(), entityIDs, tmp);
+                } else {
+                    result[i] = result[i - 1].copy(dates[i].toString(), tmp);
+                }
             }
 
             return result;
@@ -193,14 +269,18 @@ public class ClimateEnsemble extends AbstractEnsemble<ClimateModel> {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Sorry, I failed to perform the aggregation!", e);
         } finally {
             try {
-                proc.close();                    
+                proc.close();
             } catch (SQLException sqle) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Sorry, I failed to perform the aggregation!", sqle);
             }
         }
-        return null;    
+        return null;
     }
 
+    /*public ClimateDataSupplier<Double>[] aggregateEnsemble(String output, Aggregator.AggregationMode mode, Double modeParameter) {
+        return aggregateEnsemble(output, mode, modeParameter, null);
+    }*/
+        
     public TreeModel getTreeModel() {
         DefaultMutableTreeNode root = new EnsembleTreeNode(this);
 

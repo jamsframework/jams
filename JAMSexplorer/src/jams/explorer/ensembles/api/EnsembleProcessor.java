@@ -6,13 +6,11 @@
 package jams.explorer.ensembles.api;
 
 import jams.data.Attribute;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Calendar;
+import jams.workspace.dsproc.DataMatrix;
 
 /**
  *
- * @author christian
+ * @author Christian Fischer
  * @param <U>
  * @param <T>
  */
@@ -23,4 +21,6 @@ public interface EnsembleProcessor<U extends Model, T extends Ensemble<U>> {
     public long[] getEntityIDs() throws Exception;
     public double[][] getSpatialMean() throws Exception;
     public double[] getSpatialMean(U model) throws Exception;
+    
+    public DataMatrix calculate(String expression);
 }

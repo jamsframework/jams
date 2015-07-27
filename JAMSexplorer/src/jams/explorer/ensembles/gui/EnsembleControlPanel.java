@@ -7,6 +7,8 @@ package jams.explorer.ensembles.gui;
 
 import jams.JAMS;
 import jams.aggregators.Aggregator;
+import jams.data.Attribute.TimeInterval;
+import jams.data.DefaultDataFactory;
 import jams.explorer.ensembles.gui.EnsembleOverview.EnsembleChangeListener;
 import jams.explorer.ensembles.implementation.ClimateEnsemble;
 import jams.explorer.ensembles.implementation.ClimateEnsemble.ModelTreeNode;
@@ -16,6 +18,7 @@ import jams.explorer.gui.CancelableSwingWorker;
 import jams.explorer.gui.CancelableWorkerDlg;
 import jams.gui.JAMSLauncher;
 import jams.gui.ObserverWorkerDlg;
+import jams.gui.input.TimeintervalInput;
 import jams.logging.MsgBoxLogHandler;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -30,10 +33,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultButtonModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -64,6 +70,7 @@ import javax.swing.tree.TreePath;
 public class EnsembleControlPanel extends JPanel {
 
     static final Logger logger = Logger.getLogger(EnsembleControlPanel.class.getName());
+
     {
         EnsembleControlPanel.registerLogHandler(logger);
     }
@@ -118,12 +125,15 @@ public class EnsembleControlPanel extends JPanel {
             invertSelectionBn = new JButton("Invert Selection"),
             exportToShape = new JButton("Export Statistics");
 
+    TimeintervalInput refPeriodField = new TimeintervalInput(true);
+    boolean calculateDiffernce = false;
+            
     boolean isShowingStatistics = showStatistics.isSelected();
 
     JFileChooser jfc = new JFileChooser();
 
     final static MsgBoxLogHandler myLogHandler = MsgBoxLogHandler.getInstance();
-            
+
     HashMap<JTextField, String> textFields = new HashMap<JTextField, String>() {
         {
             put(GCMText, ClimateModel.GCM);
@@ -138,23 +148,23 @@ public class EnsembleControlPanel extends JPanel {
 
     List<AbstractClimateDataTab> tabSet = new ArrayList<AbstractClimateDataTab>() {
         {
-            add(new ClimateDataOverviewTab("Overview"));
-            add(new ClimateDataAggregationTab("Average", Aggregator.AggregationMode.AVERAGE, null));
-            add(new ClimateDataAggregationTab("Median", Aggregator.AggregationMode.MEDIAN, null));
-            add(new ClimateDataAggregationTab("Q5", Aggregator.AggregationMode.MEDIAN, 0.05));
-            add(new ClimateDataAggregationTab("Q95", Aggregator.AggregationMode.MEDIAN, 0.95));
-            add(new ClimateDataAggregationTab("Variance", Aggregator.AggregationMode.VARIANCE, null));
+            add(new ClimateDataOverviewTab("Overview (absolute)"));
+            add(new ClimateDataAggregationTab("Average", Aggregator.AggregationMode.AVERAGE, null, EnsembleControlPanel.this));
+            add(new ClimateDataAggregationTab("Median", Aggregator.AggregationMode.MEDIAN, null, EnsembleControlPanel.this));
+            add(new ClimateDataAggregationTab("Q5", Aggregator.AggregationMode.MEDIAN, 0.05, EnsembleControlPanel.this));
+            add(new ClimateDataAggregationTab("Q95", Aggregator.AggregationMode.MEDIAN, 0.95, EnsembleControlPanel.this));
+            add(new ClimateDataAggregationTab("Variance", Aggregator.AggregationMode.VARIANCE, null, EnsembleControlPanel.this));
         }
     };
 
     JAMSLauncher launcher;
-    
+
     private final EnsembleTable outputTable = new EnsembleTable(null);
 
     public EnsembleControlPanel() {
         this(null);
     }
-    
+
     public EnsembleControlPanel(JAMSLauncher launcher) {
         this.launcher = launcher;
         ensembleTree = new EnsembleOverview(new ClimateEnsemble("unbenanntes Ensemble"), launcher);
@@ -170,6 +180,22 @@ public class EnsembleControlPanel extends JPanel {
 
         JScrollPane tableScroller = new JScrollPane(outputTable);
 
+        JPanel refPeriodPanel = new JPanel(new BorderLayout());
+        refPeriodPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Reference Period"));
+        refPeriodField.setEnabled(false);
+        refPeriodPanel.add(new JCheckBox(new AbstractAction("Calculate change"){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JCheckBox source = ((JCheckBox)e.getSource());
+                calculateDiffernce = source.isSelected();
+                refPeriodField.setEnabled(calculateDiffernce);
+                outputTable.fireSelectionChangeNotification();
+            }            
+            
+        }), BorderLayout.NORTH);
+        refPeriodPanel.add(refPeriodField, BorderLayout.CENTER);
+        
         mainLayout.setHorizontalGroup(mainLayout.createSequentialGroup()
                 .addComponent(leftColumn)
                 .addGroup(mainLayout.createParallelGroup()
@@ -178,15 +204,17 @@ public class EnsembleControlPanel extends JPanel {
                                 .addComponent(tableScroller)
                                 .addGap(5, 10, 15)
                                 .addGroup(mainLayout.createParallelGroup()
-                                        .addComponent(showStatistics, 150, 150, 150)
-                                        .addComponent(selectAllBn, 150, 150, 150)
-                                        .addComponent(selectNoneBn, 150, 150, 150)
-                                        .addComponent(invertSelectionBn, 150, 150, 150)
-                                        .addComponent(exportToShape, 150, 150, 150)
+                                        .addComponent(showStatistics, 300, 325, 350)
+                                        .addComponent(selectAllBn, 300, 325, 350)
+                                        .addComponent(selectNoneBn, 300, 325, 350)
+                                        .addComponent(invertSelectionBn, 300, 325, 350)
+                                        .addComponent(exportToShape, 300, 325, 350)
+                                        .addComponent(refPeriodPanel, 300, 325, 350)
                                 )
+                                .addGap(5,10,15)
                         )
                 )
-                .addComponent(rightColumn)
+        //.addComponent(rightColumn)
         );
 
         mainLayout.setVerticalGroup(mainLayout.createParallelGroup()
@@ -205,12 +233,16 @@ public class EnsembleControlPanel extends JPanel {
                                         .addComponent(invertSelectionBn)
                                         .addGap(15, 20, 25)
                                         .addComponent(exportToShape)
+                                        .addGap(15, 20, 25)
+                                        .addComponent(refPeriodPanel)
                                 )
                         )
                 )
-                .addComponent(rightColumn)
+        //.addComponent(rightColumn)
         );
 
+        refPeriodField.setValue("1971-01-01 06:30 2000-12-31 06:30 6 1");
+        
         leftColumn.setBorder(BorderFactory.createTitledBorder("Ensembles"));
         leftColumn.setMinimumSize(new Dimension(400, 400));
         leftColumn.setMaximumSize(new Dimension(400, 1200));
@@ -230,7 +262,7 @@ public class EnsembleControlPanel extends JPanel {
                 .addComponent(sep)
         );
 
-        leftColumn.add(southPanel, BorderLayout.SOUTH);
+        leftColumn.add(rightColumn, BorderLayout.SOUTH);
 
         middleColumn.setBorder(BorderFactory.createTitledBorder("Outputs"));
         middleColumn.setLayout(new BorderLayout());
@@ -243,11 +275,11 @@ public class EnsembleControlPanel extends JPanel {
         rightColumn.setMaximumSize(new Dimension(400, 400));
 
         for (JTextField f : textFields.keySet()) {
-            f.setMaximumSize(new Dimension(300, 25));
+            f.setMaximumSize(new Dimension(350, 25));
         }
-        LocationText.setMaximumSize(new Dimension(300, 25));
-        ShapeFileText.setMaximumSize(new Dimension(300, 25));
-        ensembleMemberText.setMaximumSize(new Dimension(300, 25));
+        LocationText.setMaximumSize(new Dimension(350, 25));
+        ShapeFileText.setMaximumSize(new Dimension(350, 25));
+        ensembleMemberText.setMaximumSize(new Dimension(350, 25));
 
         rightLayout.setHorizontalGroup(rightLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                 .addGroup(rightLayout.createSequentialGroup()
@@ -345,12 +377,17 @@ public class EnsembleControlPanel extends JPanel {
                 )
         );
 
-        for (AbstractClimateDataTab a : tabSet) {
-            statisticsPane.addTab(a.getName(), a);
-        }
+        addTabsToPane();
         setEnabledForTextFields(false);
 
         logger.exiting(this.getClass().getName(), "init()");
+    }
+    
+    private void addTabsToPane(){
+        statisticsPane.removeAll();
+        for (AbstractClimateDataTab a : tabSet) {
+            statisticsPane.addTab(a.getName(), a);
+        }
     }
 
     private class IdentfiableDocumentListener implements DocumentListener {
@@ -382,6 +419,14 @@ public class EnsembleControlPanel extends JPanel {
                     int n = e.getDocument().getLength();
                     String s = e.getDocument().getText(0, n);
                     currentModel.setProperty(key, s);
+
+                    if (ensembleTree != null && ensembleTree.getClimateEnsemble() != null) {
+                        if (ensembleTree.getClimateEnsemble().getShapeFileTemplate() != null) {
+                            exportToShape.setEnabled(true);
+                        } else {
+                            exportToShape.setEnabled(false);
+                        }
+                    }
                 } catch (BadLocationException ble) {
 
                 }
@@ -439,6 +484,14 @@ public class EnsembleControlPanel extends JPanel {
                 if (o instanceof ClimateEnsemble.OutputDirectoryTreeNode) {
                     OutputDirectoryTreeNode odtn = (OutputDirectoryTreeNode) o;
                     setCurrentModel(odtn.getModel());
+                }
+
+                if (ensembleTree != null && ensembleTree.getClimateEnsemble() != null) {
+                    if (ensembleTree.getClimateEnsemble().getShapeFileTemplate() != null) {
+                        exportToShape.setEnabled(true);
+                    } else {
+                        exportToShape.setEnabled(false);
+                    }
                 }
 
                 countLabel.setText("count: " + ensembleTree.getClimateEnsemble().getSize());
@@ -524,9 +577,33 @@ public class EnsembleControlPanel extends JPanel {
         logger.exiting(this.getClass().getName(), "initActions()");
     }
 
+    public TimeInterval getRefPeriod(){
+        if (calculateDiffernce){
+            return this.refPeriodField.getTimeInterval();
+        }
+        return null;
+    }
+    
     private void changeEnsembleDataset(ClimateEnsemble dataset) {
         logger.entering(getClass().getName(), "changeEnsembleDataset");
 
+        tabSet.clear();
+        
+        tabSet.add(new ClimateDataOverviewTab("Overview (absolute)"));
+        tabSet.add(new ClimateDataAggregationTab("Average", Aggregator.AggregationMode.AVERAGE, null, EnsembleControlPanel.this));
+        tabSet.add(new ClimateDataAggregationTab("Median", Aggregator.AggregationMode.MEDIAN, null, EnsembleControlPanel.this));
+        tabSet.add(new ClimateDataAggregationTab("Q5", Aggregator.AggregationMode.MEDIAN, 0.05, EnsembleControlPanel.this));
+        tabSet.add(new ClimateDataAggregationTab("Q95", Aggregator.AggregationMode.MEDIAN, 0.95, EnsembleControlPanel.this));
+        tabSet.add(new ClimateDataAggregationTab("Variance", Aggregator.AggregationMode.VARIANCE, null, EnsembleControlPanel.this));
+        
+        int i=0;
+        for (ClimateModel clm : dataset.getModelSet()){
+            tabSet.add(new ClimateDataAggregationTab(clm.toString(), Aggregator.AggregationMode.INDEX, (double)i, EnsembleControlPanel.this));
+            i++;
+        }
+                
+        addTabsToPane();        
+        
         for (AbstractClimateDataTab a : tabSet) {
             a.setClimateEnsemble(dataset);
         }
@@ -588,7 +665,7 @@ public class EnsembleControlPanel extends JPanel {
                     for (String selectedOutput : outputTable.getSelectedOutputs()) {
                         ExportWorker.this.update(null, "<html><div align=\"center\">Exporting</div><br><div align=\"center\">Average of " + selectedOutput + "</div></html>");
                         try {
-                            ensemble.aggregateEnsembleToFile(targetDir, selectedOutput, Aggregator.AggregationMode.AVERAGE, null);
+                            ensemble.aggregateEnsembleToFile(targetDir, selectedOutput, Aggregator.AggregationMode.AVERAGE, null, getRefPeriod());
                         } catch (Throwable ioe) {
                             if (selectedOutput == null) {
                                 logger.log(Level.SEVERE, "Sorry, I failed to save a dataset, since it is null", ioe);
@@ -604,7 +681,7 @@ public class EnsembleControlPanel extends JPanel {
                     for (String selectedOutput : outputTable.getSelectedOutputs()) {
                         ExportWorker.this.update(null, "<html><div align=\"center\">Exporting</div><br><div align=\"center\">Median of " + selectedOutput + "</div></html>");
                         try {
-                            ensemble.aggregateEnsembleToFile(targetDir, selectedOutput, Aggregator.AggregationMode.MEDIAN, null);
+                            ensemble.aggregateEnsembleToFile(targetDir, selectedOutput, Aggregator.AggregationMode.MEDIAN, null, getRefPeriod());
                         } catch (Throwable ioe) {
                             if (selectedOutput == null) {
                                 logger.log(Level.SEVERE, "Sorry, I failed to save a dataset, since it is null", ioe);
@@ -620,7 +697,7 @@ public class EnsembleControlPanel extends JPanel {
                     for (String selectedOutput : outputTable.getSelectedOutputs()) {
                         ExportWorker.this.update(null, "<html><div align=\"center\">Exporting</div><br><div align=\"center\">Q5 of " + selectedOutput + "</div></html>");
                         try {
-                            ensemble.aggregateEnsembleToFile(targetDir, selectedOutput, Aggregator.AggregationMode.MEDIAN, 0.05);
+                            ensemble.aggregateEnsembleToFile(targetDir, selectedOutput, Aggregator.AggregationMode.MEDIAN, 0.05, getRefPeriod());
                         } catch (Throwable ioe) {
                             if (selectedOutput == null) {
                                 logger.log(Level.SEVERE, "Sorry, I failed to save a dataset, since it is null", ioe);
@@ -636,7 +713,7 @@ public class EnsembleControlPanel extends JPanel {
                     for (String selectedOutput : outputTable.getSelectedOutputs()) {
                         ExportWorker.this.update(null, "<html><div align=\"center\">Exporting</div><br><div align=\"center\">Q95 of " + selectedOutput + "</div></html>");
                         try {
-                            ensemble.aggregateEnsembleToFile(targetDir, selectedOutput, Aggregator.AggregationMode.MEDIAN, 0.95);
+                            ensemble.aggregateEnsembleToFile(targetDir, selectedOutput, Aggregator.AggregationMode.MEDIAN, 0.95, getRefPeriod());
                         } catch (Throwable ioe) {
                             if (selectedOutput == null) {
                                 logger.log(Level.SEVERE, "Sorry, I failed to save a dataset, since it is null", ioe);
@@ -652,7 +729,7 @@ public class EnsembleControlPanel extends JPanel {
                     for (String selectedOutput : outputTable.getSelectedOutputs()) {
                         ExportWorker.this.update(null, "<html><div align=\"center\">Exporting</div><br><div align=\"center\">Variance of " + selectedOutput + "</div></html>");
                         try {
-                            ensemble.aggregateEnsembleToFile(targetDir, selectedOutput, Aggregator.AggregationMode.VARIANCE, null);
+                            ensemble.aggregateEnsembleToFile(targetDir, selectedOutput, Aggregator.AggregationMode.VARIANCE, null, getRefPeriod());
                         } catch (Throwable ioe) {
                             if (selectedOutput == null) {
                                 logger.log(Level.SEVERE, "Sorry, I failed to save a dataset, since it is null", ioe);
@@ -790,9 +867,9 @@ public class EnsembleControlPanel extends JPanel {
 
     public static void registerLogHandler(Logger log) {
         log.removeHandler(myLogHandler);
-        log.addHandler(myLogHandler);        
+        log.addHandler(myLogHandler);
     }
-    
+
     public static void main(String[] args) {
         EnsembleControlPanel ecp = new EnsembleControlPanel();
         JFrame frame = new JFrame("Ensemble Management");
