@@ -37,14 +37,17 @@ import java.util.ArrayList;
 @JAMSComponentDescription(title = "JAMS spatial context",
         author = "Sven Kralisch",
         date = "2012-07-06",
-        version = "1.1_0",
-        description = "This component represents a filtered JAMS context which can be "
-        + "used to represent space in environmental models")
+        version = "1.2_0",
+        description = "This component is a spatial context which iterates over entities "
+                + "having specific attribute values. Attribute values are not evaluated "
+                + "during model runtime. Therefore it can be used only for filtering over"
+                + "static attributes.")
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
     @VersionComments.Entry(version = "1.1_0", comment = "added attribute \"attributeValuesAlternative\" as alternative "
             + "for \"attributeValues\". Version 1.0_0 compared attributeValues with startsWith function. "
-            + "This is now changed to compareTo function.")
+            + "This is now changed to compareTo function."),
+    @VersionComments.Entry(version = "1.2_0", comment = "Fixed wrong behaviour which was caused by the use of initAll() instead of init()")
 })
 public class FilteredSpatialContext extends JAMSSpatialContext {
 
@@ -78,7 +81,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
     }
 
     @Override
-    public void initAll() {
+    public void init() {
 
         if (attributeName == null || ((attributeValuesAlternative == null || attributeValuesAlternative.getValue().length == 0)
                 && (attributeValues == null || attributeValues.length == 0))) {
@@ -98,7 +101,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
 
         ArrayList<Entity> entityList = new ArrayList<Entity>();
 
-        for (Entity e : entities.getEntities()) {
+        for (Entity e : getEntities().getEntities()) {
             try {
                 if (e.existsAttribute(attributeName.getValue())) {
 
@@ -127,7 +130,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
         entities = getModel().getRuntime().getDataFactory().createEntityCollection();
         entities.setEntities(entityList);
 
-        super.initAll();
+        super.init();
     }
 
     @Override
@@ -139,7 +142,7 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
     public void setEntities(Attribute.EntityCollection entities) {
         this.entities = entities;
     }
-    
+
     @Override
     public long getNumberOfIterations() {
         return -1;
@@ -148,6 +151,6 @@ public class FilteredSpatialContext extends JAMSSpatialContext {
     @Override
     public long getRunCount() {
         return -1;
-    }    
+    }
 
 }
