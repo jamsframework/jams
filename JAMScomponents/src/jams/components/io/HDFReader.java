@@ -178,8 +178,8 @@ public class HDFReader extends JAMSComponent {
             return jams.JAMS.getMissingDataValue();
         }
         double v = actData[y * width + x];
-        if (v == missingDataValue.getValue()) {
-            return jams.JAMS.getMissingDataValue();
+        if (v >= 20000) {
+            return 0;
         }
         return v;
     }
