@@ -96,6 +96,7 @@ public class Job implements Serializable, Comparable<Job> {
     public Job(Integer id, User owner, Workspace workspace, WorkspaceFileAssociation modelFile) {
         this.id = id;
         this.owner = owner;
+        this.ownerID = owner.getId();
         this.workspace = workspace;
         this.modelFile = modelFile;
     }

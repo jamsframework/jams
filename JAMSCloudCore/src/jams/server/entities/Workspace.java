@@ -78,7 +78,7 @@ public class Workspace implements Serializable, Comparable<Workspace> {
     @Column(name = "creation")    
     private Date creation;
     
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="ownerID")
     private User user;
     
@@ -94,7 +94,7 @@ public class Workspace implements Serializable, Comparable<Workspace> {
     @JoinColumn(name = "ancestor")
     private Workspace ancestor;
         
-    @OneToMany(mappedBy="ws", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy="ws", cascade = {CascadeType.ALL}, orphanRemoval=true)
     private List<WorkspaceFileAssociation> files = new ArrayList<WorkspaceFileAssociation>();
                 
     public Workspace() {
@@ -107,7 +107,7 @@ public class Workspace implements Serializable, Comparable<Workspace> {
         this.id = 0;
         this.name = ws.getName();
         this.readOnly = ws.readOnly;
-        this.user = ws.user;
+        this.user = ws.getUser();
         this.ancestor = ws;
         this.workspaceSize = ws.getWorkspaceSize();
     }
@@ -209,7 +209,6 @@ public class Workspace implements Serializable, Comparable<Workspace> {
         for (WorkspaceFileAssociation wfa : files){
             if (wfa.getPath().equals(path)){
                 files.remove(wfa);
-                wfa.setWorkspace(null);
                 updateSize();
                 return wfa.getFile();
             }
@@ -221,7 +220,6 @@ public class Workspace implements Serializable, Comparable<Workspace> {
         while(files.size()>0){
             WorkspaceFileAssociation wfa = files.get(0);
             files.remove(wfa);
-            wfa.setWorkspace(null);
         } 
     }
         

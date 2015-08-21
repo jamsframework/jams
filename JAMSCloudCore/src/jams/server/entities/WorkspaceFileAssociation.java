@@ -109,6 +109,9 @@ public class WorkspaceFileAssociation implements Serializable, Comparable<Worksp
     public WorkspaceFileAssociation(Workspace ws, File f, int role, String path) {
         this.file_id = f.getId();
         this.ws_id = ws.getId();
+        if (ws_id == 0){
+            System.out.println("test");
+        }
         this.file = f;
         this.ws = ws;
         this.role = role;
