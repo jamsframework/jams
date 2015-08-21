@@ -156,12 +156,11 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (list == null || list.isEmpty()){
             return Response.status(Status.NOT_FOUND).build();
         }
-        
         Workspace ws = list.get(0);
         if (ws.getUser().getId() != currentUser.getId() || ws.isReadOnly()){
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+        ws = duplicateWorkspace(list.get(0));
         WorkspaceFileAssociation modelWFA = null;
         for (WorkspaceFileAssociation wfa : ws.getFiles()){
             if (wfa.getFile().getId().equals(wfaID))
@@ -170,7 +169,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (modelWFA == null){
             return Response.status(Status.NOT_FOUND).build();
         }
-        Job job = new Job(0, currentUser, duplicateWorkspace(ws), modelWFA);
+        Job job = new Job(0, currentUser, ws, modelWFA);
         if (!create(job) || job.getId()==null){
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }

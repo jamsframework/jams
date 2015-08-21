@@ -36,6 +36,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.ws.rs.core.StreamingOutput;
 
@@ -170,15 +174,20 @@ public abstract class AbstractProcessManager implements ProcessManager {
     private Workspace updateWorkspace(Job job, Workspace ws, EntityManager em){
         java.io.File dir = getLocalExecDir(job);
         Path wsPath = dir.toPath();
-        ws.detachAllFiles();
+        //ws.detachAllFiles();
+        
+        Set<WorkspaceFileAssociation> oldWFAs = new HashSet<>();
+        oldWFAs.addAll(ws.getFiles());
         
         if (dir.isDirectory()){
             Collection<java.io.File> files = FileTools.getFilesByRegEx(dir, null, true);
             for (java.io.File file : files){
                 Path filePath = file.toPath();                
                 String relPath = wsPath.relativize(filePath).toString();
+                
+                WorkspaceFileAssociation wfa = ws.getFile(relPath);
                 //änderungen nachverfolgen .. 
-                if (ws.getFile(relPath)==null){
+                if (wfa==null){
                     File dbFile = new File();
                     dbFile.setHash("0");
                     dbFile.setLocation(filePath.toString());
@@ -187,6 +196,9 @@ public abstract class AbstractProcessManager implements ProcessManager {
                     em.refresh(dbFile);
                     
                     ws.assignFile(dbFile, WorkspaceFileAssociation.ROLE_OUTPUT , relPath);
+                }else{
+                    if (!wfa.equals(job.getModelFile()))
+                        oldWFAs.remove(wfa);
                 }
             }            
         }

@@ -22,6 +22,7 @@
 
 package jams.server.service;
 
+import java.io.File;
 import java.io.FileReader;
 import java.util.Properties;
 import java.util.Set;
@@ -32,7 +33,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 /**
  *
- * @author Sven Kralisch <sven.kralisch at uni-jena.de>
+ * @author Christian Fischer <christian.fischer.2@uni-jena.de>
  */
 @javax.ws.rs.ApplicationPath("webresources")
 public class ApplicationConfig extends Application {
@@ -44,15 +45,14 @@ public class ApplicationConfig extends Application {
     static Properties p = new Properties() {
         {
             Logger log = Logger.getLogger(ApplicationConfig.class.getName());                         
-            
-            log.severe("Try to set paths ..");
+            log.info("Try to set paths ..");
             try {
                 load(new FileReader("settings.properties"));
                 SERVER_UPLOAD_DIRECTORY = getProperty("upload-directory");
                 SERVER_TMP_DIRECTORY = getProperty("tmp-directory");
                 SERVER_EXEC_DIRECTORY = getProperty("exec-directory");
 
-                log.severe("Setting of paths were successful" + "\n" + 
+                log.info("Setting of paths were successful" + "\n" + 
                         SERVER_UPLOAD_DIRECTORY + "\n" + 
                         SERVER_TMP_DIRECTORY + "\n" + 
                         SERVER_EXEC_DIRECTORY);
@@ -61,7 +61,7 @@ public class ApplicationConfig extends Application {
                 ioe.printStackTrace();
             }
         }
-    };        
+    };       
     @Override
     public Set<Class<?>> getClasses() {                                        
         Set<Class<?>> resources = new java.util.HashSet<>();
