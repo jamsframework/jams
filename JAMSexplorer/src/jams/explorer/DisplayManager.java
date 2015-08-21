@@ -41,6 +41,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
+import optas.data.DataCollection;
 import jams.explorer.gui.DataCollectionView;
 import jams.explorer.gui.InputDSInfoPanel;
 import jams.explorer.gui.TSPanel;
@@ -48,7 +49,6 @@ import jams.explorer.gui.TreePanel;
 import jams.explorer.spreadsheet.SpreadsheetConstants;
 import jams.explorer.tree.DSTreeNode;
 import jams.explorer.tree.FileObject;
-import optas.data.api.DataCollection;
 
 /**
  *

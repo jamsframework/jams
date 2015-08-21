@@ -72,9 +72,8 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
-import optas.core.OPTASException;
-import optas.data.DefaultDataCollection;
-import optas.data.api.DataCollection;
+import optas.data.DataCollection;
+import optas.data.DataSet;
 import optas.io.NetCDFFileReader;
 import optas.io.NetCDFFileWriter;
 import org.w3c.dom.Document;
@@ -313,7 +312,7 @@ public class ExplorerFrame extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     /* forward to controller */
-                    DataCollectionViewController controller = new DataCollectionViewController(new DefaultDataCollection("Ensemble"));
+                    DataCollectionViewController controller = new DataCollectionViewController(new DataCollection());
                     /* display data collection view */
                     tPane.addTab("New Ensemble", controller.getView());
                 }
@@ -394,7 +393,7 @@ public class ExplorerFrame extends JFrame {
                         stream.write(collection);
                     } catch (IOException ex) {
                         System.out.println("Unable to write file: " + name + ".");
-                    } catch (OPTASException ex) {
+                    } catch (DataSet.MismatchException ex) {
                         System.out.println(ex.getMessage());
                     } finally {
                         if (stream != null) {
@@ -450,7 +449,7 @@ public class ExplorerFrame extends JFrame {
                         ex.printStackTrace();
                     } catch (IllegalAccessException ex) {
                         ex.printStackTrace();
-                    } catch (OPTASException ex) {
+                    } catch (DataSet.MismatchException ex) {
                         System.out.println(ex.getMessage());
                     } finally {
                         if (stream != null) {

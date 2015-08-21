@@ -31,7 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import optas.data.DefaultDataCollection;
+import optas.data.DataCollection;
 import jams.workspace.dsproc.DataStoreProcessor;
 import jams.explorer.gui.ExplorerFrame;
 import jams.explorer.gui.ImportMonteCarloDataPanel;
@@ -40,7 +40,6 @@ import jams.explorer.gui.SimpleOutputPanel;
 import jams.explorer.spreadsheet.JAMSSpreadSheet;
 import jams.explorer.spreadsheet.SpreadsheetConstants;
 import jams.explorer.tree.FileObject;
-import optas.data.api.DataCollection;
 
 /**
  *
@@ -48,7 +47,7 @@ import optas.data.api.DataCollection;
  */
 public class OutputPanelFactory {
 
-    public static DataCollectionViewController constructDataCollection(ExplorerFrame frame, DefaultDataCollection dc, File f) {
+    public static DataCollectionViewController constructDataCollection(ExplorerFrame frame, DataCollection dc, File f) {
         ImportMonteCarloDataPanel importDlg = new ImportMonteCarloDataPanel(frame, dc, f);
         importDlg.addActionEventListener(new ActionListener() {
             @Override
@@ -71,7 +70,7 @@ public class OutputPanelFactory {
 
     public static Component getOutputDSPanel(JAMSExplorer explorer, FileObject file, String id) throws FileNotFoundException, IOException {
         if (file.getFile().getAbsolutePath().endsWith("cdat")){
-            DefaultDataCollection collection = DefaultDataCollection.createFromFile(file.getFile());
+            DataCollection collection = DataCollection.createFromFile(file.getFile());
             if (collection == null){
                 JOptionPane.showMessageDialog(explorer.getExplorerFrame(), "failed to load data collection from file: " + file.getFile().getName());
                 return null;

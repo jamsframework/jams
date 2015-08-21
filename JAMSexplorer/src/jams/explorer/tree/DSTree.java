@@ -41,11 +41,10 @@ import javax.swing.tree.TreePath;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
-import optas.data.DefaultDataCollection;
+import optas.data.DataCollection;
 import jams.explorer.JAMSExplorer;
 import jams.explorer.gui.ImportMonteCarloDataPanel;
 import jams.gui.WorkerDlg;
-import optas.data.api.DataCollection;
 
 /**
  *
@@ -228,7 +227,7 @@ public class DSTree extends JAMSTree {
         if (!isNodeSuitableForEnsemble(node)){
             JOptionPane.showMessageDialog(popupDS, "this element cannot be added to an ensemble");
         }
-        DataCollection collection = explorer.getDisplayManager().getCurrentDataCollection();
+        optas.data.DataCollection collection = explorer.getDisplayManager().getCurrentDataCollection();
         if (collection==null){
             JOptionPane.showMessageDialog(popupDS, "there is no data collection selected");
         }
@@ -245,7 +244,7 @@ public class DSTree extends JAMSTree {
     }
 
     private void mergeEnsembles(FileObject fo, DataCollection dc){
-        DefaultDataCollection src = DefaultDataCollection.createFromFile(fo.getFile());
+        DataCollection src = DataCollection.createFromFile(fo.getFile());
         if (src == null){
             JOptionPane.showMessageDialog(popupDS, "failed to load data collection file!");
             return;

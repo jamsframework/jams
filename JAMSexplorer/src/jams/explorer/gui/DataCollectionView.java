@@ -37,13 +37,15 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import optas.data.ensemble.DefaultEfficiencyEnsemble;
-import optas.data.ensemble.DefaultEnsemble;
-import optas.data.time.MeasuredTimeSerie;
-import optas.data.ensemble.DefaultSimpleEnsemble;
-import optas.data.time.DefaultTimeFilter;
-import optas.data.time.TimeFilterFactory;
-import optas.data.ensemble.DefaultTimeSerieEnsemble;
+import optas.data.DataCollection;
+import optas.data.DataSet;
+import optas.data.EfficiencyEnsemble;
+import optas.data.Ensemble;
+import optas.data.Measurement;
+import optas.data.SimpleEnsemble;
+import optas.data.TimeFilter;
+import optas.data.TimeFilterFactory;
+import optas.data.TimeSerieEnsemble;
 import optas.gui.MCAT5.DataCollectionPanel;
 import optas.gui.MCAT5.MCAT5Toolbar;
 import optas.tools.PatchedChartPanel;
@@ -56,8 +58,6 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.DefaultXYDataset;
 import jams.explorer.DataCollectionViewController;
-import optas.data.api.DataCollection;
-import optas.data.api.DataSet;
 
 public class DataCollectionView extends JComponent implements DataCollectionPanel {
 
@@ -256,8 +256,8 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
         if (enabled && item != null) {
             o = delegate.getItemForIdentifier(item);
         }
-        if (enabled && o != null && o instanceof DefaultSimpleEnsemble) {
-            DefaultSimpleEnsemble ensemble = (DefaultSimpleEnsemble) o;
+        if (enabled && o != null && o instanceof SimpleEnsemble) {
+            SimpleEnsemble ensemble = (SimpleEnsemble) o;
             double min = ensemble.getMin();
             double max = ensemble.getMax();
 
@@ -292,7 +292,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
         if (enabled && item != null) {
             o = delegate.getItemForIdentifier(item);
         }
-        if (enabled && o != null && o instanceof DefaultSimpleEnsemble) {
+        if (enabled && o != null && o instanceof SimpleEnsemble) {
             filterPercentilPanel.setBorder(enabledPercentilFilterPanelBorder);
 
             filterFromPercentilField.setEnabled(true);
@@ -416,7 +416,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 String[] selectedDataSets = getSelectedDataSets();
                 if (selectedDataSets.length > row){
                     String name = selectedDataSets[row];
-                    delegate.getDataCollection().renameDataSet(name, aValue.toString());
+                    delegate.getDataCollection().renameDataset(name, aValue.toString());
                 }
                 
             }
@@ -532,9 +532,9 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 Object item = ((JButton)e.getSource()).getClientProperty("item");
                 if (item != null){
                     DataSet ts = delegate.getDataCollection().getDataSet((String)item);
-                    if (ts instanceof DefaultTimeSerieEnsemble){
-                        DefaultSimpleEnsemble se = ((DefaultTimeSerieEnsemble)ts).sumTS();
-                        delegate.getDataCollection().addDataSet(se);
+                    if (ts instanceof TimeSerieEnsemble){
+                        SimpleEnsemble se = ((TimeSerieEnsemble)ts).sumTS();
+                        delegate.getDataCollection().addEnsemble(se);
                     }
                 }
             }
@@ -544,7 +544,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
         deleteAttribute.addActionListener(new ActionListener() {
            public void actionPerformed(ActionEvent e){
                Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
-               delegate.getDataCollection().removeDataSet(item.toString());
+               delegate.getDataCollection().removeDataset(item.toString());
                ((AbstractTableModel) dataSetList.getModel()).fireTableDataChanged();   
            }
         });
@@ -595,24 +595,24 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 Date d = extractDatePicker.getDate();
                 Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
                 DataSet dataset = DataCollectionView.this.delegate.getDataCollection().getDataSet(item.toString());
-                if (dataset instanceof DefaultTimeSerieEnsemble) {
-                    DefaultTimeSerieEnsemble ts = (DefaultTimeSerieEnsemble) dataset;
+                if (dataset instanceof TimeSerieEnsemble) {
+                    TimeSerieEnsemble ts = (TimeSerieEnsemble) dataset;
                     int r = -1;
-                    for (int i = 0; i < ts.getNumberOfTimesteps(); i++) {
+                    for (int i = 0; i < ts.getTimesteps(); i++) {
                         if (ts.getDate(i).after(d) || ts.getDate(i).equals(d)) {
                             r = i;
                             break;
                         }
                     }
                     if (r != -1) {
-                        Set<String> s = DataCollectionView.this.delegate.getDataCollection().getDataSetNames(MeasuredTimeSerie.class);
+                        Set<String> s = DataCollectionView.this.delegate.getDataCollection().getDatasets(Measurement.class);
                         String first = s.iterator().next();
-                        MeasuredTimeSerie m = (MeasuredTimeSerie) DataCollectionView.this.delegate.getDataCollection().getDataSet(first);
+                        Measurement m = (Measurement) DataCollectionView.this.delegate.getDataCollection().getDataSet(first);
                         double value = m.getValue(r);
-                        DefaultEfficiencyEnsemble eff = new DefaultEfficiencyEnsemble(ts.get(r), false);
+                        EfficiencyEnsemble eff = new EfficiencyEnsemble(ts.get(r), false);
                         eff.calcPlus(-value);
                         eff.calcAbs();
-                        DataCollectionView.this.delegate.getDataCollection().addDataSet(eff);
+                        DataCollectionView.this.delegate.getDataCollection().addEnsemble(eff);
                     }
                 }
             }
@@ -825,7 +825,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
 
                         Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
                         Object obj = delegate.getItemForIdentifier(item);
-                        if (obj instanceof DefaultSimpleEnsemble) {
+                        if (obj instanceof SimpleEnsemble) {
                             delegate.filter(item, minValue, maxValue, false);
                         }
                     } catch (NumberFormatException nfe) {
@@ -839,7 +839,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
 
                         Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
                         Object obj = delegate.getItemForIdentifier(item);
-                        if (obj instanceof DefaultSimpleEnsemble) {
+                        if (obj instanceof SimpleEnsemble) {
                             delegate.filterPercentil(item, minValue, maxValue, false);
                         }
                     } catch (NumberFormatException nfe) {
@@ -862,7 +862,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                     interval.getStart().setTime(startDate);
                     interval.getEnd().setTime(endDate);
 
-                    DefaultTimeFilter f = TimeFilterFactory.getRangeFilter(interval);
+                    TimeFilter f = TimeFilterFactory.getRangeFilter(interval);
                     f.setInverted(true);
                     getDataCollection().filterTimeDomain(f);
                 }
@@ -873,7 +873,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
 
                         Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
                         Object obj = delegate.getItemForIdentifier(item);
-                        if (obj instanceof DefaultSimpleEnsemble) {
+                        if (obj instanceof SimpleEnsemble) {
                             delegate.filter(item, minValue, maxValue, true);
                         }
                     } catch (NumberFormatException nfe) {
@@ -887,7 +887,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
 
                         Object item = dataSetList.getValueAt(dataSetList.getSelectedRow(), 0);
                         Object obj = delegate.getItemForIdentifier(item);
-                        if (obj instanceof DefaultSimpleEnsemble) {
+                        if (obj instanceof SimpleEnsemble) {
                             delegate.filterPercentil(item, minValue, maxValue, true);
                         }
                     } catch (NumberFormatException nfe) {
@@ -1168,11 +1168,11 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
         delegate.itemIsBeingDisplayed(identifier);
 
         Object item = delegate.getItemForIdentifier(identifier);
-        final DefaultEnsemble ensemble = (DefaultEnsemble) item;
+        final Ensemble ensemble = (Ensemble) item;
 
         long tmp = 0;
-        if (ensemble instanceof DefaultTimeSerieEnsemble){
-            tmp = ((DefaultTimeSerieEnsemble) ensemble).getNumberOfTimesteps();
+        if (ensemble instanceof TimeSerieEnsemble){
+            tmp = ((TimeSerieEnsemble) ensemble).getTimesteps();
         
         }
         
@@ -1185,7 +1185,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
 
             @Override
             public String getColumnName(int column) {
-                if (ensemble instanceof DefaultTimeSerieEnsemble) {
+                if (ensemble instanceof TimeSerieEnsemble) {
                     switch (column) {
                         case 0:
                             return "Simulation ID";
@@ -1193,7 +1193,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                             /*java.util.Calendar cal = java.util.Calendar.getInstance();
                             cal.setTime(startDatePicker.getDate());
                             cal.add(java.util.Calendar.DAY_OF_MONTH, column - 1);*/
-                            return new SimpleDateFormat("dd.MM.yyyy").format(((DefaultTimeSerieEnsemble)ensemble).getDate(column-1));
+                            return new SimpleDateFormat("dd.MM.yyyy").format(((TimeSerieEnsemble)ensemble).getDate(column-1));
                     }
                 } else {
                     switch (column) {
@@ -1214,7 +1214,7 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
 
             @Override
             public int getColumnCount() {
-                if (ensemble instanceof DefaultTimeSerieEnsemble) {
+                if (ensemble instanceof TimeSerieEnsemble) {
                     /* number of timesteps plus one for ID column */
                     return (int) numberOfSteps + 1;
                 } else {
@@ -1229,19 +1229,19 @@ public class DataCollectionView extends JComponent implements DataCollectionPane
                 if (ensemble.getSize()<=rowIndex + simIDOffset){
                     return null;
                 }
-                if (ensemble instanceof DefaultTimeSerieEnsemble) {
+                if (ensemble instanceof TimeSerieEnsemble) {
                     switch (columnIndex) {
                         case 0:
-                            return ((DefaultTimeSerieEnsemble) ensemble).getId(rowIndex);
+                            return ((TimeSerieEnsemble) ensemble).getId(rowIndex);
                         default:
-                            return ((DefaultTimeSerieEnsemble) ensemble).get(columnIndex - 1 + (int) offset, ((DefaultTimeSerieEnsemble) ensemble).getId(rowIndex));
+                            return ((TimeSerieEnsemble) ensemble).get(columnIndex - 1 + (int) offset, ((TimeSerieEnsemble) ensemble).getId(rowIndex));
                     }
                 } else {
                     switch (columnIndex) {
                         case 0:
-                            return ((DefaultSimpleEnsemble) ensemble).getId(rowIndex);
+                            return ((SimpleEnsemble) ensemble).getId(rowIndex);
                         case 1:
-                            return ((DefaultSimpleEnsemble) ensemble).getValue(((DefaultSimpleEnsemble) ensemble).getId(rowIndex));
+                            return ((SimpleEnsemble) ensemble).getValue(((SimpleEnsemble) ensemble).getId(rowIndex));
                         default:
                             return 0;
                     }
