@@ -1,0 +1,9 @@
+#JAMS configuration file
+#Mon Jun 19 09:09:28 CEST 2006
+debug=1
+verbose=1
+libs=D\:\\jamsprojects\\Thornthwaite\\dist\\Thornthwaite.jar
+windowenable=1
+windowontop=0
+windowwidth=800
+windowheight=600

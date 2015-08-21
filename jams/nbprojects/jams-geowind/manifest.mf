@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+SplashScreen-Image: resources/images/JAMSsplash.png
+Main-Class: reg.sample.DataregSample

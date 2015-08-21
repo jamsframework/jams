@@ -1,0 +1,53 @@
+\section{Methoden zur Bestimmung der Niederschlagsform}
+\subsection{Bestimmung von Niederschlagsform sowie Schnee- und Regenanteilen}
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP4.CalcRainSnowParts.java
+\subsubsection*{Beschreibung:}
+In Abhängigkeit von der Temperatur wird bestimmt, ob es sich beim gemessenen Niederschlag um Schnee oder Regen handelt. Dabei wird angenommen, dass es einen Temperatur-Übergangsbereich gibt, in dem sowohl Regen als auch Schnee bzw. Mischniederschläge auftreten können. Es muss ein Temperaturwert ($Trs$ in °C) angegeben werden, der der Temperatur entspricht, bei der 50\% des Niederschlages als Schnee und 50\% als Regen fallen. Zusätzlich muss ein Parameter $Trans$ (in K) bestimmt werden, der der halben Breite des Übergangsbereiches entspricht. Der tatsächliche Schneeanteil ($p(s)$) am Tagesniederschlag in Abhängigkeit von der Lufttemperatur ($T$) berechnet sich dabei nach: 
+
+\begin{equation}
+p(s) = \frac{TRS + Trans -T}{2 \cdot Trans} \quad \mathrm{[mm]}
+\end{equation}
+
+Die tägliche Schneemenge ($N_S$) bzw. Regenmenge ($N_R$) des gesamten Niederschlags ($N$) ergibt sich nach:
+
+\begin{equation}
+N_S = N \cdot p(s) \quad \mathrm{[mm]}
+\end{equation}
+
+\begin{equation}
+N_R = N \cdot (1-p(s)) \quad \mathrm{[mm]}
+\end{equation}
+
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{JAMSWiki} (2008)\textsc{JAMSWiki} ]{JAMSWiki}
+\textsc{JAMSWiki} (2008): Hydrologisches Modell J2000, \\ $\left\langle http://jams.uni-jena.de/jamswiki/index.php/Hydrologisches\_Modell\_J2000 \right\rangle$ (Stand: 18.2.2008) (Zugriff: 15.12.2008).
+\end{thebibliography} 
+
+\subsection*{Eingabe:} 
+
+\begin{tabular}{lllp{7.5cm}ll}
+%& & &\\ 
+& $area$ & & Größe des betrachteten Gebiets & $\mathrm{[m^{2}]}$ \\
+& $snow\_trs$ & & Temperaturwert bei dem 50\,\% Regen und 50\,\% Schnee fallen& $\mathrm{[°C]}$\\
+& $snow\_trans$ & & Halbe Breite des Übergangsbereiches & $\mathrm{[K]}$\\
+& $tmean$ & & Mittlere Temperatur & $\mathrm{[°C]}$\\
+& $precip$ & & Niederschlag & $\mathrm{[mm]}$\\
+\end{tabular}\\ 
+
+\subsection*{Interne Variablen:}
+
+\begin{tabular}{lllp{8.5cm}ll}
+%& & &\\ 
+& $pSnow$ &  & relativer Schneeanteil in Abhängigkeit von der Temperatur& $\mathrm{[-]}$\\
+\end{tabular}\\
+
+\subsection*{Ausgabe:}
+\begin{tabular}{lllll}
+& $rain$ & & Regen & $\mathrm{[mm]}$\\
+& $snow$ & & Schnee & $\mathrm{[mm]}$\\
+& $mixPrecip$ & & Mischniederschlag $\mathrm{(ja | nein)}$ & $\mathrm{[true | false]}$\\
+\end{tabular}\\
+   
+  
+

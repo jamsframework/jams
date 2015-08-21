@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!--<!DOCTYPE JAMSModel SYSTEM "jamsmodel.dtd">-->
+
+<model name="abc model" author="D. Boyle and P. Krause" date="18.05.2006">
+    <globvar name="timeInterval" value="1979-11-01 0:00 2000-10-31 0:00 2 1"/>
+    <globvar name="parameterFile" value="D:\Development_new\Dist\ABC\abc.par"/>
+    <globvar name="dataInputFile" value="D:\Development_new\Sourcen\ABC\IO\gb_monthly_data.txt"/>
+    <globvar name="dataOutputFile" value="D:\Development_new\Dist\ABC\abc_gb.out"/>
+    
+    <contextcomponent class="org.unijena.abc.ABCRandomParaSampler" name="Sampler">
+        <var name="parameterIDs" value="abcModel.b;abcModel.a;abcModel.c;snowModule.t_thres;snowModule.ddf;ETHaude.et_adaptation"/> <!--abcModel.b;abcModel.a;abcModel.c;snowModule.t_thres;snowModule.ddf"/-->
+        <var name="boundaries" value="[0.0>1.0];[0.0>1.0];[0.0>1.0];[-10.0>10.0];[0.0>100.0];[0.1>5.0]"/><!--[0.0>1.0];[0.0>1.0];[0.0>1.0];[-10.0>10.0];[0.0>100.0]"/-->
+        <var name="sampleCount" value="5000"/>
+        <var name="effMethodNames" value="e2;le2;rmse;absVolErr;rsq"/>
+        <var name="effValues" attribute="e2;le2;rmse;absVolErr;rsq"/>
+        <var name="disable" value="true"/>
+        <var name="fileName" globvar="parameterFile"/>
+        
+        <contextcomponent class="org.unijena.jams.model.JAMSTemporalContext" name="TemporalContext">
+            <var name="timeInterval" globvar="timeInterval"/>        
+            <var name="current" attribute="time"/>
+
+            <component class="org.unijena.abc.GehlbergDataReader" name="DataReader">
+                <var name="timeInterval" globvar="timeInterval"/> 
+                <var name="fileName" globvar="dataInputFile"/>
+                <var name="precip" attribute="precip"/>
+                <var name="temperature" attribute="temperature"/>
+                <var name="rhum" attribute="rhum"/>
+                <var name="obsRunoff" attribute="obsRunoff"/>
+            </component>
+            
+            <component class="org.unijena.abc.ABCETHaude" name="ETHaude">
+                <var name="time" attribute="time"/>
+                <var name="temperature" attribute="temperature"/>
+                <var name="rhum" attribute="rhum"/>
+                <var name="et_adaptation" value="4.9001"/>
+                <var name="pET" attribute="pET"/>
+            </component>
+            
+            <component class="org.unijena.abc.ABCSnowModule" name="snowModule">
+                <var name="precip" attribute="precip"/>
+                <var name="temperature" attribute="temperature"/>
+                <var name="t_thres" value="-2.5398" />
+                <var name="ddf" value="42.1383" />
+                <var name="total_output" attribute="total_output"/>
+            </component>
+
+            <component class="org.unijena.abc.ABCModel" name="abcModel">
+                <var name="precip" attribute="total_output"/>
+                <var name="pET" attribute="pET"/>
+                <var name="a" value="0.5868" />
+                <var name="b" value="0.3698" />
+                <var name="c" value="0.2941" />
+                <var name="initStor" value="100" />
+                <var name="simRunoff" attribute="simRunoff"/>
+                <var name="simBaseFlow" attribute="simBaseFlow"/>
+                <var name="simDirectFlow" attribute="simDirectFlow"/>
+                <var name="simET" attribute="simET"/>
+                <var name="storageTm1" attribute="storageTm1"/>
+            </component>
+				
+            <component class="org.unijena.abc.Output" name="abcOutput">
+                <var name="time" attribute="time"/>
+                <var name="fileName" globvar="dataOutputFile"/>
+                <var name="precip" attribute="precip"/>
+                <var name="obsRunoff" attribute="obsRunoff"/>
+                <var name="simRunoff" attribute="simRunoff"/>
+                <var name="simBaseFlow" attribute="simBaseFlow"/>
+                <var name="simDirectFlow" attribute="simDirectFlow"/>
+                <var name="simET" attribute="simET"/>
+                <var name="pET" attribute="pET"/>
+                <var name="storage" attribute="storageTm1"/>
+            </component>
+            
+            <component class="org.unijena.j2k.efficiencies.StandardEfficiencyCalculator" name="EfficiencyCalculator">
+                <var name="timeInterval" globvar="timeInterval"/>
+                <var name="effMethod" value="1,2,3,4,5,6,7,8,9,10,11"/>
+                <var name="validation" attribute="obsRunoff"/>
+                <var name="prediction" attribute="simRunoff"/>
+                <var name="e2" attribute="e2"/>
+                <var name="e1" attribute="e1"/>
+                <var name="le2" attribute="le2"/>
+                <var name="rsq" attribute="rsq"/>
+                <var name="wrsq" attribute="wrsq"/>
+                <var name="ioa2" attribute="ioa2"/>
+                <var name="grad" attribute="grad"/>
+                <var name="dsGrad" attribute="dsGrad"/>
+                <var name="absVolErr" attribute="absVolErr"/>
+                <var name="rmse" attribute="rmse"/>
+            </component>
+            
+        </contextcomponent>
+        
+    </contextcomponent>
+</model>

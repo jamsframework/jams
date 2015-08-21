@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!--<!DOCTYPE JAMSModel SYSTEM "jamsmodel.dtd">-->
+
+<model name="Thornthwaite model" author="S. Markstrom (?)" date="30.09.2005">
+
+    <globvar name="timeInterval" value="1989-11-01 7:30:00 1990-10-31 7:30 6 1"/>
+
+    <component class="gov.usgs.thornthwaite.EntityProvider" name="EntityProvider">
+        <var name="fileName" value="D:/jamsmodels/Thornthwaite/data/entities.dat"/>
+        <var name="entities" attribute="entities"/>
+    </component>
+    
+    <contextcomponent class="org.unijena.jams.model.JAMSTemporalContext" name="TemporalContext">
+        <var name="timeInterval" globvar="timeInterval"/>
+        <var name="current" attribute="current"/>
+
+        <component class="gov.usgs.thornthwaite.Climate" name="ClimateReader">
+            <var name="fileName" value="D:/jamsmodels/Thornthwaite/data/thorn.dat"/>
+            <var name="temp" attribute="temp"/>
+            <var name="precip" attribute="precip"/>
+        </component>
+
+        <contextcomponent class="org.unijena.jams.model.JAMSSpatialContext" name="SpatialContext">
+            <var name="entities" attribute="entities"/>
+		
+            <component class="gov.usgs.thornthwaite.Daylen" name="Daylen">
+                <var name="latitude" context="SpatialContext" attribute="latitude"/>
+                <var name="time" attribute="current"/>
+                <var name="daylength" context="SpatialContext" attribute="daylength"/>
+            </component>
+
+            <component class="gov.usgs.thornthwaite.HamonET" name="HamonET">
+                <var name="time" attribute="current"/>
+                <var name="temp" attribute="temp"/>
+                <var name="daylength" context="SpatialContext" attribute="daylength"/>
+                <var name="potET" context="SpatialContext" attribute="potET"/>
+            </component>
+
+            <component class="gov.usgs.thornthwaite.SoilMoisture" name="SoilMoisture">
+                <var name="soilMoistStorCap" context="SpatialContext" attribute="soilMoistStorCap"/>
+                <var name="potET" context="SpatialContext" attribute="potET"/>
+                <var name="temp" attribute="temp"/>
+                <var name="precip" attribute="precip"/>
+                <var name="prestor" context="SpatialContext" attribute="prestor"/>		            
+                <var name="soilMoistStor" context="SpatialContext" attribute="soilMoistStor"/>		            
+                <var name="surfaceRunoff" context="SpatialContext" attribute="surfaceRunoff"/>		            
+            </component>
+
+            <component class="gov.usgs.thornthwaite.Snow" name="Snow">
+                <var name="snowStorage" context="SpatialContext" attribute="snowStorage"/>
+                <var name="potET" context="SpatialContext" attribute="potET"/>
+                <var name="temp" attribute="temp"/>
+                <var name="precip" attribute="precip"/>
+                <var name="snowMelt" context="SpatialContext" attribute="snowMelt"/>		            
+            </component>
+		        
+            <component class="gov.usgs.thornthwaite.Runoff" name="Runoff">
+                <var name="runoffFactor" context="SpatialContext" attribute="runoffFactor"/>
+                <var name="remain" context="SpatialContext" attribute="remain"/>
+                <var name="snowMelt" context="SpatialContext" attribute="snowMelt"/>		            
+                <var name="surfaceRunoff" context="SpatialContext" attribute="surfaceRunoff"/>		            
+                <var name="runoff" context="SpatialContext" attribute="runoff"/>		            
+            </component>
+		        
+            <component class="gov.usgs.thornthwaite.Output" name="Output">
+                <var name="fileName" value="D:/jamsmodels/Thornthwaite/data/thorn.out"/>
+                <var name="daylength" context="SpatialContext" attribute="daylength"/>
+                <var name="time" attribute="current"/>
+                <var name="potET" context="SpatialContext" attribute="potET"/>
+                <var name="runoff" context="SpatialContext" attribute="runoff"/>		            
+                <var name="snowMelt" context="SpatialContext" attribute="snowMelt"/>		            
+                <var name="soilMoistStor" context="SpatialContext" attribute="soilMoistStor"/>		            
+            </component>
+            
+
+            <component class="org.unijena.jams.gui.TSPlot" name="Runoff Plot" >
+                <var name="titleLeft" value="potET;runoff"/>
+                <var name="titleRight" value="Precip"/>
+                <var name="colorLeft" value="red;blue"/>
+                <var name="colorRight" value="lightgray"/>            
+                <var name="typeLeft" value="0"/>
+                <var name="typeRight" value="1"/>            
+                <var name="xAxisTitle" value="Time"/>
+                <var name="leftAxisTitle" value="???"/>
+                <var name="rightAxisTitle" value="Precip [mm]"/>
+                <var name="rightAxisInverted" value="true"/>
+                <var name="dateFormat" value="dd-MM-yyyy hh:mm"/>
+                <var name="time" attribute="current"/>
+                <var name="valueLeft" context="SpatialContext" attribute="potET;runoff"/>
+                <var name="valueRight" attribute="precip"/>
+            </component>
+            
+        </contextcomponent>
+
+    </contextcomponent>
+
+    <component class="org.unijena.jams.gui.JAMSExecInfo" name="JAMSProgress" />
+    
+</model>

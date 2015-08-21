@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook"
+       xmlns:ns6="http://www.w3.org/1999/xlink"
+       xmlns:ns5="http://www.w3.org/1999/xhtml"
+       xmlns:ns4="http://www.w3.org/2000/svg"
+       xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+       xmlns:ns="http://docbook.org/ns/docbook">
+  <title>CalcLanduseStateVars</title>
+
+  <subtitle>Eine Komponente zur Berechnung der extraterrestrischen
+  Einstrahlung.</subtitle>
+
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*" />
+
+      <colspec colname="c2" colnum="2" colwidth="3*" />
+
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+
+          <entry>j2k.inputData</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+
+  <sect2>
+    <title>Variablen</title>
+
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+
+        <colspec colname="c2" colnum="2" colwidth="3.26*"/>
+
+        <thead>
+          <row>
+            <entry>Name</entry>
+
+            <entry>Beschreibung</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>entities</entry>
+
+            <entry>Der Satz der räumlichen Modelleinheiten.</entry>
+          </row>
+
+          <row>
+            <entry>LAIArray</entry>
+
+            <entry>Für jede Modelleinheit werden hier die LAI Werte in der
+            zeitlichen Modellauflösung (h, d, m) für ein Standardjahr
+            abgelegt.</entry>
+          </row>
+
+          <row>
+            <entry>effHArray</entry>
+
+            <entry>Für jede Modelleinheit werden hier die Werte für die
+            effektive Wuchshöhe in der zeitlichen Modellauflösung (h, d, m)
+            für ein Standardjahr abgelegt.</entry>
+          </row>
+
+          <row>
+            <entry>rsc0Array</entry>
+
+            <entry>Die monatliche Werte für die Stomatawiderstände der Vegetation auf der
+              Modelleinheit.</entry>
+          </row>
+
+          <row>
+            <entry>elevation</entry>
+
+            <entry>Die Höhe ü.N.N. der spezifischen Modelleinheit.</entry>
+          </row>
+
+          <row>
+            <entry>tempRes</entry>
+
+            <entry>Die zeitliche Auflösung der Modellierung - (h) stündlich,
+            (d) täglich, (m) monatlich.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+
+    <para>In dieser Komponente werden Landnutzungsparameter für die entsprechende zeitliche
+      Auflösung des Modells (Variable <emphasis role="italic">tempRes</emphasis>) und für jede
+      räumliche Modelleinheit berechnet und in entsprechenden Variablen abgelegt. Die Berechnung
+      erfolgt anhand spezifischer Stützwerte, die das Modell aus dem Landnutzungsparameterfile (z.B.
+      landuse.par) bezieht. Im Einzelnen sind dies:</para>
+
+    <para><itemizedlist>
+        <listitem>
+          <para>4 Stützwerte (d1 - d4) für den Leaf Area Index (<emphasis role="italic"
+              >LAI</emphasis>) für die Tage 110 (20. Apr.), 150 (30. Mai), 250 (7. Sep.) und 280 (7.
+            Okt)</para>
+        </listitem>
+
+        <listitem>
+          <para>4 Stützwerte für effektive Wuchshöhe (<emphasis role="italic">effH</emphasis>) für
+            die Tage 110 (20. Apr.), 150 (30. Mai), 250 (7. Sep.) und 280 (7. Okt)</para>
+        </listitem>
+
+        <listitem>
+          <para>12 Monatswerte für die Stomatawiderstände der entsprechenden
+          Vegetation</para>
+        </listitem>
+      </itemizedlist></para>
+
+    <para>Das Modell geht bei diesen Werten von einer Höhe von 400 m ü.N.N.
+    aus. Entsprechend der tatsächlichen Höhe der jeweiligen Modelleinheit
+    erfolgt eine Anpassung der Werte nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>d'</ns3:mi>
+
+              <ns3:mo>_</ns3:mo>
+
+              <ns3:mi>x</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>d</ns3:mi>
+
+                <ns3:mi>x</ns3:mi>
+              </ns3:mrow>
+
+              <ns3:mo>+</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>0.025</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mi>e</ns3:mi>
+
+                      <ns3:mi>l</ns3:mi>
+
+                      <ns3:mi>e</ns3:mi>
+
+                      <ns3:mi>v</ns3:mi>
+
+                      <ns3:mi>a</ns3:mi>
+
+                      <ns3:mi>t</ns3:mi>
+
+                      <ns3:mrow>
+                        <ns3:mi>i</ns3:mi>
+
+                        <ns3:mi>o</ns3:mi>
+
+                        <ns3:mi>n</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:mrow>
+
+                    <ns3:mo>-</ns3:mo>
+
+                    <ns3:mi>400</ns3:mi>
+                  </ns3:mrow>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Hierdurch wird die Vegetationslänge bei tiefer liegenden Flächen
+    verlängert, bei höher liegenden Flächen verkürzt. Zwischen den
+    Stützstellen erfolgt eine diskrete Berechnung für jeden Modellzeitschritt
+    durch lineare Interpolation.</para>
+
+    <para>Zu weiterführenden Informationen siehe auch: <citation><xref linkend="Krause_2001"
+        /></citation></para>
+  </sect2>
+    <bibliography>
+      <title>Literatur</title> 
+      <biblioentry  xml:id="Krause_2001" xreflabel="Krause 2001">
+        <abbrev>Krause 2001</abbrev>
+        <author><personname><firstname>P.</firstname><surname>Krause</surname></personname></author>
+        <title>Das hydrologische Modellsystem J2000: Beschreibung und Anwendung in
+          großen Flußeinzugsgebieten</title>
+        <publisher>
+          <publishername>Schriften des Forschungszentrum Jülich: Reihe Umwelt/Environment</publishername>
+        </publisher>
+        <volumenum>Band 29</volumenum>
+        <pubdate>2001</pubdate>
+      </biblioentry>
+    </bibliography>
+</sect1>

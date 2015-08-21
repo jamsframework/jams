@@ -1,0 +1,354 @@
+\section{Berechnung der potentiellen Evapotranspiration}
+
+
+\subsection{Verfahren von Turc-Wendling}
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP2.TurcWendling.java
+\subsubsection*{Beschreibung:}
+Die potentielle Evapotranspiration wird aus der mittleren Lufttemperatur und der Globalstrahlung berechnet. Zusätzlich wird die Entfernung zur Küste berücksichtigt. Die Berechnung erfolgt nach folgender Formel:
+
+\begin{equation}
+%\label{potET}
+potET = \frac{(R_G + 93 \cdot f_K) \cdot (T + 22)}{150 \cdot (T + 123)} 
+\end{equation}
+
+\begin{tabular}{lllp{8.5cm}ll}
+mit & & &\\ 
+& $R_G$ & & Globalstrahlung & $\mathrm{[W  m^{-2}]}$\\
+& $T$ & & mittlere Temperatur & $\mathrm{[°C]}$\\
+& $f_K$	&	& Küstenfaktor, Entfernung zur Küste $> 50$\,km $f_K = 1.0$, sonst $f_K = 0.6$ & $\mathrm{[-]}$\\
+\end{tabular}\\
+
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{DVWK} (1996)\textsc{DVWK} ]{DVWK}
+\textsc{DVWK} (1996): Ermittlung der Verdunstung von Land- und Wasserflächen. Merkblätter zur Wasserwirtschaft, 238. Bonn.
+\end{thebibliography}
+
+
+\subsection*{Eingabe:} 
+\begin{tabular}{lllll}
+%& & &\\ 
+& $tmean$ & & Mittlere Lufttemperatur & $\mathrm{[°C]}$\\
+& $solRad$ & & Globalstrahlung & $\mathrm{[W m^{-2}]}$\\
+& $coastalFactor$	&	& Küstenfaktor & $\mathrm{[-]}$\\
+\end{tabular}\\
+
+\subsection*{Ausgabe:}
+\begin{tabular}{lllll}
+%& & &\\ 
+& $potET$ &  & Potentielle Evapotranspiration & $\mathrm{[mm d^{-1}]}$\\
+\end{tabular}\\
+
+%----------------------------------------------------------------------------
+%----------------------------------------------------------------------------
+
+\newpage
+\subsection{Verfahren von Haude}
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP2.Haude.java
+\subsubsection*{Beschreibung:}
+Die potentielle Evapotranspiration wird aus dem von Temperatur und relativer Luftfeuchte abgeleiteten Sättigungsdefizit der Luft mit Wasserdampf und dem empirischen Faktor für die jeweilige Landnutzungen, dem Haude-Faktor, wie folgt berechnet:
+
+\begin{equation}
+%\label{potET}
+potET = est \cdot (1 - \frac{(rhum}{100}) \cdot f 
+\end{equation}
+
+\begin{tabular}{lllp{8.5cm}ll}
+mit & & &\\ 
+& $est$ & & Sättigungsdampfdruck & $\mathrm{[hPa]}$\\
+& $rhum$ &	&  Relative Luftfeuchte & $\mathrm{[\%]}$\\
+& $f$ & & empirischer monatlicher Faktor für Pflanzen (Haude-Faktor)& $\mathrm{[mm hPa^{-1}]}$\\
+\end{tabular}\\
+
+Das Haude-Verfahren wurde für die Berechnung von Monatssummen der Evapotranspiration entwickelt. Für die Berechnung von Tagessummen ist es zu ungenau.
+
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{DVWK} (1996)\textsc{DVWK} ]{DVWK}
+\textsc{DVWK} (1996): Ermittlung der Verdunstung von Land- und Wasserflächen. Merkblätter zur Wasserwirtschaft, 238. Bonn.
+\end{thebibliography}
+ 
+ 
+\subsection*{Eingabe:} 
+\begin{tabular}{lllll}
+%& & &\\ 
+& $tmean$ & & Mittlere Lufttemperatur & $\mathrm{[°C]}$\\
+& $rhum$ &	&  Relative Luftfeuchte & $\mathrm{[\%]}$\\
+& $haudeFactor$ & & Haude-Faktor & $\mathrm{[mm hpa^{-1}]}$\\
+& $area$	&		& Fläche & $\mathrm{[m^{2}]}$\\
+\end{tabular}\\
+
+\subsection*{Interne Variablen:}
+
+\begin{tabular}{lllp{6cm}ll}
+%& & &\\ 
+& $est$ & & Sättigungsdampfdruck & $\mathrm{[kPa]}$\\
+\end{tabular}\\
+
+   
+\subsection*{Ausgabe:}
+\begin{tabular}{lllll}
+%& & &\\ 
+& $pET$ &  & Potentielle Evapotranspiration & $\mathrm{[mm timeUnit^{-1}]}$\\
+\end{tabular}\\
+%----------------------------------------------------------------------------
+%----------------------------------------------------------------------------
+
+\newpage
+\subsection{Verfahren von Penman}
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP2.Penman.java
+\subsubsection*{Beschreibung:}
+%\begin{minipage}{10cm}
+Die potentielle Evapotranspiration wird nach \textsc{Penman} (1948) aus der temperaturabhängigen Steigung der Dampfdruckkurve, der effektiven Strahlungsbilanz (Nettostrahlung - Boden\-wär\-me\-strom), der speziellen Verdunstungswärme, dem Luftdruck und dem Sättigungsdefizit der Luft (Sättigungsdampfdruck - Dampfdruck) berechnet. Zusätzlich wird die Windgeschwindigkeit und die Bewuchshöhe/ astronomisch mögliche Sonnenscheindauer berücksichtigt. ??? Die Berechnung erfolgt nach folgender Formel:
+
+\begin{equation}
+%\label{potET}
+potET = \frac{s}{s + \gamma} \cdot \frac{R_N - G}{L} + \frac{\gamma}{s + \gamma} \cdot 0.063 \cdot (1 + 1.08 \cdot v) \cdot (e_s - e) \cdot S_R
+\end{equation}
+
+\begin{tabular}{lllp{7.5cm}ll}
+mit & & &\\ 
+& $s$ & & Steigung der Dampfdruckkurve & $\mathrm{[kPa  K^{-1}]}$\\
+& $\gamma$ & & Psychrometerkonstante & $\mathrm{[kPa K^{-1}]}$\\
+& $R_N$ & & Nettostrahlung & $\mathrm{[W  m^{-2}]}$\\
+& $G$ & & Bodenwärmestrom & $\mathrm{[W  m^{-2}]}$\\
+& $L$ &  & Latente Verdunstungswärme & $\mathrm{[W m^{-2}] pro [mm\, d^{-1}]}$\\
+& $e_s$	&		& Sättigungsdampfdruck & $\mathrm{[kPa]}$\\
+& $e$	&		& Dampfdruck & $\mathrm{[kPa]}$\\
+& $v$	&		& Windgeschwindigkeit & $\mathrm{[ms^{-1}]}$\\
+& $S_R$	&		& Verhältnis der astronomisch möglichen Sonnenscheindauer zu der bei Tag- und Nachtgleiche & $\mathrm{[-]}$\\
+
+\end{tabular}\\
+%\end{minpage}
+
+
+
+%------------------------------------------------------------
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{Penman} (1948)\textsc{Penman} ]{Penman}
+\textsc{Penman,\,H.L.} (1948): Natural evaporation from open water, bare soil and grass.Proc. Royal Soc. London A 193, 120-145.
+
+\bibitem[\textsc{DVWK} (1996)\textsc{DVWK} ]{DVWK}
+\textsc{DVWK} (1996): Ermittlung der Verdunstung von Land- und Wasserflächen. Merkblätter zur Wasserwirtschaft, 238. Bonn.
+
+
+\end{thebibliography} 
+%------------------------------------------------------------
+
+
+\subsection*{Eingabe:} 
+\begin{tabular}{lllll}
+%& & &\\ 
+& $time$ &  & Zeitpunkt & \\
+& $tempRes$ & & Zeitliche Auflösung & $\mathrm{[d | h | m]}$ \\
+& $wind$ & & Windgeschwindigkeit & $\mathrm{[m s^{-1}]}$ \\
+& $tmean$ & & Mittlere Lufttemperatur & $\mathrm{[°C]}$\\
+& $rhum$ &	&  Relative Luftfeuchte & $\mathrm{[\%]}$\\
+& $netRad$ & & Nettostrahlung & $\mathrm{[W m^{-2}]}$\\
+& $elevation$	&		& Höhe & $\mathrm{[m]}$\\
+& $area$	&		& Fläche & $\mathrm{[m^{2}]}$\\
+& $latitude$ & & geographische Breite & $\mathrm{[°]}$\\
+\end{tabular}\\
+
+\subsection*{Interne Variablen:}
+
+\begin{tabular}{lllp{6cm}ll}
+%& & &\\ 
+& $delta\_s$ & & Steigung der Sättigungsdampfdruckkurve & $\mathrm{[kPa K^{-1}]}$ \\
+& $pz$ & & athmosphärischer Luftdruck & $\mathrm{[kPa]}$ \\
+& $est$ & & Sättigungsdampfdruck & $\mathrm{[kPa]}$\\
+& $ea$ & & tatsächlicher Dampfdruck & $\mathrm{[kPa]}$\\
+& $latH$ & & latente Verdunstungswärme & $\mathrm{[W m^{-2}] pro [mm d^{-1}]}$\\
+& $psy$ & & Psychrometerkonstante & $\mathrm{[kPa K^{-1}]}$\\
+& $G$ & & Bodenwärmestrom & $\mathrm{[W m^{-2}]}$\\
+& $declination$ &  & Deklination der Sonne& $\mathrm{[rad]}$\\
+& $latRad$ & & geographische Breite& $\mathrm{[rad]}$ \\
+& $sunsetHourAngle$ & & Stundenwinkel zum Sonnenuntergang & $\mathrm{[rad]}$\\
+& $maximumSunshine$ & & maximale Sonnenscheindauer & $\mathrm{[h]}$\\
+& $sr$	&		& Verhältnis der astronomisch möglichen Sonnenscheindauer zu der bei Tag- und Nachtgleiche& $\mathrm{[-]}$\\
+\end{tabular}\\
+
+   
+\subsection*{Ausgabe:}
+\begin{tabular}{lllll}
+%& & &\\ 
+& $potET$ &  & Potentielle Evapotranspiration & $\mathrm{[mm timeUnit^{-1}]}$\\
+\end{tabular}\\
+%----------------------------------------------------------------------------
+%----------------------------------------------------------------------------
+
+\newpage
+\subsection{Verfahren von Penman-Monteith}
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP2.PenmanMonteith.java
+\subsubsection*{Beschreibung:}
+%\begin{minipage}{10cm}
+Die potentielle Evapotranspiration wird aus der temperaturabhängigen Steigung der Dampfdruckkurve, der effektiven Strahlungsbilanz (Nettostrahlung - Boden\-wär\-me\-strom), der Dichte der Luft, der spezifischen Wärmekapazität der Luft bei konstantem Druck und dem Sättigungsdefizit der Luft (Sättigungsdampfdruck - Dampfdruck) berechnet. Zusätzlich wird der Einfluss unterschiedlicher Vegetation auf die Verdunstung in der  Berechnung  berücksichtigt. Dafür dienen der Oberflächenwiderstand, d.h. der von der Blattfläche und der Wassermenge abhängige Stomatawiederstand der einzelnen Blätter (\textsc{Dyck \& Peschke} 1995) sowie der  Oberflächenwiderstand von unbewachsenem Boden und der von der effektiven Bewuchshöhe und der Windgeschwindigkeit verursachte aerodynamische Widerstand. Die Berechnung erfolgt nach folgender Formel:
+
+\begin{equation}
+%\label{potET}
+potET = \frac{1}{L} \cdot \frac{s \cdot (R_N - G) + \rho \cdot c_p \cdot \frac{(e_s - e)}{r_a}}{s + \gamma \cdot (1 + \frac{r_s}{r_a})}
+\end{equation}
+
+
+\begin{tabular}{lllp{7.5cm}ll}
+mit & & &\\ 
+& $L$ &  & Latente Verdunstungswärme & $\mathrm{[W m^{-2}] pro [mm\, d^{-1}]}$\\
+& $s$ & & Steigung der Dampfdruckkurve & $\mathrm{[kPa  K^{-1}]}$\\
+& $R_N$ & & Nettostrahlung & $\mathrm{[W  m^{-2}]}$\\
+& $G$ & & Bodenwärmestrom & $\mathrm{[W  m^{-2}]}$\\
+& $\rho$ &	&  Dichte der Luft & $\mathrm{[kg  m^{-3}]}$\\
+& $c_p$ &  & Spezifische Wärmekapazität der\\
+& & & Luft bei konstantem Druck & $\mathrm{[J kg^{-1} K^{-1}]}$\\
+& $e_s$	&		& Sättigungsdampfdruck & $\mathrm{[kPa]}$\\
+& $e$	&		& Dampfdruck & $\mathrm{[kPa]}$\\
+& $r_a$	&		& aerodynamischer Widerstand & $\mathrm{[s m^{-1}]}$\\
+& $r_s$	&		& Oberflächenwiderstand der Bodenbedeckung & $\mathrm{[s m^{-1}]}$\\
+& $\gamma$ & & Psychrometerkonstante & $\mathrm{[kPa K^{-1}]}$\\
+\end{tabular}\\
+%\end{minpage}
+
+
+
+%------------------------------------------------------------
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{Dyck \& Peschke} (1995)\textsc{Dyck \& Peschke} ]{dp}
+\textsc{Dyck,\,S. \& G.\,Peschke} (1995): Grundlagen der Hydrologie.Berlin: Verlag für Bauwesen.
+
+\bibitem[\textsc{JAMSWiki} (2008)\textsc{JAMSWiki} ]{JAMSWiki}
+\textsc{JAMSWiki} (2008): Hydrologisches Modell J2000, \\ $\left\langle http://jams.uni-jena.de/jamswiki/index.php/Hydrologisches\_Modell\_J2000 \right\rangle$ (Stand: 18.2.2008) (Zugriff: 12.12.2008).
+
+\bibitem[\textsc{Krause} (2001)\textsc{Krause} ]{k01}
+\textsc{Krause,\,P.} (2001): Das hydrologische Modellsystem J2000-Beschreibung und Anwendung in großen Flussgebieten. Reihe Umwelt/ Environment 29. Jülich: Forschungszentrum Jülich.
+
+
+\end{thebibliography} 
+%------------------------------------------------------------
+
+
+\subsection*{Eingabe:} 
+\begin{tabular}{lllll}
+%& & &\\ 
+& $time$ &  & Zeitpunkt & \\
+& $tempRes$ & & Zeitliche Auflösung & $\mathrm{[d | h | m]}$ \\
+& $wind$ & & Windgeschwindigkeit & $\mathrm{[m s^{-1}]}$ \\
+& $tmean$ & & Mittlere Lufttemperatur & $\mathrm{[°C]}$\\
+& $rhum$ &	&  Relative Luftfeuchte & $\mathrm{[\%]}$\\
+& $netRad$ & & Nettostrahlung & $\mathrm{[W m^{-2}]}$\\
+& $actRsc0$	&		& Oberflächenwiderstand  & $\mathrm{[s m^{-1}]}$\\
+& $elevation$	&		& Höhe & $\mathrm{[m]}$\\
+& $area$	&		& Fläche & $\mathrm{[m^{2}]}$\\
+& $actLAI$	&		& Blattflächenindex LAI & \\
+& $actEffH$	&		& effektive Bewuchshöhe & $\mathrm{[m]}$\\
+\end{tabular}\\
+
+\subsection*{Interne Variablen:}
+
+\begin{tabular}{lllll}
+%& & &\\ 
+& $abs\_temp$ &  & Temperatur & $\mathrm{[K]}$\\
+& $delta\_s$ & & Steigung der Sättigungsdampfdruckkurve & $\mathrm{[kPa K^{-1}]}$ \\
+& $pz$ & & athmosphärischer Luftdruck & $\mathrm{[kPa]}$ \\
+& $est$ & & Sättigungsdampfdruck & $\mathrm{[kPa]}$\\
+& $ea$ & & tatsächlicher Dampfdruck & $\mathrm{[kPa]}$\\
+& $latH$ & & latente Verdunstungswärme & $\mathrm{[W m^{-2}] pro [mm d^{-1}]}$\\
+& $psy$ & & Psychrometerkonstante & $\mathrm{[kPa K^{-1}]}$\\
+& $G$ & & Bodenwärmestrom & $\mathrm{[W m^{-2}]}$\\
+& $vT$ & & virtuelle Temperatur & $\mathrm{[K]}$\\
+& $pa$ & &  Dichte der Luft & $\mathrm{[kg m^{-3}]}$\\
+
+\end{tabular}\\
+
+   
+\subsection*{Ausgabe:}
+\begin{tabular}{lllll}
+%& & &\\ 
+& $potET$ &  & Potentielle Evapotranspiration & $\mathrm{[mm timeUnit^{-1}]}$\\
+& $actET$ & & Aktuelle Evapotranspiration & $\mathrm{[mm timeUnit^{-1}]}$ \\
+& $ra$ & & Aerodynamischer Widerstand & $\mathrm{[s m^{-1}]}$ \\
+& $rs$ & & Oberflächenwiderstand der Bodenbeckung & $\mathrm{[s m^{-1}]}$\\
+\end{tabular}\\
+
+
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\newpage
+\subsection{Gras-Referenzverdunstung}
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP2.RefET.java
+\subsubsection*{Beschreibung:}
+Die Gras-Referenzverdunstung wurde von \textsc{Allen} et al. (1994) als Referenz für Verdunstungsberechnungen entwickelt. Sie gilt für Grasflächen ohne Wasserstress mit einer Wuchshöhe von 0.12\,m (\textsc{DVWK} 1996). Sie wurde von der Penman-Monteith-Beziehung abgeleitet und berechnet sich wie folgt: 
+
+\begin{equation}
+%\label{potET}
+potET = \frac{0.408 \cdot s \cdot (R_N - G) + \gamma \cdot \frac{tempFactor}{T + 273} \cdot v \cdot (e_s - e)} {s + \gamma \cdot (1 + 0.34 \cdot v)}
+\end{equation}
+
+
+
+\begin{tabular}{lllp{7.5cm}ll}
+mit & & &\\ 
+& $s$ & & Steigung der Dampfdruckkurve & $\mathrm{[kPa  K^{-1}]}$\\
+& $R_N$ & & Nettostrahlung & $\mathrm{[W  m^{-2}]}$\\
+& $G$ & & Bodenwärmestrom & $\mathrm{[W  m^{-2}]}$\\
+& $tempFactor$ &  & Faktor fuer Berechnung je nach zeitlicher Auflösung& $\mathrm{[-]}$\\
+& $T$ &  & mittlere tägliche Lufttemperatur& $\mathrm{[°C]}$\\
+& $v$ &  & Windgeschwindigkeit& $\mathrm{[m s^{-1}]}$\\
+& $e_s$	&		& Sättigungsdampfdruck & $\mathrm{[kPa]}$\\
+& $e$	&		& Dampfdruck & $\mathrm{[kPa]}$\\
+& $\gamma$ & & Psychrometerkonstante & $\mathrm{[kPa K^{-1}]}$\\
+\end{tabular}\\
+
+
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{Allen} et al. (1998)\textsc{Allen} ]{Allen}
+\textsc{Allen,\,R.G., L.S.\,Pereira, D.\,Raes \& M.\,Smith} (1998): Crop evapotranspiration - Guidelines for computing crop water requirements - FAO Irrigation and drainage paper 56, \\ $\left\langle http://www.fao.org/docrep/X0490E/x0490e06.htm\#equation \right\rangle$ (Stand: 1998) (Zugriff: 13.1.2009).
+\bibitem[\textsc{DVWK} (1996)\textsc{DVWK} ]{DVWK}
+\textsc{DVWK} (1996): Ermittlung der Verdunstung von Land- und Wasserflächen. Merkblätter zur Wasserwirtschaft, 238. Bonn.
+\end{thebibliography}
+
+
+\subsection*{Eingabe:} 
+\begin{tabular}{lllll}
+%& & &\\ 
+& $time$ &  & Zeitpunkt & \\
+& $tempRes$ & & Zeitliche Auflösung & $\mathrm{[d | h | m]}$ \\
+& $wind$ & & Windgeschwindigkeit & $\mathrm{[m s^{-1}]}$ \\
+& $tmean$ & & Mittlere Lufttemperatur & $\mathrm{[°C]}$\\
+& $rhum$ &	&  Relative Luftfeuchte & $\mathrm{[\%]}$\\
+& $netRad$ & & Nettostrahlung & $\mathrm{[W m^{-2}]}$\\
+& $elevation$	&		& Höhe & $\mathrm{[m]}$\\
+& $area$	&		& Fläche & $\mathrm{[m^{2}]}$\\
+\end{tabular}\\
+
+\subsection*{Interne Variablen:}
+
+\begin{tabular}{lllp{7.5cm}ll}
+%& & &\\ 
+& $ra$ & & Konstante für Aerodynamischen Widerstand (208) & $\mathrm{[s m^{-1}]}$ \\
+& $rs$ & & Konstante für Oberflächenwiderstand der Bodenbeckung (70)& $\mathrm{[s m^{-1}]}$\\
+& $tempFactor$ &  & Faktor fuer Berechnung je nach zeitlicher Auflösung& $\mathrm{[-]}$\\
+& $abs\_temp$ &  & Temperatur & $\mathrm{[K]}$\\
+& $delta\_s$ & & Steigung der Sättigungsdampfdruckkurve & $\mathrm{[kPa K^{-1}]}$ \\
+& $pz$ & & athmosphärischer Luftdruck & $\mathrm{[kPa]}$ \\
+& $est$ & & Sättigungsdampfdruck & $\mathrm{[kPa]}$\\
+& $ea$ & & tatsächlicher Dampfdruck & $\mathrm{[kPa]}$\\
+& $latH$ & & latente Verdunstungswärme & $\mathrm{[W m^{-2}] pro [mm d^{-1}]}$\\
+& $psy$ & & Psychrometerkonstante & $\mathrm{[kPa K^{-1}]}$\\
+& $G$ & & Bodenwärmestrom & $\mathrm{[W m^{-2}]}$\\
+\end{tabular}\\
+
+
+\subsection*{Ausgabe:}
+\begin{tabular}{lllll}
+%& & &\\ 
+& $refET$ &  & Potentielle Evapotranspiration & $\mathrm{[mm d^{-1}]}$\\
+& $actET$ &  & Aktuelle Evapotranspiration & $\mathrm{[mm d^{-1}]}$\\
+\end{tabular}\\
+
+
+
+%-------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\newpage

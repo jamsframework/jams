@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook"
+  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML"
+  xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook">
+  <title>RainCorrectionRichter</title>
+  <subtitle>Eine Komponente zur Korrektur von Niederschlagsmesswerten nach dem Verfahren von
+        <citation><xref linkend="Richter_1995"/></citation>.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+          <entry>j2k.inputData</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variablen</title>
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1*"/>
+        <colspec colname="c2" colnum="2" colwidth="3*"/>
+        <thead>
+          <row>
+            <entry>Name</entry>
+            <entry>Beschreibung</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>time</entry>
+            <entry>der aktuelle Modellierungszeitpunkt</entry>
+          </row>
+          <row>
+            <entry>precip</entry>
+            <entry>die unkorrigierten Niederschlagswerte</entry>
+          </row>
+          <row>
+            <entry>temperature</entry>
+            <entry>Lufttemperaturwerte der Niederschlagsstationen oder von umliegenden
+              Klimastationen</entry>
+          </row>
+          <row>
+            <entry>tempElevation</entry>
+            <entry>die Stationshöhen für die Temperaturmessstationen</entry>
+          </row>
+          <row>
+            <entry>tempXCoord</entry>
+            <entry>die Rechtswerte für die Temperaturmessstationen</entry>
+          </row>
+          <row>
+            <entry>tempYCoord</entry>
+            <entry>die Hochwerte für die Temperaturmessstationen</entry>
+          </row>
+          <row>
+            <entry>tempRegCoeff</entry>
+            <entry>Achsenabschnitt, Steigung und Bestimmtheitsmaß aus der Regression zwischen
+              Temperaturwerten und Stationshöhen</entry>
+          </row>
+          <row>
+            <entry>tempNIDW</entry>
+            <entry>Anzahl von Temperaturstationen die bei der Interpolation berücksichtigt werden
+              sollen</entry>
+          </row>
+          <row>
+            <entry>pIDW</entry>
+            <entry>die Potenz für die Gewichtsberechnung der Interpolation der
+              Temperaturwerte</entry>
+          </row>
+          <row>
+            <entry>regThres</entry>
+            <entry>der Grenzwert für die Höhenkorrektur</entry>
+          </row>
+          <row>
+            <entry>rainElevation</entry>
+            <entry>die Stationshöhen für die Niederschlagsstationen</entry>
+          </row>
+          <row>
+            <entry>rainXCoord</entry>
+            <entry>die Rechtswerte für die Niederschlagsstationen</entry>
+          </row>
+          <row>
+            <entry>rainYCoord</entry>
+            <entry>die Hochwerte für die Niederschlagsstationen</entry>
+          </row>
+          <row>
+            <entry>snow_trs</entry>
+            <entry>Lufttemperatur bei der 50% des Niederschlags als Regen und 50% als Schnee
+              fallen</entry>
+          </row>
+          <row>
+            <entry>snow_trans</entry>
+            <entry>Temperaturintervall um snow_trs zur Bestimmung der Lufttemperaturen für Schnee-
+              oder Regenniederschläge</entry>
+          </row>
+          <row>
+            <entry>dirName</entry>
+            <entry>Verzeichnisname für die Ablage von korrigierten
+              Niederschlagsstationswerten</entry>
+          </row>
+          <row>
+            <entry>fileName</entry>
+            <entry>Dateiname für die Ablage von korrigierten Niederschlagsstationswerten</entry>
+          </row>
+          <row>
+            <entry>rcorr</entry>
+            <entry>die korrigierten Niederschlagswerte</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+    <para>Mit dieser Komponente werden Niederschlagsmesswerte nach dem Verfahren von <citation><xref
+          linkend="Richter_1995"/></citation> hinsichtlich ihrer systematischen Messfehler
+      korrigiert. Hierzu wird zunächst für jede Niederschlagstation eine Temperatur bestimmt. Liegt
+      diese nicht direkt an der Niederschlagstation vor, wird sie aus umliegenden Stationen mit
+      einer Kombination zwischen Inverser Distanz Interpolation und optionaler Höhenkorrektur
+      ermittelt. Auf Basis der Lufttemperatur wird der Niederschlag dann in Regen und Schnee
+      aufgeteilt.</para>
+    <sect3>
+      <title>Korrektur des Benetzungs- und Verdunstungsfehlers</title>
+      <para>Die Korrektur des Benetzungs- und Verdunstungsfehlers erfolgt nach Untersuchungen an
+        Hellmann-Niederschlagsmessern von <citation><xref linkend="Richter_1995"/></citation>. Um
+        eine stetige Korrektur des Fehlers, der aus dem Benetzungs- und Verdunstungsverlust
+        resultiert, zu ermöglichen, wurden für das Modellsystem J2000 logarithmische Funktionen
+        separat für das Sommer- (Mai - Oktober) und Winterhalbjahr (November - April) an die
+        diskreten, tabellierten Werte approximiert. Übersteigt die Niederschlagshöhe den Wert von 9
+        mm, wird der Benetzungs- und Verdunstungsfehler auf einen konstanten Wert gesetzt.</para>
+      <para>Für Niederschlagshöhen ≤9.0 mm berechnet sich der Benetzungs- und Verdunstungsfehler
+        nach:</para>
+      <para><equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+          <m:math display="inline">
+            <m:mtable>
+              <m:mtr>
+                <m:mtd>
+                  <m:mrow>
+                    <m:msub>
+                      <m:mrow>
+                        <m:mi>B</m:mi>
+                        <m:mi>V</m:mi>
+                      </m:mrow>
+                      <m:mrow>
+                        <m:mi>S</m:mi>
+                        <m:mi>o</m:mi>
+                        <m:mi>m</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>=</m:mo>
+                    <m:mrow>
+                      <m:mrow>
+                        <m:mi>0.08</m:mi>
+                        <m:mo>×</m:mo>
+                        <m:mrow>
+                          <m:mrow>
+                            <m:mi>ln</m:mi>
+                            <m:mo>⁡</m:mo>
+                            <m:mi>N</m:mi>
+                          </m:mrow>
+                          <m:mo>+</m:mo>
+                          <m:mi>0.225 [mm]</m:mi>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd>
+                  <m:mrow>
+                    <m:msub>
+                      <m:mrow>
+                        <m:mi>B</m:mi>
+                        <m:mi>V</m:mi>
+                      </m:mrow>
+                      <m:mrow>
+                        <m:mi>W</m:mi>
+                        <m:mi>i</m:mi>
+                        <m:mi>n</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>=</m:mo>
+                    <m:mrow>
+                      <m:mrow>
+                        <m:mrow>
+                          <m:mi>0.08</m:mi>
+                          <m:mo>×</m:mo>
+                          <m:mrow>
+                            <m:mrow>
+                              <m:mi>ln</m:mi>
+                              <m:mo>⁡</m:mo>
+                              <m:mi>N</m:mi>
+                            </m:mrow>
+                            <m:mo>+</m:mo>
+                            <m:mi>0.13 [mm]</m:mi>
+                          </m:mrow>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+          </imagedata>
+          </imageobject>
+          </mediaobject>
+          </equation></para>
+      <para>Für Niederschlagshöhen &gt;9.0 mm beträgt der Benetzungs- und Verdunstungsfehler:</para>
+      <para><equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+          <m:math display="inline">
+            <m:mtable>
+              <m:mtr>
+                <m:mtd>
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mi>B</m:mi>
+                      <m:msub>
+                        <m:mi>V</m:mi>
+                        <m:mrow>
+                          <m:mi>S</m:mi>
+                          <m:mi>o</m:mi>
+                          <m:mi>m</m:mi>
+                        </m:mrow>
+                      </m:msub>
+                    </m:mrow>
+                    <m:mo>=</m:mo>
+                    <m:mi>0.47 [mm]</m:mi>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd>
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mi>B</m:mi>
+                      <m:msub>
+                        <m:mi>V</m:mi>
+                        <m:mrow>
+                          <m:mi>W</m:mi>
+                          <m:mi>i</m:mi>
+                          <m:mi>n</m:mi>
+                        </m:mrow>
+                      </m:msub>
+                    </m:mrow>
+                    <m:mo>=</m:mo>
+                    <m:mi>0.30 [mm]</m:mi>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>   
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation></para>
+    </sect3>
+    <sect3>
+      <title>Korrektur des Windfehlers</title>
+      <para>Die Quantifizierung des zu erwartenden Niederschlagsfehlers erfolgt nach Untersuchungen
+        von <citation><xref linkend="Richter_1995"/></citation> als Funktion der Niederschlagshöhe
+        und der Stationslage. Es wird angenommen, dass sich der relative Windfehler (<inlineequation>
+          <m:math display="inline">
+            <m:mrow>
+              <m:mi>K</m:mi>
+              <m:msub>
+                <m:mi>R</m:mi>
+                <m:mrow>
+                  <m:mi>W</m:mi>
+                  <m:mi>i</m:mi>
+                  <m:mrow>
+                    <m:mi>n</m:mi>
+                    <m:mi>d</m:mi>
+                  </m:mrow>
+                </m:mrow>
+              </m:msub>
+            </m:mrow>
+          </m:math>
+        </inlineequation>) für sowohl Regen- als auch Schneeniederschläge deutlich umgekehrt
+        proportional zu den Niederschlagshöhen (<inlineequation>
+          <m:math display="inline">
+            <m:msub>
+              <m:mi>P</m:mi>
+              <m:mi>m</m:mi>
+            </m:msub>
+          </m:math>
+        </inlineequation>) verhält. Die Berechnung erfolgt nach folgenden Gleichungen:</para>
+      <para>
+        <equation>
+          <mediaobject>
+            <imageobject>
+              <imagedata align="center">
+          <m:math display="inline">
+            <m:mrow>
+              <m:mrow>
+                <m:mi>K</m:mi>
+                <m:msub>
+                  <m:mi>R</m:mi>
+                  <m:mrow>
+                    <m:mi>W</m:mi>
+                    <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+                    <m:mi>d</m:mi>
+                  </m:mrow>
+                </m:msub>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mrow>
+                <m:mrow>
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mo>{</m:mo>
+                      <m:mtable>
+                        <m:mtr>
+                          <m:mtd>
+                            <m:mrow>
+                              <m:mi>0.1349</m:mi>
+                              <m:mo>×</m:mo>
+                              <m:mrow>
+                                <m:msubsup>
+                                  <m:mi>P</m:mi>
+                                  <m:mi>m</m:mi>
+                                  <m:mi>-0.949</m:mi>
+                                </m:msubsup>
+                                <m:mo>für</m:mo>
+                                <m:msub>
+                                  <m:mi>T</m:mi>
+                                  <m:mrow>
+                                    <m:mi>m</m:mi>
+                                    <m:mi>e</m:mi>
+                                    <m:mi>a</m:mi>
+                                    <m:mi>n</m:mi>
+                                  </m:mrow>
+                                </m:msub>
+                                <m:mo>&gt;</m:mo>
+                                <m:msub>
+                                  <m:mi>T</m:mi>
+                                  <m:mrow>
+                                    <m:mi>c</m:mi>
+                                    <m:mi>r</m:mi>
+                                    <m:mi>i</m:mi>
+                                    <m:mi>t</m:mi>
+                                    <m:mi> </m:mi>
+                                  </m:mrow>
+                                </m:msub>
+                              </m:mrow>
+                            </m:mrow>
+                          </m:mtd>
+                        </m:mtr>
+                        <m:mtr>
+                          <m:mtd>
+                            <m:mrow>
+                              <m:mi>0.5319</m:mi>
+                              <m:mo>×</m:mo>
+                              <m:mrow>
+                                <m:msubsup>
+                                  <m:mi>P</m:mi>
+                                  <m:mi>m</m:mi>
+                                  <m:mi>-0.197</m:mi>
+                                </m:msubsup>
+                                <m:mo>für</m:mo>
+                                <m:msub>
+                                  <m:mi>T</m:mi>
+                                  <m:mrow>
+                                    <m:mi>m</m:mi>
+                                    <m:mi>e</m:mi>
+                                    <m:mi>a</m:mi>
+                                    <m:mi>n</m:mi>
+                                    <m:mi> </m:mi>
+                                  </m:mrow>
+                                </m:msub>
+                                <m:mo>≤</m:mo>
+                                <m:msub>
+                                  <m:mi>T</m:mi>
+                                  <m:mrow>
+                                    <m:mi>c</m:mi>
+                                    <m:mi>r</m:mi>
+                                    <m:mi>i</m:mi>
+                                    <m:mi>t</m:mi>
+                                    <m:mi> </m:mi>
+                                  </m:mrow>
+                                </m:msub>
+                              </m:mrow>
+                            </m:mrow>
+                          </m:mtd>
+                        </m:mtr>
+                      </m:mtable>
+                    </m:mrow>
+                    <m:mi>[-]</m:mi>
+                  </m:mrow>
+                </m:mrow>
+              </m:mrow>
+            </m:mrow>
+          </m:math>
+        
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation></para>
+      <para>Die Berechnung der um Verdunstungs- und Windfehler korrigierten Niederschlagshöhe
+        erfolgt schließlich nach:</para>
+      
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <m:math display="block">
+          <m:mrow>
+            <m:mrow>
+              <m:mrow>
+                <m:mrow>
+                  <m:mrow>
+                    <m:mrow>
+                      <m:msup>
+                        <m:mrow>
+                          <m:msub>
+                            <m:mi>P</m:mi>
+                            <m:mrow>
+                              <m:mi>k</m:mi>
+                              <m:mi>o</m:mi>
+                              <m:mi>r</m:mi>
+                              <m:mi>r</m:mi>
+                            </m:mrow>
+                          </m:msub>
+                          <m:mo>=</m:mo>
+                          <m:mrow>
+                            <m:mrow>
+                              <m:msub>
+                                <m:mi>P</m:mi>
+                                <m:mi>m</m:mi>
+                              </m:msub>
+                              <m:mo>+</m:mo>
+                              <m:mrow>
+                                <m:msub>
+                                  <m:mi>P</m:mi>
+                                  <m:mi>m</m:mi>
+                                </m:msub>
+                                <m:mo>×</m:mo>
+                                <m:mrow>
+                                  <m:mrow>
+                                    <m:mi>K</m:mi>
+                                    <m:msub>
+                                      <m:mi>R</m:mi>
+                                      <m:mrow>
+                                        <m:mi>W</m:mi>
+                                        <m:mi>i</m:mi>
+                                        <m:mi>n</m:mi>
+                                        <m:mi>d</m:mi>
+                                      </m:mrow>
+                                    </m:msub>
+                                  </m:mrow>
+                                  <m:mo>+</m:mo>
+                                  <m:mrow>
+                                    <m:mrow>
+                                      <m:mi>B</m:mi>
+                                      <m:msub>
+                                        <m:mi>V</m:mi>
+                                        <m:mrow>
+                                          <m:mi>S</m:mi>
+                                          <m:mi>o</m:mi>
+                                          <m:mi>m</m:mi>
+                                        </m:mrow>
+                                      </m:msub>
+                                    </m:mrow>
+                                    <m:mo>,</m:mo>
+                                    <m:mrow>
+                                      <m:mi>B</m:mi>
+                                      <m:msub>
+                                        <m:mi>V</m:mi>
+                                        <m:mrow>
+                                          <m:mi>W</m:mi>
+                                          <m:mi>i</m:mi>
+                                          <m:mi>n</m:mi>
+                                        </m:mrow>
+                                      </m:msub>
+                                    </m:mrow>
+                                  </m:mrow>
+                                </m:mrow>
+                              </m:mrow>
+                            </m:mrow>
+                            <m:msup>
+                              <m:mi>[mmd</m:mi>
+                              <m:mrow>
+                                <m:mo>-</m:mo>
+                                <m:mn>1</m:mn>
+                              </m:mrow>
+                            </m:msup>
+                            <m:mi>]</m:mi>
+                          </m:mrow>
+                        </m:mrow>
+                        <m:mi> </m:mi>
+                      </m:msup>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mrow>
+              </m:mrow>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation>
+    </sect3>
+  </sect2>
+    <bibliography>
+      <title>Literatur</title> 
+      <biblioentry xml:id="Richter_1995" xreflabel="Richter 1995">
+        <abbrev>Richter 1995</abbrev>
+        <author><personname><firstname>D.</firstname><surname>Richter</surname></personname></author>
+        <title>Ergebnisse methodischer Untersuchungen zur Korrektur des systematischen Messfehlers des Hellmann-Niederschlagmessers</title>            
+        <citetitle>Deutscher Wetterdienst</citetitle>
+        <pubdate>1995</pubdate>
+        </biblioentry>
+    </bibliography>
+</sect1>

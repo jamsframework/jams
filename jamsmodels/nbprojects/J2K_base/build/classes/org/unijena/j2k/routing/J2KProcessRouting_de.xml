@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>J2KProcessRouting</title>
+  <subtitle>Eine Komponente zur Nachbildung des lateralen Wassertransports von einer Modelleinheit
+    zur nächsten bzw. zu einem angeschlossenen Flussabschnitt.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+          <entry>j2k.routing</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variablen</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Beschreibung</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>entities</entry>
+          <entry>Die Gesamtheit der räumlichen Modelleinheiten</entry>
+        </row>
+        <row>
+          <entry>reaches</entry>
+          <entry>Die Gesamtheit der Flussabschnitte</entry>
+        </row>
+        <row>
+          <entry>reservoirs</entry>
+          <entry>Die Gesamtheit von Talsperren oder Seen (optional)</entry>
+        </row>
+        <row>
+          <entry>inRD1</entry>
+          <entry>Der Zufluss der Komponente RD1 in die Modelleinheit</entry>
+        </row>
+        <row>
+          <entry>inRD2</entry>
+          <entry>Der Zufluss der Komponente RD2 in die Modelleinheit</entry>
+        </row>
+        <row>
+          <entry>inRG1</entry>
+          <entry>Der Zufluss der Komponente RG1 in die Modelleinheit</entry>
+        </row>
+        <row>
+          <entry>inRG2</entry>
+          <entry>Der Zufluss der Komponente RG2 in die Modelleinheit</entry>
+        </row>
+        <row>
+          <entry>inGWExcess</entry>
+          <entry>Der Zufluss an Grundwasser, das die Grundwasserspeicherkapazität überschritten
+              hat</entry>
+        </row>
+        <row>
+          <entry>outRD1</entry>
+          <entry>Der Abfluss der Komponente RD1 aus der Modelleinheit</entry>
+        </row>
+        <row>
+          <entry>outRD2</entry>
+          <entry>Der Abfluss der Komponente RD2 aus der Modelleinheit</entry>
+        </row>
+        <row>
+          <entry>outRG1</entry>
+          <entry>Der Abfluss der Komponente RG1 aus der Modelleinheit</entry>
+        </row>
+        <row>
+          <entry>outRG2</entry>
+          <entry>Der Abfluss der Komponente RG2 aus der Modelleinheit</entry>
+        </row>
+        <row>
+          <entry>toPoly</entry>
+          <entry>Die ID der Modelleinheit in die entwässert wird (0 falls in einen Flussabschnitt
+              entwässer wird)</entry>
+        </row>
+        <row>
+          <entry>toReach</entry>
+          <entry>Die ID des Flussabschnittes in den entwässert wird (0 falls in eine räumliche
+              Modelleinheit entwässert wird)</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+    <para>Diese Komponente dient der Nachbildung der lateralen Fliessvorgänge im Einzugsgebiet bis
+      das Wasser schließlich in ein Vorflutersegment oder ein Reservoir geleitet wird. Hierzu werden
+      die einzelnen Abflusskomponenten, die in den Modelleinheiten gebildet werden, an den
+      entsprechenden Empfänger weitergeleitet. </para>
+    <para>Alternativ kann der Abfluss in ein Reservoir (See, abflusslose Senke, Überleitung oder
+      ähnliches) umgeleitet werden. Hierzu muss für die Modelleinheit ein Parameter "to_reservoir"
+      definiert werden, der im Modell ein Reservoirobjekt darstellt.</para>
+    <para>Schließlich sorgt diese Komponente noch dafür, dass etwaiger Grundwasserüberschuss der
+      Interflowkomponente <emphasis role="italic">RD2 </emphasis>zugeschlagen wird. </para>
+  </sect2>
+</sect1>

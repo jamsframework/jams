@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>WeightedSumAggregator</title>
+  <subtitle>A component used for calculating weighted sums from numerical data.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>processing.aggregate</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>value</entry>
+          <entry>list of input values</entry>
+        </row>
+        <row>
+          <entry>weight</entry>
+          <entry>weight to calculate weighted sums</entry>
+        </row>
+        <row>
+          <entry>sum</entry>
+          <entry>list of sum values</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>This very simple component is used to calculate weighted sums with attributes of the type
+        <ns:code>Attribute.Double</ns:code>. In order to carry out this calculation for several
+      values, the component with the attribute <emphasis role="italic">value</emphasis> an Array of
+        <ns:code>Attribute.Double</ns:code>-values and makes the sum values available in one array
+      of <ns:code>Attribute.Double</ns:code>-values (attribute <emphasis role="italic"
+        >sum</emphasis>). Every time the component is called, the i-th element of <emphasis
+        role="italic">value</emphasis> is multiplied by <emphasis role="italic">weight</emphasis>
+      and the result is added to the i-th element of <emphasis role="italic">sum</emphasis>.</para>
+  </sect2>
+</sect1>

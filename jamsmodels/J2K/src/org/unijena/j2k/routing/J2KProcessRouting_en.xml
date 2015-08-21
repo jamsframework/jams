@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>J2KProcessRouting</title>
+  <subtitle>A Routine for the simulation of lateral water transport of one model entity to the next
+    or to a connected reach. </subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.routing</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>entities</entry>
+          <entry>collection of all spatial model entities</entry>
+        </row>
+        <row>
+          <entry>reaches</entry>
+          <entry>collection of reach objects</entry>
+        </row>
+        <row>
+          <entry>reservoirs</entry>
+          <entry>collection of barrages or lakes</entry>
+        </row>
+        <row>
+          <entry>inRD1</entry>
+          <entry>inflow of component RD1 into the model entity </entry>
+        </row>
+        <row>
+          <entry>inRD2</entry>
+          <entry>inflow of component RD2 into the model entity </entry>
+        </row>
+        <row>
+          <entry>inRG1</entry>
+          <entry>inflow of component RG1 into the model entity </entry>
+        </row>
+        <row>
+          <entry>inRG2</entry>
+          <entry>inflow of component RG2 into the model entity </entry>
+        </row>
+        <row>
+          <entry>inGWExcess</entry>
+          <entry>inflow of groundwater which exceeded groundwater storage capacity </entry>
+        </row>
+        <row>
+          <entry>outRD1</entry>
+          <entry>outflow of component RD1 from the model entity </entry>
+        </row>
+        <row>
+          <entry>outRD2</entry>
+          <entry>outflow of component RD2 from the model entity </entry>
+        </row>
+        <row>
+          <entry>outRG1</entry>
+          <entry>outflow of component RG1 from the model entity </entry>
+        </row>
+        <row>
+          <entry>outRG2</entry>
+          <entry>outflow of component RG2 from the model entity </entry>
+        </row>
+        <row>
+          <entry>toPoly</entry>
+          <entry>ID of the model entity in which it drains (is 0 if it drains into a reach) </entry>
+        </row>
+        <row>
+          <entry>toReach</entry>
+          <entry>ID of the reach in which it drains (is 0 if it drains in a spatial entity) </entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>The component serves to simulate lateral flow processes in the catchment area until the
+      water finally reaches a preflooder segment or a reservoir. In order to do so, the individual
+      runoff components which are generated in the model entities are transferred to the
+      corresponding recipient.  </para>
+    <para>As an alternative, the runoff can be redirected into a reservoir (lake, enclosed basin
+      without runoff, transition or the like). For this reason a parameter called "to_reservoir"
+      designating a reservoir object has to be defined for the model entity. </para>
+    <para>In addition, the component is used to add potential excess groundwater to the interflow
+      component <emphasis role="italic">RD2</emphasis>.</para>
+  </sect2>
+</sect1>

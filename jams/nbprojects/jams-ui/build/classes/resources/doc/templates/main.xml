@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="%lang%">
+    <title>%model:name%</title>
+    <subtitle>%title%</subtitle>
+    <info>
+        <author>
+            <personname>%model:author%</personname>
+            <!--affiliation>
+                <address>
+                    <email>E-Mail Addresse</email>
+                </address>
+            </affiliation-->
+        </author>
+        <pubdate>%date%</pubdate>
+        <releaseinfo>%releaseinfo%</releaseinfo>
+        <copyright>
+            <year>%copyright:year%</year>
+            <holder>%copyright:holder%</holder>
+        </copyright>
+        %model:description%
+    </info>
+    
+    <sect1>
+        <title>%model:intro%</title>
+        <para>
+            %please_adapt_intro%
+            <!--Individual model documentation goes here!-->
+        </para>
+    </sect1>    
+    <xi:include href="structure.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    %include%
+</article>

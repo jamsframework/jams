@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+    <title>TemporalSumAggregator</title>
+    <subtitle>A component for the weighted aggregation of time-variant data over a time
+        interval.
+    </subtitle>
+    <informaltable>
+        <tgroup cols="2">
+            <colspec colname="c1" colnum="1" colwidth="1*"/>
+            <colspec colname="c2" colnum="2" colwidth="3*"/>
+            <thead>
+                <row>
+                    <entry nameend="c2" namest="c1">Metadata</entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry>classification</entry>
+                    <entry>processing.aggregate</entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </informaltable>
+    <sect2>
+        <title>Variables</title>
+        <informaltable>
+            <tgroup cols="2">
+                <colspec colname="c1" colnum="1" colwidth="1*"/>
+                <colspec colname="c2" colnum="2" colwidth="3*"/>
+                <thead>
+                    <row>
+                        <entry>Name</entry>
+                        <entry>Description</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>time</entry>
+                        <entry>Current time</entry>
+                    </row>
+                    <row>
+                        <entry>value</entry>
+                        <entry>The value(s) to be aggregated</entry>
+                    </row>
+                    <row>
+                        <entry>weight</entry>
+                        <entry>A weight to be used to calculate the weighted aggregate</entry>
+                    </row>
+                    <row>
+                        <entry>aggregate</entry>
+                        <entry>The resulting weighted aggregate(s) of the given values</entry>
+                    </row>
+                    <row>
+                        <entry>aggregationTimeInterval</entry>
+                        <entry>A time interval defining start and end of the aggregation time interval</entry>
+                    </row>
+                    <row>
+                        <entry>average</entry>
+                        <entry>Calculate the average value. If not, the sum will be calculated.</entry>
+                    </row>        
+                </tbody>
+            </tgroup>
+        </informaltable>
+    </sect2>
+    <sect2>
+        <title>Component Description</title>
+        <para>This component offers aggregation functionality for one or more time-variant data values.
+            The component takes the current time (
+            <emphasis role="italic">time</emphasis>), a time
+            interval (
+            <emphasis role="italic">aggregationTimeInterval</emphasis>), the value(s) to be
+            aggregated (
+            <emphasis role="italic">value</emphasis>), a weight value (
+            <emphasis role="italic"
+            >weight
+            </emphasis>) and the current calculated aggregate (
+            <emphasis role="italic"
+            >aggregate
+            </emphasis>) as input and calculates a new aggregate, if the current time is
+            within the time interval. If the parameter 
+            <emphasis role="italic">average</emphasis> is set
+            to true (default), the aggregate will hold the (weighted) average value(s) of the input
+            value(s) or the (weighted) sum(s).
+        </para>
+        <ns:para>A typical use case is the calculation of averages for simulated values of spatial model
+            entities (e.g. the simulated evapotranspiration in mm) over a certain period time, e.g. one
+            year. The result in this case would be one average value per HRU, a typical value for
+            <emphasis role="italic">weight</emphasis> would be the HRU area.
+        </ns:para>
+    </sect2>
+</sect1>

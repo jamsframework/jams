@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 xmlns="http://docbook.org/ns/docbook" version="5.0">
+    <title>InitJ2KProcessLumpedSoilWaterStates</title>
+    <subtitle>Eine Komponente zur Initialisierung des ungelayerten Bodenmoduls.</subtitle>
+    <informaltable>
+            <tgroup cols="2">
+                <colspec colname="c1" colnum="1" colwidth="1*"/>
+                <colspec colname="c2" colnum="2" colwidth="3*"/>
+                <thead>
+                    <row>
+                        <entry nameend="c2" namest="c1">Metainformation</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>Klassifikation</entry>
+                        <entry>j2k.soilWater</entry>
+                    </row>
+                </tbody>
+            </tgroup>
+    </informaltable>
+        <sect2>
+            <title>Variablen</title>
+            <informaltable>
+                <tgroup cols="2">
+                    <colspec colname="c1" colnum="1" colwidth="1*"/>
+                    <colspec colname="c2" colnum="2" colwidth="3*"/>
+                    <thead>
+                        <row>
+                            <entry>Name</entry>
+                            <entry>Beschreibung</entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry>entities</entry>
+                            <entry>der Satz der Modelleinheiten</entry>
+                        </row>
+                    <row>
+                        <entry>area</entry>
+                        <entry>die Fläche der aktuellen Modelleinhei</entry>
+                    </row>
+                    <row>
+                        <entry>FCAdaptation</entry>
+                        <entry>Eichparameter mit dem die Speicherkapazität des Mittel- und
+                            Feinporenspeichers (MPS) erhöht oder erniedrigt werden kann</entry>
+                    </row>
+                    <row>
+                        <entry>ACAdaptation</entry>
+                        <entry>Eichparameter mit dem die Speicherkapazität des Grobporenspeichers
+                            (LPS) erhöht oder erniedrigt werden kann</entry>
+                    </row>
+                    <row>
+                        <entry>rootDepth</entry>
+                        <entry>die effektive Wurzeltiefe der Landbedeckungseinheit der aktuellen
+                            Modelleinheit</entry>
+                    </row>
+                    <row>
+                        <entry>actMPS</entry>
+                        <entry>die aktuelle Speicherkapazität für den Mittel- und Feinporenspeicher
+                            (MPS)</entry>
+                    </row>
+                    <row>
+                        <entry>actLPS</entry>
+                        <entry>die aktuelle Speicherkapazität für den Grobporenspeicher
+                            (LPS)</entry>
+                    </row>
+                    <row>
+                        <entry>maxMPS</entry>
+                        <entry>die maximale Speicherkapazität für den Mittel- und Feinporenspeicher
+                            (MPS)</entry>
+                    </row>
+                    <row>
+                        <entry>maxLPS</entry>
+                        <entry>die maximale Speicherkapazität für den Grobporenspeicher
+                            (LPS)</entry>
+                    </row>
+                    <row>
+                        <entry>satMPS</entry>
+                        <entry>die relative Speichersättigung für den Mittel- und Feinporenspeicher
+                            (MPS)</entry>
+                    </row>
+                    <row>
+                        <entry>satLPS</entry>
+                        <entry>die relative Speichersättigung für den Grobporenspeicher
+                            (LPS)</entry>
+                    </row>
+                    <row>
+                        <entry>satStartMPS</entry>
+                        <entry>der relative Speichersättigung für den Mittel- und Feinporenspeicher
+                            (MPS) beim Modellstart</entry>
+                    </row>
+                    <row>
+                        <entry>satStartLPS</entry>
+                        <entry>die relative Speichersättigung für den Grobporenspeicher (LPS) beim
+                            Modellstart</entry>
+                    </row>
+                    <row>
+                        <entry>satSoil</entry>
+                        <entry>die relative Speichersättigung des Gesamtbodenns (LPS + MPS)</entry>
+                    </row>        
+                    </tbody>
+                </tgroup>
+            </informaltable>
+        </sect2>
+    <sect2><title>Beschreibung der Komponente</title>
+           <para>Diese Komponente initialisiert das ungelayerte Bodenmodul
+            (J2KProcessLumpedSoilWater). Hierzu weist es jeder Modelleinheit spezifische
+            Bodenfeuchtespeicher zu (<emphasis role="italic">actMPS</emphasis>, <emphasis
+                role="italic">actLPS</emphasis>), parametrisiert diese in Abhängigkeit des
+            vorherrschenden Bodentyps (<emphasis role="italic">maxMPS</emphasis>, <emphasis
+                role="italic">maxLPS</emphasis>) (z.B. aus soil.par) sowie der Landnutzung. Hierzu
+            wird für jeden Dezimeter innerhalb der effektiven Durchwurzelungstiefe die Feldkapazität
+            aufsummiert und die kumulierte Summe als maximale Speicherkapazität des
+            Mittelporenspeichers (<emphasis role="italic">maxMPS</emphasis>) der Modelleinheit
+            zugewiesen. Die maximale Speicherkapazität des Grobporenspeichers (<emphasis
+                role="italic">maxLPS</emphasis>) wird für den gesamten Boden berechnet. Zusätzlich
+            können den Speichern relative Anfangswassergehalte zugewiesen werden. Schließlich werden
+            die Wassergehalte von mm in Litern umgerechnet indem mit der Fläche (in m²) der
+            jeweiligen Modelleinheit multipliziert wird.</para>
+        <para>Zu weiterführenden Informationen siehe auch: <citetitle><xref linkend="Krause_2001"
+                /></citetitle></para>
+    </sect2>
+        <bibliography>
+            <title>Literatur</title>
+            <biblioentry  xml:id="Krause_2001" xreflabel="Krause 2001">
+                <abbrev>Krause 2001</abbrev>
+                <author><personname><firstname>P.</firstname><surname>Krause</surname></personname></author>
+                <title>Das hydrologische Modellsystem J2000: Beschreibung und Anwendung in
+                    großen Flußeinzugsgebieten</title>
+                <publisher>
+                    <publishername>Schriften des Forschungszentrum Jülich: Reihe Umwelt/Environment</publishername>
+                </publisher>
+                <volumenum>Band 29</volumenum>
+                <pubdate>2001</pubdate>
+            </biblioentry> 
+        </bibliography>
+</sect1>

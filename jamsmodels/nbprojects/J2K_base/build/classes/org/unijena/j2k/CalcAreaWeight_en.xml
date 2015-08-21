@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>CalcAreaWeight</title>
+  <subtitle>A component used for the determination of the relative mass per unit area.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      
+      <tbody>
+        <row>
+          <entry>entityArea</entry>
+          
+          <entry>area of the model entity</entry>
+        </row>
+        
+        <row>
+          <entry>catchmentArea</entry>
+          
+          <entry>area of the entire catchment area</entry>
+        </row>
+        
+        <row>
+          <entry>areaWeight</entry>
+          
+          <entry>relative area density of the model entity</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+    <sect2>
+    <title>Component Description</title>
+      <para>This component calculates the relative area density of a model entity by dividing the
+        area of the model entity by the total area. This weight is important for area-weighted sums
+        or arithmetic averaging.</para>
+  </sect2>
+</sect1>

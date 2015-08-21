@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <sect1 version="5.0" xmlns="http://docbook.org/ns/docbook"
+    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook">
+    <title>J2KProcessInterception</title>
+    <subtitle>Eine Komponente zur Berechnung von Niederschlagsinterzeption an
+        Pflanzenoberflächen.</subtitle>
+    <informaltable>
+        <tgroup cols="3">
+            <colspec colname="c1" colnum="1" colwidth="1*"/>
+            <colspec colname="c2" colnum="2" colwidth="3*"/>
+            <thead>
+                <row>
+                    <entry namest="c1" nameend="c2">Metainformationen</entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry>Klassifikation</entry>
+                    <entry>j2k.inputData</entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </informaltable>
+    <sect2>
+        <title>Variablen</title>
+        <informaltable>
+            <tgroup cols="2">
+                <colspec colname="c1" colnum="1" colwidth="1*"/>
+                <colspec colname="c2" colnum="2" colwidth="3*"/>
+                <thead>
+                    <row>
+                        <entry>Name</entry>
+                        <entry>Beschreibung</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>potET</entry>
+                        <entry>Potentielle Verdunstung</entry>
+                    </row>
+                    <row>
+                        <entry>actET</entry>
+                        <entry>Aktuelle Verdunstung</entry>
+                    </row>
+                    <row>
+                        <entry>rain</entry>
+                        <entry>Flüssiger Niederschlag</entry>
+                    </row>
+                    <row>
+                        <entry>snow</entry>
+                        <entry>Fester Niederschlag</entry>
+                    </row>
+                    <row>
+                        <entry>tmean</entry>
+                        <entry>Mittlere Lufttemperatur</entry>
+                    </row>
+                    <row>
+                        <entry>actLAI</entry>
+                        <entry>Blattflächenindex (aktuell)</entry>
+                    </row>
+                    <row>
+                        <entry>area</entry>
+                        <entry>Fläche der Modelleinheit</entry>
+                    </row>
+                    <row>
+                        <entry>intercStorage</entry>
+                        <entry>Interzeptionsspeicherfüllung</entry>
+                    </row>
+                    <row>
+                        <entry>netRain</entry>
+                        <entry>Bestandsniederschlag (flüssig)</entry>
+                    </row>
+                    <row>
+                        <entry>netSnow</entry>
+                        <entry>Bestandsniederschlag (fest)</entry>
+                    </row>
+                    <row>
+                        <entry>throughfall</entry>
+                        <entry>Bestandsniederschlag (gesamt)</entry>
+                    </row>
+                    <row>
+                        <entry>interception</entry>
+                        <entry>Interzeption</entry>
+                    </row>
+                    <row>
+                        <entry>actET</entry>
+                        <entry>Aktuelle Verdunstung</entry>
+                    </row>
+                    <row>
+                        <entry>a_rain</entry>
+                        <entry>Eichparameter für Interzeption von flüssigem Niederschlag</entry>
+                    </row>
+                    <row>
+                        <entry>a_snow</entry>
+                        <entry>Eichparameter für Interzeption von festem Niederschlag</entry>
+                    </row>
+                    <row>
+                        <entry>snow_trs</entry>
+                        <entry>Temperaturparameter</entry>
+                    </row>
+                    <row>
+                        <entry>snow_trans</entry>
+                        <entry>Temperaturparameter</entry>
+                    </row>
+                </tbody>
+            </tgroup>
+        </informaltable>
+    </sect2>
+    <sect2>
+        <title>Beschreibung der Komponente</title>
+        <para>Das Interzeptionsmodul dient der Berechnung der Bestandesniederschläge aus den
+            Freilandniederschlägen in Abhängigkeit von der jeweiligen Vegetationsbedeckung und ihrer
+            unterschiedlichen Ausprägung im Jahresgang. Durch die Interzeption wird der
+            Wasserhaushalt, je nach Art des Niederschlages, unterschiedlich beeinflusst. Zum einen
+            ist dies die Speicherung von Niederschlagswasser an den oberirdische Sprossteilen der
+            Vegetation, das dann der Verdunstung zugeführt wird und für die nachfolgenden Prozesse
+            nicht mehr zur Verfügung steht \citep{Baumgartner1995}. Zum anderen kann durch die
+            Interzeption eine beträchtliche Menge von Niederschlag in Form von Schnee durch die
+            Vegetation kurz- bis mittelfristig zurückgehalten werden und erst verzögert, nach dem
+            Abtauen, zum Boden gelangen und dort für die sich anschließenden Prozesse zur Verfügung
+            stehen. Die maximale Interzeptionsspeicherkapazität (<inlineequation>
+                <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML">
+                    <semantics>
+                        <mrow>
+                            <mi>I</mi>
+                            <mi>n</mi>
+                            <msub>
+                                <mi>t</mi>
+                                <mrow>
+                                    <mi>m</mi>
+                                    <mi>a</mi>
+                                    <mi>x</mi>
+                                </mrow>
+                            </msub>
+                        </mrow>
+                        <annotation encoding="MathType-MTEF"
+                            >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaaeaaaaaaaaa8qacaWGjbGaamOBaiaadshapaWaaSbaaSqaa8qacaWGTbGaamyyaiaadIhaa8aabeaaaaa@3BFD@</annotation>
+                    </semantics>
+                </math>
+            </inlineequation>) ist einerseits durch die Vegetationsart, insbesondere durch den
+            Blattflächenindex im Jahresgang, andererseits von der Art der Niederschläge (ob Regen
+            oder Schnee) abhängig und wird (nach \citet{Dickinson1984}) folgendermaßen berechnet: </para>
+        <para><inlineequation>
+                <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+                    <semantics>
+                        <mrow>
+                            <mi>I</mi>
+                            <mi>n</mi>
+                            <msub>
+                                <mi>t</mi>
+                                <mrow>
+                                    <mi>m</mi>
+                                    <mi>a</mi>
+                                    <mi>x</mi>
+                                </mrow>
+                            </msub>
+                            <mo>=</mo>
+                            <mi>&#x03B1;</mi>
+                            <mo>&#x00B7;</mo>
+                            <mi>L</mi>
+                            <mi>A</mi>
+                            <mi>I</mi>
+                            <mtext>&#x2003;</mtext>
+                            <mo stretchy="false">[</mo>
+                            <mtext>mm</mtext>
+                            <mo stretchy="false">]</mo>
+                        </mrow>
+                        <annotation encoding="MathType-MTEF"
+                            >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaaeaaaaaaaaa8qacaWGjbGaamOBaiaadshapaWaaSbaaSqaa8qacaWGTbGaamyyaiaadIhaa8aabeaak8qacqGH9aqpcqaHXoqycaGG3cGaamitaiaadgeacaWGjbWdaiaaywW7peGaai4waiaab2gacaqGTbGaaiyxaaaa@47A9@</annotation>
+                    </semantics>
+                </math>
+            </inlineequation></para>
+        <para>mit:</para>
+        <para><inlineequation>
+                <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML">
+                    <semantics>
+                        <mi>&#x03B1;</mi>
+                        <annotation encoding="MathType-MTEF"
+                            >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaaeaaaaaaaaa8qacqaHXoqyaaa@37B3@</annotation>
+                    </semantics>
+                </math>
+            </inlineequation>: Speicherkapazität pro m² Blattfläche [mm]</para>
+        <para><inlineequation>
+                <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML">
+                    <semantics>
+                        <mrow>
+                            <mi>L</mi>
+                            <mi>A</mi>
+                            <mi>I</mi>
+                        </mrow>
+                        <annotation encoding="MathType-MTEF"
+                            >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaaeaaaaaaaaa8qacaWGmbGaamyqaiaadMeaaaa@3879@</annotation>
+                    </semantics>
+                </math>
+            </inlineequation> : Blattflächenindex der betreffenden Landnutzungsklasse  [-] </para>
+        <para>Der Parameter <inlineequation>
+                <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML">
+                    <semantics>
+                        <mi>&#x03B1;</mi>
+                        <annotation encoding="MathType-MTEF"
+                            >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaaeaaaaaaaaa8qacqaHXoqyaaa@37B3@</annotation>
+                    </semantics>
+                </math>
+            </inlineequation> besitzt je nach Art (Schnee oder Regen) des interzeptierten
+            Niederschlages unterschiedliche Ausprägungen. Dies ist notwendig, da die
+            Interzeptionskapazität für Schnee deutlich über der von flüssigem Niederschlag liegt.
+            Welche Ausprägung des Parameters für die tägliche Berechnung der maximalen
+            Interzeptionspeicherkapazität herangezogen wird, ist von der mittleren Lufttemperatur
+            abhängig. Unterschreitet sie einen kritischen Wert (der vom Anwender bei den Parametern
+            für die Schneedeckenberechnung anzugeben ist und bereits bei der Regionalisierung
+            diskutiert wurde), wird der Niederschlag als Schneeniederschlag betrachtet. Liegt sie
+            dagegen über dem kritischen Wert wird von Niederschlag in Form von Regen
+            ausgegangen.</para>
+        <para>Durch die Interzeption wird der Freilandniederschlag, der auf die betreffende Fläche
+            fällt, um den Interzeptionsteil auf den Bestandesniederschlag reduziert.
+            Bestandesniederschlag tritt also nur dann auf, wenn die maximale
+            Interzeptionsspeicherkapazität der Vegetation erschöpft ist. Der Überschuss wird dann
+            als durchfallender Niederschlag an das folgende Modul weitergegeben. </para>
+        <para>Die Entleerung des Interzeptionsspeicher erfolgt normalerweise ausschließlich durch
+            die Verdunstung. Ein Sonderfall tritt auf, wenn sich die Ausprägung des Parameter <inlineequation>
+                <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML">
+                    <semantics>
+                        <mi>&#x03B1;</mi>
+                        <annotation encoding="MathType-MTEF"
+                            >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaaeaaaaaaaaa8qacqaHXoqyaaa@37B3@</annotation>
+                    </semantics>
+                </math>
+            </inlineequation> auf Grund der Lufttemperatur von Schnee auf Regen ändert. Dies führt
+            zu einer sprunghaften Herabsetzung der maximalen Interzeptionsspeicherkapazität. Damit
+            wird das Abtauen von auf der Vegetationsoberfläche gespeichertem Schnee nachgebildet.
+            Eventueller Überschuss wird als abtropfender Niederschlag an das sich anschließende
+            Modul weitergegeben.</para>
+    </sect2>
+</sect1>

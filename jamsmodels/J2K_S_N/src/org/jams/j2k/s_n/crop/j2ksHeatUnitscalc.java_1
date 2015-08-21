@@ -1,0 +1,231 @@
+/*
+ * j2ksHeatUnitscalc.java
+ * calculates heats units (after Boswell 1926, 1929)
+ * for application in growth cycle and landuse management
+ * Created on 20. Juni 2005, 13:56
+ */
+
+package j2k_org.proc.j2ksHeatUnits;
+
+import java.io.Serializable;
+import j2k_org.tools.j2kDate;
+
+/**
+ *
+ * @author  c5ulbe
+ */
+public class j2ksHeatUnitscalc extends j2k_org.proc.j2kProcess implements java.io.Serializable{
+    static final long serialVersionUID = 6143484018718823524L;
+    
+    private double tbase; 	/* Plant’s base or minimum temperature for growth (°C)*, refered to /
+    /* private int TDLmn;           /* Minimum daylength for the watershed during the year (hrs)*/
+    /* private int TDLthr;            /*Threshold daylength to initiate dormancy (hrs)*/
+    private double tmean;       /* Mean air temperature for day (°C), refered to HRU*/
+    private double hu;          /* define heat units for a given day */
+    private double hu0;         /* define heat units with tbase  = 0°C for a given day*/
+    private double fphu;         /* define fraction of heat units with tbase */
+    private double fhu0;        /*define fraction of heat units with temp > 0°C*/
+    private double phu0;        /*total number of heat units for a given year starting on 1th jan til 31th dec */
+    private double phu;           /*Potential heat units or total heat units required for plant maturity where base temperature is dependant on the plant species (heat units)   */        
+    private double fphu_50;        /* Fraction of potential heat units by 50% of the potential heat units sum */
+    // private int mgt_op;         /* Management operation id, refered to to icnum in CropPara *
+                                                                                                                                                                                                                        
+                                                                                                                                                                                                                        
+    // private int tdorm;     	/* Dormancy threshold (hrs)* --> noch implementieren über Breitengrad */
+    // private double lat;           /*Latitude expressed as a positive value (degrees)*/
+    
+    /*derzeit einlesen aus crop.par ---> muss noch dynamisch bei Management-Operation erzeugt werden */
+    
+    int julday;
+    int dayCount;
+    int startMgt;
+    int endMgt;
+    int mgtDate;
+    
+    /** Creates a new instance of j2ksHeatUnitscalc */
+      /* whereas heat units are defined as follows:
+       * tmean - tbase = heat unit (HU)
+       * tbase is a cropspezific temperature initiates growing
+       * Example: tmean = 20°C and tbase = 5°C: then 20-5 = 15 heat units for a given day
+       * zero based heat units with tbase = 0 (HU0)
+       * is needed to determine management operations when no crop is growing
+       * Fraction is total units divided by actual units (HUSC and HUSC0)
+       */
+    public j2ksHeatUnitscalc() {
+        /** HU Number of heat units accumulated on a given day where base temperature is dependant on the plant species (heat units)*/
+        this.definePara("hu", 0.0, 0.0, 8000, "-");
+        /** HU0 Number of base zero heat units accumulated on a given day (heat units)*/
+        this.definePara("hu0", 0.0, 0.0, 8000, "-");
+        /* Fraction of heat units for a given day*/
+        this.definePara("fhu", 0.0, 0.0, 1.9, "HUSC");
+        /* Fraction of zero based heat units for a given day*/
+        this.definePara("fhu0", 0.0, 0.0, 1.9, "HUSC0");
+        /*Yearly Sum of zero based heat units*/
+         this.definePara("phu0", 0.0, 0.0, 8000, "PHU0");
+         /*Yearly Sum of crop specific based heat units*/
+         this.definePara("phu", 0.0, 0.0, 8000, "PHU0");       
+        
+    }
+    
+    public boolean register(int nunits, j2k_org.j2k_mod model) 
+    {
+        /**exporting heat units module attributes to spatial unit*/
+        for(int i = 0; i < nunits; i++){
+            model.hru[i].dyn_Dattribs.put("HU", 0);
+            model.hru[i].dyn_Dattribs.put("HU0", 0);
+            model.hru[i].dyn_Dattribs.put("HUSC", 0);
+            model.hru[i].dyn_Dattribs.put("HUSC0", 0);
+            model.hru[i].dyn_Dattribs.put("PHU", 0);
+            model.hru[i].dyn_Dattribs.put("PHU0", 0);
+            model.hru[i].dyn_Dattribs.put("startMgt", 0);
+            model.hru[i].dyn_Dattribs.put("endMgt", 0);
+            /*model.hru[i].dyn_Dattribs.put ("mgt_op");*/
+    }
+        j2k_org.core.message.info_msg("J2KHeatUnitscalcModule has been registered");
+        
+        return true;
+    }
+    
+    
+    /** initializes the process of calculating heat units
+     * @param hru The spatial unit
+     * @return true if successfull, false otherwise
+     */
+    public boolean init(j2k_org.spatial.j2kHRU hru, j2k_org.tools.j2kDate nowdate){
+        this.julday = j2k_org.tools.j2kDate.getJulDay(nowdate);
+        /*this.dayCount = j2k_org.tools.j2kDate.getInstance().getActualMaximum(j2k_org.tools.j2kDate.DAY_OF_YEAR);*/
+        this.tmean = hru.dyn_Dattribs.get("tmean");
+        this.tbase = hru.sta_Dattribs.get("tbase"); /*statisch aus crop.dat---> hier noch einlesen*/
+        /* this.phu = hru.sta_Dattribs.get("phu"); */
+        /*this.daylength_treshold = hru.dyn_Dattribs.get("TDLthr");*/
+        /*this.latitude = hru.dyn_Dattribs.get("lat");*/
+        /*this.dormancy_treshold = hru.dyn_Dattribs.get("tdorm");*/
+        /*this.daylength_min = hru.dyn_Dattribs.get("TDLmn");*/
+        /*this.unitArea = hru.getArea();*/
+        
+        /* folgende Fälle werden betrachtet:
+         * aktuelles Datum = nowdate wird abgefragt und mit dem Pflanzzeitpunkt = cropStartMonth/Day verglichen 
+         * wenn aktuelles Datum nach dem cropStartDate liegt, dann nehme das cropStartDate als Bezugspunkt
+         * wenn aktuelles Datum vor dem cropStartDate liegt, dann gehe before zurück = year -1
+         * dann ausrechnen der Anzahl der Differenztage long diff (über millisec. rechnenbar) und umrechnen von ms in Tage (daycount)*/
+        
+        int year = nowdate.getYear();
+        int month = hru.dyn_Dattribs.get("cropStartMonth");
+        int day = hru.dyn_Dattribs.get("cropStartDay");
+        j2kDate startMgt = new j2kDate(year, month, day, 0, 0);
+        
+        if (nowdate.before(startMgt)) {
+            startMgt.setDate(year-1, month, day);
+        }
+        
+        long diff = nowdate.getTimeInMillis() - startMgt.getTimeInMillis();
+        int dayCount = Math.round(diff/(3600000*24));
+        
+        
+        return true;
+    }
+    
+    /** the modules run part
+     * @return true if successfull, false otherwise
+     */
+    public boolean run()
+              
+        // Conditions for calculating base zero heat units; starttime 1 of january; endtime 31 of december* 
+        // Daily heat units sum (hu0), total yearly heat units sum (phu0) and daily fraction of heat units sum (fhu0)
+        {
+            if ((this.getVal("tmean") > 0) && (this.julday >= 1 && this.julday <= 366))
+            this.calcHU0();
+            return true; 
+            
+        }   
+         // Conditions for calculating crop specific heat units, startime = startMgt; endtime = endMgt)
+         // Daily heat units sum (hu), total yearly heat units sum (phu) and daily fraction of heat units sum (fhu)
+            
+        {
+            if ((this.getVal("tmean") >  this.getVal("tbase"))&& (this.startMgt >= this.endMgt));
+            this.calcHU();            
+            return true;
+            
+            //@@todo fraction of heat units ends up with 1,5 !!!
+        }
+       
+      
+    /** the cleanup part of the module
+     * @param hru the spatial unit
+     */
+       
+    public void cleanUp(j2k_org.spatial.j2kHRU hru)
+    
+    {
+        
+        hru.dyn_Dattribs.put("PHU", this.phu);
+        hru.dyn_Dattribs.put("HU", this.hu);
+        hru.dyn_Dattribs.put("PHU0", this.phu0);
+        hru.dyn_Dattribs.put("HU0", this.hu0);
+        hru.dyn_Dattribs.put("HUSC", this.fphu);
+        hru.dyn_Dattribs.put("HUSC0", this.fhu0);
+        hru_dyn_Dattribs.put("FPHU5", this.fphu_5);
+        
+    }
+    
+    /*******************************************/
+    /*Calculation of HU (daily, year), HU0 (daily, year), HUSC (fraction of HU) and HUSCO (fraction of HU0*/
+    /******************************************/ 
+    
+    /*Calculation of Heat Units with base temperature*/
+    private double calcHU() 
+     {
+        if (this.getVal("tmean")> this.getVal("tbase") && (this.startMgt >= this.endMgt)) 
+            this.hu = this.getVal("tmean") - this.getVal("tbase");
+            this.hu = this.hu + 1;
+    
+        else if {(this.getVal("tmean") <= this.getVal("tbase"))
+            this.hu = 0;
+            return this.hu;
+                }
+            
+        if {(this.julday = this.endMgt)
+            this hu = this.phu;
+            return this.phu;
+     }
+    /* Calculation of zero based Heat Units */
+    private double calcHU0() {
+        if(this.getVal("tmean")> 0 && this.julday == 1 && this.julday <= 366) {
+            this.hu0 = this.getVal("tmean");
+            this.hu0 = this.hu0 + 1;
+            return this this.hu0;
+        }
+        { 
+        else if (this.getVal("tmean")<= 0)
+            this.hu0 = 0;
+            return this.hu0;
+        }    
+        { 
+        else if (this.julday >=366)
+            this.hu0 = phu0;
+        }  
+         
+    /*Calculation of Fraction of crop-specific heat units */
+    private double calcHUSC() {
+       
+        this.fphu = this.hu / this.phu;
+        this.fphu = this.fhu + 1;
+        return this.fphu;
+    }
+    /*Calculation of Fraction of crop-specific heat units */
+    private double calcHUSC0() {
+       
+        this.fhu0 = this.hu0 / this.phu0;
+        this.fhu0 = this.fhu0 + 1;
+        return this.fhu0;
+    }
+      
+    /* Calculation of the 50% fraction of heat units, needed for nitrogen uptake within the CropGrowth object */
+    private double calcHUSC_50() {
+        
+        this.fphu_50 = this.fphu / 2;
+        return this.fphu_50;
+    }
+    
+    
+    

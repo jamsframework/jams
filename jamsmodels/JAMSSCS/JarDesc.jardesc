@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="E:/Development/deploy/lib/JAMSScs.jar"/>
+    <options buildIfNeeded="true" compress="false" descriptionLocation="/JAMSScs/JarDesc.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="true" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=JAMSScs/src&lt;org.unijena.scs"/>
+        <javaElement handleIdentifier="=JAMSScs/src&lt;org"/>
+        <javaElement handleIdentifier="=JAMSScs/src&lt;org.unijena"/>
+    </selectedElements>
+</jardesc>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>GeomReader</title>
+  <subtitle/>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+          <entry>Visualisierung</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variablen</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Beschreibung</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>shapeFileName</entry>
+          <entry>Dateipfad zum HRU-Shapefile</entry>
+        </row>
+          <row>
+            <entry>hrus</entry>
+            <entry>HRU-Objekte</entry>
+          </row>
+          <row>
+            <entry>idName</entry>
+            <entry>Name der ID-Spalte im HRU-Shapefile</entry>
+          </row>        
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+    <para>Die Komponente dient zum Einlesen der Geometrien eines HRU-Shapefiles, um sie im Anschluss
+      mit den JAMS Entities zu verknüpfen. Auf diese Weise erhalten die HRU-Objekte
+      (JAMSEntityCollection) ihr Geometrie-Attribut. </para>
+  </sect2>
+</sect1>

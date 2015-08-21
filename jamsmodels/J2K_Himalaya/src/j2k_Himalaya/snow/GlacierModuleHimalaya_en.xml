@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink"
+  xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg"
+  xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook">
+  <title>J2KGlacierModule</title>
+  <subtitle>A component for calculation of the glacier melt.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.GlacierModuleHimalaya</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+        <colspec colname="c2" colnum="2" colwidth="2.36*"/>
+        <thead>
+          <row>
+            <entry>Name</entry>
+            <entry>Description</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>area</entry>
+            <entry>area of the model entity</entry>
+          </row>
+          <row>
+            <entry>actSlAsCf</entry>
+            <entry>slope-aspect correction factor</entry>
+          </row>
+          <row>
+            <entry>minTemp</entry>
+            <entry>minimum air temperature (optional)</entry>
+          </row>
+          <row>
+            <entry>meanTemp</entry>
+            <entry>mean air temperature (optional)</entry>
+          </row>
+          <row>
+            <entry>maxTemp</entry>
+            <entry>maximum air temperature (optional)</entry>
+          </row>
+          <row>
+            <entry>ddfIce</entry>
+            <entry>day degree factor for ice</entry>
+          </row>
+          <row>
+            <entry>ddfSnow</entry>
+            <entry>day degree factor for snow</entry>
+          </row>
+          <row>
+            <entry>debrisFactor</entry>
+            <entry>debris factor based on the debris cover on glaciers</entry>
+          </row>
+          <row>
+            <entry>dirQ</entry>
+            <entry>total direct runoff of unit</entry>
+          </row>
+          <row>
+            <entry>glacStorage</entry>
+            <entry>remaining storage</entry>
+          </row>
+          <row>
+            <entry>glacierRunoff</entry>
+            <entry>total runoff from glacier areas</entry>
+          </row>
+          <row>
+            <entry>iceRunoff</entry>
+            <entry>runoff from glacier ice melt</entry>
+          </row>
+          <row>
+            <entry>iceRunofftm1</entry>
+            <entry>ice runoff of time step before</entry>
+          </row>
+          <row>
+            <entry>kIce</entry>
+            <entry>routing coefficient for ice</entry>
+          </row>
+          <row>
+            <entry>kRain</entry>
+            <entry>routing coefficient for rain</entry>
+          </row>
+          <row>
+            <entry>kSnow</entry>
+            <entry>routing coefficient for snow</entry>
+          </row>
+          <row>
+            <entry>meltFactorIce</entry>
+            <entry>generalised melt factor ice</entry>
+          </row>
+          <row>
+            <entry>precip</entry>
+            <entry>the total precip </entry>
+          </row>
+          <row>
+            <entry>radiation</entry>
+            <entry>the actual global radiation</entry>
+          </row>
+          <row>
+            <entry>rain</entry>
+            <entry>the actual rainfall</entry>
+          </row>
+          <row>
+            <entry>rainRunoff</entry>
+            <entry>runoff from snow rain</entry>
+          </row>
+          <row>
+            <entry>rainRunofftm1</entry>
+            <entry>rain runoff of time step before</entry>
+          </row>
+          <row>
+            <entry>slope</entry>
+            <entry>attribute slope</entry>
+          </row>
+          <row>
+            <entry>snowMelt_G</entry>
+            <entry>snow melt from glacier areas</entry>
+          </row>
+          <row>
+            <entry>snowRunofftm1</entry>
+            <entry>snow runoff of time step before</entry>
+          </row>
+          <row>
+            <entry>snowTotSWE</entry>
+            <entry>actual snow storage</entry>
+          </row>
+          <row>
+            <entry>tbase</entry>
+            <entry>threshold temperature for ice melt</entry>
+          </row>
+          <row>
+            <entry>tempRes</entry>
+            <entry>temporal resolution [d | h]</entry>
+          </row>
+          <row>
+            <entry>tmax</entry>
+            <entry>the tmax input</entry>
+          </row>
+          <row>
+            <entry>tmean</entry>
+            <entry>the tmean input</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>The glacier module is developed and adapted as a part of the PhD research [<citetitle><xref
+          linkend="Nepal_2012"/></citetitle>] carried out in the Dudh Kosi river basin. </para>
+    <para>The glacier module is integrated into the standard J2000 hydrological model, as a part of
+      this study. The glacier module is treated as a separate module within J2000 in which snow- and
+      ice- melt (SIM) runoff is estimated and the output is directly provided to a stream as
+      overland flow (RD1). The approach suggested by [<citetitle><xref linkend="Hock_1999"
+        /></citetitle>] is implemented in the J2000 model and further adapted for icemelt estimation.
+      This approach considers ice melt by using a day-degree-factor. From this study, slope, aspect
+      and debris-covered factors are further included in the model for ice-melt runoff. The melting
+      of snow in the glacier area is calculated in the same way as described earlier. The same soil
+      heat flux (calibration parameter: g_factor) is proposed for the snowmelt in glacier areas as
+      most of the glaciers are debris-covered and behave similar to soil. </para>
+    <para>The glacier area is provided as a GIS layer which provides a unique land-use ID for
+      glaciers during HRU delineation. All the processes which occur in the glacier are separately
+      treated based on the unique ID. First the seasonal snow occurs on top of the glacier (or
+      glacier HRU). The model first treats the snow as described in the 'Snow Module" and produces
+      snowmelt runoff. In order to make sure that ice melt occurs, two conditions have to be met.
+      First, the entire snow cover of a glacier HRU has to be melted (i.e.storage is zero), and
+      second, the base temperature (<emphasis role="italic">tbase</emphasis>) as defined by users,
+      has to be less than meltTemp. Only under these circumstances, the ice melt occurs as a model
+      progress. </para>
+    <para>
+      <equation>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>m</mi>
+              <mi>e</mi>
+              <mi>l</mi>
+              <mi>t</mi>
+              <mi>T</mi>
+              <mi>e</mi>
+              <mi>m</mi>
+              <mi>p</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <msub>
+                    <mi>T</mi>
+                    <mrow>
+                      <mi>max</mi>
+                    </mrow>
+                  </msub>
+                  <mo>+</mo>
+                  <msub>
+                    <mi>T</mi>
+                    <mrow>
+                      <mi>m</mi>
+                      <mi>e</mi>
+                      <mi>a</mi>
+                      <mi>n</mi>
+                    </mrow>
+                  </msub>
+                </mrow>
+                <mn>2</mn>
+              </mfrac>
+              <msup>
+                <mo stretchy="false">[</mo>
+                <mi>o</mi>
+              </msup>
+              <mi>C</mi>
+              <mo stretchy="false">]</mo>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamyBaiaadwgacaWGSbGaamiDaiaadsfacaWGLbGaamyBaiaadchacqGH9aqpdaWcaaqaaiaadsfadaWgaaWcbaGaciyBaiaacggacaGG4baabeaakiabgUcaRiaadsfadaWgaaWcbaGaamyBaiaadwgacaWGHbGaamOBaaqabaaakeaacaaIYaaaaiaacUfadaahaaWcbeqaaiaad+gaaaGccaWGdbGaaiyxaaaa@4C72@</annotation>
+          </semantics>
+        </math>
+      </equation>
+    </para>
+    <para>The melt rate for glacier ice (<emphasis role="italic">iceMelt</emphasis>) (mm/day) is
+      obtained by the following equation: </para>
+    <para>
+      <equation>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>i</mi>
+              <mi>c</mi>
+              <mi>e</mi>
+              <mi>M</mi>
+              <mi>e</mi>
+              <mi>l</mi>
+              <mi>t</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mn>1</mn>
+                <mi>n</mi>
+              </mfrac>
+              <mtext>&#x00D7;</mtext>
+              <mi>m</mi>
+              <mi>e</mi>
+              <mi>l</mi>
+              <mi>t</mi>
+              <mi>F</mi>
+              <mi>a</mi>
+              <mi>c</mi>
+              <mi>t</mi>
+              <mi>o</mi>
+              <mi>r</mi>
+              <mi>I</mi>
+              <mi>c</mi>
+              <mi>e</mi>
+              <mo>+</mo>
+              <mi>a</mi>
+              <mi>l</mi>
+              <mi>p</mi>
+              <mi>h</mi>
+              <mi>a</mi>
+              <mi>I</mi>
+              <mi>c</mi>
+              <mi>e</mi>
+              <mtext>&#x00D7;</mtext>
+              <mi>r</mi>
+              <mi>a</mi>
+              <mi>d</mi>
+              <mi>i</mi>
+              <mi>a</mi>
+              <mi>t</mi>
+              <mi>i</mi>
+              <mi>o</mi>
+              <mi>n</mi>
+              <mtext>&#x00D7;(meltTemp-tbase)&#x00A0;[mm]</mtext>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamyAaiaadogacaWGLbGaamytaiaadwgacaWGSbGaamiDaiabg2da9maalaaabaGaaGymaaqaaiaad6gaaaGaae41aiaad2gacaWGLbGaamiBaiaadshacaWGgbGaamyyaiaadogacaWG0bGaam4BaiaadkhacaWGjbGaam4yaiaadwgacqGHRaWkcaWGHbGaamiBaiaadchacaWGObGaamyyaiaadMeacaWGJbGaamyzaiaabEnacaWGYbGaamyyaiaadsgacaWGPbGaamyyaiaadshacaWGPbGaam4Baiaad6gacaqGxdGaaeikaiaab2gacaqGLbGaaeiBaiaabshacaqGubGaaeyzaiaab2gacaqGWbGaaeylaiaabshacaqGIbGaaeyyaiaabohacaqGLbGaaeykaiaabccacaqGBbGaaeyBaiaab2gacaqGDbaaaa@71DE@</annotation>
+          </semantics>
+        </math>
+      </equation>
+    </para>
+    <para> The melt rate for glacier ice (iceMelt) (mm/day) is obtained by the following equation: </para>
+    <ns:para>where: </ns:para>
+    <ns:para><emphasis role="italic">radiation</emphasis> = actual global radiation </ns:para>
+    <ns:para><emphasis role="italic">meltFactIce</emphasis> = generalized melt factor for ice as a
+      calibration parameter </ns:para>
+    <ns:para><emphasis role="italic">alphaIce</emphasis> = melt coefficient for ice n = time step
+      (i.e. for daily model, n=1) </ns:para>
+    <ns:para>The ice melt is further adapted by the debris covered factor. Because the glaciers in
+      the Dudh Kosi river basin are in general debris cover, a simple segregation method is applied
+      to identify debris-covered glaciers based on slope. If the <emphasis role="italic"
+        >slope</emphasis> is higher than 30 degrees, the gravels, stones and pebbles are rolled down
+      and the glacier is regarded as a clean glacier. The slope lower than this threshold is
+      suitable for the accumulation of debris on top of glaciers. By using this approach, about 77
+      percent of the glaciers are estimated as debris-covered glaciers. According to
+          <citetitle><xref linkend="Mool_2001"/></citetitle>, about 70 percent of the glaciers in
+      the Dudh Kosi river basin are valley types. One of the most common characteristics of glaciers
+      located in the Himalayan region is the presence of debris material. In general, valley
+      glaciers are debris-covered in the Himalayan region [<citetitle><xref linkend="Fujji_1977"
+        /></citetitle>, <citetitle><xref linkend="Sakai_2000"/></citetitle>]. It can be assumed that
+      the debris-covered glacier areas estimated by this approach are fairly representative and
+      adequate for purposes of this modelling application. </ns:para>
+    <ns:para>The presence of debris affects the ablation process. Supra-glacial debris cover, with
+      thickness exceeding a few centimeters, leads to considerable reduction in melt rates
+          [<citetitle><xref linkend="Oestrem_1959"/></citetitle>, <citetitle><xref
+          linkend="Mattson_1993"/></citetitle>). According to <citetitle><xref
+          linkend="Oestrem_1959"/></citetitle>] the melt rate decreased when the thickness of the
+      debris cover was more than about 0.5 cm thick. The report further mentioned that not only the
+      melting will be slower under the moraine cover, but also the ablation period will be shorter
+      for the covered ice. The clean glaciers as reported on the Tibetan Plateau have higher retreat
+      rates. [<citetitle><xref linkend="Kayastha_2000"/></citetitle>] studied the ice-melt pattern
+      in the Khumbu glaciers (Dudh Kosi river basin where the J2000 model is being applied) and
+      found that the debris ranging thickness from 0 to 5 cm indicates that ice ablation is enhanced
+      by a maximum at 0.3 cm. Therefore, when a glacier is covered by debris, the ice melt is
+      reduced. Using the calibration parameter (<emphasis role="italic">debrisFactor</emphasis>),
+      the effects of debris cover on melt is controlled as follows.</ns:para>
+    <para>
+      <equation>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>i</mi>
+              <mi>c</mi>
+              <mi>e</mi>
+              <mi>m</mi>
+              <mi>e</mi>
+              <mi>l</mi>
+              <mi>t</mi>
+              <mo>&#x0027;</mo>
+              <mo>=</mo>
+              <mi>i</mi>
+              <mi>c</mi>
+              <mi>e</mi>
+              <mi>m</mi>
+              <mi>e</mi>
+              <mi>l</mi>
+              <mi>t</mi>
+              <mo>&#x2212;</mo>
+              <mo stretchy="false">(</mo>
+              <mi>i</mi>
+              <mi>c</mi>
+              <mi>e</mi>
+              <mi>m</mi>
+              <mi>e</mi>
+              <mi>l</mi>
+              <mi>t</mi>
+              <mo>&#x00D7;</mo>
+              <mfrac>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>e</mi>
+                  <mi>b</mi>
+                  <mi>r</mi>
+                  <mi>i</mi>
+                  <mi>s</mi>
+                  <mi>F</mi>
+                  <mi>a</mi>
+                  <mi>c</mi>
+                  <mi>t</mi>
+                  <mi>o</mi>
+                  <mi>r</mi>
+                </mrow>
+                <mrow>
+                  <mn>10</mn>
+                </mrow>
+              </mfrac>
+              <mo stretchy="false">)</mo>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamyAaiaadogacaWGLbGaamyBaiaadwgacaWGSbGaamiDaiaacEcacqGH9aqpcaWGPbGaam4yaiaadwgacaWGTbGaamyzaiaadYgacaWG0bGaeyOeI0IaaiikaiaadMgacaWGJbGaamyzaiaad2gacaWGLbGaamiBaiaadshaiiaacqWFxdaTdaWcaaqaaiaadsgacaWGLbGaamOyaiaadkhacaWGPbGaam4CaiaadAeacaWGHbGaam4yaiaadshacaWGVbGaamOCaaqaaiaaigdacaaIWaaaaiaacMcaaaa@5C30@</annotation>
+          </semantics>
+        </math>
+      </equation>
+    </para>
+    <para> The icemelt is further adapted with the slope and aspect of the particular glacier HRU.
+      Routing of glacier melt is made separately for snowmelt, ice melt and rain runoff using the
+      following formula: </para>
+    <para>
+      <equation>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>s</mi>
+              <mi>n</mi>
+              <mi>o</mi>
+              <mi>w</mi>
+              <mi>r</mi>
+              <mi>u</mi>
+              <mi>n</mi>
+              <mi>o</mi>
+              <mi>f</mi>
+              <mi>f</mi>
+              <mo>=</mo>
+              <mi>m</mi>
+              <mi>e</mi>
+              <mi>l</mi>
+              <mi>t</mi>
+              <mi>Re</mi>
+              <mi>s</mi>
+              <mi>t</mi>
+              <mi>t</mi>
+              <mo>&#x2212;</mo>
+              <mn>1</mn>
+              <mo>&#x00D7;</mo>
+              <msup>
+                <mi>e</mi>
+                <mrow>
+                  <mo>&#x2212;</mo>
+                  <mo stretchy="false">(</mo>
+                  <mfrac>
+                    <mn>1</mn>
+                    <mrow>
+                      <mi>k</mi>
+                      <mi>S</mi>
+                      <mi>n</mi>
+                      <mi>o</mi>
+                      <mi>w</mi>
+                    </mrow>
+                  </mfrac>
+                  <mo stretchy="false">)</mo>
+                </mrow>
+              </msup>
+              <mo>&#x00D7;</mo>
+              <mi>S</mi>
+              <mi>n</mi>
+              <mi>o</mi>
+              <msub>
+                <mi>w</mi>
+                <mrow>
+                  <mi>m</mi>
+                  <mi>e</mi>
+                  <mi>l</mi>
+                  <mi>t</mi>
+                </mrow>
+              </msub>
+              <mo>&#x00D7;</mo>
+              <msup>
+                <mi>e</mi>
+                <mrow>
+                  <mo>&#x2212;</mo>
+                  <mo stretchy="false">(</mo>
+                  <mfrac>
+                    <mn>1</mn>
+                    <mrow>
+                      <mi>k</mi>
+                      <mi>S</mi>
+                      <mi>n</mi>
+                      <mi>o</mi>
+                      <mi>w</mi>
+                    </mrow>
+                  </mfrac>
+                  <mo stretchy="false">)</mo>
+                </mrow>
+              </msup>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaam4Caiaad6gacaWGVbGaam4DaSGaamOCaiaadwhacaWGUbGaam4BaiaadAgacaWGMbGccqGH9aqpcaWGTbGaamyzaiaadYgacaWG0bGaciOuaiaacwgacaWGZbGaamiDaSGaamiDaiabgkHiTiaaigdaiiaakiab=Dna0kaacwgadaahaaWcbeqaaiabgkHiTiaacIcadaWcaaqaaiaaigdaaeaacaWGRbGaam4uaiaad6gacaWGVbGaam4DaaaacaGGPaaaaOGae831aqRaam4uaiaad6gacaWGVbGaam4DamaaBaaaleaacaWGTbGaamyzaiaadYgacaWG0baabeaakiab=Dna0kaacwgadaahaaWcbeqaaiabgkHiTiaacIcadaWcaaqaaiaaigdaaeaacaWGRbGaam4uaiaad6gacaWGVbGaam4DaaaacaGGPaaaaaaa@6A65@</annotation>
+          </semantics>
+        </math>
+      </equation>
+    </para>
+    <para>where: snowmelt = total snowmelt during the time step (mm/day); meltRest-1 = outflow of
+      reservoir during the last time step; kSnow = storage coefficient (recession constant) for
+      reservoir </para>
+    <para>A similar routing procedure is applied for ice melt and rain runoff with a different
+      recession constant (<emphasis role="italic">kIce</emphasis>) and (<emphasis role="italic"
+        >kRain</emphasis>). It is assumed that the routing of rain runoff is faster than that of ice
+      and snow. </para>
+    <para>In reality, snow is stored in the accumulation zone of high-altitude areas. The snow is
+      transported to low-altitude by wind, avalanches and gravity. As snow gets buried under new
+      snow, it is gradually converted into firn and eventually into glacier ice. This ice flows by
+      gravity downstream towards the ablation zone as glaciers [<citetitle><xref linkend="Jansson_2003"/></citetitle>]. However, such dynamic
+      processes of snow transformation and transportation are not included in the glacier module of
+      the J2000 model. Therefore, some part of the precipitation is always stored as snow in the
+      accumulation zone of high-altitude areas. To compensate for this long-term storage process, a
+      constant glacier layer is used as a surrogate which provides melting from glacier ice. </para>
+  </sect2>
+  <bibliography>
+    <biblioentry xml:id="Fujji_1977" xreflabel="Fujji et al.2001">
+      <abbrev>Fujji 1977</abbrev>
+      <author>
+        <personname><firstname>Y.</firstname><surname>Fujji</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>K.</firstname><surname>Higuchu</surname></personname>
+      </author>
+      <title>Statistical analysis of the forms of glaciers in Khumbu region</title>
+      <publisher>
+        <publishername>Journal of Japanese Society of Snow Ice (Seppyo) 39, 7–14. )</publishername>
+      </publisher>
+      <pubdate>1977</pubdate>
+    </biblioentry>
+
+ 
+    <biblioentry xml:id="Hock_1999" xreflabel="Hock 1999">
+      <abbrev>Hock 1999</abbrev>
+      <author>
+        <personname><firstname>R.</firstname><surname>Hock</surname></personname>
+      </author>
+      <title>A distributed temperature index ice and snowmelt model including potential direct solar
+        radiation</title>
+      <publisher>
+        <publishername>Journal of Glaciology 45(149), 101–112. </publishername>
+      </publisher>
+      <pubdate>2003</pubdate>
+    </biblioentry>
+  
+    <biblioentry xml:id="Jansson_2003" xreflabel="Jansson et al. 2003">
+      <abbrev>Jansson 2003</abbrev>
+      <author>
+        <personname><firstname>P.</firstname><surname>Jansson</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>R.</firstname><surname>Hock</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>T.</firstname><surname>Schneider</surname></personname>
+      </author>
+      <title>The concept of glacier storage: a review </title>
+      <publisher>
+        <publishername>Journal of Hydrology 282, 116–129</publishername>
+      </publisher>
+      <pubdate>2003</pubdate>
+    </biblioentry>
+  
+    <biblioentry xml:id="Kayastha_2000" xreflabel="Kayastha et al. 2000">
+      <abbrev>Kayastha 2000</abbrev>
+      <author>
+        <personname><firstname>R. B.</firstname><surname>Kayastha</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>Y.</firstname><surname>Takeuchi</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>M.</firstname><surname>Nakawo</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>Y.</firstname><surname>Ageta</surname></personname>
+      </author>
+      <title>Practical prediction of ice melting beneath various thickness of debris cover on Khumbu
+        Glacier, Nepal, using a positive degree-day factor </title>
+      <publisher>
+        <publishername>IAHS Publication 264, 71–82. </publishername>
+      </publisher>
+      <pubdate>2000</pubdate>
+    </biblioentry>
+  
+    <biblioentry xml:id="Mool_2001" xreflabel="Mool et al. 2001">
+      <abbrev>Mool 2001</abbrev>
+      <author>
+        <personname><firstname>P.K.</firstname><surname>Mool</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>S.R.</firstname><surname>Bajracharya</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>S.P.</firstname><surname>Joshi</surname></personname>
+      </author>
+      <title>Inventory of Glaciers, Glacial Lakes, and Glacial Lake Outburst Flood Monitoring and
+        Early Warning Systems in the Hindu Kush-Himalayan Region, Nepal </title>
+      <publisher>
+        <publishername>International Centre for Integrated Mountain Development
+          (ICIMOD)</publishername>
+        <address>Kathmandu, Nepal</address>
+      </publisher>
+      <pubdate>2001</pubdate>
+    </biblioentry>
+  
+    <biblioentry xml:id="Mattson_1993" xreflabel="Mattson  et al. 1993">
+      <abbrev>Mattson 1993</abbrev>
+      <author>
+        <personname><firstname>L. E.</firstname><surname>Mattson</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>J. S.</firstname><surname>Gardner</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>G. J.</firstname><surname>Young</surname></personname>
+      </author>
+      <title>Ablation on debris covered glaciers: an example from the Rakhiot glacier, Punjab
+        Himalaya </title>
+      <publisher>
+        <publishername>In: Snow and glacier hydrology. Proceedings of the Kathmandu Symposium,
+          November, 1992.</publishername>
+      </publisher>
+      <pubdate>1993</pubdate>
+    </biblioentry>
+  
+ 
+    <biblioentry xml:id="Nepal_2012" xreflabel="Nepal 2012">
+      <abbrev>Nepal 2012</abbrev>
+      <author>
+        <personname><firstname>S.</firstname><surname>Nepal</surname></personname>
+      </author>
+      <title>Evaluating Upstream-Downstream linkages of Hydrological Dynamics in the Himalayan
+        region </title>
+      <citetitle pubwork="journal">PhD Thesis</citetitle>
+      <publisher>
+        <publishername>Friedrich Schiller University of Jena, Jena, Germany</publishername>
+        <address>Jena, Germany</address>
+      </publisher>
+      <pubdate>2012</pubdate>
+    </biblioentry>
+  
+
+    <biblioentry xml:id="Oestrem_1959" xreflabel="Oestrem 1959">
+      <abbrev>Oestrem 1959</abbrev>
+      <author>
+        <personname><firstname>G.</firstname><surname>Oestrem</surname></personname>
+      </author>
+      <title>Ice Melting under a Thin Layer of Moraine, and the Existence of Ice Cores in Moraine
+        Ridges.</title>
+      <publisher>
+        <publishername>Geograﬁska Annaler 41, 228–230. </publishername>
+      </publisher>
+      <pubdate>1959</pubdate>
+    </biblioentry>
+  
+ 
+    <biblioentry xml:id="Sakai_2000" xreflabel="Sakai et al. 2000">
+      <abbrev>Sakai 2000</abbrev>
+      <author>
+        <personname><firstname>A.</firstname><surname>Sakai</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>N.</firstname><surname>Takeuchi</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>K.</firstname><surname>Fujita</surname></personname>
+      </author>
+      <author>
+        <personname><firstname>M.</firstname><surname>Nakawo</surname></personname>
+      </author>
+      <title>Role of supraglacial ponds in the ablation process of a debris-covered glaciers in the
+        Nepal Himalayas.</title>
+      <publisher>
+        <publishername>In: Debris Covered Glaciers (Proceedings of a workshop held at Seattle,
+          Washington, USA, September 2000). IAHS Publ. no. 265, 2000. </publishername>
+      </publisher>
+      <pubdate>2000</pubdate>
+    </biblioentry>
+    </bibliography>
+</sect1>

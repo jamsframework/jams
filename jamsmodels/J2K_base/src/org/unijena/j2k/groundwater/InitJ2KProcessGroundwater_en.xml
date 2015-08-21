@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>InitJ2KProcessGroundwater</title>
+  <subtitle>A component for initialisation of the groundwater storage module.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.groundwater</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>entities</entry>
+          <entry>set of model entities</entry>
+        </row>
+        <row>
+          <entry>maxRG1</entry>
+          <entry>maximum storage capacity for groundwater component RG1</entry>
+        </row>
+        <row>
+          <entry>maxRG2</entry>
+          <entry>maximum storage capacity for groundwater component RG2</entry>
+        </row>
+        <row>
+          <entry>actRG1</entry>
+          <entry>actual storage capacity for groundwater component RG1</entry>
+        </row>
+        <row>
+          <entry>actRG2</entry>
+          <entry>actual storage capacity for groundwater component RG2</entry>
+        </row>
+        <row>
+          <entry>initRG1</entry>
+          <entry>relative storage of groundwater component RG1 at the start of model
+            execution</entry>
+        </row>
+        <row>
+          <entry>initRG2</entry>
+          <entry>relative storage of groundwater component RG2 at the start of model
+            execution</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+    <sect2>
+    <title>Component Description</title>
+      <para>This component initializes both groundwater storages, <emphasis role="italic"
+        >RG1</emphasis> and <emphasis role="italic">RG2</emphasis>, of the groundwater module
+      "J2KProcessGroundwater." Therefore the maximum storage capacities of both storages, which are
+      taken from the corresponding parameter file (e.g. "hgeo.par") and stored in mm as measure
+      unit, are multiplied with the area of the corresponding model entity to obtain an absolute
+      storage capacity in liters. Those values are stored as attributes <emphasis role="italic"
+        >maxRG1</emphasis> and <emphasis role="italic">maxRG2</emphasis>. In addition, the current
+      storage capacity of both groundwater components (<emphasis role="italic">actRG1</emphasis> and
+        <emphasis role="italic">actRG2</emphasis>) can be provided with an initial storage. This can
+      be done by using the parameters <emphasis role="italic">initRG1</emphasis> and <emphasis
+        role="italic">initRG2</emphasis> which describe a relative storage in relation to the
+        maximum capacity.</para> 
+    </sect2>
+      <bibliography>
+        <title>Literatur</title> 
+        <biblioentry  xml:id="Krause_2001" xreflabel="Krause 2001">
+          <abbrev>Krause 2001</abbrev>
+          <author><personname><firstname>P.</firstname><surname>Krause</surname></personname></author>
+          <title>Das hydrologische Modellsystem J2000: Beschreibung und Anwendung in
+            großen Flußeinzugsgebieten</title>
+          <publisher>
+            <publishername>Schriften des Forschungszentrum Jülich: Reihe Umwelt/Environment</publishername>
+          </publisher>
+          <volumenum>Band 29</volumenum>
+          <pubdate>2001</pubdate>
+        </biblioentry>
+      </bibliography>
+</sect1>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink"
+  xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg"
+  xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook">
+  <title>CalcLatLong</title>
+  <subtitle>A component for calculation of extraterrestrial radiation.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+      <colspec colname="c2" colnum="2" colwidth="2.96*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.geographicalCalculations</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1*"/>
+        <colspec colname="c2" colnum="2" colwidth="3*"/>
+        <thead>
+          <row>
+            <entry>Name</entry>
+            <entry>Description</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>entities</entry>
+            <entry>set of spatial model entities</entry>
+          </row>
+          <row>
+            <entry>x</entry>
+            <entry>x-coordinate of the spatial model entity</entry>
+          </row>
+          <row>
+            <entry>y</entry>
+            <entry>y-coordinate of the spatial model entity</entry>
+          </row>
+          <row>
+            <entry>slope</entry>
+            <entry>slope of the spatial model entity</entry>
+          </row>
+          <row>
+            <entry>aspect</entry>
+            <entry>exposition of the spatial model entity</entry>
+          </row>
+          <row>
+            <entry>latitude</entry>
+            <entry>geographical latitude of the spatial model entity</entry>
+          </row>
+          <row>
+            <entry>longitude</entry>
+            <entry>geographical longitude of the spatial model entity</entry>
+          </row>
+          <row>
+            <entry>slAsCfArray</entry>
+            <entry>correction factors of slope-aspect combination of the spatial model
+              entity</entry>
+          </row>
+          <row>
+            <entry>projection</entry>
+            <entry>projection of coordinates of the spatial model entity</entry>
+          </row>
+          <row>
+            <entry>tempRes</entry>
+            <entry>temporal resolution of the spatial model entities - per hour (h), day (d), month
+              (m)</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>This component converts projected coordinates into decimal degree measures. Therefore the
+      projected x- and y-coordinates and the description of the projection are transferred to the
+      module. The projection is stored as the variable "<emphasis role="italic"
+        >projection</emphasis>." Corresponding valid entries are: </para>
+    <para>GK for Gauss-Krüger projection</para>
+    <para>UTMxxZ for UTM projections, xx specifying the zone number and Z referring to the zone
+      letter (e.g. UTM32U for Germany)</para>
+    <para>LL for geographic coordinates in decimal degrees</para>
+    <para>In addition, the component calculates a temporally variable correction factor which
+      modifies the radiation receipt according to the exposition and slope of the spatial model
+      entities. </para>
+  </sect2>
+    <bibliography>
+      <title>Literatur</title> 
+      <biblioentry  xml:id="Krause_2005" xreflabel="Krause et al. 2005">
+        <abbrev>Krause et al. 2005</abbrev>
+        <authorgroup>
+          <author><personname><firstname>P.</firstname><surname>Krause</surname></personname></author>
+          <author><personname><firstname>D.</firstname><surname>Boyle</surname></personname></author>
+          <author><personname><firstname>F.</firstname><surname>Bäse</surname></personname></author>
+        </authorgroup>
+        <title>Comparison of different efficiency criteria for hydrological model assessment</title>
+        <citetitle pubwork="journal">Advances in Geosiences</citetitle>
+        <volumenum>5</volumenum>
+        <pagenums>89-97</pagenums>
+        <pubdate>2005</pubdate>
+      </biblioentry>
+    </bibliography>
+</sect1>

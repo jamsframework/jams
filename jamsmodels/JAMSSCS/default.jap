@@ -1,0 +1,14 @@
+#JAMS configuration file
+#Mon Oct 15 13:02:13 CEST 2007
+debug=1
+infolog=
+windowenable=1
+verbose=0
+guiconfigheight=600
+windowwidth=800
+model=
+libs=lib
+errorlog=
+guiconfigwidth=600
+windowheight=600
+guiconfig=1

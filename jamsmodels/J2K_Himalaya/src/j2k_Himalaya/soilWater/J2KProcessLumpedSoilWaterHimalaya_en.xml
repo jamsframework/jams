@@ -1,0 +1,1739 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>J2KProcessLumpedSoilWater</title>
+  <subtitle>A component for calculation of soil water budget and runoff generation.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.soilWater</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>time</entry>
+          <entry>current time</entry>
+        </row>
+        <row>
+          <entry>area</entry>
+          <entry>area of the spatial model entity [m²]</entry>
+        </row>
+        <row>
+          <entry>slope</entry>
+          <entry>slope of the spatial model entity</entry>
+        </row>
+        <row>
+          <entry>sealedGrade</entry>
+          <entry>sealed area [-] WB[0 .. 1]</entry>
+        </row>
+        <row>
+          <entry>netRain</entry>
+          <entry>net liquid precipitation [mm]</entry>
+        </row>
+        <row>
+          <entry>netSnow</entry>
+          <entry>net snow precipitation [mm]</entry>
+        </row>
+        <row>
+          <entry>potET</entry>
+          <entry>potential evaporation [mm]</entry>
+        </row>
+        <row>
+          <entry>actET</entry>
+          <entry>actual evaporation [mm]</entry>
+        </row>
+        <row>
+          <entry>snowDepth</entry>
+          <entry>snow depth [mm]</entry>
+        </row>
+        <row>
+          <entry>snowMelt</entry>
+          <entry>snow melt [mm]</entry>
+        </row>
+        <row>
+          <entry>maxMPS</entry>
+          <entry>maximum middle pore storage volume [mm]</entry>
+        </row>
+        <row>
+          <entry>maxLPS</entry>
+          <entry>maximum large pore storage volume [mm]</entry>
+        </row>
+        <row>
+          <entry>actMPS</entry>
+          <entry>actual middle pore storage [mm]</entry>
+        </row>
+        <row>
+          <entry>actLPS</entry>
+          <entry>actual large pore storage [mm]</entry>
+        </row>
+        <row>
+          <entry>actDPS</entry>
+          <entry>actual water storage in depression [mm]</entry>
+        </row>
+        <row>
+          <entry>satMPS</entry>
+          <entry>relative water saturation of middle pore storage [-]</entry>
+        </row>
+        <row>
+          <entry>satLPS</entry>
+          <entry>relative water saturation of large pore storage [-]</entry>
+        </row>
+        <row>
+          <entry>satSoil</entry>
+          <entry>saturation of whole soil [-]</entry>
+        </row>
+        <row>
+          <entry>infiltration</entry>
+          <entry>infiltration [mm]</entry>
+        </row>
+        <row>
+          <entry>interflow</entry>
+          <entry>generated interflow [mm]</entry>
+        </row>
+        <row>
+          <entry>percolation</entry>
+          <entry>generated vertical percolation [mm]</entry>
+        </row>
+        <row>
+          <entry>inRD1</entry>
+          <entry>lateral inflow at direct runoff (RD1) [mm]</entry>
+        </row>
+        <row>
+          <entry>outRD1</entry>
+          <entry>generated outflow (RD1) [mm]</entry>
+        </row>
+        <row>
+          <entry>genRD1</entry>
+          <entry>generated outflow (RD1) [mm]</entry>
+        </row>
+        <row>
+          <entry>inRD2</entry>
+          <entry>lateral inflow at direct runoff (RD2) [mm]</entry>
+        </row>
+        <row>
+          <entry>outRD2</entry>
+          <entry>generated outflow (RD2) [mm]</entry>
+        </row>
+        <row>
+          <entry>genRD2</entry>
+          <entry>generated outflow (RD2) [mm]</entry>
+        </row>
+        <row>
+          <entry>soilMaxDPS</entry>
+          <entry>maximum depression storage [mm]</entry>
+        </row>
+        <row>
+          <entry>soilPolRed</entry>
+          <entry>evaporation calibration parameter for polynomial function [-]</entry>
+        </row>
+        <row>
+          <entry>soilLinRed</entry>
+          <entry>evaporation calibration parameter for linear function [-]</entry>
+        </row>
+        <row>
+          <entry>soilMaxInfSummer</entry>
+          <entry>maximum infiltration rate in summer [mm/d]</entry>
+        </row>
+        <row>
+          <entry>soilMaxInfWinter</entry>
+          <entry>maximum infiltration rate in winter [mm/d]</entry>
+        </row>
+        <row>
+          <entry>soilMaxInfSnow</entry>
+          <entry>maximum infiltration rate on snow cover [mm/d]</entry>
+        </row>
+        <row>
+          <entry>soilImpGT80</entry>
+          <entry>maximum infiltration part on sealed areas (gt 80%) </entry>
+        </row>
+        <row>
+          <entry>soilImpLT80</entry>
+          <entry>maximum infiltration part on less sealed areas (lt 80%)</entry>
+        </row>
+        <row>
+          <entry>soilDistMPSLPS</entry>
+          <entry>distribution coefficient of infiltration for middle and large pore storage</entry>
+        </row>
+        <row>
+          <entry>soilDiffMPSLPS</entry>
+          <entry>diffusion factor for water from large pore storage into middle pore storage
+              [-]</entry>
+        </row>
+        <row>
+          <entry>soilOutLPS</entry>
+          <entry>coefficient for calculation of outflow from large pore storage</entry>
+        </row>
+        <row>
+          <entry>soilLatVertLPS</entry>
+          <entry>coefficient for the distribution of outflow from the large pore storage to the
+              lateral and vertical flow path </entry>
+        </row>
+        <row>
+          <entry>soilMaxPerc</entry>
+          <entry>maximum percolation rate [mm/d]</entry>
+        </row>
+        <row>
+          <entry>soilConcRD1</entry>
+          <entry>concentration coefficient for direct runoff RD1</entry>
+        </row>
+          <row>
+            <entry>soilConcRD1Flood</entry>
+            <entry> recession coefficient for flood event </entry>
+          </row>
+          <row>
+            <entry>soilConcRD1Floodthreshold </entry>
+            <entry> threshold value for soilConcRD1Flood </entry>
+          </row>
+        <row>
+          <entry>soilConcRD2</entry>
+          <entry>concentration coefficient for interflow RD2</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>In the soil module separate soils are represented according to their pore volumes. The
+      pore storages which can occur in the soil are classified in the literature as follows (e.g.
+      <citetitle><xref linkend="Scheffer_Schachtschabel_1984"/></citetitle>):</para>
+    <para><orderedlist>
+        <listitem>
+          <para>The water stored in fine pores (&lt; 0.2 µm diameter, pF > 4.2, corresponds to the
+            permanent wilting point - PWP) is so strongly bound due to its adsorption powers that it
+            is not at all available for runoff generation. </para>
+        </listitem>
+        <listitem>
+          <para>The water stored in middle pores (diameter 0.2 to 50 µm, pF 1.8 to 4.2, corresponds
+            to usable field capacity -nFk) is hold against gravity due to its adsorption powers. It
+            can be extracted from the soil almost exclusively by using suction potential. </para>
+        </listitem>
+        <listitem>
+          <para>The water stored in coarse and macro pores (> 50 µm diameter, pF > 1.8, corresponds
+            to air capacity - Lk) is subject to gravitation and can be kept in the soil for only a
+            short period of time (1 to 2 days according to <citetitle><xref linkend="Scheffer_Schachtschabel_1984"/></citetitle>,
+            1984).</para>
+        </listitem>
+      </orderedlist>The water stored in the fine pores can be neglected during the modeling as it is
+      not available for evaporation or flow processes according to the above-mentioned specification
+      of the pore volumes due to the constant binding. Hence the modeling abstraction of the soil is
+      carried out by two parallel and connected storage in the model J2000: one storage which
+      corresponds to the middle pore storage volume (hereinafter referred to as <emphasis
+        role="italic">MPS</emphasis>) and which can only be emptied by evaporation and another
+      storage which represents the volume of the large and macro pore storage (hereinafter referred
+      to as <emphasis role="italic">LPS</emphasis>) and which is the source for the actual runoff. </para>
+    
+    <figure xml:id="j2k.soilWater.j2kProcessLumpedSoilWater.soil_module_concept_fig1.png">
+      <title>Schematic representation of the concept of soil-water-budget module</title>      
+      <para><inlinemediaobject>      
+        <imageobject>
+          <imagedata align="center" fileref="soil_module_concept.png" scale="80" width="100%"/>
+        </imageobject>
+      </inlinemediaobject></para>
+    </figure>
+    
+    <para>From the image (<xref linkend="j2k.soilWater.j2kProcessLumpedSoilWater.soil_module_concept_fig1.png" xrefstyle="select: label"/>)
+      
+      it can be concluded that an infiltration storage precedes the soil storages
+      which contains net precipitation and water resulting from snow melt. From this storage the
+      water is distributed to both soil storages where remaining water is cached in the depression
+      storage in case of exceeding a maximum infiltration capacity of the corresponding soil or a
+      saturation of the large pore storage. Emptying the depression storage is done by evaporation,
+      the generation of surface runoff and/or seepage at a later point in time. Emptying the middle
+      pore storage is done by evapotranspiration, emptying the large pore storage by generating
+      interflow or by groundwater recharge. In addition, at the end of the time step a certain
+      amount of the water stored in large pores can be transferred to the middle pore storage. The
+      middle pore storage can, in addition to this water amount and to the infiltration, receive
+      water from the saturated zone due to capillary rise. These individual processes are explained
+      in detail below, however the parameterization of the soil module is discussed beforehand. </para>
+    <para><emphasis role="bold">Infiltration</emphasis>
+    </para>
+    <para>The first process which contains the water resulting from the snow melt and from net
+      precipitation is infiltration. Whether water can seep away entirely or whether it is stored
+      for a short time at the surface and whether it generates depression storage at this place or
+      surface runoff, is subject to the infiltration capacity of the corresponding soil. The
+      infiltration capacity is calculated by a simplified method which is suitable for daily time
+      steps. It is based on the assumption that infiltration capacity is on the one hand subject to
+      water saturation in the soil and on the other hand it cannot exceed a certain threshold value,
+      a maximum infiltration rate. If this maximum infiltration rate is set to a constant mean value
+      for the whole year, there are two problems, at least for two special cases: </para>
+    <para><orderedlist>
+        <listitem>
+          <para>In convective precipitation with high intensities and short duration. Often the
+            infiltration capacity of the soil is exceeded since much water comes to the soil within
+            a short time although the precipitation amount for the whole day would not imply this.
+          </para>
+        </listitem>
+        <listitem>
+          <para>In snow melt runoff from the snow cover. Although water is released in a quite
+            continuous manner, the soil behaves like a sealed area since it is partly or completely
+            frozen or since water runs off within the snow cover without having the chance to seep
+            away. </para>
+        </listitem>
+      </orderedlist>In order to take these special cases into account, at least rudimentarily. Two
+      threshold values can be indicated in addition to the "standard value". Since special case 1
+      occurs mainly in summer months, a threshold value can be specified for summer half year. This
+      threshold value serves to take into account thundershowers with high intensity within a short
+      time which occur mainly during summer months. The second threshold value is applied if the
+      modeled unit is covered in snow. Using this value the reduced infiltration capacity of the
+      soil with a partly or completely frozen surface is considered. At the same time this value can
+      be used to take into consideration the runoff of melt and precipitation water within the snow
+      cover. The third value represents the standard case and therefore holds for the winter half
+      year and for entities without snow cover.  </para>
+    <para>The threshold values which are to be determined by the user (<emphasis role="italic"
+        >soilMaxInfSummer</emphasis>, <emphasis role="italic">soilMaxInfSnow</emphasis>, <emphasis
+        role="italic">soilMaxInfWinter</emphasis>) are weighted during the modeling with the
+      relative saturation deficit of the soil (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>δ</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>t</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) ). The resulting maximum infiltration rate (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mrow>
+              <ns3:mi>I</ns3:mi>
+              <ns3:mi>n</ns3:mi>
+              <ns3:mi>f</ns3:mi>
+            </ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>m</ns3:mi>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>x</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) then calculated according to: </para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mrow>
+                <ns3:mi>I</ns3:mi>
+                <ns3:mi>n</ns3:mi>
+                <ns3:mi>f</ns3:mi>
+              </ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>m</ns3:mi>
+                <ns3:mi>a</ns3:mi>
+                <ns3:mi>x</ns3:mi>
+              </ns3:mrow>
+            </ns3:msub>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>s</ns3:mi>
+                <ns3:mi>o</ns3:mi>
+                <ns3:mi>i</ns3:mi>
+                <ns3:mi>l</ns3:mi>
+                <ns3:mi>M</ns3:mi>
+                <ns3:mi>a</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>x</ns3:mi>
+                  <ns3:mi>I</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                  <ns3:mi>f</ns3:mi>
+                  <ns3:mi>X</ns3:mi>
+                  <ns3:mi>X</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>X</ns3:mi>
+                    <ns3:mi>X</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mn>1</ns3:mn>
+                  <ns3:mo>-</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>s</ns3:mi>
+                    <ns3:mi>a</ns3:mi>
+                    <ns3:mi>t</ns3:mi>
+                    <ns3:mi>S</ns3:mi>
+                    <ns3:mi>o</ns3:mi>
+                    <ns3:mi>i</ns3:mi>
+                    <ns3:mi>l</ns3:mi>
+                    <ns3:mo>)</ns3:mo>
+                  </ns3:mrow>
+                  
+                </ns3:mrow>
+              </ns3:mrow>
+              
+              
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[mm/d]</ns3:mi>
+          </ns3:mrow>
+          
+          
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+      
+    <para>The relative water saturation of the soil can be calculated using: </para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+              <ns3:mi>o</ns3:mi>
+              <ns3:mi>i</ns3:mi>
+              <ns3:mi>l</ns3:mi>
+              <ns3:mi>S</ns3:mi>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>t</ns3:mi>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>c</ns3:mi>
+                  <ns3:mi>t</ns3:mi>
+                  <ns3:mi>M</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>P</ns3:mi>
+                    <ns3:mi>S</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mo>+</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>c</ns3:mi>
+                  <ns3:mi>t</ns3:mi>
+                  <ns3:mi>L</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>P</ns3:mi>
+                    <ns3:mi>S</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>m</ns3:mi>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>x</ns3:mi>
+                  <ns3:mi>M</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>P</ns3:mi>
+                    <ns3:mi>S</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mo>+</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mi>m</ns3:mi>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>x</ns3:mi>
+                  <ns3:mi>L</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>P</ns3:mi>
+                    <ns3:mi>S</ns3:mi>
+                  </ns3:mrow>
+                  
+                </ns3:mrow>
+              </ns3:mrow>
+              
+            </ns3:mfrac>
+          </ns3:mrow>
+        
+          
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+          
+            
+            <ns3:mi>[-]</ns3:mi>
+       
+          </ns3:mrow>
+          
+          
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+     
+    <para>If the water amount of precipitation and snow melt for the infiltration exceeds the
+      calculated maximum infiltration rate, the excess is transferred to the depression storage and
+      cached there. The resulting, actually seeping water amount (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mrow>
+              <ns3:mi>I</ns3:mi>
+              <ns3:mi>n</ns3:mi>
+              <ns3:mi>f</ns3:mi>
+            </ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>c</ns3:mi>
+              <ns3:mi>t</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) is distributed among the soil storages. The amount of water which is in
+      every soil storage is subject to the saturation deficit of the middle pore storage (<emphasis
+        role="italic">MPS</emphasis>) and is calculated using the calibration parameter <emphasis
+        role="italic">soilDissMPSLPS</emphasis> as follows: </para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>M</ns3:mi>
+              <ns3:mi>P</ns3:mi>
+              <ns3:msub>
+                <ns3:mi>S</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>i</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                </ns3:mrow>
+              </ns3:msub>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:msub>
+                <ns3:mrow>
+                  <ns3:mi>I</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                  <ns3:mi>f</ns3:mi>
+                </ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>c</ns3:mi>
+                  <ns3:mi>t</ns3:mi>
+                </ns3:mrow>
+              </ns3:msub>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mn>1</ns3:mn>
+                <ns3:mo>-</ns3:mo>
+                <ns3:msup>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mfrac>
+                    <ns3:mrow>
+                      <ns3:mi>-1</ns3:mi>
+                      <ns3:mo>×</ns3:mo>
+                      <ns3:mrow>
+                        <ns3:mi>s</ns3:mi>
+                        <ns3:mi>o</ns3:mi>
+                        <ns3:mi>i</ns3:mi>
+                        <ns3:mi>l</ns3:mi>
+                        <ns3:mi>D</ns3:mi>
+                        <ns3:mi>i</ns3:mi>
+                        <ns3:mrow>
+                          <ns3:mi>s</ns3:mi>
+                          <ns3:mi>t</ns3:mi>
+                          <ns3:mi>M</ns3:mi>
+                          <ns3:mi>P</ns3:mi>
+                          <ns3:mi>S</ns3:mi>
+                          <ns3:mi>L</ns3:mi>
+                          <ns3:mrow>
+                            <ns3:mi>P</ns3:mi>
+                            <ns3:mi>S</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mi>s</ns3:mi>
+                      <ns3:mi>a</ns3:mi>
+                      <ns3:mi>t</ns3:mi>
+                      <ns3:mi>M</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>P</ns3:mi>
+                        <ns3:mi>S</ns3:mi>
+                      </ns3:mrow>
+                      
+                    </ns3:mrow>
+                  </ns3:mfrac>
+              
+                </ns3:msup>
+              
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[mm]</ns3:mi>
+          
+          </ns3:mrow>
+          </ns3:mrow>
+          
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+    <para>The large pore storage (<emphasis role="italic">LPS</emphasis>) receives remaining water
+      according to: </para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>L</ns3:mi>
+              <ns3:mi>P</ns3:mi>
+              <ns3:msub>
+                <ns3:mi>S</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>i</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                </ns3:mrow>
+              </ns3:msub>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>I</ns3:mi>
+                <ns3:mi>n</ns3:mi>
+                <ns3:msub>
+                  <ns3:mi>f</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>a</ns3:mi>
+                    <ns3:mi>c</ns3:mi>
+                    <ns3:mi>t</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+              <ns3:mo>-</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>M</ns3:mi>
+                <ns3:mi>P</ns3:mi>
+                <ns3:msub>
+                  <ns3:mi>S</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>i</ns3:mi>
+                    <ns3:mi>n</ns3:mi>
+                  </ns3:mrow>
+                
+                </ns3:msub>
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            
+          </ns3:mrow>
+         
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[mm]</ns3:mi>
+           
+          </ns3:mrow>
+          
+          
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+    <para>Due to the water distribution according to these equations the middle pore storage works
+      like a sponge and its potential of taking water increases with increasing dehydration.
+      However, a certain amount always remains in the large pore storage. The weighted distribution
+      has the advantage that even in dry soils, especially during the summer months, part of the
+      infiltrated water can run off fast. If the water was not distributed, interflow could only
+      occur after saturating the middle pore storage, i.e. after achieving usable field capacity.
+      Various investigations showed that large and macro pores can also achieve runoff if there is
+      no water saturation in the soil.</para>
+    <para>Other special cases of infiltration occur with sealed areas and water areas. For water
+      areas the water which is actually available for infiltration is transferred to an individual
+      storage which can only be emptied by evaporation. In sealed areas only a certain amount of
+      water on the surface seeps away subject to the degree of sealing (e.g. 25% with degree of
+      sealing > 80% and 60% with degree of sealing &lt; 80% according to <citetitle><xref
+          linkend="Wessolek_1993"/></citetitle>). The remaining part contributes to the total runoff
+      in the form of surface runoff. This is considered by using corresponding coefficients
+        (<emphasis role="italic">soilImpGT80</emphasis>, <emphasis role="italic"
+        >soilImpLT80</emphasis>) which have to adjusted by the user.</para>
+    <para><emphasis role="bold">The depression storage</emphasis>
+    </para>
+    <para>As represented in the description of infiltration above, the water amount which exceeds
+      the maximum infiltration rate of the soil is transferred to the depression storage. This also
+      applies if the soil is completely water-saturated and no infiltration can take place. The
+      water which is stored in the depression storage runs off partly as surface runoff. The maximum
+      amount in mm m^{-2} which can be kept as depression storage on the individual are has to be
+      indicated during model parameterization. According to <citetitle><xref linkend="Maniak_1997"
+        /></citetitle> the maximum depression storage lies between 0.6 and 8.0 mm m^{-2} subject to
+      the specific land use. Since this variable has a relatively low impact on the dynamics of
+      runoff lines (<citetitle><xref linkend="Maniak_1997"/></citetitle>), the maximum depression
+      storage is set to a lump value and is not differentiated according to the land use. As the
+      depression storage is only important in rather lowly-elevated locations, the maximum
+      depression storage is weighted using the slope of the specific area. As, according to
+          <citetitle><xref linkend="Maniak_1997"/></citetitle>, the maximum depression storage
+      decreases by 50% from 4-6 % slope, the volume of the depression storage halved for areas
+      exceeding this slope. If the maximum depression storage is exceed on an area, spare water is
+      released as surface runoff. </para>
+    <para><emphasis role="bold">The middle pore storage</emphasis>
+    </para>
+    <para>The water stored in the middle pores of the soil is held against gravity due to the
+      adsorption powers. This means an active soil water potential is required in order to extract
+      water from the middle pore storage. The potential for such a soil water suction is made
+      available by evaporation. Two different cases have to be distinguished: the direct evaporation
+      from the soil surface and the evaporation caused by transpiration of the vegetation cover. The
+      direct evaporation of the soil surface is comparably low since only a few millimeters of dry
+      soil can cause an effective isolation of the underlying layers regarding the evaporation. This
+      isolation is shorted out by the roots of the vegetation cover, which makes a consistent
+      exhaustion of water stored in the middle pores possible by transpiration. With increasing
+      dehydration of the soil the actual evaporation decreases significantly in relation to
+      potential evaporation. For simulating this reduction an established linear approach
+          (<citetitle><xref linkend="Gurtz_1997"/></citetitle>; <citetitle><xref
+          linkend="Schulla_1997"/></citetitle>; <citetitle><xref linkend="Uhlenbrook_1999"
+        /></citetitle>) is used or a non-linear approach which has been developed for the model is
+      applied.</para>
+    <para>When using the linear approach (<xref linkend="j2k.soilWater.j2kProcessLumpedSoilWater.soil_linRed_fig2.png" xrefstyle="select: label"/>) it is assumed that the real evaporation equals potential
+      evaporation until a specific water saturation is achieved. When the value goes below this
+      water saturation, the real evaporation decreases consistently in relation to potential
+      evaporation until it is zero when reaching the permanent welting point (= complete emptying of
+      nFk). As threshold value (<emphasis role="italic">soilLinRed</emphasis>) for this specific
+      water saturation values between 0.8 to 0.6 are mentioned in the literature (<citetitle><xref
+          linkend="Gurtz_1997"/></citetitle>; <citetitle><xref linkend="Menzel_1997"/></citetitle>).
+      This threshold value and the actual water saturation of the middle pore storage M (<emphasis
+        role="italic">satMPS</emphasis>) is used to calculate a reduction factor (<emphasis
+        role="italic">RF</emphasis>):</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>R</ns3:mi>
+              <ns3:mi>F</ns3:mi>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mi>1 for</ns3:mi>
+          </ns3:mrow>
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>t</ns3:mi>
+              <ns3:mi>M</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>P</ns3:mi>
+                <ns3:mi>S</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>≥</ns3:mo>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+              <ns3:mi>o</ns3:mi>
+              <ns3:mi>i</ns3:mi>
+              <ns3:mi>l</ns3:mi>
+              <ns3:mi>L</ns3:mi>
+              <ns3:mi>i</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>n</ns3:mi>
+                <ns3:mi>R</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mi>d</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+        
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation></para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>R</ns3:mi>
+              <ns3:mi>F</ns3:mi>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mi>s</ns3:mi>
+                <ns3:mi>a</ns3:mi>
+                <ns3:mi>t</ns3:mi>
+                <ns3:mi>M</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>P</ns3:mi>
+                  <ns3:mi>S</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>s</ns3:mi>
+                <ns3:mi>o</ns3:mi>
+                <ns3:mi>i</ns3:mi>
+                <ns3:mi>l</ns3:mi>
+                <ns3:mi>L</ns3:mi>
+                <ns3:mi>i</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>n</ns3:mi>
+                  <ns3:mi>R</ns3:mi>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mi>d</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mfrac>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+    
+    <para></para>
+    <figure xml:id="j2k.soilWater.j2kProcessLumpedSoilWater.soil_linRed_fig2.png">
+      <title>Fig: Functioning of the linear reduction factor</title>
+      <para><inlinemediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="soil_linRed.png" scale="80" width="100%"/>
+        </imageobject>
+      </inlinemediaobject></para>
+    </figure> 
+    <para>In addition to this linear approach a non-linear approach can be selected for the
+      reduction of evaporation can be chosen. The advantage of this approach is that the reduction
+      of actual evaporation in relation to potential evaporation shows a typical S-shaped
+      progression and thus behaves like a relation between water content of the soil and connected
+      soil water potential which is known from pedology (<xref linkend="j2k.soilWater.j2kProcessLumpedSoilWater.soil_polRed_fig3.png" xrefstyle="select: label"/>).</para>
+    
+    <para></para>
+    <figure xml:id="j2k.soilWater.j2kProcessLumpedSoilWater.soil_polRed_fig3.png">
+      <title>Functioning of the polynomial reduction factor</title>      
+      <mediaobject>        
+        <imageobject>          
+          <imagedata align="center" fileref="soil_polRed.png" scale="95" width="100%"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>This method also requires a parameter which is specified by the user (<emphasis
+        role="italic">polLinRed</emphasis>). Plausible values for this parameter are between 3 and
+      8. This non-linear approach also delivers a non-dimensional reduction factor (<emphasis
+        role="italic">RF</emphasis>) which is calculated as follows:</para>
+    <para/>
+    <para>The real stand evaporation (<emphasis role="italic">rETP</emphasis>) is calculated
+        using<emphasis role="italic"> f</emphasis>(<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>θ</ns3:mi>
+        </ns3:math>
+      </inlineequation>) from the potential evaporation calculated beforehand (<emphasis
+        role="italic">pETP</emphasis>) according to:
+          <inlineequation>
+          <ns3:math display="inline">
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>r</ns3:mi>
+                <ns3:mi>E</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>T</ns3:mi>
+                  <ns3:mi>P</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>=</ns3:mo>
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>f</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mo>(</ns3:mo>
+                    <ns3:mi>θ</ns3:mi>
+                    <ns3:mo>)</ns3:mo>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mo>×</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mi>p</ns3:mi>
+                  <ns3:mi>E</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>T</ns3:mi>
+                    <ns3:mi>P</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:math>
+        </inlineequation> [mm]. This water amount is extracted from the middle pore storage.
+      It may happen that there is no sufficient water for the saturation of the real evaporation
+      which has been calculated with the equation 4.29 is available. In this case an evaporation
+      deficit remains. </para>
+    <para><emphasis role="bold">The large pore storage</emphasis>
+    </para>
+    <para>The water which is in the large pore storage (<emphasis role="italic">GPS</emphasis>) is
+      subject to gravitation and is therefore considered as the source of actual flow processes and
+      runoff generation of the soil in J2000. Filling the storage is done by the infiltration amount
+      which remains after subtracting the inflow to the middle pore storage. </para>
+    <para>The different runoff behavior of different soils is reflected very well by the pore
+      volumes which have been defined beforehand. Clayey soil has a relatively high proportion of
+      fine and middle pores, whereas sandy soil has a comparably high amount of large pores. The
+      generation of lateral and vertical runoff and the amount of precipitation is correspondingly
+      different. The water which is stored in rather clayey soil contributes less to lateral and
+      vertical runoff, under the same conditions (e.g. vegetation cover, slope etc.), than does
+      rather sandy soil. In contrast, the water amount available for evaporation is significantly
+      higher in clayey soils than in sandy soils. Clayey or silty soil, which lies between the
+      above-mentioned soils according to their pore size, has the best water storage capacities
+      since it has the highest amount of middle pores.</para>
+    <para>The water amount which generates runoff from the large pore storage in the time step is
+      subject to the relative water saturation of the entire soil (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mrow>
+              <ns3:mi>G</ns3:mi>
+              <ns3:mi>P</ns3:mi>
+              <ns3:mi>S</ns3:mi>
+            </ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+              <ns3:mi>o</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>i</ns3:mi>
+                <ns3:mi>l</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) and is calculated according to:</para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>Q</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>G</ns3:mi>
+                <ns3:mi>P</ns3:mi>
+                <ns3:mi>S</ns3:mi>
+              </ns3:mrow>
+            </ns3:msub>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:msubsup>
+                <ns3:mrow>
+                  <ns3:mi>S</ns3:mi>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>t</ns3:mi>
+                </ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+                  <ns3:mi>o</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>i</ns3:mi>
+                    <ns3:mi>l</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mi>α</ns3:mi>
+              </ns3:msubsup>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>G</ns3:mi>
+                <ns3:mi>P</ns3:mi>
+                <ns3:msub>
+                  <ns3:mi>S</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>a</ns3:mi>
+                    <ns3:mi>c</ns3:mi>
+                    <ns3:mi>t</ns3:mi>
+                  </ns3:mrow>
+                  
+                </ns3:msub>
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            
+          </ns3:mrow>
+          
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+   
+          
+          
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+    <para>with:</para>
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>G</ns3:mi>
+            <ns3:mi>P</ns3:mi>
+            <ns3:msub>
+              <ns3:mi>S</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>a</ns3:mi>
+                <ns3:mi>c</ns3:mi>
+                <ns3:mi>t</ns3:mi>
+              </ns3:mrow>
+            </ns3:msub>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>: Actual storage amount of the large pore storage [mm]</para>
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>S</ns3:mi>
+            <ns3:mi>a</ns3:mi>
+            <ns3:msub>
+              <ns3:mi>t</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>s</ns3:mi>
+                <ns3:mi>o</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>i</ns3:mi>
+                  <ns3:mi>l</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:msub>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>: Relative water saturation of the soil at location [-]</para>
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>α</ns3:mi>
+        </ns3:math>
+      </inlineequation> : calibration coefficient [-]</para>
+    <para>The advantage of this non-linear outfall function is that much less water runs off in low
+      areal humidity than if it were a linear drain function. The common behavior of catchment areas
+      which generate much more and faster runoff when there is high soil moisture (<citetitle><xref
+          linkend="Baumgartner_1990"/></citetitle>; <citetitle><xref linkend="Dyck_1995"
+        /></citetitle>) than when there is low soil moisture (assuming the same precipitation
+      amount) can be better displayed using an outfall function.</para>
+    <para>The gravitation water flowing out from the <emphasis role="italic">GPS </emphasis> (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>Q</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>G</ns3:mi>
+              <ns3:mi>P</ns3:mi>
+              <ns3:mi>S</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) is distributed among three different target storages. A certain amount goes
+      to the middle pores and is stored there for a longer period of time, a second part percolates
+      into the groundwater storage (vertical component) and the remaining amount provides the source
+      for interflow (lateral component). The size of the components is subject to soil-physical
+      parameters (especially kf values) and the slope of the corresponding HRU. Therefore, it is
+      assumed in the model that the slope area generates much interflow, whereas in almost evenly
+      situated locations the percolation into the groundwater is the main component. The amount
+      which goes from large pores into middle pores is, however, subject to the saturation of the
+      middle pore storage. In order to determine of runoff amounts the slope and two kf values have
+      to be specified for each HRU: The kf value of the soil horizon with the lowest permeability
+      and the kf value of the overlying horizon. </para>
+    <para><emphasis role="bold">Percolation and interflow generation</emphasis></para>
+    <para>A certain amount of available gravitation water seeps through the entire soil and
+      contributes to groundwater recharge. In the model presentation of the J2000 this percolated
+      amount is represented as dependent on the slope of the corresponding HRU. The slope influences
+      the percolation in that inclined areas have a higher amount of gravitation water as lateral
+      runoff from unsaturated zones, i.e. the groundwater recharge is less in these areas than in
+      evenly situated locations. The influence of the slope is taken into account with a gradient
+      according to the following equation:</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>g</ns3:mi>
+            <ns3:mi>r</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>a</ns3:mi>
+              <ns3:msub>
+                <ns3:mi>d</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>p</ns3:mi>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>r</ns3:mi>
+                    <ns3:mi>c</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+              
+          
+              </ns3:msub>
+              <ns3:mrow>
+              <ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:msup>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mn>1</ns3:mn>
+                  <ns3:mo>-</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>tan</ns3:mi>
+                    <ns3:mo>⁡</ns3:mo>
+                    <ns3:mi>α</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+              <ns3:mi>β</ns3:mi>
+            </ns3:msup>
+          </ns3:mrow>
+          
+         
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[mm]</ns3:mi>
+          </ns3:mrow>
+     
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+    <para>with:</para>
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>α</ns3:mi>
+        </ns3:math>
+      </inlineequation>: slope of the corresponding HRU [degree]</para>
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>β</ns3:mi>
+        </ns3:math>
+      </inlineequation>: shape parameter, calibration coefficient [-]</para>
+    <para>Using this equation the relation between vertical and lateral runoff is determined which
+      can be adapted to the conditions in the catchment area with help of the calibration
+      coefficient <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>β</ns3:mi>
+        </ns3:math>
+      </inlineequation>. In addition, with this calibration coefficient the slope resulting from
+      coarse-grained models which is systematically too low can be enhanced. </para>
+    <para>The water amount which is available for percolation is calculated according to:</para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>P</ns3:mi>
+              <ns3:mi>e</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>r</ns3:mi>
+                <ns3:msub>
+                  <ns3:mi>c</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>p</ns3:mi>
+                    <ns3:mi>o</ns3:mi>
+                    <ns3:mi>t</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>g</ns3:mi>
+                <ns3:mi>r</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:msub>
+                    <ns3:mi>d</ns3:mi>
+                    <ns3:mrow>
+                      <ns3:mi>p</ns3:mi>
+                      <ns3:mi>e</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>r</ns3:mi>
+                        <ns3:mi>c</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:msub>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>×</ns3:mo>
+              <ns3:msub>
+                <ns3:mi>Q</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>G</ns3:mi>
+                  <ns3:mi>P</ns3:mi>
+                  <ns3:mi>S</ns3:mi>
+                </ns3:mrow>
+                
+              </ns3:msub>
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          
+       
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[mm]</ns3:mi>
+          </ns3:mrow>
+        
+          
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+    <para>This percolation rate is then set against the calibration coefficient <emphasis
+        role="italic">soilMaxPerc</emphasis> which describes the maximum percolation rate per time
+      step.</para>
+    <para>And for the interflow <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>I</ns3:mi>
+            <ns3:mi>n</ns3:mi>
+            <ns3:mi>t</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> (RD2):</para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+              <ns3:math display="inline">
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mi>I</ns3:mi>
+                    <ns3:mi>n</ns3:mi>
+                    <ns3:mi>t</ns3:mi>
+                  </ns3:mrow>
+                  <ns3:mo>=</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mn>1</ns3:mn>
+                    <ns3:mo>-</ns3:mo>
+                    <ns3:mrow>
+                      <ns3:mrow>
+                        <ns3:mi>g</ns3:mi>
+                        <ns3:mi>r</ns3:mi>
+                        <ns3:mrow>
+                          <ns3:mi>a</ns3:mi>
+                          <ns3:msub>
+                            <ns3:mi>d</ns3:mi>
+                            <ns3:mrow>
+                              <ns3:mi>p</ns3:mi>
+                              <ns3:mi>e</ns3:mi>
+                              <ns3:mrow>
+                                <ns3:mi>r</ns3:mi>
+                                <ns3:mi>c</ns3:mi>
+                              </ns3:mrow>
+                            </ns3:mrow>
+                          </ns3:msub>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                      <ns3:mo>×</ns3:mo>
+                      <ns3:msub>
+                        <ns3:mi>Q</ns3:mi>
+                        <ns3:mrow>
+                          <ns3:mi>G</ns3:mi>
+                          <ns3:mi>P</ns3:mi>
+                          <ns3:mi>S</ns3:mi>
+                        </ns3:mrow>
+                      </ns3:msub>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mi> &#160;</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>[mm]</ns3:mi>
+                </ns3:mrow>
+              </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+    <para><emphasis role="bold">Runoff detention</emphasis></para>
+    <para>Both runoff components, direct runoff (<emphasis role="italic">RD1</emphasis>) and
+      interflow (<emphasis role="italic">RD2</emphasis>) are delayed in time in order to take into
+      account the areal expansion of the spatial model entity. The detention takes place using
+      corresponding retention coefficients (<emphasis role="italic">soilConcRD1</emphasis>,
+        <emphasis role="italic">soilConcRD2</emphasis>). The detention is calculated according
+      to:</para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>R</ns3:mi>
+              <ns3:mi>D</ns3:mi>
+              <ns3:mn>1</ns3:mn>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mfrac>
+                <ns3:mn>1</ns3:mn>
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+                  <ns3:mi>o</ns3:mi>
+                  <ns3:mi>i</ns3:mi>
+                  <ns3:mi>l</ns3:mi>
+                  <ns3:mi>C</ns3:mi>
+                  <ns3:mi>o</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>n</ns3:mi>
+                    <ns3:mi>c</ns3:mi>
+                    <ns3:mi>R</ns3:mi>
+                    <ns3:mi>D</ns3:mi>
+                    <ns3:mn>1</ns3:mn>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mfrac>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>R</ns3:mi>
+                <ns3:mi>D</ns3:mi>
+                <ns3:mn>1</ns3:mn>
+                <ns3:mi>g</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                </ns3:mrow>
+                
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            
+          </ns3:mrow>
+          
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[mm]</ns3:mi>
+          </ns3:mrow>
+          
+          
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+              <ns3:math display="inline">
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mi>R</ns3:mi>
+                    <ns3:mi>D</ns3:mi>
+                    <ns3:mn>2</ns3:mn>
+                  </ns3:mrow>
+                  <ns3:mo>=</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mfrac>
+                      <ns3:mn>1</ns3:mn>
+                      <ns3:mrow>
+                        <ns3:mi>s</ns3:mi>
+                        <ns3:mi>o</ns3:mi>
+                        <ns3:mi>i</ns3:mi>
+                        <ns3:mi>l</ns3:mi>
+                        <ns3:mi>C</ns3:mi>
+                        <ns3:mi>o</ns3:mi>
+                        <ns3:mrow>
+                          <ns3:mi>n</ns3:mi>
+                          <ns3:mi>c</ns3:mi>
+                          <ns3:mi>R</ns3:mi>
+                          <ns3:mi>D</ns3:mi>
+                          <ns3:mn>2</ns3:mn>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:mfrac>
+                    <ns3:mo>×</ns3:mo>
+                    <ns3:mrow>
+                      <ns3:mi>R</ns3:mi>
+                      <ns3:mi>D</ns3:mi>
+                      <ns3:mn>2</ns3:mn>
+                      <ns3:mi>g</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>e</ns3:mi>
+                        <ns3:mi>n</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mi> &#160;</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>[mm]</ns3:mi>
+                </ns3:mrow>
+              </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation>
+    </para>
+    <para>Nepal (2012) suggested that in the case of RD1, the delayed time may be different during
+      high-flow periods due to non-linear behavior of a catchment. Beven (2001a) highlighted that
+      the non-linear responses primarily exist due to two causes. The first reason is the antecedent
+      condition when the relationship between rainfall and runoff is generally considered to be
+      nonlinear because the wetter the catchment prior to a unit input of rainfall, the greater the
+      runoff that will be generated. Second, a non-linearity exists also due to change of velocity
+      with discharge. Average flow velocities increase with the flow with both surface and
+      subsurface flow processes. Faster flow velocities mean that the runoff will reach a
+      measurement point in the stream-channel flow system more quickly. In case of high
+      precipitation events (such as during the monsoon season in the study area) which are
+      responsible for high flood peaks, a high degree of non-linearity is noted. During those
+      events, the soil becomes saturated by the initial rainfall events and a higher rainfall-runoff
+      coefficient is likely after some periods of rainfall. These typical conditions have been taken
+      into account by introducing a new parameter into the J2000 modelling system. The new parameter
+        (<emphasis role="italic">concRD1Flood</emphasis>) is used by the model when the RD1gen
+      crosses a threshold value (<emphasis role="italic">RD1FloodThreshold</emphasis>) provided by a
+      user. The value of (<emphasis role="italic">concRD1Flood</emphasis>) should be lower than
+      concRD1 because it produces higher RD1 output flow. </para>
+    <para>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+            <ns3:math display="inline">
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>R</ns3:mi>
+                  <ns3:mi>D</ns3:mi>
+                  <ns3:mn>1</ns3:mn>
+                  <ns3:msub>
+                    <ns3:mrow>
+                      <ns3:mi>f</ns3:mi>
+                      <ns3:mi>l</ns3:mi>
+                      <ns3:mi>o</ns3:mi>
+                      <ns3:mi>o</ns3:mi>
+                      <ns3:mi>d</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:msub>
+                </ns3:mrow>
+                <ns3:mo>=</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mfrac>
+                    <ns3:mn>1</ns3:mn>
+                    <ns3:mrow>
+                      <ns3:mi>s</ns3:mi>
+                      <ns3:mi>o</ns3:mi>
+                      <ns3:mi>i</ns3:mi>
+                      <ns3:mi>l</ns3:mi>
+                      <ns3:mi>C</ns3:mi>
+                      <ns3:mi>o</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>n</ns3:mi>
+                        <ns3:mi>c</ns3:mi>
+                        <ns3:mi>R</ns3:mi>
+                        <ns3:mi>D</ns3:mi>
+                        <ns3:mn>1</ns3:mn>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mfrac>
+                  <ns3:mo>×</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>R</ns3:mi>
+                    <ns3:mi>D</ns3:mi>
+                    <ns3:mn>1</ns3:mn>
+                    <ns3:mi>g</ns3:mi>
+                    <ns3:mrow>
+                      <ns3:mi>e</ns3:mi>
+                      <ns3:mi>n</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mi> &#160;</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>[mm]</ns3:mi>
+              </ns3:mrow>
+            </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </para>
+    <para><emphasis role="bold">Diffusion</emphasis></para>
+    <para>At the end of the time step a deficit of the middle pore storage (<emphasis role="italic"
+        >MPS</emphasis>) resulting from evaporation be balanced out by water from the large pore
+      storage (<emphasis role="italic">LPS</emphasis>). This diffusion (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>d</ns3:mi>
+            <ns3:mi>i</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>f</ns3:mi>
+              <ns3:mi>f</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) is carried out using the calibration coefficient <emphasis role="italic"
+        >soilDiffMPSLPS</emphasis> according to:</para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>d</ns3:mi>
+              <ns3:mi>i</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>f</ns3:mi>
+                <ns3:mi> &#160;</ns3:mi>
+                <ns3:mi>f</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>a</ns3:mi>
+                <ns3:mi>c</ns3:mi>
+                <ns3:mi>t</ns3:mi>
+                <ns3:mi>L</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>P</ns3:mi>
+                  <ns3:mi>S</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mn>1</ns3:mn>
+                  <ns3:mo>-</ns3:mo>
+                  <ns3:msup>
+                    <ns3:mi>e</ns3:mi>
+                    <ns3:mfrac>
+                      <ns3:mrow>
+                        <ns3:mrow>
+                          <ns3:mo>-</ns3:mo>
+                          <ns3:mn>1</ns3:mn>
+                        </ns3:mrow>
+                        <ns3:mo>×</ns3:mo>
+                        <ns3:mrow>
+                          <ns3:mi>d</ns3:mi>
+                          <ns3:mi>i</ns3:mi>
+                          <ns3:mrow>
+                            <ns3:mi>f</ns3:mi>
+                            <ns3:mi>f</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                      <ns3:mrow>
+                        <ns3:mi>s</ns3:mi>
+                        <ns3:mi>a</ns3:mi>
+                        <ns3:mi>t</ns3:mi>
+                        <ns3:mi>M</ns3:mi>
+                        <ns3:mrow>
+                          <ns3:mi>P</ns3:mi>
+                          <ns3:mi>S</ns3:mi>
+                        </ns3:mrow>
+                   
+                      </ns3:mrow>
+                    </ns3:mfrac>
+                  </ns3:msup>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+                
+                
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            <ns3:mi> &#160;</ns3:mi>
+            <ns3:mrow>
+              
+              <ns3:mi>[mm]</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+    <para>For more information see also: <citetitle><xref linkend="Baumgartner_1990"/></citetitle>,
+      <citetitle><xref linkend="Dyck_1995"/></citetitle>, <citetitle><xref linkend="Gurtz_1997"
+      /></citetitle>, <citetitle><xref linkend="Maniak_1997"/></citetitle>, <citetitle><xref
+        linkend="Menzel_1997"/></citetitle>, <citetitle><xref linkend="Scheffer_Schachtschabel_1984"
+        /></citetitle>, <citetitle><xref linkend="Schulla_1997"/></citetitle>, <citetitle><xref
+          linkend="Uhlenbrook_1999"/></citetitle>, <citetitle><xref linkend="Wessolek_1993"
+        /></citetitle>
+    </para>
+  </sect2>
+    <bibliography>
+      <title>Literature</title>
+      <biblioentry xml:id="Baumgartner_1990" xreflabel="Baumgartner &amp; Liebscher 1990">
+        <abbrev>Baumgartner &amp; Liebscher 1990</abbrev>
+        <authorgroup>
+          <author><personname><firstname>A.</firstname><surname>Baumgartner</surname></personname></author>
+          <author><personname><firstname>H.J.</firstname><surname>Liebscher</surname></personname></author>
+        </authorgroup>
+        <title>Allgemeine Hydrologie - Quantitative Hydrologie</title>
+        <citetitle pubwork="book">Lehrbuch der Hydrologie, Band 1</citetitle>
+        <publisher>
+          <publishername>Gebrüder Bornträger Verlag</publishername>
+          <address>Stuttgart</address>
+        </publisher>
+        <pubdate>1990</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Dyck_1995" xreflabel="Dyck &amp; Peschke 1995">
+        <abbrev>Dyck &amp; Peschke 1995</abbrev>
+        <authorgroup>
+          <author><personname><firstname>S.</firstname><surname>Dyck</surname></personname></author>
+          <author><personname><firstname>G.</firstname><surname>Peschke</surname></personname></author>
+        </authorgroup>
+        <title>Grundlagen der Hydrologie</title>
+        <publisher>
+          <publishername>Verlag für Bauwesen</publishername>
+          <address>Berlin</address>
+        </publisher>
+        <pubdate>1995</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Gurtz_1997" xreflabel="Gurtz et al. 1997">
+        <abbrev>Gurtz et al. 1997</abbrev>
+        <authorgroup>
+          <author><personname><firstname>J.</firstname><surname>Gurtz</surname></personname></author>
+          <author><personname><firstname>A.</firstname><surname>Baltensweiler</surname></personname></author>
+          <author><personname><firstname>H.</firstname><surname>Lang</surname></personname></author>
+          <author><personname><firstname>L.</firstname><surname>Menzel</surname></personname></author>
+          <author><personname><firstname>J.</firstname><surname>Schulla</surname></personname></author>
+        </authorgroup>
+        <title>Auswirkungen von klimatischen Variationen auf Wasserhaushalt und Abfluss im Flussgebiet des Rheins</title>
+        <publisher>
+          <publishername>Ydf Hochschulverlag AG and der ETH Zürich</publishername>
+          <address>Zürich</address>
+        </publisher>
+        <pubdate>1997</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Maniak_1997" xreflabel="Maniak 1997">
+        <abbrev>Maniak 1997</abbrev>
+        <author><personname><firstname>U.</firstname><surname>Maniak</surname></personname></author>
+        <title>Hydrologie und Wasserwirtschaft</title>
+        <publisher>
+          <publishername>Springer Verlag</publishername>
+          <address>Berlin</address>
+        </publisher>
+        <pubdate>1997</pubdate>
+      </biblioentry>
+      
+      <biblioentry  xml:id="Menzel_1997" xreflabel="Menzel 1997">
+        <abbrev>Menzel 1997</abbrev>
+        <author><personname><firstname>L.</firstname><surname>Menzel</surname></personname></author>
+        <title>Modellierung der Evapotranspiration im System Boden-Pflanzen-Atmosphäre</title>
+        <citetitle pubwork="journal">Zürcher Geographische Schriften</citetitle>
+        <volumenum>67</volumenum>
+        <pubdate>1997</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Scheffer_Schachtschabel_1984" xreflabel="Scheffer &amp; Schachtschabel 1984">
+        <abbrev>Scheffer &amp; Schachtschabel 1984</abbrev>
+        <authorgroup>
+          <author>
+            <personname><firstname>F.</firstname><surname>Scheffer</surname></personname>
+          </author>
+          <author><personname><firstname>P.</firstname><surname>Schachtschabel</surname></personname></author>
+        </authorgroup>
+        <title>Lehrbuch der Bodenkunde</title>
+        <publisher>
+          <publishername>Enke Verlag</publishername>
+          <address>Stuttgart</address>
+        </publisher>
+        <pubdate>1984</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Schulla_1997" xreflabel="Schulla 1997">
+        <abbrev>Schulla 1997</abbrev>
+        <author><personname><firstname>J.</firstname><surname>Schulla</surname></personname></author>
+        <title>Hydrologische Modellierung von Flussgebieten zur Abschätzung der Folgen von Klimaänderungen</title>
+        <publisher>
+          <publishername>Geographisches Institut der ETH Zürich, ETH-Dissertation 12018</publishername>
+          <address>Zürich</address>
+        </publisher>
+        <pubdate>1997</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Uhlenbrook_1999" xreflabel="Uhlenbrook 1999">
+        <abbrev>Uhlenbrook 1999</abbrev>
+        <author><personname><firstname>S.</firstname><surname>Uhlenbrook</surname></personname></author>
+        <title>Untersuchung und Modellierung der Abflussbildung in einem mesoskaligen Einzugsgebiet</title>
+        <publisher>
+          <publishername>Freiburger Schriften zur Hydrologie, Institut für Hydrologie, Univerität Freiburg</publishername>
+          <address>Freiburg</address>
+        </publisher>
+        <pubdate>1999</pubdate>
+      </biblioentry>
+    <biblioentry xml:id="Wessolek_1993" xreflabel="Wessolek 1993">
+      <abbrev>Nepal 2012</abbrev>
+      <author>
+        <personname><firstname>S.</firstname><surname>Nepal</surname></personname>
+      </author>
+      <title>Evaluating upstream downstream linkages of Hydrological Dynamics in the Himalayan
+        Region</title>
+      <publisher>
+        <publishername>PhD Theis. Friedrich-Schiller-Universität Jena</publishername>
+        <address>Jena</address>
+      </publisher>
+      <pubdate>2012</pubdate>
+    </biblioentry>
+    </bibliography>
+</sect1>

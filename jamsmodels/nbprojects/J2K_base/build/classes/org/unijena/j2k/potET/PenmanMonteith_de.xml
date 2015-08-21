@@ -1,0 +1,1575 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook"
+       xmlns:ns6="http://www.w3.org/1999/xlink"
+       xmlns:ns5="http://www.w3.org/1999/xhtml"
+       xmlns:ns4="http://www.w3.org/2000/svg"
+       xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+       xmlns:ns="http://docbook.org/ns/docbook">
+  <title>PenmanMonteith</title>
+
+  <subtitle>Eine Komponente zur Berechnung der potentiellen
+  Landoberflächenverdunstung nach Penman-Monteith. Die Berechnung erfolgt
+  weitestgehend nach <citetitle><xref linkend="Allen_1998"/></citetitle>.</subtitle>
+
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*" />
+
+      <colspec colname="c2" colnum="2" colwidth="3*" />
+
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+
+          <entry>j2k.potET</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+
+  <sect2>
+    <title>Variablen</title>
+
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1*" />
+
+        <colspec colname="c2" colnum="2" colwidth="3*" />
+
+        <thead>
+          <row>
+            <entry>Name</entry>
+
+            <entry>Beschreibung</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>time</entry>
+
+            <entry>Der aktuelle Zeitschritt</entry>
+          </row>
+
+          <row>
+            <entry>tempRes</entry>
+
+            <entry>Die zeitliche Auflösung [h | d | m]</entry>
+          </row>
+
+          <row>
+            <entry>wind</entry>
+
+            <entry>Windgeschwindigkeit [m/s]</entry>
+          </row>
+
+          <row>
+            <entry>tmean</entry>
+
+            <entry>Mittlere Lufttemperatur [°C]</entry>
+          </row>
+
+          <row>
+            <entry>rhum</entry>
+
+            <entry>Relative Luftfeuchtigkeit [%]</entry>
+          </row>
+
+          <row>
+            <entry>netRad</entry>
+
+            <entry>Nettostrahlung [MJ/m² tempRes]</entry>
+          </row>
+
+          <row>
+            <entry>actRsc0</entry>
+
+            <entry>Stomatawiderstand [s/m]</entry>
+          </row>
+
+          <row>
+            <entry>elevation</entry>
+
+            <entry>Die Höhe über NN der räumlichen Einheit [m]</entry>
+          </row>
+
+          <row>
+            <entry>area</entry>
+
+            <entry>Die Fläche der räumlichen Einheit [m²]</entry>
+          </row>
+
+          <row>
+            <entry>actLAI</entry>
+
+            <entry>Der Blattflächenindex [-]</entry>
+          </row>
+
+          <row>
+            <entry>actEffH</entry>
+
+            <entry>Die effektive Wuchshöhe der Vegetation</entry>
+          </row>
+
+          <row>
+            <entry>potET</entry>
+
+            <entry>Die potentielle Verdunstung [mm/ tempRes]</entry>
+          </row>
+
+          <row>
+            <entry>actET</entry>
+
+            <entry>Die aktuelle Verdunstung [mm/ tempRes]</entry>
+          </row>
+
+          <row>
+            <entry>rs</entry>
+
+            <entry>Der Verdunstungswiderstand der Vegetation [s/m]</entry>
+          </row>
+
+          <row>
+            <entry>ra</entry>
+
+            <entry>Der aerodynamische Widerstand des Bestandes [s/m]</entry>
+          </row>
+
+          <row>
+            <entry>dataCaching</entry>
+
+            <entry>Caching configuration: 0 - write cache, 1 - use cache, 2 -
+            caching off</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+
+    <para>Mit diesem Modul wird die potentielle Verdunstung nach Penman-Monteith (<citetitle><xref
+          linkend="Monteith_1975"/></citetitle>) für verschiedene Landbedeckungen berechnet. Die
+      Berechnung der Bestandverdunstung erfolgt in mehreren Schritten weitestgehend nach
+          <citation><xref linkend="Allen_1998"/></citation> unter Einbeziehung einer Vielzahl von
+      Parametern. Die Berechnung der potentiellen Verdunstung erfolgt nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>E</ns3:mi>
+
+              <ns3:mi>T</ns3:mi>
+
+              <ns3:mi>P</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mfrac>
+                <ns3:mn>1</ns3:mn>
+
+                <ns3:mi>L</ns3:mi>
+              </ns3:mfrac>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mfrac>
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+
+                  <ns3:mo>×</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mo>(</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:msub>
+                          <ns3:mi>R</ns3:mi>
+
+                          <ns3:mi>N</ns3:mi>
+                        </ns3:msub>
+
+                        <ns3:mo>-</ns3:mo>
+
+                        <ns3:mi>G</ns3:mi>
+                      </ns3:mrow>
+
+                      <ns3:mo>)</ns3:mo>
+                    </ns3:mrow>
+
+                    <ns3:mo>+</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mi>ρ</ns3:mi>
+
+                      <ns3:mo>×</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:msub>
+                          <ns3:mi>c</ns3:mi>
+
+                          <ns3:mi>p</ns3:mi>
+                        </ns3:msub>
+
+                        <ns3:mo>×</ns3:mo>
+
+                        <ns3:mfrac>
+                          <ns3:mrow>
+                            <ns3:mrow>
+                              <ns3:mi>e</ns3:mi>
+
+                              <ns3:mi>s</ns3:mi>
+                            </ns3:mrow>
+
+                            <ns3:mo>-</ns3:mo>
+
+                            <ns3:mrow>
+                              <ns3:mi>e</ns3:mi>
+
+                              <ns3:mi>a</ns3:mi>
+                            </ns3:mrow>
+                          </ns3:mrow>
+
+                          <ns3:mrow>
+                            <ns3:mi>r</ns3:mi>
+
+                            <ns3:mi>a</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mfrac>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+
+                  <ns3:mo>+</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mi>γ</ns3:mi>
+
+                    <ns3:mo>×</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mo>(</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mn>1</ns3:mn>
+
+                        <ns3:mo>+</ns3:mo>
+
+                        <ns3:mfrac>
+                          <ns3:mrow>
+                            <ns3:mi>r</ns3:mi>
+
+                            <ns3:mi>s</ns3:mi>
+                          </ns3:mrow>
+
+                          <ns3:mrow>
+                            <ns3:mi>r</ns3:mi>
+
+                            <ns3:mi>a</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mfrac>
+                      </ns3:mrow>
+
+                      <ns3:mo>)</ns3:mo>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mfrac>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+    <para>mit:</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>L</ns3:mi>
+        </ns3:math>
+      </inlineequation>... Latente Verdunstungswärme [MJ/kg/ZS]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>s</ns3:mi>
+        </ns3:math>
+      </inlineequation>... Steigung der Sättigungsdampfdruckkurve
+    [hPa/K]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>R</ns3:mi>
+
+            <ns3:mi>N</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation> ... Nettostrahlung [MJ/m²/ZS]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>G</ns3:mi>
+        </ns3:math>
+      </inlineequation> ... Bodenwärmestrom [MJ/m²/ZS]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>ρ</ns3:mi>
+        </ns3:math>
+      </inlineequation> ... Dichte der Luft [kg/m³]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>c</ns3:mi>
+
+            <ns3:mi>p</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>... Spezifische Wärmekapazität der der Luft bei
+    konstantem Druck [J/kg/K]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>e</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> ... Sättigungsdampfdruck [kPa]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>e</ns3:mi>
+
+            <ns3:mi>a</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>... Aktueller Dampfdruck [hPa]</para>
+
+    <para><emphasis role="italic">ra</emphasis> ... Aerodynamischer Widerstand
+    der Bodenbedeckung [s/m]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>γ</ns3:mi>
+        </ns3:math>
+      </inlineequation>... Psychrometerkonstante [hPa/K]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>r</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>... Oberflächenwiderstand der Bodenbeckung [s/m]</para>
+
+    <para>Die latente Verdunstungswärme (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>L</ns3:mi>
+        </ns3:math>
+      </inlineequation>) berechnet sich aus der mittleren Luftemperatur
+    <inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>T</ns3:mi>
+
+            <ns3:mrow>
+              <ns3:mi>a</ns3:mi>
+
+              <ns3:mi>v</ns3:mi>
+
+              <ns3:mi>g</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation> in °C nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>L</ns3:mi>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mi>25001</ns3:mi>
+
+                <ns3:mo>-</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mi>2.361</ns3:mi>
+
+                    <ns3:mo>×</ns3:mo>
+
+                    <ns3:msub>
+                      <ns3:mi>T</ns3:mi>
+
+                      <ns3:mrow>
+                        <ns3:mi>a</ns3:mi>
+
+                        <ns3:mi>v</ns3:mi>
+
+                        <ns3:mi>g</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:msub>
+                  </ns3:mrow>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mi>1000</ns3:mi>
+            </ns3:mfrac>
+          </ns3:mrow>
+          
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[MJ/kg/ZS]</ns3:mi>
+          
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Der Sättigungsdampfdruck (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>e</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) in kPa der Luft bei der Temperatur (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>T</ns3:mi>
+
+            <ns3:mrow>
+              <ns3:mi>a</ns3:mi>
+
+              <ns3:mi>v</ns3:mi>
+
+              <ns3:mi>g</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) ergibt sich als:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>e</ns3:mi>
+
+              <ns3:mi>s</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mi>0.6108</ns3:mi>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:msup>
+                <ns3:mi>e</ns3:mi>
+
+                <ns3:mfrac>
+                  <ns3:mrow>
+                    <ns3:mi>17.27</ns3:mi>
+
+                    <ns3:mo>×</ns3:mo>
+
+                    <ns3:msub>
+                      <ns3:mi>T</ns3:mi>
+
+                      <ns3:mrow>
+                        <ns3:mi>a</ns3:mi>
+
+                        <ns3:mi>v</ns3:mi>
+
+                        <ns3:mi>g</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:msub>
+                  </ns3:mrow>
+
+                  <ns3:mrow>
+                    <ns3:mi>237.3</ns3:mi>
+
+                    <ns3:mo>+</ns3:mo>
+
+                    <ns3:msub>
+                      <ns3:mi>T</ns3:mi>
+
+                      <ns3:mrow>
+                        <ns3:mi>a</ns3:mi>
+
+                        <ns3:mi>v</ns3:mi>
+
+                        <ns3:mi>g</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:msub>
+                  </ns3:mrow>
+                </ns3:mfrac>
+              </ns3:msup>
+            </ns3:mrow>
+            
+          </ns3:mrow>
+          
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[kPa]</ns3:mi>
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Der aktuelle Dampfdruck (<emphasis role="italic">ea</emphasis>)
+    ergibt sich aus dem Sättigungsdampfdruck und der relativen Luftfeuchte (%)
+    nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>e</ns3:mi>
+
+              <ns3:mi>a</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>e</ns3:mi>
+
+                <ns3:mi>s</ns3:mi>
+              </ns3:mrow>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mfrac>
+                <ns3:mi>U</ns3:mi>
+
+                <ns3:mi>100</ns3:mi>
+              </ns3:mfrac>
+            </ns3:mrow>
+            
+          </ns3:mrow>
+          
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[kPa]</ns3:mi>
+          </ns3:mrow>
+ 
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Aus dem Sättigungsdampfdruck (<emphasis role="italic">es</emphasis>)
+    und der Lufttemperatur (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>T</ns3:mi>
+
+            <ns3:mrow>
+              <ns3:mi>a</ns3:mi>
+
+              <ns3:mi>v</ns3:mi>
+
+              <ns3:mi>g</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) berechnet sich die Steigung der
+    Sättigungsdampfdruckkurve (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>s</ns3:mi>
+        </ns3:math>
+      </inlineequation>) nach</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>s</ns3:mi>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>e</ns3:mi>
+
+                <ns3:mi>s</ns3:mi>
+              </ns3:mrow>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mfrac>
+                <ns3:mi>4098</ns3:mi>
+
+                <ns3:msup>
+                  <ns3:mrow>
+                    <ns3:mo>(</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:msub>
+                        <ns3:mi>T</ns3:mi>
+
+                        <ns3:mrow>
+                          <ns3:mi>a</ns3:mi>
+
+                          <ns3:mi>v</ns3:mi>
+
+                          <ns3:mi>g</ns3:mi>
+                        </ns3:mrow>
+                      </ns3:msub>
+
+                      <ns3:mo>+</ns3:mo>
+
+                      <ns3:mi>237.3</ns3:mi>
+                    </ns3:mrow>
+
+                    <ns3:mo>)</ns3:mo>
+                  </ns3:mrow>
+
+                  <ns3:mn>2</ns3:mn>
+                </ns3:msup>
+              </ns3:mfrac>
+            </ns3:mrow>
+            
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[kPa/°C]</ns3:mi>
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Der Luftdruck (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>P</ns3:mi>
+
+            <ns3:mi>z</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) in der Höhe (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>z</ns3:mi>
+        </ns3:math>
+      </inlineequation>) wird aus der umgestellten barometrischen Höhenformel
+    ermittelt:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>P</ns3:mi>
+
+              <ns3:mi>z</ns3:mi>
+            </ns3:msub>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mi>101.3</ns3:mi>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:msup>
+                  <ns3:mi>e</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mo>-</ns3:mo>
+
+                      <ns3:mn>1</ns3:mn>
+                    </ns3:mrow>
+
+                    <ns3:mo>×</ns3:mo>
+
+                    <ns3:mfrac>
+                      <ns3:mi>9.811</ns3:mi>
+
+                      <ns3:mrow>
+                        <ns3:mi>8314.3</ns3:mi>
+
+                        <ns3:mo>×</ns3:mo>
+
+                        <ns3:msub>
+                          <ns3:mi>T</ns3:mi>
+
+                          <ns3:mrow>
+                            <ns3:mi>a</ns3:mi>
+
+                            <ns3:mi>b</ns3:mi>
+
+                            <ns3:mi>s</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:msub>
+                      </ns3:mrow>
+                    </ns3:mfrac>
+                  </ns3:mrow>
+                </ns3:msup>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mi>z</ns3:mi>
+              </ns3:mrow>
+              
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[kPa]</ns3:mi>
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>mit:</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>p</ns3:mi>
+
+            <ns3:mn>0</ns3:mn>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>... Luftdruck auf Meeresniveau (= 101.3) [kPa]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>g</ns3:mi>
+        </ns3:math>
+      </inlineequation>... Erdbeschleunigung (= 9.811) [m/s]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>R</ns3:mi>
+        </ns3:math>
+      </inlineequation>... Gaskonstante (= 8314.3) [Jkmol/K]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>T</ns3:mi>
+
+            <ns3:mrow>
+              <ns3:mi>a</ns3:mi>
+
+              <ns3:mi>b</ns3:mi>
+
+              <ns3:mi>s</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>... absolute Lufttemperatur [K]</para>
+
+    <para>Die Psychrometerkonstante (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>γ</ns3:mi>
+        </ns3:math>
+      </inlineequation>) ergibt sich aus der spezifischen Wärmekapazität der
+    Luft (= <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>1.013</ns3:mi>
+
+            <ns3:mo>×</ns3:mo>
+
+            <ns3:msup>
+              <ns3:mi>10</ns3:mi>
+
+              <ns3:mrow>
+                <ns3:mo>-</ns3:mo>
+
+                <ns3:mn>3</ns3:mn>
+              </ns3:mrow>
+            </ns3:msup>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>), dem Luftdruck <inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>P</ns3:mi>
+
+            <ns3:mi>z</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>, dem Verhältnis der Molgewichte von trockner Luft und
+    Wasserdampf (= 0.622) und der latenten Verdunstungswärme (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>L</ns3:mi>
+        </ns3:math>
+      </inlineequation>) nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>γ</ns3:mi>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mi>1.013</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:msup>
+                    <ns3:mi>10</ns3:mi>
+
+                    <ns3:mrow>
+                      <ns3:mo>-</ns3:mo>
+
+                      <ns3:mn>3</ns3:mn>
+                    </ns3:mrow>
+                  </ns3:msup>
+
+                  <ns3:mo>×</ns3:mo>
+
+                  <ns3:msub>
+                    <ns3:mi>P</ns3:mi>
+
+                    <ns3:mi>z</ns3:mi>
+                  </ns3:msub>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mrow>
+                <ns3:mi>0.622</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mi>L</ns3:mi>
+              </ns3:mrow>
+            </ns3:mfrac>
+          </ns3:mrow>
+          
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[kPa/°C]</ns3:mi>
+          </ns3:mrow>
+
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para><emphasis role="bold">Berechnung bestandsspezifischer Parameter
+    </emphasis></para>
+
+    <para>Der Einfluss verschiedener Vegetationsformen auf die Verdunstung
+    wird im Penman-Monteith-Ansatz durch zwei verschiedene Widerstände
+    berücksichtigt, dem Oberflächenwiderstand (<emphasis
+    role="italic">rs</emphasis>) und dem aerodynamischen Widerstand (<emphasis
+    role="italic">ra</emphasis>). Für die Berechnung der Widerstände werden
+    landnutzungsspezifische Parameter benötigt.</para>
+
+    <para>Im einzelnen sind dies:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>der Blattflächenindex LAI</para>
+      </listitem>
+
+      <listitem>
+        <para>die effektive Bewuchshöhe (eff.Bh.)</para>
+      </listitem>
+
+      <listitem>
+        <para>und die Oberflächenwiderstände bei Wassersättigung</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Deren Werte sind für verschiedene Bodenbedeckungsklassen in
+      folgender Abbildung (<xref
+        linkend="j2k.potET.PenmanMonteith.hlanu_par_fig1.png" xrefstyle="select: label"/>) dargestellt:</para>
+
+    <para></para>
+
+    <figure xml:id="j2k.potET.PenmanMonteith.hlanu_par_fig1.png">
+      <title>Landnutzungsparameter verschiedener
+      Bodenbedeckungsklassen</title>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata align="center" fileref="hlanu_par.png" scale="58" width="100%"></imagedata>
+          </imageobject>
+        </inlinemediaobject></para>
+    </figure>
+
+    <para>Weiterhin sind die bestandsspezifischen Albedowerte enthalten, die
+    bei der Berechnung der Strahlungsbilanz eingesetzt werden. Der
+    Blattflächenindex und die effektive Bewuchshöhe sind in Form von markanten
+    Stellen (<emphasis role="italic">d1</emphasis>...<emphasis
+    role="italic">d4</emphasis>) des Jahresgangs dargestellt. Die Punkte
+    repräsentieren den Beginn der Vegetationsphase (<emphasis
+    role="italic">d1</emphasis>), das Erreichen der maximalen Ausprägung oder
+    Vollreife (<emphasis role="italic">d2</emphasis>), die Vollreifephase bis
+    zum Punkt <emphasis role="italic">d3</emphasis> und dann die Abnahme bis
+    zum Ende der Vegetationsperiode (<emphasis role="italic">d4</emphasis>).
+    Die einzelnen Punkte werden durch die julianischen Tageswerte (d1 = 110,
+    d2 = 150, d3 = 250, d4 = 280) für Gebiete in ca. 400 m Höhe repräsentiert.
+    Für andere Höhen (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>z</ns3:mi>
+        </ns3:math>
+      </inlineequation>) werden diese Punkte nach folgender empirischen
+    Beziehung approximiert:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:msub>
+                <ns3:mi>d</ns3:mi>
+
+                <ns3:mn>1</ns3:mn>
+              </ns3:msub>
+
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+
+                <ns3:mi>z</ns3:mi>
+
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:msub>
+                  <ns3:mi>d</ns3:mi>
+
+                  <ns3:mn>1</ns3:mn>
+                </ns3:msub>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mi>400</ns3:mi>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mo>+</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>0.025</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mi>z</ns3:mi>
+
+                    <ns3:mo>-</ns3:mo>
+
+                    <ns3:mi>400</ns3:mi>
+                  </ns3:mrow>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:msub>
+                <ns3:mi>d</ns3:mi>
+
+                <ns3:mn>2</ns3:mn>
+              </ns3:msub>
+
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+
+                <ns3:mi>z</ns3:mi>
+
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:msub>
+                  <ns3:mi>d</ns3:mi>
+
+                  <ns3:mn>2</ns3:mn>
+                </ns3:msub>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mi>400</ns3:mi>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mo>+</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>0.025</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mi>z</ns3:mi>
+
+                    <ns3:mo>-</ns3:mo>
+
+                    <ns3:mi>400</ns3:mi>
+                  </ns3:mrow>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:msub>
+                <ns3:mi>d</ns3:mi>
+
+                <ns3:mn>3</ns3:mn>
+              </ns3:msub>
+
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+
+                <ns3:mi>z</ns3:mi>
+
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:msub>
+                  <ns3:mi>d</ns3:mi>
+
+                  <ns3:mn>3</ns3:mn>
+                </ns3:msub>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mi>400</ns3:mi>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mo>+</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>0.025</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mi>z</ns3:mi>
+
+                    <ns3:mo>-</ns3:mo>
+
+                    <ns3:mi>400</ns3:mi>
+                  </ns3:mrow>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:msub>
+                <ns3:mi>d</ns3:mi>
+
+                <ns3:mn>4</ns3:mn>
+              </ns3:msub>
+
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+
+                <ns3:mi>z</ns3:mi>
+
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:msub>
+                  <ns3:mi>d</ns3:mi>
+
+                  <ns3:mn>4</ns3:mn>
+                </ns3:msub>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mi>400</ns3:mi>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mo>+</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>0.025</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mi>z</ns3:mi>
+
+                    <ns3:mo>-</ns3:mo>
+
+                    <ns3:mi>400</ns3:mi>
+                  </ns3:mrow>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+    <para>Die Werte zwischen den einzelnen Punkten werden linear interpoliert.
+    Der aerodynamische Widerstand (<emphasis role="italic">ra</emphasis>) für
+    Vegetation mit einer effektiven Bewuchshöhe von weniger als 10 m der
+    jeweiligen Landnutzungsart lässt sich nach folgender Gleichung
+    berechnen:</para>
+
+    <para><emphasis role="italic"><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>r</ns3:mi>
+
+              <ns3:mi>a</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mfrac>
+                <ns3:mi>9.5</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mi>v</ns3:mi>
+
+                  <ns3:mn>2</ns3:mn>
+                </ns3:mrow>
+              </ns3:mfrac>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:msup>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mi>log</ns3:mi>
+
+                    <ns3:mo>⁡</ns3:mo>
+
+                    <ns3:mfrac>
+                      <ns3:mn>2</ns3:mn>
+
+                      <ns3:mrow>
+                        <ns3:mi>z</ns3:mi>
+
+                        <ns3:mn>0</ns3:mn>
+                      </ns3:mrow>
+                    </ns3:mfrac>
+                  </ns3:mrow>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+
+                <ns3:mn>2</ns3:mn>
+              </ns3:msup>
+            </ns3:mrow>
+            
+          </ns3:mrow>
+          
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[s/m]</ns3:mi>
+          </ns3:mrow>
+          
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></emphasis> </para>
+
+    <para>mit</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>z</ns3:mi>
+
+            <ns3:mn>0</ns3:mn>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>... aerodynamische Rauhigkeitslänge (≈ 0.1*effektive
+    Bewuchshöhe) [m]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>v</ns3:mi>
+
+            <ns3:mn>2</ns3:mn>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> ... Windgeschwindigkeit in 2 m Höhe [m/s]</para>
+
+    <para>Für effektive Bewuchshöhen von gleich oder mehr als 10 m berechnet
+    sich die aerodynamische Widerstand vereinfacht nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>r</ns3:mi>
+
+              <ns3:mi>a</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mfrac>
+              <ns3:mi>20</ns3:mi>
+
+              <ns3:mrow>
+                <ns3:msup>
+                  <ns3:mi>0.41</ns3:mi>
+
+                  <ns3:mn>2</ns3:mn>
+                </ns3:msup>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mi>v</ns3:mi>
+
+                  <ns3:mn>2</ns3:mn>
+                  
+                </ns3:mrow>
+              </ns3:mrow>
+                </ns3:mfrac>
+          </ns3:mrow>
+        
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[s/m]</ns3:mi>
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Der Oberflächenwiderstand der jeweiligen Landbedeckung berechnet
+    sich nach:</para>
+
+    <para><emphasis role="italic"><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>r</ns3:mi>
+
+              <ns3:mi>s</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:msup>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mfrac>
+                    <ns3:mrow>
+                      <ns3:mn>1</ns3:mn>
+
+                      <ns3:mo>-</ns3:mo>
+
+                      <ns3:mi>A</ns3:mi>
+                    </ns3:mrow>
+
+                    <ns3:mrow>
+                      <ns3:mi>r</ns3:mi>
+
+                      <ns3:mi>s</ns3:mi>
+
+                      <ns3:mi>c</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:mfrac>
+
+                  <ns3:mo>+</ns3:mo>
+
+                  <ns3:mfrac>
+                    <ns3:mi>A</ns3:mi>
+
+                    <ns3:mrow>
+                      <ns3:mi>r</ns3:mi>
+
+                      <ns3:mi>s</ns3:mi>
+
+                      <ns3:mi>s</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:mfrac>
+                </ns3:mrow>
+
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+
+              <ns3:mrow>
+                <ns3:mo>-</ns3:mo>
+
+                <ns3:mn>1</ns3:mn>
+              </ns3:mrow>
+            </ns3:msup>
+          </ns3:mrow>
+          
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[s/m]</ns3:mi>
+          </ns3:mrow>
+          
+          
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></emphasis> </para>
+
+    <para>mit</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>r</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+
+            <ns3:mi>c</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>... Oberflächenwiderstand [s/m]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>A</ns3:mi>
+        </ns3:math>
+      </inlineequation>... 0.7LAI [-]</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>r</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>... Oberflächenwiderstand von unbewachsenem Boden
+    [s/m]</para>
+
+    <para>Zu weiterführenden Informationen siehe auch: <citetitle><xref linkend="Allen_1998"
+        /></citetitle>, <citetitle><xref linkend="Monteith_1975"/></citetitle></para>
+  </sect2>
+  <bibliography xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
+    <title>Literatur</title> 
+    <biblioentry xml:id="Allen_1998" xreflabel="Allen et.al 1998" role="inproceedings" >
+      <abbrev>Allen et.al 1998</abbrev>
+      <authorgroup>
+        <author><personname><firstname>R.G.</firstname><surname>Allen</surname></personname></author>
+        <author><personname><firstname>L.</firstname><surname>Pereira</surname></personname></author>
+        <author><personname><firstname>D.</firstname><surname>Raes</surname></personname></author>
+        <author><personname><firstname>M.</firstname><surname>Smith</surname></personname></author>
+      </authorgroup>
+      <title>Crop evapotranspiration: Guidelines for computing crop water requirements-FAO Irrigation and drainage paper 56</title>
+      <citetitle pubwork="journal">FAO</citetitle>
+      <address>Rom</address>
+      <volumenum>300</volumenum>
+      <pubdate>1998</pubdate>
+    </biblioentry>
+    <biblioentry xml:id="Monteith_1975" xreflabel="Monteith 1975">
+      <abbrev>Monteith 1975</abbrev>
+      <author><personname><firstname>J.L.</firstname><surname>Monteith</surname></personname></author>
+      <title>Vegetation and atmosphere, Vol.1 Principles</title>
+      <publisher>
+        <publishername>Academic Press</publishername>
+        <address>London</address>
+      </publisher>
+      <pubdate>1975</pubdate>
+    </biblioentry>
+    </bibliography>
+</sect1>

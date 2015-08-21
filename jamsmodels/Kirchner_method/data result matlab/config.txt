@@ -1,0 +1,12 @@
+#JAMS workspace configuration
+#Wed Sep 04 15:28:49 CEST 2013
+OUTPUT_DIR_NAME=output
+persistent=false
+EXPLORER_DIR_NAME=explorer
+TEMP_DIR_NAME=tmp
+DUMP_DIR_NAME=dump
+defaultmodel=model.jam
+INPUT_DIR_NAME=input
+title=
+LOCAL_INDIR_NAME=local
+description=

@@ -1,0 +1,58 @@
+/*
+ * J2KactCropGrowth.java
+ *
+ * Created on 18. März 2006, 14:29
+ *
+ *
+ * This file is part of JAMS
+ * Copyright (C) 2005 FSU Jena, c5ulbe
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ *
+ */
+
+package org.jams.j2k.s_n.crop;
+
+/**
+ *
+ * @author c5ulbe
+ */
+public class J2KactCropGrowth  extends JAMSComponent{
+    
+    {
+    
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "Current hru object"
+            )
+            public JAMSEntity entity;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "Current time"
+            )
+            public JAMSCalendar time;
+    
+    
+      }
+
+      
+      
+        double bioN_act;
+        double Ndemand = bioNopt_act - this.bioN_act; //@todo: declare the actual N content according to the
+        Ndemand_act = Ndemand + Ndemand_act;
+}

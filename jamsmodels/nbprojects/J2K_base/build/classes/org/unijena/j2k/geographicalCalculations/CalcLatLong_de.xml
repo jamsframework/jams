@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>CalcLatLong</title>
+  <subtitle>Eine Komponente zur Berechnung der extraterrestrischen Einstrahlung.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+          <entry>j2k.geographicalCalculations</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variablen</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Beschreibung</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>entities</entry>
+          <entry>Der Satz der räumlichen Modelleinheiten.</entry>
+        </row>
+          <row>
+            <entry>x</entry>
+            <entry>Die X Koordinate (Rechtswert) der räumlichen Modelleinheit.</entry>
+          </row>
+          <row>
+            <entry>y</entry>
+            <entry>Die Y Koordinate (Hochwert) der räumlichen Modelleinheit.</entry>
+          </row>
+          <row>
+            <entry>slope</entry>
+            <entry>Die Neigung der räumlichen Modelleinheit.</entry>
+          </row>
+          <row>
+            <entry>aspect</entry>
+            <entry>Die Exposition der räumlichen Modelleinheit.</entry>
+          </row>
+          <row>
+            <entry>latitude</entry>
+            <entry>Die geographische Breite der räumlichen Modelleinheit</entry>
+          </row>
+          <row>
+            <entry>longitude</entry>
+            <entry>Die geographische Länge der räumlichen Modelleinheit</entry>
+          </row>
+          <row>
+            <entry>slAsCfArray</entry>
+            <entry>Korrekturfaktoren für die Neigungs-Expositions Kombination der räumlichen
+              Modelleinheit.</entry>
+          </row>
+          <row>
+            <entry>projection</entry>
+            <entry>Die Projektion der Koordinaten der räumlichen Modelleinheit.</entry>
+          </row>
+          <row>
+            <entry>tempRes</entry>
+            <entry>Die zeitliche Auflösung der Modellierung - (h) stündlich, (d) täglich, (m)
+              monatlich.</entry>
+          </row>        
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+    <para>In dieser Komponente werden projizierte Koordinaten in dezimale Gradangaben umgerechnet.
+      Hierzu werden dem Modul die projizierten X und Y Koordinaten gemeinsam mit der Beschreibung
+      der Projektion übergeben. Die Projektion wird in der Variablen "<emphasis role="italic"
+        >projection</emphasis>" abgelegt. Gültige Einträge sind hier: <itemizedlist>
+        <listitem>
+          <para>GK für Gauss-Krüger Projektion</para>
+        </listitem>
+        <listitem>
+          <para>UTMxxZ für UTM Projektionen wobei xx für die Zonennummer und Z für den
+            Zonenbuchstaben steht (z.B. UTM32U für Deutschland)</para>
+        </listitem>
+        <listitem>
+          <para>LL für geographische Koordinaten in Dezimalgrad </para>
+        </listitem>
+      </itemizedlist></para>
+    <para>Außerdem berechnet die Komponente einen zeitlich variablen Korrekturfaktor der zur
+      Anpassung des Strahlungsempfang der räumlichen Modelleinheiten entsprechend ihrer Expositions-
+      und Neigungskombination dient. </para>
+  </sect2>
+    <bibliography>
+      <title>Literatur</title> 
+      <biblioentry  xml:id="Krause_2005" xreflabel="Krause et al. 2005">
+        <abbrev>Krause et al. 2005</abbrev>
+        <authorgroup>
+          <author><personname><firstname>P.</firstname><surname>Krause</surname></personname></author>
+          <author><personname><firstname>D.</firstname><surname>Boyle</surname></personname></author>
+          <author><personname><firstname>F.</firstname><surname>Bäse</surname></personname></author>
+        </authorgroup>
+        <title>Comparison of different efficiency criteria for hydrological model assessment</title>
+        <citetitle pubwork="journal">Advances in Geosiences</citetitle>
+        <volumenum>5</volumenum>
+        <pagenums>89-97</pagenums>
+        <pubdate>2005</pubdate>
+      </biblioentry>
+    </bibliography>
+</sect1>

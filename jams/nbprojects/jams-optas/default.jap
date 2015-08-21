@@ -1,0 +1,21 @@
+#JAMS-Konfigurationsdatei
+#Tue Aug 16 00:58:30 CEST 2011
+infolog=
+libs=C\:\\Arbeit\\JAMS\\lib\\lib\\jscience.jar;C\:\\Arbeit\\JAMS\\lib\\lib;C\:\\Arbeit\\JAMS\\lib
+guiconfig=1
+model=
+charset=
+username=
+profiling=1
+windowenable=1
+errordlg=1
+windowontop=0
+forcelocale=
+windowheight=600
+verbose=1
+debug=3
+guiconfigheight=600
+windowwidth=900
+guiconfigwidth=600
+errorlog=
+helpbaseurl=

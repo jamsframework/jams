@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes"?>
+<dwd:dwd xmlns:dwd="http://www.dwd.de">
+   <Programm>
+      <Programmname>KOSTRA-DWD</Programmname>
+      <Programmversion>2.1.1</Programmversion>
+      <Erstellungsdatum>2006-12-21T16:35:23Z</Erstellungsdatum>
+   </Programm>
+   <KOSTRA>
+      <KOSTRA-Datenquelle>KOSTRA-DWD</KOSTRA-Datenquelle>
+      <KOSTRA-Datenbasis>1951-2000</KOSTRA-Datenbasis>
+      <Bemerkung>Niederschlagshöhen und -spenden für Jena</Bemerkung>
+      <Zeitspanne>Januar - Dezember</Zeitspanne>
+      <Rasterfeldspalte>48</Rasterfeldspalte>
+      <Rasterfeldzeile>56</Rasterfeldzeile>
+      <Klassenfaktor>0.500</Klassenfaktor>
+      <Ortsname>Jena</Ortsname>
+   </KOSTRA>
+   <Daten>
+       <D dauer="5" einheit="min">
+             <T a="0.5">
+                 <hN>3.2</hN>
+                 <RN>105.2</RN>
+             </T>
+             <T a="1.0">
+                 <hN>4.9</hN>
+                 <RN>163.4</RN>
+             </T>
+             <T a="2.0">
+                 <hN>6.6</hN>
+                 <RN>221.5</RN>
+             </T>
+             <T a="5.0">
+                 <hN>9.0</hN>
+                 <RN>298.4</RN>
+             </T>
+             <T a="10.0">
+                 <hN>10.7</hN>
+                 <RN>356.5</RN>
+             </T>
+             <T a="20.0">
+                 <hN>12.4</hN>
+                 <RN>414.6</RN>
+             </T>
+             <T a="50.0">
+                 <hN>14.7</hN>
+                 <RN>491.5</RN>
+             </T>
+             <T a="100.0">
+                 <hN>16.5</hN>
+                 <RN>549.6</RN>
+             </T>
+       </D>
+       <D dauer="10" einheit="min">
+             <T a="0.5">
+                 <hN>5.6</hN>
+                 <RN>92.9</RN>
+             </T>
+             <T a="1.0">
+                 <hN>7.8</hN>
+                 <RN>130.3</RN>
+             </T>
+             <T a="2.0">
+                 <hN>10.1</hN>
+                 <RN>167.6</RN>
+             </T>
+             <T a="5.0">
+                 <hN>13.0</hN>
+                 <RN>217.0</RN>
+             </T>
+             <T a="10.0">
+                 <hN>15.3</hN>
+                 <RN>254.4</RN>
+             </T>
+             <T a="20.0">
+                 <hN>17.5</hN>
+                 <RN>291.8</RN>
+             </T>
+             <T a="50.0">
+                 <hN>20.5</hN>
+                 <RN>341.2</RN>
+             </T>
+             <T a="100.0">
+                 <hN>22.7</hN>
+                 <RN>378.5</RN>
+             </T>
+       </D>
+       <D dauer="15" einheit="min">
+             <T a="0.5">
+                 <hN>7.2</hN>
+                 <RN>79.5</RN>
+             </T>
+             <T a="1.0">
+                 <hN>9.8</hN>
+                 <RN>108.3</RN>
+             </T>
+             <T a="2.0">
+                 <hN>12.3</hN>
+                 <RN>137.2</RN>
+             </T>
+             <T a="5.0">
+                 <hN>15.8</hN>
+                 <RN>175.3</RN>
+             </T>
+             <T a="10.0">
+                 <hN>18.4</hN>
+                 <RN>204.2</RN>
+             </T>
+             <T a="20.0">
+                 <hN>21.0</hN>
+                 <RN>233.0</RN>
+             </T>
+             <T a="50.0">
+                 <hN>24.4</hN>
+                 <RN>271.2</RN>
+             </T>
+             <T a="100.0">
+                 <hN>27.0</hN>
+                 <RN>300.0</RN>
+             </T>
+       </D>
+       <D dauer="20" einheit="min">
+             <T a="0.5">
+                 <hN>8.2</hN>
+                 <RN>68.7</RN>
+             </T>
+             <T a="1.0">
+                 <hN>11.1</hN>
+                 <RN>92.7</RN>
+             </T>
+             <T a="2.0">
+                 <hN>14.0</hN>
+                 <RN>116.7</RN>
+             </T>
+             <T a="5.0">
+                 <hN>17.8</hN>
+                 <RN>148.5</RN>
+             </T>
+             <T a="10.0">
+                 <hN>20.7</hN>
+                 <RN>172.5</RN>
+             </T>
+             <T a="20.0">
+                 <hN>23.6</hN>
+                 <RN>196.5</RN>
+             </T>
+             <T a="50.0">
+                 <hN>27.4</hN>
+                 <RN>228.2</RN>
+             </T>
+             <T a="100.0">
+                 <hN>30.3</hN>
+                 <RN>252.3</RN>
+             </T>
+       </D>
+       <D dauer="30" einheit="min">
+             <T a="0.5">
+                 <hN>9.6</hN>
+                 <RN>53.4</RN>
+             </T>
+             <T a="1.0">
+                 <hN>13.0</hN>
+                 <RN>72.0</RN>
+             </T>
+             <T a="2.0">
+                 <hN>16.3</hN>
+                 <RN>90.5</RN>
+             </T>
+             <T a="5.0">
+                 <hN>20.7</hN>
+                 <RN>115.0</RN>
+             </T>
+             <T a="10.0">
+                 <hN>24.0</hN>
+                 <RN>133.6</RN>
+             </T>
+             <T a="20.0">
+                 <hN>27.4</hN>
+                 <RN>152.1</RN>
+             </T>
+             <T a="50.0">
+                 <hN>31.8</hN>
+                 <RN>176.6</RN>
+             </T>
+             <T a="100.0">
+                 <hN>35.1</hN>
+                 <RN>195.1</RN>
+             </T>
+       </D>
+       <D dauer="45" einheit="min">
+             <T a="0.5">
+                 <hN>10.7</hN>
+                 <RN>39.6</RN>
+             </T>
+             <T a="1.0">
+                 <hN>14.5</hN>
+                 <RN>53.9</RN>
+             </T>
+             <T a="2.0">
+                 <hN>18.4</hN>
+                 <RN>68.2</RN>
+             </T>
+             <T a="5.0">
+                 <hN>23.5</hN>
+                 <RN>87.1</RN>
+             </T>
+             <T a="10.0">
+                 <hN>27.4</hN>
+                 <RN>101.4</RN>
+             </T>
+             <T a="20.0">
+                 <hN>31.3</hN>
+                 <RN>115.8</RN>
+             </T>
+             <T a="50.0">
+                 <hN>36.4</hN>
+                 <RN>134.7</RN>
+             </T>
+             <T a="100.0">
+                 <hN>40.2</hN>
+                 <RN>149.0</RN>
+             </T>
+       </D>
+       <D dauer="60" einheit="min">
+             <T a="0.5">
+                 <hN>11.2</hN>
+                 <RN>31.1</RN>
+             </T>
+             <T a="1.0">
+                 <hN>15.5</hN>
+                 <RN>43.1</RN>
+             </T>
+             <T a="2.0">
+                 <hN>19.8</hN>
+                 <RN>55.0</RN>
+             </T>
+             <T a="5.0">
+                 <hN>25.5</hN>
+                 <RN>70.7</RN>
+             </T>
+             <T a="10.0">
+                 <hN>29.7</hN>
+                 <RN>82.6</RN>
+             </T>
+             <T a="20.0">
+                 <hN>34.0</hN>
+                 <RN>94.6</RN>
+             </T>
+             <T a="50.0">
+                 <hN>39.7</hN>
+                 <RN>110.3</RN>
+             </T>
+             <T a="100.0">
+                 <hN>44.0</hN>
+                 <RN>122.2</RN>
+             </T>
+       </D>
+       <D dauer="90" einheit="min">
+             <T a="0.5">
+                 <hN>12.6</hN>
+                 <RN>23.3</RN>
+             </T>
+             <T a="1.0">
+                 <hN>17.4</hN>
+                 <RN>32.3</RN>
+             </T>
+             <T a="2.0">
+                 <hN>22.3</hN>
+                 <RN>41.4</RN>
+             </T>
+             <T a="5.0">
+                 <hN>28.8</hN>
+                 <RN>53.3</RN>
+             </T>
+             <T a="10.0">
+                 <hN>33.7</hN>
+                 <RN>62.3</RN>
+             </T>
+             <T a="20.0">
+                 <hN>38.5</hN>
+                 <RN>71.4</RN>
+             </T>
+             <T a="50.0">
+                 <hN>45.0</hN>
+                 <RN>83.3</RN>
+             </T>
+             <T a="100.0">
+                 <hN>49.9</hN>
+                 <RN>92.4</RN>
+             </T>
+       </D>
+       <D dauer="120" einheit="min">
+             <T a="0.5">
+                 <hN>13.6</hN>
+                 <RN>18.9</RN>
+             </T>
+             <T a="1.0">
+                 <hN>19.0</hN>
+                 <RN>26.4</RN>
+             </T>
+             <T a="2.0">
+                 <hN>24.3</hN>
+                 <RN>33.8</RN>
+             </T>
+             <T a="5.0">
+                 <hN>31.4</hN>
+                 <RN>43.6</RN>
+             </T>
+             <T a="10.0">
+                 <hN>36.8</hN>
+                 <RN>51.0</RN>
+             </T>
+             <T a="20.0">
+                 <hN>42.1</hN>
+                 <RN>58.5</RN>
+             </T>
+             <T a="50.0">
+                 <hN>49.2</hN>
+                 <RN>68.3</RN>
+             </T>
+             <T a="100.0">
+                 <hN>54.5</hN>
+                 <RN>75.7</RN>
+             </T>
+       </D>
+       <D dauer="180" einheit="min">
+             <T a="0.5">
+                 <hN>15.3</hN>
+                 <RN>14.1</RN>
+             </T>
+             <T a="1.0">
+                 <hN>21.4</hN>
+                 <RN>19.8</RN>
+             </T>
+             <T a="2.0">
+                 <hN>27.4</hN>
+                 <RN>25.4</RN>
+             </T>
+             <T a="5.0">
+                 <hN>35.5</hN>
+                 <RN>32.9</RN>
+             </T>
+             <T a="10.0">
+                 <hN>41.6</hN>
+                 <RN>38.5</RN>
+             </T>
+             <T a="20.0">
+                 <hN>47.7</hN>
+                 <RN>44.2</RN>
+             </T>
+             <T a="50.0">
+                 <hN>55.7</hN>
+                 <RN>51.6</RN>
+             </T>
+             <T a="100.0">
+                 <hN>61.8</hN>
+                 <RN>57.2</RN>
+             </T>
+       </D>
+       <D dauer="240" einheit="min">
+             <T a="0.5">
+                 <hN>16.5</hN>
+                 <RN>11.5</RN>
+             </T>
+             <T a="1.0">
+                 <hN>23.2</hN>
+                 <RN>16.1</RN>
+             </T>
+             <T a="2.0">
+                 <hN>29.9</hN>
+                 <RN>20.8</RN>
+             </T>
+             <T a="5.0">
+                 <hN>38.7</hN>
+                 <RN>26.9</RN>
+             </T>
+             <T a="10.0">
+                 <hN>45.4</hN>
+                 <RN>31.5</RN>
+             </T>
+             <T a="20.0">
+                 <hN>52.1</hN>
+                 <RN>36.2</RN>
+             </T>
+             <T a="50.0">
+                 <hN>60.9</hN>
+                 <RN>42.3</RN>
+             </T>
+             <T a="100.0">
+                 <hN>67.6</hN>
+                 <RN>46.9</RN>
+             </T>
+       </D>
+       <D dauer="360" einheit="min">
+             <T a="0.5">
+                 <hN>18.5</hN>
+                 <RN>8.6</RN>
+             </T>
+             <T a="1.0">
+                 <hN>26.1</hN>
+                 <RN>12.1</RN>
+             </T>
+             <T a="2.0">
+                 <hN>33.7</hN>
+                 <RN>15.6</RN>
+             </T>
+             <T a="5.0">
+                 <hN>43.8</hN>
+                 <RN>20.3</RN>
+             </T>
+             <T a="10.0">
+                 <hN>51.4</hN>
+                 <RN>23.8</RN>
+             </T>
+             <T a="20.0">
+                 <hN>59.0</hN>
+                 <RN>27.3</RN>
+             </T>
+             <T a="50.0">
+                 <hN>69.0</hN>
+                 <RN>32.0</RN>
+             </T>
+             <T a="100.0">
+                 <hN>76.6</hN>
+                 <RN>35.5</RN>
+             </T>
+       </D>
+       <D dauer="540" einheit="min">
+             <T a="0.5">
+                 <hN>20.8</hN>
+                 <RN>6.4</RN>
+             </T>
+             <T a="1.0">
+                 <hN>29.4</hN>
+                 <RN>9.1</RN>
+             </T>
+             <T a="2.0">
+                 <hN>38.1</hN>
+                 <RN>11.8</RN>
+             </T>
+             <T a="5.0">
+                 <hN>49.5</hN>
+                 <RN>15.3</RN>
+             </T>
+             <T a="10.0">
+                 <hN>58.2</hN>
+                 <RN>18.0</RN>
+             </T>
+             <T a="20.0">
+                 <hN>66.8</hN>
+                 <RN>20.6</RN>
+             </T>
+             <T a="50.0">
+                 <hN>78.2</hN>
+                 <RN>24.2</RN>
+             </T>
+             <T a="100.0">
+                 <hN>86.9</hN>
+                 <RN>26.8</RN>
+             </T>
+       </D>
+       <D dauer="720" einheit="min">
+             <T a="0.5">
+                 <hN>22.5</hN>
+                 <RN>5.2</RN>
+             </T>
+             <T a="1.0">
+                 <hN>32.0</hN>
+                 <RN>7.4</RN>
+             </T>
+             <T a="2.0">
+                 <hN>41.5</hN>
+                 <RN>9.6</RN>
+             </T>
+             <T a="5.0">
+                 <hN>54.0</hN>
+                 <RN>12.5</RN>
+             </T>
+             <T a="10.0">
+                 <hN>63.5</hN>
+                 <RN>14.7</RN>
+             </T>
+             <T a="20.0">
+                 <hN>73.0</hN>
+                 <RN>16.9</RN>
+             </T>
+             <T a="50.0">
+                 <hN>85.5</hN>
+                 <RN>19.8</RN>
+             </T>
+             <T a="100.0">
+                 <hN>95.0</hN>
+                 <RN>22.0</RN>
+             </T>
+       </D>
+       <D dauer="1080" einheit="min">
+             <T a="0.5">
+                 <hN>24.6</hN>
+                 <RN>3.8</RN>
+             </T>
+             <T a="1.0">
+                 <hN>34.8</hN>
+                 <RN>5.4</RN>
+             </T>
+             <T a="2.0">
+                 <hN>44.9</hN>
+                 <RN>6.9</RN>
+             </T>
+             <T a="5.0">
+                 <hN>58.4</hN>
+                 <RN>9.0</RN>
+             </T>
+             <T a="10.0">
+                 <hN>68.6</hN>
+                 <RN>10.6</RN>
+             </T>
+             <T a="20.0">
+                 <hN>78.8</hN>
+                 <RN>12.2</RN>
+             </T>
+             <T a="50.0">
+                 <hN>92.3</hN>
+                 <RN>14.2</RN>
+             </T>
+             <T a="100.0">
+                 <hN>102.5</hN>
+                 <RN>15.8</RN>
+             </T>
+       </D>
+       <D dauer="1440" einheit="min">
+             <T a="0.5">
+                 <hN>26.6</hN>
+                 <RN>3.1</RN>
+             </T>
+             <T a="1.0">
+                 <hN>37.5</hN>
+                 <RN>4.3</RN>
+             </T>
+             <T a="2.0">
+                 <hN>48.4</hN>
+                 <RN>5.6</RN>
+             </T>
+             <T a="5.0">
+                 <hN>62.8</hN>
+                 <RN>7.3</RN>
+             </T>
+             <T a="10.0">
+                 <hN>73.8</hN>
+                 <RN>8.5</RN>
+             </T>
+             <T a="20.0">
+                 <hN>84.7</hN>
+                 <RN>9.8</RN>
+             </T>
+             <T a="50.0">
+                 <hN>99.1</hN>
+                 <RN>11.5</RN>
+             </T>
+             <T a="100.0">
+                 <hN>110.0</hN>
+                 <RN>12.7</RN>
+             </T>
+       </D>
+       <D dauer="2880" einheit="min">
+             <T a="0.5">
+                 <hN>33.7</hN>
+                 <RN>2.0</RN>
+             </T>
+             <T a="1.0">
+                 <hN>45.0</hN>
+                 <RN>2.6</RN>
+             </T>
+             <T a="2.0">
+                 <hN>56.3</hN>
+                 <RN>3.3</RN>
+             </T>
+             <T a="5.0">
+                 <hN>71.2</hN>
+                 <RN>4.1</RN>
+             </T>
+             <T a="10.0">
+                 <hN>82.5</hN>
+                 <RN>4.8</RN>
+             </T>
+             <T a="20.0">
+                 <hN>93.8</hN>
+                 <RN>5.4</RN>
+             </T>
+             <T a="50.0">
+                 <hN>108.7</hN>
+                 <RN>6.3</RN>
+             </T>
+             <T a="100.0">
+                 <hN>120.0</hN>
+                 <RN>6.9</RN>
+             </T>
+       </D>
+       <D dauer="4320" einheit="min">
+             <T a="0.5">
+                 <hN>35.2</hN>
+                 <RN>1.4</RN>
+             </T>
+             <T a="1.0">
+                 <hN>45.0</hN>
+                 <RN>1.7</RN>
+             </T>
+             <T a="2.0">
+                 <hN>54.8</hN>
+                 <RN>2.1</RN>
+             </T>
+             <T a="5.0">
+                 <hN>67.7</hN>
+                 <RN>2.6</RN>
+             </T>
+             <T a="10.0">
+                 <hN>77.5</hN>
+                 <RN>3.0</RN>
+             </T>
+             <T a="20.0">
+                 <hN>87.3</hN>
+                 <RN>3.4</RN>
+             </T>
+             <T a="50.0">
+                 <hN>100.2</hN>
+                 <RN>3.9</RN>
+             </T>
+             <T a="100.0">
+                 <hN>110.0</hN>
+                 <RN>4.2</RN>
+             </T>
+       </D>
+   </Daten>
+   <Grunddaten>
+       <T  a="1.0">
+            <D dauer="15" einheit="min">
+                <ug>9.50</ug>
+                <hN>9.75</hN>
+                <og>10.00</og>
+            </D>
+            <D dauer="60" einheit="min">
+                <ug>15.00</ug>
+                <hN>15.50</hN>
+                <og>16.00</og>
+            </D>
+            <D dauer="720" einheit="min">
+                <ug>30.00</ug>
+                <hN>32.00</hN>
+                <og>34.00</og>
+            </D>
+            <D dauer="1440" einheit="min">
+                <ug>35.00</ug>
+                <hN>37.50</hN>
+                <og>40.00</og>
+            </D>
+            <D dauer="2880" einheit="min">
+                <ug>40.00</ug>
+                <hN>45.00</hN>
+                <og>50.00</og>
+            </D>
+            <D dauer="4320" einheit="min">
+                <ug>40.00</ug>
+                <hN>45.00</hN>
+                <og>50.00</og>
+            </D>
+        </T>
+        <T  a="100.0">
+            <D dauer="15" einheit="min">
+                <ug>26.00</ug>
+                <hN>27.00</hN>
+                <og>28.00</og>
+            </D>
+            <D dauer="60" einheit="min">
+                <ug>42.00</ug>
+                <hN>44.00</hN>
+                <og>46.00</og>
+            </D>
+            <D dauer="720" einheit="min">
+                <ug>90.00</ug>
+                <hN>95.00</hN>
+                <og>100.00</og>
+            </D>
+            <D dauer="1440" einheit="min">
+                <ug>100.00</ug>
+                <hN>110.00</hN>
+                <og>120.00</og>
+            </D>
+            <D dauer="2880" einheit="min">
+                <ug>110.00</ug>
+                <hN>120.00</hN>
+                <og>130.00</og>
+            </D>
+            <D dauer="4320" einheit="min">
+                <ug>100.00</ug>
+                <hN>110.00</hN>
+                <og>120.00</og>
+            </D>
+        </T>
+   </Grunddaten>
+</dwd:dwd>

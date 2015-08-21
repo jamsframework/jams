@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+    <title>DoubleSetter</title>
+    <subtitle>Eine Komponente zum Einfügen eines doppelten Attributs zu einem bestimmten Wert. </subtitle>
+    <informaltable>
+        <tgroup cols="2">
+            <colspec colname="c1" colnum="1" colwidth="1*"/>
+            <colspec colname="c2" colnum="2" colwidth="3*"/>
+            <thead>
+                <row>
+                    <entry nameend="c2" namest="c1">Metainformation</entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry>Klassifikation</entry>
+                    <entry>processing</entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </informaltable>
+    <sect2>
+        <title>Variablen</title>
+        <informaltable>
+            <tgroup cols="2">
+                <colspec colname="c1" colnum="1" colwidth="1*"/>
+                <colspec colname="c2" colnum="2" colwidth="3*"/>
+                <thead>
+                    <row>
+                        <entry>Name</entry>
+                        <entry>Beschreibung</entry>
+                    </row>
+                </thead>
+                <tbody>
+                    <row>
+                        <entry>attributes</entry>
+                        <entry>die zu setzenden doppelten Attribute</entry>
+                    </row>
+                    <row>
+                        <entry>value</entry>
+                        <entry>doppelter Wert</entry>
+                    </row>        
+                </tbody>
+            </tgroup>
+        </informaltable>
+    </sect2>
+    <sect2>
+        <title>Beschreibung der Komponente</title>
+        <para>Diese sehr einfach Komponente setzt die Werte der Attribute, die durch definiert werden,
+            auf den Wert des Attributwerts. Die Komponente kann für das Zurücksetzen räumlicher/zeitlicher
+      Ausgleichswerte genutzt werden nach einem Schritt der räumlichen/zeitlichen Iteration. </para>
+    </sect2>
+</sect1>

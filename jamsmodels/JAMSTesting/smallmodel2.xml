@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!--  sample model  -->
+
+<!--<!DOCTYPE JAMSModel SYSTEM "jamsmodel.dtd">-->
+
+<model name="The smallmodel testmodel" author="Sven Kralisch" date="10.06.2005">
+    
+    <component class="org.unijena.jamstesting.SEProvider" name="SEProvider">
+   </component>
+
+    <compoundcomponent class="org.unijena.jams.model.JAMSTemporalContext" name="TemporalContext">
+        <jamsvar class="org.unijena.jams.data.JAMSTimeInterval" name="timeInterval" value="2005-01-01 00:01 2005-01-07 00:00 6 1"/>
+
+        <compoundcomponent class="org.unijena.jams.model.JAMSSpatialContext" name="SpatialContext">
+            <jamsvar class="org.unijena.jams.data.JAMSEntityCollection" name="entities" provider="SEProvider" providervar="entities"/>           
+
+            <component class="org.unijena.jamstesting.Testcomponent2" name="Testcomponent">
+                <jamsvar class="org.unijena.jams.data.JAMSEntity" name="entity" provider="SpatialContext" providervar="currentEntity"/>           
+								<jamsvar class="org.unijena.jams.data.JAMSCalendar" name="date" provider="TemporalContext" providervar="current"/>
+                <jamsvar class="org.unijena.jams.data.JAMSDouble" name="precip" provider="SEProvider" providervar="precip"/>
+                <jamsvar class="org.unijena.jams.data.JAMSLongArray" name="myArray" provider="SEProvider" providervar="array"/>
+            </component>
+            
+        </compoundcomponent>  
+    </compoundcomponent>
+    
+</model>

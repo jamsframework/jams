@@ -1,0 +1,1829 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook"
+       xmlns:ns6="http://www.w3.org/1999/xlink"
+       xmlns:ns5="http://www.w3.org/1999/xhtml"
+       xmlns:ns4="http://www.w3.org/2000/svg"
+       xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+       xmlns:ns="http://docbook.org/ns/docbook">
+  <title>J2KProcessSnow</title>
+
+  <subtitle>Eine Komponente zur Berechnung der Schneeschmelze.</subtitle>
+
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*" />
+
+      <colspec colname="c2" colnum="2" colwidth="3*" />
+
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+
+          <entry>j2k.snow</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+
+  <sect2>
+    <title>Variablen</title>
+
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1*" />
+
+        <colspec colname="c2" colnum="2" colwidth="3*" />
+
+        <thead>
+          <row>
+            <entry>Name</entry>
+
+            <entry>Beschreibung</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>area</entry>
+
+            <entry>Die Fläche der Modelleinheit</entry>
+          </row>
+
+          <row>
+            <entry>actSlAsCf</entry>
+
+            <entry>Der Neigungs-Expostions-Korrekturfaktor</entry>
+          </row>
+
+          <row>
+            <entry>minTemp</entry>
+
+            <entry>Die minimale Lufttemperatur (optional)</entry>
+          </row>
+
+          <row>
+            <entry>meanTemp</entry>
+
+            <entry>Die mittlere Lufttemperatur (optional)</entry>
+          </row>
+
+          <row>
+            <entry>maxTemp</entry>
+
+            <entry>Die maximale Lufttemperatur (optional)</entry>
+          </row>
+
+          <row>
+            <entry>netRain</entry>
+
+            <entry>Der flüssige Anteil des Niederschlags</entry>
+          </row>
+
+          <row>
+            <entry>netSnow</entry>
+
+            <entry>Der feste Anteil des Niederschlags</entry>
+          </row>
+
+          <row>
+            <entry>snowTotSWE</entry>
+
+            <entry>Das Gesamtschneewasseräquivalent (Schnee, Eis,
+            Wasser)</entry>
+          </row>
+
+          <row>
+            <entry>drySWE</entry>
+
+            <entry>Der gefrorene Anteil am Gesamtschneewasseräquivalent
+            (Schnee, Eis)</entry>
+          </row>
+
+          <row>
+            <entry>totDens</entry>
+
+            <entry>Die Gesamtschneedichte</entry>
+          </row>
+
+          <row>
+            <entry>dryDens</entry>
+
+            <entry>Die Dichte des gefrorenen Anteils</entry>
+          </row>
+
+          <row>
+            <entry>snowDepth</entry>
+
+            <entry>Die Schneehöhe</entry>
+          </row>
+
+          <row>
+            <entry>snowAge</entry>
+
+            <entry>Das Alter der Scheedecke seit dem letzen Neuschnee</entry>
+          </row>
+
+          <row>
+            <entry>snowColdContent</entry>
+
+            <entry>Der Kältegehalt der Schneedecke</entry>
+          </row>
+
+          <row>
+            <entry>snowMelt</entry>
+
+            <entry>Die Schneeschmelze</entry>
+          </row>
+
+          <row>
+            <entry>baseTemp</entry>
+
+            <entry>Grenztemperatur ab der Metamorphose und Schmelze
+            stattfindet</entry>
+          </row>
+
+          <row>
+            <entry>t_factor</entry>
+
+            <entry>Schmelzfaktor der den Energieeintrag über fühlbare Wärme
+            beschreibt</entry>
+          </row>
+
+          <row>
+            <entry>r_factor</entry>
+
+            <entry>Schmelzfaktor der den Energieeintrag über flüssigen
+            Niederschlag beschreibt</entry>
+          </row>
+
+          <row>
+            <entry>g_factor</entry>
+
+            <entry>Schmelzfaktor der den Energieeintrag über den
+            Bodenwärmestrom beschreibt</entry>
+          </row>
+
+          <row>
+            <entry>snowCritDens</entry>
+
+            <entry>Kritische Schneedichte ab der Wasser nicht länger in der
+            Schneedecke zurückgehalten werden kann</entry>
+          </row>
+
+          <row>
+            <entry>ccf_factor</entry>
+
+            <entry>Faktor zur Berechnung des Kältegehaltes [mm/°C]</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+
+    <para>Das Schneemodul folgt dem in <citetitle><xref linkend="Knauf_1980"/></citetitle> beschriebenen Verfahren
+    mit einigen Änderungen und Erweiterungen. Das Schneemodul berücksichtigt
+    die Zustandsänderungen der Schneedecke während ihrer Lebensdauer,
+    insbesondere Dichteänderungen durch Schmelz- und Setzungsvorgänge. Dies
+    ist von Bedeutung, da Schneedecken bis zum Erreichen einer bestimmten
+    Grenzdichte freies Wasser, ähnlich wie ein Schwamm speichern kann und erst
+    nach Überschreiten dieser Grenzdichte eine sprunghafte Wasserabgabe
+    erfolgt. Für die Modellierung werden hierfür unterschiedliche
+    Wasserkapazitäten der Schneedecke betrachtet: Das eigentliche
+    Schneewasseräquivalent (<emphasis role="italic">drySWE</emphasis>), das
+    der Menge des tatsächlich gefrorenen Wassers entspricht und das
+    Gesamtschneewasseräquivalent (<emphasis role="italic">totSWE</emphasis>),
+    das zusätzlich noch das flüssige, in der Schneedecke gespeicherte Wasser
+    berücksichtigt. Die Setzung der Schneedecke, die aus dem Eintrag von
+    flüssigem Wasser durch Schneeschmelze an der Oberfläche oder aus
+    Niederschlägen in Form von Regen resultiert, wird nach dem empirischen
+    Schneesetzungsverfahren (snow compaction scheme) von <citetitle><xref linkend="Bertle_1966"/></citetitle>
+    berechnet.</para>
+
+    <para>Die Schneedecke und ihre Zustände werden für die Modellierung anhand
+    folgender Parameter beschrieben: Die Schneehöhe (<emphasis
+    role="italic">snowDepth</emphasis>) [in mm], die Trockenschneedichte
+    (<emphasis role="italic">dryDens</emphasis>) [in g/cm³] als Quotient aus
+    Gesamtwassergehalt und Schneehöhe.</para>
+
+    <para>Liegen minimale, mittlere und maximale Lufttemperatur für einen
+    Zeitschritt vor berechnet das Modul getrennte Akkumulations- bzw.
+    Schmelztemperaturen. Hierdurch kann innerhalb eines Zeitschrittes sowohl
+    Akkumulation als auch Schmelze auftreten. Die Berechnung der Temperaturen
+    erfolgen nach:</para>
+
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>T</ns3:mi>
+
+              <ns3:mrow>
+                <ns3:mi>a</ns3:mi>
+
+                <ns3:mi>c</ns3:mi>
+
+                <ns3:mi>c</ns3:mi>
+              </ns3:mrow>
+            </ns3:msub>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:msub>
+                  <ns3:mi>T</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>m</ns3:mi>
+
+                    <ns3:mi>i</ns3:mi>
+
+                    <ns3:mi>n</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+
+                <ns3:mo>+</ns3:mo>
+
+                <ns3:msub>
+                  <ns3:mi>T</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>a</ns3:mi>
+
+                    <ns3:mi>v</ns3:mi>
+
+                    <ns3:mi>g</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+
+              <ns3:mi>2</ns3:mi>
+        
+            </ns3:mfrac>
+          </ns3:mrow>
+
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[°C]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+    
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>T</ns3:mi>
+
+              <ns3:mrow>
+                <ns3:mi>m</ns3:mi>
+
+                <ns3:mi>e</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mi>l</ns3:mi>
+
+                  <ns3:mi>t</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:msub>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:msub>
+                  <ns3:mi>T</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>m</ns3:mi>
+
+                    <ns3:mi>a</ns3:mi>
+
+                    <ns3:mi>x</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+
+                <ns3:mo>+</ns3:mo>
+
+                <ns3:msub>
+                  <ns3:mi>T</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>a</ns3:mi>
+
+                    <ns3:mi>v</ns3:mi>
+
+                    <ns3:mi>g</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+
+              <ns3:mi>2</ns3:mi>
+
+          </ns3:mfrac>  
+    
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[°C]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+
+    <para>Ist nur die mittlere Lufttemperatur verfügbar wird anhand dieser
+    entschieden ob sich das Modul in der Akkumulation oder Schmelzphase
+    befindet.</para>
+
+    <para><emphasis role="bold">Akkumulationsphase:</emphasis></para>
+
+    <para>Bei Temperaturen deutlich unter dem dem Gefrierpunkt eine
+    Schneedecke auskühlt. Bevor nun Temperaturen oberhalb des Gefrierpunktes
+    zur Schneeschmelze führen muss zunächst die Temperatur der Schneedecke
+    wieder nahe an die 0 Grad Celsius gebracht werden. Dieser Prozess wird
+    durch die Berechnung eines <emphasis role="bold">Kältegehalt</emphasis>
+    (<emphasis role="italic">snowColdContent</emphasis>) der Schneedecke
+    berücksichtigt. Dieser ergibt sich nach:</para>
+
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+
+              <ns3:mi>n</ns3:mi>
+
+              <ns3:mi>o</ns3:mi>
+
+              <ns3:mi>w</ns3:mi>
+
+              <ns3:mrow>
+                <ns3:mi>C</ns3:mi>
+
+                <ns3:mi>o</ns3:mi>
+
+                <ns3:mi>l</ns3:mi>
+
+                <ns3:mi>d</ns3:mi>
+
+                <ns3:mi>C</ns3:mi>
+
+                <ns3:mi>o</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mi>n</ns3:mi>
+
+                  <ns3:mi>t</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>e</ns3:mi>
+
+                    <ns3:mi>n</ns3:mi>
+
+                    <ns3:msub>
+                      <ns3:mi>t</ns3:mi>
+
+                      <ns3:mi>t</ns3:mi>
+                    </ns3:msub>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>C</ns3:mi>
+
+                <ns3:msub>
+                  <ns3:mi>C</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>t</ns3:mi>
+
+                    <ns3:mo>-</ns3:mo>
+
+                    <ns3:mi>1</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+
+              <ns3:mo>+</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>c</ns3:mi>
+
+                  <ns3:mi>c</ns3:mi>
+
+                  <ns3:mi>f</ns3:mi>
+
+                  <ns3:mo>_</ns3:mo>
+
+                  <ns3:mi>F</ns3:mi>
+
+                  <ns3:mi>a</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>c</ns3:mi>
+
+                    <ns3:mi>t</ns3:mi>
+
+                    <ns3:mrow>
+                      <ns3:mi>o</ns3:mi>
+
+                      <ns3:mi>r</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:msub>
+                  <ns3:mi>T</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>a</ns3:mi>
+
+                    <ns3:mi>v</ns3:mi>
+
+                    <ns3:mi>g</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+          
+                
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            <ns3:mi> &#160;</ns3:mi>
+            <ns3:mrow>
+              
+              <ns3:mi>[mm]</ns3:mi>
+              
+            </ns3:mrow>
+            
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+
+    <para>Hierdurch werden negative Lufttemperaturen kumuliert und durch
+    positive Lufttemperaturen und daraus resultierende potentielle
+    Schmelzraten wieder aufgehoben. Erst wenn der Kältegehalt wieder den Wert
+    0 erreicht kommt es zur Schneeschmelze.</para>
+
+    <para>Das <emphasis role="bold">Alter des Schnees</emphasis> (<emphasis
+    role="italic">snowAge</emphasis>) in Zeitschritten wird bei jedem
+    Zeitschritt an dem kein Neuschnee fällt aber noch eine Schneedecke
+    vorhanden ist um eins erhöht.</para>
+
+    <para><emphasis role="bold">Schneeakkumulation</emphasis> tritt dann auf wenn das Modul
+      Niederschlag in fester Form (<emphasis role="italic">netSnow</emphasis> &gt; 0) erhält. Hier
+      wird dann zunächst die <emphasis role="bold">Neuschneedichte</emphasis> (<emphasis
+        role="italic">newSnowDens</emphasis>) in Abhängigkeit von der Lufttemperatur bestimmt. Die
+      Berechnung erfolgt nach <citetitle><xref linkend="Kuchment_1983"/></citetitle> und
+          <citetitle><xref linkend="Vehviläinen_1992"/></citetitle> nach:</para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>n</ns3:mi>
+
+              <ns3:mi>e</ns3:mi>
+
+              <ns3:mi>w</ns3:mi>
+
+              <ns3:mi>S</ns3:mi>
+
+              <ns3:mi>n</ns3:mi>
+
+              <ns3:mi>o</ns3:mi>
+
+              <ns3:mrow>
+                <ns3:mi>w</ns3:mi>
+
+                <ns3:mi>D</ns3:mi>
+
+                <ns3:mi>e</ns3:mi>
+
+                <ns3:mi>n</ns3:mi>
+
+                <ns3:mi>s</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mi>0.13</ns3:mi>
+
+              <ns3:mo>+</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>0.0135</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:msub>
+                    <ns3:mi>T</ns3:mi>
+
+                    <ns3:mrow>
+                      <ns3:mi>a</ns3:mi>
+
+                      <ns3:mi>c</ns3:mi>
+
+                      <ns3:mi>c</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:msub>
+
+                  <ns3:mo>+</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mi>0.00045</ns3:mi>
+
+                    <ns3:mo>×</ns3:mo>
+
+                    <ns3:msubsup>
+                      <ns3:mi>T</ns3:mi>
+
+                      <ns3:mrow>
+                        <ns3:mi>a</ns3:mi>
+
+                        <ns3:mi>c</ns3:mi>
+
+                        <ns3:mi>c</ns3:mi>
+                      </ns3:mrow>
+
+                      <ns3:mi>2</ns3:mi>
+                    </ns3:msubsup>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> [g/cm³]</para>
+
+    <para>Die aus Schneeniederschlägen (<emphasis role="italic">netSnow</emphasis>) resultierende
+        <emphasis role="bold">Schneehöhenänderung</emphasis> (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>δ</ns3:mi>
+            <ns3:mi>S</ns3:mi>
+            <ns3:mi>H</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) berechnet sich dann wie:</para>
+
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>δ</ns3:mi>
+
+              <ns3:mi>S</ns3:mi>
+
+              <ns3:mi>H</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mi>n</ns3:mi>
+
+                <ns3:mi>e</ns3:mi>
+
+                <ns3:mi>t</ns3:mi>
+
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>n</ns3:mi>
+
+                <ns3:mi>o</ns3:mi>
+
+                <ns3:mi>w</ns3:mi>
+              </ns3:mrow>
+
+              <ns3:mrow>
+                <ns3:mi>n</ns3:mi>
+
+                <ns3:mi>e</ns3:mi>
+
+                <ns3:mi>w</ns3:mi>
+
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>n</ns3:mi>
+
+                <ns3:mi>o</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mi>w</ns3:mi>
+
+                  <ns3:mi>D</ns3:mi>
+
+                  <ns3:mi>e</ns3:mi>
+
+                  <ns3:mi>n</ns3:mi>
+
+                  <ns3:mi>s</ns3:mi>
+                </ns3:mrow>
+        
+  
+              </ns3:mrow>
+              </ns3:mfrac>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+
+    <para>Das <emphasis role="bold">Schneewasseräquivalent</emphasis> des
+    Vortages (<emphasis role="italic">SWCdry</emphasis>) erhöht sich damit um
+    den Betrag des Schneeniederschlages nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>S</ns3:mi>
+
+              <ns3:mi>W</ns3:mi>
+
+              <ns3:mi>C</ns3:mi>
+
+              <ns3:mi>d</ns3:mi>
+
+              <ns3:mrow>
+                <ns3:mi>r</ns3:mi>
+
+                <ns3:msub>
+                  <ns3:mi>y</ns3:mi>
+
+                  <ns3:mi>t</ns3:mi>
+                </ns3:msub>
+              </ns3:mrow>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>W</ns3:mi>
+
+                <ns3:mi>C</ns3:mi>
+
+                <ns3:mi>d</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mi>r</ns3:mi>
+
+                  <ns3:msub>
+                    <ns3:mi>y</ns3:mi>
+
+                    <ns3:mrow>
+                      <ns3:mi>t</ns3:mi>
+
+                      <ns3:mo>-</ns3:mo>
+
+                      <ns3:mi>1</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:msub>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mo>+</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>n</ns3:mi>
+
+                <ns3:mi>e</ns3:mi>
+
+                <ns3:mi>t</ns3:mi>
+
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>n</ns3:mi>
+
+                <ns3:mi>o</ns3:mi>
+
+                <ns3:mi>w</ns3:mi>
+              </ns3:mrow>
+             
+            
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+
+    <para>Um den gleichen Betrag wird das Trockenschneewasseräquivalent und
+    das Gesamtschneewasseräquivalent erhöht. Handelte es sich beim
+    Niederschlagsereignis um einen Mischniederschlag, wird zusätzlich der
+    Regenanteil dem Gesamtscheewasseräquivalent zugeschlagen.</para>
+
+    <para>Ist Regen am Niederschlagsereignis beteiligt, führt dies zu einer Setzung der Schneedecke.
+      Die Berechnung des Setzungsbetrages wird weiter unten dargestellt. Während der Modellierung
+      verharrt die Schneedecke solange in der Akkumulationsphase, bis der vom Anwender festgelegte
+      Temperaturwert für die Schneeschmelze (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>T</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>m</ns3:mi>
+              <ns3:mi>e</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>l</ns3:mi>
+                <ns3:mi>t</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) einen ebenfalls während der Parametrisierung festzulegenden
+      Temperaturgrenzwert (<emphasis role="italic">baseTemp</emphasis>) überschreitet. Dann tritt
+      sie in die Metamorphosephase, in der die Schmelz- und Setzungsprozesse nachgebildet werden,
+      ein. Sie kann aber jederzeit, bei entsprechend niedrigeren Temperaturen, wieder in die
+      Akkumulationsphase zurückkehren. Durch die unterschiedlichen Temperaturwerte können während
+      eines Zeitschrittes sowohl Akkumulations- als auch Schmelzvorgänge modelliert werden.</para>
+
+    <para><emphasis role="bold">Schmelz- und Setzungsphase:</emphasis></para>
+
+    <para>Überschreitet der vom Anwender bestimmte Temperaturwert (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>T</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>m</ns3:mi>
+              <ns3:mi>e</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>l</ns3:mi>
+                <ns3:mi>t</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) den Temperaturgrenzwert (<emphasis role="italic">baseTemp</emphasis>),
+      tritt die Schneedecke von der Akkumulations- in die Metamorphosephase über. Die Energie, die
+      dort für die Schneeschmelze zur Verfügung steht, kann auf drei verschiedenen Wegen in die
+      Schneedecke gelangen. Zum ersten durch Eintrag von fühlbarer Wärme durch die Lufttemperatur,
+      zweitens durch Energieeintrag aus Niederschlag in Form von Regen und drittens durch Eintrag
+      auf Grund des Bodenwärmestromes. Aus der Summe der Energieeinträge ergibt sich eine
+      potentielle Schneeschmelzrate (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>M</ns3:mi>
+            <ns3:mi>p</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>). Die Berechnung von <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>M</ns3:mi>
+            <ns3:mi>p</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> erfolgt nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>M</ns3:mi>
+
+              <ns3:mi>p</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>t</ns3:mi>
+
+                <ns3:mo>_</ns3:mo>
+
+                <ns3:mi>f</ns3:mi>
+
+                <ns3:mi>a</ns3:mi>
+
+                <ns3:mi>c</ns3:mi>
+
+                <ns3:mi>t</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mi>o</ns3:mi>
+
+                  <ns3:mi>r</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:msub>
+                  <ns3:mi>T</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>m</ns3:mi>
+
+                    <ns3:mi>e</ns3:mi>
+
+                    <ns3:mrow>
+                      <ns3:mi>l</ns3:mi>
+
+                      <ns3:mi>t</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:msub>
+
+                <ns3:mo>+</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mi>r</ns3:mi>
+
+                    <ns3:mo>_</ns3:mo>
+
+                    <ns3:mi>f</ns3:mi>
+
+                    <ns3:mi>a</ns3:mi>
+
+                    <ns3:mi>c</ns3:mi>
+
+                    <ns3:mi>t</ns3:mi>
+
+                    <ns3:mrow>
+                      <ns3:mi>o</ns3:mi>
+
+                      <ns3:mi>r</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:mrow>
+
+                  <ns3:mo>×</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mi>n</ns3:mi>
+
+                      <ns3:mi>e</ns3:mi>
+
+                      <ns3:mi>t</ns3:mi>
+
+                      <ns3:mi>R</ns3:mi>
+
+                      <ns3:mi>a</ns3:mi>
+
+                      <ns3:mi>i</ns3:mi>
+
+                      <ns3:mi>n</ns3:mi>
+                    </ns3:mrow>
+
+                    <ns3:mo>×</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:msub>
+                        <ns3:mi>T</ns3:mi>
+
+                        <ns3:mrow>
+                          <ns3:mi>m</ns3:mi>
+
+                          <ns3:mi>e</ns3:mi>
+
+                          <ns3:mrow>
+                            <ns3:mi>l</ns3:mi>
+
+                            <ns3:mi>t</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                      </ns3:msub>
+
+                      <ns3:mo>+</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mi>g</ns3:mi>
+
+                        <ns3:mo>_</ns3:mo>
+
+                        <ns3:mi>f</ns3:mi>
+
+                        <ns3:mi>a</ns3:mi>
+
+                        <ns3:mi>c</ns3:mi>
+
+                        <ns3:mi>t</ns3:mi>
+
+                        <ns3:mrow>
+                          <ns3:mi>o</ns3:mi>
+
+                          <ns3:mi>r</ns3:mi>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                    
+                    <ns3:mi> &#160;</ns3:mi>
+                    <ns3:mrow>
+                      
+                      <ns3:mi>[m³/s]</ns3:mi>
+                      
+                    </ns3:mrow>
+                    
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>M</ns3:mi>
+
+            <ns3:mi>p</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> wird dann noch an die Hangneigung und die Exposition
+    der räumlichen Modelleinheit angepasst:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>M</ns3:mi>
+
+              <ns3:mi>p</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>M</ns3:mi>
+
+                <ns3:mi>p</ns3:mi>
+              </ns3:mrow>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>a</ns3:mi>
+
+                <ns3:mi>c</ns3:mi>
+
+                <ns3:mi>t</ns3:mi>
+
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>I</ns3:mi>
+
+                <ns3:mi>A</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+
+                  <ns3:mi>C</ns3:mi>
+
+                  <ns3:mi>f</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+             
+       
+
+            
+            <ns3:mi> &#160;</ns3:mi>
+            <ns3:mrow>
+              
+              <ns3:mi>[mm]</ns3:mi>
+              
+            </ns3:mrow>
+            
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>M</ns3:mi>
+
+            <ns3:mi>p </ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>wird nun zunächst benutzt um den Kältegehalt der
+    Schneedecke wieder auszugleichen und erzeugt erst dann Schneeschmelze. Aus
+    der potentiellen Schmelzrate wird die resultierende maximale
+    Schneehöhenänderung (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>δ</ns3:mi>
+
+            <ns3:mi>S</ns3:mi>
+
+            <ns3:mi>H</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) berechnet:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>δ</ns3:mi>
+
+              <ns3:mi>S</ns3:mi>
+
+              <ns3:mi>H</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mi>M</ns3:mi>
+
+                <ns3:mi>p</ns3:mi>
+              </ns3:mrow>
+
+              <ns3:mrow>
+                <ns3:mi>d</ns3:mi>
+
+                <ns3:mi>r</ns3:mi>
+
+                <ns3:mi>y</ns3:mi>
+
+                <ns3:mi>D</ns3:mi>
+
+                <ns3:mi>e</ns3:mi>
+
+                <ns3:mi>n</ns3:mi>
+
+                <ns3:mi>s</ns3:mi>
+              </ns3:mrow>
+            </ns3:mfrac>  
+          </ns3:mrow>
+
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Ist <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>δ</ns3:mi>
+
+            <ns3:mi>S</ns3:mi>
+
+            <ns3:mi>H</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> größer als die gesamte Schneehöhe, taut diese komplett
+    ab und das gesamte Schneewasseräquivalent trägt als Schneeschmelze der
+    Abflussbildung bei. Ist dies nicht der Fall wird die Schneehöhe
+    entsprechend reduziert, wobei sich das Schneewasseräquivalent zunächst
+    nicht ändert. Hieraus resultiert eine Zunahme der Gesamtdichte der
+    Schneedecke.</para>
+
+    <para>Zusätzlich zu dieser Dichteänderung werden zusätzliche Setzungs- und Dichteänderungen nach
+      dem <emphasis role="bold">snow-compaction-scheme</emphasis> nach <citetitle><xref linkend="Bertle_1966"/></citetitle> berücksichtigt.
+      Diesem Verfahren liegt zugrunde, dass Wasser, gleich ob es aus der temperaturindizierten
+      Schneeschmelze oder aus dem Niederschlag resultiert, in die Schneedecke einsickert und dort zu
+      Setzungsvorgängen durch Umkristallisation des Schnees und durch Strukturänderungen und
+      Verdichtung in der Lagerung führt (<citetitle><xref linkend="Knauf_1980"/></citetitle>). Die daraus resultierende Setzungsrate wird
+      nach dem in <citetitle><xref linkend="Bertle_1966"/></citetitle> beschriebenen Schneesetzungsverfahren berechnet. Diesem Verfahren
+      liegt die Beobachtung eines empirischen Zusammenhangs zwischen zugeführtem freien Wasser und
+      der daraus resultierenden Höhenänderung durch die Setzung zugrunde, der aus Laborversuchen des
+      US-Bureau of Reclamation abgeleitet wurde. Hierfür wird die prozentuale Zunahme des
+      akkumulierten Wassergehaltes im Verhältnis zum Schneewasseräquivalent nach folgender Gleichung
+      berechnet:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>P</ns3:mi>
+
+              <ns3:mi>W</ns3:mi>
+            </ns3:msub>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mfrac>
+                <ns3:mrow>
+                  <ns3:mi>S</ns3:mi>
+
+                  <ns3:mi>W</ns3:mi>
+
+                  <ns3:msub>
+                    <ns3:mi>C</ns3:mi>
+
+                    <ns3:mrow>
+                      <ns3:mi>t</ns3:mi>
+
+                      <ns3:mi>o</ns3:mi>
+
+                      <ns3:mi>t</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:msub>
+                </ns3:mrow>
+
+                <ns3:mrow>
+                  <ns3:mi>S</ns3:mi>
+
+                  <ns3:mi>W</ns3:mi>
+
+                  <ns3:msub>
+                    <ns3:mi>C</ns3:mi>
+
+                    <ns3:mrow>
+                      <ns3:mi>d</ns3:mi>
+
+                      <ns3:mi>r</ns3:mi>
+
+                      <ns3:mi>y</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:msub>
+                </ns3:mrow>
+              </ns3:mfrac>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mi>100</ns3:mi>
+            </ns3:mrow>  
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[\%]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>In dieser Gleichung kommt zum Ausdruck, daß die Schneedeckensetzung um so größer ist, je
+      mehr flüssiges Wasser zugeführt wird (<citetitle><xref linkend="Knauf_1980"/></citetitle>). Eine Zufuhr von gerade der Wassermenge, die
+      dem Schneewasseräquivalent der Schneedecke entspricht, führt zu einer Halbierung der
+      Schneehöhe durch die Setzung. Die prozentuale Schneehöhenänderung (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>P</ns3:mi>
+            <ns3:mi>H</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) berechnet sich in Abhängigkeit des zugeführten freien Wassers nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>P</ns3:mi>
+
+              <ns3:mi>H</ns3:mi>
+            </ns3:msub>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mi>147.4</ns3:mi>
+
+              <ns3:mo>-</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>0.474</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:msub>
+                  <ns3:mi>P</ns3:mi>
+
+                  <ns3:mi>W</ns3:mi>
+                </ns3:msub>
+              </ns3:mrow>
+              
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[\%]</ns3:mi>
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Daraus ergibt sich die neue Schneehöhe nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>S</ns3:mi>
+
+              <ns3:mi>H</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>H</ns3:mi>
+              </ns3:mrow>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mfrac>
+                <ns3:msub>
+                  <ns3:mi>P</ns3:mi>
+
+                  <ns3:mi>H</ns3:mi>
+                </ns3:msub>
+
+                <ns3:mi>100</ns3:mi>
+              </ns3:mfrac>
+            </ns3:mrow>
+            
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+      
+            <ns3:mi>[mm]</ns3:mi>
+   
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Mit der neu berechneten Schneehöhe wird nun die Gesamtschneedichte
+    (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>t</ns3:mi>
+
+            <ns3:mi>o</ns3:mi>
+
+            <ns3:mi>t</ns3:mi>
+
+            <ns3:mi>D</ns3:mi>
+
+            <ns3:mi>e</ns3:mi>
+
+            <ns3:mi>n</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) sowie die Trockenschneedichte (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>d</ns3:mi>
+
+            <ns3:mi>r</ns3:mi>
+
+            <ns3:mi>y</ns3:mi>
+
+            <ns3:mi>D</ns3:mi>
+
+            <ns3:mi>e</ns3:mi>
+
+            <ns3:mi>n</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) nach folgenden Gleichungen neu berechnet:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>d</ns3:mi>
+
+              <ns3:mi>r</ns3:mi>
+
+              <ns3:mi>y</ns3:mi>
+
+              <ns3:mi>D</ns3:mi>
+
+              <ns3:mi>e</ns3:mi>
+
+              <ns3:mi>n</ns3:mi>
+
+              <ns3:mi>s</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>W</ns3:mi>
+
+                <ns3:msub>
+                  <ns3:mi>C</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>d</ns3:mi>
+
+                    <ns3:mi>r</ns3:mi>
+
+                    <ns3:mi>y</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+
+              <ns3:mrow>
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>H</ns3:mi>
+              </ns3:mrow>
+            </ns3:mfrac>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[g/cm³]</ns3:mi>
+      
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>t</ns3:mi>
+
+              <ns3:mi>o</ns3:mi>
+
+              <ns3:mi>t</ns3:mi>
+
+              <ns3:mi>D</ns3:mi>
+
+              <ns3:mi>e</ns3:mi>
+
+              <ns3:mi>n</ns3:mi>
+
+              <ns3:mi>s</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>W</ns3:mi>
+
+                <ns3:msub>
+                  <ns3:mi>C</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>t</ns3:mi>
+
+                    <ns3:mi>o</ns3:mi>
+
+                    <ns3:mi>t</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+
+              <ns3:mrow>
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>H</ns3:mi>
+              </ns3:mrow>
+            </ns3:mfrac>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[g/cm³]</ns3:mi>
+          </ns3:mrow>
+          
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+
+    <para>Folgende Abbildung (<xref linkend="j2k.snow.j2kProcessSnow.snow_compaction_fig1.png" xrefstyle="select: label" />) stellt das Snow-Compaction-Scheme nocheinmal
+    beispielhaft dar.</para>
+    
+    <para> </para>
+    
+    <figure xml:id="j2k.snow.j2kProcessSnow.snow_compaction_fig1.png">
+      <title>Beispielhafte Darstellung der durch Schmelze implizierten
+        Abnahme einer Schneedecke. A: Schneedecke vor Beginn der Schmelze, B:
+        Rückgang durch Schmelze, C: Setzung der Schneedecke durch das
+        Schmelzwasser.</title>
+    
+      <para><inlinemediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="snow_compaction.png" scale="80" width="100%"></imagedata>
+        </imageobject>
+      </inlinemediaobject></para>
+    </figure>
+    <para><emphasis role="bold">Schneeschmelzabfluss</emphasis>: Wie oben dargestellt ist die
+      Schneedecke in der Lage, bis zu einer gewissen Grenzdichte (<emphasis role="italic"
+        >critDens</emphasis>) freies Wasser in ihren Poren zu speichern. Diese Speicherfähigkeit
+      geht bei Erreichen eines bestimmten Anteils von freiem Wasser im Verhältnis zum
+      Gesamtschneewasseräquivalent (zwischen 40% und 45% nach <citetitle><xref linkend="Bertle_1966"/></citetitle>, <citetitle><xref linkend="Herrmann_1976"/></citetitle>, 
+      <citetitle><xref linkend="Lang_2005"/></citetitle>) nahezu vollkommen und irreversibel verloren. Ab diesem Schwellenbereich wird auch ohne
+      Regeneinwirkung die Retentionskapazität einer natürlich entwickelten Schneedecke sprunghaft
+      herabgesetzt, es ist eine ruckhafte Wasserabgabe aus der Schneedecke zu beobachten (<citetitle><xref linkend="Herrmann_1976"/></citetitle>). Bei der Modellierung wird dieses Verhalten durch die Berechnung eines maximalen
+      Wassergehaltes (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>S</ns3:mi>
+            <ns3:mi>W</ns3:mi>
+            <ns3:msub>
+              <ns3:mi>C</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>m</ns3:mi>
+                <ns3:mi>a</ns3:mi>
+                <ns3:mi>x</ns3:mi>
+              </ns3:mrow>
+            </ns3:msub>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) der Schneedecke nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>S</ns3:mi>
+
+              <ns3:mi>W</ns3:mi>
+
+              <ns3:msub>
+                <ns3:mi>C</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mi>m</ns3:mi>
+
+                  <ns3:mi>a</ns3:mi>
+
+                  <ns3:mi>x</ns3:mi>
+                </ns3:mrow>
+              </ns3:msub>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>s</ns3:mi>
+
+                <ns3:mi>n</ns3:mi>
+
+                <ns3:mi>o</ns3:mi>
+
+                <ns3:mi>w</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mi>C</ns3:mi>
+
+                  <ns3:mi>r</ns3:mi>
+
+                  <ns3:mi>i</ns3:mi>
+
+                  <ns3:mi>t</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>D</ns3:mi>
+
+                    <ns3:mi>e</ns3:mi>
+
+                    <ns3:mrow>
+                      <ns3:mi>n</ns3:mi>
+
+                      <ns3:mi>s</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>H</ns3:mi>
+              </ns3:mrow>
+              
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[mm]</ns3:mi>
+           
+          </ns3:mrow>
+          
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+
+    <para>nachgebildet. Die kritische Grenzdichte (<emphasis role="italic">snowCritDens</emphasis>)
+      ist dabei vom Anwender anzugeben. Das in der Schneedecke gespeicherte Wasser, das diesen
+      Grenzwert überschreitet, kommt zum Abfluß:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>Q</ns3:mi>
+
+              <ns3:mrow>
+                <ns3:mi>s</ns3:mi>
+
+                <ns3:mi>n</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mi>o</ns3:mi>
+
+                  <ns3:mi>w</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:msub>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>W</ns3:mi>
+
+                <ns3:msub>
+                  <ns3:mi>C</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>t</ns3:mi>
+
+                    <ns3:mi>o</ns3:mi>
+
+                    <ns3:mi>t</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+
+              <ns3:mo>-</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>S</ns3:mi>
+
+                <ns3:mi>W</ns3:mi>
+
+                <ns3:msub>
+                  <ns3:mi>C</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>m</ns3:mi>
+
+                    <ns3:mi>a</ns3:mi>
+
+                    <ns3:mi>x</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            <ns3:mi> &#160;</ns3:mi>
+            <ns3:mrow>
+              
+              <ns3:mi>[mm]</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+
+    <para>In den folgenden Zeitschritten verharrt die Dichte der Schneedecke dann auf der kritischen
+      Grenzdichte, bis sie entweder vollkommen abgetaut ist oder durch erneutes Auftreten von
+      Schneefall wieder in die Akkumulationsphase übergeht.</para>
+    <para>Für weiterführende Informationen siehe auch: <citetitle><xref linkend="Bertle_1966"
+    /></citetitle>, <citetitle><xref linkend="Herrmann_1976"/></citetitle>, <citetitle><xref
+      linkend="Knauf_1980"/></citetitle>, <citetitle><xref linkend="Kuchment_1983"/></citetitle>,
+      <citetitle><xref linkend="Lang_2005"/></citetitle>, <citetitle><xref
+          linkend="Vehviläinen_1992"/></citetitle></para>
+  </sect2>
+    <bibliography>
+      <title>Literatur</title>
+      <biblioentry xml:id="Bertle_1966" xreflabel="Bertle 1966">
+        <abbrev>Bertle 1966</abbrev>
+        <author><personname><firstname>F.A.</firstname><surname>Bertle</surname></personname></author>
+        <title>Effects of Snow Compaction on Runoff from Rain and Snow</title>
+        <citetitle pubwork="journal">Engineering Monograph</citetitle>
+        <volumenum>35</volumenum>
+        <pagenums>1-45</pagenums>
+        <pubdate>1966</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Herrmann_1976" xreflabel="Herrmann 1976">
+        <abbrev>Herrmann 1976</abbrev>
+        <author><personname><firstname>A.</firstname><surname>Herrmann</surname></personname></author>
+        <title>Einfluss des Alpensüdföhns auf die Schneedeckenentwicklung und das nival gesteuerte Abflussgeschehen</title>
+        <citetitle pubwork="journal">Polarforschung</citetitle>
+        <volumenum>46(2)</volumenum>
+        <pagenums>83-94</pagenums>
+        <pubdate>1976</pubdate> 
+      </biblioentry>
+      
+      <biblioentry xml:id="Knauf_1980" xreflabel="Knauf 1980">
+        <abbrev>Knauf 1980</abbrev>
+        <author><personname><firstname>D.</firstname><surname>Knauf</surname></personname></author>
+        <title>Die Berechnung des Abflusses aus einer Schneedecke. Analyse und Berechnung oberirdischer Abflüsse</title>
+        <citetitle pubwork="journal">DVWK-Schriften</citetitle>
+        <volumenum>46</volumenum>
+        <pagenums>83-94</pagenums>
+        <pubdate>1980</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Kuchment_1983" xreflabel="Kuchment et al. 1983">
+        <abbrev>Kuchment et al. 1983</abbrev>
+        <authorgroup>
+          <author><personname><firstname>L.S.</firstname><surname>Kuchment</surname></personname></author>
+          <author><personname><firstname>V.N.</firstname><surname>Demidov</surname></personname></author>
+          <author><personname><firstname>Y.G.</firstname><surname>Motovolov</surname></personname></author>
+        </authorgroup>
+        <title>Formirovanie rechnogo stok
+          (fiziko-matematichestde modeli) (River runoff formation/physically based models) (in
+          Russian)</title>
+        <publisher>
+          <publishername>Nauka</publishername>
+          <address>Moscow</address>
+        </publisher>
+        <pubdate>1983</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Lang_2005" xreflabel="Lang 2005">
+        <abbrev>Lang 2005</abbrev>
+        <author><personname><firstname>H.</firstname><surname>Lang</surname></personname></author>
+        <title>Hydrometeorologische Ergebnisse aus Abflussmessungen im Bereich des Hintereisferners (Ötztaler Alpen) in den Jahren 1957 bis 1959</title>
+        <citetitle pubwork="journal">Archiv für Meteorologie</citetitle>
+        <volumenum>Serie B, Band 14</volumenum>
+        <pagenums>280-302</pagenums>
+        <pubdate>2005</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Vehviläinen_1992" xreflabel="Vehviläinen 1992">
+        <abbrev>Vehviläinen 1992</abbrev>
+        <author><personname><firstname>B.</firstname><surname>Vehviläinen</surname></personname></author>
+        <title>Snow cover models in operational watershed forecasting. Yhteenveto:
+          Lumimallit vesistöjen ennustemalleissa.</title>
+        <citetitle pubwork="book">Publications of the Water and Environment Research
+          Institute 11</citetitle>
+        <publisher>
+          <publishername>National Board of Waters and the Environment</publishername>
+          <address>Finland, Helsinki</address>
+        </publisher>
+        <pubdate>1992</pubdate>
+      </biblioentry>
+      
+    </bibliography>
+</sect1>

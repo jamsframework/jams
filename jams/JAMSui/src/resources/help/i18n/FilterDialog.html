@@ -1,0 +1,157 @@
+<html>   
+    <body>
+        <h1> Function Reference</h1>
+        <table style="padding-top:0px; border:solid; border-color:#eeeeff">            
+            <tbody>
+                <tr style="background-color:#ddddff">
+            <b>getValue(jams.data.JAMSData)</b>
+        </tr>
+        <tr style="background-color:#eeeeee">
+        <pre>public static&nbsp;java.lang.Object&nbsp;getValue(jams.data.JAMSData&nbsp;a)</pre><br>
+        <br>Returns the value of a JAMSData Attribute
+        <dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>a</code> - a variable of JAMSData </dd> 
+            <dt><span style="font-weight:bold;">Returns:</span></dt><dd>the value of variable a</dd>  </dl>
+    </tr>
+
+    <tr style="background-color:#ddddff">
+    <b>toCalendar(java.lang.String)</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<pre>public static&nbsp;jams.data.Attribute.Calendar&nbsp;toCalendar(java.lang.String&nbsp;in)</pre><br>
+<br>returns the calendar object of a string representation
+<dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>a</code> - a string formatted in yyyy-mm-dd </dd> 
+    <dt><span style="font-weight:bold;">Returns:</span></dt><dd>the calendar object</dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>toTimeInterval(java.lang.String)</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<pre>public static&nbsp;jams.data.Attribute.TimeInterval&nbsp;toTimeInterval(java.lang.String&nbsp;in)</pre><br>
+<br>returns the time interval object of a string representation
+<dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>a</code> - a string formatted in yyyy-mm-dd - yyyy-mm-dd T C, where T is the time periode unit (day=6, month=2, year=1) and C is the time periode unit count</dd> 
+    <dt><span style="font-weight:bold;">Returns:</span></dt><dd>the time interval object</dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>start(jams.data.Attribute.TimeInterval)</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<pre>public static&nbsp;jams.data.Attribute.Calendar&nbsp;start(jams.data.Attribute.TimeInterval&nbsp;in)</pre><br>
+<br>returns the start date of a TimeInterval Object
+<dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>a</code> - a TimeInterval object</dd> 
+    <dt><span style="font-weight:bold;">Returns:</span></dt><dd>the start date of that TimeInterval</dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>end(jams.data.Attribute.TimeInterval)</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<pre>public static&nbsp;jams.data.Attribute.Calendar&nbsp;end(jams.data.Attribute.TimeInterval&nbsp;in)</pre><br>
+<br>returns the end date of a TimeInterval Object
+<dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>a</code> - a TimeInterval object</dd> 
+    <dt><span style="font-weight:bold;">Returns:</span></dt><dd>the end date of that TimeInterval</dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>day(jams.data.Attribute.Calendar)</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<pre>public static&nbsp;int&nbsp;day(jams.data.Attribute.Calendar&nbsp;c)</pre><br>
+<br>returns the dayOfMonth from a Calendar Object
+<dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>a</code> - a Calendar object</dd> 
+    <dt><span style="font-weight:bold;">Returns:</span></dt><dd>the dayOfMonth property</dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>month(jams.data.Attribute.Calendar)</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<pre>public static&nbsp;int&nbsp;month(jams.data.Attribute.Calendar&nbsp;c)</pre><br>
+<br>returns the monthOfYear from a Calendar Object
+<dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>a</code> - a Calendar object</dd> 
+    <dt><span style="font-weight:bold;">Returns:</span></dt><dd>the monthOfYear property</dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>year(jams.data.Attribute.Calendar)</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<pre>public static&nbsp;int&nbsp;year(jams.data.Attribute.Calendar&nbsp;c)</pre><br>
+<br>returns the year from a Calendar Object
+<dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>a</code> - a Calendar object</dd> 
+    <dt><span style="font-weight:bold;">Returns:</span></dt><dd>the year property</dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>lastDayInMonth(jams.data.Attribute.Calendar)</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<pre>public static&nbsp;int&nbsp;lastDayInMonth(jams.data.Attribute.Calendar&nbsp;c)</pre><br>
+<br>returns the maximum day of the month
+<dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>a</code> - a Calendar object</dd> 
+    <dt><span style="font-weight:bold;">Returns:</span></dt><dd>the maximum day of the month</dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>isLastDayInMonth(jams.data.Attribute.Calendar)</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<pre>public static&nbsp;int&nbsp;isLastDayInMonth(jams.data.Attribute.Calendar&nbsp;c)</pre><br>
+<br>returns if the day is the last of the current month
+<dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>a</code> - a Calendar object</dd> 
+    <dt><span style="font-weight:bold;">Returns:</span></dt><dd>true if the day is the last of the current month</dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>getAttribute(jams.model.Context, java.lang.String)</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<pre>public static&nbsp;java.lang.Object&nbsp;getAttribute(jams.model.Context&nbsp;context, java.lang.String&nbsp;name)</pre><br>
+<br>returns the attribute with "name" from "context" 
+<dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>context</code> - the name of a model context</dd><dd><code>name</code> - the name of a attribute in context</dd> 
+    <dt><span style="font-weight:bold;">Returns:</span></dt><dd>the value of that attribute</dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>dateCompare(jams.data.Attribute.Calendar, jams.data.Attribute.Calendar, int)</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<pre>public static&nbsp;int&nbsp;dateCompare(jams.data.Attribute.Calendar&nbsp;c1, jams.data.Attribute.Calendar&nbsp;c2, int&nbsp;accuracy)</pre><br>
+<br>compares two calendar objects
+<dl><dt><span style="font-weight:bold;">Parameters:</span></dt><dd><code>c1</code> - calendar 1</dd><dd><code>c2</code> - calendar 2</dd> 
+    <dt><span style="font-weight:bold;">Returns:</span></dt><dd>-1 if c1 is before c2, 1 if c1 is after c2 and 0 otherwise</dd>  </dl>
+</tr>
+</tbody>
+</table>
+<h1> Examples</h1> 
+<table style="padding-top:0px; border:solid; border-color:#eeeeff">            
+    <tbody>
+        <tr style="background-color:#ddddff">
+    <b>Example 1</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<dl><dt><span style="font-weight:bold;">Objective</span></dt><dd>Writing attributes only for settlement hrus (id=1 or id=2)</dd> 
+    <dt><span style="font-weight:bold;">Solution</span></dt><dd><pre>getAttribute(HRULoop,&quot;landuse&quot;)==1 || getAttribute(HRULoop,&quot;landuse&quot;)==2</pre></dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>Example 2</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<dl><dt><span style="font-weight:bold;">Objective</span></dt><dd>Writing attributes only at the first day of every month</dd> 
+    <dt><span style="font-weight:bold;">Solution</span></dt><dd><pre>day(getAttribute(TimeLoop,&quot;time&quot;)==1)</pre></dd>  </dl>
+</tr>
+
+<tr style="background-color:#ddddff">
+<b>Example 3</b>
+</tr>
+<tr style="background-color:#eeeeee">
+<dl><dt><span style="font-weight:bold;">Objective</span></dt><dd>Writing attributes only at the last day of every month</dd> 
+    <dt><span style="font-weight:bold;">Solution</span></dt><dd><pre>isLastDayInMonthay(getAttribute(TimeLoop,&quot;time&quot;))</pre></dd>  </dl>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

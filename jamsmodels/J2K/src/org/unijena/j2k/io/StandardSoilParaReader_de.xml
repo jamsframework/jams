@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>StandardSoilParaReader</title>
+  <subtitle>Eine Komponente zum Auslesen von Bodeninformation aus einem ASCII-File.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+          <entry>j2k.io</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variablen</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Beschreibung</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>stFileName</entry>
+          <entry>Bodentypenparamter Dateiname</entry>
+        </row>
+        <row>
+          <entry>hrus</entry>
+          <entry>Liste der HRU-Objekte</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+    <para>Diese Kompenten liest Bodeninformationen aus einer ASCII-Datei, die durch <emphasis
+        role="italic">stFileName</emphasis> identifiziert wird. Für jede Einheit der Liste der
+        <emphasis role="italic">hrus</emphasis> wählt sie einen Bodentyp, der durch sein Attribut
+        <ns:emphasis>soilID</ns:emphasis> identifiziert wird und ergänzt die verbundenen
+      Bodeninformationen zu dem Attributeset der Einheit. Ein Beispiel für eine hydrogeologische
+      Parameterdatei wird i folgender  Abbildung (<xref xmlns:xlink="http://www.w3.org/1999/xlink"
+        linkend="org.unijena.j2k.io.StandardSoilParaReader_en_fig1" xrefstyle="select: label"/>)
+      gezeigt.</para>
+    <figure xml:id="org.unijena.j2k.io.StandardSoilParaReader_en_fig1">
+      <title>Ausschnitt einer ASCII-Beispieldatei mit Bodeninformationen</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="soil_file.png" scale="60" width="100%"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </sect2>
+</sect1>

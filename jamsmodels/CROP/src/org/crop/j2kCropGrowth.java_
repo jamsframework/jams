@@ -1,0 +1,727 @@
+    /*
+ * j2kCropGrowth.java
+ *
+ * Created on 15. November 2005, 11:47
+ */
+
+package j2k_org.proc.j2k_CropGrowth;
+
+/**
+ *
+ * @author  c5ulbe
+ */
+import org.unijena.jams.model.*;
+import org.unijena.jams.data.*;
+import org.unijena.jams.io.*;
+import java.io.*;
+import java.util.*;
+
+
+@JAMSComponentDescription(
+        title="j2k_CropGrwoth",
+        author="Ulrike Bende-Michl",
+        description="Module for calculation of crop growth according to the algorithms of SWAT"
+        )
+        public class j2kETP_E_TP extends JAMSComponent {
+    
+
+public class j2k_CropGrowth extends JAMSComponent {
+
+     @JAMSVarDescription(
+             access = JAMSVarDescription.AccessType.READ,
+             update = JAMSVarDescription.UpdateType.INIT
+             )
+             public JAMSString fileName;
+     
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Collection of hru objects"
+            )
+            public JAMSEntityCollection hrus;
+    
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.RUN,
+            description = "The current hru entity"
+            )
+            public JAMSEntity entity;
+    
+        @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "HRU attribute name area"
+            )
+            public JAMSString aNameArea;
+    
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "HRU crop id"
+            )
+            public JAMSString aNameCropID;
+    
+      @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "HRU crop class"
+            )
+            public JAMSString aNameCropLClass; 
+      
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "HRU land use typ (same as J2K land use id)"
+            )
+            public JAMSString aNamePTyp;             
+     
+   @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "HRU daily potential heat units"
+            )
+            public JAMSString aNamePHU_daily;
+   
+   
+   @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "HRU daily zero based heat units"
+            )
+            public JAMSString aNameHU_daily;
+          
+   @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "HRU fraction daily potential heat units"
+            )
+            public JAMSString aNameFPHU_daily;      
+   
+   
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "HRU fraction daily zero based potential heat units"
+            )
+            public JAMSString aNameFHU0_daily;
+ 
+    
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "HRU half of yearly potential heat units"
+            )
+            public JAMSString aNameFPHU_50;
+    
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "first shape coefficient to determine LAI development"
+            )
+            public JAMSString SC1_LAI;
+     
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "second shape coefficient to determine LAI development"
+            )
+            public JAMSString SC2_LAI;  
+        
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Max LAI corresponding to the first point of the optimal LAI development"
+            )
+            public JAMSString MLAI_1;
+     
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Max LAI corresponding to the second point of the optimal LAI development"
+             
+            )
+            public JAMSString MLAI_2;
+     
+      @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Maximimum LAI"
+            )
+            public JAMSString aNameMLAI;
+    
+    
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Fraction of growing season corresponding to the first point of the optimal LAI development"
+            )
+            public JAMSString FrcGrow1;
+     
+      @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Fraction of growing season corresponding to the second point of the optimal LAI development"
+            )
+            public JAMSString FrcGrow2;
+      
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "daily solar radiation [MJ/m²]"
+            )
+            public JAMSString aNameSolRad;
+    
+     
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "crop specific radiation use efficiency ([kg/ha] drymass per[MJm²])"
+            )
+            public JAMSString aNameRadUse;
+     
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "intercepted photosynthetically active radiation [MJ/m²]"
+            )
+            public JAMSString aNameHphosyn;
+     
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Biomass produced for a given day [kg/ha] drymass"
+            )
+            public JAMSString aNameBiomass;
+     
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Canopy Height [m]"
+            )
+            public JAMSString aNameCanHeight;
+     
+       @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Max Canopy Height [m]"
+            )
+            public JAMSString aNameMCanHeight;   
+       
+       @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "daily LAI"
+            )
+            public JAMSString aNameLAI_daily;
+            
+            
+       @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Max rooting depth [mm]"
+            )
+            public JAMSString aNameMRootD;
+    
+       @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Total rooting depth [mm]"
+            )
+            public JAMSString aNameTrootD;
+    
+         @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "normal fraction of N in the plant biomass at the emergence"
+            )
+            public JAMSString aNameNuptake_1;
+         
+          @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "normal fraction of N in the plant biomass at 50% of maturity"
+            )
+            public JAMSString aNameNuptake_2;
+          
+      @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "normal fraction of N in the plant biomass at maturity"
+            )
+            public JAMSString aNameNuptake_3;
+      
+        @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "first shape coefficient for nitrogen uptake in biomass"
+            )
+            public JAMSString aNameSC3_NBio;
+        
+        @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "second shape coefficient for nitrogen uptake in biomass"
+            )
+            public JAMSString aNameSC4_NBio;
+        
+        @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "optimal fraction of nitrogen in the plant biomass at the current growth's stage"
+            )
+            public JAMSString aNameFNPlant;
+            
+         @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Optimal plant nitrogen content in the plants biomass for a given day"
+            )
+            public JAMSString aNameBioNopt;
+            
+       @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Plants nitrogen demand for a given day"
+            )
+            public JAMSString aNameBioNdem;       
+          
+       @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Actual nitrogen stored in the plants biomass for a given day"
+            )
+            public JAMSString aNameBioNact;
+        
+        @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Harvest Index [0-1]"
+            )
+            public JAMSString aNameHarvIndex;
+        
+          @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Fraction of harvest"
+            )
+            public JAMSString aNameFracHarv;
+        
+        
+        @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Lower boundary of harvest index [0-1]"
+            )
+            public JAMSString aNameLHarIndex;
+        
+         @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Potential Crop Yield [kg/ha]"
+            )
+            public JAMSString aNameYieldPot;
+         
+         @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Actual Crop Yield [kg/ha]"
+            )
+            public JAMSString aNameYieldAct;
+         
+         @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Biomass above ground on the day of harvest [kg/ha]"
+            )
+            public JAMSString aNameBioAg;
+         
+         @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Fraction N in Yield"
+            )
+            public JAMSString aNameFrcNyld;
+         
+         @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Fraction P in Yield"
+            )
+            public JAMSString aNameFrcPyld;
+         
+         @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Actual N mass stored in plant material [kg N/ha]"
+            )
+            public JAMSString aNameBioAct;
+         
+  @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Scaling factor for N stress"
+            )
+            public JAMSString aNameScalN;
+  
+         
+  @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Actual LAI for a given day"
+            )
+            public JAMSString aNameLAIact;
+  
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Optimal temperature for plant growth [°C]"
+            )
+            public JAMSString aNameTOpt; 
+     
+       @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Residuen pool (biomass)"
+            )
+            public JAMSString aNameResidue_pool;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Water stress for a given day [mm H2O]"
+            )
+            public JAMSString aNameWstrs;
+            
+ @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "HRU actual Transpiration in mm"
+            )
+            public JAMSString aNameaTP;
+ 
+     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "HRU potential Transpiration in mm"
+            )
+            public JAMSString aNamepTP;
+     
+         @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Light Extinct Coefficient [-0.65]"
+            )
+            public JAMSDouble LExCoef;
+    
+     
+   
+
+      public void init() throws JAMSEntity.NoSuchAttributeException, IOException {
+        JAMSEntityEnumerator eEnum = hrus.getEntityEnumerator();
+        JAMSEntity[] entities = hrus.getEntityArray();
+          
+     
+     for (int i = 0; i < entities.length; i++) {
+         entities[i].setDouble(aNamebio_daily.getValue(), 0);
+         }          
+     }
+     
+         public void run() throws JAMSEntity.NoSuchAttributeException{
+     
+         double fphu = entity.getDouble(aNameFPHU_daily.getValue()); /* fraction of daily PHU */
+         double aTP = entity.getDouble(aNameaTP.getValue()); /*actual transpiration in mm*/     
+         double pTP = entity.getDouble(aNameaTP.getValue()); /*potential transpiration in mm*/  
+         double crop_id = entity.getDouble(aNameCropID.getValue()); /*crop id re crop.par*/  
+         double LC_class = entity.getDouble(aNameLClass.getValue()); /*plant typ re crop.par*/  
+         double ptyp = entity.getDouble(aNamePTyp.getValue()); /*land use typ re land use par*/  
+         double mlai = entity.getDouble(aNameMLAI.getValue()); /* maximum plant specific LAI */
+         double mlai1 = entity.getDouble(aNameMLAI_1.getValue()); /*max lai first point */
+         double mlai2 = entity.getDouble(aNameMLAI_2.getValue()); /*max lai second point*/
+         double frgrw1 = entity.getDouble(aNameFrcGrw1.getValue()); /*fraction growing season first point */
+         double frgrw2 = entity.getDouble(aNameFrcGrw2.getValue()); /*fraction growing season second point */
+         double solrad = entity.getDouble(aNameSolRad.getValue()); /*incoming solar radition */
+         double raduse = entity.getDouble(aNameRadUse.getValue()); /*radiation use efficiency*/
+         double mcanhei = entity.getDouble(aNameMCanHeight.getValue()); /*maximum canopy height */
+         double mrootd = entity.getDouble(aNameMRootD.getValue()); /*maximum rooting depth */
+         double nupt1 = entity.getDouble(aNameNuptake_1.getValue()); /*N uptake parameter emergence */
+         double nupt2 = entity.getDouble(aNameNuptake_2.getValue()); /*N uptake parameter 50% maturity */
+         double nupt3 = entity.getDouble(aNameNuptake_3.getValue()); /*N uptake parameter maturity */
+         double harvind = entity.getDouble(aNameHarvIndex.getValue()); /*harvest index */
+         double frcNyld = entity.getDouble(aNameFrcNyld.getValue()); /*fraction N in yield*/
+         double topt = entity.getDouble(aNameTOpt.getValue()); /*Plants optimal growth temperature */
+         double tbase = entity.getDouble(aNameTBase.getValue()); /*Plants base temperature */
+         
+         double sc2 = ((Math.ln(this.frgwr1/this.mlai1)-this.frgwr1)-(Math.ln(this.frgwr2(this.mlai2)-this.frgwr2)))/ (this.frgwr2 - this.frgwr1);
+         double sc1 = Math.ln ((this.frgwr1/this.mlai1)-this.frgwr1)+ this.sc2 * this.frgrwr1;
+         
+         double frLAImx = calc_lai_development();
+     }              
+//Optimal growth
+         // Biomass production
+         // First the daily development of the LAI is calculated as fraction of maxLAI (frLAImx)
+         // Hereby the farction of plants maximum leaf area index corresponding to a given fraction of PHU is calculated
+         // and two shape-coefficient, sc1 and sc2 are needed
+         // calculation the maximum leaf area corresponding to fraction of heat units, expressed as LAI fraction of the max LAI
+         //
+    
+       private double calc_lai_development() throws JAMSEntity.NoSuchAttributeException {
+                    
+        double fr_LAImx = this.fphu / this.fphu + Math.exp(sc1 - sc2 * this.fphu);
+        return fr_LAImx;
+        } 
+         // Second the amount of daily solar radtion intercepted by the leaf area of the plant is calculated
+         // this.solrad = incoming total solar
+         // Hphosyn = the amount of intercepted photosynthetically active radiation on a day [MJ m-2]
+         // Third the amount of biomass (dry weight in kg/ha) produced per unit intercepted solar radiation is calulated using the plant-specific
+         // radiation- use efficiency declared in the crop growth database by parameter 'rue' in crop.par
+         // whereas the total biomass on a given day is summed up b
+       
+        private double calc_biomass() throws JAMSEntity.NoSuchAttributeException {
+                   
+         double Hphosyn = 0.5 * this.solrad * (1 - Math.exp(this.LExCoef * this.frLAImx));       
+         double bio_daily = this.raduse * this.Hphosyn;
+         double bio = this.bio_daily + entity.getDouble(aNamebio_daily.getValue()); // 
+         bio_daily = bio;
+         entity.setDouble(aNamebio_daily.getValue(), bio);
+         return bio_daily;
+        }
+        
+         // Canopy height and cover
+         // Canopy cover is expressed as leaf area index
+         
+         private double calc_canopy() throws JAMSEntity.NoSuchAttributeException {
+         
+         double hc = this.mlai * Math.sqrt(this.frLAImx); // hc = canopy height (m) for a given day
+                                                   // chtmx = maximum canopy height (m), Parameter from crop.par
+                                                   // frLAImx = fraction of plants maximum canopy height
+                                                   // Amount of daily added canopy cover added for a day i, 
+                                                    // this deltaLAI = daily change rate
+                                                    // this.frLAImx = fraction of the max LAI on the given day i, see above
+                                                    // this.frLAImx_1 = added fraction of the max LAI on the given day before day i
+                                                    // this.LAI = is the actual LAI on a given day 
+         
+         this.deltaLAI = (this.frLAImx_i - frLAImx_i1) * this.mlai(1 - Math.exp( 5 *(this.frLAImx - this.blai)));
+         
+         // the total leaf area index is calculated by
+                                                    // this.LAI_i = added LAI on a day
+         this.LAI_i = this.deltaLAI + this.LAI;
+         
+         // LAI will remain constant until leaf senescence begins to exceed leaf growth
+                                                    // this. phu_sense is the fphu when senescence becomes dominant
+         // @todo declare what is fphu_sense;
+         if this.fphu > this.fphu_sense;
+         this.LAI = 16 * this.blai * Math.pow(1 - this.fphu);
+         
+         // Root development
+         
+         this.froot = 0.40 - 0.20 * fphu;
+         
+         // calculation of the root depth according to the plant type, whereas perennials and trees have roots down to
+         // the maximum rooting depth [mm] and the 
+         
+         // perennials
+         
+         if this.idc =      ;            // perennials and trees @todo read information from crop.par
+         this.zroot = this.rdmx;
+         
+         // annuals
+         // if case as long pfhu is within 0.4 as 0.4 is the time of max, root depth
+         
+         if this.idc = and if this.fphu <= 0.4       @todo
+         this zroot = 2.5 * this.fphu * rdmx;
+         else
+             if this.fphu > 0.4
+             this.zroot = rdmx;
+               
+                  // Maturity
+         // is reached when fphu = 1
+         // as therefore no calculation is needed
+         // @todo nutrients uptake will stopp depending on the conditions
+         
+         
+         // Water uptake by plants
+                  // Potential water uptake
+         
+         
+         
+                  // Nutrient uptake by plants
+         
+         // is calculated by the fraction of the plant biomass as a function of growth stage given the optimal conditions
+                            // fnplant =fraction N in plant biomass
+                            // with frn1 as fraction of N in the plant biomass at the emergence
+                            // with frn2 as fraction of N in the plant biomass at the 2. point of the known point
+                            // with frn3 as fraction of N in the plant biomass at the maturity
+                            // n1 and n2 are shape coefficients by solving the equation of two known points
+                            // (frn2 by 50% of PHU and frn3 by 100% of PHU
+         
+         this.frn1 = this.frgrw1; @todo link to the parameter file crop.par take parameter frgrw1
+         this.frn2 = this.frgrw2; @todo take parameter frgrw2 from crop.par
+         this.frn3 = ;@todo Wert?
+         this.frn_sub1 = this.frn1 - this.frn3;
+         this.frn_sub2 = this.frn2 - this.frn3;
+         this.frn_sub3 = this.frnca3 - this.frn3;  // the module assumes that the denominator term does not equals 1
+         											// @todo construction of denominator term
+         
+         double n2 = (Math.ln(fphu_50/(1-(this.frn_sub2)/(this.frn_sub1))- this.fphu_50)- (Math.ln(this.fphu_100/(1-(this.frn_sub3)/this.frn_sub1))))/ this.fphu_100 - this.fphu_50;
+         
+         double n1 = Math.ln(fphu_50/(1-((this.frn_sub2)/(this.frn_sub1))- this.fphu_50) + this.n2 * this.fphu_50;
+         
+         double fnplant = (this.frn1 - this.frn3) * (1 -(this.fphu / this.fphu + Math.exp(this.n1 - this.n2 * this.pfhu))) + frn3;
+         
+         // determing the mass of N that should be stored in the plant biomass on a given day
+         // whereas the fnplant is the optimal fraction of nitrogen in the plant biomass for the current growth stage
+         // and bio.daily is the total plant biomass on a given day [kg/ha]
+         
+         double bioNopt = fnplant * this.bio_daily;
+         
+         // Nitrogen uptake
+         
+         double nup = this.bioNopt - this.bio_daily;
+         
+         // @todo should we take depth distribution into account? probably no
+         
+         
+         // Nitrogen fixation
+         
+         // Phosphorus uptake
+         
+         // Crop Yield
+                
+         		//for harvesting 4 codes are implemented:
+				// (1) assumes harvesting with Haupt- & Nebenfrucht, plant growth stopped
+				// (2) assumes harvesting with Hauptfrucht, Nebenfrucht remains on the field, plant growth stopped (former kill operation)
+				// (3) assumes harvesting with Haupt- & Nebenfrucht, plant growth continues (may not be suitable for meadows)
+				// (4) assumes harvesting with Hauptfrucht, plant growth continues//
+          		// when harvest&kill as determined in the crop management by code (1)
+          		
+    			//above-ground plant dry biomass removed as dry economic yield is called harvest index      		
+                // for majority of crops the harvest index is between 0 and 1, 
+                // howerver for plant whose roots are harvested, such as potatos may have an harvest index greater than 1
+                
+                // harvest index is calculated for each day of the plant's growing season using the relationship
+                
+           double HI = this.HIOpt * (100*this.phu)/(100 * this.phu + Math.exp(11.1 - 10 * this.phu));
+           
+           // as HI is the potential harvest index for a given day and
+           // HIOpt is the potential harvest index for the platn at maturity given ideal growing conditions
+           // @todo could not find HiOpt in the crop.par
+           
+           // crop yield is calculated as
+           
+           double bio_ag = (1- this.froot)* this.bio; // actual aboveground biomass 
+           											// froot is the fraction of the total biomass in the roots the day of harvest
+           											// bio is the total biomass on the day of the harvest (kg/ha)
+                 
+           if this.HI is <= 1
+           double yld = bio_ag * HI   // where yld is crop yield (kg/ha) 
+           else
+           double yld = bio *(1-(1/(1+ this.HI)); // when HI is over 1
+                
+           // Amounts of nitrogen and who wants to P could also be removed from the field
+           
+           // @todo is that right take CNYLD & CPYLD from crop.par
+           
+           double yldN = this.cnyld * this.yld;
+           
+           double yldP = this.cpyld * this.yld;
+          		
+          // Next please is determine the actual growth
+          // as plant can be stressed by water, temperature and nutrients stess
+           
+          // Water stress is simulated by comparing actual and potential plant transpiration 		
+
+          double watstrs = 1 - (this.actualEt/this.ET);
+          
+          // this actual.ET is the actual plant transpiration on a given day and ET is the maximal ET on that given day
+          // is the same as total plant water uptake 
+                    
+          // Temperature stress is a function of the daily average air temperature and the optimal temperature for plant growth
+          // is depending on different stages of the air temperature
+          
+          if this.tmean < equalls this.tbase
+          double tempstrs = 1;
+          else if 
+          this.tbase < this.tmean < this.tppt
+          this tempstrs = 1 - Math.exp ((-0.1054 * (this.topt - this.tmean)²/(this.tmean - this.tbase))
+          else if
+          this.topt < this.tmean < (2 * this.tOpt) - this.tBase
+          this tempstrs = 1 - Math.exp ((-0.1054 * (this.topt - this.tmean)²/(2 * this.topt - this.tmean - this.tbase))
+          else if
+          this.tmean > (2 * this.topt) - this.tbase
+          this tempstrs = 1;
+          
+          
+          // Nitrogen stress
+          // is quantified by comparing actual and optimal plant nitrogen levels. 
+          // N stress varies non-lineary between 0 at optimal content and 
+          // 1 when N content of the plant is 50% or less of the optimal value
+          // Scaling factor scal_n
+          
+          double scal_n = 200 * ((this.bio_n/this.bio_Nopt)- 0.5);
+          
+          double nstrs = 1 - (this.scal_n/this.scal_n + Math.exp(3.535 - 0.02597 * this.scal_n));
+          
+          // Actual growth
+          // plant factor quantifies the fraction of potential growth achieved on a given day 
+          // plgrwfac = plant growth factor (0 - 1), watstrs, tempstrs, nstrs (maybe needed in the future pstres)
+          
+          double plgrfac = 1 - Math.max (this.watstrs, this.tempstrs, this.nstrs);
+          
+          // potential biomass predicted is a adjusted daily if one of the three stress factors is greater than 1
+          
+          double bio_act = this.bio_daily * this.plgrfac;
+          
+          // Potential leaf area added on a given day, adjusted for plant stess
+          
+          double LAI_act = this.deltaLAI * Math.sqrt(this.pfgrfac);
+          
+          // biomass override, @todo
+          // Modul assumes that the user will specify a total biomass what will be produce each year
+          // When biomass override is specified in the operation mode the impact of variation in growing conditions
+          // will be ignored
+                    
+          if this.Bio_over = 1;
+          this bio_actch = this.bio_act * ((this.bio_tar - this.bio_act)/this.bio.tar);
+          
+          // Actual yield
+          // predicted harvest index is affected by water deficit
+          // with parameter harvest_min (WSYF from crop.par)
+          
+          double wat_deffac = 100 * (Math.sum this.actET(m-i/Math.sum this.potET (m-i))
+          // whereas i is the day in the plant growing season, 
+          // m is the day of harvest if the plant is harvested before it reaches maturity or the last day of the
+          // growing season if the plant is harvested after it reaches maturity 
+          
+          double harvindex_actual = (this.HI - this.WSYF) * (this.watstrs/(this.wat_deffac + Math.exp(6.13 - 0.883 * this.wat_deffac))+ this.WSYF;
+          
+          // harvest index override by determine harvest operations
+          // is used if harvest only operation 
+          // it is allowed to specify a target harvest index
+          // the target index is ususally set when the yield is removed using the harvest/kill operation but could also be
+          // set by the harvest operation
+          
+          if this.HIact is > 0
+          this hitar = this.HIact;
+              
+         // harvest efficiency, defines the fraction of yield biomass removed by harvest efficiency 
+         // if harvest efficiency is not set or 0 the modul assumes that the user want to ignore harvest efficiency and
+         // sets the fraction to 1.0, so that the entire yield is totally removed 
+         
+          double yld_act = this.yld - this.FracHarv;
+          
+          // the remainder is converted to residue as parameter residu_act
+          
+          double residu_act = this.yld * (1 - this.FracHarv);
+          
+          // and biomass is added to the residue pool on a given day;
+          
+          double resi_pool = this.resi_act + resi_surf; // whereas resi_surf is the actual material in the residue pool 
+          
+     }
+
+     public void cleanup(){
+         store.close();
+     }
+
+}
+

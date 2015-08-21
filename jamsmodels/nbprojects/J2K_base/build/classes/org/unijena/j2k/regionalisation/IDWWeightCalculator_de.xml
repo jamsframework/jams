@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>IDWWeightCalculator</title>
+  <subtitle>Eine Komponente zur Berechnung von Gewichtswerten für das
+    Inverse-Distanzen-Verfahren.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+          <entry>j2k.regionalisation</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variablen</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Beschreibung</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>entityX</entry>
+          <entry>Einheit x-Koordinate</entry>
+        </row>
+        <row>
+          <entry>entityY</entry>
+          <entry>Einheit y-Koordinate</entry>
+        </row>
+        <row>
+          <entry>pidw</entry>
+          <entry>Stärke der IDW-Funktion</entry>
+        </row>
+        <row>
+          <entry>statWeights</entry>
+          <entry>Gewichte des IDW-Anteils der Regionalisierung</entry>
+        </row>
+        <row>
+          <entry>statOrder</entry>
+          <entry>Positionsmatrix zur Bestimmung der besten Gewichte</entry>
+        </row>
+        <row>
+          <entry>equalWeights</entry>
+          <entry>Gewichte für Thiessen-Polygone</entry>
+        </row>
+        <row>
+          <entry>latLong</entry>
+          <entry>Berechnung mit geografischen Koordinaten (lat, long)</entry>
+        </row>
+        <row>
+          <entry>dataStoreID</entry>
+          <entry>ID des Datenspeichers zum Einlesen von Stationskoordinaten</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+    <para>Diese Komponente berechnet die gewichteten Werte für die Regionalisierung auf Basis des
+        <ns:emphasis>Inverse Distance Weighting (IDW)</ns:emphasis> Verfahren. Für diesen Zweck
+      werden die Koordinaten (<ns:code>entityX/entityY</ns:code>) einer Modelleinheit und die Anzahl
+      der Stationskoordinaten von einem Datenspeicher  auf Grund der ID
+        (<ns:code>dataStoreID</ns:code>) identifiziert. Diese werden als Input für die Berechnung
+      der Distanzen zu diesen Stationen benutzt.</para>
+    <para>Als ein Ergebnis berechnet die Komponente:</para><orderedlist>
+      <listitem>
+        <para>einen gewichteteten Wert für jede Station (<ns:code>statWeights</ns:code>), mit höheren
+          Werten bei raäumliche näheren Stationen,</para>
+      </listitem>
+      <listitem>
+        <para>eine Matrix von Stationskoordinaten (<ns:code>statOrder</ns:code>) welche nach der
+          Distanz zur Einheit sortiert sind.</para>
+      </listitem>
+    </orderedlist>
+    <para>Um die Gewichtung zu berechnen müssen zusätzliche Parameter bereitgestellt werden: ein
+      Gewichtungswert (<ns:code>pidw</ns:code>), zur Betonung oder Abschwächung der Distanz zwischen
+      den Stationen, ein Kennzeichen (<ns:code>latLong</ns:code>) ob ein geographisches
+      Koordinatensystem benötigt wird und ein Kennzeichen (<ns:code>equalWeights</ns:code>) welches
+      die Berechnung der gleichen Gewichtung verstärkt (für n Stationen hat jede Station die
+      Gewichtung l/n).  </para>
+    <para>Diese Komponente wird hauptsächlich für die Vorverarbeitung genutzt, wenn die IDW
+      Gewichtung nur für jede räumliche Einheit berechnet werden muss. </para>
+  </sect2>
+</sect1>

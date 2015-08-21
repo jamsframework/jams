@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook">
+  <title>CalcLanduseStateVars</title>
+  <subtitle>A component for calculation of extraterrestrial radiation.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.inputData</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>entities</entry>
+          <entry>set of spatial model entities</entry>
+        </row>
+        <row>
+          <entry>LAIArray</entry>
+          <entry>LAI values for every model entity in temporal resolution (h, d, m) for a
+            default year</entry>
+        </row>
+        <row>
+          <entry>effHArray</entry>
+          <entry>values of effective height for every model unit in temporal resolution
+            (h, d, m) for a default year</entry>
+        </row>
+        <row>
+          <entry>rsc0Array</entry>
+          <entry>monthly values of stomatal resistance of the vegetation on the model
+            entity</entry>
+        </row>
+        <row>
+          <entry>elevation</entry>
+          <entry>elevation of the model entity above MSL</entry>
+        </row>
+        <row>
+          <entry>tempRes</entry>
+          <entry>temporal resolution of modeling - per hour (h), per day (d), per month
+            (m)</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+    <sect2>
+    <title>Component Description</title>
+      <para>In this component, land use parameters for the corresponding temporal resolution of the
+      model (variable <emphasis role="italic">tempRes</emphasis>) and for every spatial model entity
+      are calculated and stored in corresponding variables. The calculation is carried out with
+      specific support values which the model takes from the land use parameter file (e.g.
+      landuse.par). Those are in particular: </para>
+      <para>  4
+        support values (d1 - d4) for the Leaf Area Index (LAI) for days 110 (20th
+        April), 150 (30th May), 250 (7th Sept.) and 280 (7th Oct.)</para>
+      <para>  4 support
+        values for effective height (effH) for days 110 (20th April), 150 (30th
+        May), 250 (7th Sept.) and 280 (7th Oct.) </para>
+      <para> 12 monthly values for stomatal resistance of the corresponding
+        vegetation</para>
+      <para>The model assumes an elevation of 400m above MSL for those values.
+        With regard to the actual elevation of the corresponding model entity
+        the values are adapted according to the following formula: </para><para> d'_x =
+          dx + 0.025 \cdot (elevation - 400).</para> <para>In this way, the vegetation length is extended for lower areas and shortened for higher
+            areas. Between the support positions every modeling time span is
+            discretely calculated by linear interpolation.</para> 
+    </sect2>
+      <bibliography> 
+        <title>Literature</title> 
+        <biblioentry xml:id="Krause_2001" xreflabel="Krause 2001">
+          <abbrev>Krause 2001</abbrev>
+          <author><personname><firstname>P.</firstname><surname>Krause</surname></personname></author>
+          <title>Das hydrologische Modellsystem J2000: Beschreibung und Anwendung in
+            großen Flußeinzugsgebieten</title>
+          <publisher>
+            <publishername>Schriften des Forschungszentrum Jülich: Reihe Umwelt/Environment</publishername>
+          </publisher>
+          <volumenum>Band 29</volumenum>
+          <pubdate>2001</pubdate>
+        </biblioentry>
+      </bibliography>
+</sect1>

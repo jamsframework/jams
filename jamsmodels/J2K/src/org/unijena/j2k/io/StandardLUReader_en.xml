@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink"
+  xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg"
+  xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook">
+  <title>StandardLUReader</title>
+  <subtitle>A component for reading land use information from an ASCII file.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.io</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1*"/>
+        <colspec colname="c2" colnum="2" colwidth="3*"/>
+        <thead>
+          <row>
+            <entry>Name</entry>
+            <entry>Description</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>luFileName</entry>
+            <entry>Land use parameter file name</entry>
+          </row>
+          <row>
+            <entry>hrus</entry>
+            <entry>List of hru objects</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>This component reads land use information from an ASCII file identified by <emphasis
+        role="italic">luFileName</emphasis>. For each entity from the list <emphasis role="italic"
+        >hrus</emphasis> it selects the land use type identified by its attribute
+        <ns:emphasis>landuseID</ns:emphasis> and adds the related land use information to the
+      entity's attribute set. An example of a land use parameter file is shown in  <xref
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        linkend="org.unijena.j2k.io.StandardLUReader_en_fig1" xrefstyle="select: label"/>.</para>
+    <figure xml:id="org.unijena.j2k.io.StandardLUReader_en_fig1">
+      <title>Excerpt from an example ASCII file with land use information</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="lu_file.png" scale="70" width="100%"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </sect2>
+</sect1>

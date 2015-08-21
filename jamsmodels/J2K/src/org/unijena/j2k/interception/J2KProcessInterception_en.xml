@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>J2KProcessInterception</title>
+  <subtitle>A component for calculation of interception.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.interception</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>potET</entry>
+          <entry>potential evapotranspiration</entry>
+        </row>
+        <row>
+          <entry>actET</entry>
+          <entry>actual evapotranspiration</entry>
+        </row>
+        <row>
+          <entry>rain</entry>
+          <entry>liquid precipitation</entry>
+        </row>
+        <row>
+          <entry>snow</entry>
+          <entry>frozen precipitation</entry>
+        </row>
+        <row>
+          <entry>tmean</entry>
+          <entry>mean air temperature</entry>
+        </row>
+        <row>
+          <entry>actLAI</entry>
+          <entry>leaf area index (current)</entry>
+        </row>
+        <row>
+          <entry>area</entry>
+          <entry>area of the model entity</entry>
+        </row>
+        <row>
+          <entry>intercStorage</entry>
+          <entry>interception storage</entry>
+        </row>
+        <row>
+          <entry>netRain</entry>
+          <entry>throughfall (rain)</entry>
+        </row>
+        <row>
+          <entry>netSnow</entry>
+          <entry>throughfall (snow)</entry>
+        </row>
+        <row>
+          <entry>throughfall</entry>
+          <entry>throughfall (total)</entry>
+        </row>
+        <row>
+          <entry>interception</entry>
+          <entry>interception (total)</entry>
+        </row>
+        <row>
+          <entry>a_rain</entry>
+          <entry>calibration parameter for interception of liquid precipitation</entry>
+        </row>
+        <row>
+          <entry>a_snow</entry>
+          <entry>calibration parameter for interception of frozen precipitation</entry>
+        </row>
+        <row>
+          <entry>snow_trs</entry>
+          <entry>temperature parameter</entry>
+        </row>
+        <row>
+          <entry>snow_trans</entry>
+          <entry>temperature parameter</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+    <sect2>
+    <title>Component Description</title>
+      <para>The interception module calculates the throughfalls of field
+        precipitation dependent on the corresponding vegetative cover and its
+        value in the seasonal cycle. The field precipitation is reduced by the
+        interception rate to the throughfall (via interception). Hence
+        throughfall only occurs when the maximum interception storage capacity
+        of a vegetation is exhausted. The excess precipitation is transferred as
+        falling precipitation to the subsequent module. The maximum interception
+        capacity (Int <subscript xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:xi="http://www.w3.org/2001/XInclude"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:m="http://www.w3.org/1998/Math/MathML"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:db="http://docbook.org/ns/docbook">max</subscript>) is
+        calculated in J2000 according to the following formula: </para>
+      
+      <para>with:</para>
+      
+      <variablelist>
+        <varlistentry>
+          <term>α [mm]</term>
+          
+          <listitem>
+            <para>storage capacity per m² leaf area subject to the type of
+              precipitation [mm]</para>
+          </listitem>
+        </varlistentry>
+        
+        <varlistentry>
+          <term>LAI [-]</term>
+          
+          <listitem>
+            <para>leaf area index of specific land use class</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+      
+      <para>
+      <inlinemediaobject>
+        <imageobject>
+          <imagedata fileref="lake_small.jpeg"/>
+        </imageobject>
+        <textobject>
+          <para>example image</para>
+        </textobject>
+      </inlinemediaobject>The parameter α has a certain value dependent on the type of intercepted
+      precipitation (rain or snow) since the maximum interception capacity of snow is significantly
+      higher than that of liquid precipitation. The leaf area index for the individual vegetation
+      types in the seasonal cycle is calculated according to the above-mentioned method for each day
+      of the time span. The emptying of the inception storage is exclusively carried out by
+      evaporation. A special case occurs when the value of the parameter α changes from snow to rain
+      because of air temperature. This leads to a sudden decrease of the maximum interception
+      storage capacity. Potential excess precipitation is transferred as drip precipitation to the
+      subsequent module. </para>
+  </sect2>
+</sect1>

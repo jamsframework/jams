@@ -1,0 +1,706 @@
+Class Dependency Analyzer
+Author: Manfred Duchrow
+Copyright (c) 2003-2008, by Manfred Duchrow. All rights reserved.
+=======================================================================
+
+-----------------------------------------------------------------------
+
+VERSION 1.11.4 ( December 3, 2008 )
+
+* Added DARC client API to Javadoc
+
+* Changed loading of cda.properties from URL-based loading to
+  file based loading because on Linux systems Java might use 
+  an FTP URL Handler for URLs starting with "file://".
+
+-----------------------------------------------------------------------
+
+VERSION 1.11.3 ( October 5, 2008 )
+
+* Added "Cancel" button to initialization progress dialog.
+
+* BUGFIX: When closing a workset while initialization is still running
+  an exception occurred.
+
+* BUGFIX: BCEL
+  Exceptions similar to the following should not occur anymore:
+
+  org.apache.bcel.classfile.ClassFormatException: Invalid constant pool
+  reference: 6144. Constant pool size is: 146  
+
+* BUGFIX: BCEL
+  Exceptions similar to the following should not occur anymore:
+
+  java.io.IOException: Too much bytes to be allocated on heap for Unknown: 2471
+        at org.apache.bcel.classfile.Unknown.<init>(Unknown.java:143)
+        at org.apache.bcel.classfile.Attribute.readAttribute(Attribute.java:201)
+        at org.apache.bcel.classfile.ClassParser.readAttributes(ClassParser.java:228)
+        at org.apache.bcel.classfile.ClassParser.parse(ClassParser.java:184)
+        at org.pf.tools.cda.dependency.analyzer.ClassFileAnalyzer.analyze(ClassFileAnalyzer.java:152)
+
+* Updated libraries
+  - bcel.jar 5.1-A1.2
+
+-----------------------------------------------------------------------
+
+VERSION 1.11.2 ( September 14, 2008 )
+
+* BUGFIX
+  Referred classes that have not been found in the defined classpath
+  are now again added to the special "Not Found" (N/A) container.
+
+* In the workset wizard the "Display Filter" and "Ignore Filter" tabs
+  now support "Activate All" and "Deactivate All" buttons.
+  
+-----------------------------------------------------------------------
+
+VERSION 1.11.1 ( September 13, 2008 )
+
+* Better exception handling and logging during class file analysis
+
+* Fixed cda.bat and cda.sh
+
+-----------------------------------------------------------------------
+
+VERSION 1.11 ( June 29, 2008 )
+
+* Introduced the Dependency Analyzer Remote Control (DARC).
+  It allows other Java applications to utilize CDA functionality via
+  remote calls and work further on the returned results.
+
+* BUGFIX
+  There was a memory leak when a workset was closed. The loaded container
+  package and class objects could not been removed by the GC.
+  No the references are released and GC can clean-up properly.  
+
+* Full name of selected element in tree is now shown in status line.
+  
+* After changing a workset definition it gets now saved before analyzing
+  its claspath.
+  
+* Using newer version of libraries
+  - pf.jar V3.8.1
+  - pf-mvc.jar V2.8
+
+-----------------------------------------------------------------------
+
+VERSION 1.10 ( February 15, 2008 )
+
+* All DTD files (workset-1.6.dtd, odem-1.1.dtd) are now declared by
+  a public logical name and a URI that points to the file location 
+  in the web.
+  That should simplify validation of the corresponding XML files.
+  > http://dependency-analyzer.org/schema/dtd/workset-1.6.dtd
+  > http://pfsw.org/ODEM/schema/dtd/odem-1.1.dtd
+
+* CDA now supports ODEM/XML file in a workset's classpath.
+  That means, all dependency analysis can be executed also on ODEM/XML 
+  files alone or together with Java binaries.
+
+* Export of XML files now appends automatically file extension ".odem"
+  to file name.
+  
+* After editing a workset with the workset wizard a re-initialization
+  of the classes and their dependencies will now be executed only if
+  any data has been changed that might have an impact on this 
+  initialization. That is, any of the the "Variables", "Classpath" or 
+  "Ignore Filters" has been changed.
+  
+* A progress monitor window is shown now during the whole initialization
+  process of a workset. There is a progress window per workset.
+
+* Windows showing circular dependencies graph and table now support Ctrl+C
+  to copy the selected rows in table to the clipboard.
+  
+* BUGFIX
+  If class java.lang.Object was not excluded from analysis by an 
+  Ignore Filter then it could happen that in hierarchy graph views
+  this class was shown multiple times.
+  Now it is ensured that java.lang.Object will be shown only once.
+  
+* BUGFIX
+  When a table was scrolled vertically or horizontically the popup menu
+  showed up far away from the mouse pointer (at bottom or right side 
+  of window).
+  Now the popup menu in tables shows up at the current mouse pointer 
+  position.
+  
+* BUGFIX
+  When a graph window is opened on two different worksets but for the same 
+  class then the first one is reused an brought to front.
+  Corrected behaviour is to have the graph view opened per workset.
+
+* Using newer version of libraries
+  - pf.jar V3.7
+  - pf-odem.jar V0.5
+  - pf-mvc.jar V2.7
+  - forms-1.1.0.jar
+  - looks-2.1.4.jar
+  - y.jar V2.4.0.3
+  
+-----------------------------------------------------------------------
+
+VERSION 1.9.1 ( August 16, 2007 )
+
+* Container elements can now be marked as "Third Party Library".
+  That is helpful in some cases where such libraries should be excluded
+  from the analysis.
+
+* Supports now detection of circular dependencies with several options
+  to ignore special cases (e.g. third party libraries, cycles in the
+  same package, ...)
+
+* For classes and packages it is now possible to show the "distance" of
+  the dependencies by separate colors.
+  That is,
+  class-to-class dependency where both classes in the same package: green
+  class-to-class dependency where the classes in different packages: blue
+  class-to-class dependency where the classes in different containers: red
+
+  package-to-package dependency where both packages in the same container: blue
+  package-to-package dependency where the packages in different containers: red
+
+* Input dialog for classpath elements now provides help text for 
+  pattern usage.
+
+* BUGFIX:
+  When installing CDA in a folder that contains a space (e.g. Program Files),
+	Toolbar icons do not show.
+	Following stacktrace appears:
+	
+	Loading configuration from file:/C:/Program Files/pf-cda-1.9/config/cda.properties
+	E Failed to load config file: cda_ui.xml
+	java.io.FileNotFoundException: C:\Program%20Files\pf-cda-1.9\pf-cda-swing.jar\cda_ui.xml
+	        at org.pf.file.FileLocator.getInputStream(FileLocator.java:422)
+	        at org.pf.tools.cda.ui.UserInterfaceConfigurer.readConfigFile(Unknown Source)
+	        at org.pf.tools.cda.ui.UserInterfaceConfigurer.initFrom(Unknown Source)
+	        at org.pf.tools.cda.ui.UserInterfaceConfigurer.<init>(Unknown Source)
+
+  ==> Fixed by using new pf.jar 3.6.1 which includes bugfix for proper
+      URL encoding/decoding
+
+* BUGFIX: Avoid NPE in Drag&Drop functionality
+  java.lang.NullPointerException
+	at org.pf.tools.cda.ui.dnd.AnalyzableElementTransferHandler.canImport(AnalyzableElementTransferHandler.java:71)
+	at javax.swing.TransferHandler$DropHandler.dragEnter(TransferHandler.java:651)
+	at java.awt.dnd.DropTarget.dragEnter(DropTarget.java:337)
+	  
+* XML file export now adds new attributes isFinal="yes", isAbstract="yes" and
+  visibility="public" to <type> tag.
+
+* Using newer version of libraries
+  - pf.jar V3.6.1
+  - pf-odem.jar V0.4
+
+-----------------------------------------------------------------------
+
+VERSION 1.9 ( April 8, 2007 )
+
+* Plug-in API defined
+  --> Generalized model: Object Dependency Exploration Model (ODEM)
+  --> Extension points (custom window, model export)
+  --> Javadoc
+  --> Developer Guide
+
+* "Find Dependants" feature is now also available on
+  > Packages
+  > Containers
+
+* A new feature to find all duplicate classes is now available via the
+  popup menu on a workest node in the tree view.
+
+* The container for all classes that have not been found is now also
+  shown in the tree view.
+
+* The display filter can be activated/deactivated per container in the
+  tree view.
+  
+* The new generic API for dependency analysis 
+  ODEM (Object Dependency Exploration Model)
+  is now supported by CDA. 
+
+* Supports now hiding/showing and auto positioning of main window.
+	That means, right half of split-screen gets shrinked away and window
+  gets positioned to the left of the screen. (Use Alt+W)
+
+* All sub-windows now provide a toolbar button that moves the main window 
+  to front.
+
+* Class overview pages show now the class file version and minimum 
+  required JVM version
+  
+* On package, container and workset level highest class file version and
+  corresponding minimum required JVM version of the contained classes are shown
+  .  
+* In all table windows a toolbar button was added that allows to open a 
+  graph view on the elements shown in the table 
+
+* In the dependency path tracking graph it is now also possible via popup menu to
+  - select the current element in the tree view of the main window
+  - open a new graph view window on the current element 
+
+* In package and container graphs it is now possible select whether to open the 
+  details information on a dependency in a graph or a table window
+
+* Avoid duplicate container (i.e. JARs, folders) when assempling the classpath 
+  elements
+
+* With the new configuration parameter 'ui.graph.dependency.paths.threshold' 
+  it is now possible to define a threshold for the number of dpendency paths 
+  to be shown in a graph without warning.
+	The warning will be shown if that threshold is exceeded. However, the user can
+	still decide to continue with creating the dpendency graph.
+
+* BUGFIX: 
+  Dropping elements to a graph from a different workset are now prevented!
+
+* BUGFIX:
+  In some cases (particular with worksets containing many classes) the 
+  following exception occured:
+  java.util.ConcurrentModificationException
+		at java.util.AbstractList$Itr.checkForComodification(AbstractList.java:448)
+		at java.util.AbstractList$Itr.next(AbstractList.java:419)
+		at org.pf.tools.cda.model.ClassContainer.findPackage(ClassContainer.java:482)
+
+	That was because the background process which did the class file analyzing for 
+	all classes was not yet finished. A simultaneously started analysis (thread)
+	on the dependencies now collided with that background thread.
+	Proper synchronization whould have been an option. But the overhead would 
+	slow down class file analysis even further.
+	
+	So from now on dependency analysis can be executed NOT before all class files
+	have been	loaded and analyzed.
+
+* Upgraded to 
+  > forms-1.0.7.jar
+  > looks-2.1.2.jar
+  > pf.jar V3.6
+  > pf-joi.jar V2.3
+  
+-----------------------------------------------------------------------
+
+VERSION 1.8.1 ( December 16, 2006 )
+
+* BUGFIX: Some classes or dependency arrows where missing in hierarchy 
+  graph.
+
+* BUGFIX: In the tree view with container names the number of classes 
+  has not been shown anymore if "short container names" option were selected.
+
+* BUGFIX: Table in "Edit Filter" dialog didn't resize correctly when
+  dialog window was resized.
+
+* BUGFIX: "Edit Filter" dialog wasn't modal and therefore disappeard
+  behind the main window whenever an input dialog for a new or editing
+  an existing filter entry was opened.
+  Now the dialog is modal.
+
+* BUGFIX: Recognizing static class array definitions like 
+  org.pf.tools.cda.model.Element[].class
+  produced class entrys with a name like "[Lorg.pf.tools.cda.model.Element;"
+
+* The Workset wizard now caches the last directory selection of its
+  file dialog for classpath definitions.
+
+-----------------------------------------------------------------------
+
+VERSION 1.8 ( December 1, 2006 )
+
+* In some cases where classes are loaded via Class.forName(String)
+  these classes are now recognized and added to the dependency list.
+
+* The modifiers "public", "abstract" and "final" are now shown in the
+  overview tab for a class.
+  
+* In graph views the names of abstract classes, interfaces, annotations 
+  are now shown with ITALICS font style to distinguish them from 
+  concrete classes.
+
+* Various new settings in cda.properties
+  > ui.graph.text.font
+  > ui.graph.class.separate.package
+  > ui.graph.class.show.icon
+  > ui.graph.grid.size
+
+* Some enhancements have been added to the overview tab 
+  - There is now a button available to jump to the container and one to 
+    jump to the package in the tree view.
+  - On all levels the number of contained elements are shown
+    (e.g. number of contained classes)
+
+* In the tree view it is now possible to open various graph views on the
+  currently selected 
+  > class
+  > package
+  > container
+
+* Workset wizard supports now proper resizing of window
+
+* A new option in the classpath definition tab of the workset wizard
+  allows to turn on/off whether container names should be displayed
+  with their short names.
+
+* Support of adding more elements (of the same type) to an opened 
+  graph view by drag & drop
+
+* Show details for the dependency between two packages (i.e. a list
+  of all class dependency pairs that cause the package dependency)
+
+* Show details for the dependency between two class containers 
+  (i.e. a list of all class dependency pairs that cause the container 
+  dependency)
+
+* In a details list of dependencies it is supported to jump to the
+  tree view for any class shown in the dependencies table
+
+* Support COPY (Ctrl+C) in dependency details table
+
+* Allow opening a graph on all containers of a workset
+
+* Allow opening a graph on all packages of a container
+
+* Allow opening a graph on all classes of a package
+
+* On each element in a graph view it is possible via pop-up menu to 
+  jump to the element in the tree view of the main window
+
+* BUGFIX: Classes that are only referenced by ClassName.class 
+  are now found and added to the dependency list.
+  
+* BUGFIX: Start background analyzer threads again if relevant changes
+  of workset have been accepted/saved (e.g. classpath changed)
+
+-----------------------------------------------------------------------
+
+VERSION 1.7 ( October 13, 2006 )
+
+* Changed graphics library from JGraph to yGraph (www.yworks.com)
+
+* New supported features in dependency path tracker graph
+  > Zooming
+  > Auto-Layout
+  > Change of layout direction (left->right, right->left, top->bottom, bottom->top)
+  > Printing the graph (with print preview)
+  > Storing the graph as JPG, GIF or GML file
+  > Toolbar and hotkey support
+
+-----------------------------------------------------------------------
+
+VERSION 1.6.3 ( September 16, 2006 )
+
+* Corrected bat and sh files to allow path names with blanks
+
+* Bugfix: Finding cda.properties didn't work if CDA was started with 
+  -jar option
+  
+* New version 1.3 of pf-ssgen bundled with CDA
+  
+* DEPENDENCY CHANGES
+  
+  > pf.jar 3.5.2
+
+-----------------------------------------------------------------------
+
+VERSION 1.6.2 ( September 1, 2006 )
+
+* Bugfix: All JAR files have been kept open until CDA was terminated.
+  Now the archives are closed after their contents has been analyzed.
+
+* DEPENDENCY CHANGES
+  
+  > pf.jar 3.5.1
+
+-----------------------------------------------------------------------
+
+VERSION 1.6.1 ( July 8, 2006 )
+
+* Bugfix: Closing a workset sometimes caused a NullPointerException
+
+-----------------------------------------------------------------------
+
+VERSION 1.6 ( June 11, 2006 )
+
+I) NEW FEATURES
+  
+  * New search function: Find all implementors of the selected interface.
+    Opens up a new window with the list of all classes that implement
+    the interface directly or indirectly.
+
+  * New search function: Find direct implementors of the selected interface.
+    Opens up a new window with the list of all classes that implement
+    the interface directly.
+
+  * New search function: Find direct dependants of selected class/interface.
+    Opens up a new window with the list of all classes depending on
+    the class or interface selected in the tree view.
+
+  * In tables the selected rows now can be copied to the clipboard.
+    The separator for the columns is a tabulator which allows to easily
+    paste the contents to a spreadsheet like MS Excel or OpenOffice
+    spreadsheet.
+    However, the separator can be configured to a different value in
+    cda.properties.
+ 
+II) ENHANCEMENTS
+
+  * Supports now all new Java 5 types in dependency analysis:
+    > annotaions
+    > enums
+    > generics
+
+  * Extreme performance optimization (class file analyzing reduced down
+    to 17% of the time previous versions needed)
+     
+  * Running background thread (low prio) per workset to load class file
+    information. Increases performance dramatically.
+  
+  * Added large icons for element type in overview tab
+
+III) DEPENDENCY CHANGES
+  
+  * pf.jar 3.4 
+  
+  * pf-mvc.jar 2.3
+  
+  * bcel.jar (special version 5.1/A1.0 to support Java 5)
+
+IV) BUGFIXES
+
+  * Handle classes in default package (i.e. no package name) 
+    correctly. Former versions failed to analyze such classes.
+
+  * Analyzing Eclipse .classpath files didn't locate entries
+    like kind="lib" path="/Project2/lib/xyz.jar" correctly.
+  
+  * There was a memory leak in the dependency table. For each
+    change in the display options a new table model was added to internal
+    observer list
+  
+-----------------------------------------------------------------------
+
+VERSION 1.5 ( April 2, 2006 )
+
+* Uses pf.jar V3.3 now
+
+* Supports export of a workset and all contained model objects to an
+  XML file. It is also possible to just export a selected element in
+  the tree view and all its children.
+
+* Provides a plug-in mechanism for further model export implementations
+
+* Added search function for containers and packages
+
+* New configuration settings in cda.properties are supported
+  - ui.dependency.display.filter.default
+  - ui.dependency.graph.text.size
+
+* Changed from resource bundles to NLS-ini files that support UTF-8
+
+* A new global variable CDA_HOME is now automatically set to the
+  directory where the cda-base.jar is located.
+  That allows to use {CDA_HOME} to refer to the install dir of CDA.
+
+* Changed example CDA.ws workset so that it will work on any
+  machine (if it is still located under the install directory)
+
+* Bugfix: Workset files are now properly saved with UTF-8 encoding.
+
+* Support of automatic workset loading at startup.
+  Can be disabled via the new property "workset.auto.loading".
+  If active, all worksets that have been open at last CDA exit will
+  automatically be reloaded if they have been marked as auto-reloadable.
+
+* Bugfix: For an Eclipse classpath there was an uncatched 
+  FileNotFoundException if a reference to a project in a different
+  workspace was in the classpath.
+  That's fixed now (at least for Eclipse 3.1.x it should be ok) 
+
+* Bugfix: After analyzing an element it sometime happened that the 
+  divider was set to the right window edge. That has hidden the whole
+  right part (e.g. the dependency table).
+  Now the divider will not change anymore.
+
+-----------------------------------------------------------------------
+
+VERSION 1.4.1 ( March 3, 2006 )
+
+* Uses pf.jar V3.2.1 now
+
+* Delivered now with Start Shell Script Generator V1.2 (pf-sssgen.jar)
+
+* BUGFIX: On Unix systems neither the toolbar icons nor the hotkeys
+  worked due to a bug in locating and reading config file "cda_ui.xml"
+  
+* BUGFIX: After saving a workset the state of "Save Workset" action 
+  was not set to disabled.
+
+* BUGFIX: Workset was not correctly refreshing its classpath elements
+  if just a classpath variable has been modified.
+  
+* Added sssgen.sh
+
+-----------------------------------------------------------------------
+
+VERSION 1.4 ( February 26, 2006 )
+
+* Support for classpath calculation from Eclipse project's .classpath
+  files.
+
+* Container-Info now shows the type Java Archive or File Directory
+
+* Container-Info now shows the contents of the manifest file if
+  available
+
+* Workset info now shows the number of all classes in the workset
+  
+* Bugfix: In previous version the extended interfaces of an interface
+  have not been shown correctly
+
+* Bugfix: GUI does not block anymore if during initial container 
+  scanning the workset element is selected with the mouse
+
+-----------------------------------------------------------------------
+
+VERSION 1.3 ( February 4, 2006 )
+
+* Short info view for classes and interfacses now shows the superclass
+  and all directly implemented interfaces with a button that allows to
+  find for those referred classes in the tree view.
+
+* Added toolbar with most important actions
+
+* Loading a workset file (*.ws) does not require the file workset.dtd
+  in the same directory anymore. The XML parser is not validating the
+  workset file anymore.
+  
+* If there are problems with loading a workset file, now better error
+  messages help to detect the reason.
+
+* Supports now a selection history (per workset) that allows to
+  navigate backward/forward (with Alt+Left, Alt+Right and toolbar) 
+  through the slected elements in the tree.
+  (currently limited to 10 entries).
+  
+* Supports ** in classpath definition to indicate recursive file lookup
+
+* The dependency tracking view nows shows the different dependency
+  types (extends, implements, refers to) in different arrow colors and 
+  shapes.
+  The colors are changed for better contrast and the icon representing
+  a class or an interface gets displayed as well. 
+
+* In the dependency tracking view class names are shortened at their
+  beginning if they are getting too long to be read.
+  
+* For each selected element that can be analyzed the information view
+  on the right half of the window is now a panel with two tabs.
+  One for the "Overview" and one for the "Dependencies".
+  That now allows to still see the overview even after the element
+  has been analyzed.
+  
+-----------------------------------------------------------------------
+
+VERSION 1.2 ( January 14, 2006 )
+
+* Names of containers (archives) and packages in the tree view can now
+  be limited to a specific length. If they exceed this length, the name
+  will be reduced and the missing piece will be shown as "..." or "*".
+  The maximum length can be specified in cda.properties by the properties
+  - ui.tree.display.length.container
+  - ui.tree.display.length.package
+  
+* The tree view now can show the number of classes in a package and in
+  a container with the corresponding tree nodes.
+  This feature can be switched on or off in cda.properties by property
+  - ui.tree.show.class.count
+
+* The progress of the background thread that's scanning the containers
+  for included packages and classes now is shown in the status line
+  at the bottom of the main window.
+  
+* When analyzing dependencies a progress monitor window is shown.
+  It shows each class that gets currently analyzed and it allows to
+  stop analysis with a cancel button.
+
+* All supported hotkeys are now shown with their corresponding 
+  menu items.
+
+* The dependency table now gets resized when the window size is changed.
+
+Known Bugs:
+
+> Sometimes after analyzing a class, package or container the right
+  half of the spit screen vanishes.
+  If that happens, just move the mouse to the right edge of the window
+  and draw the split screen separator back to the middle. 
+
+-----------------------------------------------------------------------
+
+VERSION 1.1 ( December 2, 2005 )
+
+* Fixed NullPointerExecption if workset.dtd was not found
+
+* Fixed bug in copying workset.dtd to directory where a workset gets
+  stored to
+
+* Now based on pf.jar V3.1
+
+* Added icon for desktop shortcuts
+
+-----------------------------------------------------------------------
+
+VERSION 1.0 ( June 24, 2004 )
+
+* Bugfix: Workset file wasn't closed after save
+
+* workset.dtd will now be copied automatically to all new folders
+  where a workset gets stored to
+
+* Supports multiple placeholder replacement
+
+* Supports searching for classes
+
+* Packages are sorted per JAR/DIR in the tree view
+
+* Classes are sorted per package in the tree view
+
+-----------------------------------------------------------------------
+
+VERSION 0.8 ( February 1, 2004 )
+
+* Provides a GUI that shows a hierarchy tree on the left
+  (workset/container/package/class) and on the right a table with the
+  dependencies of the selected class or package or container in the tree.
+
+* Supports filters in Workset to define patterns
+  for ignoring specific packages/classes
+  (e.g. java.* ; javax.* ; com.sun.* )
+
+* Supports dependency analysis on different levels:
+  - class -> classes
+  - class -> packages
+  - class -> class containers
+  - package -> classes
+  - package -> packages
+  - package -> class containers
+  - class container -> classes
+  - class container -> packages
+  - class container -> class containers
+
+* Displays the current number of rows shown in the dependency table.
+
+* Supports variables/placeholders:
+  - Global variables, loaded at startup from 'cda_vars.properties'
+  - Local variables that can be specified per workset
+  
+  Variables can be used in all classpath parts.
+
+* Displays short info for not yet analyzed classes, packages and
+  containers
+
+* Displays short info for selected workset
+
+* Provides a dialog to create new worksets or edit existing worksets
+
+-----------------------------------------------------------------------
+

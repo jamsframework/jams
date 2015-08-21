@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>StandardLUReader</title>
+  <subtitle>Eine Komponente zum Auslesen von Landnutzungsinformation aus einem
+    ASCII-File.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+          <entry>j2k.io</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variablen</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Beschreibung</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>luFileName</entry>
+          <entry>Dateiname von Landnutzungsparametern</entry>
+        </row>
+        <row>
+          <entry>hrus</entry>
+          <entry>Liste von HRU-Objekten</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+    <para>Diese Komponente liest Landnutzungsinformation aus einer ASCII-Datei, die durch <emphasis
+        role="italic">luFileName</emphasis> identifiziert wird. Für jede Einheit der Liste <emphasis
+        role="italic">hrus</emphasis> wählt es den Landnutzungstypen, der durch sein Attribut
+        <ns:emphasis>landuseID</ns:emphasis> identifiziert wird, und fügt die entsprechende
+      Landnutzungsinformation zum Attributeset der Einheit hinzu. Ein Beispiel für ein Parameterfile
+      der Landnutzung wird in der Abbildung (<xref xmlns:xlink="http://www.w3.org/1999/xlink"
+        linkend="org.unijena.j2k.io.StandardLUReader_en_fig1" xrefstyle="select: label"/>) dargestellt.</para>
+    <figure xml:id="org.unijena.j2k.io.StandardLUReader_en_fig1">
+      <title>Ausschnitt aus einem Beisipiel einer ASCII-Datei mit Landnutzungsinformation</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="lu_file.png" scale="70" width="100%"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+  </sect2>
+</sect1>

@@ -1,0 +1,1366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 xmlns="http://docbook.org/ns/docbook" version="5.0">
+    <title>org.jams.j2k.s_n.J2KNSoilLayer</title>
+    <subtitle/>
+    <informaltable><tgroup cols="3">
+<colspec colname="c1" colnum="1" colwidth="1.0*"/>
+<colspec colname="c2" colnum="2" colwidth="5.74*"/>
+<thead>
+<row>
+<entry namest="c1" nameend="c2">Metainformationen</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry>Komponente</entry>
+<entry namest="c2" nameend="newCol3">J2KNSoilLayer</entry>
+</row>
+<row>
+<entry>Modellprozess</entry>
+<entry namest="c2" nameend="newCol3">Calculates Nitrogen transformation Processes in Soil. Method
+                        after SWAT2000 with adaptions</entry>
+</row>
+<row>
+<entry>Paket</entry>
+<entry namest="c2" nameend="newCol3">package org.jams.j2k.s_n</entry>
+</row>
+<row>
+<entry>Autor</entry>
+<entry namest="c2" nameend="newCol3">Manfred Fink</entry>
+</row>
+<row>
+<entry>Version</entry>
+<entry namest="c2" nameend="newCol3">1.0</entry>
+</row>
+<row>
+<entry>Modifikationsdatum</entry>
+<entry namest="c2" nameend="newCol3">2010-11-22</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+<informaltable>
+<tgroup cols="7">
+<colspec colname="c1" colnum="1" colwidth="1.0*"/>
+<colspec colname="newCol2" colnum="2" colwidth="2.96*"/>
+<colspec colname="c2" colnum="3" colwidth="1.15*"/>
+<colspec colname="newCol4" colnum="4" colwidth="1.23*"/>
+<colspec colname="newCol5" colnum="5" colwidth="1.1*"/>
+<colspec colname="newCol6" colnum="6" colwidth="1.25*"/>
+<colspec colname="newCol7" colnum="7" colwidth="1.28*"/>
+<thead>
+<row>
+<entry namest="c1" nameend="newCol7">Variablen</entry>
+</row>
+<row>
+<entry>Variable</entry>
+<entry>Beschreibung</entry>
+<entry>Einheit</entry>
+<entry>Wertebereich</entry>
+<entry>Datentyp</entry>
+<entry>Variablentyp</entry>
+<entry>Defaultwert</entry>
+</row>
+</thead>
+<tbody>
+
+<row>
+<entry>area</entry>
+<entry>attribute area</entry>
+<entry>m^2</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Layer</entry>
+<entry> number of soil layers</entry>
+<entry>-</entry>
+<entry>0.0...100.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>layerdepth</entry>
+<entry>depth of soil layer</entry>
+<entry>cm</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>totaldepth</entry>
+<entry>depth of soil profile</entry>
+<entry>cm</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>rootdepth</entry>
+<entry>in m actual depth of roots</entry>
+<entry>m</entry>
+<entry>0.0...100.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>soil_bulk_density</entry>
+<entry>soil bulk density</entry>
+<entry>kg*dm^3^-1</entry>
+<entry>0.0...20.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sat_LPS</entry>
+<entry>actual LPS in portion of sto_LPS soil water content</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sat_MPS</entry>
+<entry>actual MPS in portion of sto_MPS soil water content</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>stohru_MPS</entry>
+<entry>maximum MPS (Middle Pore Storage) soil water content</entry>
+<entry>L</entry>
+<entry>0.0...2000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>stohru_LPS</entry>
+<entry>maximum LPS (Large Pore Storage) soil water content</entry>
+<entry>L</entry>
+<entry>0.0...2000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>stohru_FPS</entry>
+<entry>maximum FPS (Fine Pore Storage) soil water content</entry>
+<entry>L</entry>
+<entry>0.0...2000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Soil_Temp_Layer</entry>
+<entry>soil temperature in layerdepth</entry>
+<entry>°C</entry>
+<entry>-70.0...70.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>C_org</entry>
+<entry>portion of organic Carbon in soil</entry>
+<entry>%</entry>
+<entry>0.0...100.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>NO3_Pool</entry>
+<entry>NO3-Pool, N content in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>NH4_Pool</entry>
+<entry>NH4-Pool, N content in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>N_activ_pool</entry>
+<entry>N-Organic Pool with reactive organic matter, N content in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>N_stabel_pool</entry>
+<entry>N-Organic Pool with stable organic matter, N content in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sN_activ_pool</entry>
+<entry>sum of N-Organic Pool with reactive organic matter, N content in the entire soil profile</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sN_stabel_pool</entry>
+<entry>sum of N-Organic Pool with stable organic matter, N content in the entire soil profile</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1.0E7</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sNO3_Pool</entry>
+<entry>sum of NO3-Pool, N content in the entire soil profile</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sNH4_Pool</entry>
+<entry>sum of NH4-Pool, N content in the entire soil profile</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sNResiduePool</entry>
+<entry>sum of NResiduePool, N content in the entire soil profile</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sinterflowNabs</entry>
+<entry>sum of soil layers of N in interflow absolute leaving the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E8</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sinterflowN</entry>
+<entry>sum of soil layers of N in interflow leaving the HRU</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Residue_pool</entry>
+<entry>Residue biomass in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>N_residue_pool_fresh</entry>
+<entry>N-Organic fresh Pool from Residue, N content in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>aEP_h</entry>
+<entry>actual evaporation in Layer</entry>
+<entry>L</entry>
+<entry>0.0...1.0E8</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>w_layer_diff</entry>
+<entry>mps diffusion between layers value</entry>
+<entry>L</entry>
+<entry>0.0...1.0E8</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>RD1_out</entry>
+<entry>surface runoff leaving the HRU</entry>
+<entry>L</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>RD2_out</entry>
+<entry>interflow leaving the HRU in every layer</entry>
+<entry>L</entry>
+<entry>0.0...1.0E8</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>D_perco</entry>
+<entry>percolation leaving the HRU</entry>
+<entry>L</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Volati_trans</entry>
+<entry>voltalisation rate from NH4_Pool in N leaving the HRU</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>NH4inp</entry>
+<entry>NH4 fertilizer rate in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Nitri_trans</entry>
+<entry>nitrification rate from  NO3_Pool in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Denit_trans</entry>
+<entry>denitrification rate from  NO3_Pool in N leaving the HRU</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>SurfaceN</entry>
+<entry>Nitrate in surface runoff in N leaving the HRU</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>InterflowN</entry>
+<entry>Nitrate in interflow in N leaving the HRU for each layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>PercoN</entry>
+<entry>Nitrate in percolation in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>SurfaceNabs</entry>
+<entry>Nitrate in surface runoff in N absolute leaving the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>InterflowNabs</entry>
+<entry>Nitrate in interflow in N absolute leaving the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>PercoNabs</entry>
+<entry>Nitrate in percolation in N absolute leaving the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>SurfaceN_in</entry>
+<entry>Nitrate in surface runoff added to HRU layer in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>InterflowN_in</entry>
+<entry>Nitrate in interflow in added to HRU layer in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>BioNoptAct</entry>
+<entry>potential nitrogen content of plants in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>BioNAct</entry>
+<entry>actual nitrate nitrogen content of plants in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>actnup</entry>
+<entry>actual nitrate uptake of plants in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>infiltration_hor</entry>
+<entry>intfiltration poritions for the single horizonts</entry>
+<entry>L</entry>
+<entry>0.0...1.0E7</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>perco_hor</entry>
+<entry>percolation out ouf the single horizonts</entry>
+<entry>L</entry>
+<entry>0.0...1.0E7</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>actETP_h</entry>
+<entry>percolation out ouf the single horizonts</entry>
+<entry>L</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>fertNO3</entry>
+<entry> Nitrate input due to Fertilisation in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>fertNH4</entry>
+<entry> Ammonium input due to Fertilisation in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>fertstableorg</entry>
+<entry> Stable organig N input due to Fertilisation in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>fertactivorg</entry>
+<entry> Activ organig N input due to Fertilisation in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sum_Ninput</entry>
+<entry>Sum of N input due fertilisation and deposition in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>fertorgNfresh</entry>
+<entry>Current organic fertilizer amount added to residue pool</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>inp_biomass</entry>
+<entry> Input of plant residues</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>inpN_biomass</entry>
+<entry>Nitrogen input of plant residues in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>precip</entry>
+<entry>precipitation</entry>
+<entry>mm</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>time</entry>
+<entry>Current time</entry>
+<entry></entry>
+<entry>0.0...0.0</entry>
+<entry>jams.data.JAMSCalendar</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>dormancy</entry>
+<entry>indicates dormancy of plants</entry>
+<entry></entry>
+<entry>0.0...0.0</entry>
+<entry>jams.data.JAMSBoolean</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>App_time</entry>
+<entry>time since the last PIADIN application</entry>
+<entry>d</entry>
+<entry>0.0...400.0</entry>
+<entry>jams.data.JAMSInteger</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>nmin</entry>
+<entry>Mineral nitrogen content in the soil profile down to 60 cm depth in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>root_h</entry>
+<entry>Indicates whether roots can penetrate or not the soil layer</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sedi_in</entry>
+<entry>Anmount of sediments entering the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sedi_out</entry>
+<entry>Anmount of sediments leaving the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>NH4_in</entry>
+<entry>NH4 in surface runoff added to HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>residue_in</entry>
+<entry>Residue-N in surface runoff added to HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>activ_in</entry>
+<entry>Activ-N in surface runoff added to HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>stabel_in</entry>
+<entry>Stable-N in surface runoff added to HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>NH4_out</entry>
+<entry>NH4 in surface runoff leaving the HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>residue_out</entry>
+<entry>Residue-N in surface runoff leaving the HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>activ_out</entry>
+<entry>Activ-N in surface runoff leaving the HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>stabel_out</entry>
+<entry>Stable-N in surface runoff leaving the HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Beta_trans</entry>
+<entry>rate constant between N_activ_pool and N_stabel_pool = 0.00001</entry>
+<entry>-</entry>
+<entry>1.0E-5...1.0E-5</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.00001</entry>
+</row>
+<row>
+<entry>Beta_min</entry>
+<entry>rate factor between N_activ_pool and NO3_Pool to be calibrated</entry>
+<entry>-</entry>
+<entry>0.0010...0.0030</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.002</entry>
+</row>
+<row>
+<entry>Beta_rsd</entry>
+<entry>rate factor between Residue_pool and NO3_Pool to be calibrated</entry>
+<entry>-</entry>
+<entry>0.1...0.02</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.03</entry>
+</row>
+<row>
+<entry>Beta_NO3</entry>
+<entry>percolation coefitient to calibrate</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.2</entry>
+</row>
+<row>
+<entry>Beta_Ndist</entry>
+<entry>nitrogen uptake distribution parameter to calibrate</entry>
+<entry>-</entry>
+<entry>1.0...15.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>1</entry>
+</row>
+<row>
+<entry>infil_conc_factor</entry>
+<entry>infiltration bypass parameter to calibrate = 0 - 1</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>1</entry>
+</row>
+<row>
+<entry>denitfac</entry>
+<entry>denitrfcation saturation factor to calibrate</entry>
+<entry>-</entry>
+<entry>0.7...1.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.91</entry>
+</row>
+<row>
+<entry>deposition_factor</entry>
+<entry>concentration of Nitrate in rain in N</entry>
+<entry>kg*mm^-1*ha^-1</entry>
+<entry>0.0...0.1</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.03</entry>
+</row>
+<row>
+<entry>enrichment</entry>
+<entry>Enrichment factor for sediment bounded N-Pools</entry>
+<entry>-</entry>
+<entry>1.0...10.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>1</entry>
+</row>
+<row>
+<entry>piadin</entry>
+<entry>Indicates PIADIN application</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSInteger</entry>
+<entry>READ</entry>
+<entry>0</entry>
+</row>
+<row>
+<entry>opti</entry>
+<entry>Indicates fertilazation optimization with plant demand</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSInteger</entry>
+<entry>READ</entry>
+<entry>0</entry>
+</row>
+ </tbody>
+</tgroup>
+</informaltable>
+   
+    <informaltable>
+        <tgroup cols="1">
+            <colspec colname="c2" colnum="1" colwidth="1.36*"/>
+            <thead>
+                <row>
+                    <entry>Beschreibung der Komponente</entry>
+                    
+                        
+                
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry><para><emphasis role="bold"><emphasis role="underline">Bodenstickstoffmodul</emphasis></emphasis>
+                        </para><para>Die Beschreibung des Bodenstickstoffhaushalts erfolgt analog zu der im Modell SWAT (Arnold et
+                            al. 1998, Neitsch et al. 2001). Hierbei werden in den einzelnen
+                            Bodenhorizonten die 5 Stickstoffpools für Nitrat, Ammonium, stabile
+                            organische Substanz, aktive organische Substanz, frische Pflanzenrest
+                            Biomasse unterschieden. Die Flüsse und Transformationen zwischen den
+                            Pools und außerhalb des Bodens: Nitrifikation, Denitrifikation,
+                            Mineralisation, Volatilation, Pflanzenaufnahme und Auswaschung, werden
+                            durch empirische Beziehungen in Abhängigkeit der Bodenfeuchte und
+                            Bodentemperatur berechnet. Der Nitratfluss wird äquivalent zum
+                            Wassertransport durch ein Routingverfahren zwischen den Teilflächen und
+                            zum Vorfluter weitergegeben (vgl. Abbildung 1).</para>
+                        <para>Der Stickstoffeintrag über Düngung und
+                            Bestandesabfall wird, ebenso wie der Entzug durch die Pflanzen, vom
+                            Pflanzenwachstums- und Landnutzungsmanagementmodul bereitgestellt. Die
+                            mineralischen Einträge werden dem Ammoniumpool oder direkt dem
+                            Nitratpool zugeführt. Der organische Stickstoff geht entweder in die
+                            Pools für den Bestandesabfall oder in den aktiven organischen Pool ein.
+                            Der Abbau des Bestandesabfalls geht in Abhängigkeit vom C/N-Verhältnis
+                            in Anteilen in den Nitratpool oder in den aktiven organischen Pool ein.
+                            Der aktive organische Pool steht im Gleichgewicht mit dem stabilen
+                            organischen Pool. Der Nitratpool stellt die zentrale Verteilstelle für
+                            die Austräge in Form von Auswaschung, Pflanzenaufnahme und
+                            Denitrifikation dar. Die im Modul beschriebenen Prozesse finden in
+                            verschiedenen frei parametrisierbaren Bodenhorizonten statt. Hierbei
+                            beschränken sich die Zuführung von organischer Substanz und Dünger und
+                            die Abfuhr von Stickstoff mit dem Oberflächenabfluss auf den obersten
+                            Horizont. </para><para><inlinemediaobject>
+                                <imageobject>
+                                    <imagedata fileref="Bodenstickstoffmodul.jpg"/>
+                                </imageobject>
+                            </inlinemediaobject></para><para>Abbildung 1: Struktur des
+                            Bodenstickstoffmoduls </para><para>Das hier eingesetzte Stickstoffmodul enthält einige starke Vereinfachungen. So wird keine
+                            Pflanzenaufnahme aus dem Ammoniumpool ermöglicht. Weiterhin wird die
+                            Dekomposition der organischen Substanz direkt zu Nitrat simuliert, statt
+                            den Umweg über Ammonium zu gehen. Die N-Immobilisierung von
+                            mineralischem zu organischem Stickstoff in der Bodenzone wird komplett
+                            vernachlässigt. Auch der Wassertransport von Stickstoff wird stark
+                            generalisiert abgebildet. So findet eine vollständige Durchmischung des
+                            Stickstoffs in den einzelnen Speichern statt, anstelle Advektion und
+                            Dispersion zu berücksichtigen. Die einzelnen Prozesse werden im Modell
+                            wie folgt beschrieben: </para>
+                        <para><emphasis role="bold">Pflanzenaufnahme</emphasis></para>
+                        <para>Zunächst wird der Bedarf (potentielle Pflanzenaufnahme) der Pflanze an
+                            Tag t0 ermittelt, der vom Bodenstickstoffspeicher gedeckt werden soll: </para>
+                        <para>&lt;math> potNup= BioNopt - BioN \! &lt;/math> [1] </para>
+                        <para>mit: '' &lt;math>potNup\!&lt;/math> = potentielle Pflanzenaufnahme
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>BioNopt\!&lt;/math> = optimale Biomasse [kgN/ha]'' </para>
+                        <para>'' &lt;math>BioN\!&lt;/math> = aktulelle Biomasse [kgN/ha]''</para>
+                        <para>Anschließend werden die Anteile der Bodenhorizonte ermittelt die
+                            innerhalb der effektiven Wurzelzone liegen. Hierbei werden die Horizonte
+                            die voll innerhalb der Wurzelzone liegen vollständig berücksichtigt
+                            (partroot = 1), während der Horizont der sind nur teilweise in der
+                            Wurzelzone befindet nur zu einem entsprechenden Anteil Berücksichtigung
+                            findet: </para>
+                        <para>&lt;math> partroot[i] = \frac {rootdepth - layerdepth[i -
+                            1]}{layerdepth[i] - layerdepth[i - 1]} \! &lt;/math> [2] </para>
+                        <para>mit: '' &lt;math>i\!&lt;/math> = Horizont [-] '' </para>
+                        <para>'' &lt;math>partroot\!&lt;/math> = Anteil des Horizonts an der
+                            Wurzelzone [-]'' </para>
+                        <para>'' &lt;math>layerdepth\!&lt;/math> = Untergrenze des Bodenhorizonts
+                            [-]''</para>
+                        <para>Die Verteilung der N-Aufnahme auf die einzelnen Horizonte findet in
+                            Abhängigkeit eines Kalibrationsparameters
+                            (&lt;math>\beta_{Ndist}\!&lt;/math>) statt. Hier wird zunächst die
+                            potenzielle Aufnahme für die einzelnen Horizonte berechtet:</para>
+                        <para>&lt;math>potNup_z[i] = \frac {potNup} {1 - \exp(-\beta_{Ndist})} \cdot
+                            \left(1 - \exp\left(-\beta_{Ndist} * \frac {layerdepth[i]}
+                            {rootdepth}\right)\right) - uptake[i-1]&lt;/math> [3]</para>
+                        <para> mit: '' &lt;math>i\!&lt;/math> = Horizont [-] '' </para>
+                        <para>'' &lt;math>partroot\!&lt;/math> = Anteil des Horizonts an der
+                            Wurzelzone [-]'' </para>
+                        <para>'' &lt;math>layerdepth\!&lt;/math> = Untergrenze des Bodenhorizonts
+                            [-]'' </para>
+                        <para>'' &lt;math>potNup\!&lt;/math> = potentielle Pflanzenaufnahme
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>potNup_z\!&lt;/math> = potentielle Pflanzenaufnahme in den
+                            einzelnen Horizonten [kgN/ha]'' </para>
+                        <para>'' &lt;math>uptake\!&lt;/math> = potentielle Pflanzenaufnahme die
+                            bereits von oben liegenden Horizonten entnommen wurde [kgN/ha]'' </para>
+                        <para>'' &lt;math>\beta_{Ndist}\!&lt;/math> = Verteilungssparameter der
+                            Pflanzenaufnahme; Vorgabewert = 1.0; mögliche Werte 1 - 15 [-]''</para>
+                        <para>Für die Berechnung der potentiellen Pflanzenaufnahme die bereits von
+                            oben liegenden Horizonten gedeckt wurde wird der folgende Zusammenhang
+                            verwendet: </para>
+                        <para>&lt;math> uptake = uptake + potNup_z[i] \! &lt;/math> [4] </para>
+                        <para>mit: '' &lt;math>potNup_z\!&lt;/math> = potentielle Pflanzenaufnahme
+                            in den einzelnen Horizonten [kgN/ha]'' </para>
+                        <para>'' &lt;math>uptake\!&lt;/math> = potentielle Pflanzenaufnahme die
+                            bereits von oben liegenden Horizonten entnommen wurde [kgN/ha]'' </para>
+                        <para>Die Berechnung eines Bedarfs erfolgt nach folgender Beziehung: </para>
+                        <para>&lt;math> demand = (NO_3Pool[i] \cdot partroot[i]) - potNup_z[i] \!
+                            &lt;/math> [5] </para>
+                        <para>mit: '' &lt;math>i\!&lt;/math> = Horizont [-] '' </para>
+                        <para>'' &lt;math>partroot\!&lt;/math>t = Anteil des Horizonts an der
+                            Wurzelzone [-]'' </para>
+                        <para>'' &lt;math>demand\!&lt;/math> = Bedarf der vom Bodenstickstoffpool
+                            gedeckt werden kann [kgN/ha]'' </para>
+                        <para>'' &lt;math>NO_3Pool\!&lt;/math> = Bodenstickstoffpool [kgN/ha]'' </para>
+                        <para>'' &lt;math>potNup_z\!&lt;/math> = potentielle Pflanzenaufnahme in den
+                            einzelnen Horizonten [kgN/ha]'' </para>
+                        <para>Ist dieser Bedarf größer 0 kann er durch den vorhandenen
+                            Bodenstickstoffspeicher gedeckt werden mit: </para>
+                        <para>&lt;math> NO_3Pool2[i] = \begin{cases} NO_3Pool1[i] - potNup_z[i]
+                            &amp; \mathrm{f\ddot{u}r} \; \; demand >= 0 \\ NO_3Pool1[i] -
+                            (NO_3Pool1[i] \cdot partroot[i])&amp; \mathrm{f\ddot{u}r} \; \; demand
+                            &lt; 0 \end{cases} &lt;/math> </para>
+                        <para>und </para>
+                        <para>&lt;math> demand = \begin{cases} demand[i] = 0 &amp;
+                            \mathrm{f\ddot{u}r}\; \; demand >= 0 \\ demand[i] = demand
+                            &amp;\mathrm{f\ddot{u}r} \; \; demand &lt; 0 \end{cases} &lt;/math> </para>
+                        <para>mit: '' &lt;math>i\!&lt;/math> = Horizont [-] '' </para>
+                        <para>'' &lt;math>demand\!&lt;/math> = Bedarf der vom Bodenstickstoffpool
+                            gedeckt werden kann [kgN/ha]'' </para>
+                        <para>'' &lt;math>NO_3Pool1\!&lt;/math> = Bodennitratpool vor dem
+                            Zeitschritt [kgN/ha]'' </para>
+                        <para>'' &lt;math>NO_3Pool2\!&lt;/math> = Bodennitratpool nach dem
+                            Zeitschritt [kgN/ha]'' </para>
+                        <para>'' &lt;math>potNupz\!&lt;/math> = potentielle Pflanzenaufnahme in den
+                            einzelnen Horizonten [kgN/ha]'' </para>
+                        <para>'' &lt;math>partroot\!&lt;/math> = Anteil des Horizonts an der
+                            Wurzelzone [-]'' </para>
+                        <para>Anschließend berechnet sich die aktuelle Pflanzenaufnahme aus der
+                            potentiellen Pflanzenaufnahme und dem über die Horizonte summierten
+                            Bedarf: </para>
+                        <para>&lt;math> N_{uptake} = potNup + \sum^{n}_{i=1}{demand[i]} \!
+                            &lt;/math> [10] </para>
+                        <para>mit: '' &lt;math>i\!&lt;/math> = Horizont [-] '' </para>
+                        <para>'' &lt;math>n\!&lt;/math> = Anzahl der Horizonte innerhalb der
+                            Wurzelzone [-] '' </para>
+                        <para>'' &lt;math>demand\!&lt;/math> = Bedarf der vom Bodenstickstoffpool
+                            gedeckt werden kann [kgN/ha]'' </para>
+                        <para>'' &lt;math>potNup\!&lt;/math> = potentielle Pflanzenaufnahme
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>N_{uptake}\!&lt;/math> = aktuelle Pflanzenaufnahme
+                            [kgN/ha]'' </para>
+                        <para><emphasis role="bold">Mit der Evaporation aufsteigendes
+                                Nitrat</emphasis></para>
+                        <para>Mit der Evaporationsstrom wird Bodenwasser aus tieferen Schichten in
+                            den obersten Horizont transportiert. Dies geschieht für jeden Horizont
+                            nach der Methode von SWAT in der Form: </para>
+                        <para>&lt;math> n_{upmove} = 0.1 \cdot NO_3Pool \cdot \frac {aEvap}
+                            {act_{LPS} + act_{MPS} + sto_{FPS}} \! &lt;/math> [1] </para>
+                        <para>mit: '' &lt;math>n_{upmove}\!&lt;/math> = Stickstoffmenge aus dem
+                            einzelnen Horizont, die durch Evaporation verlagert wird. [kgN/ha]'' </para>
+                        <para>'' &lt;math>NO_3Pool\!&lt;/math> = Bodenstickstoffpool [kgN/ha]'' </para>
+                        <para>'' &lt;math>aEvap\!&lt;/math> = aktuelle Evapotranspiration des
+                            Horizonts [l]'' </para>
+                        <para>'' &lt;math>act_{LPS}\!&lt;/math> = aktueller Grobporenspeicher des
+                            Horizonts [l]'' </para>
+                        <para>'' &lt;math>act_{LPS}\!&lt;/math> = aktueller Mittelporenspeicher des
+                            Horizonts [l]'' </para>
+                        <para>'' &lt;math>sto_{FPS}\!&lt;/math> = Feinporenspeicher des Horizonts
+                            [l]'' </para>
+                        <para><emphasis role="bold">Transformationsprozesse im
+                            Boden</emphasis></para>
+                        <para><emphasis role="underline">Nitrifikation und Ammonium
+                                Volatilation</emphasis></para>
+                        <para>Die Umsetzungsprozesse des Ammoniumpools sind in diesem Modell die
+                            Nitrifikation von Ammonium zu Nitrat und die Ammonium Volatilation. Die
+                            Kalkulation des Gesamtumsatzes des Ammoniumpools findet für die beiden
+                            Prozesse gemeinsam statt. Anschließend werden die Raten für beide
+                            Prozesse separiert. Zur Darstellung des Einflusses der Temperatur wird
+                            der folgende Koeffizient berechnet: </para>
+                        <para>&lt;math> \eta_{temp} = 0.41 \cdot \frac {temp_{Layer} - 5} {10}\!
+                            &lt;/math> [1] </para>
+                        <para>mit: '' &lt;math>\eta_{temp}\!&lt;/math> = Bodentemperaturkoeffizient
+                            [-]'' </para>
+                        <para>'' &lt;math>temp_{Layer}\!&lt;/math> = Temperatur der Bodenschicht
+                            [°C]'' </para>
+                        <para>Der Einfluss der Bodenfeuchte auf die Nitrifikation wird durch den
+                            Koeffizienten eta_water beschreiben: </para>
+                        <para>für &lt;math> act_{LPS} + act_{MPS} &lt; 0.25 \cdot (sto_{LPS} +
+                            sto_{MPS})\! &lt;/math> &lt;math> \eta_{water} = \frac{act_{LPS} +
+                            act_{MPS} + sto_{FPS}} {0.25 \cdot (sto_{LPS} + sto_{MPS} + sto_{FPS})}
+                            \!&lt;/math> [2]</para>
+                        <para>für &lt;math> act_{LPS} + act_{MPS} >= 0.25 \cdot (sto_{LPS} +
+                            sto_{MPS}) \!&lt;/math> &lt;math> \eta_{water} = 1 \! &lt;/math> [3] </para>
+                        <para>mit:'' &lt;math> \eta_{water}\! &lt;/math> = Bodenfeuchtekoeffizient
+                            [-]'' </para>
+                        <para>'' &lt;math>sto_{LPS}\!&lt;/math> = maximaler Grobporenspeicher des
+                            Horizonts [l]'' </para>
+                        <para>'' &lt;math>sto_{MPS}\!&lt;/math> = maximaler Mittelporenspeicher des
+                            Horizonts [l]'' </para>
+                        <para>'' &lt;math>sto_{FPS}\!&lt;/math> = maximaler Feinporenspeicher des
+                            Horizonts [l]'' </para>
+                        <para>'' &lt;math>act_{LPS}\!&lt;/math> = aktueller Grobporenspeicher des
+                            Horizonts [l]'' </para>
+                        <para>'' &lt;math>act_{MPS}\!&lt;/math> = aktueller Mittelporenspeicher des
+                            Horizonts [l]'' </para>
+                        <para>Die Abhängigkeit der Ammoniumvolatilation von der Bodentiefe wird mit
+                            der folgenden Gleichung beschrieben: </para>
+                        <para>&lt;math>\eta_{vol_z} = 1 - \frac {layerdepth} {layerdepth + \exp
+                            (4.706 - (0.305 \cdot \frac {layerdepth}{20}))}\!&lt;/math> </para>
+                        <para>mit: '' &lt;math>\eta_{vol_z}\!&lt;/math> = Bodentiefekoeffizient
+                            [-]'' </para>
+                        <para>'' &lt;math>layerdepth\!&lt;/math> = Untergrenze des Bodenhorizonts
+                            [cm]'' </para>
+                        <para>Der Gesamtumsatz des Ammoniumpools errechnet sich wie folgt: </para>
+                        <para>&lt;math> N_{nit + vol} = NH_4Pool * (1 - \exp(-(\eta_{water} \cdot
+                            \eta_{temp})-(\eta_{vol_z} \cdot \eta_{temp})))\!&lt;/math> </para>
+                        <para>Aufgeteilt wird dieser Gesamtumsatz anschließend in: </para>
+                        <para>&lt;math> frac_{nitr} = 1 - \exp(-(\eta_{water} \cdot
+                            \eta_{temp}))\!&lt;/math> </para>
+                        <para>&lt;math> frac_{vol} = 1 - \exp(-(\eta_{vol_z} \cdot
+                            \eta_{temp}))\!&lt;/math> </para>
+                        <para>&lt;math>nitri_{trans} = (frac_{nitr} /(frac_{nitr} + frac_{vol}))
+                            \cdot N_{nit + vol} \!&lt;/math> </para>
+                        <para>&lt;math>volati_{trans} = (frac_{vol} /(frac_{nitr} + frac_{vol}))
+                            \cdot N_{nit + vol} \!&lt;/math> </para>
+                        <para>mit: '' &lt;math> \eta_{water} \!&lt;/math> = Bodenfeuchtekoeffizient
+                            [-]'' </para>
+                        <para>'' &lt;math>\eta_{temp}\!&lt;/math> = Bodentemperaturkoeffizient [-]'' </para>
+                        <para>'' &lt;math>\eta_{vol_z}\!&lt;/math> = Bodentiefekoeffizient [-]'' </para>
+                        <para>'' &lt;math> NH_4Pool\! &lt;/math> = Bodenfeuchtekoeffizient
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>N_{nit + vol}\!&lt;/math> = Gesamtumsatzes des
+                            Ammoniumpools [kgN/ha]'' </para>
+                        <para>'' &lt;math>frac_{nitr}\!&lt;/math> = Fraktion Nitrifikation [-]'' </para>
+                        <para>'' &lt;math>frac_{vol}\!&lt;/math> = Fraktion Ammoniumvolatilation
+                            [-]'' </para>
+                        <para>'' &lt;math>nitri_{trans}\!&lt;/math> = Menge Nitrifikation [kgN/ha]'' </para>
+                        <para>'' &lt;math>volati_{trans}\!&lt;/math> = Menge Ammoniumvolatilation
+                            [kgN/ha]''</para>
+                        <para><emphasis role="underline">Vorberechnungen zum Einfluss der
+                                Umgebungsbedingungnen</emphasis></para>
+                        <para>Um den Einfluss der Bodentemperatur und der Bodenfeuchte in den
+                            verschiedenen Transformationsprozessen darzustellen werden vorab für
+                            jeden Horizont die folgenden Koeffizienten berechnet: </para>
+                        <para>&lt;math> \gamma_{temp} = 0.9 \cdot \frac {temp_{Layer}} {temp_{Layer}
+                            \cdot \exp(9.93 - 0.312 \cdot temp_{Layer}} + 0.1 \! &lt;/math> [1] </para>
+                        <para>mit: '' &lt;math>\gamma_{temp}\!&lt;/math> =
+                            Bodentemperaturkoeffizient [-]'' </para>
+                        <para>'' &lt;math>temp_{Layer}\!&lt;/math> = Temperatur der Bodenschicht
+                            [°C]'' </para>
+                        <para>&lt;math> \gamma_{water} = \frac {act_{LPS} + act_{MPS} + sto_{FPS}}
+                            {sto_{LPS} + sto_{MPS} + sto_{FPS})} \! &lt;/math> [2] </para>
+                        <para>mit: '' &lt;math>\gamma_{water}\!&lt;/math> = Bodenfeuchtekoeffizient
+                            [-]'' </para>
+                        <para>'' &lt;math>sto_{LPS}\!&lt;/math> = maximaler Grobporenspeicher des
+                            Horizonts [l]'' </para>
+                        <para>'' &lt;math>sto_{MPS}\!&lt;/math> = maximaler Mittelporenspeicher des
+                            Horizonts [l]'' </para>
+                        <para>'' &lt;math>sto_{FPS}\!&lt;/math> = maximaler Feinporenspeicher des
+                            Horizonts [l]'' </para>
+                        <para>'' &lt;math>act_{LPS}\!&lt;/math> = aktueller Grobporenspeicher des
+                            Horizonts [l]'' </para>
+                        <para>'' &lt;math>act_{MPS}\!&lt;/math> = aktueller Mittelporenspeicher des
+                            Horizonts [l]''</para>
+                        <para><emphasis role="underline">Transfer zwischen den organischen
+                                Pools</emphasis></para>
+                        <para>Der Transfer zwischen dem aktiven und dem stabilen organischen Pool
+                            wird mit der folgenden Gleichung berechnet: </para>
+                        <para>&lt;math>N_{Hum_{trans}} = \beta_{trans} \cdot (N_{activ_{pool}} \cdot
+                            (\frac{1} {fr_{actN}} -1) - N_{stabel_{pool}})\!&lt;/math> </para>
+                        <para>mit: '' &lt;math>N_{Hum_{trans}}\!&lt;/math> = Transferrate zwischen
+                            aktiven und dem stabilen organischen Pool [kgN/ha]'' </para>
+                        <para>'' &lt;math>\beta_{trans}\!&lt;/math> = Transferkonstante zwischen
+                            aktiven und dem stabilen organischen Pool; Vorgabewert = 0.00001 [-]'' </para>
+                        <para>'' &lt;math>N_{activ_{pool}}\!&lt;/math> = Aktiver organischer Pool
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>N_{stabel_{pool}}\!&lt;/math> = Stabiler organischer Pool
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>fr_{actN}\!&lt;/math> = Fraktion des organischen
+                            Stickstoffs im aktiven organischen Pool = 0.02 [-]'' </para>
+                        <para>Die Transferrate wird hierbei vom aktiven Pool subtrahiert währen sie
+                            zu dem stabilen Pool hinzuaddiert wird. </para>
+                        <para><emphasis role="underline">Mineralisierung des aktiven
+                                Pools</emphasis></para>
+                        <para>Der aktive Pool wird unter Auslassung der Nitrifikation direkt zu
+                            Nitrat mineralisiert. Die Rate wird hierbei wie folgt berechnet: </para>
+                        <para>&lt;math>N_{actmin} = \beta_{min} \cdot \sqrt{\gamma_{temp} \cdot
+                            \gamma_{water}} \cdot N_{activ_{pool}}\!&lt;/math> </para>
+                        <para>mit: '' &lt;math>N_{actmin}\!&lt;/math> = Transferrate zwischen
+                            aktiven organischen und dem Nitratpool [kgN/ha]'' </para>
+                        <para>'' &lt;math>\beta_{min}\!&lt;/math> = Transferkonstante zwischen
+                            aktiven organischen und dem Nitratpool; Vorgabewert = 0.002 [-]'' </para>
+                        <para>'' &lt;math>N_{activ_{pool}}\!&lt;/math> = Aktiver organischer Pool
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>\gamma_{water}\!&lt;/math> = Bodenfeuchtekoeffizient [-]'' </para>
+                        <para>'' &lt;math>\gamma_{temp}\!&lt;/math> = Bodentemperaturkoeffizient
+                            [-]'' </para>
+                        <para>Die Transferrate wird hierbei vom aktiven Pool subtrahiert währen sie
+                            zu dem Nitratpool hinzuaddiert wird. </para>
+                        <para><emphasis role="underline">Dynamik der Residuenpools</emphasis>
+                        </para>
+                        <para>Die Dynamik des Abbaus frischer organischer Substanz (Residuen) aus
+                            Pflanzenresten und organischem Dünger erfolgt nur im obersten
+                            Bodenhorizont. Die Residuen werden hierbei in zwei Pools aufgeteilt, der
+                            Erste repräsentiert die Biomasse als ganzes und der Zweite den
+                            Stickstoffanteil der Residuen. Die Zufuhr zu den Residuenpools erfolgt
+                            über Pflanzenreste nach der Ernte und über die organische Düngung mit
+                            Hilfe der folgenden Gleichungen:</para>
+                        <para> &lt;math>Residue_{pool} = Residue_{pool} + inp_{biomass} +
+                            (fertorgN_{fresh} \cdot 10)\! &lt;/math> </para>
+                        <para>&lt;math>N_{residue_{pool}} = N_{residue_{pool}} + inpN_{biomass} +
+                            fertorgN_{fresh}\!&lt;/math> </para>
+                        <para>mit: '' &lt;math>Residue_{pool}\!&lt;/math> = Residuenpool
+                            [kg/ha]''</para>
+                        <para>'' &lt;math>inp_{biomass}\!&lt;/math> = Zugeführte Biomasse [kg/ha]'' </para>
+                        <para>'' &lt;math>fertorgN_{fresh}\!&lt;/math> = Über organische Düngung
+                            zugeführter Stickstoff [kgN/ha]'' </para>
+                        <para>'' &lt;math>N_{residue_{pool}}\!&lt;/math> = Stickstoffanteil des
+                            Residuenpools [kgN/ha]'' </para>
+                        <para>Der Abbau des Residuenpools findet in Abhängigkeit des Kohlenstoff-
+                            Stickstoffverhältnisses (C/N-Verhältnis) statt. Die Berechnung des
+                            C/N-Verhältnisses erfolgt wie in der nachstehenden Gleichung
+                            angegeben.</para>
+                        <para>&lt;math>\epsilon_{C/N} = \frac{Residue_{pool} \cdot 0.58}
+                            {N_{residue_{pool}} + NO_3Pool}&lt;/math> </para>
+                        <para>&lt;math> \gamma_{ntr} = min \begin{cases} \exp(-0.693
+                            \cdot\frac{\epsilon_{C/N} - 25} {25})\\ 1.0 \end{cases} &lt;/math> </para>
+                        <para>mit: '' &lt;math>\epsilon_{C/N}\!&lt;/math> = C/N-Verhältnis [-]'' </para>
+                        <para>'' &lt;math>\gamma_{ntr}\!&lt;/math> = Residuenabbaufaktor [-]'' </para>
+                        <para>'' &lt;math>Residue_{pool}\!&lt;/math> = Residuenpool [kg/ha]'' </para>
+                        <para>'' &lt;math>NO_3Pool\!&lt;/math> = Nitratpool [kgN/ha]'' </para>
+                        <para>'' &lt;math>N_{residue_{pool}}\!&lt;/math> = Stickstoffanteil des
+                            Residuenpools [kgN/ha]'' </para>
+                        <para>Aus &lt;math>\gamma_{ntr}&lt;/math>,
+                            &lt;math>\gamma_{water}&lt;/math>, &lt;math>\gamma_{temp}&lt;/math> </para>
+                        <para>rechnet sich die Abbaukonstante des Residuenpools: </para>
+                        <para>'&lt;math>\delta_{ntr} = \beta_{rsd} \cdot \gamma_{ntr} \cdot
+                            \sqrt{\gamma_{water} \cdot \gamma_{temp}}\!&lt;/math> </para>
+                        <para>mit: '' &lt;math>\delta_{ntr}\!&lt;/math> = Konstante der Rate des
+                            Residuenabbaus [-]'' </para>
+                        <para>'' &lt;math>\gamma_{ntr}\!&lt;/math> = Residuenabbaufaktor [-]'' </para>
+                        <para>'' &lt;math>\beta_{rsd}\!&lt;/math> = Residuenabbaukoeffizient;
+                            Vorgabewert = 0.05 [-]'' </para>
+                        <para>'' &lt;math>\gamma_{water}\!&lt;/math> = Bodenfeuchtekoeffizient [-]'' </para>
+                        <para>'' &lt;math>\gamma_{temp}\!&lt;/math> = Bodentemperaturkoeffizient
+                            [-]'' </para>
+                        <para>Der Abbau des Residuenpools erfolgt anhand der Konstante der Rate des
+                            Residuenabbaus. Dabei wird der Stickstoffteil auf den aktiven
+                            organischen Pool, im Sinne einer Humifizierung und den Nitratpool im
+                            Sinne einer Mineralisierung, im Verhätnis 20 zu 80% aufgeteilt: </para>
+                        <para>&lt;math>Residue_{pool}2 = Residue_{pool}1 - (\delta_{ntr} \cdot
+                            Residue_{pool}1)\!&lt;/math> </para>
+                        <para>&lt;math>N_{active_{pool}}2 = N_{active_{pool}}1 + (0.2 \cdot
+                            \delta_{ntr} \cdot N_{residue_{pool}}1)\!&lt;/math> </para>
+                        <para>&lt;math>NO_3Pool2 = NO_3Pool1 + (0.8 \cdot delta_ntr \cdot
+                            N_{residue_{pool}}1)\!&lt;/math> </para>
+                        <para>&lt;math>N_{residue_{pool}}2 = N_{residue_{pool}}1 - (\delta_{ntr}
+                            \cdot N_{residue_{pool}}1)\!&lt;/math> </para>
+                        <para>mit: '' &lt;math>\delta_{ntr}\!&lt;/math> = Konstante der Rate des
+                            Residuenabbaus [-]'' </para>
+                        <para>'' &lt;math>Residue_{pool}1\!&lt;/math> = Residuenpool vor dem
+                            Zeitschritt [kgN/ha]'' </para>
+                        <para>'' &lt;math>Residue_{pool}2\!&lt;/math> = Residuenpool nach dem
+                            Zeitschritt [kgN/ha]'' </para>
+                        <para>'' &lt;math>N_{active_{pool}}1\!&lt;/math> = Aktiver organischer Pool
+                            vor dem Zeitschritt [kgN/ha]'' </para>
+                        <para>'' &lt;math>N_{active_{pool}}2\!&lt;/math> = Aktiver organischer Pool
+                            nach dem Zeitschritt [kgN/ha]'' </para>
+                        <para>'' &lt;math>NO_3Pool1\!&lt;/math> = Bodennitratpool vor dem
+                            Zeitschritt [kgN/ha]'' </para>
+                        <para>'' &lt;math>NO_3Pool2\!&lt;/math> = Bodennitratpool nach dem
+                            Zeitschritt [kgN/ha]'' </para>
+                        <para>'' &lt;math>N_{residue_{pool}}1\!&lt;/math> = Stickstoffanteil des
+                            Residuenpools vor dem Zeitschritt [kgN/ha]'' </para>
+                        <para>'' &lt;math>N_{residue_{pool}}2\!&lt;/math> = Stickstoffanteil des
+                            Residuenpools nach dem Zeitschritt [kgN/ha]''</para>
+                        <para><emphasis role="underline">Denitrifikation</emphasis>
+                        </para>
+                        <para>Denitrifikation findet statt wenn der Boden sich in einem nahezu
+                            wassergesättigten Zustand befindet. Die Rate ist dabei abhängig von dem
+                            Gehalt an organischem Kohlenstoff im Boden und der Bodentemperatur.
+                            Abweichend von SWAT (0,95) liegt der Grad der Wassersättigung bei dem
+                            Denitrifikation stattfindet mit 0,91 niedriger. Dies ist dadurch
+                            begründet, Dass SWAT die Luftkapazität des Bodens im Gegensatz zu J2000
+                            nicht berücksichtigt und somit in J2000 das zu Grunde liegende
+                            Porenvolumen, bei der Berechnung der Wassersättigung größer ist. Es wird
+                            weiterhin sichergestellt, dass die Rate höchstens 1 kgN/ha*d beträgt, da
+                            höhere Raten im Freiland nicht zu erwarten sind.</para>
+                        <para> &lt;math> denit_{trans} = \begin{cases} NO_3Pool \cdot (1 - \exp(-1.4
+                            \cdot \gamma_{temp} \cdot C_{org}))&amp; \mathrm{f\ddot{u}r} \; \;
+                            \gamma_{water} \ge \beta_{denit} \\ 0.0 &amp; \mathrm{f\ddot{u}r}\; \;
+                            \gamma_{water} &lt; \beta_{denit} \end{cases} &lt;/math> </para>
+                        <para>mit '' &lt;math>NO_3Pool\!&lt;/math> = Bodennitratpool [kgN/ha]'' </para>
+                        <para>'' &lt;math>denit_{trans}\!&lt;/math> = Denitrifikationsrate
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>\gamma_{water}\!&lt;/math> = Bodenfeuchtekoeffizient [-]'' </para>
+                        <para>'' &lt;math>\gamma_{temp}\!&lt;/math> = Bodentemperaturkoeffizient
+                            [-]'' </para>
+                        <para>'' &lt;math>\beta_{denit}\!&lt;/math> = Denitrifikationskoeffizient;
+                            Vorgabewert = 0.91 [-]'' </para>
+                        <para><emphasis role="bold">Stofftransport mit der Wasserbewegung im
+                                Boden</emphasis>
+                        </para>
+                        <para><emphasis role="underline">Stickstoffkonzentration des mobilen
+                                Wassers</emphasis></para>
+                        <para>Für die Simulation des Stofftransports mit der Wasserbewegung wird
+                            zunächst die Stickstoffkonzentration des mobilen Wassers bestimmt.
+                            Hierbei wird vereinfachend angenommen, dass ausschließlich der
+                            Stickstoff des Nitratpools mobil ist und somit in die Berechnung
+                            eingeht. Die Wassermenge bestimmt sich aus den Bodenspeichern und den
+                            den Horizont verlassenden Wasserflüssen. </para>
+                        <para>&lt;math>soil_{water} = act_{LPS} + act_{MPS} + sto_{FPS}\!&lt;/math> </para>
+                        <para>&lt;math> mobile_{water} = \begin{cases} (RD1_{out} * Beta_{NO_{3}}) +
+                            RD2_{out} + h_{perco} + hor_{by_{infilt}} + diff_{out} &amp;
+                            \mathrm{f\ddot{u}r} \; \; Horizont = 1 \\ RD2_{out} + h_{perco} +
+                            hor_{by_{infilt}} + diff_{out}&amp; \mathrm{f\ddot{u}r} \; \; i >
+                            Horizont &lt; n\\ RD2_{out} + h_{perco} + diff_{out}&amp;
+                            \mathrm{f\ddot{u}r} \; \; Horizont = n \end{cases} &lt;/math> </para>
+                        <para>&lt;math>concN_{mobile} = \frac {NO_3Pool * (1 - \exp \frac{-
+                            mobile_{water}} {(1 - \theta_{nit}) * soil_{water}})}
+                            {mobile_{water}}&lt;/math> </para>
+                        <para>mit: '' &lt;math>NO_3Pool\!&lt;/math> = Bodennitratpool [kgN/ha]'' ''
+                            &lt;math>soil_{water}\!&lt;/math> = Bodenwassergehalt [mm]'' </para>
+                        <para>'' &lt;math>mobile_{water}\!&lt;/math> = Menge an Mobilem Wasser
+                            [mm]'' </para>
+                        <para>'' &lt;math>\Beta_{NO_{3}}\!&lt;/math> = Perkolationskoeffizient;
+                            Vorgabewert = 0.2 [-] '' </para>
+                        <para>'' &lt;math>RD1_{out}\!&lt;/math> = Oberflächenabfluss [mm]'' </para>
+                        <para>'' &lt;math>RD2_{out}\!&lt;/math> = Interflow [mm]'' </para>
+                        <para>'' &lt;math>h_{perco}\!&lt;/math> = Perkolation in tieferen Horizont
+                            bzw. Grundwasser [mm]'' </para>
+                        <para>'' &lt;math>hor_{by_{infilt}}\!&lt;/math> = Infiltrations Wasser, dass
+                            in einem Zeitschritt in tiefere Schichten vordringt und somit den
+                            aktuellen Horizont "bypasst" [mm]'' </para>
+                        <para>'' &lt;math>diff_{out}\!&lt;/math> = Wasser, dass durch Diffusion den
+                            Horizont verlässt [mm]'' </para>
+                        <para>'' &lt;math>\theta_{nit}\!&lt;/math> = Fraktion des Porenvolumens von
+                            dem Anionen ausgeschlossen sind (durch positiven Ladungsüberschuss der
+                            Tonminerale); Vorgabewert = 0.05 [-]'' </para>
+                        <para>'' &lt;math> concN_{mobile}\!&lt;/math> = Stickstoffkonzentration des
+                            mobilen Wassers [kgN/ha*mm]'' </para>
+                        <para>Das der Einfluss des Infiltrations Wassers, dass dass in einem
+                            Zeitschritt in tiefere Schichten vordringt wird mit Hilfe eines
+                            Parameters (&lt;math>infil_{conc_{factor}}&lt;/math>) wie folgt
+                            bestimmt. Dabei repräsentiert dieser Parameter in wie weit das
+                            "Bypasswasser" mit der Bodenmatrix interagiert oder in Makroporen an den
+                            durchflossenen Schichten vorbeifliest. </para>
+                        <para>&lt;math>hor_{by_{infilt}}[i-1] = \sum^{n}_{i}{hor_{by_{infilt}}} *
+                            infil_{conc_{factor}} \!&lt;/math> </para>
+                        <para>mit: '' &lt;math>hor_{by_{infilt}}\!&lt;/math> = Infiltrations Wasser,
+                            dass in einem Zeitschritt in tiefere Schichten vordringt und somit den
+                            aktuellen Horizont "bypasst" [mm]'' </para>
+                        <para>'' &lt;math>infil_{conc_{factor}}\!&lt;/math> = Bypassparameter [mm]'' </para>
+                        <para>'' &lt;math>i\!&lt;/math> = Aktueller Horizont [-]'' </para>
+                        <para>'' &lt;math>n\!&lt;/math> = Anzahl der Horizonte [-]'' </para>
+                        <para><emphasis role="underline">Stickstofftransport in den
+                                Abflusskomponenten</emphasis></para>
+                        <para>Basierend auf der Stickstoffkonzentration des mobilen Wassers werden
+                            für die einzelnen Horizonte die Stickstofffrachten für die
+                            Abflusskomponenten berechnet. Hierbei wird der Interflow in allen
+                            Horizonten und der Oberflächenabfluss nur im obersten Horizont
+                            berücksichtigt, während die Perkolation immer in den tiefer gelegenen
+                            Horizont bzw. in die Grundwasserspeicher erfolgt. </para>
+                        <para>&lt;math>N_{surface} = Beta_{NO_3} \cdot RD1_{out} \cdot
+                            concN_{mobile}\!&lt;/math> </para>
+                        <para>&lt;math>N_{interflow} = RD2_{out} \cdot concN_{mobile}\!&lt;/math> </para>
+                        <para>&lt;math>N_{perco} = (hor_{by_{infilt}} + h_{perco}) \cdot
+                            concN_{mobile}\!&lt;/math> </para>
+                        <para>mit: '' &lt;math> concN_{mobile}\!&lt;/math> = Stickstoffkonzentration
+                            des mobilen Wassers [kgN/ha*mm]'' </para>
+                        <para>'' &lt;math>hor_{by_{infilt}}\!&lt;/math> = Infiltrations Wasser, dass
+                            in einem Zeitschritt in tiefere Schichten vordringt und somit den
+                            aktuellen Horizont "bypasst" [mm]'' </para>
+                        <para>'' &lt;math>N_{surface}\!&lt;/math> = Stickstoff im Oberflächenabfluss
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>N_{interflow}\!&lt;/math> = Stickstoff im Interflow
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>N_{perco}\!&lt;/math> = Stickstoff im Perkolationswasser
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>RD1_{out}\!&lt;/math> = Oberflächenabfluss [mm]'' </para>
+                        <para>'' &lt;math>RD2_{out}\!&lt;/math> = Interflow [mm]'' </para>
+                        <para>'' &lt;math>h_{perco}\!&lt;/math> = Perkolation [mm]'' </para>
+                        <para>'' &lt;math>Beta_{NO_3}\!&lt;/math> = Percolationskoeffizient [-]'' </para>
+                        <para>Der Perkolationskoeffizient stellt dabei ein Maß für die Interaktion
+                            des Oberflächenabfluss mit der Bodenmatrix des obersten Horizontes dar
+                            und Bestimmt somit den Stickstoffgehalt des Oberflächenabflusses. Der
+                            Stoff der mit dem Diffusionswasser den Horizont verlässt wird wie folgt
+                            berechnet. Als Diffusion wird dabei die Wasserbewegung bezeichnet die
+                            aufgrund von Potentialgradienten oberhalb der Feldkapazität stattfindet.
+                            Ein negativer Wert für das Diffusionswasser bedeutet hierbei eine
+                            absteigende Wasserbewegung während ein positiver Wert eine aufsteigende
+                            Wasserbewegung repräsentiert.</para>
+                        <para> &lt;math> diffoutN = \begin{cases} w_{l_{diff}}[i] *
+                            ConcN_{mobile}[i] &amp; \mathrm{f\ddot{u}r} \; \; w_{l_{diff}} &lt; 0 \\
+                            w_{l_{diff}}[i] * ConcN_{mobile}[i+1] &amp; \mathrm{f\ddot{u}r} \; \;
+                            w_{l_{diff}} &lt; 0 \end{cases} &lt;/math> </para>
+                        <para>und </para>
+                        <para>&lt;math>NO_3Pool[i] = NO_3Pool[i] + diffoutN \!&lt;/math> </para>
+                        <para>und </para>
+                        <para>&lt;math>NO_3Pool[i+1] = NO_3Pool[i+1] - diffoutN \!&lt;/math> </para>
+                        <para>mit: '' &lt;math> concN_{mobile}\!&lt;/math> = Stickstoffkonzentration
+                            des mobilen Wassers [kgN/ha*mm]'' </para>
+                        <para>'' &lt;math>diffoutN \!&lt;/math> = Stickstoff im Diffussionswasser
+                            [kgN/ha]'' </para>
+                        <para>'' &lt;math>NO_3Pool\!&lt;/math> = Bodennitratpool [kgN/ha]'' </para>
+                        <para>'' &lt;math>w_{l_{diff}}\!&lt;/math> = Diffussionswasser [mm]'' </para>
+                        <para>'' &lt;math>i\!&lt;/math> = Bodenhorizont [kgN/ha]'' </para>
+                    </entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </informaltable>
+    <informaltable width="1021">
+        <col width="2.08*"/>
+        <thead>
+            <tr>
+                <td>Literatur</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Literatur 1</td>
+            </tr>
+            <tr>
+                <td>Arnold, J., R. Srinivasan, R. Muttiah und J. Williams (1998): Large Area
+                    Hydrologic Modelling and Assessment. Part I, Model Development. – In: Journal of
+                    the American Water Ressource Association 34, H. 1, S. 73-89.</td>
+            </tr>
+            <tr>
+                <td>Neitsch, S.L., J. G. Arnold, J. R. Kiniry, and J. R. Williams (2001): Soil and
+                    Water Assessment Tool theoretical documentation version 2000. </td>
+            </tr>
+            <tr>
+                <td/>
+            </tr>
+            <tr>
+                <td/>
+            </tr>
+        </tbody>
+    </informaltable>
+</sect1>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<!DOCTYPE JAMSModel SYSTEM "jamsmodel.dtd">-->
+<model name="J2K" author="Sven Kralisch" date="30.01.2006">
+    
+    <contextcomponent class="org.unijena.jams.tools.JAMSParaSampler" name="JAMSParaSampler">
+        <var name="parameterIDs" value="Test.number1;Test.number2"/>
+        <var name="boundaries" value="[0>5];[18>20]"/>
+        <var name="sampleCount" value="4"/>
+        
+        <contextcomponent class="org.unijena.jams.model.JAMSTemporalContext" name="TemporalContext">
+            <var name="timeInterval" value="1948-01-01 00:01 1950-12-01 00:00 1 1"/>
+
+            <component class="org.unijena.jamstesting.HandleTest" name="Test">
+                <var name="time" context="TemporalContext" cvar="current"/>
+                <var name="number1" value="3"/>
+                <var name="number2" value="5"/>
+            </component>
+
+        </contextcomponent>
+
+    </contextcomponent>
+            
+</model>

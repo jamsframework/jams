@@ -1,0 +1,65 @@
+<informaltable>
+    <tgroup cols="3">
+        <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+        <colspec colname="c2" colnum="2" colwidth="5.74*"/>
+        <thead>
+            <row>
+                <entry namest="c1" nameend="c2">Metainformationen</entry>
+            </row>
+        </thead>
+        <tbody>
+            <row>
+                <entry>Komponente</entry>
+                <entry namest="c2" nameend="newCol3">%class%</entry>
+            </row>
+            <row>
+                <entry>Modellprozess</entry>
+                <entry namest="c2" nameend="newCol3"></entry>
+            </row>
+            <row>
+                <entry>Paket</entry>
+                <entry namest="c2" nameend="newCol3">%package%</entry>
+            </row>
+            <row>
+                <entry>Autor</entry>
+                <entry namest="c2" nameend="newCol3">%author%</entry>
+            </row>
+            <row>
+                <entry>Version</entry>
+                <entry namest="c2" nameend="newCol3">%version%</entry>
+            </row>
+            <row>
+                <entry>Modifikationsdatum</entry>
+                <entry namest="c2\" nameend="newCol3\">%date%</entry>
+            </row>
+        </tbody>
+    </tgroup>
+</informaltable>
+<informaltable>
+    <tgroup cols="7">
+        <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+        <colspec colname="newCol2" colnum="2" colwidth="2.96*"/>
+        <colspec colname="c2" colnum="3" colwidth="1.15*"/>
+        <colspec colname="newCol4" colnum="4" colwidth="1.23*"/>
+        <colspec colname="newCol5" colnum="5" colwidth="1.1*"/>
+        <colspec colname="newCol6" colnum="6" colwidth="1.25*"/>
+        <colspec colname="newCol7" colnum="7" colwidth="1.28*"/>
+    <thead>
+        <row>
+            <entry namest="c1" nameend="newCol7">Variablen</entry>
+        </row>
+        <row>
+            <entry>Variable</entry>
+            <entry>Beschreibung</entry>
+            <entry>Einheit</entry>
+            <entry>Wertebereich</entry>
+            <entry>Datentyp</entry>
+            <entry>Variablentyp</entry>
+            <entry>Defaultwert</entry>
+        </row>
+    </thead>
+    <tbody>
+        %componentvars%
+    </tbody>
+    </tgroup>
+</informaltable>

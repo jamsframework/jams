@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook"
+       xmlns:ns6="http://www.w3.org/1999/xlink"
+       xmlns:ns5="http://www.w3.org/1999/xhtml"
+       xmlns:ns4="http://www.w3.org/2000/svg"
+       xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+       xmlns:ns="http://docbook.org/ns/docbook">
+  <title>CalcRainSnowParts</title>
+
+  <subtitle>Eine Komponente zur Teilung des gefallenen Niederschlags in einen
+  Regen- und einen Schneeanteil basierend auf der Lufttemperatur.</subtitle>
+
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*" />
+
+      <colspec colname="c2" colnum="2" colwidth="3*" />
+
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+
+          <entry>j2k.snow</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+
+  <sect2>
+    <title>Variablen</title>
+
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1*" />
+
+        <colspec colname="c2" colnum="2" colwidth="3*" />
+
+        <thead>
+          <row>
+            <entry>Name</entry>
+
+            <entry>Beschreibung</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>area</entry>
+
+            <entry>Die Fläche der räumlichen Modelleinheit [m²]</entry>
+          </row>
+
+          <row>
+            <entry>snow_trs</entry>
+
+            <entry>Temperatur bei der 50% des Niederschlags als Regen und 50% als Schnee fällt.
+              [°C]</entry>
+          </row>
+
+          <row>
+            <entry>snow_trans</entry>
+
+            <entry>Temperaturintervall um snow_trs [K]</entry>
+          </row>
+
+          <row>
+            <entry>tmin</entry>
+
+            <entry>Die minimale Lufttemperatur [°C]</entry>
+          </row>
+
+          <row>
+            <entry>tmean</entry>
+
+            <entry>Die mittlere Lufttemperatur [°C]</entry>
+          </row>
+
+          <row>
+            <entry>precip</entry>
+
+            <entry>Der Niederschlag [mm]</entry>
+          </row>
+
+          <row>
+            <entry>rain</entry>
+
+            <entry>Die Regenmenge am Niederschlag [l]</entry>
+          </row>
+
+          <row>
+            <entry>snow</entry>
+
+            <entry>Die Schneemenge am Niederschlag [l]</entry>
+          </row>
+
+          <row>
+            <entry>svRain</entry>
+
+            <entry>Kopie von rain - nur zu Bilanzierungszwecken [l]</entry>
+          </row>
+
+          <row>
+            <entry>svSnow</entry>
+
+            <entry>Kopie von snow - nur zu Bilanzierungszwecken [l]</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+
+    <para>Dieses Modul bestimmt anhand der Lufttemperatur, wie hoch der
+    Schneeanteil am Gesamtniederschlag ist. Zur Bestimmung des Anteils wird
+    angenommen, daß bei Unterschreiten einer bestimmten Grenztemperatur der
+    gesamte Niederschlag als Schnee fällt und bei Überschreiten einer zweiten
+    Grenztemperatur der gesamte Niederschlag als Regen fällt. Im Bereich
+    zwischen diesen Grenztemperaturen treten Mischniederschläge auf. Zur
+    Bestimmung der Grenztemperaturen und damit der Breite des
+    Übergangsbereiches muß ein Temperaturwert (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>T</ns3:mi>
+
+            <ns3:mi>R</ns3:mi>
+
+            <ns3:mi>S</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> in °C) angegeben werden, der der Temperatur
+    entspricht, bei der 50% des Niederschlages als Schnee und 50% als Regen
+    fallen. Zusätzlich muß ein Parameter <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>T</ns3:mi>
+
+            <ns3:mi>r</ns3:mi>
+
+            <ns3:mi>a</ns3:mi>
+
+            <ns3:mi>n</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> (in K) bestimmt werden, der der halben Breite des
+      Übergangsbereiches entspricht
+      (<xref xmlns:xlink="http://www.w3.org/1999/xlink"
+        linkend="j2k.snow.CalcRainSnowParts.snow_rain_fig1.png" xrefstyle="select: label"/>). 
+      
+      Der tatsächliche Schneeanteil
+    (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>p</ns3:mi>
+
+            <ns3:mrow>
+              <ns3:mo>(</ns3:mo>
+
+              <ns3:mi>s</ns3:mi>
+
+              <ns3:mo>)</ns3:mo>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) am Tagesniederschlag in Abhängigkeit von der
+    Lufttemperatur (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>T</ns3:mi>
+        </ns3:math>
+      </inlineequation>) berechnet sich dabei nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>p</ns3:mi>
+
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+
+                <ns3:mi>s</ns3:mi>
+
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>T</ns3:mi>
+
+                  <ns3:mi>R</ns3:mi>
+
+                  <ns3:mi>S</ns3:mi>
+                </ns3:mrow>
+
+                <ns3:mo>+</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mi>T</ns3:mi>
+
+                    <ns3:mi>r</ns3:mi>
+
+                    <ns3:mi>a</ns3:mi>
+
+                    <ns3:mi>n</ns3:mi>
+
+                    <ns3:mi>s</ns3:mi>
+                  </ns3:mrow>
+
+                  <ns3:mo>-</ns3:mo>
+
+                  <ns3:mi>T</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mrow>
+                <ns3:mi>2</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mi>T</ns3:mi>
+
+                  <ns3:mi>r</ns3:mi>
+
+                  <ns3:mi>a</ns3:mi>
+
+                  <ns3:mi>n</ns3:mi>
+
+                  <ns3:mi>s</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+              
+            </ns3:mfrac>
+          </ns3:mrow>
+          
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Die tägliche Schneemenge (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>N</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) bzw. Regenmenge (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>N</ns3:mi>
+
+            <ns3:mi>r</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) ergibt sich nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>N</ns3:mi>
+
+              <ns3:mi>s</ns3:mi>
+            </ns3:msub>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mi>N</ns3:mi>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>p</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mi>s</ns3:mi>
+
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+              
+              
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>N</ns3:mi>
+
+              <ns3:mi>r</ns3:mi>
+            </ns3:msub>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mi>N</ns3:mi>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mi>1</ns3:mi>
+
+                  <ns3:mo>-</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mi>p</ns3:mi>
+
+                    <ns3:mrow>
+                      <ns3:mo>(</ns3:mo>
+
+                      <ns3:mi>s</ns3:mi>
+
+                      <ns3:mo>)</ns3:mo>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                  
+                  
+                </ns3:mrow>
+              </ns3:mrow>
+              
+              <ns3:mi> &#160;</ns3:mi>
+              <ns3:mrow>
+                
+                
+                <ns3:mi>[mm]</ns3:mi>
+                
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Schließlich werden <inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>N</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation> und <inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>N</ns3:mi>
+
+            <ns3:mi>r</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation> noch mit der Fläche (area) der Modelleinheit
+    multipliziert um mm in Liter umzuwandeln.</para>
+
+
+    <figure xml:id="j2k.snow.CalcRainSnowParts.snow_rain_fig1.png">
+      <title>Die Funktion zur Bestimmung des von Regen- bzw. Schneeanteils
+      eines Niederschlagsereignisses</title>
+
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata align="center"  fileref="snow_rain.png" scale="60" width="100%"></imagedata>
+          </imageobject>
+        </inlinemediaobject></para>
+    </figure>
+  </sect2>
+</sect1>

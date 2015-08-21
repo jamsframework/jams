@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>InitJ2KProcessLumpedSoilWaterStates</title>
+  <subtitle>A component for initilisation of the unlayered soil module.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.soilWater</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>entities</entry>
+          <entry>set of model entities</entry>
+        </row>
+        <row>
+          <entry>area</entry>
+          <entry>area of the current model entities</entry>
+        </row>
+        <row>
+          <entry>FCAdaptation</entry>
+          <entry>calibration parameter used to increase or decrease the storage capacity
+            of a middle pore storage (MPS)</entry>
+        </row>
+        <row>
+          <entry>ACAdaptation</entry>
+          <entry>calibration parameter used to increase or decrease the storage capacity
+            of a coarse-grained large pore storage (LPS)</entry>
+        </row>
+        <row>
+          <entry>rootDepth</entry>
+          <entry>effective root depth of ground cover of the current model entity</entry>
+        </row>
+        <row>
+          <entry>actMPS</entry>
+          <entry>current storage capacity of the middle and fine-grained middle pore
+            storage (MPS)</entry>
+        </row>
+        <row>
+          <entry>actLPS</entry>
+          <entry>current storage capacity of the large pore storage (LPS)</entry>
+        </row>
+        <row>
+          <entry>maxMPS</entry>
+          <entry>maximum storage capacity of the middle and fine-grained pore storage
+            (MPS)</entry>
+        </row>
+        <row>
+          <entry>maxLPS</entry>
+          <entry>maximum storage capacity of the large pore storage (LPS)</entry>
+        </row>
+        <row>
+          <entry>satMPS</entry>
+          <entry>relative storage saturation of the middle and fine-grained pore storage
+            (MPS)</entry>
+        </row>
+        <row>
+          <entry>satLPS</entry>
+          <entry>relative storage saturation of the large pore storage (LPS)</entry>
+        </row>
+        <row>
+          <entry>satStartMPS</entry>
+          <entry>relative storage saturation of the middle and fine-grained pore storage
+            (MPS) at start of model execution</entry>
+        </row>
+        <row>
+          <entry>satStartLPS</entry>
+          <entry>relative storage saturation of the large pore storage (LPS) at start of
+            model execution</entry>
+        </row>
+        <row>
+          <entry>satSoil</entry>
+          <entry>relative storage saturation of both soils (LPS + MPS)</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+    
+  </sect2>
+    <sect2>
+    <title>Component Description</title>
+      <para>This component initializes the non-layered soil module (J2KProcessLumpedSoilWater). It
+      assigns a specific soil water storage (<emphasis role="italic">actMPS</emphasis>, <emphasis
+        role="italic">actLPS</emphasis>) to every model entity and parameterizes them subject to the
+      dominant soil type (<emphasis role="italic">maxMPS</emphasis>, <emphasis role="italic"
+        >maxLPS</emphasis>) (e.g. from soil.par) as well as subject to land use. Therefore the field
+      capacity for every decimeter within the effective root depth is added and the accumulated sum
+      is assigned to the model entity as the maximum storage capacity of the middle pore storage
+        (<emphasis role="italic">maxMPS</emphasis>). The maximum storage capacity of the large pore
+      storage (<emphasis role="italic">maxLPS</emphasis>) is calculated for the entire soil. In
+      addition, a relative initial soil water storage can be assigned to the storages. Finally, the
+      water storages are converted from mm to liters by multiplying them with the area (in m²) of
+      the respective model entity.</para>
+    </sect2>
+      <bibliography>
+        <title>Literature</title>
+        <biblioentry  xml:id="Krause_2001" xreflabel="Krause 2001">
+          <abbrev>Krause 2001</abbrev>
+          <author><personname><firstname>P.</firstname><surname>Krause</surname></personname></author>
+          <title>Das hydrologische Modellsystem J2000: Beschreibung und Anwendung in
+            großen Flußeinzugsgebieten</title>
+          <publisher>
+            <publishername>Schriften des Forschungszentrum Jülich: Reihe Umwelt/Environment</publishername>
+          </publisher>
+          <volumenum>Band 29</volumenum>
+          <pubdate>2001</pubdate>
+        </biblioentry>
+      </bibliography>
+</sect1>

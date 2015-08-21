@@ -1,0 +1,917 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--<!DOCTYPE JAMSModel SYSTEM "jamsmodel.dtd">-->
+<model name="J2K" author="Peter Krause" date="30.01.2006">
+    <globvar name="workspaceDir" value="D:\jamsmodels\JAMS-Application\JAMS-Gehlberg"/>
+    <globvar name="snow_trs" value="0.0"/>
+    <globvar name="snow_trans" value="2.0"/>
+    <globvar name="data_caching" value="0"/>
+    <globvar name="timeInterval" value="1996-11-01 7:30 2000-10-31 7:30 6 1"/>
+<contextcomponent class="org.unijena.abc.SCEM_UA" name="Optimizer">
+	<var name="parameterIDs" value="J2KProcessLumpedSoilWater.soilConcRD1;J2KProcessLumpedSoilWater.soilConcRD2;J2KProcessLumpedSoilWater.soilMaxPerc"/>
+        <var name="boundaries" value="[0.0>10.0];[0.0>10.0];[0.0>10.0];"/>
+        <var name="sampleCount" value="100"/>
+        <var name="effMethodNames" value="e2;le2"/>
+        <var name="effValues" attribute="e2;le2"/>
+               
+    <component class="org.unijena.j2k.io.StandardEntityReader" name="ParaReader">
+        <var name="dirName" globvar="workspaceDir"/>
+        <var name="hruFileName" value="parameter\hrus_hor_dist.par"/>
+        <var name="reachFileName" value="parameter\reach.par"/>
+        <var name="hrus" attribute="hrus"/>
+        <var name="reaches" attribute="reaches"/>
+    </component>
+    
+    <component class="org.unijena.j2k.io.StandardLUReader" name="LUReader">
+        <var name="dirName" globvar="workspaceDir"/>
+        <var name="luFileName" value="parameter\landuse.par"/>
+        <var name="hrus" attribute="hrus"/>
+    </component>
+    
+    <component class="org.unijena.j2k.io.StandardSoilParaReader" name="STReader">
+        <var name="dirName" globvar="workspaceDir"/>
+        <var name="stFileName" value="parameter\soils.par"/>
+        <var name="hrus" attribute="hrus"/>
+    </component>
+    
+    <component class="org.unijena.j2k.io.StandardGroundwaterParaReader" name="GWReader">
+        <var name="dirName" globvar="workspaceDir"/>
+        <var name="gwFileName" value="parameter\hgeo.par"/>
+        <var name="hrus" attribute="hrus"/>        
+    </component>
+    
+    <component class="org.unijena.j2k.io.TSDataReader" name="InitTmeanDataReader">
+        <var name="dirName" globvar="workspaceDir"/>
+        <var name="skipRegression" globvar="data_caching"/>
+        <var name="dataFileName" value="data\tmean.dat"/>
+        <var name="startColumn" value="3"/>
+        <var name="xCoord" attribute="xCoordTmean"/>
+        <var name="yCoord" attribute="yCoordTmean"/>
+    </component>
+    
+    <component class="org.unijena.j2k.io.TSDataReader" name="InitTminDataReader">
+        <var name="dirName" globvar="workspaceDir"/>
+        <var name="skipRegression" globvar="data_caching"/>
+        <var name="dataFileName" value="data\tmin.dat"/>
+        <var name="startColumn" value="3"/>
+        <var name="xCoord" attribute="xCoordTmin"/>
+        <var name="yCoord" attribute="yCoordTmin"/>
+    </component>
+    
+    <component class="org.unijena.j2k.io.TSDataReader" name="InitTmaxDataReader">
+        <var name="dirName" globvar="workspaceDir"/>
+        <var name="skipRegression" globvar="data_caching"/>
+        <var name="dataFileName" value="data\tmax.dat"/>
+        <var name="startColumn" value="3"/>
+        <var name="xCoord" attribute="xCoordTmax"/>
+        <var name="yCoord" attribute="yCoordTmax"/>
+    </component>
+    
+    <component class="org.unijena.j2k.io.TSDataReader" name="InitAhumDataReader">
+        <var name="dirName" globvar="workspaceDir"/>
+        <var name="skipRegression" globvar="data_caching"/>
+        <var name="dataFileName" value="data\ahum.dat"/>
+        <var name="startColumn" value="3"/>
+        <var name="xCoord" attribute="xCoordAhum"/>
+        <var name="yCoord" attribute="yCoordAhum"/>        
+    </component>
+    
+    <component class="org.unijena.j2k.io.TSDataReader" name="InitPrecipDataReader">
+        <var name="dirName" globvar="workspaceDir"/>
+        <var name="skipRegression" globvar="data_caching"/>
+        <var name="dataFileName" value="data\rain.dat"/>
+        <var name="startColumn" value="3"/>
+        <var name="xCoord" attribute="xCoordPrecip"/>
+        <var name="yCoord" attribute="yCoordPrecip"/>
+    </component>
+    
+    <component class="org.unijena.j2k.io.TSDataReader" name="InitSunhDataReader">
+        <var name="dirName" globvar="workspaceDir"/>
+        <var name="skipRegression" globvar="data_caching"/>
+        <var name="dataFileName" value="data\sunh.dat"/>
+        <var name="startColumn" value="3"/>
+        <var name="xCoord" attribute="xCoordSunh"/>
+        <var name="yCoord" attribute="yCoordSunh"/>        
+    </component>
+    
+    <component class="org.unijena.j2k.io.TSDataReader" name="InitWindDataReader">
+        <var name="dirName" globvar="workspaceDir"/>
+        <var name="skipRegression" globvar="data_caching"/>
+        <var name="dataFileName" value="data\wind.dat"/>
+        <var name="startColumn" value="3"/>
+        <var name="xCoord" attribute="xCoordWind"/>
+        <var name="yCoord" attribute="yCoordWind"/>
+    </component>
+
+    <contextcomponent class="org.unijena.jams.model.JAMSSpatialContext" name="InitCatchmentContext">
+        <var name="entities" attribute="hrus"/>
+
+        <component class="org.unijena.j2k.aggregate.SumAggregator" name="AreaCalculator">
+            <var name="value" context="InitCatchmentContext" attribute="area"/>
+            <var name="sum" attribute="area"/>
+        </component>
+    </contextcomponent>
+        
+    <contextcomponent class="org.unijena.jams.model.JAMSSpatialContext" name="InitHRUContext">
+        <var name="entities" attribute="hrus"/>
+                
+        <component class="org.unijena.j2k.CalcAreaWeight" name="AreaWeight">
+            <var name="entityArea" context="InitHRUContext" attribute="area"/>
+            <var name="catchmentArea" attribute="area"/>
+            <var name="areaWeight" context="InitHRUContext" attribute="areaweight"/>
+        </component>
+
+        <component class="org.unijena.j2k.geographicalCalculations.CalcLatLong" name="CalcLatLong">
+            <var name="projection" value="GK" />
+            <var name="x" context="InitHRUContext" attribute="x"/>
+            <var name="y" context="InitHRUContext" attribute="y"/>
+            <var name="slope" context="InitHRUContext" attribute="slope"/>
+            <var name="aspect" context="InitHRUContext" attribute="aspect"/>
+            <var name="latitude" context="InitHRUContext" attribute="latitude"/>
+            <var name="longitude" context="InitHRUContext" attribute="longitude"/>
+            <var name="slAsCfArray" context="InitHRUContext" attribute="slAsCfArray"/>
+        </component> 
+                   
+        <component class="org.unijena.j2k.inputData.CalcLanduseStateVars" name="CalcLanduseStateVars">
+            <var name="entities" attribute="hrus"/>
+            <var name="LAIArray" context="InitHRUContext" attribute="LAIArray"/>
+            <var name="effHArray" context="InitHRUContext" attribute="effHArray"/>
+            <var name="rsc0Array" context="InitHRUContext" attribute="rsc0Array"/>
+            <var name="elevation" context="InitHRUContext" attribute="elevation"/>
+        </component>
+        
+        <component class="org.unijena.j2k.radiation.CalcExtraterrRadiation" name="ExtRad">
+            <var name="latitude" context="InitHRUContext" attribute="latitude"/>
+            <var name="longitude" context="InitHRUContext" attribute="longitude"/>
+            <var name="longTZ" value="15"/>
+            <var name="locGrw" value="e"/>
+            <var name="tempRes" value="d"/>
+            <var name="extRadArray" context="InitHRUContext" attribute="extRadArray"/>
+        </component>
+        
+        <component class="org.unijena.j2k.soilWater.InitJ2KProcessLumpedSoilWaterStates" name="InitSoilWater">
+            <var name="entities" attribute="hrus"/>
+            <var name="area" context="InitHRUContext" attribute="area"/>
+            <var name="rootDepth" context="InitHRUContext" attribute="rootDepth"/>
+            <var name="maxMPS" context="InitHRUContext" attribute="maxMPS"/>
+            <var name="maxLPS" context="InitHRUContext" attribute="maxLPS"/>
+            <var name="actMPS" context="InitHRUContext" attribute="actMPS"/>
+            <var name="actLPS" context="InitHRUContext" attribute="actLPS"/>
+            <var name="satMPS" context="InitHRUContext" attribute="satMPS"/>
+            <var name="satLPS" context="InitHRUContext" attribute="satLPS"/>
+            <var name="satSoil" context="InitHRUContext" attribute="satSoil"/>
+            <var name="FCAdaptation" value="1.2"/>
+            <var name="ACAdaptation" value="1"/>
+        </component>
+        
+        <component class="org.unijena.j2k.groundwater.InitJ2KProcessGroundwater" name="InitGroundWater">
+            <var name="entities" attribute="hrus"/>
+            <var name="area" context="InitHRUContext" attribute="area"/>
+            <var name="maxRG1" context="InitHRUContext" attribute="maxRG1"/>
+            <var name="maxRG2" context="InitHRUContext" attribute="maxRG2"/>
+            <var name="actRG1" context="InitHRUContext" attribute="actRG1"/>
+            <var name="actRG2" context="InitHRUContext" attribute="actRG2"/>
+            <var name="initRG1" value="0.0"/>
+            <var name="initRG2" value="0.0"/>
+        </component>
+        
+        <component class="org.unijena.j2k.regionalisation.CalcNidwWeights" name="tminWeights">
+            <var name="entityX" context="InitHRUContext" attribute="x"/>
+            <var name="entityY" context="InitHRUContext" attribute="y"/>
+            <var name="statX" attribute="xCoordTmin"/>
+            <var name="statY" attribute="yCoordTmin"/>
+            <var name="nidw" value="3"/>
+            <var name="pidw" value="2"/>
+            <var name="statWeights" context="InitHRUContext" attribute="tminWeights"/>
+        </component>
+        
+        <component class="org.unijena.j2k.regionalisation.CalcNidwWeights" name="tmeanWeights">
+            <var name="entityX" context="InitHRUContext" attribute="x"/>
+            <var name="entityY" context="InitHRUContext" attribute="y"/>
+            <var name="statX" attribute="xCoordTmean"/>
+            <var name="statY" attribute="yCoordTmean"/>
+            <var name="nidw" value="3"/>
+            <var name="pidw" value="2"/>
+            <var name="statWeights" context="InitHRUContext" attribute="tmeanWeights"/>
+        </component>
+        
+        <component class="org.unijena.j2k.regionalisation.CalcNidwWeights" name="tmaxWeights">
+            <var name="entityX" context="InitHRUContext" attribute="x"/>
+            <var name="entityY" context="InitHRUContext" attribute="y"/>
+            <var name="statX" attribute="xCoordTmax"/>
+            <var name="statY" attribute="yCoordTmax"/>
+            <var name="nidw" value="3"/>
+            <var name="pidw" value="2"/>
+            <var name="statWeights" context="InitHRUContext" attribute="tmaxWeights"/>
+        </component>
+        
+        <component class="org.unijena.j2k.regionalisation.CalcNidwWeights" name="ahumWeights">
+            <var name="entityX" context="InitHRUContext" attribute="x"/>
+            <var name="entityY" context="InitHRUContext" attribute="y"/>
+            <var name="statX" attribute="xCoordAhum"/>
+            <var name="statY" attribute="yCoordAhum"/>
+            <var name="nidw" value="3"/>
+            <var name="pidw" value="2"/>
+            <var name="statWeights" context="InitHRUContext" attribute="ahumWeights"/>
+        </component>
+        
+        <component class="org.unijena.j2k.regionalisation.CalcNidwWeights" name="sunhWeights">
+            <var name="entityX" context="InitHRUContext" attribute="x"/>
+            <var name="entityY" context="InitHRUContext" attribute="y"/>
+            <var name="statX" attribute="xCoordSunh"/>
+            <var name="statY" attribute="yCoordSunh"/>
+            <var name="nidw" value="3"/>
+            <var name="pidw" value="2"/>
+            <var name="statWeights" context="InitHRUContext" attribute="sunhWeights"/>
+        </component>
+        
+        <component class="org.unijena.j2k.regionalisation.CalcNidwWeights" name="windWeights">
+            <var name="entityX" context="InitHRUContext" attribute="x"/>
+            <var name="entityY" context="InitHRUContext" attribute="y"/>
+            <var name="statX" attribute="xCoordWind"/>
+            <var name="statY" attribute="yCoordWind"/>            
+            <var name="nidw" value="3"/>
+            <var name="pidw" value="2"/>
+            <var name="statWeights" context="InitHRUContext" attribute="windWeights"/>
+        </component>
+        
+        <component class="org.unijena.j2k.regionalisation.CalcNidwWeights" name="precipWeights">
+            <var name="entityX" context="InitHRUContext" attribute="x"/>
+            <var name="entityY" context="InitHRUContext" attribute="y"/>
+            <var name="statX" attribute="xCoordPrecip"/>
+            <var name="statY" attribute="yCoordPrecip"/>            
+            <var name="nidw" value="5"/>
+            <var name="pidw" value="2"/>
+            <var name="statWeights" context="InitHRUContext" attribute="precipWeights"/>
+        </component>
+                
+    </contextcomponent>
+
+
+    <contextcomponent class="org.unijena.jams.model.JAMSTemporalContext" name="TemporalContext">
+        <var name="timeInterval" globvar="timeInterval"/>        
+        <var name="current" attribute="time"/>
+        
+        <component class="org.unijena.jamscomponents.gui.JAMSExecInfo" name="JAMSProgress" />
+                
+        <component class="org.unijena.j2k.io.TSDataReader" name="TmeanDataReader">
+            <var name="dirName" globvar="workspaceDir"/>
+            <var name="skipRegression" globvar="data_caching"/>
+            <var name="timeInterval" globvar="timeInterval"/>
+            <var name="dataFileName" value="data\tmean.dat"/>
+            <var name="startColumn" value="3"/>
+            <var name="dataArray" attribute="dataArrayTmean"/>
+            <var name="regCoeff" attribute="regCoeffTmean"/>
+            <var name="elevation" attribute="elevationTmean"/>
+            <var name="xCoord" attribute="xCoordTmean"/>
+            <var name="yCoord" attribute="yCoordTmean"/>
+            <var name="dataSetName" attribute="dataSetNameTmean"/>
+        </component>
+        
+        <component class="org.unijena.j2k.io.TSDataReader" name="TminDataReader">
+            <var name="dirName" globvar="workspaceDir"/>
+            <var name="skipRegression" globvar="data_caching"/>
+            <var name="timeInterval" globvar="timeInterval"/>
+            <var name="dataFileName" value="data\tmin.dat"/>
+            <var name="startColumn" value="3"/>
+            <var name="dataArray" attribute="dataArrayTmin"/>
+            <var name="regCoeff" attribute="regCoeffTmin"/>
+            <var name="elevation" attribute="elevationTmin"/>
+            <var name="xCoord" attribute="xCoordTmin"/>
+            <var name="yCoord" attribute="yCoordTmin"/>
+            <var name="dataSetName" attribute="dataSetNameTmin"/>
+
+        </component>
+        
+        <component class="org.unijena.j2k.io.TSDataReader" name="TmaxDataReader">
+            <var name="dirName" globvar="workspaceDir"/>
+            <var name="skipRegression" globvar="data_caching"/>
+            <var name="timeInterval" globvar="timeInterval"/>
+            <var name="dataFileName" value="data\tmax.dat"/>
+            <var name="startColumn" value="3"/>
+            <var name="dataArray" attribute="dataArrayTmax"/>
+            <var name="regCoeff" attribute="regCoeffTmax"/>
+            <var name="elevation" attribute="elevationTmax"/>
+            <var name="xCoord" attribute="xCoordTmax"/>
+            <var name="yCoord" attribute="yCoordTmax"/>
+            <var name="dataSetName" attribute="dataSetNameTmax"/>            
+        </component>
+        
+        <component class="org.unijena.j2k.io.TSDataReader" name="AhumDataReader">
+            <var name="dirName" globvar="workspaceDir"/>
+            <var name="skipRegression" globvar="data_caching"/>
+            <var name="timeInterval" globvar="timeInterval"/>
+            <var name="dataFileName" value="data\ahum.dat"/>
+            <var name="startColumn" value="3"/>
+            <var name="dataArray" attribute="dataArrayAhum"/>
+            <var name="regCoeff" attribute="regCoeffAhum"/>
+            <var name="elevation" attribute="elevationAhum"/>
+            <var name="xCoord" attribute="xCoordAhum"/>
+            <var name="yCoord" attribute="yCoordAhum"/>
+            <var name="dataSetName" attribute="dataSetNameAhum"/>            
+        </component>
+        
+        <component class="org.unijena.j2k.io.TSDataReader" name="PrecipDataReader">
+            <var name="dirName" globvar="workspaceDir"/>
+            <var name="skipRegression" globvar="data_caching"/>
+            <var name="timeInterval" globvar="timeInterval"/>
+            <var name="dataFileName" value="data\rain.dat"/>
+            <var name="startColumn" value="3"/>
+            <var name="dataArray" attribute="dataArrayPrecip"/>
+            <var name="regCoeff" attribute="regCoeffPrecip"/>
+            <var name="elevation" attribute="elevationPrecip"/>
+            <var name="xCoord" attribute="xCoordPrecip"/>
+            <var name="yCoord" attribute="yCoordPrecip"/>
+            <var name="dataSetName" attribute="dataSetNamePrecip"/>            
+        </component>
+            
+        <component class="org.unijena.j2k.io.TSDataReader" name="SunhDataReader">
+            <var name="dirName" globvar="workspaceDir"/>
+            <var name="skipRegression" globvar="data_caching"/>
+            <var name="timeInterval" globvar="timeInterval"/>
+            <var name="dataFileName" value="data\sunh.dat"/>
+            <var name="startColumn" value="3"/>
+            <var name="dataArray" attribute="dataArraySunh"/>
+            <var name="regCoeff" attribute="regCoeffSunh"/>
+            <var name="elevation" attribute="elevationSunh"/>
+            <var name="xCoord" attribute="xCoordSunh"/>
+            <var name="yCoord" attribute="yCoordSunh"/>
+            <var name="dataSetName" attribute="dataSetNameSunh"/>            
+        </component>
+            
+        <component class="org.unijena.j2k.inputData.RainCorrectionRichter" name="RCRichter">
+            <var name="time" attribute="time"/>
+            <var name="precip" attribute="dataArrayPrecip"/>
+            <var name="temperature" attribute="dataArrayTmean"/>
+            <var name="rcorr" attribute="dataArrayRcorr"/>
+            <var name="tempElevation" attribute="elevationTmean"/>
+            <var name="tempXCoord" attribute="xCoordTmean"/>
+            <var name="tempYCoord" attribute="yCoordTmean"/>
+            <var name="tempRegCoeff" attribute="regCoeffTmean"/>
+            <var name="rainElevation" attribute="elevationPrecip"/>
+            <var name="rainXCoord" attribute="xCoordPrecip"/>
+            <var name="rainYCoord" attribute="yCoordPrecip"/>
+            <var name="tempNIDW" value="3"/>
+            <var name="pIDW" value="2"/>
+            <var name="regThres" value="0.75"/>
+            <var name="snow_trs" globvar="snow_trs"/>
+            <var name="snow_trans" globvar="snow_trans"/>
+            <var name="dataCaching" globvar="data_caching"/>
+        </component>
+        
+        <component class="org.unijena.j2k.io.TSDataReader" name="WindDataReader">
+            <var name="dirName" globvar="workspaceDir"/>
+            <var name="skipRegression" globvar="data_caching"/>
+            <var name="timeInterval" globvar="timeInterval"/>
+            <var name="dataFileName" value="data\wind.dat"/>
+            <var name="startColumn" value="3"/>
+            <var name="dataArray" attribute="dataArrayWind"/>
+            <var name="regCoeff" attribute="regCoeffWind"/>
+            <var name="elevation" attribute="elevationWind"/>
+            <var name="xCoord" attribute="xCoordWind"/>
+            <var name="yCoord" attribute="yCoordWind"/>
+            <var name="dataSetName" attribute="dataSetNameWind"/>            
+        </component>
+        
+        <component class="org.unijena.j2k.io.TSDataReader" name="ObsRunoffDataReader">
+            <var name="dirName" globvar="workspaceDir"/>
+            <var name="skipRegression" globvar="data_caching"/>
+            <var name="timeInterval" globvar="timeInterval"/>
+            <var name="dataFileName" value="data\orun.dat"/>
+            <var name="startColumn" value="3"/>
+            <var name="dataArray" attribute="dataArrayObsRunoff"/>
+            <var name="regCoeff" attribute="regCoeffObsRunoff"/>
+            <var name="elevation" attribute="elevationObsRunoff"/>
+            <var name="xCoord" attribute="xCoordObsRunoff"/>
+            <var name="yCoord" attribute="yCoordObsRunoff"/>
+            <var name="dataSetName" attribute="dataSetNameObsRunoff"/>            
+        </component>
+                
+        <contextcomponent class="org.unijena.jams.model.JAMSSpatialContext" name="HRUContext">
+            <var name="entities" attribute="hrus"/>            
+            
+            <component class="org.unijena.j2k.J2KArrayGrabber" name="j2kArrayGrabber">
+                <var name="time" attribute="time"/>                
+                <var name="LAIArray" context="HRUContext" attribute="LAIArray"/>
+                <var name="effHArray" context="HRUContext" attribute="effHArray"/>
+                <var name="slAsCfArray" context="HRUContext" attribute="slAsCfArray"/>
+                <var name="rsc0Array" context="HRUContext" attribute="rsc0Array"/>
+                <var name="extRadArray" context="HRUContext" attribute="extRadArray"/>
+                <var name="actLAI" context="HRUContext" attribute="actLAI"/>
+                <var name="actEffH" context="HRUContext" attribute="actEffH"/>
+                <var name="actSlAsCf" context="HRUContext" attribute="actSlAsCf"/>
+                <var name="actRsc0" context="HRUContext" attribute="actRsc0"/>
+                <var name="actExtRad" context="HRUContext" attribute="actExtRad"/>
+                <var name="tempRes" value="d"/>
+            </component>
+            
+            <component class="org.unijena.j2k.regionalisation.Regionalisation" name="TmeanRegionaliser">
+                <var name="dirName" globvar="workspaceDir"/>
+                <var name="dataCaching" globvar="data_caching"/>
+                <var name="dataArray" attribute="dataArrayTmean"/>
+                <var name="regCoeff" attribute="regCoeffTmean"/>
+                <var name="statElevation" attribute="elevationTmean"/>
+                <var name="statX" attribute="xCoordTmean"/>
+                <var name="statY" attribute="yCoordTmean"/>
+                <var name="dataSetName" attribute="dataSetNameTmean"/>                
+                <var name="entityElevation" context="HRUContext" attribute="elevation"/>
+                <var name="statWeights" context="HRUContext" attribute="tmeanWeights"/>
+                <var name="elevationCorrection" value="1"/>
+                <var name="rsqThreshold" value="0.75"/>
+                <var name="dataValue" context="HRUContext" attribute="tmean"/>
+            </component>
+            
+            <component class="org.unijena.j2k.regionalisation.Regionalisation" name="TminRegionaliser">
+                <var name="dirName" globvar="workspaceDir"/>
+                <var name="dataCaching" globvar="data_caching"/>
+                <var name="dataArray" attribute="dataArrayTmin"/>
+                <var name="regCoeff" attribute="regCoeffTmin"/>
+                <var name="statElevation" attribute="elevationTmin"/>
+                <var name="statX" attribute="xCoordTmin"/>
+                <var name="statY" attribute="yCoordTmin"/>
+                <var name="dataSetName" attribute="dataSetNameTmin"/>                
+                <var name="entityElevation" context="HRUContext" attribute="elevation"/>
+                <var name="statWeights" context="HRUContext" attribute="tminWeights"/>
+                <var name="elevationCorrection" value="1"/>
+                <var name="rsqThreshold" value="0.75"/>
+                <var name="dataValue" context="HRUContext" attribute="tmin"/>
+            </component>
+            
+            <component class="org.unijena.j2k.regionalisation.Regionalisation" name="TmaxRegionaliser">
+                <var name="dirName" globvar="workspaceDir"/>
+                <var name="dataCaching" globvar="data_caching"/>
+                <var name="dataArray" attribute="dataArrayTmax"/>
+                <var name="regCoeff" attribute="regCoeffTmax"/>
+                <var name="statElevation" attribute="elevationTmax"/>
+                <var name="statX" attribute="xCoordTmax"/>
+                <var name="statY" attribute="yCoordTmax"/>
+                <var name="dataSetName" attribute="dataSetNameTmax"/>                                
+                <var name="entityElevation" context="HRUContext" attribute="elevation"/>
+                <var name="statWeights" context="HRUContext" attribute="tmaxWeights"/>
+                <var name="elevationCorrection" value="1"/>
+                <var name="rsqThreshold" value="0.75"/>
+                <var name="dataValue" context="HRUContext" attribute="tmax"/>
+            </component>
+            
+            <component class="org.unijena.j2k.regionalisation.Regionalisation" name="AhumRegionaliser">
+                <var name="dirName" globvar="workspaceDir"/>
+                <var name="dataCaching" globvar="data_caching"/>
+                <var name="dataArray" attribute="dataArrayAhum"/>
+                <var name="regCoeff" attribute="regCoeffAhum"/>
+                <var name="statElevation" attribute="elevationAhum"/>
+                <var name="statX" attribute="xCoordAhum"/>
+                <var name="statY" attribute="yCoordAhum"/>
+                <var name="dataSetName" attribute="dataSetNameAhum"/>
+                <var name="entityElevation" context="HRUContext" attribute="elevation"/>
+                <var name="statWeights" context="HRUContext" attribute="ahumWeights"/>
+                <var name="elevationCorrection" value="1"/>
+                <var name="rsqThreshold" value="0.75"/>
+                <var name="dataValue" context="HRUContext" attribute="ahum"/>
+            </component>
+            
+            <component class="org.unijena.j2k.regionalisation.Regionalisation" name="PrecipRegionaliser">
+                <var name="dirName" globvar="workspaceDir"/>
+                <var name="dataCaching" globvar="data_caching"/>
+                <var name="dataArray" attribute="dataArrayRcorr"/>
+                <var name="regCoeff" attribute="regCoeffPrecip"/>
+                <var name="statElevation" attribute="elevationPrecip"/>
+                <var name="statX" attribute="xCoordPrecip"/>
+                <var name="statY" attribute="yCoordPrecip"/>
+                <var name="dataSetName" attribute="dataSetNamePrecip"/>
+                <var name="entityElevation" context="HRUContext" attribute="elevation"/>
+                <var name="statWeights" context="HRUContext" attribute="precipWeights"/>
+                <var name="elevationCorrection" value="1"/>
+                <var name="rsqThreshold" value="0.75"/>
+                <var name="dataValue" context="HRUContext" attribute="precip"/>
+            </component>
+            
+            <component class="org.unijena.j2k.regionalisation.Regionalisation" name="SunhRegionaliser">
+                <var name="dirName" globvar="workspaceDir"/>
+                <var name="dataCaching" globvar="data_caching"/>
+                <var name="dataArray" attribute="dataArraySunh"/>
+                <var name="regCoeff" attribute="regCoeffSunh"/>
+                <var name="statElevation" attribute="elevationSunh"/>
+                <var name="statX" attribute="xCoordSunh"/>
+                <var name="statY" attribute="yCoordSunh"/>
+                <var name="dataSetName" attribute="dataSetNameSunh"/>
+                <var name="entityElevation" context="HRUContext" attribute="elevation"/>
+                <var name="statWeights" context="HRUContext" attribute="sunhWeights"/>
+                <var name="elevationCorrection" value="0"/>
+                <var name="rsqThreshold" value="0.75"/>
+                <var name="dataValue" context="HRUContext" attribute="sunh"/>
+            </component>
+            
+            <component class="org.unijena.j2k.regionalisation.Regionalisation" name="WindRegionaliser">
+                <var name="dirName" globvar="workspaceDir"/>
+                <var name="dataCaching" globvar="data_caching"/>
+                <var name="dataArray" attribute="dataArrayWind"/>
+                <var name="regCoeff" attribute="regCoeffWind"/>
+                <var name="statElevation" attribute="elevationWind"/>
+                <var name="statX" attribute="xCoordWind"/>
+                <var name="statY" attribute="yCoordWind"/>
+                <var name="dataSetName" attribute="dataSetNameWind"/>
+                <var name="entityElevation" context="HRUContext" attribute="elevation"/>
+                <var name="statWeights" context="HRUContext" attribute="windWeights"/>
+                <var name="elevationCorrection" value="0"/>
+                <var name="rsqThreshold" value="0.75"/>
+                <var name="dataValue" context="HRUContext" attribute="wind"/>
+            </component>
+            
+            <component class="org.unijena.j2k.inputData.CalcRelativeHumidity" name="CalcRelativeHumidity">
+                <var name="tmean" context="HRUContext" attribute="tmean"/>
+                <var name="ahum" context="HRUContext" attribute="ahum"/>
+                <var name="rhum" context="HRUContext" attribute="rhum"/>
+            </component>
+            
+            <component class="org.unijena.j2k.radiation.CalcDailySolarRadiation" name="CalcDailySolarRadiation">
+                <var name="dirName" globvar="workspaceDir"/>
+                <var name="dataCaching" globvar="data_caching"/>
+                <var name="time" attribute="time"/>
+                <var name="actSlAsCf" context="HRUContext" attribute="actSlAsCf"/>
+                <var name="latitude" context="HRUContext" attribute="latitude"/>
+                <var name="actExtRad" context="HRUContext" attribute="actExtRad"/>
+                <var name="sunh" context="HRUContext" attribute="sunh"/>
+                <var name="angstrom_a" value="0.25"/>
+                <var name="angstrom_b" value="0.5"/>
+                <var name="solRad" context="HRUContext" attribute="solRad"/>
+            </component>
+            
+            <component class="org.unijena.j2k.radiation.CalcDailyNetRadiation" name="CalcDailyNetRadiation">
+                <var name="dirName" globvar="workspaceDir"/>
+                <var name="dataCaching" globvar="data_caching"/>
+                <var name="time" attribute="time"/>
+                <var name="tmean" context="HRUContext" attribute="tmean"/>
+                <var name="sunh" context="HRUContext" attribute="sunh"/>
+                <var name="rhum" context="HRUContext" attribute="rhum"/>
+                <var name="solRad" context="HRUContext" attribute="solRad"/>
+                <var name="latitude" context="HRUContext" attribute="latitude"/>
+                <var name="elevation" context="HRUContext" attribute="elevation"/>
+                <var name="albedo" context="HRUContext" attribute="albedo"/>
+                <var name="extRad" context="HRUContext" attribute="actExtRad"/>
+                <var name="netRad" context="HRUContext" attribute="netRad"/>
+            </component>
+
+            <component class="org.unijena.j2k.potET.RefET" name="CalcRefET">
+                <var name="dirName" globvar="workspaceDir"/>
+                <var name="dataCaching" globvar="data_caching"/>
+                <var name="netRad" context="HRUContext" attribute="netRad"/>
+                <var name="tmean" context="HRUContext" attribute="tmean"/>
+                <var name="rhum" context="HRUContext" attribute="rhum"/>
+                <var name="wind" context="HRUContext" attribute="wind"/>
+                <var name="elevation" context="HRUContext" attribute="elevation"/>
+                <var name="area" context="HRUContext" attribute="area"/>
+                <var name="refET" context="HRUContext" attribute="refET"/>
+                <var name="actET" context="HRUContext" attribute="actET"/>
+                <var name="tempRes" value="d"/>
+            </component>
+            
+            <component class="org.unijena.j2k.potET.PenmanMonteith" name="CalcPotentialET">
+                <var name="dirName" globvar="workspaceDir"/>
+                <var name="dataCaching" globvar="data_caching"/>
+                <var name="netRad" context="HRUContext" attribute="netRad"/>
+                <var name="tmean" context="HRUContext" attribute="tmean"/>
+                <var name="rhum" context="HRUContext" attribute="rhum"/>
+                <var name="wind" context="HRUContext" attribute="wind"/>
+                <var name="actRsc0" context="HRUContext" attribute="actRsc0"/>
+                <var name="actLAI" context="HRUContext" attribute="actLAI"/>
+                <var name="actEffH" context="HRUContext" attribute="actEffH"/>
+                <var name="elevation" context="HRUContext" attribute="elevation"/>
+                <var name="area" context="HRUContext" attribute="area"/>
+                <var name="potET" context="HRUContext" attribute="potET"/>
+                <var name="actET" context="HRUContext" attribute="actET"/>
+                <var name="rs" context="HRUContext" attribute="rs"/>
+                <var name="ra" context="HRUContext" attribute="ra"/>
+                <var name="tempRes" value="d"/>
+            </component>
+            
+            <component class="org.unijena.j2k.snow.CalcRainSnowParts" name="CalcRainSnowParts">
+                <var name="precip" context="HRUContext" attribute="precip"/>
+                <var name="tmin" context="HRUContext" attribute="tmean"/>
+                <var name="tmean" context="HRUContext" attribute="tmean"/>
+                <var name="area" context="HRUContext" attribute="area"/>
+                <var name="snow_trs" globvar="snow_trs"/>
+                <var name="snow_trans" globvar="snow_trans"/>
+                <var name="rain" context="HRUContext" attribute="rain"/>
+                <var name="snow" context="HRUContext" attribute="snow"/>
+            </component>
+            
+            <component class="org.unijena.j2k.interception.J2KProcessInterception" name="J2KProcessInterception">
+                <var name="area" context="HRUContext" attribute="area"/>
+                <var name="tmean" context="HRUContext" attribute="tmean"/>
+                <var name="rain" context="HRUContext" attribute="rain"/>
+                <var name="snow" context="HRUContext" attribute="snow"/>
+                <var name="potET" context="HRUContext" attribute="potET"/>
+                <var name="actET" context="HRUContext" attribute="actET"/>
+                <var name="actLAI" context="HRUContext" attribute="actLAI"/>
+                <var name="snow_trs" globvar="snow_trs"/>
+                <var name="snow_trans" globvar="snow_trans"/>
+                <var name="a_rain" value="2.22"/>
+                <var name="a_snow" value="2.78"/>
+                <var name="netRain" context="HRUContext" attribute="netRain"/>
+                <var name="netSnow" context="HRUContext" attribute="netSnow"/>
+                <var name="throughfall" context="HRUContext" attribute="throughfall"/>
+                <var name="interception" context="HRUContext" attribute="interception"/>
+                <var name="intercStorage" context="HRUContext" attribute="intercStorage"/>
+            </component>
+            
+            <component class="org.unijena.j2k.snow.J2KProcessSnow" name="J2KProcessSnow">
+                <var name="area" context="HRUContext" attribute="area"/>
+                <var name="actSlAsCf" context="HRUContext" attribute="actSlAsCf"/>
+                <var name="minTemp" context="HRUContext" attribute="tmean"/>
+                <var name="meanTemp" context="HRUContext" attribute="tmean"/>
+                <var name="maxTemp" context="HRUContext" attribute="tmean"/>
+                <var name="netRain" context="HRUContext" attribute="netRain"/>
+                <var name="netSnow" context="HRUContext" attribute="netSnow"/>
+                <var name="snowTotSWE" context="HRUContext" attribute="snowTotSWE"/>
+                <var name="drySWE" context="HRUContext" attribute="drySWE"/>
+                <var name="totDens" context="HRUContext" attribute="totDens"/>
+                <var name="dryDens" context="HRUContext" attribute="dryDens"/>
+                <var name="snowDepth" context="HRUContext" attribute="snowDepth"/>
+                <var name="snowAge" context="HRUContext" attribute="snowAge"/>
+                <var name="snowColdContent" context="HRUContext" attribute="snowColdContent"/>
+                <var name="snowMelt" context="HRUContext" attribute="snowMelt"/>
+                <var name="snow_trs" globvar="snow_trs"/>
+                <var name="snow_trans" globvar="snow_trans"/>
+                <var name="t_factor" value="0.7"/>
+                <var name="r_factor" value="0.008"/>
+                <var name="g_factor" value="4.04"/>
+                <var name="snowCritDens" value="0.45"/>
+                <var name="ccf_factor" value="0.001"/>
+            </component>
+            
+            <component class="org.unijena.j2k.soilWater.J2KProcessLumpedSoilWater" name="J2KProcessLumpedSoilWater">
+                <var name="time" attribute="time"/>                
+                <var name="area" context="HRUContext" attribute="area"/>
+                <var name="slope" context="HRUContext" attribute="slope"/>
+                <var name="sealedGrade" context="HRUContext" attribute="sealedGrade"/>
+                <var name="netRain" context="HRUContext" attribute="netRain"/>
+                <var name="netSnow" context="HRUContext" attribute="netSnow"/>
+                <var name="potET" context="HRUContext" attribute="potET"/>
+                <var name="actET" context="HRUContext" attribute="actET"/>
+                <var name="snowDepth" context="HRUContext" attribute="snowDepth"/>
+                <var name="snowMelt" context="HRUContext" attribute="snowMelt"/>
+                <var name="maxMPS" context="HRUContext" attribute="maxMPS"/>
+                <var name="maxLPS" context="HRUContext" attribute="maxLPS"/>
+                <var name="actDPS" context="HRUContext" attribute="actDPS"/>
+                <var name="actMPS" context="HRUContext" attribute="actMPS"/>
+                <var name="actLPS" context="HRUContext" attribute="actLPS"/>
+                <var name="satMPS" context="HRUContext" attribute="satMPS"/>
+                <var name="satLPS" context="HRUContext" attribute="satLPS"/>
+                <var name="satSoil" context="HRUContext" attribute="satSoil"/>
+                <var name="infiltration" context="HRUContext" attribute="infiltration"/>
+                <var name="interflow" context="HRUContext" attribute="interflow"/>
+                <var name="percolation" context="HRUContext" attribute="percolation"/>
+                <var name="inRD1" context="HRUContext" attribute="inRD1"/>
+                <var name="inRD2" context="HRUContext" attribute="inRD2"/>
+                <var name="genRD1" context="HRUContext" attribute="genRD1"/>
+                <var name="genRD2" context="HRUContext" attribute="genRD2"/>
+                <var name="outRD1" context="HRUContext" attribute="outRD1"/>
+                <var name="outRD2" context="HRUContext" attribute="outRD2"/>
+                <var name="soilMaxDPS" value="2.0"/>
+                <var name="soilPolRed" value="5.0"/>
+                <var name="soilLinRed" value="0.0"/>
+                <var name="soilMaxInfSummer" value="80.0"/>
+                <var name="soilMaxInfWinter" value="100.0"/>
+                <var name="soilMaxInfSnow" value="40.0"/>
+                <var name="soilImpGT80" value="0.25"/>
+                <var name="soilImpLT80" value="0.6"/>
+                <var name="soilDistMPSLPS" value="0.4"/>
+                <var name="soilDiffMPSLPS" value="0.68"/>
+                <var name="soilOutLPS" value="1.0"/>
+                <var name="soilLatVertLPS" value="0.7"/>
+                <var name="soilMaxPerc" value="1.0"/>
+                <var name="soilConcRD1" value="1.0"/>
+                <var name="soilConcRD2" value="1.0"/>
+            </component>
+ 
+            <component class="org.unijena.j2k.groundwater.J2KProcessGroundwater" name="J2KProcessGroundwater">
+                <var name="area" context="HRUContext" attribute="area"/>
+                <var name="slope" context="HRUContext" attribute="slope"/>
+                <var name="maxRG1" context="HRUContext" attribute="maxRG1"/>
+                <var name="maxRG2" context="HRUContext" attribute="maxRG2"/>
+                <var name="kRG1" context="HRUContext" attribute="RG1_k"/>
+                <var name="kRG2" context="HRUContext" attribute="RG2_k"/>
+                <var name="actRG1" context="HRUContext" attribute="actRG1"/>
+                <var name="actRG2" context="HRUContext" attribute="actRG2"/>
+                <var name="inRG1" context="HRUContext" attribute="inRG1"/>
+                <var name="inRG2" context="HRUContext" attribute="inRG2"/>
+                <var name="outRG1" context="HRUContext" attribute="outRG1"/>
+                <var name="outRG2" context="HRUContext" attribute="outRG2"/>
+                <var name="genRG1" context="HRUContext" attribute="genRG1"/>
+                <var name="genRG2" context="HRUContext" attribute="genRG2"/>
+                <var name="percolation" context="HRUContext" attribute="percolation"/>
+                <var name="gwExcess" context="HRUContext" attribute="outRD2"/>
+                <var name="maxSoilStorage" context="HRUContext" attribute="maxMPS"/>
+                <var name="actSoilStorage" context="HRUContext" attribute="actMPS"/>
+                <var name="gwRG1RG2dist" value="0.8"/>
+                <var name="gwRG1Fact" value="1.0"/>
+                <var name="gwRG2Fact" value="1.0"/>
+                <var name="gwCapRise" value="0.0"/>
+            </component>
+
+            <component class="org.unijena.j2k.routing.J2KProcessRouting" name="J2KProcessRouting">
+                <var name="reaches" attribute="reaches"/>
+                <var name="entities" attribute="hrus"/>
+                <var name="inRD1" context="HRUContext" attribute="inRD1"/>
+                <var name="inRD2" context="HRUContext" attribute="inRD2"/>
+                <var name="inRG1" context="HRUContext" attribute="inRG1"/>
+                <var name="inRG2" context="HRUContext" attribute="inRG2"/>
+                <var name="outRD1" context="HRUContext" attribute="outRD1"/>
+                <var name="outRD2" context="HRUContext" attribute="outRD2"/>
+                <var name="outRG1" context="HRUContext" attribute="outRG1"/>
+                <var name="outRG2" context="HRUContext" attribute="outRG2"/>
+            </component>
+            
+            
+            <component class="org.unijena.jamscomponents.aggregate.TemporalSumAggregator" name="TemporalSumAggregator1">
+                <var name="time" attribute="time"/>
+                <var name="start" value="1997-01-01 7:30"/>
+                <var name="end" value="1997-12-31 7:30"/>
+                <var name="timeInterval" globvar="timeInterval"/>
+                <var name="value" context="HRUContext" attribute="precip;tmean"/>
+                <var name="weight" value="1"/>
+                <var name="sum" context="HRUContext" attribute="precip_1997;tmean_1997"/>
+            </component>
+
+            <component class="org.unijena.j2k.aggregate.WeightedSumAggregator" name="SpatialWeightedSumAggregator1">
+                <var name="value" context="HRUContext" attribute="precip;tmean;rhum;wind;solRad;netRad;snowDepth;satMPS;satLPS;rs;ra"/>
+                <var name="weight" context="HRUContext" attribute="areaweight"/>
+                <var name="sum" attribute="precip;tmean;rhum;wind;solRad;netRad;snowDepth;satMPS;satLPS;rs;ra"/>
+            </component>
+
+            <component class="org.unijena.j2k.aggregate.WeightedSumAggregator" name="SpatialWeightedSumAggregator2">
+                <var name="value" context="HRUContext" attribute="rain;snow;potET;refET;actET;netSnow;netRain;throughfall;interception;intercStorage;snowTotSWE;snowMelt;actMPS;actLPS;actDPS;percolation;actRG1;actRG2;outRD1;outRD2;outRG1;outRG2"/>
+                <var name="weight" attribute="area"/>
+                <var name="sum" attribute="rain;snow;potET;refET;actET;netSnow;netRain;throughfall;interception;intercStorage;snowTotSWE;snowMelt;actMPS;actLPS;actDPS;percolation;actRG1;actRG2;outRD1;outRD2;outRG1;outRG2"/>
+            </component>            
+
+        </contextcomponent>
+            
+        <contextcomponent class="org.unijena.jams.model.JAMSSpatialContext" name="ReachContext">
+            <var name="entities" attribute="reaches"/>
+        
+            <component class="org.unijena.j2k.routing.J2KProcessReachRouting" name="J2KProcessReachRouting">
+                <var name="entities" attribute="reaches"/>
+                <var name="length" context="ReachContext" attribute="length"/>
+                <var name="slope" context="ReachContext" attribute="slope"/>
+                <var name="width" context="ReachContext" attribute="width"/>
+                <var name="roughness" context="ReachContext" attribute="rough"/>
+                <var name="inRD1" context="ReachContext" attribute="inRD1"/>
+                <var name="inRD2" context="ReachContext" attribute="inRD2"/>
+                <var name="inRG1" context="ReachContext" attribute="inRG1"/>
+                <var name="inRG2" context="ReachContext" attribute="inRG2"/>
+                <var name="actRD1" context="ReachContext" attribute="actRD1"/>
+                <var name="actRD2" context="ReachContext" attribute="actRD2"/>
+                <var name="actRG1" context="ReachContext" attribute="actRG1"/>
+                <var name="actRG2" context="ReachContext" attribute="actRG2"/>
+                <var name="outRD1" context="ReachContext" attribute="reachOutRD1"/>
+                <var name="outRD2" context="ReachContext" attribute="reachOutRD2"/>
+                <var name="outRG1" context="ReachContext" attribute="reachOutRG1"/>
+                <var name="outRG2" context="ReachContext" attribute="reachOutRG2"/>
+                <var name="catchmentRD1" attribute="catchmentRD1"/>
+                <var name="catchmentRD2" attribute="catchmentRD2"/>
+                <var name="catchmentRG1" attribute="catchmentRG1"/>
+                <var name="catchmentRG2" attribute="catchmentRG2"/>
+                <var name="catchmentSimRunoff" attribute="catchmentSimRunoff"/>
+                <var name="simRunoff" context="ReachContext" attribute="simRunoff"/>
+                <var name="channelStorage" context="ReachContext" attribute="channelStorage"/>
+                <var name="flowRouteTA" value="1.0"/>
+                <var name="tempRes" value="d"/>
+            </component>              
+            
+            <component class="org.unijena.j2k.aggregate.SumAggregator" name="ChannelStorageAggregator">
+                <var name="value" context="ReachContext" attribute="channelStorage"/>
+                <var name="sum" attribute="channelStorage"/>
+            </component> 
+            
+        </contextcomponent>
+
+        <component class="org.unijena.j2k.aggregate.WeightedSumAggregator" name="FlowWeightedSumAggregator">
+            <var name="value" attribute="catchmentRD1;catchmentRD2;catchmentRG1;catchmentRG2;channelStorage"/>
+            <var name="weight" attribute="area"/>
+            <var name="sum" attribute="catchmentRD1_w;catchmentRD2_w;catchmentRG1_w;catchmentRG2_w;channelStorage_w"/>
+        </component> 
+    
+        <component class="org.unijena.jams.tools.JAMSUnitConverter" name="SimRunoffConverter">
+            <var name="inUnit" value="L/day"/>
+            <var name="outUnit" value="m³/s"/>
+            <var name="inValue" attribute="catchmentSimRunoff"/>
+            <var name="outValue" attribute="catchmentSimRunoff_qm"/>
+        </component> 
+       
+        <component class="org.unijena.j2k.io.StandardTSDataProvider" name="ObsRunoff">
+            <var name="dataArray" attribute="dataArrayObsRunoff"/>
+            <var name="attribute" attribute="catchmentObsRunoff"/>
+            <var name="column" value="1"/>
+        </component>
+            
+        <component class="org.unijena.j2k.io.StandardDataWriter" name="CatchmentWriter">
+            <var name="dirName" globvar="workspaceDir"/>
+            <var name="fileName" value="output\result-gb.dat"/>
+            <var name="time" attribute="time"/>
+            <var name="headers" value="precip;tmean;rhum;wind;rain;snow;solRad;netRad;refET;potET;actET;netRain;netSnow;throughfall;interception;intercStorage;snowDepth;snowTotSWE;snowMelt;satMPS;satLPS;actMPS;actLPS;percolation;actRG1;actRG2;catchmentRD1_w;catchmentRD2_w;catchmentRG1_w;catchmentRG2_w;channelStorage_w;catchmentSimRunoff_qm;catchmentObsRunoff;rs;ra"/>
+            <var name="value" attribute="precip;tmean;rhum;wind;rain;snow;solRad;netRad;refET;potET;actET;netRain;netSnow;throughfall;interception;intercStorage;snowDepth;snowTotSWE;snowMelt;satMPS;satLPS;actMPS;actLPS;percolation;actRG1;actRG2;catchmentRD1_w;catchmentRD2_w;catchmentRG1_w;catchmentRG2_w;channelStorage_w;catchmentSimRunoff_qm;catchmentObsRunoff;rs;ra"/>
+        </component>            
+
+        <component class="org.unijena.jamscomponents.gui.TSPlot" name="Runoff Plot" >
+            <var name="titleLeft" value="Simulated Runoff;Observed Runoff"/>
+            <var name="titleRight" value="Precip"/>
+            <var name="colorLeft" value="red;blue"/>
+            <var name="colorRight" value="lightgray"/>            
+            <var name="typeLeft" value="0"/>
+            <var name="typeRight" value="1"/>            
+            <var name="xAxisTitle" value="Time"/>
+            <var name="leftAxisTitle" value="Runoff [m³/s]"/>
+            <var name="rightAxisTitle" value="Precip [mm]"/>
+            <var name="rightAxisInverted" value="true"/>
+            <var name="dateFormat" value="dd-MM-yyyy hh:mm"/>
+            <var name="time" attribute="time"/>
+            <var name="valueLeft" attribute="catchmentSimRunoff_qm;catchmentObsRunoff"/>
+            <var name="valueRight" attribute="precip"/>
+        </component>
+
+        <!--component class="org.unijena.jamscomponents.gui.TSPlot" name="ETP Plot" >
+        <var name="titleLeft" value="pot. ET;act. ET"/>
+        <var name="colorLeft" value="magenta;cyan"/>
+        <var name="typeLeft" value="0"/>
+        <var name="xAxisTitle" value="Time"/>
+        <var name="leftAxisTitle" value="ETP [mm]"/>
+        <var name="dateFormat" value="dd-MM-yyyy hh:mm"/>
+        <var name="time" attribute="time"/>
+        <var name="valueLeft" attribute="potET;actET"/>
+        </component-->   
+     
+        <!--component class="org.unijena.jamscomponents.gui.TSPlot" name="soil moisture plot" >
+        <var name="titleLeft" value="satMPS;satLPS"/>
+        <var name="colorLeft" value="blue;red"/>
+        <var name="typeLeft" value="0"/>
+        <var name="xAxisTitle" value="Time"/>
+        <var name="leftAxisTitle" value="saturation [%]"/>
+        <var name="dateFormat" value="dd-MM-yyyy hh:mm"/>
+        <var name="time" attribute="time"/>
+        <var name="valueLeft" attribute="satMPS;satLPS"/>
+        </component-->   
+
+        <component class="org.unijena.j2k.DoubleSetter" name="CatchmentResetter">
+            <var name="attributes" attribute="precip;tmean;rhum;wind;rain;snow;solRad;netRad;refET;potET;actET;netRain;netSnow;throughfall;interception;intercStorage;snowDepth;snowTotSWE;snowMelt;satMPS;satLPS;actMPS;actLPS;percolation;actRG1;actRG2;catchmentRD1_w;catchmentRD2_w;catchmentRG1_w;catchmentRG2_w;channelStorage_w;channelStorage;rs;ra"/>
+            <var name="value" value="0"/>
+        </component>
+            
+        <component class="org.unijena.j2k.efficiencies.StandardEfficiencyCalculator" name="ec_full">
+            <var name="modelTimeInterval" globvar="timeInterval"/>
+            <var name="effTimeInterval" value="1996-11-01 7:30 1997-10-31 7:30 6 1"/>
+            <var name="effMethod" value="1,2,3,4,5,6,7,8,9,10,11"/>
+            <var name="validation" attribute="catchmentObsRunoff"/>
+            <var name="prediction" attribute="catchmentSimRunoff_qm"/>
+            <var name="e2" attribute="e2_f"/>
+            <var name="e1" attribute="e1_f"/>
+            <var name="le2" attribute="le2_f"/>
+            <var name="rsq" attribute="rsq_f"/>
+            <var name="wrsq" attribute="wrsq_f"/>
+            <var name="ioa1" attribute="ioa1_f"/>
+            <var name="ioa2" attribute="ioa2_f"/>
+            <var name="grad" attribute="grad_f"/>
+            <var name="dsGrad" attribute="dsGrad_f"/>
+            <var name="absVolErr" attribute="absVolErr_f"/>
+            <var name="rmse" attribute="rmse_f"/>
+        </component>
+            
+        <component class="org.unijena.j2k.efficiencies.StandardEfficiencyCalculator" name="ec_woInit">
+            <var name="modelTimeInterval" globvar="timeInterval"/>
+            <var name="effTimeInterval" value="1997-11-01 7:30 2000-10-31 7:30 6 1"/>
+            <var name="effMethod" value="1,2,3,4,5,6,7,8,9,10,11"/>
+            <var name="validation" attribute="catchmentObsRunoff"/>
+            <var name="prediction" attribute="catchmentSimRunoff_qm"/>
+            <var name="e2" attribute="e2"/>
+            <var name="e1" attribute="e1"/>
+            <var name="le2" attribute="le2"/>
+            <var name="rsq" attribute="rsq"/>
+            <var name="wrsq" attribute="wrsq"/>
+            <var name="ioa1" attribute="ioa1"/>
+            <var name="ioa2" attribute="ioa2"/>
+            <var name="grad" attribute="grad"/>
+            <var name="dsGrad" attribute="dsGrad"/>
+            <var name="absVolErr" attribute="absVolErr"/>
+            <var name="rmse" attribute="rmse"/>
+        </component>
+            
+    </contextcomponent>
+    
+    <component class="org.unijena.jamscomponents.io.EntityObserver" name="HRUObserver">
+        <var name="entities" attribute="hrus"/>
+        <var name="idAttribute" value="ID"/>
+        <var name="idValue" value="2"/>
+    </component>
+    
+    <contextcomponent class="org.unijena.jams.model.JAMSSpatialContext" name="EntityOutputContext">
+        <var name="entities" attribute="hrus"/>
+
+        <component class="org.unijena.jamscomponents.io.EntityWriter" name="EntityWriter">
+            <var name="dirName" globvar="workspaceDir"/>
+            <var name="fileName" value="output\entitiy_1997.dat"/>
+            <var name="headers" value="ID;precip_1997;tmean_1997"/>
+            <var name="value" context="EntityOutputContext" attribute="ID;precip_1997;tmean_1997"/>
+        </component>
+
+    </contextcomponent>
+</contextcomponent>    
+</model>

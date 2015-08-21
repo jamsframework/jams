@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook"
+       xmlns:ns6="http://www.w3.org/1999/xlink"
+       xmlns:ns5="http://www.w3.org/1999/xhtml"
+       xmlns:ns4="http://www.w3.org/2000/svg"
+       xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+       xmlns:ns="http://docbook.org/ns/docbook">
+  <title>CalcRelativeHumidity</title>
+
+  <subtitle>Eine Komponente zur Berechnung der relativen Feuchte aus der
+  Lufttemperatur und der absoluten Feuchte.</subtitle>
+
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*" />
+
+      <colspec colname="c2" colnum="2" colwidth="3*" />
+
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+
+          <entry>j2k.inputData</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+
+  <sect2>
+    <title>Variablen</title>
+
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1*" />
+
+        <colspec colname="c2" colnum="2" colwidth="3*" />
+
+        <thead>
+          <row>
+            <entry>Name</entry>
+
+            <entry>Beschreibung</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>tmean</entry>
+
+            <entry>Die Lufttemperatur U[°C]</entry>
+          </row>
+
+          <row>
+            <entry>ahum</entry>
+
+            <entry>Die absolute Luftfeuchtigkeit U[g/m³]</entry>
+          </row>
+
+          <row>
+            <entry>rhum</entry>
+
+            <entry>Die relative Luftfeuchtigkeit U[%]</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+
+    <para>Aus der absoluten Luftfeuchtigkeit (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>a</ns3:mi>
+
+            <ns3:mi>h</ns3:mi>
+
+            <ns3:mrow>
+              <ns3:mi>u</ns3:mi>
+
+              <ns3:mi>m</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) wird in Abhängigkeit von der Luftfeuchtigkeit die
+    relative Luftfeuchtigkeit berechnet. Hierzu wird zunächst der
+    Sättigungsdampfdruck (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>e</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) berechnet:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>e</ns3:mi>
+
+              <ns3:mi>s</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mi>6.108</ns3:mi>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:msup>
+                <ns3:mi>e</ns3:mi>
+
+                <ns3:mfrac>
+                  <ns3:mrow>
+                    <ns3:mi>17.27</ns3:mi>
+
+                    <ns3:mo>×</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mi>t</ns3:mi>
+
+                      <ns3:mi>m</ns3:mi>
+
+                      <ns3:mi>e</ns3:mi>
+
+                      <ns3:mi>a</ns3:mi>
+
+                      <ns3:mi>n</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:mrow>
+
+                  <ns3:mrow>
+                    <ns3:mi>273.3</ns3:mi>
+
+                    <ns3:mo>+</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mi>t</ns3:mi>
+
+                      <ns3:mi>m</ns3:mi>
+
+                      <ns3:mi>e</ns3:mi>
+
+                      <ns3:mi>a</ns3:mi>
+
+                      <ns3:mi>n</ns3:mi>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                  
+                </ns3:mfrac>
+              </ns3:msup>
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[hPa]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Daraus ergibt sich die maximal mögliche Luftfeuchtigkeit
+    (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>m</ns3:mi>
+
+            <ns3:mi>h</ns3:mi>
+
+            <ns3:mrow>
+              <ns3:mi>u</ns3:mi>
+
+              <ns3:mi>m</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>m</ns3:mi>
+
+              <ns3:mi>h</ns3:mi>
+
+              <ns3:mrow>
+                <ns3:mi>u</ns3:mi>
+
+                <ns3:mi>m</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>e</ns3:mi>
+
+                <ns3:mi>s</ns3:mi>
+              </ns3:mrow>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mfrac>
+                <ns3:mi>216.7</ns3:mi>
+
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mi>t</ns3:mi>
+
+                    <ns3:mi>m</ns3:mi>
+
+                    <ns3:mi>e</ns3:mi>
+
+                    <ns3:mi>a</ns3:mi>
+
+                    <ns3:mi>n</ns3:mi>
+                  </ns3:mrow>
+
+                  <ns3:mo>+</ns3:mo>
+
+                  <ns3:mi>273.15</ns3:mi>
+                </ns3:mrow>
+              </ns3:mfrac>
+            </ns3:mrow>
+            
+            
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[g/m³]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+
+    <para>Und schließlich die relative Luftfeuchtigkeit (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>r</ns3:mi>
+
+            <ns3:mi>h</ns3:mi>
+
+            <ns3:mrow>
+              <ns3:mi>u</ns3:mi>
+
+              <ns3:mi>m</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>)nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>r</ns3:mi>
+
+              <ns3:mi>h</ns3:mi>
+
+              <ns3:mrow>
+                <ns3:mi>u</ns3:mi>
+
+                <ns3:mi>m</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mfrac>
+                <ns3:mrow>
+                  <ns3:mi>a</ns3:mi>
+
+                  <ns3:mi>h</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>u</ns3:mi>
+
+                    <ns3:mi>m</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+
+                <ns3:mrow>
+                  <ns3:mi>m</ns3:mi>
+
+                  <ns3:mi>h</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mi>u</ns3:mi>
+
+                    <ns3:mi>m</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mfrac>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mi>100</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[%]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+  </sect2>
+</sect1>

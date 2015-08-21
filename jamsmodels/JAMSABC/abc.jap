@@ -1,0 +1,11 @@
+#JAMS configuration file
+#Mon May 08 11:36:39 CEST 2006
+verbose=0
+debug=3
+libs=D:/jamsprojects/J2K/dist/J2K.jar;D:/jamsprojects/ABCModel/dist/ABCModel.jar
+#infolog=c:/abc/jamsinfo.log
+#errorlog=c:/abc/jamserror.log
+windowenable=1
+windowontop=0
+windowwidth=600
+windowheight=400

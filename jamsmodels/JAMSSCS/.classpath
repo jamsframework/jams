@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="E:/Development/deploy/lib/JAMS.jar"/>
+	<classpathentry kind="lib" path="E:/Development/deploy/lib/JAMSComponents.jar"/>
+	<classpathentry kind="lib" path="E:/Development/lib/jcommon-1.0.9.jar"/>
+	<classpathentry kind="lib" path="E:/Development/lib/jfreechart-1.0.5.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

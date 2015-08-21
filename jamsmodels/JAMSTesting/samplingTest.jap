@@ -1,0 +1,8 @@
+#JAMS configuration file
+#Tue May 09 17:06:01 CEST 2006
+verbose=1
+debug=3
+model=D\:\\jamsmodels\\JAMSTesting\\samplingTest.xml
+errorlog=D\:/jamserror.log
+libs=D\:\\jamsprojects\\JAMSTesting\\dist\\JAMSTesting.jar
+infolog=D\:/jamsinfo.log

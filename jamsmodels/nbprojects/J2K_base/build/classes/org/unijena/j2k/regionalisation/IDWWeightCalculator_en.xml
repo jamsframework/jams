@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>IDWWeightCalculator</title>
+  <subtitle>A component for calculating weight values for the Inverse Distance Weighting
+    algorithm.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.regionalisation</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Beschreibung</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>entityX</entry>
+          <entry>x-coordinate of the model entity</entry>
+        </row>
+        <row>
+          <entry>entityY</entry>
+          <entry>y-coordinate of the model entity</entry>
+        </row>
+        <row>
+          <entry>pidw</entry>
+          <entry>Power to be used for weight calculation</entry>
+        </row>
+        <row>
+          <entry>statWeights</entry>
+          <entry>Calculated weights for IDW part of regionalisation</entry>
+        </row>
+        <row>
+          <entry>statOrder</entry>
+          <entry>Position array to determine best weights</entry>
+        </row>
+        <row>
+          <entry>equalWeights</entry>
+          <entry>Weights for Thiessen polygons</entry>
+        </row>
+        <row>
+          <entry>latLong</entry>
+          <entry>Calculation with geographical coordinates lat, long</entry>
+        </row>
+        <row>
+          <entry>dataStoreID</entry>
+          <entry>ID of the datastore to read station coordinates from</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>This component calculates the weight values that are needed for the data regionalisation
+      based on the <ns:emphasis>Inverse Distance Weighting (IDW)</ns:emphasis> algorithm. For this
+      purpose, the component takes the coordinates (<ns:code>entityX/entityY</ns:code>) of a
+      model entity and a number of station coordinates from a datastore identified by its ID
+        (<ns:code>dataStoreID</ns:code>) as input and calculates the distances to those
+      stations. As a result, the component calculates<orderedlist>
+        <listitem>
+          <para>one weight value for each station (<ns:code>statWeights</ns:code>), with
+            higher values representing closer stations,</para>
+        </listitem>
+        <listitem>
+          <para>an array of station coordinates (<ns:code>statOrder</ns:code>) which is
+            ordered by their distance to the entity.</para>
+        </listitem>
+      </orderedlist>In order to calculate the weights, additional parameters must be provided, i.e.
+      a weighting value (<ns:code>pidw</ns:code>) to emphasize/damp distance of the
+      stations, a flag (<ns:code>latLong</ns:code>) for defining if a geographic coordinate
+      system should be used or not and a flag (<ns:code>equalWeights</ns:code>) which
+      enforces the calculation of equal weights, i.e. for <ns:emphasis>n</ns:emphasis> stations
+      every station has the weight <ns:emphasis>1/n</ns:emphasis>.</para>
+    <ns:para>This component is typically used in a preprocessing stage as the IDW weights need to be
+      calculated only once for every spatial model entity.</ns:para>
+  </sect2>
+</sect1>

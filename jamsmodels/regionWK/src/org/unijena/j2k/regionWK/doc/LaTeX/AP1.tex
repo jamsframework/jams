@@ -1,0 +1,226 @@
+\section{Berechnung von zusätzlichen meteorologischen Größen}
+
+\subsection{Absolute Luftfeuchte}
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP1.CalcAbsoluteHumidity.java
+\subsubsection*{Beschreibung:}
+Die absolute Luftfeuchte ist die vorhandene Masse an Wasserdampf in einer Volumeneinheit Luft. Die maximal mögliche Masse an Wasserdampf, die pro Volumeneinheit Luft aufgenommen werden kann bis die Luft gesättigt ist, wird als Sättigungsfeuchte bezeichnet. Sie wird mit dem von der Temperatur am jeweiligen Standort abhängigen Sättigungsdampfdruck und dieser Temperatur nach folgender Formel berechnet:
+
+\begin{equation}
+%\label{potET}
+maxHum = est \cdot \frac{216.7}{temp} \quad \mathrm{[gcm^{-3}]}
+\end{equation}
+
+\begin{tabular}{lllll}
+mit & & &\\ 
+& $est$ &  & Sättigungsdampfdruck & $\mathrm{[kPa]}$\\
+& $temp$ &  & Temperatur & $\mathrm{[K]}$.\\
+\end{tabular}\\
+
+Daraus wird die absolute Luftfeuchte unter Verwendung der gemessenen relativen Luftfeuchte ($rhum$) abgeleitet nach:
+\begin{equation}
+%\label{potET}
+ahum = maxHum \cdot \frac{rhum}{100} \quad \mathrm{[gcm^{-3}]}
+\end{equation}
+
+
+%------------------------------------------------------------
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{Brunotte} et al. (2001)\textsc{Brunotte} et al. ]{lexGeo}
+\textsc{Brunotte,\,E., H.\,Gebhardt, M.\,Meurer, P.\,Meusburger \& J.\,Nipper} (Hrsg.) (2001 f.): Lexikon der Geographie in vier Bänden. Heidelberg: Spektrum.
+\end{thebibliography} 
+%------------------------------------------------------------
+
+\subsection*{Eingabe:} 
+
+\begin{tabular}{lllll}
+%& & &\\ 
+& $rhum$ &  & Relative Luftfeuchte & $\mathrm{[\%]}$\\
+& $temperature$ & & Mittlere Lufttemperatur & $\mathrm{[°C]}$\\
+\end{tabular}\\ 
+    
+\subsection*{Interne Variablen:}
+
+\begin{tabular}{lllp{9.5cm}ll}
+%& & &\\ 
+& $rhumTemp$ &  & Temperatur für jede rhum-Station & $\mathrm{[°C]}$\\
+& $absDist$ & & absoluter Abstand zwischen verwendeten Temperatur- und Relativen- Luftfeuchte-Messstation& $\mathrm{[m]}$ \\
+& $est$ & & Sättigungsdampfdruck & $\mathrm{[kPa]}$\\
+& $maxHum$ & & Sättigungsfeuchte & $\mathrm{[gcm^{-3}]}$\\
+\end{tabular}\\
+
+
+\subsection*{Ausgabe:}
+\begin{tabular}{lllp{8.5cm}ll}
+%& & &\\ 
+& $ahum$ &  & Absolute Luftfeuchte & $\mathrm{[gcm^{-3}]}$\\
+& $tempElevation$ & & Array von Temperatur-Stationshöhen & $\mathrm{[m]}$ \\
+& $tempXCoord$ & & Array von Temperatur-Stations-x-Koordinaten & $\mathrm{[-]}$ \\
+& $tempYCoord$ & & Array von Temperatur-Stations-y-Koordinaten  & $\mathrm{[-]}$\\
+& $rhumElevation$ & & Array von Relative-Luftfeuchte-Messstationshöhen & $\mathrm{[m]}$ \\
+& $rhumXCoord$ & & Array von Relative-Luftfeuchte-Messstations-x-Koordinaten & $\mathrm{[-]}$\\
+& $rhumYCoord$ & & Array von Relative-Luftfeuchte-Messstations-y-Koordinaten & $\mathrm{[-]}$\\
+& $regCoeffAhum$ & & Bestimmtheitsmaß für Absolute-Luftfeuchte-Stationen & $\mathrm{[-]}$\\
+\end{tabular}\\
+ 
+%************************************************************ 
+
+\newpage
+\subsection{Globalstrahlung}
+
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP1.CalcDailySolarRadiation.java
+\subsubsection*{Beschreibung:}
+Die Globalstrahlung ($R_G$) wird aus der extraterrestrischen Strahlung ($R_0$) und der Bewölkung errechnet. Der Bewölkungsgrad wird hierbei aus dem Verhältnis der gemessenen Sonnenscheindauer ($S$) zur astronomisch möglichen Sonnenscheindauer ($S_0$) bei unbedecktem Himmel unter Zuhilfenahme einer empirischen Beziehung nach der Formel von \r Angström appoximiert. Die Globalstrahlung berechnet sich nach: 
+
+\begin{equation}
+R_G = R_0 \cdot (a + b \cdot \frac{S}{S_0}) \quad \mathrm{[Wm^{-2}]}
+\end{equation}
+
+
+%------------------------------------------------------------
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{JAMSWiki} (2008)\textsc{JAMSWiki} ]{JAMSWiki}
+\textsc{JAMSWiki} (2008): Hydrologisches Modell J2000, \\ $\left\langle http://jams.uni-jena.de/jamswiki/index.php/Hydrologisches\_Modell\_J2000 \right\rangle$ (Stand: 18.2.2008) (Zugriff: 14.12.2008).
+
+\end{thebibliography} 
+%------------------------------------------------------------
+
+\subsection*{Eingabe:} 
+
+\begin{tabular}{lllll}
+%& & &\\ 
+& $time$ &  & Zeitpunkt & \\
+& $tempRes$ & & zeitliche Auflösung & $\mathrm{[d | h | m]}$ \\
+& $sunh$ & & Sonnenscheindauer & $\mathrm{[h d^{-1}]}$\\
+& $actSlAsCf$ & & Korrekturfaktor für Slope und Aspect & $\mathrm{[-]}$\\
+& $latitude$ & & geographische Breite & $\mathrm{[°]}$\\
+& $actExtRad$ & & extraterrestrische Strahlung & $\mathrm{[MJm^{-2}d^{-1}]}$\\
+& $angstrom\_a$ & & \r Angström Faktor a & $\mathrm{[-]}$\\
+& $angstrom\_b$ & & \r Angström Faktor b & $\mathrm{[-]}$\\
+\end{tabular}\\ 
+
+
+\subsection*{Interne Variablen:}
+
+\begin{tabular}{lllll}
+%& & &\\ 
+& $declination$ &  & Deklination der Sonne& $\mathrm{[rad]}$\\
+& $latRad$ & & geographische Breite& $\mathrm{[rad]}$ \\
+& $ sunsetHourAngle$ & & Stundenwinkel zum Sonnenuntergang & $\mathrm{[rad]}$\\
+\end{tabular}\\
+
+\subsection*{Ausgabe:}
+\begin{tabular}{lllll}
+& $sunhmax$ & & maximale Sonnenscheindauer & $\mathrm{[h]}$\\
+& $solRad$ & & tägliche Globalstrahlung & $\mathrm{[MJm^{-2}d^{-1}]}$\\
+\end{tabular}\\
+
+%*****************************************************
+\newpage
+\subsection{Kurzwellige Ausstrahlung}
+
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP1.CalcShortWaveRadiation.java
+\subsubsection*{Beschreibung:}
+Die kurzwellige Ausstrahlung ($swR$) hängt von der Globalstrahlung ($R_G$) und dem Rückstreuvermögen einer Oberfläche, dem Albedo ($alb$), ab. Sie berechnet sich nach:
+
+\begin{equation}
+swR = (1 - alb) \cdot R_G \quad \mathrm{[MJ m^{-2}]}
+\end{equation}
+%------------------------------------------------------------
+%------------------------------------------------------------
+
+\subsection*{Eingabe:} 
+
+\begin{tabular}{lllll}
+& $solRad$ & & Globalstrahlung & $\mathrm{[MJm^{-2}d^{-1}]}$\\
+& $albedo$ & & Albedo & $\mathrm{[-]}$\\
+\end{tabular}\\ 
+
+
+\subsection*{Ausgabe:}
+\begin{tabular}{lllll}
+& $swRad$ & & kurzwellige Ausstrahlung & $\mathrm{[MJ m^{-2}]}$\\
+\end{tabular}\\
+
+
+%************************************************************
+\newpage
+
+\subsection{Langwellige Ausstrahlung}
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP1.CalcLongWaveRadiation.java
+\subsubsection*{Beschreibung:}
+
+Die langwellige Ausstrahlung der Erdoberfläche und die atmosphärische Gegenstrahlung werden gemeinsam als effektive langwellige Ausstrahlung ($RL$) berechnet. In die Berechnung gehen die Schwarzkörperstrahlung nach Boltzmann, der Bewölkungsgrad und eine empirische Funktion des Wasserdampfgehaltes der Luft ein: 
+
+\begin{equation}
+RL = B \cdot T^{4} \cdot (0.34 - 0.14 \cdot  \sqrt{ea}) \cdot (1.35 \cdot \frac{Rs}{Rs0} - 0.35) \quad \mathrm{[MJ m^{-2}]}
+\end{equation}
+
+\begin{tabular}{lllp{8.5cm}ll}
+mit & & &\\ 
+& $B$ &  & Stefan Boltzmann Konstante (=4.903E-9) & $\mathrm{[MJm^{-2}K^{-4}]}$\\
+& $T$ & & absolue Lufttemperatur & $\mathrm{[K]}$\\
+& $ea$ & & Dampfdruck & $\mathrm{[kPa]}$\\
+& $Rs$ & & Globalstrahlung & $\mathrm{[MJm^{-2}d^{-1}]}$\\
+& $Rs0$	&	& astronomisch mögliche Solarstrahlung ohne Bewölkung & $\mathrm{[MJm^{-2}d^{-1}]}$\\
+\end{tabular}\\
+
+%------------------------------------------------------------
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{JAMSWiki} (2008)\textsc{JAMSWiki} ]{JAMSWiki}
+\textsc{JAMSWiki} (2008): Hydrologisches Modell J2000, \\ $\left\langle http://jams.uni-jena.de/jamswiki/index.php/Hydrologisches\_Modell\_J2000 \right\rangle$ (Stand: 18.2.2008) (Zugriff: 14.12.2008).
+
+\end{thebibliography} 
+%------------------------------------------------------------
+
+\subsection*{Eingabe:}
+\begin{tabular}{lllll}
+& $tmean$ & & Mittlere Lufttemperatur & $\mathrm{[°C]}$\\
+& $rhum$ &  & Relative Luftfeuchte & $\mathrm{[\%]}$\\
+& $extRad$ & & extraterrestrische Strahlung & $\mathrm{[MJm^{-2}d^{-1}]}$\\ 
+& $solRad$ & & Globalstrahlung & $\mathrm{[MJm^{-2}d^{-1}]}$\\
+& $elevation$ & & Höhe & $\mathrm{[m]}$\\
+\end{tabular}\\
+
+\subsection*{Interne Variablen:}
+\begin{tabular}{lllp{6.5cm}ll}
+& $sat\_vapour\_pressure$ & & Sättigungsdampfdruck & $\mathrm{[kPa]}$\\
+& $act\_vapour\_pressure$ & & Dampfdruck & $\mathrm{[kPa]}$\\
+& $clearSkyRad$ & & astronomisch mögliche Solarstrahlung ohne Bewölkung & $\mathrm{[MJm^{-2}d^{-1}]}$\\
+& $BOLTZMANN$ & & Stefan Boltzmann Konstante & $\mathrm{[MJm^{-2}K^{-4}]}$\\
+\end{tabular}\\
+
+\subsection*{Ausgabe:}
+\begin{tabular}{lllll}
+& $lwRad$ & & langwellige Ausstrahlung & $\mathrm{[MJ m^{-2}]}$\\
+\end{tabular}\\
+%********************************************
+\newpage
+
+\subsection{Nettostrahlung}
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP1.CalcDailyNetRadiation.java
+\subsubsection*{Beschreibung:}
+
+Die Nettostrahlung ist die Differenz aus kurz- und langwelliger Ausstrahlung.  
+
+%------------------------------------------------------------
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{JAMSWiki} (2008)\textsc{JAMSWiki} ]{JAMSWiki}
+\textsc{JAMSWiki} (2008): Hydrologisches Modell J2000, \\ $\left\langle http://jams.uni-jena.de/jamswiki/index.php/Hydrologisches\_Modell\_J2000 \right\rangle$ (Stand: 18.2.2008) (Zugriff: 14.12.2008).
+
+\end{thebibliography} 
+%------------------------------------------------------------
+
+\subsection*{Eingabe:}
+\begin{tabular}{lllll}
+& $swRad$ & & kurzwellige Ausstrahlung & $\mathrm{[MJ m^{-2}]}$\\
+& $lwRad$ & & langwellige Ausstrahlung & $\mathrm{[MJ m^{-2}]}$\\
+\end{tabular}\\
+
+\subsection*{Ausgabe:}
+\begin{tabular}{lllll}
+& $netRad$ & & Nettostrahlung & $\mathrm{[MJ m^{-2}]}$\\
+\end{tabular}\\

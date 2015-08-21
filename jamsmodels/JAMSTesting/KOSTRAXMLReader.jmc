@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><config author="Sven Kralisch" date="28.08.2006" modeldefinition="KOSTRAXMLReader.xml" name="J2K Model">
+    
+    <group description="" name="Main">
+        <property attribute="workspaceDir" component="J2K" default="E:\JAMS\MODELS\JAMSTesting\" description="Workspace directory" name="Workspace directory" range="" type="dir" value="E:\JAMS\MODELS\JAMSTesting\"/>       
+        <property attribute="data_caching" component="J2K" default="0" description="Caching on or off - needs the model to be run once in advance" name="Caching" range="" type="boolean" value="0"/>
+    </group>       
+</config>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="doall">
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="./antlib/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
+    <target name="doall" depends="buildproj, dostarters, doJ2K, doThornthwaite"/>
+
+    <target name="dojams" depends="buildproj, dostarters"/>
+
+    <target name="clean" depends="cleanproj, cleanlib" />
+
+    <target name="doallwithclean" depends="clean, doall"/>
+
+    <target name="buildproj">
+        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar"/>
+    </target>
+
+    <target name="run">
+        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="run">
+            <property name="no.deps" value="true"/>
+        </ant>
+    </target>
+
+    <target name="cleanproj">
+        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="clean"/>
+    </target>
+
+    <target name="cleanlib">
+        <delete>
+            <fileset dir="../lib" includes="**/*"/>
+            <fileset dir="../lib/lib" includes="**/*"/>
+        </delete>
+    </target>
+
+    <!--target name="buildproj" description="Build all top level JAMS projects">
+        <foreach target="buildproject" param="buildxml">
+            <path>
+                <fileset dir="../nbprojects">
+                    <include name="**/build.xml"/>
+                    <exclude name="**/jams-starter/build.xml"/>
+                    <exclude name="**/jams-common/build.xml"/>
+                    <exclude name="**/jams-explorer/build.xml"/>
+                    <exclude name="**/jams-geowind/build.xml"/>
+                    <exclude name="**/jams-geowind/build.xml"/>
+                </fileset>
+            </path>
+        </foreach>
+        <antcall target="buildproject">
+            <param  name="buildxml" value="../nbprojects/jams-starter/build.xml"/>
+        </antcall>
+    </target>
+
+
+    <target name="cleanproj" description="Clean all NetBeans projects and delete libs in this directory">
+        <foreach target="cleanproject" param="buildxml">
+            <path>
+                <fileset dir="../nbprojects">
+                    <include name="**/build.xml"/>
+                </fileset>
+            </path>
+        </foreach>
+    </target>
+
+    <target name="buildproject" description="Build a single NetBeans project">
+        <ant antfile="${buildxml}" inheritall="false" target="jar"/>
+    </target>
+
+    <target name="cleanproject" description="Build a single NetBeans project">
+        <ant antfile="${buildxml}" inheritall="false" target="clean"/>
+    </target-->
+
+    <target name="doJ2K">
+        <ant antfile="../../jamsmodels/nbprojects/J2K_base/nbbuild.xml" inheritall="false" target="jar"/>
+        <ant antfile="../../jamsmodels/nbprojects/J2K_ext/nbbuild.xml" inheritall="false" target="jar"/>
+        <echo>Created J2K</echo>
+    </target>
+
+    <target name="doThornthwaite">
+        <ant antfile="../../jamsmodels/nbprojects/Thornthwaite/build.xml" inheritall="false" target="jar"/>
+        <echo>Created Thornthwaite</echo>
+    </target>
+
+    <target name="dostarters" depends="juicestarter, jamsstarter" />
+
+    <target name="juicestarter">
+        <property name="starterproj" value="jams-starter"/>
+        <ant antfile="../nbprojects/${starterproj}/build.xml" inheritall="false" target="jar">
+            <property name="config" value="JUICE"/>
+            <property name="no.deps" value="true"/>
+        </ant>
+        <property file="jams.properties"/>
+        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../lib/juice-starter${main.postfix}.jar"/>
+        <echo>Created juicestarter</echo>
+    </target>
+
+    <target name="jamsstarter">
+        <property name="starterproj" value="jams-starter"/>
+        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar">
+            <property name="config" value="JAMS_Launcher"/>
+            <property name="no.deps" value="true"/>
+        </ant>
+        <property file="jams.properties"/>
+        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../lib/jams-starter${main.postfix}.jar"/>
+        <echo>Created jamsstarter</echo>
+    </target>
+
+    <target name="remotestarter">
+        <property name="starterproj" value="jams-starter"/>
+        <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar">
+            <property name="config" value="JAMS_Remote"/>
+            <property name="no.deps" value="true"/>
+        </ant>
+        <property file="jams.properties"/>
+        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../lib/jamsremote-starter${main.postfix}.jar"/>
+        <echo>Created remotestarter</echo>
+    </target>
+</project>

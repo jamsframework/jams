@@ -1,0 +1,1471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook"
+       xmlns:ns6="http://www.w3.org/1999/xlink"
+       xmlns:ns5="http://www.w3.org/1999/xhtml"
+       xmlns:ns4="http://www.w3.org/2000/svg"
+       xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+       xmlns:ns="http://docbook.org/ns/docbook">
+  <title>CalcExtraterrRadiation</title>
+
+  <subtitle>Eine Komponente zur Berechnung der extraterrestrischen
+  Einstrahlung.</subtitle>
+
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*" />
+
+      <colspec colname="c2" colnum="2" colwidth="3*" />
+
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+
+          <entry>j2k.radiation</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+
+  <sect2>
+    <title>Variablen</title>
+
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1*" />
+
+        <colspec colname="c2" colnum="2" colwidth="3*" />
+
+        <thead>
+          <row>
+            <entry>Name</entry>
+
+            <entry>Beschreibung</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>latitude</entry>
+
+            <entry>die geographische Breite der jeweiligen
+            Modelleinheit</entry>
+          </row>
+
+          <row>
+            <entry>longitude</entry>
+
+            <entry>die geographische Länge der jeweiligen
+            Modelleinheit</entry>
+          </row>
+
+          <row>
+            <entry>longTZ</entry>
+
+            <entry>die geographische Bezugslänge der aktuellen
+            Zeitzone</entry>
+          </row>
+
+          <row>
+            <entry>tempRes</entry>
+
+            <entry>die zeitliche Auflösung des Modells</entry>
+          </row>
+
+          <row>
+            <entry>locGrw</entry>
+
+            <entry>die Lage (westlich oder östlich) von Greenwich</entry>
+          </row>
+
+          <row>
+            <entry>extRadArray</entry>
+
+            <entry>Ein Array, das die extraterrestrische Einstrahlung für
+            jeden diskreten Zeitschritt (entsprechend der zeitlichen
+            Modellauflösung) enthält.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+
+    <para>Diese Komponente berechnet die extraterrestrische Einstrahlung
+    (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>R</ns3:mi>
+
+            <ns3:mi>a</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) für die jeweilige Modelleinheit für ein Standardjahr.
+    Hierfür wird für jeden diskreten Zeitschritt (Stunde, Tag oder Monat)
+    <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>R</ns3:mi>
+
+            <ns3:mi>a</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> berechnet und als Arrayelement in der Variablen
+    <emphasis role="italic">extRadArray</emphasis> abgelegt. Hier kann sie
+    dann später während der Modelllaufzeit abgeholt werden. Die Berechnung der
+    extraterrestrischen Strahlung erfolgt nach <citation><xref
+    linkend="Allen_1998" /></citation>. Die Berechnung für Monatswerte erfolgt
+    jeweils für einen Tag in der Mitte des Monats und einer Multiplikation des
+    Wertes mit der Anzahl der Tage des betreffenden Monats. Die Berechnung von
+    täglichen Werten erfolgt in folgenden Berechnungsschritten:</para>
+
+    <para>Deklination (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>d</ns3:mi>
+        </ns3:math>
+      </inlineequation>) der Sonne für den julianischen Tag (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>j</ns3:mi>
+
+            <ns3:mi>D</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>d</ns3:mi>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mi>0.40954</ns3:mi>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>sin</ns3:mi>
+
+                  <ns3:mo>⁡</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mo>(</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mi>0.0172</ns3:mi>
+
+                      <ns3:mo>×</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mo>(</ns3:mo>
+
+                        <ns3:mrow>
+                          <ns3:mrow>
+                            <ns3:mi>j</ns3:mi>
+
+                            <ns3:mi>D</ns3:mi>
+                          </ns3:mrow>
+
+                          <ns3:mo>-</ns3:mo>
+
+                          <ns3:mi>79.35</ns3:mi>
+                        </ns3:mrow>
+
+                        <ns3:mo>)</ns3:mo>
+                      </ns3:mrow>
+                    </ns3:mrow>
+
+                    <ns3:mo>) </ns3:mo>
+                  </ns3:mrow>
+                </ns3:mrow>
+
+                <ns3:mi> &#160;</ns3:mi> 
+                <ns3:mrow>
+                  <ns3:mo>[</ns3:mo>
+
+                  <ns3:mi>rad</ns3:mi>
+
+                  <ns3:mo>]</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+    <para>Solarkonstante (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>s</ns3:mi>
+
+            <ns3:mi>c</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) für den julianischen Tag (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>j</ns3:mi>
+
+            <ns3:mi>D</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+
+              <ns3:mi>c</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mi>81930</ns3:mi>
+
+              <ns3:mo>+</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>2910</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mi>cos</ns3:mi>
+
+                    <ns3:mo>⁡</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mo>(</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mfrac>
+                          <ns3:mi>π</ns3:mi>
+
+                          <ns3:mi>180</ns3:mi>
+                        </ns3:mfrac>
+
+                        <ns3:mo>×</ns3:mo>
+
+                        <ns3:mrow>
+                          <ns3:mo>(</ns3:mo>
+
+                          <ns3:mrow>
+                            <ns3:mrow>
+                              <ns3:mi>j</ns3:mi>
+
+                              <ns3:mi>D</ns3:mi>
+                            </ns3:mrow>
+
+                            <ns3:mo>-</ns3:mo>
+
+                            <ns3:mi>15</ns3:mi>
+                          </ns3:mrow>
+
+                          <ns3:mo>)</ns3:mo>
+                        </ns3:mrow>
+                      </ns3:mrow>
+
+                      <ns3:mo>)</ns3:mo>
+                    </ns3:mrow>
+                  </ns3:mrow>
+
+                  <ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mo>÷</ns3:mo>
+
+                      <ns3:mi>1000000</ns3:mi>
+                    </ns3:mrow>
+
+                    <ns3:mi> &#160;</ns3:mi> 
+                    <ns3:mrow>
+                      <ns3:mo> [</ns3:mo>
+
+                      <ns3:mi>MJ/m²/min</ns3:mi>
+
+                      <ns3:mo>]</ns3:mo>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation></para>
+
+    <para>Inverse relative Distanz Erde Sonne für den julianischen Tag
+    :<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>j</ns3:mi>
+
+            <ns3:mi>D</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>i</ns3:mi>
+
+              <ns3:mi>r</ns3:mi>
+
+              <ns3:mi>d</ns3:mi>
+
+              <ns3:mi>e</ns3:mi>
+
+              <ns3:mi>s</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mn>1</ns3:mn>
+
+              <ns3:mo>+</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mi>0.033</ns3:mi>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mi>cos</ns3:mi>
+
+                    <ns3:mo>⁡</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mo>(</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mfrac>
+                          <ns3:mrow>
+                            <ns3:mn>2</ns3:mn>
+
+                            <ns3:mi>π</ns3:mi>
+                          </ns3:mrow>
+
+                          <ns3:mi>365</ns3:mi>
+                        </ns3:mfrac>
+
+                        <ns3:mo>×</ns3:mo>
+
+                        <ns3:mrow>
+                          <ns3:mi>j</ns3:mi>
+
+                          <ns3:mi>D</ns3:mi>
+                        </ns3:mrow>
+                      </ns3:mrow>
+
+                      <ns3:mo>) </ns3:mo>
+                    </ns3:mrow>
+                  </ns3:mrow>
+
+                  <ns3:mi> &#160;</ns3:mi> 
+                  <ns3:mrow>
+                    <ns3:mo>[</ns3:mo>
+
+                    <ns3:mi>radians</ns3:mi>
+
+                    <ns3:mo>]</ns3:mo>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+    <para>Stundenwinkel bei Sonnenuntergang für die jeweilige geographische
+    Breite (lat in radians) und die Deklination <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>d</ns3:mi>
+        </ns3:math>
+      </inlineequation>:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+
+              <ns3:mi>w</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:msup>
+                  <ns3:mi>cos</ns3:mi>
+
+                  <ns3:mrow>
+                    <ns3:mo>-</ns3:mo>
+
+                    <ns3:mn>1</ns3:mn>
+                  </ns3:mrow>
+                </ns3:msup>
+
+                <ns3:mo>⁡</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mn>-1</ns3:mn>
+
+                    <ns3:mo>×</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mrow>
+                        <ns3:mi>tan</ns3:mi>
+
+                        <ns3:mo>⁡</ns3:mo>
+
+                        <ns3:mrow>
+                          <ns3:mo>(</ns3:mo>
+
+                          <ns3:mrow>
+                            <ns3:mi>l</ns3:mi>
+
+                            <ns3:mrow>
+                              <ns3:mi>a</ns3:mi>
+
+                              <ns3:mi>t</ns3:mi>
+                            </ns3:mrow>
+                          </ns3:mrow>
+
+                          <ns3:mo>)</ns3:mo>
+                        </ns3:mrow>
+                      </ns3:mrow>
+
+                      <ns3:mo>×</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mi>tan</ns3:mi>
+
+                        <ns3:mo>⁡</ns3:mo>
+
+                        <ns3:mrow>
+                          <ns3:mo>(</ns3:mo>
+
+                          <ns3:mi>d</ns3:mi>
+
+                          <ns3:mo>)</ns3:mo>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mrow>
+
+                  <ns3:mo>) </ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mi> &#160;</ns3:mi> 
+              <ns3:mrow>
+                <ns3:mo>[</ns3:mo>
+
+                <ns3:mi>radians</ns3:mi>
+
+                <ns3:mo>]</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation></para>
+
+    <para>Extraterrestrische Strahlung <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>R</ns3:mi>
+
+            <ns3:mi>a</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>R</ns3:mi>
+
+              <ns3:mi>a</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mfrac>
+                <ns3:mrow>
+                  <ns3:mi>24</ns3:mi>
+
+                  <ns3:mo>×</ns3:mo>
+
+                  <ns3:mi>60</ns3:mi>
+                </ns3:mrow>
+
+                <ns3:mi>π</ns3:mi>
+              </ns3:mfrac>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+
+                  <ns3:mi>c</ns3:mi>
+                </ns3:mrow>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mi>i</ns3:mi>
+
+                    <ns3:mi>r</ns3:mi>
+
+                    <ns3:mi>d</ns3:mi>
+
+                    <ns3:mi>e</ns3:mi>
+
+                    <ns3:mi>s</ns3:mi>
+                  </ns3:mrow>
+
+                  <ns3:mo>×</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mo>(</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mrow>
+                          <ns3:mi>s</ns3:mi>
+
+                          <ns3:mi>w</ns3:mi>
+                        </ns3:mrow>
+
+                        <ns3:mo>×</ns3:mo>
+
+                        <ns3:mrow>
+                          <ns3:mrow>
+                            <ns3:mi>sin</ns3:mi>
+
+                            <ns3:mo>⁡</ns3:mo>
+
+                            <ns3:mrow>
+                              <ns3:mo>(</ns3:mo>
+
+                              <ns3:mrow>
+                                <ns3:mi>l</ns3:mi>
+
+                                <ns3:mrow>
+                                  <ns3:mi>a</ns3:mi>
+
+                                  <ns3:mi>t</ns3:mi>
+                                </ns3:mrow>
+                              </ns3:mrow>
+
+                              <ns3:mo>)</ns3:mo>
+                            </ns3:mrow>
+                          </ns3:mrow>
+
+                          <ns3:mo>×</ns3:mo>
+
+                          <ns3:mrow>
+                            <ns3:mrow>
+                              <ns3:mi>sin</ns3:mi>
+
+                              <ns3:mo>⁡</ns3:mo>
+
+                              <ns3:mrow>
+                                <ns3:mo>(</ns3:mo>
+
+                                <ns3:mi>d</ns3:mi>
+
+                                <ns3:mo>)</ns3:mo>
+                              </ns3:mrow>
+                            </ns3:mrow>
+
+                            <ns3:mo>+</ns3:mo>
+
+                            <ns3:mrow>
+                              <ns3:mrow>
+                                <ns3:mi>cos</ns3:mi>
+
+                                <ns3:mo>⁡</ns3:mo>
+
+                                <ns3:mrow>
+                                  <ns3:mo>(</ns3:mo>
+
+                                  <ns3:mrow>
+                                    <ns3:mi>l</ns3:mi>
+
+                                    <ns3:mrow>
+                                      <ns3:mi>a</ns3:mi>
+
+                                      <ns3:mi>t</ns3:mi>
+                                    </ns3:mrow>
+                                  </ns3:mrow>
+
+                                  <ns3:mo>)</ns3:mo>
+                                </ns3:mrow>
+                              </ns3:mrow>
+
+                              <ns3:mo>×</ns3:mo>
+
+                              <ns3:mrow>
+                                <ns3:mrow>
+                                  <ns3:mi>cos</ns3:mi>
+
+                                  <ns3:mo>⁡</ns3:mo>
+
+                                  <ns3:mrow>
+                                    <ns3:mo>(</ns3:mo>
+
+                                    <ns3:mi>d</ns3:mi>
+
+                                    <ns3:mo>)</ns3:mo>
+                                  </ns3:mrow>
+                                </ns3:mrow>
+
+                                <ns3:mo>×</ns3:mo>
+
+                                <ns3:mrow>
+                                  <ns3:mi>sin</ns3:mi>
+
+                                  <ns3:mo>⁡</ns3:mo>
+
+                                  <ns3:mrow>
+                                    <ns3:mo>(</ns3:mo>
+
+                                    <ns3:mrow>
+                                      <ns3:mi>s</ns3:mi>
+
+                                      <ns3:mi>w</ns3:mi>
+                                    </ns3:mrow>
+
+                                    <ns3:mo>)</ns3:mo>
+                                  </ns3:mrow>
+                                </ns3:mrow>
+                              </ns3:mrow>
+                            </ns3:mrow>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                      </ns3:mrow>
+
+                      <ns3:mo>)</ns3:mo>
+                    </ns3:mrow>
+
+                    <ns3:mi> &#160;</ns3:mi> 
+                    <ns3:mrow>
+                      <ns3:mo> [</ns3:mo>
+
+                      <ns3:mi>MJ/m²/d</ns3:mi>
+
+                      <ns3:mo>]</ns3:mo>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+    <para>Für stündliche Werte ergeben sich zusäztliche
+    Berechnungsschritte:</para>
+
+    <para>Stundenwinkel in der Mitte der Stunde:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>m</ns3:mi>
+
+              <ns3:mi>s</ns3:mi>
+
+              <ns3:mi>w</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mfrac>
+                <ns3:mi>π</ns3:mi>
+
+                <ns3:mi>12</ns3:mi>
+              </ns3:mfrac>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mo>(</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mrow>
+                        <ns3:mi>m</ns3:mi>
+
+                        <ns3:mi>i</ns3:mi>
+
+                        <ns3:mi>d</ns3:mi>
+
+                        <ns3:mi>T</ns3:mi>
+
+                        <ns3:mrow>
+                          <ns3:mi>i</ns3:mi>
+
+                          <ns3:mrow>
+                            <ns3:mi>m</ns3:mi>
+
+                            <ns3:mi>e</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                      </ns3:mrow>
+
+                      <ns3:mo>+</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mi>0.06667</ns3:mi>
+
+                        <ns3:mo>×</ns3:mo>
+
+                        <ns3:mrow>
+                          <ns3:mrow>
+                            <ns3:mo>(</ns3:mo>
+
+                            <ns3:mrow>
+                              <ns3:mrow>
+                                <ns3:mi>l</ns3:mi>
+
+                                <ns3:mi>o</ns3:mi>
+
+                                <ns3:mi>n</ns3:mi>
+
+                                <ns3:mi>g</ns3:mi>
+
+                                <ns3:mrow>
+                                  <ns3:mi>T</ns3:mi>
+
+                                  <ns3:mi>z</ns3:mi>
+                                </ns3:mrow>
+                              </ns3:mrow>
+
+                              <ns3:mo>-</ns3:mo>
+
+                              <ns3:mrow>
+                                <ns3:mi>l</ns3:mi>
+
+                                <ns3:mi>o</ns3:mi>
+
+                                <ns3:mi>n</ns3:mi>
+
+                                <ns3:mi>g</ns3:mi>
+
+                                <ns3:mrow>
+                                  <ns3:mi>i</ns3:mi>
+
+                                  <ns3:mi>t</ns3:mi>
+
+                                  <ns3:mrow>
+                                    <ns3:mi>u</ns3:mi>
+
+                                    <ns3:mi>d</ns3:mi>
+
+                                    <ns3:mi>e</ns3:mi>
+                                  </ns3:mrow>
+                                </ns3:mrow>
+                              </ns3:mrow>
+                            </ns3:mrow>
+
+                            <ns3:mo>)</ns3:mo>
+                          </ns3:mrow>
+
+                          <ns3:mo>+</ns3:mo>
+
+                          <ns3:mrow>
+                            <ns3:mi>c</ns3:mi>
+
+                            <ns3:mi>o</ns3:mi>
+
+                            <ns3:mi>r</ns3:mi>
+
+                            <ns3:mi>r</ns3:mi>
+
+                            <ns3:mi>S</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:mrow>
+
+                    <ns3:mo>)</ns3:mo>
+                  </ns3:mrow>
+
+                  <ns3:mrow>
+                    <ns3:mo>-</ns3:mo>
+
+                    <ns3:mi>12</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation></para>
+
+    <para>wobei <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>m</ns3:mi>
+
+            <ns3:mi>i</ns3:mi>
+
+            <ns3:mi>d</ns3:mi>
+
+            <ns3:mi>T</ns3:mi>
+
+            <ns3:mrow>
+              <ns3:mi>i</ns3:mi>
+
+              <ns3:mi>m</ns3:mi>
+
+              <ns3:mi>e</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> die Mitte der aktuellen Stunde darstellt und
+    <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>c</ns3:mi>
+
+            <ns3:mi>o</ns3:mi>
+
+            <ns3:mi>r</ns3:mi>
+
+            <ns3:mi>r</ns3:mi>
+
+            <ns3:mi>S</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> ein saisonaler Korrekturfaktor für die Sonnenzeit ist,
+    der sich folgendermaßen berechnet:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>c</ns3:mi>
+
+              <ns3:mi>o</ns3:mi>
+
+              <ns3:mi>r</ns3:mi>
+
+              <ns3:mi>r</ns3:mi>
+
+              <ns3:mi>S</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mi>0.1645</ns3:mi>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>sin</ns3:mi>
+
+                  <ns3:mo>⁡</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mo>(</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mn>2</ns3:mn>
+
+                      <ns3:mi>b</ns3:mi>
+                    </ns3:mrow>
+
+                    <ns3:mo>)</ns3:mo>
+                  </ns3:mrow>
+                </ns3:mrow>
+
+                <ns3:mo>-</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mi>0.1255</ns3:mi>
+
+                  <ns3:mo>×</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mi>cos</ns3:mi>
+
+                      <ns3:mo>⁡</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mo>(</ns3:mo>
+
+                        <ns3:mi>b</ns3:mi>
+
+                        <ns3:mo>)</ns3:mo>
+                      </ns3:mrow>
+                    </ns3:mrow>
+
+                    <ns3:mo>-</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mi>0.025</ns3:mi>
+
+                      <ns3:mo>×</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mi>sin</ns3:mi>
+
+                        <ns3:mo>⁡</ns3:mo>
+
+                        <ns3:mrow>
+                          <ns3:mo>(</ns3:mo>
+
+                          <ns3:mi>b</ns3:mi>
+
+                          <ns3:mo>)</ns3:mo>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+    <para>mit <equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>b</ns3:mi>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mn>2</ns3:mn>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mi>π</ns3:mi>
+
+                  <ns3:mo>×</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mo>(</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mrow>
+                        <ns3:mi>j</ns3:mi>
+
+                        <ns3:mi>D</ns3:mi>
+                      </ns3:mrow>
+
+                      <ns3:mo>-</ns3:mo>
+
+                      <ns3:mi>81</ns3:mi>
+                    </ns3:mrow>
+
+                    <ns3:mo>)</ns3:mo>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+
+              <ns3:mi>364</ns3:mi>
+            </ns3:mfrac>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+    <para>Der Stundenwinkel zu Beginn der Stunde :<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>s</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+
+            <ns3:mi>w</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+
+              <ns3:mi>s</ns3:mi>
+
+              <ns3:mi>w</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>m</ns3:mi>
+
+                <ns3:mi>s</ns3:mi>
+
+                <ns3:mi>w</ns3:mi>
+              </ns3:mrow>
+
+              <ns3:mo>-</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mi>π</ns3:mi>
+
+                  <ns3:mo>×</ns3:mo>
+
+                  <ns3:mfrac>
+                    <ns3:mn>1</ns3:mn>
+
+                    <ns3:mi>24</ns3:mi>
+                  </ns3:mfrac>
+                </ns3:mrow>
+
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation></para>
+
+    <para>Der Stundenwinkel am Ende der Stunde :<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>e</ns3:mi>
+
+            <ns3:mi>s</ns3:mi>
+
+            <ns3:mi>w</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>e</ns3:mi>
+
+              <ns3:mi>s</ns3:mi>
+
+              <ns3:mi>w</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>m</ns3:mi>
+
+                <ns3:mi>s</ns3:mi>
+
+                <ns3:mi>w</ns3:mi>
+              </ns3:mrow>
+
+              <ns3:mo>+</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mi>π</ns3:mi>
+
+                  <ns3:mo>×</ns3:mo>
+
+                  <ns3:mfrac>
+                    <ns3:mn>1</ns3:mn>
+
+                    <ns3:mi>24</ns3:mi>
+                  </ns3:mfrac>
+                </ns3:mrow>
+
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para>Hiermit ergibt sich die stündliche extraterrestrische Einstrahlung
+    nach:</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>R</ns3:mi>
+
+              <ns3:mi>a</ns3:mi>
+            </ns3:mrow>
+
+            <ns3:mo>=</ns3:mo>
+
+            <ns3:mrow>
+              <ns3:mfrac>
+                <ns3:mrow>
+                  <ns3:mi>12</ns3:mi>
+
+                  <ns3:mo>×</ns3:mo>
+
+                  <ns3:mi>60</ns3:mi>
+                </ns3:mrow>
+
+                <ns3:mi>π</ns3:mi>
+              </ns3:mfrac>
+
+              <ns3:mo>×</ns3:mo>
+
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+
+                  <ns3:mi>c</ns3:mi>
+                </ns3:mrow>
+
+                <ns3:mo>×</ns3:mo>
+
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mi>i</ns3:mi>
+
+                    <ns3:mi>r</ns3:mi>
+
+                    <ns3:mi>d</ns3:mi>
+
+                    <ns3:mi>e</ns3:mi>
+
+                    <ns3:mi>s</ns3:mi>
+                  </ns3:mrow>
+
+                  <ns3:mo>×</ns3:mo>
+
+                  <ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mo>(</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mo>(</ns3:mo>
+
+                        <ns3:mrow>
+                          <ns3:mrow>
+                            <ns3:mi>e</ns3:mi>
+
+                            <ns3:mi>s</ns3:mi>
+
+                            <ns3:mi>w</ns3:mi>
+                          </ns3:mrow>
+
+                          <ns3:mo>-</ns3:mo>
+
+                          <ns3:mrow>
+                            <ns3:mi>s</ns3:mi>
+
+                            <ns3:mi>s</ns3:mi>
+
+                            <ns3:mi>w</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mrow>
+
+                        <ns3:mo>)</ns3:mo>
+                      </ns3:mrow>
+                    </ns3:mrow>
+
+                    <ns3:mo>×</ns3:mo>
+
+                    <ns3:mrow>
+                      <ns3:mrow>
+                        <ns3:mi>sin</ns3:mi>
+
+                        <ns3:mo>⁡</ns3:mo>
+
+                        <ns3:mrow>
+                          <ns3:mo>(</ns3:mo>
+
+                          <ns3:mrow>
+                            <ns3:mi>l</ns3:mi>
+
+                            <ns3:mi>a</ns3:mi>
+
+                            <ns3:mi>t</ns3:mi>
+                          </ns3:mrow>
+
+                          <ns3:mo>)</ns3:mo>
+                        </ns3:mrow>
+                      </ns3:mrow>
+
+                      <ns3:mo>×</ns3:mo>
+
+                      <ns3:mrow>
+                        <ns3:mrow>
+                          <ns3:mi>sin</ns3:mi>
+
+                          <ns3:mo>⁡</ns3:mo>
+
+                          <ns3:mrow>
+                            <ns3:mo>(</ns3:mo>
+
+                            <ns3:mi>d</ns3:mi>
+
+                            <ns3:mo>)</ns3:mo>
+                          </ns3:mrow>
+                        </ns3:mrow>
+
+                        <ns3:mo>+</ns3:mo>
+
+                        <ns3:mrow>
+                          <ns3:mrow>
+                            <ns3:mi>cos</ns3:mi>
+
+                            <ns3:mo>⁡</ns3:mo>
+
+                            <ns3:mrow>
+                              <ns3:mo>(</ns3:mo>
+
+                              <ns3:mrow>
+                                <ns3:mi>l</ns3:mi>
+
+                                <ns3:mi>a</ns3:mi>
+
+                                <ns3:mi>t</ns3:mi>
+                              </ns3:mrow>
+
+                              <ns3:mo>)</ns3:mo>
+                            </ns3:mrow>
+                          </ns3:mrow>
+
+                          <ns3:mo>×</ns3:mo>
+
+                          <ns3:mrow>
+                            <ns3:mrow>
+                              <ns3:mi>cos</ns3:mi>
+
+                              <ns3:mo>⁡</ns3:mo>
+
+                              <ns3:mrow>
+                                <ns3:mo>(</ns3:mo>
+
+                                <ns3:mi>d</ns3:mi>
+
+                                <ns3:mo>)</ns3:mo>
+                              </ns3:mrow>
+                            </ns3:mrow>
+
+                            <ns3:mo>×</ns3:mo>
+
+                            <ns3:mrow>
+                              <ns3:mrow>
+                                <ns3:mrow>
+                                  <ns3:mo>(</ns3:mo>
+
+                                  <ns3:mrow>
+                                    <ns3:mrow>
+                                      <ns3:mi>sin</ns3:mi>
+
+                                      <ns3:mo>⁡</ns3:mo>
+
+                                      <ns3:mrow>
+                                        <ns3:mo>(</ns3:mo>
+
+                                        <ns3:mrow>
+                                          <ns3:mi>e</ns3:mi>
+
+                                          <ns3:mi>s</ns3:mi>
+
+                                          <ns3:mi>w</ns3:mi>
+                                        </ns3:mrow>
+
+                                        <ns3:mo>)</ns3:mo>
+                                      </ns3:mrow>
+                                    </ns3:mrow>
+
+                                    <ns3:mo>-</ns3:mo>
+
+                                    <ns3:mrow>
+                                      <ns3:mi>sin</ns3:mi>
+
+                                      <ns3:mo>⁡</ns3:mo>
+
+                                      <ns3:mrow>
+                                        <ns3:mo>(</ns3:mo>
+
+                                        <ns3:mrow>
+                                          <ns3:mi>s</ns3:mi>
+
+                                          <ns3:mi>s</ns3:mi>
+
+                                          <ns3:mi>w</ns3:mi>
+                                        </ns3:mrow>
+
+                                        <ns3:mo>)</ns3:mo>
+                                      </ns3:mrow>
+                                    </ns3:mrow>
+                                  </ns3:mrow>
+
+                                  <ns3:mo>)</ns3:mo>
+                                </ns3:mrow>
+
+                                <ns3:mo>)</ns3:mo>
+                              </ns3:mrow>
+
+                              <ns3:mrow>
+                                <ns3:mo> </ns3:mo>
+
+                                <ns3:mrow>
+                                  <ns3:mo>[</ns3:mo>
+
+                                  <ns3:mi>MJ/m²/h</ns3:mi>
+
+                                  <ns3:mo>]</ns3:mo>
+                                </ns3:mrow>
+                              </ns3:mrow>
+                            </ns3:mrow>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+
+    <para>Zu weiterführenden Informationen siehe auch: <citation><xref linkend="Krause_2001"
+        /></citation><citation><xref linkend="Allen_1998"/></citation></para>
+  </sect2>
+    <bibliography>
+      <title>Literatur</title>
+      <biblioentry  xml:id="Krause_2001" xreflabel="Krause 2001">
+        <abbrev>Krause 2001</abbrev>
+        <author><personname><firstname>P.</firstname><surname>Krause</surname></personname></author>
+        <title>Das hydrologische Modellsystem J2000: Beschreibung und Anwendung in
+          großen Flußeinzugsgebieten</title>
+        <publisher>
+          <publishername>Schriften des Forschungszentrum Jülich: Reihe Umwelt/Environment</publishername>
+        </publisher>
+        <volumenum>Band 29</volumenum>
+        <pubdate>2001</pubdate>
+      </biblioentry>
+      <biblioentry xml:id="Allen_1998" xreflabel="Allen et.al 1998" role="inproceedings">
+        <abbrev>Allen et.al 1998</abbrev>
+        <authorgroup>
+          <author><personname><firstname>R.G.</firstname><surname>Allen</surname></personname></author>
+          <author><personname><firstname>L.</firstname><surname>Pereira</surname></personname></author>
+          <author><personname><firstname>D.</firstname><surname>Raes</surname></personname></author>
+          <author><personname><firstname>M.</firstname><surname>Smith</surname></personname></author>
+        </authorgroup>
+        <title>Crop evapotranspiration: Guidelines for computing crop water requirements-FAO Irrigation and drainage paper 56</title>
+        <citetitle pubwork="journal">FAO</citetitle>
+        <address>Rom</address>
+        <volumenum>300</volumenum>
+        <pubdate>1998</pubdate>
+      </biblioentry>
+    </bibliography>
+</sect1>

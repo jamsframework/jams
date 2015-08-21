@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>org.unijena.j2k.snow.CalcRainSnowParts</title>
+  <subtitle>A component for dividing precipitation into two parts, rainfall and snowfall, based on
+    air temperature.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.snow</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>area</entry>
+          <entry>area of the spatial model entity [m²]</entry>
+        </row>
+        <row>
+          <entry>snow_trs</entry>
+          <entry>temperature at which 50% of the precipitation falls as rainfall and 50% as
+              snowfall. [°C] </entry>
+        </row>
+        <row>
+          <entry>snow_trans</entry>
+          <entry>temperature interval around snow_trs [K]</entry>
+        </row>
+        <row>
+          <entry>tmin</entry>
+          <entry>minimum air temperature [°C]</entry>
+        </row>
+        <row>
+          <entry>tmean</entry>
+          <entry>mean air temperature [°C]</entry>
+        </row>
+        <row>
+          <entry>precip</entry>
+          <entry>precipitation [mm]</entry>
+        </row>
+        <row>
+          <entry>rain</entry>
+          <entry>rain precipitation [l]</entry>
+        </row>
+        <row>
+          <entry>snow</entry>
+          <entry>snow precipitation [l]</entry>
+        </row>
+        <row>
+          <entry>svRain</entry>
+          <entry>copy of rain - for accounting objectives [l]</entry>
+        </row>
+        <row>
+          <entry>svSnow</entry>
+          <entry>copy of snow - for accounting objectives [l]</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>This module determines the amount of snowfall on total precipitation based on air
+      temperature. In order to determine the amount it is assumed that coming below a certain
+      threshold temperature results in total snow precipitation and exceeding a second threshold
+      results in total rainfall as precipitation. The range between those threshold temperatures
+      mixed precipitation occurs. To determine threshold temperatures and the resulting width of the
+      transition area a temperature value (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>T</ns3:mi>
+            <ns3:mi>R</ns3:mi>
+            <ns3:mi>S</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> in °C) has to be indicated which corresponds to the temperature at which 50%
+      of the preciptation falls as rainfall and 50% as snowfall. Additionally, a parameter <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>T</ns3:mi>
+            <ns3:mi>r</ns3:mi>
+            <ns3:mi>a</ns3:mi>
+            <ns3:mi>n</ns3:mi>
+            <ns3:mi>s</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> (in K) has to be determined which corresponds to half the width of the
+      transition area (<xref xmlns:xlink="http://www.w3.org/1999/xlink"
+        linkend="j2k.snow.CalcRainSnowParts.snow_rain_fig1.png" xrefstyle="select: label"/>).  
+      
+      The actual amount of snow(<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>p</ns3:mi>
+            <ns3:mrow>
+              <ns3:mo>(</ns3:mo>
+              <ns3:mi>s</ns3:mi>
+              <ns3:mo>)</ns3:mo>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) of daily precipitation subject to air temperature (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>T</ns3:mi>
+        </ns3:math>
+      </inlineequation>) is calculated according to: </para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>p</ns3:mi>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mi>s</ns3:mi>
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>T</ns3:mi>
+                  <ns3:mi>R</ns3:mi>
+                  <ns3:mi>S</ns3:mi>
+                </ns3:mrow>
+                <ns3:mo>+</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mi>T</ns3:mi>
+                    <ns3:mi>r</ns3:mi>
+                    <ns3:mi>a</ns3:mi>
+                    <ns3:mi>n</ns3:mi>
+                    <ns3:mi>s</ns3:mi>
+                  </ns3:mrow>
+                  <ns3:mo>-</ns3:mo>
+                  <ns3:mi>T</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>2</ns3:mi>
+                <ns3:mo>×</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mi>T</ns3:mi>
+                  <ns3:mi>r</ns3:mi>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                  <ns3:mi>s</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+              
+            
+            </ns3:mfrac>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+         
+  
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+        
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+              
+          
+    <para>The daily amount of snow precipitation (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>N</ns3:mi>
+            <ns3:mi>s</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) or rain precipitation (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>N</ns3:mi>
+            <ns3:mi>r</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) results from: </para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>N</ns3:mi>
+              <ns3:mi>s</ns3:mi>
+            </ns3:msub>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mi>N</ns3:mi>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>p</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mi>s</ns3:mi>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+              
+              
+          </ns3:mrow>
+          </ns3:mrow>
+          
+            <ns3:mi> &#160;</ns3:mi>
+            <ns3:mrow>
+             
+              
+              <ns3:mi>[mm]</ns3:mi>
+       
+            </ns3:mrow>
+            
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+              
+            
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>N</ns3:mi>
+              <ns3:mi>r</ns3:mi>
+            </ns3:msub>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mi>N</ns3:mi>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mi>1</ns3:mi>
+                  <ns3:mo>-</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>p</ns3:mi>
+                    <ns3:mrow>
+                      <ns3:mo>(</ns3:mo>
+                      <ns3:mi>s</ns3:mi>
+                      <ns3:mo>)</ns3:mo>
+                      <ns3:mo>)</ns3:mo>
+                    </ns3:mrow>
+                    
+                  </ns3:mrow>
+                </ns3:mrow>
+                
+                
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            <ns3:mi> &#160;</ns3:mi>
+            <ns3:mrow>
+             
+              
+              <ns3:mi>[mm]</ns3:mi>
+             
+            </ns3:mrow>
+          </ns3:mrow>
+            
+            
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+    
+                  
+    <para>Finally, <inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>N</ns3:mi>
+            <ns3:mi>s</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation> and <inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>N</ns3:mi>
+            <ns3:mi>r</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>are multiplied by the <emphasis role="italic">area</emphasis> of the model
+      entity in order to convert mm into liters. </para>
+   
+    <figure xml:id="j2k.snow.CalcRainSnowParts.snow_rain_fig1.png">
+      <title>Function for determining amount of rain or snow of a precipitation event</title>    
+      <para><inlinemediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="snow_rain.png" scale="60" width="100%"></imagedata>
+        </imageobject>
+      </inlinemediaobject></para>
+    </figure>
+  </sect2>
+</sect1>
+ 

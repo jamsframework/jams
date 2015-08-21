@@ -1,0 +1,36 @@
+#JAMS model parameter file
+#User: adamovic
+#Model: New_Model
+#Thu Jan 16 11:30:07 CET 2014
+Runoff_generator.c3=-0.16
+Runoff_generator.cropCoefficient=0.62
+Runoff_2.area=98000000
+Runoff_generator.c2=1.64
+Runoff_generator1.c3=-0.16
+Runoff_generator.c1=-3.87
+Runoff_generator1.c2=1.64
+Runoff_generator1.c1=-3.87
+Runoff_2.bypassFraction=0.074
+Runoff_2.Runoff_2=
+Runoff_generator.area=98000000
+Runoff_generator1.initialDischarge=-2.98578194270082
+Runoff_generator.bypassFraction=0.074
+Runoff_generator.Runoff_generator=
+KirchnerReader.fileName=C\:\\jams_models\\Kirchner_method\\data result matlab\\result.txt
+New_Model.workspaceDirectory=
+TSPlot.varTitleLeft=
+KirchnerReader.KirchnerReader=
+InitKirchner.InitKirchner=
+Runoff_2.cropCoefficient=0.62
+Runoff_generator1.bypassFraction=0
+New_Model.New_Model=
+JAMSTemporalContext.JAMSTemporalContext=
+Runoff_generator1.cropCoefficient=0.74
+Runoff_2.c3=-0.16
+Runoff_2.c2=1.64
+Runoff_2.c1=-3.87
+TSPlot.TSPlot=
+JAMSTemporalContext.timeInterval=2000-01-01 00\:00 2008-12-31 00\:00 11 1
+Runoff_generator1.Runoff_generator1=
+InitKirchner.initialDischarge=0.0505
+JAMSExecInfo.JAMSExecInfo=

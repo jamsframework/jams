@@ -1,0 +1,230 @@
+\section{Methoden zur Korrektur von Nieder\-schlags\-mess\-werten}
+\subsection{Niederschlagskorrektur nach \textsc{Richter} (1995) (auf Tagesbasis)} \label{richter}
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP3.RainCorrectionRichter.java
+\subsubsection*{Beschreibung:}
+Bei der Niederschlagsmessung können einerseits gerätebedingte Fehler und andererseits Messfehler auftreten. Messfehler werden unter anderem durch Benetzung und Verdunstung sowie durch Winddrift verursacht.
+
+Der Benetzungs- und Verdunstungsfehler ($BV$) bei Hellmann-Niederschlagsmessern wurde von \textsc{Richter} (1995) für das Nordostdeutsche Tiefland und die südlich angrenzenden Mittelgebirge untersucht und in Abhängigkeit der Niederschlagssumme eines Tages tabelliert. 
+Um eine stetige Korrektur dieses Fehlers zu ermöglichen, wurden logarithmische Funktionen separat für das Sommer- (April - September) und Winterhalbjahr (Oktober - März) an die diskreten, tabellierten Werte approximiert (\textsc{Krause} 2001). Übersteigt die Niederschlagshöhe den Wert von 9\,mm, wird der Benetzungs- und Verdunstungsfehler auf einen konstanten Wert gesetzt.
+
+Für Niederschlagshöhen ($N$) $< 9.0$\,mm berechnet sich der Benetzungs- und Verdunstungsfehler nach: 
+\begin{eqnarray}
+BV_{Som} & = & 0.08 \cdot \log(N) + 0.225  \quad \mathrm{[mm]}\\
+BV_{Win} & = & 0.05 \cdot \log(N) + 0.13 \quad \mathrm{[mm]} \nonumber
+\end{eqnarray}
+
+Für Niederschlagshöhen $\geq 9.0$\,mm beträgt der Benetzungs- und Verdunstungsfehler: 
+\begin{eqnarray}
+BV_{Som} & = & 0.47  \quad \mathrm{[mm]}\\
+BV_{Win} & = & 0.3	 \quad \mathrm{[mm]} \nonumber
+\end{eqnarray}
+
+Der durch Winddrift verursachte Windfehler beeinflusst die Niederschlagsmessung stärker als der Benetzungs- und Verdunstungsfehler. \textsc{Richter} (1995) quantifizierte diesen Einfluss durch Vergleichsmessungen auf Bodenniveau oder den Einsatz von Windschutzvorrichtungen. Der Windfehler wird dadurch als Funktion der Niederschlagshöhe und der Stationslage betrachtet. Zur Korrektur des Fehlers wurden zwei Korrekturfunktionen an die Werte von \textsc{Richter} approximiert (\textsc{Krause} 2001).
+
+Der relative Windfehler ($KRWind$) für sowohl Regen- als auch Schneeniederschläge verhält sich deutlich umgekehrt proportional zu den Niederschlagshöhen ($P_{m}$). Bei kleinen Niederschlagshöhen ist er hoch, während er bei höheren Niederschlägen abnimmt. Die Berechnung erfolgt bei Niederschlagshöhen $> 0.1$\,mm nach folgenden Gleichungen: 
+
+\begin{eqnarray}
+KR_{Wind} & = & \begin{cases}0.1349 \cdot Pm^{-0.494}  \quad \text{für} \quad T_{mean}>T_{crit}\\
+0.5319 \cdot Pm^{-0.197} \quad \text{für} \quad  T_{mean} \leq T_{crit} \end{cases} \quad \mathrm{[-]}
+\end{eqnarray}
+
+Für Niederschlagshöhen $\leq 0.1$\,mm beträgt der Windkorrekturfaktor: 
+\begin{eqnarray}
+KR_{Wind} & = & \begin{cases} 0.492  \quad \text{für} \quad T_{mean}>T_{crit}\\
+0.938	 \quad \text{für} \quad  T_{mean} \leq T_{crit} \end{cases} \quad \mathrm{[-]}
+\end{eqnarray}
+
+%\mathrm{für}
+
+Die Berechnung der um Verdunstungs- und Windfehler korrigierten Niederschlagshöhe ($P_{korr}$) erfolgt schließlich nach: 
+
+\begin{equation}
+P_{korr} = P_m + P_m \cdot KR_{Wind} + BV_{Som},BV_{Win} \quad \mathrm{[mmd^{-1}]}
+\end{equation}
+
+%------------------------------------------------------------
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{Richter} (1995)\textsc{Richter}]{Richter}
+\textsc{Richter,\,D.} (1995): Ergebnisse methodischer Untersuchungen zur Korrektur des systematischen Meßfehlers des Hellmann-Niederschlagsmessers. Berichte des Deutschen Wetterdienstes, 194. Offenbach am Main: Selbstverlag des Deutschen Wetterdienstes.
+
+\bibitem[\textsc{Krause} (2001)\textsc{Krause} ]{k01}
+\textsc{Krause,\,P.} (2001): Das hydrologische Modellsystem J2000-Beschreibung und Anwendung in großen Flussgebieten. Reihe Umwelt/ Environment 29. Jülich: Forschungszentrum Jülich.
+\end{thebibliography} 
+%------------------------------------------------------------
+
+\subsection*{Eingabe:} 
+
+\begin{tabular}{lllll}
+%& & &\\ 
+& $time$ &  & Zeitpunkt & \\
+& $temperature$ & & Mittlere Lufttemperatur & $\mathrm{[°C]}$\\
+& $precip$ & & Niederschlag & $\mathrm{[mm]}$\\
+\end{tabular}\\ 
+    
+\subsection*{Interne Variablen:}
+
+\begin{tabular}{lllp{9.5cm}ll}
+& $statWeights$ & & 2-dimensionales Array zum Wichten der Temperaturstationen & $\mathrm{[°C]}$\\
+& $rainTemp$ & & Temperatur für jede Niederschlagsstation & $\mathrm{[°C]}$\\
+& $pSnow$ &  & relativer Schneeanteil in Abhängigkeit von der Temperatur& $\mathrm{[-]}$\\
+& $windErr$ &  & relativer Windfehler nach \textsc{Richter} 1995& $\mathrm{[-]}$\\
+& $wetErr$ &  & Benetzungs- und Verdunstungsfehler nach \textsc{Richter} 1995& $\mathrm{[mm]}$\\
+\end{tabular}\\
+
+          
+
+\subsection*{Ausgabe:}
+\begin{tabular}{lllp{8.5cm}ll}
+%& & &\\ 
+& $rcorr$ &  & korrigierten Niederschlagswerte & $\mathrm{[mm]}$\\
+& $tempElevation$ & & Array von Temperatur-Stationshöhen & $\mathrm{[m]}$ \\
+& $tempXCoord$ & & Array von Temperatur-Stations-x-Koordinaten & $\mathrm{[-]}$ \\
+& $tempYCoord$ & & Array von Temperatur-Stations-y-Koordinaten  & $\mathrm{[-]}$\\
+& $tempRegCoeff$ & & Regressionskoeffizient für Temperatur & $\mathrm{[-]}$\\
+& $rainElevation$ & & Array von Niederschlags-Messstationshöhen & $\mathrm{[m]}$ \\
+& $rainXCoord$ & & Array von Niederschlags-Messstations-x-Koordinaten & $\mathrm{[-]}$\\
+& $rainYCoord$ & & Array von Niederschlags-Messstations-y-Koordinaten & $\mathrm{[-]}$\\
+& $tempNIDW$ & & Anzahl Temperatur-Stationen für IDW& $\mathrm{[-]}$\\
+& $pIDW$ & & Potenz-Wert für IDW-Funktion& $\mathrm{[-]}$\\
+& $regThres$ & & Regressions-Grenzwert& $\mathrm{[-]}$\\
+& $snow_trs$ & & Temperaturwert bei dem 50\,\% Regen und 50\,\% Schnee fallen& $\mathrm{[°C]}$\\
+& $snow\_trans$ & & halbe Breite des Temperatur-Übergangsbereiches von Mischniederschlägen & $\mathrm{[K]}$\\
+\end{tabular}\\
+
+
+%----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------  
+\newpage
+ 
+\subsection{Niederschlagskorrektur nach \textsc{Richter} (1995) und \textsc{Sevruk} (1989)} 
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP3.RainCorrectionSevruk.java
+\subsubsection*{Beschreibung:}
+Der Benetzungs- und Verdunstungsfehler wird wie in \ref{richter} berechnet. Die Korrektur des Windfehlers erfolgt mit der Berechnung eines multiplikativen Korrekturfaktors ($KS_{Wind}$) nach \textsc{Sevruk} (1989). Dabei wird angenommen, dass der Windfehler von der Windgeschwindigkeit und der Lufttemperatur abhängt. Bei diesem Verfahren werden für Schneeniederschläge deutlich höhere Korrekturwerte als für Regen berechnet. Demnach muss gegebenenfalls sichergestellt werden, dass es sich bei dem zu korrigierenden Niederschlag auch tatsächlich mehrheitlich um Schnee handelt. Aus diesem Grund kann hier bestimmt werden, welcher Temperaturwert ($T_{corr}$) für die Korrekturgleichung herangezogen werden soll. Es besteht die Wahl zwischen der Minimumtemperatur, der mittleren Tagestemperatur, dem Mittelwert aus diesen beiden Temperaturen (1.\,Quartil), der Maximumtemperatur und dem Mittel aus Maximal- und Mittelwert der Temperaturen (3.\,Quartil). Der Korrekturfaktor für den Windfehler berechnet sich nach folgenden Gleichungen:
+
+\begin{eqnarray}
+KS_{Wind} & = & 1 + 0.550 \cdot v^{1.4} \quad \text{für} \quad T_{corr} < -27°C\\
+KS_{Wind} & = & 1 + 0.280 \cdot v^{1.3} \quad \text{für} \quad -27°C \leq T_{corr} < -8°C \nonumber\\
+KS_{Wind} & = & 1 + 0.150 \cdot v^{1.18} ~ ~ \text{für} \quad -8°C \leq T_{corr} < T_{crit}\nonumber \\
+KS_{Wind} & = & 1 + 0.015 \cdot v \qquad \text{für} \quad T_{corr} > T_{crit} \nonumber
+\end{eqnarray}
+
+\begin{tabular}{lllp{9.5cm}ll}
+mit & & &\\ 
+& $v$ &  & Windgeschwindigkeit in 1\,m Höhe & $\mathrm{[ms^{-1}]}$\\
+& $T_{corr}$ &  & Vom Anwender gewählter Wert der Tagestemperatur & $\mathrm{[°C]}$\\
+& $T_{crit}$ &  & Lufttemperatur unterhalb derer mehrheitlich mit Schneeniederschlag zu rechnen ist. & $\mathrm{[°C]}$\\
+\end{tabular}\\
+
+
+Die Berechnung der um Verdunstungs- und Windfehler korrigierten Niederschlagshöhe ($P_{korr}$) erfolgt schließlich nach: 
+
+\begin{equation}
+P_{korr} = P_m + P_m \cdot KS_{Wind} + BV_{Som},BV_{Win} \quad \mathrm{[mm]}
+\end{equation}
+%------------------------------------------------------------
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{Sevruk} (1989)\textsc{Sevruk}]{sevruk}
+\textsc{Sevruk,\,B.} (1989): Reliability of precipitation measurement. WMO IAHS ETH International Workshop on Presipitation Measurement. St. Moritz.
+
+\bibitem[\textsc{Krause} (2001)\textsc{Krause} ]{k01}
+\textsc{Krause,\,P.} (2001): Das hydrologische Modellsystem J2000-Beschreibung und Anwendung in großen Flussgebieten. Reihe Umwelt/ Environment 29. Jülich: Forschungszentrum Jülich.
+\end{thebibliography} 
+%------------------------------------------------------------
+
+\subsection*{Eingabe:} 
+
+\begin{tabular}{lllll}
+%& & &\\ 
+& $time$ &  & Zeitpunkt & \\
+& $temperature$ & & Mittlere Lufttemperatur & $\mathrm{[°C]}$\\
+& $precip$ & & Niederschlag & $\mathrm{[mm]}$\\
+& $wind$ & & Windgeschwindigkeit & $\mathrm{[ms^{-1}]}$\\
+\end{tabular}\\ 
+    
+\subsection*{Interne Variablen:}
+
+\begin{tabular}{lllp{9.5cm}ll}
+& $tempStatWeights$ & & 2-dimensionales Array zum Wichten der Temperaturstationen & $\mathrm{[°C]}$\\
+& $windStatWeights$ & & 2-dimensionales Array zum Wichten der Windmessstationen & $\mathrm{[ms^{-1}]}$\\
+& $rainTemp$ & & Temperatur für jede Niederschlagsstation & $\mathrm{[°C]}$\\
+& $rainWind$ & & Windgeschwindigkeit für jede Niederschlagsstation & $\mathrm{[ms^{-1}]}$\\
+& $windErr$ &  & Korrekturfaktor für Windfehler nach \textsc{Sevruk} 1989& $\mathrm{[-]}$\\
+& $wetErr$ &  & Benetzungs- und Verdunstungsfehler nach \textsc{Richter} 1995& $\mathrm{[mm]}$\\
+\end{tabular}\\
+
+          
+
+\subsection*{Ausgabe:}
+\begin{tabular}{lllp{8.5cm}ll}
+%& & &\\ 
+& $rcorr$ &  & korrigierten Niederschlagswerte & $\mathrm{[mm]}$\\
+& $tempElevation$ & & Array von Temperatur-Stationshöhen & $\mathrm{[m]}$ \\
+& $tempXCoord$ & & Array von Temperatur-Stations-x-Koordinaten & $\mathrm{[-]}$ \\
+& $tempYCoord$ & & Array von Temperatur-Stations-y-Koordinaten  & $\mathrm{[-]}$\\
+& $tempRegCoeff$ & & Regressionskoeffizient für Temperatur & $\mathrm{[-]}$\\
+& $rainElevation$ & & Array von Niederschlags-Messstationshöhen & $\mathrm{[m]}$ \\
+& $rainXCoord$ & & Array von Niederschlags-Messstations-x-Koordinaten & $\mathrm{[-]}$\\
+& $windElevation$ & & Array von Windmess-Stationshöhen & $\mathrm{[m]}$ \\
+& $windXCoord$ & & Array von Wind-Stations-x-Koordinaten & $\mathrm{[-]}$ \\
+& $windYCoord$ & & Array von Wind-Stations-y-Koordinaten  & $\mathrm{[-]}$\\
+& $windRegCoeff$ & & Regressionskoeffizient für Windgeschwindigkeit & $\mathrm{[-]}$\\
+& $rainYCoord$ & & Array von Niederschlags-Messstations-y-Koordinaten & $\mathrm{[-]}$\\
+& $tempNIDW$ & & Anzahl Temperatur-Stationen für IDW& $\mathrm{[-]}$\\
+& $windNIDW$ & & Anzahl Windmess-Stationen für IDW& $\mathrm{[-]}$\\
+& $pIDW$ & & Potenz-Wert für IDW-Funktion& $\mathrm{[-]}$\\
+& $regThres$ & & Regressions-Grenzwert& $\mathrm{[-]}$\\
+& $tbase$ & & Lufttemperatur unterhalb derer mehrheitlich mit Schneeniederschlag zu rechnen ist & $\mathrm{[°C]}$\\
+\end{tabular}\\
+
+%-----------------------------------------------------------------------
+%-----------------------------------------------------------------------
+\newpage
+\subsection{Niederschlagskorrektur nach \textsc{Richter} (1995) (auf Monatsbasis)} 
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.AP3.RainCorrectionRichterMonthly.java
+\subsubsection*{Beschreibung:}
+Die Niederschlagskorrektur auf Monatsbasis erfolgt nach den empirischen Ergebnissen für das Nordostdeutsche Tiefland und die südlich angrenzenden Mittelgebirge von \textsc{Richter} (1995). Dabei wird in Abhänigkeit des jeweiligen Monats ein additiver Korrekturfaktor verwendet:
+
+\begin{equation}
+P_{korr} = P_m + P_m \cdot corrFactor \quad \mathrm{[mm]}
+\end{equation}
+
+\begin{tabular}{lllp{9.5cm}ll}
+mit & & &\\ 
+& $P_{korr}$ &  & korrigierter monatlicher Niederschlag & $\mathrm{[mm]}$\\
+& $P_{m}$ &  & gemessener monatlicher Niederschlag & $\mathrm{[mm]}$\\
+& $corrFactor$ &  & Korrekturfaktor & $\mathrm{[-]}$\\
+\end{tabular}\\
+
+%------------------------------------------------------------
+\renewcommand{\refname}{\subsubsection*{Literatur}}
+\begin{thebibliography}{}
+\bibitem[\textsc{Richter} (1995)\textsc{Richter}]{Richter}
+\textsc{Richter,\,D.} (1995): Ergebnisse methodischer Untersuchungen zur Korrektur des systematischen Meßfehlers des Hellmann-Niederschlagsmessers. Berichte des Deutschen Wetterdienstes, 194. Offenbach am Main: Selbstverlag des Deutschen Wetterdienstes.
+\end{thebibliography}
+
+\subsection*{Eingabe:} 
+
+\begin{tabular}{lllp{9.5cm}ll}
+%& & &\\ 
+& $time$ &  & Monat & \\
+& $inPrecip$ & & unkorrigierter Niederschlag & $\mathrm{[mm]}$\\
+& $corrFac$ & & Stationslage (a - frei, b - leicht geschützt, c - mäßig geschützt, d - stark geschützt)& $\mathrm{[mm]}$\\
+\end{tabular}\\ 
+
+\subsection*{Interne Variablen:}
+
+\begin{tabular}{lllp{9.5cm}ll}
+& $richter3\_a$ &  & Array mit Korrekturfaktoren für alle Monate eines Jahres für freie Stationslage& $\mathrm{[-]}$\\
+& $richter3\_b$ & & Array mit Korrekturfaktoren für alle Monate eines Jahres für leicht geschützte Stationslage & $\mathrm{[-]}$\\
+& $richter3\_c$ &  & Array mit Korrekturfaktoren für alle Monate eines Jahres für mäßig geschützte Stationslage & $\mathrm{[-]}$\\
+& $richter3\_d$ & & Array mit Korrekturfaktoren für alle Monate eines Jahres für stark geschützte Stationslage& $\mathrm{[-]}$\\
+& $corrFactor$ &  & Korrekturfaktor & $\mathrm{[-]}$\\
+\end{tabular}
+
+
+\subsection*{Ausgabe:}
+\begin{tabular}{lllll}
+& $corrPrecip$ & & korrigierter Niederschlag & $\mathrm{[mm]}$\\
+\end{tabular}

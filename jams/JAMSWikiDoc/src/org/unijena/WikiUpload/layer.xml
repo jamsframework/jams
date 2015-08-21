@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.1//EN" "http://www.netbeans.org/dtds/filesystem-1_1.dtd">
+<filesystem>
+    <folder name="Menu">
+        <folder name="File">
+            <file name="org-unijena-WikiUpload-WikiProperties.shadow">
+                <attr name="originalFile" stringvalue="Actions/Build/org-unijena-WikiUpload-WikiProperties.instance"/>
+            </file>
+            <attr name="org-unijena-WikiUpload-WikiProperties.shadow/org-unijena-WikiUpload-WikiUpload.shadow" boolvalue="true"/>
+            <file name="org-unijena-WikiUpload-WikiUpload.shadow">
+                <attr name="originalFile" stringvalue="Actions/Build/org-unijena-WikiUpload-WikiUpload.instance"/>
+            </file>
+            <attr name="org-unijena-WikiUpload-WikiUpload.shadow/org-netbeans-modules-project-ui-NewProject.shadow" boolvalue="true"/>
+        </folder>
+    </folder>
+    <folder name="Projects">
+        <folder name="Actions">            
+            <file name="org-unijena-WikiUpload-WikiUpload.instance"/>
+        </folder>
+    </folder>
+</filesystem>
+

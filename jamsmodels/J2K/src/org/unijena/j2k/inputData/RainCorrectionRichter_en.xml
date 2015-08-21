@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook"  xmlns:m="http://www.w3.org/1998/Math/MathML">
+  <title>RainCorrectionRichter</title>
+  <subtitle>A component used for the correction of precipitation values according to the Richter
+    method.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.inputData</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+        
+        
+        
+      </thead>
+      
+      <tbody>
+        <row>
+          <entry>time</entry>
+          
+          <entry>current time of the modeling</entry>
+        </row>
+        
+        <row>
+          <entry>precip</entry>
+          
+          <entry>the uncorrected  precipitation values</entry>
+        </row>
+        
+        <row>
+          <entry>temperature</entry>
+          
+          <entry>air temperature values of the precipitation stations or neighboring
+            climate stations</entry>
+        </row>
+        
+        <row>
+          <entry>tempElevation</entry>
+          
+          <entry>heights of temperature measurement stations</entry>
+        </row>
+        
+        <row>
+          <entry>tempXCoord</entry>
+          
+          <entry>x-coordinates for the temperature measurement stations</entry>
+        </row>
+        
+        <row>
+          <entry>tempYCoord</entry>
+          
+          <entry>y-coordinates for the temperature measurement stations</entry>
+        </row>
+        
+        <row>
+          <entry>tempRegCoeff</entry>
+          
+          <entry>section of an axis, slope and coefficient of determination taken from
+            the regression between temperature values and heights of stations </entry>
+        </row>
+        
+        <row>
+          <entry>tempNIDW</entry>
+          
+          <entry>number of temperature stations which will be considered for the
+            interpolation</entry>
+        </row>
+        
+        <row>
+          <entry>pIDW</entry>
+          
+          <entry>power for the calculation of weight of the interpolation of
+            temperature values</entry>
+        </row>
+        
+        <row>
+          <entry>regThres</entry>
+          
+          <entry>threshold value for height correction</entry>
+        </row>
+        
+        <row>
+          <entry>rainElevation</entry>
+          
+          <entry>station heights for precipitation stations</entry>
+        </row>
+        
+        <row>
+          <entry>rainXCoord</entry>
+          
+          <entry>x-coordinates for the precipitation stations</entry>
+        </row>
+        
+        <row>
+          <entry>rainYCoord</entry>
+          
+          <entry>y-coordinates for the precipitation stations</entry>
+        </row>
+        
+        <row>
+          <entry>snow_trs</entry>
+          
+          <entry>air temperature where precipitation is 50% rain and 50% snow</entry>
+        </row>
+        
+        <row>
+          <entry>snow_trans</entry>
+          
+          <entry>temperature interval around snow_trs used to determine the air
+            temperature of snow or rain precipitation</entry>
+        </row>
+        
+        <row>
+          <entry>dirName</entry>
+          
+          <entry>folder name for saving corrected precipitation values</entry>
+        </row>
+        
+        <row>
+          <entry>fileName</entry>
+          
+          <entry>file name for saving corrected precipitation values</entry>
+        </row>
+        
+        <row>
+          <entry>rcorr</entry>
+          
+          <entry>corrected precipitation values</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+    <sect2>
+    <title>Component Description</title>
+       <para>By using this component the precipitation values are corrected according to <citation><xref linkend="Richter_1995"/></citation> with
+            regard to their systematic measurement errors. Therefore, in the first place a
+            temperature value is determined for every precipitation station. If the value is not
+            available at the precipitation station, it is calculated with neighboring stations by
+            combining Inverse Distance Interpolation and optional height correction. On the basis of
+            air temperature the precipitation is then split up into rain and snow. </para>
+        
+      <sect3>
+          <title>Correction of Wetting and Evaporation Error</title>
+        <para>The correction of the wetting and evaporation error is carried out according to
+            Hellmann precipitation gauges by <citation><xref linkend="Richter_1995"/></citation>. In order to guarantee a constant correction
+        of errors which results from the wetting and evaporation error, logarithmic functions were
+        approximated to discrete tabulated values for the summer term (May - October) and winter
+        term (November - April) separately for the modeling system J2000. If the precipitation depth
+        is higher than 9 mm, the wetting and evaporation error is set to a constant value. </para>
+        
+        <para>For precipitation depths of ≤9.0 mm the wetting and evaporation error is calculated
+        according to:</para>
+        
+          <para><equation>
+              <mediaobject>
+                  <imageobject>
+                      <imagedata align="center">
+            <m:math display="inline">
+                <m:mtable>
+                    <m:mtr>
+                        <m:mtd>
+                            <m:mrow>
+                                <m:msub>
+                                    <m:mrow>
+                                        <m:mi>B</m:mi>
+                                        
+                                        <m:mi>V</m:mi>
+                                    </m:mrow>
+                                    
+                                    <m:mrow>
+                                        <m:mi>S</m:mi>
+                                        
+                                        <m:mi>o</m:mi>
+                                        
+                                        <m:mi>m</m:mi>
+                                    </m:mrow>
+                                </m:msub>
+                                
+                                <m:mo>=</m:mo>
+                                
+                                <m:mrow>
+                                    <m:mi>0.08</m:mi>
+                                    
+                                    <m:mo>×</m:mo>
+                                    
+                                    <m:mrow>
+                                        <m:mrow>
+                                            <m:mrow>
+                                                <m:mo>ln</m:mo>
+                                                
+                                                <m:mi>N</m:mi>
+                                            </m:mrow>
+                                        </m:mrow>
+                                        
+                                        <m:mo>+</m:mo>
+                                        
+                                        <m:mi>0.225 [mm]</m:mi>
+                                    </m:mrow>
+                                </m:mrow>
+                            </m:mrow>
+                        </m:mtd>
+                    </m:mtr>
+                    
+                    <m:mtr>
+                        <m:mtd>
+                            <m:mrow>
+                                <m:msub>
+                                    <m:mrow>
+                                        <m:mi>B</m:mi>
+                                        
+                                        <m:mi>V</m:mi>
+                                    </m:mrow>
+                                    
+                                    <m:mrow>
+                                        <m:mi>W</m:mi>
+                                        
+                                        <m:mi>i</m:mi>
+                                        
+                                        <m:mi>n</m:mi>
+                                    </m:mrow>
+                                </m:msub>
+                                
+                                <m:mo>=</m:mo>
+                                
+                                <m:mrow>
+                                    <m:mrow>
+                                        <m:mi>0.05</m:mi>
+                                        
+                                        <m:mo>×</m:mo>
+                                        
+                                        <m:mrow>
+                                            <m:mrow>
+                                                <m:mo>ln</m:mo>
+                                                
+                                                <m:mi>N</m:mi>
+                                            </m:mrow>
+                                        </m:mrow>
+                                    </m:mrow>
+                                    
+                                    <m:mo>+</m:mo>
+                                    
+                                    <m:mi>0.13 [mm]</m:mi>
+                                </m:mrow>
+                            </m:mrow>
+                        </m:mtd>
+                    </m:mtr>
+                </m:mtable>
+            </m:math>
+                          
+                      </imagedata>
+                  </imageobject>
+              </mediaobject>
+          </equation></para>
+        
+        <para>For precipitation depths of &gt;9.0 mm the wetting and evaporation error is:</para>
+        
+          <para>
+              <equation>
+                  <mediaobject>
+                      <imageobject>
+                          <imagedata align="center">
+            <m:math display="inline">
+                <m:mtable>
+                    <m:mtr>
+                        <m:mtd>
+                            <m:mrow>
+                                <m:mrow>
+                                    <m:mi>B</m:mi>
+                                    
+                                    <m:msub>
+                                        <m:mi>V</m:mi>
+                                        
+                                        <m:mrow>
+                                            <m:mi>S</m:mi>
+                                            
+                                            <m:mi>o</m:mi>
+                                            
+                                            <m:mi>m</m:mi>
+                                        </m:mrow>
+                                    </m:msub>
+                                </m:mrow>
+                                
+                                <m:mo>=</m:mo>
+                                
+                                <m:mi>0.47 [mm]</m:mi>
+                            </m:mrow>
+                        </m:mtd>
+                    </m:mtr>
+                    
+                    <m:mtr>
+                        <m:mtd>
+                            <m:mrow>
+                                <m:mrow>
+                                    <m:mi>B</m:mi>
+                                    
+                                    <m:msub>
+                                        <m:mi>V</m:mi>
+                                        
+                                        <m:mrow>
+                                            <m:mi>W</m:mi>
+                                            
+                                            <m:mi>i</m:mi>
+                                            
+                                            <m:mi>n</m:mi>
+                                        </m:mrow>
+                                    </m:msub>
+                                </m:mrow>
+                                
+                                <m:mo>=</m:mo>
+                                
+                                <m:mi>0.30 [mm]</m:mi>
+                            </m:mrow>
+                        </m:mtd>
+                    </m:mtr>
+                </m:mtable>
+            </m:math>
+            
+            </imagedata>
+            </imageobject>
+            </mediaobject>
+            </equation></para>
+      </sect3>
+        <sect3>
+            <title>Correction of the Wind Error</title>  
+        <para>The quantification of the expected precipitation error is carried out according to
+            investigations of <citation><xref linkend="Richter_1995"/></citation> as a function of precipitation depth and station location.
+        It is assumed that the relative wind error (KRWind) for both rain and snow precipitation is
+        distinctly inversely proportional to the precipitation depths (Pm). The calculation is
+        carried out according to the following equations:</para>
+        
+            <para>
+                <equation>
+                    <mediaobject>
+                        <imageobject>
+                            <imagedata align="center">
+            <m:math display="inline">
+                <m:mrow>
+                    <m:mrow>
+                        <m:mi>K</m:mi>
+                        
+                        <m:msub>
+                            <m:mi>R</m:mi>
+                            
+                            <m:mrow>
+                                <m:mi>W</m:mi>
+                                
+                                <m:mi>i</m:mi>
+                                
+                                <m:mi>n</m:mi>
+                                
+                                <m:mi>d</m:mi>
+                                
+                                <m:mi></m:mi>
+                            </m:mrow>
+                        </m:msub>
+                    </m:mrow>
+                    
+                    <m:mo>=</m:mo>
+                    
+                    <m:mrow>
+                        <m:mo>{</m:mo>
+                        
+                        <m:mtable>
+                            <m:mtr>
+                                <m:mtd>
+                                    <m:mrow>
+                                        <m:mi>0.1349</m:mi>
+                                        
+                                        <m:mo>*</m:mo>
+                                        
+                                        <m:msubsup>
+                                            <m:mi>P</m:mi>
+                                            
+                                            <m:mi>m</m:mi>
+                                            
+                                            <m:mi>-0.494</m:mi>
+                                        </m:msubsup>
+                                    </m:mrow>
+                                </m:mtd>
+                            </m:mtr>
+                            
+                            <m:mtr>
+                                <m:mtd>
+                                    <m:mrow>
+                                        <m:mi>0.5319</m:mi>
+                                        
+                                        <m:mo>*</m:mo>
+                                        
+                                        <m:msubsup>
+                                            <m:mi>P</m:mi>
+                                            
+                                            <m:mi>m</m:mi>
+                                            
+                                            <m:mi>-0.197</m:mi>
+                                        </m:msubsup>
+                                    </m:mrow>
+                                </m:mtd>
+                            </m:mtr>
+                        </m:mtable>
+                    </m:mrow>
+                </m:mrow>
+            </m:math>
+                            </imagedata>
+                        </imageobject>
+                    </mediaobject>
+                </equation></para>
+        
+        <para>The calculation of the corrected precipitation depths with regard to evaporation and
+        wind error is carried out as follows:</para>
+            <equation>
+                <mediaobject>
+                    <imageobject>
+                        <imagedata align="center">
+            <m:math display="block">
+                <m:mrow>
+                    <m:mrow>
+                        <m:mrow>
+                            <m:mrow>
+                                <m:mrow>
+                                    <m:mrow>
+                                        <m:msup>
+                                            <m:mrow>
+                                                <m:msub>
+                                                    <m:mi>P</m:mi>
+                                                    
+                                                    <m:mrow>
+                                                        <m:mi>k</m:mi>
+                                                        
+                                                        <m:mi>o</m:mi>
+                                                        
+                                                        <m:mi>r</m:mi>
+                                                        
+                                                        <m:mi>r</m:mi>
+                                                    </m:mrow>
+                                                </m:msub>
+                                                
+                                                <m:mo>=</m:mo>
+                                                
+                                                <m:mrow>
+                                                    <m:mrow>
+                                                        <m:msub>
+                                                            <m:mi>P</m:mi>
+                                                            
+                                                            <m:mi>m</m:mi>
+                                                        </m:msub>
+                                                        
+                                                        <m:mo>+</m:mo>
+                                                        
+                                                        <m:mrow>
+                                                            <m:msub>
+                                                                <m:mi>P</m:mi>
+                                                                
+                                                                <m:mi>m</m:mi>
+                                                            </m:msub>
+                                                            
+                                                            <m:mo>×</m:mo>
+                                                            
+                                                            <m:mrow>
+                                                                <m:mrow>
+                                                                    <m:mi>K</m:mi>
+                                                                    
+                                                                    <m:msub>
+                                                                        <m:mi>R</m:mi>
+                                                                        
+                                                                        <m:mrow>
+                                                                            <m:mi>W</m:mi>
+                                                                            
+                                                                            <m:mi>i</m:mi>
+                                                                            
+                                                                            <m:mi>n</m:mi>
+                                                                            
+                                                                            <m:mi>d</m:mi>
+                                                                        </m:mrow>
+                                                                    </m:msub>
+                                                                </m:mrow>
+                                                                
+                                                                <m:mo>+</m:mo>
+                                                                
+                                                                <m:mrow>
+                                                                    <m:mrow>
+                                                                        <m:mi>B</m:mi>
+                                                                        
+                                                                        <m:msub>
+                                                                            <m:mi>V</m:mi>
+                                                                            
+                                                                            <m:mrow>
+                                                                                <m:mi>S</m:mi>
+                                                                                
+                                                                                <m:mi>o</m:mi>
+                                                                                
+                                                                                <m:mi>m</m:mi>
+                                                                            </m:mrow>
+                                                                        </m:msub>
+                                                                    </m:mrow>
+                                                                    
+                                                                    <m:mo>,</m:mo>
+                                                                    
+                                                                    <m:mrow>
+                                                                        <m:mi>B</m:mi>
+                                                                        
+                                                                        <m:msub>
+                                                                            <m:mi>V</m:mi>
+                                                                            
+                                                                            <m:mrow>
+                                                                                <m:mi>W</m:mi>
+                                                                                
+                                                                                <m:mi>i</m:mi>
+                                                                                
+                                                                                <m:mi>n</m:mi>
+                                                                            </m:mrow>
+                                                                        </m:msub>
+                                                                    </m:mrow>
+                                                                </m:mrow>
+                                                            </m:mrow>
+                                                        </m:mrow>
+                                                    </m:mrow>
+                                                    
+                                                    <m:msup>
+                                                        <m:mi>[mmd</m:mi>
+                                                        
+                                                        <m:mrow>
+                                                            <m:mo>-</m:mo>
+                                                            
+                                                            <m:mn>1</m:mn>
+                                                        </m:mrow>
+                                                    </m:msup>
+                                                    
+                                                    <m:mi> ] </m:mi>
+                                                </m:mrow>
+                                            </m:mrow>
+                                            
+                                            <m:mi> </m:mi>
+                                        </m:msup>
+                                    </m:mrow>
+                                </m:mrow>
+                            </m:mrow>
+                        </m:mrow>
+                    </m:mrow>
+                </m:mrow>
+            </m:math>
+                            
+                        </imagedata>
+                    </imageobject>
+                </mediaobject>
+            </equation>
+        </sect3>
+    </sect2>
+      <bibliography>
+          <title>Literature</title> 
+          <biblioentry xml:id="Richter_1995" xreflabel="Richter 1995">
+              <abbrev>Richter 1995</abbrev>
+              <author><personname><firstname>D.</firstname><surname>Richter</surname></personname></author>
+              <title>Ergebnisse methodischer Untersuchungen zur Korrektur des systematischen Messfehlers des Hellmann-Niederschlagmessers</title>            
+              <citetitle>Deutscher Wetterdienst</citetitle>
+              <pubdate>1995</pubdate>
+          </biblioentry>    
+      </bibliography>
+</sect1>

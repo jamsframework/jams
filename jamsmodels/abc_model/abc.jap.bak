@@ -1,0 +1,7 @@
+#JAMS configuration file
+#Mon May 08 11:36:39 CEST 2006
+verbose=1
+debug=3
+errorlog=c:/abc/jamserror.log
+libs=D:/jamsprojects/J2K/dist/J2K.jar?D:/jamsprojects/ABCModel/dist/ABCModel.jar
+infolog=c:/abc/jamsinfo.log

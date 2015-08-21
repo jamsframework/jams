@@ -1,0 +1,20 @@
+\select@language {ngerman}
+\contentsline {section}{\numberline {1}Berechnung von zus\"atzlichen meteorologischen Gr\"o\IeC {\ss }en}{3}
+\contentsline {subsection}{\numberline {1.1}Absolute Luftfeuchte}{3}
+\contentsline {subsection}{\numberline {1.2}Globalstrahlung}{5}
+\contentsline {subsection}{\numberline {1.3}Kurzwellige Ausstrahlung}{7}
+\contentsline {subsection}{\numberline {1.4}Langwellige Ausstrahlung}{8}
+\contentsline {subsection}{\numberline {1.5}Nettostrahlung}{10}
+\contentsline {section}{\numberline {2}Berechnung der potentiellen Evapotranspiration}{11}
+\contentsline {subsection}{\numberline {2.1}Verfahren von Turc-Wendling}{11}
+\contentsline {subsection}{\numberline {2.2}Verfahren von Haude}{12}
+\contentsline {subsection}{\numberline {2.3}Verfahren von Penman}{14}
+\contentsline {subsection}{\numberline {2.4}Verfahren von Penman-Monteith}{16}
+\contentsline {subsection}{\numberline {2.5}Gras-Referenzverdunstung}{19}
+\contentsline {section}{\numberline {3}Methoden zur Korrektur von Nieder\discretionary {-}{}{}schlags\discretionary {-}{}{}mess\discretionary {-}{}{}werten}{21}
+\contentsline {subsection}{\numberline {3.1}Niederschlagskorrektur nach \textsc {Richter} (1995) (auf Tagesbasis)}{21}
+\contentsline {subsection}{\numberline {3.2}Niederschlagskorrektur nach \textsc {Richter} (1995) und \textsc {Sevruk} (1989)}{24}
+\contentsline {subsection}{\numberline {3.3}Niederschlagskorrektur nach \textsc {Richter} (1995) (auf Monatsbasis)}{27}
+\contentsline {section}{\numberline {4}Methoden zur Bestimmung der Niederschlagsform}{29}
+\contentsline {subsection}{\numberline {4.1}Bestimmung von Niederschlagsform sowie Schnee- und Regenanteilen}{29}
+\contentsline {section}{\numberline {5}Methoden zur deskriptiven statistischen Auswertung von Zeitreihen}{31}

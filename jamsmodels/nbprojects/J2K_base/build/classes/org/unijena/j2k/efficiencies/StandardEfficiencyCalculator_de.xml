@@ -1,0 +1,1894 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:db="http://docbook.org/ns/docbook">
+  <title>StandardEfficiencyCalculator</title>
+
+  <subtitle>Eine KDataReaderomponente zum Beurteilen der
+  Modellqualität.</subtitle>
+
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+
+          <entry>j2k.efficiencies</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+<sect2>
+  <title>Variablen</title>
+  <informaltable>
+    <tgroup cols="2">
+      
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+
+      <thead>
+       
+        <row>
+          <entry>Name</entry>
+
+          <entry>Beschreibung</entry>
+        </row>
+      </thead>
+
+      <tbody>
+        <row>
+          <entry>time</entry>
+
+          <entry>der aktuelle Modellzeitschritt</entry>
+        </row>
+
+        <row>
+          <entry>modelTimeInterval</entry>
+
+          <entry>das Modellierungszeitinterval</entry>
+        </row>
+
+        <row>
+          <entry>effTimeInterval</entry>
+
+          <entry>Zeitintervall für das die Gütemaße berechnet werden
+          sollen</entry>
+        </row>
+
+        <row>
+          <entry>effMonthList</entry>
+
+          <entry>eine kommaseparierte Liste von Monaten (1-12) für die die
+          Güte berechnet werden soll. Diese Variable kann ausgelassen werden
+          wenn sie nicht benötigt wird.</entry>
+        </row>
+
+        <row>
+          <entry>effMethod</entry>
+
+          <entry>eine kommaseparierte Liste von Integerwerten, die
+          entsprechenden Gütekriterien entsprechen</entry>
+        </row>
+
+        <row>
+          <entry>predicition</entry>
+
+          <entry>der Simulationswert der geprüft werden soll</entry>
+        </row>
+
+        <row>
+          <entry>validation</entry>
+
+          <entry>der Vergleichswert gegen den die Prüfung stattfinden
+          soll</entry>
+        </row>
+
+        <row>
+          <entry>e1</entry>
+
+          <entry>die Nash-Suttcliffe Effizienz mit Potenz 1</entry>
+        </row>
+
+        <row>
+          <entry>e2</entry>
+
+          <entry>die Nash-Sutcliffe Effizienz mit Potenz 2</entry>
+        </row>
+
+        <row>
+          <entry>le1</entry>
+
+          <entry>die Nash-Suttcliffe Effizienz berechnet aus logarithmierten
+          Werten mit Potenz 1</entry>
+        </row>
+
+        <row>
+          <entry>le2</entry>
+
+          <entry>die Nash-Suttcliffe Effizienz berechnet aus logarithmierten
+          Werten mit Potenz 2</entry>
+        </row>
+
+        <row>
+          <entry>ioa1</entry>
+
+          <entry>der Index of Agreement mit Potenz 1</entry>
+        </row>
+
+        <row>
+          <entry>ioa2</entry>
+
+          <entry>der Index of Agreement mit Potenz 2</entry>
+        </row>
+
+        <row>
+          <entry>rsq</entry>
+
+          <entry>das Bestimmtheitsmaß</entry>
+        </row>
+
+        <row>
+          <entry>grad</entry>
+
+          <entry>die Steigung der linearen Ausgleichsgeraden</entry>
+        </row>
+
+        <row>
+          <entry>wrsq</entry>
+
+          <entry>eine gewichtete Form des Bestimmtheitsmaßes</entry>
+        </row>
+
+        <row>
+          <entry>dsgrad</entry>
+
+          <entry>die Steigung der Regressionsgerade aus der
+          Doppelsummenanalyse</entry>
+        </row>
+
+        <row>
+          <entry>absVolError</entry>
+
+          <entry>der absolute, kumulierte Volumenfehler</entry>
+        </row>
+
+        <row>
+          <entry>rmse</entry>
+
+          <entry>der mittlere quadratische Fehler</entry>
+        </row>
+
+        <row>
+          <entry>pbias</entry>
+
+          <entry>der mittlere prozentuale Fehler</entry>
+        </row>
+
+        <row>
+          <entry>apbias</entry>
+
+          <entry>der mittlere absolute prozentuale Fehler</entry>
+        </row>
+
+        <row>
+          <entry>predictionValues</entry>
+
+          <entry>ein Array, das sämtliche Simulationswerte speichert</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+</sect2>
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+    
+  <para>Mit dieser Komponente können eine Anzahl von Gütemaßen zur Beurteilung der Modellqualität
+      anhand gemessener Werte berechnet werden. Hierzu muss der Komponente der Simulationswert
+        (<emphasis role="italic">prediction</emphasis>) und ein Vergleichswert (<emphasis role="italic">validation</emphasis>) für jeden Zeitschritt der Modelllaufzeit übergeben
+      werden. Zusätzlich benötigt die Komponente zwei Zeitintervalle, wobei das erste das
+      Modellzeitintervall (modelTimeInterval) ist, das zweite dann ein beliebiger Zeitraum
+        (<emphasis role="italic">effTimeInterval</emphasis>) innerhalb des Modellzeitintervalls sein
+      darf. Hierdurch, kann beispielsweise eine „warming up“ Periode zu Beginn der Modelllaufzeit
+      aus der Effizienzberechnung ausgeschlossen werden oder Gütemaße für einzelne Jahre bestimmt
+      werden. Es kann auch eine Liste von Monaten (1-12) in der Variablen „<emphasis role="italic">effMonthList</emphasis>“ angeben werden um kontinuierlich nur einzelne Monate
+      auszuwerten.</para>
+
+  <para>Während der Modelllaufzeit speichert die Komponente lediglich die einlaufenden Einzelwerte
+      und legt diese in entsprechenden Strukturen ab. Fehlende Werte werden als spezieller Fehlwert gespeichert.
+      Während der „cleanUp“ Phase erfolgt dann die Berechnung der spezifischen Gütemaße, die weiter
+      unten beschrieben werden. Diese können durch Angabe von Identifikationsnummern in der Variable
+        „<emphasis role="italic">effMethod</emphasis>“ ausgewählt werden. Im Einzelnen sind dies: <itemizedlist>
+        <listitem>
+          <para>0 - für die Nash-Suttcliffe Effizienz mit Potenz 1</para>
+        </listitem>
+        <listitem>
+          <para>1 – für die Nash-Sutcliffe Effizienz mit Potenz 2</para>
+        </listitem>
+        <listitem>
+          <para>3 – für die Nash-Suttcliffe Effizienz berechnet aus logarithmierten Werten mit
+            Potenz 1</para>
+        </listitem>
+        <listitem>
+          <para>4 – für die Nash-Suttcliffe Effizienz berechnet aus logarithmierten Werten mit
+            Potenz 2</para>
+        </listitem>
+        <listitem>
+          <para>5 – der Index of Agreement mit Potenz 1</para>
+        </listitem>
+        <listitem>
+          <para>6 – der Index of Agreement mit Potenz 2</para>
+        </listitem>
+        <listitem>
+          <para>7 – das Bestimmtheitsmaß</para>
+        </listitem>
+        <listitem>
+          <para>8 – eine gewichtete Form des Bestimmtheitsmaßes nach <citation><xref linkend="Krause_2005"/></citation></para>
+        </listitem>
+        <listitem>
+          <para>9 – die Steigung der Regressionsgerade aus der Doppelsummenanalyse</para>
+        </listitem>
+        <listitem>
+          <para>10 – der absolute, kumulierte Volumenfehler</para>
+        </listitem>
+        <listitem>
+          <para>11 – der mittlere quadratische Fehler</para>
+        </listitem>
+        <listitem>
+          <para>12 – der mittlere prozentuale Fehler</para>
+        </listitem>
+        <listitem>
+          <para>13 – der mittlere absolute prozentuale Fehler</para>
+        </listitem>
+      </itemizedlist></para>
+
+  <para>Die Berechnung der einzelnen Gütemaße, mit dem Simulationswert pi und
+  dem Vergleichswert oi erfolgt nach:</para>
+
+  <para>Nash-Sutcliffe Effizienz mit Potenz 1 (<inlineequation>
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>E</m:mi>
+
+          <m:mn>1</m:mn>
+        </m:mrow>
+      </m:math>
+    </inlineequation>):</para>
+
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>E</m:mi>
+
+            <m:mn>1</m:mn>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:mn>1</m:mn>
+
+            <m:mo>-</m:mo>
+
+            <m:mfrac>
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:mrow>
+                  <m:mo>|</m:mo>
+
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>p</m:mi>
+
+                      <m:mi>i</m:mi>
+                    </m:msub>
+
+                    <m:mo>-</m:mo>
+
+                    <m:msub>
+                      <m:mi>o</m:mi>
+
+                      <m:mi>i</m:mi>
+                    </m:msub>
+                  </m:mrow>
+
+                  <m:mo>|</m:mo>
+                </m:mrow>
+              </m:mrow>
+
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:mrow>
+                  <m:mo>|</m:mo>
+
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>o</m:mi>
+
+                      <m:mi>i</m:mi>
+                    </m:msub>
+
+                    <m:mo>-</m:mo>
+
+                    <m:mover>
+                      <m:mi>o</m:mi>
+
+                      <m:mo>─</m:mo>
+                    </m:mover>
+                  </m:mrow>
+
+                  <m:mo>|</m:mo>
+                </m:mrow>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation></para>
+
+  <para>Nash-Sutcliffe Effizienz mit Potenz 2 (<inlineequation>
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>E</m:mi>
+
+          <m:mn>2</m:mn>
+        </m:mrow>
+      </m:math>
+    </inlineequation>):</para>
+
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>E</m:mi>
+
+            <m:mn>2</m:mn>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:mn>1</m:mn>
+
+            <m:mo>-</m:mo>
+
+            <m:mfrac>
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+
+                    <m:mrow>
+                      <m:msub>
+                        <m:mi>p</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+
+                      <m:mo>-</m:mo>
+
+                      <m:msub>
+                        <m:mi>o</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mrow>
+
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+
+                  <m:mn>2</m:mn>
+                </m:msup>
+              </m:mrow>
+
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+
+                    <m:mrow>
+                      <m:msub>
+                        <m:mi>o</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+
+                      <m:mo>-</m:mo>
+
+                      <m:mover>
+                        <m:mi>o</m:mi>
+
+                        <m:mo>─</m:mo>
+                      </m:mover>
+                    </m:mrow>
+
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+
+                  <m:mn>2</m:mn>
+                </m:msup>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation></para>
+
+  <para>Nash-Sutcliffe Effizienz aus logarithmierten Werten mit Potenz 1
+  (<inlineequation>
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>ln</m:mi>
+
+          <m:mo>⁡</m:mo>
+
+          <m:mrow>
+            <m:mi>E</m:mi>
+
+            <m:mn>1</m:mn>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+    </inlineequation>):</para>
+
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>ln</m:mi>
+
+            <m:mo>⁡</m:mo>
+
+            <m:mrow>
+              <m:mi>E</m:mi>
+
+              <m:mn>1</m:mn>
+            </m:mrow>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:mn>1</m:mn>
+
+            <m:mo>-</m:mo>
+
+            <m:mfrac>
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:mrow>
+                  <m:mo>|</m:mo>
+
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mi>ln</m:mi>
+
+                      <m:mo>⁡</m:mo>
+
+                      <m:msub>
+                        <m:mi>p</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mrow>
+
+                    <m:mo>-</m:mo>
+
+                    <m:mrow>
+                      <m:mi>ln</m:mi>
+
+                      <m:mo>⁡</m:mo>
+
+                      <m:msub>
+                        <m:mi>o</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mrow>
+                  </m:mrow>
+
+                  <m:mo>|</m:mo>
+                </m:mrow>
+              </m:mrow>
+
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:mrow>
+                  <m:mo>|</m:mo>
+
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mi>ln</m:mi>
+
+                      <m:mo>⁡</m:mo>
+
+                      <m:msub>
+                        <m:mi>o</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mrow>
+
+                    <m:mo>-</m:mo>
+
+                    <m:mrow>
+                      <m:mi>ln</m:mi>
+
+                      <m:mo>⁡</m:mo>
+
+                      <m:mover>
+                        <m:mi>o</m:mi>
+
+                        <m:mo>─</m:mo>
+                      </m:mover>
+                    </m:mrow>
+                  </m:mrow>
+
+                  <m:mo>|</m:mo>
+                </m:mrow>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation></para>
+
+  <para>Nash-Sutcliffe Effizienz aus logarithmierten Werten mit Potenz 2
+  (<inlineequation>
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>ln</m:mi>
+
+          <m:mo>⁡</m:mo>
+
+          <m:mrow>
+            <m:mi>E</m:mi>
+
+            <m:mn>2</m:mn>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+    </inlineequation>):</para>
+
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>ln</m:mi>
+
+            <m:mo>⁡</m:mo>
+
+            <m:mrow>
+              <m:mi>E</m:mi>
+
+              <m:mn>2</m:mn>
+            </m:mrow>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:mn>1</m:mn>
+
+            <m:mo>-</m:mo>
+
+            <m:mfrac>
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+
+                    <m:mrow>
+                      <m:mrow>
+                        <m:mi>ln</m:mi>
+
+                        <m:mo>⁡</m:mo>
+
+                        <m:msub>
+                          <m:mi>p</m:mi>
+
+                          <m:mi>i</m:mi>
+                        </m:msub>
+                      </m:mrow>
+
+                      <m:mo>-</m:mo>
+
+                      <m:mrow>
+                        <m:mi>ln</m:mi>
+
+                        <m:mo>⁡</m:mo>
+
+                        <m:msub>
+                          <m:mi>o</m:mi>
+
+                          <m:mi>i</m:mi>
+                        </m:msub>
+                      </m:mrow>
+                    </m:mrow>
+
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+
+                  <m:mn>2</m:mn>
+                </m:msup>
+              </m:mrow>
+
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+
+                    <m:mrow>
+                      <m:mrow>
+                        <m:mi>ln</m:mi>
+
+                        <m:mo>⁡</m:mo>
+
+                        <m:msub>
+                          <m:mi>o</m:mi>
+
+                          <m:mi>i</m:mi>
+                        </m:msub>
+                      </m:mrow>
+
+                      <m:mo>-</m:mo>
+
+                      <m:mrow>
+                        <m:mi>ln</m:mi>
+
+                        <m:mo>⁡</m:mo>
+
+                        <m:mover>
+                          <m:mi>o</m:mi>
+
+                          <m:mo>─</m:mo>
+                        </m:mover>
+                      </m:mrow>
+                    </m:mrow>
+
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+
+                  <m:mn>2</m:mn>
+                </m:msup>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation></para>
+
+  <para>Bei den beiden Formen, die aus logarithmierten Werten berechnet werden
+  besteht das Problem wenn einer oder beide Werten 0 zeigen, da hierfür der
+  Logarithmus nicht definiert ist. Hier werden intern folgende Fälle
+  unterschieden: <itemizedlist>
+      <listitem>
+        <para>Ist einer der beiden Werte 0 so wird das Wertepaar bei der
+        Berechnung nicht berücksichtigt.</para>
+      </listitem>
+
+      <listitem>
+        <para>Sind beide Werte 0 so wird eine einfache oder quadratische
+        Differenz von ebenfalls 0 angenommen.</para>
+      </listitem>
+    </itemizedlist></para>
+
+  <para>Index of Agreement mit Potenz 1 (<inlineequation>
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>i</m:mi>
+
+          <m:mi>o</m:mi>
+
+          <m:mrow>
+            <m:mi>a</m:mi>
+
+            <m:mn>1</m:mn>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+    </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>i</m:mi>
+
+            <m:mrow>
+              <m:mi>o</m:mi>
+
+              <m:mrow>
+                <m:mi>a</m:mi>
+
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:mrow>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:mn>1</m:mn>
+
+            <m:mo>-</m:mo>
+
+            <m:mfrac>
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:mrow>
+                  <m:mo>|</m:mo>
+
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>p</m:mi>
+
+                      <m:mi>i</m:mi>
+                    </m:msub>
+
+                    <m:mo>-</m:mo>
+
+                    <m:msub>
+                      <m:mi>o</m:mi>
+
+                      <m:mi>i</m:mi>
+                    </m:msub>
+                  </m:mrow>
+
+                  <m:mo>|</m:mo>
+                </m:mrow>
+              </m:mrow>
+
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:mrow>
+                  <m:mo>|</m:mo>
+
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>p</m:mi>
+
+                          <m:mi>i</m:mi>
+                        </m:msub>
+
+                        <m:mo>-</m:mo>
+
+                        <m:mover>
+                          <m:mi>o</m:mi>
+
+                          <m:mo>─</m:mo>
+                        </m:mover>
+                      </m:mrow>
+
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+
+                    <m:mo>+</m:mo>
+
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>o</m:mi>
+
+                          <m:mi>i</m:mi>
+                        </m:msub>
+
+                        <m:mo>-</m:mo>
+
+                        <m:mover>
+                          <m:mi>o</m:mi>
+
+                          <m:mo>─</m:mo>
+                        </m:mover>
+                      </m:mrow>
+
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+
+                  <m:mo>|</m:mo>
+                </m:mrow>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+      </imagedata>
+      </imageobject>
+      </mediaobject>
+      </equation></para>
+
+  <para>Index of Agreement mit Potenz 2 (<inlineequation>
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>i</m:mi>
+
+          <m:mi>o</m:mi>
+
+          <m:mrow>
+            <m:mi>a</m:mi>
+
+            <m:mn>2</m:mn>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+    </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>i</m:mi>
+
+            <m:mi>o</m:mi>
+
+            <m:mrow>
+              <m:mi>a</m:mi>
+
+              <m:mn>2</m:mn>
+            </m:mrow>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:mn>1</m:mn>
+
+            <m:mo>-</m:mo>
+
+            <m:mfrac>
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+
+                    <m:mrow>
+                      <m:msub>
+                        <m:mi>p</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+
+                      <m:mo>-</m:mo>
+
+                      <m:msub>
+                        <m:mi>o</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mrow>
+
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+
+                  <m:mn>2</m:mn>
+                </m:msup>
+              </m:mrow>
+
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+
+                    <m:mrow>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+
+                        <m:mrow>
+                          <m:msub>
+                            <m:mi>p</m:mi>
+
+                            <m:mi>i</m:mi>
+                          </m:msub>
+
+                          <m:mo>-</m:mo>
+
+                          <m:mover>
+                            <m:mi>o</m:mi>
+
+                            <m:mo>─</m:mo>
+                          </m:mover>
+                        </m:mrow>
+
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+
+                      <m:mo>+</m:mo>
+
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+
+                        <m:mrow>
+                          <m:msub>
+                            <m:mi>o</m:mi>
+
+                            <m:mi>i</m:mi>
+                          </m:msub>
+
+                          <m:mo>-</m:mo>
+
+                          <m:mover>
+                            <m:mi>o</m:mi>
+
+                            <m:mo>─</m:mo>
+                          </m:mover>
+                        </m:mrow>
+
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                    </m:mrow>
+
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+
+                  <m:mn>2</m:mn>
+                </m:msup>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+      </imagedata>
+      </imageobject>
+      </mediaobject>
+      </equation> </para>
+
+  <para>Das Bestimmtheitsmaß (<inlineequation>
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>r</m:mi>
+
+          <m:mi>s</m:mi>
+
+          <m:mi>q</m:mi>
+        </m:mrow>
+      </m:math>
+    </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>r</m:mi>
+
+            <m:mi>s</m:mi>
+
+            <m:mi>q</m:mi>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:msup>
+            <m:mrow>
+              <m:mo>(</m:mo>
+
+              <m:mfrac>
+                <m:mrow>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+
+                    <m:mrow>
+                      <m:mi>i</m:mi>
+
+                      <m:mo>=</m:mo>
+
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+
+                    <m:mi>n</m:mi>
+                  </m:munderover>
+
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>o</m:mi>
+
+                          <m:mi>i</m:mi>
+                        </m:msub>
+
+                        <m:mo>-</m:mo>
+
+                        <m:mover>
+                          <m:mi>o</m:mi>
+
+                          <m:mo>─</m:mo>
+                        </m:mover>
+                      </m:mrow>
+
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+
+                    <m:mo>×</m:mo>
+
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>p</m:mi>
+
+                          <m:mi>i</m:mi>
+                        </m:msub>
+
+                        <m:mo>-</m:mo>
+
+                        <m:mover>
+                          <m:mi>p</m:mi>
+
+                          <m:mo>─</m:mo>
+                        </m:mover>
+                      </m:mrow>
+
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mrow>
+
+                <m:mrow>
+                  <m:msqrt>
+                    <m:mrow>
+                      <m:munderover>
+                        <m:mo>∑</m:mo>
+
+                        <m:mrow>
+                          <m:mi>i</m:mi>
+
+                          <m:mo>=</m:mo>
+
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+
+                        <m:mi>n</m:mi>
+                      </m:munderover>
+
+                      <m:msup>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+
+                          <m:mrow>
+                            <m:msub>
+                              <m:mi>o</m:mi>
+
+                              <m:mi>i</m:mi>
+                            </m:msub>
+
+                            <m:mo>-</m:mo>
+
+                            <m:mover>
+                              <m:mi>o</m:mi>
+
+                              <m:mo>─</m:mo>
+                            </m:mover>
+                          </m:mrow>
+
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+
+                        <m:mn>2</m:mn>
+                      </m:msup>
+                    </m:mrow>
+                  </m:msqrt>
+
+                  <m:mo>×</m:mo>
+
+                  <m:msqrt>
+                    <m:mrow>
+                      <m:munderover>
+                        <m:mo>∑</m:mo>
+
+                        <m:mrow>
+                          <m:mi>i</m:mi>
+
+                          <m:mo>=</m:mo>
+
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+
+                        <m:mi>n</m:mi>
+                      </m:munderover>
+
+                      <m:msup>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+
+                          <m:mrow>
+                            <m:msub>
+                              <m:mi>p</m:mi>
+
+                              <m:mi>i</m:mi>
+                            </m:msub>
+
+                            <m:mo>-</m:mo>
+
+                            <m:mover>
+                              <m:mi>p</m:mi>
+
+                              <m:mo>─</m:mo>
+                            </m:mover>
+                          </m:mrow>
+
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+
+                        <m:mn>2</m:mn>
+                      </m:msup>
+                    </m:mrow>
+                  </m:msqrt>
+                </m:mrow>
+              </m:mfrac>
+
+              <m:mo>)</m:mo>
+            </m:mrow>
+
+            <m:mn>2</m:mn>
+          </m:msup>
+        </m:mrow>
+      </m:math>
+      </imagedata>
+      </imageobject>
+      </mediaobject>
+      </equation></para>
+
+  <para>Eine gewichtete Form des Bestimmtheitsmaßes mit der Steigung der
+  Regressionsgeraden (b) als Gewicht (<inlineequation>
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>w</m:mi>
+
+          <m:mi>r</m:mi>
+
+          <m:mrow>
+            <m:mi>s</m:mi>
+
+            <m:mi>q</m:mi>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+    </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>w</m:mi>
+
+            <m:mi>r</m:mi>
+
+            <m:mrow>
+              <m:mi>s</m:mi>
+
+              <m:mi>q</m:mi>
+            </m:mrow>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:mo>{</m:mo>
+
+            <m:mtable>
+              <m:mtr>
+                <m:mtd>
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mrow>
+                        <m:mo>|</m:mo>
+
+                        <m:mi>b</m:mi>
+
+                        <m:mo>|</m:mo>
+                      </m:mrow>
+
+                      <m:mo>×</m:mo>
+
+                      <m:mrow>
+                        <m:mi>r</m:mi>
+
+                        <m:mi>s</m:mi>
+
+                        <m:mi>q</m:mi>
+                      </m:mrow>
+                    </m:mrow>
+
+                    <m:mo>für</m:mo>
+
+                    <m:mrow>
+                      <m:mi>b</m:mi>
+
+                      <m:mo>≤</m:mo>
+
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+
+              <m:mtr>
+                <m:mtd>
+                  <m:mrow>
+                    <m:msup>
+                      <m:mrow>
+                        <m:mo>|</m:mo>
+
+                        <m:mi>b</m:mi>
+
+                        <m:mo>|</m:mo>
+                      </m:mrow>
+
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:msup>
+
+                    <m:mrow>
+                      <m:mo>×</m:mo>
+
+                      <m:mi>r</m:mi>
+
+                      <m:mrow>
+                        <m:mi>s</m:mi>
+
+                        <m:mi>q</m:mi>
+                      </m:mrow>
+                    </m:mrow>
+
+                    <m:mrow>
+                      <m:mi> für</m:mi>
+
+                      <m:mi> b</m:mi>
+
+                      <m:mrow>
+                        <m:mo>&gt;</m:mo>
+
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+      </imagedata>
+      </imageobject>
+      </mediaobject>
+      </equation></para>
+
+  <para>Die Steigung der linearen Ausgleichsgeraden der kumulierten Simulations- und
+    Vergleichswerten (dsgrad) (<xref linkend="j2k.efficiencies.StandardEfficienciesCalculator.dsgrad_fig1.jpg"/>:)</para>
+  <figure xml:id="j2k.efficiencies.StandardEfficienciesCalculator.dsgrad_fig1.jpg">
+    <title>dsgrad</title>
+  <para><inlinemediaobject>
+      <imageobject>
+        <imagedata fileref="../dsgrad.jpg"/>
+      </imageobject>
+  </inlinemediaobject> </para>
+  </figure>
+  <para>Der absolute, kumulierte Volumenfehler (<inlineequation>
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>a</m:mi>
+
+          <m:mi>v</m:mi>
+
+          <m:mi>e</m:mi>
+        </m:mrow>
+      </m:math>
+    </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>a</m:mi>
+
+            <m:mi>v</m:mi>
+
+            <m:mi>e</m:mi>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+
+              <m:mrow>
+                <m:mi>i</m:mi>
+
+                <m:mo>=</m:mo>
+
+                <m:mn>1</m:mn>
+              </m:mrow>
+
+              <m:mi>n</m:mi>
+            </m:munderover>
+
+            <m:mrow>
+              <m:mo>|</m:mo>
+
+              <m:mrow>
+                <m:msub>
+                  <m:mi>p</m:mi>
+
+                  <m:mi>i</m:mi>
+                </m:msub>
+
+                <m:mo>-</m:mo>
+
+                <m:msub>
+                  <m:mi>o</m:mi>
+
+                  <m:mi>i</m:mi>
+                </m:msub>
+              </m:mrow>
+
+              <m:mo>|</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+            
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+  <para>Der mittlere quadratische Fehler (rmse):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>r</m:mi>
+
+            <m:mi>m</m:mi>
+
+            <m:mrow>
+              <m:mi>s</m:mi>
+
+              <m:mi>e</m:mi>
+            </m:mrow>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:msqrt>
+            <m:mrow>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+
+                <m:mi>n</m:mi>
+              </m:mfrac>
+
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+
+                    <m:mrow>
+                      <m:msub>
+                        <m:mi>p</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+
+                      <m:mo>-</m:mo>
+
+                      <m:msub>
+                        <m:mi>o</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mrow>
+
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+
+                  <m:mn>2</m:mn>
+                </m:msup>
+              </m:mrow>
+            </m:mrow>
+          </m:msqrt>
+        </m:mrow>
+      </m:math>
+      </imagedata>
+      </imageobject>
+      </mediaobject>
+      </equation> </para>
+
+  <para>Der mittlere prozentuale Fehler (<inlineequation>
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>p</m:mi>
+
+          <m:mi>b</m:mi>
+
+          <m:mi>i</m:mi>
+
+          <m:mi>a</m:mi>
+
+          <m:mi>s</m:mi>
+        </m:mrow>
+      </m:math>
+    </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>p</m:mi>
+
+            <m:mi>b</m:mi>
+
+            <m:mi>i</m:mi>
+
+            <m:mi>a</m:mi>
+
+            <m:mi>s</m:mi>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:mfrac>
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:mrow>
+                  <m:mo>(</m:mo>
+
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>p</m:mi>
+
+                      <m:mi>i</m:mi>
+                    </m:msub>
+
+                    <m:mo>-</m:mo>
+
+                    <m:msub>
+                      <m:mi>o</m:mi>
+
+                      <m:mi>i</m:mi>
+                    </m:msub>
+                  </m:mrow>
+
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mrow>
+
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:msub>
+                  <m:mi>o</m:mi>
+
+                  <m:mi>i</m:mi>
+                </m:msub>
+              </m:mrow>
+            </m:mfrac>
+
+            <m:mo>×</m:mo>
+
+            <m:mrow>
+              <m:mn>1</m:mn>
+
+              <m:mn>0</m:mn>
+
+              <m:mn>0</m:mn>
+            </m:mrow>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+  <para>Der mittlere absolute prozentuale Fehler (<inlineequation>
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>a</m:mi>
+
+          <m:mi>p</m:mi>
+
+          <m:mi>b</m:mi>
+
+          <m:mi>i</m:mi>
+
+          <m:mrow>
+            <m:mi>a</m:mi>
+
+            <m:mi>s</m:mi>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+    </inlineequation>):</para>
+
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <m:math display="inline">
+          <m:mrow>
+            <m:mrow>
+              <m:mi>a</m:mi>
+              <m:mi>p</m:mi>
+              <m:mi>b</m:mi>
+              <m:mi>i</m:mi>
+              <m:mrow>
+                <m:mi>a</m:mi>
+                <m:mi>s</m:mi>
+              </m:mrow>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mrow>
+              <m:mfrac>
+                <m:mrow>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>i</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                    <m:mi>n</m:mi>
+                  </m:munderover>
+                  <m:mrow>
+                    <m:mo>|</m:mo>
+                    <m:mrow>
+                      <m:msub>
+                        <m:mi>p</m:mi>
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                      <m:mo>-</m:mo>
+                      <m:msub>
+                        <m:mi>o</m:mi>
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mrow>
+                    <m:mo>|</m:mo>
+                  </m:mrow>
+                </m:mrow>
+                <m:mrow>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>i</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                    <m:mi>n</m:mi>
+                  </m:munderover>
+                  <m:msub>
+                    <m:mi>o</m:mi>
+                    <m:mi>i</m:mi>
+                  </m:msub>
+                </m:mrow>
+              </m:mfrac>
+              <m:mo>×</m:mo>
+              <m:mrow>
+                <m:mn>1</m:mn>
+                <m:mn>0</m:mn>
+                <m:mn>0</m:mn>
+              </m:mrow>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation>
+    </para>
+    <para/>
+  </sect2>
+  <bibliography>
+    <title>Literatur</title> 
+    <biblioentry  xml:id="Krause_2005" xreflabel="Krause et al. 2005">
+      <abbrev>Krause et al. 2005</abbrev>
+      <authorgroup>
+        <author><personname><firstname>P.</firstname><surname>Krause</surname></personname></author>
+        <author><personname><firstname>D.</firstname><surname>Boyle</surname></personname></author>
+        <author><personname><firstname>F.</firstname><surname>Bäse</surname></personname></author>
+      </authorgroup>
+      <title>Comparison of different efficiency criteria for hydrological model assessment</title>
+      <citetitle pubwork="journal">Advances in Geosiences</citetitle>
+      <volumenum>5</volumenum>
+      <pagenums>89-97</pagenums>
+      <pubdate>2005</pubdate>
+    </biblioentry>
+    
+    <biblioentry  xml:id="Nash_Sutcliffe_1970" xreflabel="Nash &amp; Sutcliffe 1970">
+      <abbrev>Nash &amp; Sutcliffe 1970</abbrev>          
+      <authorgroup>
+        <author><personname><firstname>J.</firstname><surname>Nash</surname></personname></author>
+        <author><personname><firstname>J.</firstname><surname>Sutcliffe</surname></personname></author>
+      </authorgroup>
+      <title>River flow forecasting through conceptual models. Part I: a discussion of principles</title>
+      <citetitle pubwork="journal">Journal of Hydrology</citetitle>
+      <volumenum>10</volumenum>
+      <pagenums>282-290</pagenums>
+      <pubdate>1970</pubdate>
+    </biblioentry>
+    
+    <biblioentry  xml:id="Willmot_1981" xreflabel="Willmot 1981">
+      <abbrev>Willmot 1981</abbrev>          
+      <author><personname><firstname>C.J.</firstname><surname>Willmot</surname></personname></author>            
+      <title>On the validation of models</title>
+      <citetitle pubwork="journal">Physical Geography</citetitle>
+      <volumenum>2</volumenum>
+      <pagenums>184-194</pagenums>
+      <pubdate>1981</pubdate>
+    </biblioentry>
+  </bibliography>
+</sect1>

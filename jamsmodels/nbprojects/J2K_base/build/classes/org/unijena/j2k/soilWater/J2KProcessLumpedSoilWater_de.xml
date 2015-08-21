@@ -1,0 +1,1803 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook"
+       xmlns:ns6="http://www.w3.org/1999/xlink"
+       xmlns:ns5="http://www.w3.org/1999/xhtml"
+       xmlns:ns4="http://www.w3.org/2000/svg"
+       xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+       xmlns:ns="http://docbook.org/ns/docbook">
+  <title>J2KProcessLumpedSoilWater</title>
+    
+  <subtitle>Eine Komponente zur Berechnung des Bodenwasserhaushalts und der Generierung von
+    Abfluss.</subtitle>
+
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*" />
+
+      <colspec colname="c2" colnum="2" colwidth="3*" />
+
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metainformation</entry>
+        </row>
+      </thead>
+
+      <tbody>
+        <row>
+          <entry>Klassifikation</entry>
+
+          <entry>j2k.soilWater</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+
+  <sect2>
+    <title>Variablen</title>
+
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1*" />
+
+        <colspec colname="c2" colnum="2" colwidth="3*" />
+
+        <thead>
+          <row>
+            <entry>Name</entry>
+
+            <entry>Beschreibung</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>time</entry>
+
+            <entry>Der aktuelle Zeitschritt</entry>
+          </row>
+
+          <row>
+            <entry>area</entry>
+
+            <entry>Die Fläche der räumlichen Modelleinheit [m²]</entry>
+          </row>
+
+          <row>
+            <entry>slope</entry>
+
+            <entry>Die Neigung der räumlichen Modelleinheit [Grad]</entry>
+          </row>
+
+          <row>
+            <entry>sealedGrade</entry>
+
+            <entry>Der Anteil an versiegelter Fläche [-] WB[0 .. 1]</entry>
+          </row>
+
+          <row>
+            <entry>netRain</entry>
+
+            <entry>Der flüssige Niederschlag [mm]</entry>
+          </row>
+
+          <row>
+            <entry>netSnow</entry>
+
+            <entry>Der feste Niederschlag [mm]</entry>
+          </row>
+
+          <row>
+            <entry>potET</entry>
+
+            <entry>Die potentielle Verdunstung [mm]</entry>
+          </row>
+
+          <row>
+            <entry>actET</entry>
+
+            <entry>Die aktuelle Verdunstung [mm]</entry>
+          </row>
+
+          <row>
+            <entry>snowDepth</entry>
+
+            <entry>Die Schneehöhe [mm]</entry>
+          </row>
+
+          <row>
+            <entry>snowMelt</entry>
+
+            <entry>Die Schneeschmelze [mm]</entry>
+          </row>
+
+          <row>
+            <entry>maxMPS</entry>
+
+            <entry>Das maximale Mittelporenvolumen [mm]</entry>
+          </row>
+
+          <row>
+            <entry>maxLPS</entry>
+
+            <entry>Das maximale Grobporenvolumen [mm]</entry>
+          </row>
+
+          <row>
+            <entry>actMPS</entry>
+
+            <entry>Die aktuelle Wasserspeicherung in den Mittelporen
+            [mm]</entry>
+          </row>
+
+          <row>
+            <entry>actLPS</entry>
+
+            <entry>Die aktuelle Wasserspeicherung in den Mittelporen
+            [mm]</entry>
+          </row>
+
+          <row>
+            <entry>actDPS</entry>
+
+            <entry>Die aktuelle Wasserspeicherung im Muldenrückhaltspeicher
+            [mm]</entry>
+          </row>
+
+          <row>
+            <entry>satMPS</entry>
+
+            <entry>Die relative Wassersättigung des Mittelporenspeichers
+            [-]</entry>
+          </row>
+
+          <row>
+            <entry>satLPS</entry>
+
+            <entry>Die relative Wassersättigung des Grobporenspeichers
+            [-]</entry>
+          </row>
+
+          <row>
+            <entry>satSoil</entry>
+
+            <entry>Die relative Wassersättigung des Gesamtbodens [-]</entry>
+          </row>
+
+          <row>
+            <entry>infiltration</entry>
+
+            <entry>Die Infiltration [mm]</entry>
+          </row>
+
+          <row>
+            <entry>interflow</entry>
+
+            <entry>Der gebildete Zwischenabfluss [mm]</entry>
+          </row>
+
+          <row>
+            <entry>percolation</entry>
+
+            <entry>Die gebildete vertikale Sickerwasserrate [mm]</entry>
+          </row>
+
+          <row>
+            <entry>inRD1</entry>
+
+            <entry>Der laterale Zustrom an Direktabfluss (RD1) [mm]</entry>
+          </row>
+
+          <row>
+            <entry>outRD1</entry>
+
+            <entry>Der gebildete Direktabfluss (RD1) [mm]</entry>
+          </row>
+
+          <row>
+            <entry>genRD1</entry>
+
+            <entry>Der gebildete Direktabfluss (RD1) [mm]</entry>
+          </row>
+
+          <row>
+            <entry>inRD2</entry>
+
+            <entry>Der laterale Zustrom an Zwischenabfluss (RD2) [mm]</entry>
+          </row>
+
+          <row>
+            <entry>outRD2</entry>
+
+            <entry>Der gebildete Zwischenabfluss (RD2) [mm]</entry>
+          </row>
+
+          <row>
+            <entry>genRD2</entry>
+
+            <entry>Der gebildete Zwischenabfluss (RD2) [mm]</entry>
+          </row>
+
+          <row>
+            <entry>soilMaxDPS</entry>
+
+            <entry>Der maximal mögliche Muldenrückhalt [mm]</entry>
+          </row>
+
+          <row>
+            <entry>soilPolRed</entry>
+
+            <entry>Verdunstungskalibrierungsparameter für die polynomische
+            Funktion [-]</entry>
+          </row>
+
+          <row>
+            <entry>soilLinRed</entry>
+
+            <entry>Verdunstungskalibrierungsparameter für die lineare Funktion
+            [-]</entry>
+          </row>
+
+          <row>
+            <entry>soilMaxInfSummer</entry>
+
+            <entry>Maximale Infiltrationsrate im Sommer [mm/d]</entry>
+          </row>
+
+          <row>
+            <entry>soilMaxInfWinter</entry>
+
+            <entry>Maximale Infiltrationsrate im Winter [mm/d]</entry>
+          </row>
+
+          <row>
+            <entry>soilMaxInfSnow</entry>
+
+            <entry>Maximale Infiltrationsrate bei Schneebedeckung
+            [mm/d]</entry>
+          </row>
+
+          <row>
+            <entry>soilImpGT80</entry>
+
+            <entry>Maximaler Infiltrationsanteil auf stark versiegelten
+            Flächen (&gt; 80%) [-]</entry>
+          </row>
+
+          <row>
+            <entry>soilImpLT80</entry>
+
+            <entry>Maximaler Infiltrationsanteil auf weniger stark
+            versiegelten Flächen (&lt; 80%)</entry>
+          </row>
+
+          <row>
+            <entry>soilDistMPSLPS</entry>
+
+            <entry>Faktor für die Verteilung der Infiltration auf den
+            Mittelporen- bzw. den Grobporenspeicher [-]</entry>
+          </row>
+
+          <row>
+            <entry>soilDiffMPSLPS</entry>
+
+            <entry>Faktor für die Diffusion von Wasser aus dem Grobporen- in
+            den Mittelporenspeicher [-]</entry>
+          </row>
+
+          <row>
+            <entry>soilOutLPS</entry>
+
+            <entry>Koeffizient zur Berechnung des Ausflusses aus dem
+            Grobporenspeicher</entry>
+          </row>
+
+          <row>
+            <entry>soilLatVertLPS</entry>
+
+            <entry>Koeffizient zur Verteilung des Ausflusses aus dem
+            Grobporenspeicher auf den lateralen und den vertikalen
+            Fließpfad</entry>
+          </row>
+
+          <row>
+            <entry>soilMaxPerc</entry>
+
+            <entry>Die maximale Sickerwasserrate [mm/d]</entry>
+          </row>
+
+          <row>
+            <entry>soilConcRD1</entry>
+
+            <entry>Konzentrationsparameter für den Direktabfluss (RD1)</entry>
+          </row>
+
+          <row>
+            <entry>soilConcRD2</entry>
+
+            <entry>Konzentrationsparameter für den Zwischenabfluss
+            (RD2)</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+
+  <sect2>
+    <title>Beschreibung der Komponente</title>
+    <para>Im Bodenmodul werden einzelne Böden durch Speicher entsprechend ihrer Porenvolumina
+      repräsentiert. Die Porenräume, die in den Böden auftreten können, werden in der Literatur
+      (z.B. <citetitle><xref linkend="Scheffer_Schachtschabel_1984"/></citetitle>) folgendermaßen klassifiziert:</para>
+    <para><orderedlist>
+        <listitem>
+          <para>Das in den Feinporen (&lt; 0.2 µm Durchmesser, pF &gt; 4.2, entspricht dem
+            permanenten Welkepunkt - PWP) gespeicherte Wasser ist auf Grund der Adsorptionskräfte so
+            fest ge¬bunden, daß es für die Abflußbildung in keiner Weise zur Verfügung steht.</para>
+        </listitem>
+        <listitem>
+          <para>Das in den Mittelporen (Durchmesser 0.2 bis 50 µm, pF 1.8 bis 4.2, entspricht der
+            nutzbaren Feldkapazität - nFk) gespeicherte Wasser wird durch die Adsorptionskräfte
+            gegen die Gravitation gehalten. Es kann nahezu nur durch Anlegen einer aktiven
+            Saugspannung dem Boden entzogen werden.</para>
+        </listitem>
+        <listitem>
+          <para>Das in den Grob- und Makroporen (&gt; 50 µm Durchmesser, pF &gt; 1.8, entspricht der
+            Luftkapazität - Lk) gespeicherte Wasser unterliegt der Gravitation und kann nur für
+            kurze Zeit (1 bis 2 Tage nach <citetitle><xref linkend="Scheffer_Schachtschabel_1984"/></citetitle>) im Boden gehalten
+            werden.</para>
+        </listitem>
+      </orderedlist>Das in den Feinporen gespeicherte Wasser kann bei der Modellierung
+      vernachlässigt werden, da es nach der oben angeführten Spezifikation der Porenvolumina
+      aufgrund der dauerhaften Bindung weder für Verdunstungs- noch für Fließvorgänge verfügbar ist.
+      Damit erfolgt die modelltechnische Abstraktion des Bodens im Modell J2000 durch zwei parallel
+      geschaltete, miteinander in Verbindung stehende Speicher: Einem Speicher, der dem
+      Mittelporenvolumen entspricht (im folgenden auch mit <emphasis role="italic">MPS</emphasis>
+      bezeichnet) und nur durch die Verdunstung entleert werden kann und einem Speicher, der das
+      Volumen der Grob- und Makroporen repräsentiert (im folgenden auch mit <emphasis role="italic"
+        >LPS</emphasis> bezeichnet) und der die Quelle für den eigentlichen Abfluß darstellt.</para>
+    <para></para>
+    <figure xml:id="j2k.soilWater.j2kProcessLumpedSoilWater.soil_module_concept_fig1.png">
+      <title>Schematische Darstellung des Konzeptes des Bodenwasserhaushaltsmoduls</title>      
+      <para><inlinemediaobject>      
+          <imageobject>
+            <imagedata align="center" fileref="soil_module_concept.png" scale="80" width="100%"/>
+          </imageobject>
+        </inlinemediaobject></para>
+    </figure>
+    <para>Aus der Abbildung (<xref
+        linkend="j2k.soilWater.j2kProcessLumpedSoilWater.soil_module_concept_fig1.png"
+        xrefstyle="select: label"/>) geht hervor, daß den Bodenspeichern ein Infiltrationsspeicher
+      vorgeschaltet ist, der zunächst den Nettoniederschlag sowie das aus der Schneeschmelze
+      resultierende Wasser erhält. Ausgehend von diesem Speicher wird das Wasser auf die beiden
+      Bodenspeicher verteilt, wobei bei Überschreiten einer maximalen Infiltrationskapazität des
+      jeweiligen Bodens oder bei Sättigung des Grobporenspeichers überschüssiges Wasser in einem
+      Muldenrückhaltspeicher zwischengespeichert wird. Die Entleerung des Muldenrückhalts erfolgt
+      über die Verdunstung, durch die Bildung von Oberflächenabfluß und/oder durch die Versickerung
+      zu einem späteren Zeitpunkt. Die Entleerung des Mittelporenspeichers erfolgt allein durch die
+      Evapotranspiration, die des Grobporenspeichers durch Bildung von Zwischenabfluß oder durch
+      Grundwasserneubildung. Außerdem kann am Ende des Zeitschrittes ein gewisser Teil des in den
+      Grobporen gespeicherten Wassers in den Mittelporenspeicher überführt werden. Der
+      Mittelporenspeicher kann zusätzlich zu diesem Wasseranteil und zur Infiltration noch Wasser
+      aus der gesättigten Zone durch kapillaren Aufstieg erhalten. Diese einzelnen Prozesse werden
+      im folgenden Text ausführlich erläutert, zuvor soll jedoch die Parametrisierung des
+      Bodenmoduls diskutiert werden.</para>
+    <para><emphasis role="bold">Die Infiltration</emphasis></para>
+    <para>Der erste Prozess, dem das aus der Schneeschmelze und dem Nettoniederschlag resultierende
+      Wasser unterliegt, ist die Infiltration. Ob das Wasser vollkommen versickern kann oder ob es
+      kurzfristig an der Oberfläche gespeichert wird und dort Muldenrückhalt oder ausgehend von dort
+      Oberflächenabfluss bildet, ist von der Infiltrationskapazität des jeweiligen Bodens abhängig.
+      Die Infiltrationskapazität wird mit einem vereinfachten, für tägliche Zeitschritte geeigneten
+      Verfahren berechnet. Grundlage dieses Ansatzes ist die Annahme, dass das Infiltrationsvermögen
+      einerseits von der Wassersättigung im Boden abhängt, andererseits einen gewissen Grenzwert,
+      eine maximale Infiltrationsrate, nicht übersteigen kann. Wird diese maximale Infiltrationsrate
+      auf einen konstanten mittleren Wert für das ganze Jahr gesetzt, führt dies zumindest bei zwei
+      Sonderfällen zu Problemen:</para>
+    <para><orderedlist>
+        <listitem>
+          <para>Bei konvektiven Niederschlägen mit hohen Intensitäten und kurzer Dauer. Hier wird
+            häufig kurzfristig die Infiltrationskapazität des Bodens überschritten, da sehr viel
+            Wasser in relativ kurzer Zeit auf den Boden trifft, obwohl die Niederschlagsmenge auf
+            den gesamten Tag bezogen dies nicht implizieren würde.</para>
+        </listitem>
+        <listitem>
+          <para>Bei Schmelzwasserabfluss aus einer Schneedecke. Hier wird zwar relativ
+            kontinuierlich Wasser abgegeben, der Boden verhält sich aber ähnlich wie eine
+            versiegelte Fläche, da er teilweise oder ganz gefroren ist, oder das Wasser innerhalb
+            der Schneedecke abfließt, ohne Gelegenheit zur Versickerung zu erhalten.</para>
+        </listitem>
+      </orderedlist>Um diesen Sonderfällen wenigsten ansatzweise gerecht zu werden, können neben dem
+      "Normalwert" noch zwei weitere Grenzwerte angegeben werden. Da der Sonderfall 1 vor allem in
+      den Sommermonaten zum Tragen kommt, kann ein Grenzwert für das Sommerhalbjahr angegeben
+      werden. Dieser Grenzwert dient der Berücksichtigung von Gewitterschauern mit kurzer Dauer und
+      hoher Intensität, wie sie vor allem während der Sommermonate auftreten. Der zweite Grenzwert
+      kommt dann zum Einsatz, wenn die modellierte Einheit schneebedeckt ist. Mit diesem Wert kann
+      die verminderte Infiltrationsfähigkeit des Bodens, bei teilweiser oder komplett gefrorener
+      oberster Bodenschicht, berücksichtigt werden. Ebenso kann mit diesem Grenzwert der Abfluss von
+      Schmelz- oder Niederschlagswasser innerhalb der Schneedecke berücksichtigt werden. Der dritte
+      Wert stellt den Normalfall dar und gilt somit für das Winterhalbjahr und Einheiten ohne
+      Schneebedeckung.</para>
+    <para>Die vom Anwender festzulegenden Grenzwerte (<emphasis role="italic"
+        >soilMaxInfSummer</emphasis>, <emphasis role="italic">soilMaxInfSnow</emphasis>, <emphasis
+        role="italic">soilMaxInfWinter</emphasis>) werden dann noch während der Modellierung mit dem
+      relativen Sättigungsdefizit des Bodens (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>δ</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>t</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) gewichtet. Die resultierende maximale Infiltrationsrate (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mrow>
+              <ns3:mi>I</ns3:mi>
+              <ns3:mi>n</ns3:mi>
+              <ns3:mi>f</ns3:mi>
+            </ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>m</ns3:mi>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>x</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) ergibt sich dann nach:</para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mrow>
+                <ns3:mi>I</ns3:mi>
+                <ns3:mi>n</ns3:mi>
+                <ns3:mi>f</ns3:mi>
+              </ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>m</ns3:mi>
+                <ns3:mi>a</ns3:mi>
+                <ns3:mi>x</ns3:mi>
+              </ns3:mrow>
+            </ns3:msub>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>s</ns3:mi>
+                <ns3:mi>o</ns3:mi>
+                <ns3:mi>i</ns3:mi>
+                <ns3:mi>l</ns3:mi>
+                <ns3:mi>M</ns3:mi>
+                <ns3:mi>a</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>x</ns3:mi>
+                  <ns3:mi>I</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                  <ns3:mi>f</ns3:mi>
+                  <ns3:mi>X</ns3:mi>
+                  <ns3:mi>X</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>X</ns3:mi>
+                    <ns3:mi>X</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mn>1</ns3:mn>
+                  <ns3:mo>-</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>s</ns3:mi>
+                    <ns3:mi>a</ns3:mi>
+                    <ns3:mi>t</ns3:mi>
+                    <ns3:mi>S</ns3:mi>
+                    <ns3:mi>o</ns3:mi>
+                    <ns3:mi>i</ns3:mi>
+                    <ns3:mi>l</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            
+          </ns3:mrow>
+        
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm/d]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+    <para>Die relative Wassersättigungs des Bodens berechnet sich hierfür nach:</para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+              <ns3:mi>o</ns3:mi>
+              <ns3:mi>i</ns3:mi>
+              <ns3:mi>l</ns3:mi>
+              <ns3:mi>S</ns3:mi>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>t</ns3:mi>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>c</ns3:mi>
+                  <ns3:mi>t</ns3:mi>
+                  <ns3:mi>M</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>P</ns3:mi>
+                    <ns3:mi>S</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mo>+</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>c</ns3:mi>
+                  <ns3:mi>t</ns3:mi>
+                  <ns3:mi>L</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>P</ns3:mi>
+                    <ns3:mi>S</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>m</ns3:mi>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>x</ns3:mi>
+                  <ns3:mi>M</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>P</ns3:mi>
+                    <ns3:mi>S</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mo>+</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mi>m</ns3:mi>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>x</ns3:mi>
+                  <ns3:mi>L</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>P</ns3:mi>
+                    <ns3:mi>S</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+                
+                
+              </ns3:mrow>
+            </ns3:mfrac>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[-]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+    <para>Übersteigt die zu infiltrierende Wassermenge aus Niederschlag und Schneeschmelze die so
+      berechnete maximale Infiltrationsrate, wird der Überschuß in den Speicher für Muldenrückhalt
+      überführt und dort zwischengespeichert. Die resultierende, tatsächlich versickernde
+      Wassermenge (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mrow>
+              <ns3:mi>I</ns3:mi>
+              <ns3:mi>n</ns3:mi>
+              <ns3:mi>f</ns3:mi>
+            </ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>c</ns3:mi>
+              <ns3:mi>t</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) wird auf die beiden Bodenspeicher verteilt. Der Anteil dieser Wassermenge,
+      die jeder Bodenspeicher erhält, ist vom Sättigungsdefizit des Mittelporenspeichers (<emphasis
+        role="italic">MPS</emphasis>) abhängig und berechnet sich mit dem Eichkoeffizienten
+        <emphasis role="italic">soilDistMPSLPS </emphasis>für diesen folgendermaßen:</para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>M</ns3:mi>
+              <ns3:mi>P</ns3:mi>
+              <ns3:msub>
+                <ns3:mi>S</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>i</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                </ns3:mrow>
+              </ns3:msub>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:msub>
+                <ns3:mrow>
+                  <ns3:mi>I</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                  <ns3:mi>f</ns3:mi>
+                </ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>c</ns3:mi>
+                  <ns3:mi>t</ns3:mi>
+                </ns3:mrow>
+              </ns3:msub>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mn>1</ns3:mn>
+                <ns3:mo>-</ns3:mo>
+                <ns3:msup>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mfrac>
+                    <ns3:mrow>
+                      <ns3:mi>-1</ns3:mi>
+                      <ns3:mo>×</ns3:mo>
+                      <ns3:mrow>
+                        <ns3:mi>s</ns3:mi>
+                        <ns3:mi>o</ns3:mi>
+                        <ns3:mi>i</ns3:mi>
+                        <ns3:mi>l</ns3:mi>
+                        <ns3:mi>D</ns3:mi>
+                        <ns3:mi>i</ns3:mi>
+                        <ns3:mrow>
+                          <ns3:mi>s</ns3:mi>
+                          <ns3:mi>t</ns3:mi>
+                          <ns3:mi>M</ns3:mi>
+                          <ns3:mi>P</ns3:mi>
+                          <ns3:mi>S</ns3:mi>
+                          <ns3:mi>L</ns3:mi>
+                          <ns3:mrow>
+                            <ns3:mi>P</ns3:mi>
+                            <ns3:mi>S</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mi>s</ns3:mi>
+                      <ns3:mi>a</ns3:mi>
+                      <ns3:mi>t</ns3:mi>
+                      <ns3:mi>M</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>P</ns3:mi>
+                        <ns3:mi>S</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mfrac>
+                </ns3:msup>
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            <ns3:mi> &#160;</ns3:mi>
+            <ns3:mrow>
+              
+              
+              <ns3:mi>[mm]</ns3:mi>
+              
+            </ns3:mrow>
+          </ns3:mrow>
+            
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+    <para>Der Grobporenspeicher (LPS) erhält das übrige Wasser nach:</para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>L</ns3:mi>
+              <ns3:mi>P</ns3:mi>
+              <ns3:msub>
+                <ns3:mi>S</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>i</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                </ns3:mrow>
+              </ns3:msub>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>I</ns3:mi>
+                <ns3:mi>n</ns3:mi>
+                <ns3:msub>
+                  <ns3:mi>f</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>a</ns3:mi>
+                    <ns3:mi>c</ns3:mi>
+                    <ns3:mi>t</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+              <ns3:mo>-</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>M</ns3:mi>
+                <ns3:mi>P</ns3:mi>
+                <ns3:msub>
+                  <ns3:mi>S</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>i</ns3:mi>
+                    <ns3:mi>n</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+              
+              
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+    <para>Durch die Wasserverteilung nach diesen Gleichungen verhält sich der Mittelporenspeicher
+      ähnlich wie ein Schwamm, dessen Potential Wasser an sich zu ziehen, mit zunehmender
+      Austrocknung ansteigt. Ein gewisser Anteil bleibt aber immer für den Grobporenspeicher übrig.
+      Diese gewichtete Verteilung hat den Vorteil, dass selbst bei trockenen Böden, vor allem
+      während der Sommermonate, trotzdem ein Teil des infiltrierenden Wassers schnell zum Abfluss
+      kommen kann. Würde das Wasser nicht verteilt werden, könnte erst nach der Sättigung des
+      Mittelporenspeichers, das heißt erst nach Erreichen der nutzbaren Feldkapazität,
+      Zwischenabfluss auftreten. Verschiedenen Untersuchungen zeigten aber, dass die Grob- und
+      Makroporen auch bei nicht gesättigtem Wasserverhältnissen im Boden abflusswirksam werden
+      können.</para>
+    <para>Weitere Sonderfälle bei der Infiltration treten bei versiegelten Flächen und Wasserflächen
+      auf. Bei Wasserflächen wird das eigentlich für die Infiltration zur Verfügung stehende Wasser
+      in einen eigenen Speicher überführt, der nur durch die Verdunstung entleert werden kann. Bei
+      versiegelten Flächen versickert je nach Versiegelungsgrad nur ein Teil des auf die Oberfläche
+      treffenden Wassers (beispielsweise 25% bei Versiegelungsgrad &gt; 80% und 60% bei
+      Versiegelungsgrad &lt; 80% nach <citetitle><xref linkend="Wessolek_1993"/></citetitle>). Der restliche Teil trägt als
+      Oberflächenabfluss zum Gesamtabfluss bei. Dies wird vom Modellsystem durch entsprechende
+      Koeffizienten (<emphasis role="italic">soilImpGT80</emphasis>, <emphasis role="italic"
+        >soilImpLT80</emphasis>), die vom Anwender noch angepasst werden können,
+      berücksichtigt.</para>
+    <para><emphasis role="bold">Der Muldenrückhaltspeicher</emphasis></para>
+    <para>Wie oben bei der Beschreibung der Infiltration dargestellt, wird die Wassermenge, die die
+      maximale Infiltrationsrate des Bodens übersteigt, in einen Muldenrückhaltspeicher überführt.
+      Dies geschieht auch, wenn der Boden vollkommen wassergesättigt ist und deshalb keine
+      Infiltration mehr stattfinden kann. Das im Muldenrückhalt gespeicherte Wasser fließt teilweise
+      als Oberflächenabfluss ab. Die maximale Menge in mm/m², die als Muldenrückhalt auf der
+      einzelnen Teilfläche zurückgehalten werden kann, muß während der Modellparametrisierung
+      angegeben werden. Nach <citetitle><xref linkend="Maniak_1997"/></citetitle> liegt die maximale
+      Muldenspeicherung zwischen 0.6 und 8.0 mm/m² je nach Landnutzungsart. Da diese Größe einen
+      relativ kleinen Einfluss auf die Dynamik der Abflussganglinien hat (<citetitle><xref
+          linkend="Maniak_1997"/></citetitle>), wird die maximale Muldenspeicherung als pauschaler
+      Wert gesetzt und nicht mehr weiter nach der Landnutzung unterschieden. Da Muldenspeicherung
+      nur auf relativ flachen Standorten von Bedeutung ist, wird der maximale Muldenrückhalt noch
+      anhand der Hangneigung der jeweiligen Fläche gewichtet. Da nach <citetitle><xref
+          linkend="Maniak_1997"/></citetitle> die maximal mögliche Muldenspeicherung ab etwa 4-6 %
+      Neigung um die Hälfte zurückgeht, wird bei Flächen, die diese Neigung übersteigen, das Volumen
+      des Muldenspeichers halbiert. Wird auf einer Teilfläche die maximal mögliche Muldenspeicherung
+      überschritten, wird das überschüssige Wasser als Oberflächenabfluss abgeführt.</para>
+    <para><emphasis role="bold">Der Mittelporenspeicher</emphasis></para>
+    <para>Das in den Mittelporen des Bodens gespeicherte Wasser wird auf Grund der Adsorptionskräfte
+      des Bodens gegen die Schwerkraft gehalten. Es wird also eine aktive Saugspannung benötigt, um
+      das im Mittelporenspeicher befindliche Wasser wieder zu entnehmen. Das Potential für eine
+      solche Saugspannung wird durch die Verdunstung bereitgestellt. Es sind dabei zwei Fälle zu
+      unterscheiden: Die direkte Verdunstung von der Bodenoberfläche und die Verdunstung durch die
+      Transpiration der Vegetationsbedeckung. Die direkte Verdunstung von der Bodenoberfläche ist
+      vergleichsweise gering, da schon wenige Millimeter trockener Boden eine sehr wirksame
+      Isolierung der unterliegenden Schichten hinsichtlich der Verdunstung zur Folge hat. Diese
+      Isolierung wird durch die Wurzeln der Vegetationsbedeckung kurzgeschlossen, womit eine
+      kontinuierliche Ausschöpfung des in den Mittelporen gespeicherten Wassers durch die
+      Transpiration ermöglicht wird. Mit zunehmender Austrocknung des Bodens nimmt die reale
+      Verdunstung im Verhältnis zur potentiellen Verdunstung deutlich ab. Zur Nachbildung dieser
+      Reduktion kommt wahlweise ein bewährter (<citetitle><xref linkend="Gurtz_1997"/></citetitle>;
+          <citetitle><xref linkend="Schulla_1997"/></citetitle>; <citetitle><xref
+          linkend="Uhlenbrook_1999"/></citetitle>) linearer Ansatz oder aber ein für das Modell
+      entwickelter nichtlineare Ansatz zur Anwendung.</para>
+    <para>Beim linearen Ansatz (<xref linkend="j2k.soilWater.j2kProcessLumpedSoilWater.soil_linRed_fig2.png" xrefstyle="select: label"/>) wird davon ausgegangen, dass die reale Verdunstung bis zu einer
+      spezifischen Wassersättigung gleich der potentiellen Verdunstung ist. Nach Unterschreiten
+      dieser Wassersättigung nimmt die reale Verdunstung im Verhältnis zur potentiellen Verdunstung
+      gleichbleibend ab, bis sie bei Erreichen des permanenten Welkepunkts (= vollständige
+      Entleerung der nFk) Null wird. Als Grenzwert (<emphasis role="italic">soilLinRed</emphasis>)
+      für diese spezifische Wassersättigung werden in der Literatur Werte zwischen 0.8 bis 0.6
+      genannt (<citetitle><xref linkend="Gurtz_1997"/></citetitle>; <citetitle><xref
+          linkend="Menzel_1997"/></citetitle>). Mit diesem Grenzwert und der aktuellen
+      Wassersättigung des Mittelporenspeichers (<emphasis role="italic">satMPS</emphasis>) wird ein
+      Reduktionsfaktor (<emphasis role="italic">RF</emphasis>) berechnet:</para>
+    <para>
+      
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>R</ns3:mi>
+              <ns3:mi>F</ns3:mi>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mi>1 für</ns3:mi>
+          </ns3:mrow>
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>t</ns3:mi>
+              <ns3:mi>M</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>P</ns3:mi>
+                <ns3:mi>S</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>≥</ns3:mo>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+              <ns3:mi>o</ns3:mi>
+              <ns3:mi>i</ns3:mi>
+              <ns3:mi>l</ns3:mi>
+              <ns3:mi>L</ns3:mi>
+              <ns3:mi>i</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>n</ns3:mi>
+                <ns3:mi>R</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mi>d</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+        
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation></para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>R</ns3:mi>
+              <ns3:mi>F</ns3:mi>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mi>s</ns3:mi>
+                <ns3:mi>a</ns3:mi>
+                <ns3:mi>t</ns3:mi>
+                <ns3:mi>M</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>P</ns3:mi>
+                  <ns3:mi>S</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>s</ns3:mi>
+                <ns3:mi>o</ns3:mi>
+                <ns3:mi>i</ns3:mi>
+                <ns3:mi>l</ns3:mi>
+                <ns3:mi>L</ns3:mi>
+                <ns3:mi>i</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>n</ns3:mi>
+                  <ns3:mi>R</ns3:mi>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mi>d</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+              
+            </ns3:mfrac>
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+          
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+    <para></para>
+    <figure xml:id="j2k.soilWater.j2kProcessLumpedSoilWater.soil_linRed_fig2.png">
+      <title>Wirkungsweise des linearen Reduktionsfaktors</title>
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata align="center" fileref="soil_linRed.png" scale="80" width="100%"/>
+          </imageobject>
+        </inlinemediaobject></para>
+    </figure>
+    <para>Neben diesem linearen Ansatz kann ein nichtlinearer Ansatz zur Reduktion der Verdunstung
+      ausgewählt werden. Dieser Ansatz hat den Vorteil, dass die Reduktion der aktuellen Verdunstung
+      im Verhältnis zur potentiellen Verdunstung einen typischen S-förmigen Verlauf aufweist und
+      sich somit eher wie die aus der Bodenkunde bekannte Beziehung zwischen Wassergehalt des Bodens
+      und der damit verbunden Saugspannung verhält (<xref linkend="j2k.soilWater.j2kProcessLumpedSoilWater.soil_polRed_fig3.png" xrefstyle="select: label"/>).</para>
+    <para></para>
+    <figure xml:id="j2k.soilWater.j2kProcessLumpedSoilWater.soil_polRed_fig3.png">
+      <title>Wirkungsweise des polynomischen Reduktionsfaktors</title>      
+      <mediaobject>        
+        <imageobject>          
+          <imagedata align="center" fileref="soil_polRed.png" scale="95" width="100%"/>
+        </imageobject>
+      </mediaobject>
+    </figure>
+    <para>Auch dieses Verfahren benötigt einen vom Anwender festzulegenden Parameter (<emphasis
+        role="italic">polLinRed</emphasis>). Plausible Werte für diesen Parameter liegen zwischen 3
+      und 8. Auch dieser nichtlineare Ansatz liefert einen dimensionslosen Reduktionsfaktor
+        (<emphasis role="italic">RF</emphasis>), der sich wie folgt berechnet:</para>
+    <para/>
+    <para>Die reale Bestandes Verdunstung (<emphasis role="italic">rETP</emphasis>) ergibt sich
+        mit<emphasis role="italic"> f</emphasis>(<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>θ</ns3:mi>
+        </ns3:math>
+      </inlineequation>) aus der zuvor berechneten potentiellen Bestandesverdunstung (<emphasis
+        role="italic">pETP</emphasis>) nach:</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>r</ns3:mi>
+              <ns3:mi>E</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>T</ns3:mi>
+                <ns3:mi>P</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>f</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mi>θ</ns3:mi>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>p</ns3:mi>
+                <ns3:mi>E</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>T</ns3:mi>
+                  <ns3:mi>P</ns3:mi>
+                </ns3:mrow>
+                
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            
+          </ns3:mrow>  
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+ 
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+    <para>Diese Wassermenge wird dem Mittelporenspeicher entnommen. Es kann vorkommen, dass nicht
+      genügend Wasser zur Sättigung der mit der Gleichung berechneten realen Bestandes Verdunstung
+      zur Verfügung steht. Ist dies der Fall bleibt ein Verdunstungsdefizit zurück.</para>
+    <para><emphasis role="bold">Der Grobporenspeicher</emphasis></para>
+    <para>Das Wasser, das im Grobporenspeicher (<emphasis role="italic">GPS</emphasis>) enthalten
+      ist, unterliegt der Gravitation und wird deshalb im J2000 als die Quelle für die eigentlichen
+      Fließvorgänge und Abflussbildungsprozesse des Bodens betrachtet. Die Füllung des Speichers
+      erfolgt durch den Infiltrationsanteil, der nach Abzug des Zuflusses zum Mittelporenspeicher
+      verbleibt.</para>
+    <para>Das unterschiedliche Verhalten verschiedener Böden bei der Abflussbildung wird sehr gut
+      durch die zuvor bestimmten unterschiedlichen Porenvolumina wiedergegeben. So besitzt ein eher
+      toniger Boden einen relativ hohen Anteil an Fein- und Mittelporen, wohingegen ein Sandboden
+      einen vergleichsweise hohen Anteil an Grobporen besitzt. Dementsprechend unterschiedlich ist
+      die Bildung von lateralen und vertikalen Abflüssen bzw. die Höhe der Verdunstungsmenge. Das in
+      einem eher tonigen Boden gespeicherte Wasser trägt bei ansonsten gleichen Randbedingungen
+      (z.B. Vegetationsbedeckung, Hangneigung etc.) im Vergleich zu einem eher sandigen Boden
+      weniger stark zur Bildung von lateralen und vertikalen Abflüssen bei. Dagegen ist die
+      Wassermenge, die für die Verdunstung verfügbar ist, bei einem tonigen Boden wesentlich größer
+      als bei einem Sandboden. Lehmige oder schluffige Böden, die nach ihren Korngrößen zwischen den
+      oben angesprochenen Böden liegen, besitzen die besten Wasserspeicherkapazitäten, da bei ihnen
+      der Mittelporenanteil am größten ist.</para>
+    <para>Die Wassermenge, die während des Zeitschrittes aus dem Grobporenspeicher zum Abfluss
+      kommt, ist von der relativen Wassersättigung des gesamten Bodens (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mrow>
+              <ns3:mi>G</ns3:mi>
+              <ns3:mi>P</ns3:mi>
+              <ns3:mi>S</ns3:mi>
+            </ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>s</ns3:mi>
+              <ns3:mi>o</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>i</ns3:mi>
+                <ns3:mi>l</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) abhängig und berechnet sich nach:</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>Q</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>G</ns3:mi>
+                <ns3:mi>P</ns3:mi>
+                <ns3:mi>S</ns3:mi>
+              </ns3:mrow>
+            </ns3:msub>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:msubsup>
+                <ns3:mrow>
+                  <ns3:mi>S</ns3:mi>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:mi>t</ns3:mi>
+                </ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+                  <ns3:mi>o</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>i</ns3:mi>
+                    <ns3:mi>l</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mi>α</ns3:mi>
+              </ns3:msubsup>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>G</ns3:mi>
+                <ns3:mi>P</ns3:mi>
+                <ns3:msub>
+                  <ns3:mi>S</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>a</ns3:mi>
+                    <ns3:mi>c</ns3:mi>
+                    <ns3:mi>t</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            
+          </ns3:mrow>
+   
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+ 
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+    <para>mit:</para>
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>G</ns3:mi>
+            <ns3:mi>P</ns3:mi>
+            <ns3:msub>
+              <ns3:mi>S</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>a</ns3:mi>
+                <ns3:mi>c</ns3:mi>
+                <ns3:mi>t</ns3:mi>
+              </ns3:mrow>
+            </ns3:msub>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>: Aktuelle Füllung des Grobporenspeichers [mm]</para>
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>S</ns3:mi>
+            <ns3:mi>a</ns3:mi>
+            <ns3:msub>
+              <ns3:mi>t</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>s</ns3:mi>
+                <ns3:mi>o</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>i</ns3:mi>
+                  <ns3:mi>l</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:msub>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>: Relative Wassersättigung des Bodens am Standort [-]</para>
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>α</ns3:mi>
+        </ns3:math>
+      </inlineequation> : Eichkoeffizient [-]</para>
+    <para>Der Vorteil dieser nichtlinearen Auslauffunktion liegt darin, dass damit bei niedriger
+      Gebietsfeuchte ungleich weniger Wasser zum Abfluss kommt als dies der Fall bei einer linearen
+      Auslauffunktion wäre. Das bekannte Verhalten von Einzugsgebieten, die bei hoher Vorfeuchte
+      sehr viel mehr und rascheren Abfluss bilden (<citetitle><xref linkend="Baumgartner_1990"/></citetitle>; <citetitle><xref linkend="Dyck_1995"/></citetitle>) als dies bei
+      niedrigerer Vorfeuchte bei gleichem Niederschlagsinput der Fall ist, kann mit einer
+      Auslauffunktion besser nachgebildet werden.</para>
+    <para>Das aus dem <emphasis role="italic">GPS </emphasis>ausfließende Gravitationswasser (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>Q</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>G</ns3:mi>
+              <ns3:mi>P</ns3:mi>
+              <ns3:mi>S</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) wird auf drei unterschiedliche Zielspeicher verteilt. Ein Teil wandert in
+      die Mittelporen und wird dort wieder längerfristig gespeichert, ein zweiter Teil perkoliert in
+      den Grundwasserspeicher (vertikale Komponente) und der übrige Teil ist die Quelle für den
+      Zwischenabfluss (laterale Komponente). Wie hoch die Anteile der jeweiligen Komponenten sind,
+      ist neben den bodenphysikalischen Parametern (insbesondere den kf-Werten) von der Hangneigung
+      der jeweiligen HRU abhängig. So wird im Modell davon ausgegangen, dass eine Hangfläche
+      vermehrt Zwischenabfluss bildet, wohingegen bei nahezu ebenen Standorten die Perkolation in
+      den Grundwasserraum die Hauptkomponente darstellt. Der Anteil, der von den Grobporen in die
+      Mittelporen wandert, ist wiederum von der Sättigung des Mittelporenspeichers abhängig. Zur
+      Bestimmung der Abflussanteile müssen für jede HRU neben der Hangneigung zwei kf-Werte bestimmt
+      werden: Der kf-Wert des Horizontes mit der niedrigsten Durchlässigkeit sowie der kf-Wert des
+      darüberliegenden Horizontes.</para>
+    <para><emphasis role="bold">Perkolation und Zwischenabflussbildung</emphasis></para>
+    <para>Ein Teil des verfügbaren Gravitationswasser sickert durch den gesamten Boden und trägt zur
+      Grundwasserneubildung teil. In der Modellvorstellung des J2000 wird dieser perkolierende
+      Anteil als abhängig von der Hangneigung der betreffenden HRU abgebildet. Die Hangneigung
+      beeinflusst die Perkolation in der Art, dass bei geneigten Flächen ein größerer Anteil des
+      Gravitationswassers als lateraler Abfluss aus der ungesättigten Zone abgeführt wird, so dass
+      die Grundwasserneubildung auf diesen Flächen geringer ist als auf ebenen Standorten. Der
+      Einfluss der Hangneigung wird mit einem Gradienten nach folgender Gleichung
+      berücksichtigt:</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>g</ns3:mi>
+            <ns3:mi>r</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>a</ns3:mi>
+              <ns3:msub>
+                <ns3:mi>d</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>p</ns3:mi>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>r</ns3:mi>
+                    <ns3:mi>c</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:msub>
+            </ns3:mrow>
+          </ns3:mrow>
+     
+          <ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:msup>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mn>1</ns3:mn>
+                  <ns3:mo>-</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>tan</ns3:mi>
+                    <ns3:mo>⁡</ns3:mo>
+                    <ns3:mi>α</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+              <ns3:mi>β</ns3:mi>
+            </ns3:msup>
+          </ns3:mrow>
+
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[-]</ns3:mi>
+            
+          </ns3:mrow>
+  
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+    <para>mit:</para>
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>α</ns3:mi>
+        </ns3:math>
+      </inlineequation>: Hangneigung der jeweiligen HRU [Grad]</para>
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>β</ns3:mi>
+        </ns3:math>
+      </inlineequation>: Formparameter, Eichkoeffizient [-]</para>
+    <para>Durch diese Gleichung wird das Verhältnis zwischen vertikalem und lateralem Abfluss
+      bestimmt, das durch den Eichkoeffizienten <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>β</ns3:mi>
+        </ns3:math>
+      </inlineequation> an die Verhältnisse im Einzugsgebiet angepasst werden kann. Mit diesem
+      Eichkoeffizient kann zudem, die aus dem Einsatz von grob aufgelösten Geländemodellen
+      resultierende, systematisch zu niedrig berechnete Hangneigung verstärkt werden.</para>
+    <para>Die für die Perkolation verfügbare Wassermenge ergibt sich nach:</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>P</ns3:mi>
+              <ns3:mi>e</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>r</ns3:mi>
+                <ns3:msub>
+                  <ns3:mi>c</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>p</ns3:mi>
+                    <ns3:mi>o</ns3:mi>
+                    <ns3:mi>t</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>g</ns3:mi>
+                <ns3:mi>r</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>a</ns3:mi>
+                  <ns3:msub>
+                    <ns3:mi>d</ns3:mi>
+                    <ns3:mrow>
+                      <ns3:mi>p</ns3:mi>
+                      <ns3:mi>e</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>r</ns3:mi>
+                        <ns3:mi>c</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:msub>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>×</ns3:mo>
+              <ns3:msub>
+                <ns3:mi>Q</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>G</ns3:mi>
+                  <ns3:mi>P</ns3:mi>
+                  <ns3:mi>S</ns3:mi>
+                </ns3:mrow>
+              </ns3:msub>
+            </ns3:mrow>
+          </ns3:mrow>
+
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+    <para>Diese Perkolationsrate wird dann noch gegen den Eichkoeffizient <emphasis role="italic"
+        >soilMaxPerc</emphasis> verrechnet, der die maximal mögliche Perkolationsrate pro
+      Zeitschritt beschreibt.</para>
+    <para>und für den Zwischenabfluss <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>I</ns3:mi>
+            <ns3:mi>n</ns3:mi>
+            <ns3:mi>t</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> (RD2):</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>I</ns3:mi>
+              <ns3:mi>n</ns3:mi>
+              <ns3:mi>t</ns3:mi>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mn>1</ns3:mn>
+              <ns3:mo>-</ns3:mo>
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>g</ns3:mi>
+                  <ns3:mi>r</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>a</ns3:mi>
+                    <ns3:msub>
+                      <ns3:mi>d</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>p</ns3:mi>
+                        <ns3:mi>e</ns3:mi>
+                        <ns3:mrow>
+                          <ns3:mi>r</ns3:mi>
+                          <ns3:mi>c</ns3:mi>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:msub>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mo>×</ns3:mo>
+                <ns3:msub>
+                  <ns3:mi>Q</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>G</ns3:mi>
+                    <ns3:mi>P</ns3:mi>
+                    <ns3:mi>S</ns3:mi>
+                  </ns3:mrow>
+                </ns3:msub>
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            
+          </ns3:mrow>
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+      
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+    <para><emphasis role="bold">Abflussverzögerung</emphasis></para>
+    <para>Die beiden gebildeten Abflusskomponenten Direktabfluss (<emphasis role="italic"
+        >RD1</emphasis>) und Zwischenabfluss (<emphasis role="italic">RD2</emphasis>) werden noch
+      zeitlich verzögert um der flächenhaften Ausdehnung der räumlichen Modelleinheit Rechnung zu
+      tragen. Die Verzögerung erfolgt über entsprechende Retentionskoeffizienten (<emphasis
+        role="italic">soilConcRD1</emphasis>, <emphasis role="italic">soilConcRD2</emphasis>). Die
+      Verzögerung berechnet sich damit nach:</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>R</ns3:mi>
+              <ns3:mi>D</ns3:mi>
+              <ns3:mn>1</ns3:mn>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mfrac>
+                <ns3:mn>1</ns3:mn>
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+                  <ns3:mi>o</ns3:mi>
+                  <ns3:mi>i</ns3:mi>
+                  <ns3:mi>l</ns3:mi>
+                  <ns3:mi>C</ns3:mi>
+                  <ns3:mi>o</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>n</ns3:mi>
+                    <ns3:mi>c</ns3:mi>
+                    <ns3:mi>R</ns3:mi>
+                    <ns3:mi>D</ns3:mi>
+                    <ns3:mn>1</ns3:mn>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mfrac>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>R</ns3:mi>
+                <ns3:mi>D</ns3:mi>
+                <ns3:mn>1</ns3:mn>
+                <ns3:mi>g</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                </ns3:mrow>
+                
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            
+          </ns3:mrow>
+         
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+
+        
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>R</ns3:mi>
+              <ns3:mi>D</ns3:mi>
+              <ns3:mn>2</ns3:mn>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mfrac>
+                <ns3:mn>1</ns3:mn>
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+                  <ns3:mi>o</ns3:mi>
+                  <ns3:mi>i</ns3:mi>
+                  <ns3:mi>l</ns3:mi>
+                  <ns3:mi>C</ns3:mi>
+                  <ns3:mi>o</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>n</ns3:mi>
+                    <ns3:mi>c</ns3:mi>
+                    <ns3:mi>R</ns3:mi>
+                    <ns3:mi>D</ns3:mi>
+                    <ns3:mn>2</ns3:mn>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mfrac>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>R</ns3:mi>
+                <ns3:mi>D</ns3:mi>
+                <ns3:mn>2</ns3:mn>
+                <ns3:mi>g</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mi>n</ns3:mi>
+                </ns3:mrow>
+                
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            
+          </ns3:mrow>
+ 
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+        </equation> </para>
+    <para><emphasis role="bold">Diffusion</emphasis></para>
+    <para>Am Ende des Zeitschrittes kann ein durch die Verdunstung entstandenes Defizit des
+      Mittelporenspeichers (<emphasis role="italic">MPS</emphasis>) noch durch Wasser, das im
+      Grobporenspeicher (<emphasis role="italic">LPS</emphasis>) vorhanden ist ausgeglichen werden.
+      Dieser Ausgleich (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>d</ns3:mi>
+            <ns3:mi>i</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>f</ns3:mi>
+              <ns3:mi>f</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) erfolgt mit Hilfe des Eichkoeffizienten <emphasis role="italic"
+        >soilDiffMPSLPS</emphasis> nach:</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>d</ns3:mi>
+              <ns3:mi>i</ns3:mi>
+              <ns3:mrow>
+                <ns3:mi>f</ns3:mi>
+                <ns3:mi> &#160;</ns3:mi>
+                <ns3:mi>f</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>a</ns3:mi>
+                <ns3:mi>c</ns3:mi>
+                <ns3:mi>t</ns3:mi>
+                <ns3:mi>L</ns3:mi>
+                <ns3:mrow>
+                  <ns3:mi>P</ns3:mi>
+                  <ns3:mi>S</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mn>1</ns3:mn>
+                  <ns3:mo>-</ns3:mo>
+                  <ns3:msup>
+                    <ns3:mi>e</ns3:mi>
+                    <ns3:mfrac>
+                      <ns3:mrow>
+                        <ns3:mrow>
+                          <ns3:mo>-</ns3:mo>
+                          <ns3:mn>1</ns3:mn>
+                        </ns3:mrow>
+                        <ns3:mo>×</ns3:mo>
+                        <ns3:mrow>
+                          <ns3:mi>d</ns3:mi>
+                          <ns3:mi>i</ns3:mi>
+                          <ns3:mrow>
+                            <ns3:mi>f</ns3:mi>
+                            <ns3:mi>f</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                      <ns3:mrow>
+                        <ns3:mi>s</ns3:mi>
+                        <ns3:mi>a</ns3:mi>
+                        <ns3:mi>t</ns3:mi>
+                        <ns3:mi>M</ns3:mi>
+                        <ns3:mrow>
+                          <ns3:mi>P</ns3:mi>
+                          <ns3:mi>S</ns3:mi>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:mfrac>
+                  </ns3:msup>
+                </ns3:mrow>
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+              
+            </ns3:mrow>
+          </ns3:mrow>
+  
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            
+            <ns3:mi>[mm]</ns3:mi>
+            
+          </ns3:mrow>
+          
+          
+        </ns3:math>
+        </imagedata>
+        </imageobject>
+        </mediaobject>
+    </equation> </para> 
+    <para> Fortführende Informationen in: <citetitle><xref
+      linkend="Baumgartner_1990"/></citetitle>, <citetitle><xref linkend="Dyck_1995"/></citetitle>,
+    <citetitle><xref linkend="Gurtz_1997"/></citetitle>, <citetitle><xref linkend="Maniak_1997"/></citetitle>, 
+    <citetitle><xref linkend="Menzel_1997"/></citetitle>, <citetitle><xref
+      linkend="Scheffer_Schachtschabel_1984"/></citetitle>, <citetitle><xref
+        linkend="Schulla_1997"/></citetitle>, <citetitle><xref linkend="Uhlenbrook_1999"/></citetitle>, 
+    <citetitle><xref linkend="Wessolek_1993"/></citetitle>
+    </para>
+  </sect2>
+    <bibliography>
+      <title>Literatur</title>
+      <biblioentry xml:id="Baumgartner_1990" xreflabel="Baumgartner &amp; Liebscher 1990">
+        <abbrev>Baumgartner &amp; Liebscher 1990</abbrev>
+        <authorgroup>
+          <author><personname><firstname>A.</firstname><surname>Baumgartner</surname></personname></author>
+          <author><personname><firstname>H.J.</firstname><surname>Liebscher</surname></personname></author>
+        </authorgroup>
+        <title>Allgemeine Hydrologie - Quantitative Hydrologie</title>
+        <citetitle pubwork="book">Lehrbuch der Hydrologie, Band 1</citetitle>
+        <publisher>
+          <publishername>Gebrüder Bornträger Verlag</publishername>
+          <address>Stuttgart</address>
+        </publisher>
+        <pubdate>1990</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Dyck_1995" xreflabel="Dyck &amp; Peschke 1995">
+        <abbrev>Dyck &amp; Peschke 1995</abbrev>
+        <authorgroup>
+          <author><personname><firstname>S.</firstname><surname>Dyck</surname></personname></author>
+          <author><personname><firstname>G.</firstname><surname>Peschke</surname></personname></author>
+        </authorgroup>
+        <title>Grundlagen der Hydrologie</title>
+        <publisher>
+          <publishername>Verlag für Bauwesen</publishername>
+          <address>Berlin</address>
+        </publisher>
+        <pubdate>1995</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Gurtz_1997" xreflabel="Gurtz et al. 1997">
+        <abbrev>Gurtz et al. 1997</abbrev>
+        <authorgroup>
+          <author><personname><firstname>J.</firstname><surname>Gurtz</surname></personname></author>
+          <author><personname><firstname>A.</firstname><surname>Baltensweiler</surname></personname></author>
+          <author><personname><firstname>H.</firstname><surname>Lang</surname></personname></author>
+          <author><personname><firstname>L.</firstname><surname>Menzel</surname></personname></author>
+          <author><personname><firstname>J.</firstname><surname>Schulla</surname></personname></author>
+        </authorgroup>
+        <title>Auswirkungen von klimatischen Variationen auf Wasserhaushalt und Abfluss im Flussgebiet des Rheins</title>
+        <publisher>
+          <publishername>Ydf Hochschulverlag AG and der ETH Zürich</publishername>
+          <address>Zürich</address>
+        </publisher>
+        <pubdate>1997</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Maniak_1997" xreflabel="Maniak 1997">
+        <abbrev>Maniak 1997</abbrev>
+        <author><personname><firstname>U.</firstname><surname>Maniak</surname></personname></author>
+        <title>Hydrologie und Wasserwirtschaft</title>
+        <publisher>
+          <publishername>Springer Verlag</publishername>
+          <address>Berlin</address>
+        </publisher>
+        <pubdate>1997</pubdate>
+      </biblioentry>
+      
+      <biblioentry  xml:id="Menzel_1997" xreflabel="Menzel 1997">
+        <abbrev>Menzel 1997</abbrev>
+        <author><personname><firstname>L.</firstname><surname>Menzel</surname></personname></author>
+        <title>Modellierung der Evapotranspiration im System Boden-Pflanzen-Atmosphäre</title>
+        <citetitle pubwork="journal">Zürcher Geographische Schriften</citetitle>
+        <volumenum>67</volumenum>
+        <pubdate>1997</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Scheffer_Schachtschabel_1984" xreflabel="Scheffer &amp; Schachtschabel 1984">
+        <abbrev>Scheffer &amp; Schachtschabel 1984</abbrev>
+        <authorgroup>
+          <author>
+            <personname><firstname>F.</firstname><surname>Scheffer</surname></personname>
+          </author>
+          <author><personname><firstname>P.</firstname><surname>Schachtschabel</surname></personname></author>
+        </authorgroup>
+        <title>Lehrbuch der Bodenkunde</title>
+        <publisher>
+          <publishername>Enke Verlag</publishername>
+          <address>Stuttgart</address>
+        </publisher>
+        <pubdate>1984</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Schulla_1997" xreflabel="Schulla 1997">
+        <abbrev>Schulla 1997</abbrev>
+        <author><personname><firstname>J.</firstname><surname>Schulla</surname></personname></author>
+        <title>Hydrologische Modellierung von Flussgebieten zur Abschätzung der Folgen von Klimaänderungen</title>
+        <publisher>
+          <publishername>Geographisches Institut der ETH Zürich, ETH-Dissertation 12018</publishername>
+          <address>Zürich</address>
+        </publisher>
+        <pubdate>1997</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Uhlenbrook_1999" xreflabel="Uhlenbrook 1999">
+        <abbrev>Uhlenbrook 1999</abbrev>
+        <author><personname><firstname>S.</firstname><surname>Uhlenbrook</surname></personname></author>
+        <title>Untersuchung und Modellierung der Abflussbildung in einem mesoskaligen Einzugsgebiet</title>
+        <publisher>
+          <publishername>Freiburger Schriften zur Hydrologie, Institut für Hydrologie, Univerität Freiburg</publishername>
+          <address>Freiburg</address>
+        </publisher>
+        <pubdate>1999</pubdate>
+      </biblioentry>
+      
+      <biblioentry xml:id="Wessolek_1993" xreflabel="Wessolek 1993">
+        <abbrev>Wessolek 1993</abbrev>
+        <author><personname><firstname>G.</firstname><surname>Wessolek</surname></personname></author>
+        <title>Erarbeitung eines Schlüssels zur Abschätzung von Versickerung und Oberflächenabfluss versiegelter Flächen Berlins</title>
+        <publisher>
+          <publishername>Unveröffentlicher Bericht im Auftrag der Bundesanstalt für Gewässerkunde</publishername>
+          <address>Berlin</address>
+        </publisher>
+        <pubdate>1993</pubdate>
+      </biblioentry>
+    </bibliography>
+
+</sect1>

@@ -1,0 +1,10 @@
+<big>'''%package%'''</big><br />
+==%class%==
+===Component description===
+:Title: %title%
+:Author: %author% 
+:Date: %date%
+:Description: %description%
+
+===Interface description===
+%componentvars%

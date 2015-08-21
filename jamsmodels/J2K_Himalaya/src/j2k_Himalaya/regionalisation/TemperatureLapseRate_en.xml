@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink"
+  xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg"
+  xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook">
+  <title>TemperaturureLapseRateModule</title>
+  <subtitle>A component for calculation of the glacier melt.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.TemperatureLapseRate</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+    <informaltable>
+      <tgroup cols="2">
+        <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+        <colspec colname="c2" colnum="2" colwidth="2.36*"/>
+        <thead>
+          <row>
+            <entry>Name</entry>
+            <entry>Description</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>entityElev</entry>
+            <entry>elevation of HRU entity</entry>
+          </row>
+          <row>
+            <entry>inputValue</entry>
+            <entry>the measured input from a base station</entry>
+          </row>
+          <row>
+            <entry>lapseRateSummer</entry>
+            <entry>lapse rate per 100 m elevation difference</entry>
+          </row>
+          <row>
+            <entry>lapseRateWinter</entry>
+            <entry>lapse rate per 100 m elevation difference in winter period</entry>
+          </row>
+          <row>
+            <entry>outputValue</entry>
+            <entry>calculated output for the modelling entity</entry>
+          </row>
+          <row>
+            <entry>statElev</entry>
+            <entry>station elevation</entry>
+          </row>
+          <row>
+            <entry>statOrder</entry>
+            <entry>position array to determine best weights</entry>
+          </row>
+          <row>
+            <entry>time</entry>
+            <entry>The current model time</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>This module describes the temperature regionalization method in case there is only one
+      temperature station is available in the study area. This method uses lapse-rates for summer
+      and winter periods. In this approach, first the distance between the particular HRU
+      (entityElev) and HRU of the temperature station  is calculated. If there is more than one
+      temperature station, the model recognizes the station which is closest to the HRU
+      (ELEV_station(closest)) and defined as statOrder. In the next step, the elevation difference
+      (ELEV_diff) between the particular HRU and the station is calculated. The mean elevation of
+      each HRU is obtained from the HRU parameter file. The lapse rate is provided as a calibration
+      parameter (lapseRateSummer and lapseRateWinter) per 100 meter. Finally the model calculates
+      the temperature of each HRU (TEMP_hru) using the lapse rate and temperature of the station on
+      a particular day using the following equations:</para>
+    <para> </para>
+    <para>
+      <equation>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>E</mi>
+              <mi>l</mi>
+              <mi>e</mi>
+              <msub>
+                <mi>v</mi>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>i</mi>
+                  <mi>f</mi>
+                  <mi>f</mi>
+                </mrow>
+              </msub>
+              <mo>=</mo>
+              <mi>E</mi>
+              <mi>l</mi>
+              <mi>e</mi>
+              <msub>
+                <mi>v</mi>
+                <mrow>
+                  <mi>s</mi>
+                  <mi>t</mi>
+                  <mi>a</mi>
+                  <mi>t</mi>
+                  <mi>i</mi>
+                  <mi>o</mi>
+                  <mi>n</mi>
+                  <mo stretchy="false">(</mo>
+                  <mi>c</mi>
+                  <mi>l</mi>
+                  <mi>o</mi>
+                  <mi>s</mi>
+                  <mi>e</mi>
+                  <mi>s</mi>
+                  <mi>t</mi>
+                  <mo stretchy="false">)</mo>
+                </mrow>
+              </msub>
+              <mo>&#x2212;</mo>
+              <mi>E</mi>
+              <mi>l</mi>
+              <mi>e</mi>
+              <msub>
+                <mi>v</mi>
+                <mrow>
+                  <mi>H</mi>
+                  <mi>R</mi>
+                  <mi>U</mi>
+                </mrow>
+              </msub>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamyraiaadYgacaWGLbGaamODamaaBaaaleaacaWGKbGaamyAaiaadAgacaWGMbaabeaakiabg2da9iaadweacaWGSbGaamyzaiaadAhadaWgaaWcbaGaam4CaiaadshacaWGHbGaamiDaiaadMgacaWGVbGaamOBaiaacIcacaWGJbGaamiBaiaad+gacaWGZbGaamyzaiaadohacaWG0bGaaiykaaqabaGccqGHsislcaWGfbGaamiBaiaadwgacaWG2bWaaSbaaSqaaiaadIeacaWGsbGaamyvaaqabaaaaa@5828@</annotation>
+          </semantics>
+        </math>
+      </equation>
+      <equation>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>T</mi>
+              <mi>e</mi>
+              <mi>m</mi>
+              <msub>
+                <mi>p</mi>
+                <mrow>
+                  <mi>H</mi>
+                  <mi>R</mi>
+                  <mi>U</mi>
+                </mrow>
+              </msub>
+              <mo>=</mo>
+              <mi>E</mi>
+              <mi>l</mi>
+              <mi>e</mi>
+              <msub>
+                <mi>v</mi>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>i</mi>
+                  <mi>f</mi>
+                  <mi>f</mi>
+                </mrow>
+              </msub>
+              <mo>.</mo>
+              <mi>L</mi>
+              <mi>a</mi>
+              <mi>p</mi>
+              <mi>s</mi>
+              <msub>
+                <mi>e</mi>
+                <mrow>
+                  <mi>r</mi>
+                  <mi>a</mi>
+                  <mi>t</mi>
+                  <mi>e</mi>
+                  <mo>.</mo>
+                  <mi>S</mi>
+                  <mi>u</mi>
+                  <mi>m</mi>
+                  <mi>m</mi>
+                  <mi>e</mi>
+                  <mi>r</mi>
+                  <mo stretchy="false">(</mo>
+                  <mi>o</mi>
+                  <mi>r</mi>
+                  <mi>W</mi>
+                  <mi>int</mi>
+                  <mi>e</mi>
+                  <mi>r</mi>
+                  <mo stretchy="false">)</mo>
+                </mrow>
+              </msub>
+              <mo>+</mo>
+              <mi>T</mi>
+              <mi>e</mi>
+              <mi>m</mi>
+              <msub>
+                <mi>p</mi>
+                <mrow>
+                  <mi>s</mi>
+                  <mi>t</mi>
+                  <mi>a</mi>
+                  <mi>t</mi>
+                  <mi>i</mi>
+                  <mi>o</mi>
+                  <mi>n</mi>
+                </mrow>
+              </msub>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamivaiaadwgacaWGTbGaamiCamaaBaaaleaacaWGibGaamOuaiaadwfaaeqaaOGaeyypa0JaamyraiaadYgacaWGLbGaamODamaaBaaaleaacaWGKbGaamyAaiaadAgacaWGMbaabeaakiaac6cacaWGmbGaamyyaiaadchacaWGZbGaamyzamaaBaaaleaacaWGYbGaamyyaiaadshacaWGLbGaaiOlaiaadofacaWG1bGaamyBaiaad2gacaWGLbGaamOCaiaacIcacaWGVbGaamOCaiaadEfaciGGPbGaaiOBaiaacshacaWGLbGaamOCaiaacMcaaeqaaOGaey4kaSIaamivaiaadwgacaWGTbGaamiCamaaBaaaleaacaWGZbGaamiDaiaadggacaWG0bGaamyAaiaad+gacaWGUbaabeaaaaa@6891@</annotation>
+          </semantics>
+        </math>
+      </equation>
+    </para>
+    <para>Summer and winter lapse rates can be different. In such case, the lapse rates can be
+      determined by using stations in nearby areas. In case, a same lapse can be used by providing
+      the same value for the winter and summer peirods.</para>
+    <para> </para>
+  </sect2>
+</sect1>

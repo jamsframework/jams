@@ -1,0 +1,1222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>Regionalisation</title>
+  <subtitle>A component which makes current values available for the corresponding time step of the
+    model.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.regionalisation</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>dataArray </entry>
+          <entry>list of input values (station values) which will be
+            regionalized</entry>
+        </row>
+        <row>
+          <entry>regCoeff</entry>
+          <entry>coefficients (section of axis, slope, coefficient of determination)
+            of linear regression between data values and height a.s.l. of the
+            stations</entry>
+        </row>
+        <row>
+          <entry>statElevation</entry>
+          <entry>list containing the elevation values of stations where data values
+            were measured</entry>
+        </row>
+        <row>
+          <entry>statWeight</entry>
+          <entry>list containing relative weights for the stations </entry>
+        </row>
+        <row>
+          <entry>statOrder </entry>
+          <entry>list which is organized according to weights, containing array
+            indices to identify stations</entry>
+        </row>
+        <row>
+          <entry>dataValue</entry>
+          <entry>the regionalized data value for the current time step and the current
+            model entity</entry>
+        </row>
+        <row>
+          <entry>entityElevation</entry>
+          <entry>height of the current model entity</entry>
+        </row>
+        <row>
+          <entry>nidw</entry>
+          <entry>number of stations which will be considered for the
+            interpolation</entry>
+        </row>
+        <row>
+          <entry>elevationCorrection</entry>
+          <entry>button to switch on or off the optional elevation correction </entry>
+        </row>
+        <row>
+          <entry>rsqThreshold </entry>
+          <entry>threshold value for the coefficient of determination of linear
+            regression which has to be exceeded to activate the elevation
+            correction</entry>
+        </row>
+        <row>
+          <entry>fixedMinimum</entry>
+          <entry>lowest value; values must not be below this value</entry>
+        </row>
+        <row>
+          <entry>dataCaching</entry>
+          <entry>button which determines the caching behavior</entry>
+        </row>
+        <row>
+          <entry>noData</entry>
+          <entry>value which is given if regionalization has not been
+            successful</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+    <sect2>
+    <title>Component Description</title>
+       <para>This component makes current values available for the corresponding time step of the
+        model. Therefore it receives scales of temporally variable values which are calculated by
+        other components for standard years. The scales have, according to their temporal solutions,
+        a number of elements: 12 (per month), 366 (per day) or 8784 (per hour).</para>
+<sect3>
+  <title>Regionalization of Climate and Precipitation Data</title>
+        <para>General Method</para>
+         <para><emphasis role="bold">1. Calculation of linear regression between station measurement
+                                values per day and station heights. </emphasis> The coefficient of
+                            determination (<inlineequation>
+                                <m:math display="inline">
+                                    <m:msup>
+                                        <m:mi>r</m:mi>
+                                        <m:mn>2</m:mn>
+                                    </m:msup>
+                                </m:math>
+                            </inlineequation>) and the slope of the regression line  (<inlineequation>
+                                <m:math display="inline">
+                                    <m:msub>
+                                        <m:mi>b</m:mi>
+                                        <m:mi>H</m:mi>
+                                    </m:msub>
+                                </m:math>
+                            </inlineequation>) of this relation are calculated. It is assumed that
+                            the measurement value  (<inlineequation>
+                                <m:math display="inline">
+                                    <m:mrow>
+                                        <m:mi>M</m:mi>
+                                        <m:mi>W</m:mi>
+                                    </m:mrow>
+                                </m:math>
+                            </inlineequation>) is linearly dependent on the ground level (<inlineequation>
+                                <m:math display="inline">
+                                    <m:mi>H</m:mi>
+                                </m:math>
+                            </inlineequation>), according to: </para>
+
+  <equation>
+    <mediaobject>
+      <imageobject>
+        <imagedata align="center">
+    <m:math display="block">
+      <m:mrow>
+        <m:mrow>
+          <m:mi>M</m:mi>
+
+          <m:mi>W</m:mi>
+        </m:mrow>
+
+        <m:mo>=</m:mo>
+
+        <m:mrow>
+          <m:msub>
+            <m:mi>a</m:mi>
+
+            <m:mi>H</m:mi>
+          </m:msub>
+
+          <m:mo>+</m:mo>
+
+          <m:mrow>
+            <m:msub>
+              <m:mi>b</m:mi>
+
+              <m:mi>H</m:mi>
+            </m:msub>
+
+            <m:mo>×</m:mo>
+
+            <m:mi>H</m:mi>
+          </m:mrow>
+        </m:mrow>
+      </m:mrow>
+    </m:math>
+        </imagedata>
+      </imageobject>
+    </mediaobject>
+  </equation>
+
+  <para>The unknown values  <inlineequation>
+                                <m:math display="inline">
+                                    <m:msub>
+                                        <m:mi>a</m:mi>
+                                        <m:mi>H</m:mi>
+                                    </m:msub>
+                                </m:math>
+                            </inlineequation> und <inlineequation>
+                                <m:math display="inline">
+                                    <m:msub>
+                                        <m:mi>b</m:mi>
+                                        <m:mi>H</m:mi>
+                                    </m:msub>
+                                </m:math>
+                            </inlineequation>  are calculated according to the Gauss' Method of
+                            Least Squares:</para>
+
+  <para><equation>
+    <mediaobject>
+      <imageobject>
+        <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:msub>
+            <m:mi>b</m:mi>
+
+            <m:mi>H</m:mi>
+          </m:msub>
+
+          <m:mo>=</m:mo>
+
+          <m:mfrac>
+            <m:mrow>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+
+                <m:mrow>
+                  <m:mi>i</m:mi>
+
+                  <m:mo>=</m:mo>
+
+                  <m:mn>1</m:mn>
+                </m:mrow>
+
+                <m:mi>n</m:mi>
+              </m:munderover>
+
+              <m:mrow>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>H</m:mi>
+
+                      <m:mi>i</m:mi>
+                    </m:msub>
+
+                    <m:mo>-</m:mo>
+
+                    <m:mover>
+                      <m:mi>H</m:mi>
+
+                      <m:mo>─</m:mo>
+                    </m:mover>
+                  </m:mrow>
+
+                  <m:mo>)</m:mo>
+                </m:mrow>
+
+                <m:mo>×</m:mo>
+
+                <m:mrow>
+                  <m:mo>(</m:mo>
+
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mi>M</m:mi>
+
+                      <m:msub>
+                        <m:mi>W</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mrow>
+
+                    <m:mo>-</m:mo>
+
+                    <m:mover>
+                      <m:mrow>
+                        <m:mi>M</m:mi>
+
+                        <m:mi>W</m:mi>
+                      </m:mrow>
+
+                      <m:mo>─</m:mo>
+                    </m:mover>
+                  </m:mrow>
+
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mrow>
+            </m:mrow>
+
+            <m:mrow>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+
+                <m:mrow>
+                  <m:mi>i</m:mi>
+
+                  <m:mo>=</m:mo>
+
+                  <m:mn>1</m:mn>
+                </m:mrow>
+
+                <m:mi>n</m:mi>
+              </m:munderover>
+
+              <m:msup>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>H</m:mi>
+
+                      <m:mi>i</m:mi>
+                    </m:msub>
+
+                    <m:mo>-</m:mo>
+
+                    <m:mover>
+                      <m:mi>H</m:mi>
+
+                      <m:mo>─</m:mo>
+                    </m:mover>
+                  </m:mrow>
+
+                  <m:mo>)</m:mo>
+                </m:mrow>
+
+                <m:mn>2</m:mn>
+              </m:msup>
+            </m:mrow>
+          </m:mfrac>
+        </m:mrow>
+      </m:math>
+      </imagedata>
+      </imageobject>
+      </mediaobject>
+      </equation></para>
+
+  <para><equation>
+    <mediaobject>
+      <imageobject>
+        <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:msub>
+            <m:mi>a</m:mi>
+
+            <m:mi>H</m:mi>
+          </m:msub>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:mover>
+              <m:mrow>
+                <m:mi>M</m:mi>
+
+                <m:mi>W</m:mi>
+              </m:mrow>
+
+              <m:mo>─</m:mo>
+            </m:mover>
+
+            <m:mo>-</m:mo>
+
+            <m:mrow>
+              <m:msub>
+                <m:mi>b</m:mi>
+
+                <m:mi>H</m:mi>
+              </m:msub>
+
+              <m:mo>×</m:mo>
+
+              <m:mover>
+                <m:mi>H</m:mi>
+
+                <m:mo>─</m:mo>
+              </m:mover>
+            </m:mrow>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+          
+        </imagedata>
+      </imageobject>
+    </mediaobject>
+  </equation></para>
+
+  <para>The correlation coefficient of the regression is determined according to:</para>
+
+  <para><equation>
+    <mediaobject>
+      <imageobject>
+        <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mi>r</m:mi>
+
+          <m:mo>=</m:mo>
+
+          <m:mfrac>
+            <m:mrow>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+
+                <m:mrow>
+                  <m:mi>i</m:mi>
+
+                  <m:mo>-</m:mo>
+
+                  <m:mn>1</m:mn>
+                </m:mrow>
+
+                <m:mi>n</m:mi>
+              </m:munderover>
+
+              <m:mrow>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>H</m:mi>
+
+                      <m:mi>i</m:mi>
+                    </m:msub>
+
+                    <m:mo>-</m:mo>
+
+                    <m:mover>
+                      <m:mi>H</m:mi>
+
+                      <m:mo>─</m:mo>
+                    </m:mover>
+                  </m:mrow>
+
+                  <m:mo>)</m:mo>
+                </m:mrow>
+
+                <m:mo>×</m:mo>
+
+                <m:mrow>
+                  <m:mo>(</m:mo>
+
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mi>M</m:mi>
+
+                      <m:msub>
+                        <m:mi>W</m:mi>
+
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mrow>
+
+                    <m:mo>-</m:mo>
+
+                    <m:mover>
+                      <m:mrow>
+                        <m:mi>M</m:mi>
+
+                        <m:mi>W</m:mi>
+                      </m:mrow>
+
+                      <m:mo>─</m:mo>
+                    </m:mover>
+                  </m:mrow>
+
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mrow>
+            </m:mrow>
+
+            <m:msqrt>
+              <m:mrow>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+
+                    <m:mo>=</m:mo>
+
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+
+                  <m:mi>n</m:mi>
+                </m:munderover>
+
+                <m:mrow>
+                  <m:msup>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>H</m:mi>
+
+                          <m:mi>i</m:mi>
+                        </m:msub>
+
+                        <m:mo>-</m:mo>
+
+                        <m:mover>
+                          <m:mi>H</m:mi>
+
+                          <m:mo>─</m:mo>
+                        </m:mover>
+                      </m:mrow>
+
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+
+                    <m:mn>2</m:mn>
+                  </m:msup>
+
+                  <m:mo>×</m:mo>
+
+                  <m:mrow>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+
+                      <m:mrow>
+                        <m:mi>i</m:mi>
+
+                        <m:mo>=</m:mo>
+
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+
+                      <m:mi>n</m:mi>
+                    </m:munderover>
+
+                    <m:msup>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+
+                        <m:mrow>
+                          <m:msub>
+                            <m:mrow>
+                              <m:mi>M</m:mi>
+
+                              <m:mi>W</m:mi>
+                            </m:mrow>
+
+                            <m:mi>i</m:mi>
+                          </m:msub>
+
+                          <m:mo>-</m:mo>
+
+                          <m:mover>
+                            <m:mrow>
+                              <m:mi>M</m:mi>
+
+                              <m:mi>W</m:mi>
+                            </m:mrow>
+
+                            <m:mo>─</m:mo>
+                          </m:mover>
+                        </m:mrow>
+
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+
+                      <m:mn>2</m:mn>
+                    </m:msup>
+                  </m:mrow>
+                </m:mrow>
+              </m:mrow>
+            </m:msqrt>
+          </m:mfrac>
+        </m:mrow>
+      </m:math>
+          
+        </imagedata>
+      </imageobject>
+    </mediaobject>
+  </equation></para>
+
+  <para><emphasis role="bold">2. Determination of n measurement stations which are closest to the
+                                specific HRU.</emphasis> The number n which has to be indicated
+                            during the parameterization of the model is dependent on the density of
+                            the station measurement network and the position of individual stations. </para>
+
+  <para>For every data set it has to be indicated in advance how many stations (n) will be
+                            considered for the regionalization. Moreover, a weighting factor (pIDW)
+                            has to be indicated. By using the values of the x- and y-axis of the
+                            stations' location and the coordinates of the corresponding HRU n close
+                            stations are determined according to the following equation. The first
+                            step is the calculation of the distance  (<inlineequation>
+                                <m:math display="inline">
+                                    <m:mrow>
+                                        <m:mi>D</m:mi>
+                                        <m:mi>i</m:mi>
+                                        <m:mi>s</m:mi>
+                                        <m:mi>t</m:mi>
+                                        <m:mrow>
+                                            <m:mo>(</m:mo>
+                                            <m:mi>i</m:mi>
+                                            <m:mo>)</m:mo>
+                                        </m:mrow>
+                                    </m:mrow>
+                                </m:math>
+                            </inlineequation>) of every station to the area which is considered.
+                            This is done as follows:</para>
+
+  <para><equation>
+    <mediaobject>
+      <imageobject>
+        <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>D</m:mi>
+
+            <m:mi>i</m:mi>
+
+            <m:mi>s</m:mi>
+
+            <m:mi>t</m:mi>
+
+            <m:mrow>
+              <m:mo>(</m:mo>
+
+              <m:mi>i</m:mi>
+
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:msqrt>
+            <m:mrow>
+              <m:msup>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mi>R</m:mi>
+
+                      <m:msub>
+                        <m:mi>W</m:mi>
+
+                        <m:mrow>
+                          <m:mi>s</m:mi>
+
+                          <m:mi>t</m:mi>
+
+                          <m:mi>a</m:mi>
+
+                          <m:mi>t</m:mi>
+
+                          <m:mrow>
+                            <m:mo>(</m:mo>
+
+                            <m:mi>i</m:mi>
+
+                            <m:mo>)</m:mo>
+                          </m:mrow>
+                        </m:mrow>
+                      </m:msub>
+                    </m:mrow>
+
+                    <m:mo>-</m:mo>
+
+                    <m:mrow>
+                      <m:mi>R</m:mi>
+
+                      <m:msub>
+                        <m:mi>W</m:mi>
+
+                        <m:mrow>
+                          <m:mi>D</m:mi>
+
+                          <m:mi>F</m:mi>
+                        </m:mrow>
+                      </m:msub>
+                    </m:mrow>
+                  </m:mrow>
+
+                  <m:mo>)</m:mo>
+                </m:mrow>
+
+                <m:mn>2</m:mn>
+              </m:msup>
+
+              <m:mo>+</m:mo>
+
+              <m:msup>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mi>H</m:mi>
+
+                      <m:msub>
+                        <m:mi>W</m:mi>
+
+                        <m:mrow>
+                          <m:mi>s</m:mi>
+
+                          <m:mi>t</m:mi>
+
+                          <m:mi>a</m:mi>
+
+                          <m:mi>t</m:mi>
+
+                          <m:mrow>
+                            <m:mo>(</m:mo>
+
+                            <m:mi>i</m:mi>
+
+                            <m:mo>)</m:mo>
+                          </m:mrow>
+                        </m:mrow>
+                      </m:msub>
+                    </m:mrow>
+
+                    <m:mo>-</m:mo>
+
+                    <m:mrow>
+                      <m:mi>H</m:mi>
+
+                      <m:msub>
+                        <m:mi>W</m:mi>
+
+                        <m:mrow>
+                          <m:mi>D</m:mi>
+
+                          <m:mi>F</m:mi>
+                        </m:mrow>
+                      </m:msub>
+                    </m:mrow>
+                  </m:mrow>
+
+                  <m:mo>)</m:mo>
+                </m:mrow>
+
+                <m:mn>2</m:mn>
+              </m:msup>
+            </m:mrow>
+          </m:msqrt>
+        </m:mrow>
+      </m:math>
+    
+    </imagedata>
+    </imageobject>
+    </mediaobject>
+    </equation></para>
+
+  <para>with:</para>
+
+  <para><inlineequation>
+                                <m:math display="inline">
+                                    <m:mrow>
+                                        <m:mi>R</m:mi>
+                                        <m:mi>W</m:mi>
+                                    </m:mrow>
+                                </m:math>
+                            </inlineequation>... horizontal value of the station i...n, or of the
+                            HRU (DF)</para>
+
+  <para><inlineequation>
+                                <m:math display="inline">
+                                    <m:mrow>
+                                        <m:mi>H</m:mi>
+                                        <m:mi>W</m:mi>
+                                    </m:mrow>
+                                </m:math>
+                            </inlineequation> ... vertical value of the station i...n, or of the HRU
+                            (DF)</para>
+
+  <para>From the distances which have been calculated in this way, the n stations with shortest
+                            distances to the corresponding HRU are considered for subsequent
+                            calculations. The distances of these stations are converted to weighted
+                            distances (<inlineequation>
+                                <m:math display="inline">
+                                    <m:mrow>
+                                        <m:mi>ω</m:mi>
+                                        <m:mi>D</m:mi>
+                                        <m:mi>i</m:mi>
+                                        <m:mi>s</m:mi>
+                                        <m:mrow>
+                                            <m:mi>t</m:mi>
+                                            <m:mrow>
+                                                <m:mo>(</m:mo>
+                                                <m:mi>i</m:mi>
+                                                <m:mo>)</m:mo>
+                                            </m:mrow>
+                                        </m:mrow>
+                                    </m:mrow>
+                                </m:math>
+                            </inlineequation>) by the exponentiation with weighting factor pIDW. The
+                            weighting factor can reinforce the influence of close stations and
+                            weaken the influence of stations which are more distant. Good results
+                            can be obtained with values of 2 or 3 for pIDW. </para>
+
+  <para><emphasis role="bold">3</emphasis>. By using the <emphasis role="bold"
+                                >Inverse-Distance-Weighted Method (IDW)</emphasis> The weights of
+                            the n stations are defined with regard to their distances for every HRU
+                            in a different module. The IDW method considers the horizontal
+                            variability of stations' data, corresponding to their location in space.
+                            The calculation is carried out according to: </para>
+
+  <para><equation>
+    <mediaobject>
+      <imageobject>
+        <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>W</m:mi>
+
+            <m:mrow>
+              <m:mo>(</m:mo>
+
+              <m:mi>i</m:mi>
+
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mfrac>
+            <m:mrow>
+              <m:mo>(</m:mo>
+
+              <m:mfrac>
+                <m:mrow>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+
+                    <m:mrow>
+                      <m:mi>i</m:mi>
+
+                      <m:mo>=</m:mo>
+
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+
+                    <m:mi>n</m:mi>
+                  </m:munderover>
+
+                  <m:mrow>
+                    <m:mi>ω</m:mi>
+
+                    <m:mi>D</m:mi>
+
+                    <m:mi>i</m:mi>
+
+                    <m:mi>s</m:mi>
+
+                    <m:mrow>
+                      <m:mi>t</m:mi>
+
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+
+                        <m:mi>i</m:mi>
+
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mrow>
+
+                <m:mrow>
+                  <m:mi>ω</m:mi>
+
+                  <m:mi>D</m:mi>
+
+                  <m:mi>i</m:mi>
+
+                  <m:mi>s</m:mi>
+
+                  <m:mrow>
+                    <m:mi>t</m:mi>
+
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+
+                      <m:mi>i</m:mi>
+
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mrow>
+              </m:mfrac>
+
+              <m:mo>)</m:mo>
+            </m:mrow>
+
+            <m:mrow>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+
+                <m:mrow>
+                  <m:mi>i</m:mi>
+
+                  <m:mo>=</m:mo>
+
+                  <m:mn>1</m:mn>
+                </m:mrow>
+
+                <m:mi>n</m:mi>
+              </m:munderover>
+
+              <m:mrow>
+                <m:mo>(</m:mo>
+
+                <m:mfrac>
+                  <m:mrow>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+
+                      <m:mrow>
+                        <m:mi>i</m:mi>
+
+                        <m:mo>=</m:mo>
+
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+
+                      <m:mi>n</m:mi>
+                    </m:munderover>
+
+                    <m:mrow>
+                      <m:mi>ω</m:mi>
+
+                      <m:mi>D</m:mi>
+
+                      <m:mi>i</m:mi>
+
+                      <m:mi>s</m:mi>
+
+                      <m:mrow>
+                        <m:mi>t</m:mi>
+
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+
+                          <m:mi>i</m:mi>
+
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mrow>
+
+                  <m:mrow>
+                    <m:mi>ω</m:mi>
+
+                    <m:mi>D</m:mi>
+
+                    <m:mi>i</m:mi>
+
+                    <m:mi>s</m:mi>
+
+                    <m:mrow>
+                      <m:mi>t</m:mi>
+
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+
+                        <m:mi>i</m:mi>
+
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mfrac>
+
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:mfrac>
+        </m:mrow>
+      </m:math>
+        </imagedata>
+      </imageobject>
+    </mediaobject>
+  </equation></para>
+
+  <para><emphasis role="bold">4. Calculation of the data value for every HRU </emphasis>with weights
+                            of section 3 and an optional elevation correction, considering the
+                            vertical variability. The elevation correction is only carried out if
+                            the coefficient of determination (section 1) exceeds a threshold value
+                            which is defined by the user. The calculation of the optional elevation
+                            correction is done as follows:</para>
+
+  <para>
+    <equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>D</m:mi>
+
+            <m:msub>
+              <m:mi>W</m:mi>
+
+              <m:mrow>
+                <m:mi>D</m:mi>
+
+                <m:mi>F</m:mi>
+              </m:mrow>
+            </m:msub>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+
+              <m:mrow>
+                <m:mi>i</m:mi>
+
+                <m:mo>=</m:mo>
+
+                <m:mn>1</m:mn>
+              </m:mrow>
+
+              <m:mi>n</m:mi>
+            </m:munderover>
+
+            <m:mrow>
+              <m:mrow>
+                <m:mi>M</m:mi>
+
+                <m:mi>W</m:mi>
+
+                <m:mrow>
+                  <m:mo>(</m:mo>
+
+                  <m:mi>i</m:mi>
+
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mrow>
+
+              <m:mo>×</m:mo>
+
+              <m:mrow>
+                <m:mi>W</m:mi>
+
+                <m:mrow>
+                  <m:mo>(</m:mo>
+
+                  <m:mi>i</m:mi>
+
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mrow>
+            </m:mrow>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+
+  <para>The data values which notoriously show an elevation effect receive an additional elevation
+                            correction of the measurement values if the regression relation is
+                            sufficiently close (<inlineequation>
+                                <m:math display="inline">
+                                    <m:msup>
+                                        <m:mi>r</m:mi>
+                                        <m:mn>2</m:mn>
+                                    </m:msup>
+                                </m:math>
+                            </inlineequation> higher than the threshold value defined by the user).
+                            The calculation is carried out according to:</para>
+
+  <para><equation>
+    <mediaobject>
+      <imageobject>
+        <imagedata align="center">
+      <m:math display="inline">
+        <m:mrow>
+          <m:mrow>
+            <m:mi>D</m:mi>
+
+            <m:msub>
+              <m:mi>W</m:mi>
+
+              <m:mrow>
+                <m:mi>D</m:mi>
+
+                <m:mi>F</m:mi>
+              </m:mrow>
+            </m:msub>
+          </m:mrow>
+
+          <m:mo>=</m:mo>
+
+          <m:mrow>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+
+              <m:mrow>
+                <m:mi>i</m:mi>
+
+                <m:mo>=</m:mo>
+
+                <m:mn>1</m:mn>
+              </m:mrow>
+
+              <m:mi>n</m:mi>
+            </m:munderover>
+
+            <m:mrow>
+              <m:mo>(</m:mo>
+
+              <m:mrow>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mi>Δ</m:mi>
+
+                      <m:mi>H</m:mi>
+
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+
+                        <m:mi>i</m:mi>
+
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                    </m:mrow>
+
+                    <m:mo>×</m:mo>
+
+                    <m:mrow>
+                      <m:msub>
+                        <m:mi>b</m:mi>
+
+                        <m:mi>H</m:mi>
+                      </m:msub>
+
+                      <m:mo>+</m:mo>
+
+                      <m:mrow>
+                        <m:mi>M</m:mi>
+
+                        <m:mi>W</m:mi>
+
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+
+                          <m:mi>i</m:mi>
+
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mrow>
+
+                  <m:mo>)</m:mo>
+                </m:mrow>
+
+                <m:mo>×</m:mo>
+
+                <m:mrow>
+                  <m:mi>W</m:mi>
+
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+
+                    <m:mi>i</m:mi>
+
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mrow>
+
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:mrow>
+      </m:math>
+      </imagedata>
+      </imageobject>
+      </mediaobject>
+      </equation></para>
+
+  <para>with <inlineequation>
+                                <m:math display="inline">
+                                    <m:mrow>
+                                        <m:mi>Δ</m:mi>
+                                        <m:mi>H</m:mi>
+                                        <m:mrow>
+                                            <m:mo>(</m:mo>
+                                            <m:mi>i</m:mi>
+                                            <m:mo>)</m:mo>
+                                        </m:mrow>
+                                    </m:mrow>
+                                </m:math>
+                            </inlineequation> ... elevation difference between station <inlineequation>
+                                <m:math display="inline">
+                                    <m:mi>i</m:mi>
+                                </m:math>
+                            </inlineequation> and the HRU</para>
+
+  <para><inlineequation>
+                                <m:math display="inline">
+                                    <m:msub>
+                                        <m:mi>b</m:mi>
+                                        <m:mi>H</m:mi>
+                                    </m:msub>
+                                </m:math>
+  </inlineequation>... slope of the regression line</para>
+    </sect3>
+  </sect2>
+</sect1>

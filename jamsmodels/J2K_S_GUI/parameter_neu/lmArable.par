@@ -1,0 +1,150 @@
+# landuse management for spring 								
+# ID crop-ID referred to crop.par								
+# Date when operation starts								
+# Till-id according to till.par								
+# Fert-id according to fert.par								
+# FAmount amount of fertilizer application [kg/ha] absolut								
+# Plant (1) assumes that planting operation; - no planting								
+# Harvest (1-4)assumes that plant is harvested; - no harvest								
+# for harvesting 4 codes are implemented:								
+# (1) assumes harvesting with Haupt- & Nebenfrucht, Nebenfrucht leaves the field, plant growth stopped								
+# (2) assumes harvesting with Hauptfrucht, Nebenfrucht remains on the field, plant growth stopped								
+# (3) assumes harvesting with Haupt- & Nebenfrucht, plant growth continues (may not be suitable for meadows)								
+# (4) assumes harvesting with Hauptfrucht, plant growth continues								
+# FracHarv is the fraction of the target biomass which will be removed by the harvest (according to harvest code)								
+# CID 27 spring wheat; 88 winter rape; 97 winter barley; 12 pasture ; 7 Forrest-Deciduous; 98 urban; 8 Coniferous Forrest; 28 Winter-Wheat; 31Spring Barley; 20 Maize; 188 yellow Mustard; 16 Range-Brush; 18 Water								
+# 19								
+# 28								
+# 31								
+CID	Date	TID	FID	FAmount	PLANT	HARVEST	FRACHARV	
+88	231	76	-	-	-	-	-	
+88	243	199	-	-	1	-	-	
+88	270	-	45	1400	-	-	-	
+88	130	-	21	600	-	-	-	
+88	150	-	5	120	-	-	-	
+88	212	-	-	-	-	1	1	
+88	220	1	-	-	-	-	-	
+27	75	76	-	-	-	-	-	
+27	76	-	45	3000	-	-	-	
+27	80	-	-	-	1	-	-	
+27	122	-	21	200	-	-	-	
+27	224	-	-	-	-	1	0.9	
+27	225	1	-	-	-	-	-	
+97	250	76	-	-	-	-	-	
+97	267	-	-	-	1	-	-	
+97	90	-	45	1800	-	-	-	
+97	94	-	21	250	-	-	-	
+97	150	-	5	150	-	-	-	
+97	215	-	-	-	-	1	0.9	
+97	230	1	-	-	-	-	-	
+12	90	-	45	1125	-	-	-	
+12	180	-	-	-	-	1	0.9	
+12	190	-	21	100	-	-	-	
+12	240	-	-	-	-	1	0.9	
+12	300	-	-	-	-	1	0.9	
+112	90	-	21	100	-	-	-	
+112	180	-	-	-	-	1	0.9	
+112	240	-	-	-	-	1	0.9	
+112	260	-	45	1000	-	-	-	
+112	300	-	-	-	-	1	0.9	
+7	1	-	-	-	-	-	-	
+7	295	-	-	-	-	1	0.1	
+7	365	-	-	-	-	-	-	
+98	1	-	-	-	1	-	-	
+98	365	-	-	-	-	1	-	
+8	1	-	-	-	-	-	-	
+8	320	-	-	-	-	1	0.1	
+8	365	-	-	-	-	-	-	
+28	240	-	45	900	-	-	-	
+28	250	76	-	-	-	-	-	
+28	267	-	-	-	1	-	-	
+28	90	-	45	900	-	-	-	
+28	94	-	21	250	-	-	-	
+28	150	-	5	150	-	-	-	
+28	220	-	-	-	-	1	0.9	
+28	221	1	-	-	-	-	-	
+31	50	76	-	-	-	-	-	
+31	60	-	-	-	1	-	-	
+31	91	-	45	800	-	-	-	
+31	122	-	21	200	-	-	-	
+31	220	-	-	-	-	1	0.9	
+31	221	1	-	-	-	-	-	
+20	75	76	-	-	-	-	-	
+20	90	-	45	2300	-	-	-	
+20	101	-	-	-	1	-	-	
+20	140	-	21	740	-	-	-	
+20	300	-	-	-	-	1	0.9	
+20	305	1	-	-	-	-	-	
+18	1	-	-	-	-	-	-	
+18	365	-	-	-	-	-	-	
+13	222	-	-	-	1	-	-	
+13	30	-	-	-	-	1	0	
+16	1	-	-	-	-	-	-	
+16	295	-	-	-	-	1	0.1	
+16	365	-	-	-	-	-	-	
+62	50	76	-	-	-	-	-	
+62	60	-	-	-	1	-	-	
+62	91	-	45	1250	-	-	-	
+62	122	-	21	270	-	-	-	
+62	220	-	-	-	-	1	0.5	
+62	229	1	-	-	-	-	-	
+127	75	76	-	-	-	-	-	
+127	91	-	45	1750	-	-	-	
+127	100	-	-	-	1	-	-	
+127	122	-	21	200	-	-	-	
+127	153	-	4	100	-	-	-	
+127	234	-	-	-	-	1	0.9	
+127	249	1	-	-	-	-	-	
+197	260	76	-	-	-	-	-	
+197	267	-	-	-	1	-	-	
+197	90	-	45	1800	-	-	-	
+197	94	-	21	300	-	-	-	
+197	150	-	4	100	-	-	-	
+197	215	-	-	-	-	1	0.9	
+197	230	1	-	-	-	-	-	
+112	90	76	-	-	-	-	-	
+112	91	-	-	-	1	-	-	
+112	88	-	-	-	-	1	0.01	
+112	89	1	-	-	-	-	-	
+107	1	-	-	-	-	-	-	
+107	295	-	-	-	-	1	0.1	
+107	365	-	-	-	-	-	-	
+198	1	-	-	-	1	-	-	
+198	365	-	-	-	-	1	-	
+108	1	-	-	-	-	-	-	
+108	320	-	-	-	-	1	0.1	
+108	365	-	-	-	-	-	-	
+128	250	76	-	-	-	-	-	
+128	267	-	-	-	1	-	-	
+128	90	-	45	1700	-	-	-	
+128	94	-	21	200	-	-	-	
+128	150	-	4	143	-	-	-	
+128	230	-	-	-	-	1	0.9	
+128	240	1	-	-	-	-	-	
+131	50	76	-	-	-	-	-	
+131	60	-	-	-	1	-	-	
+131	91	-	45	1000	-	-	-	
+131	122	-	21	300	-	-	-	
+131	220	-	-	-	-	1	0.9	
+131	229	1	-	-	-	-	-	
+120	75	76	-	-	-	-	-	
+120	100	-	45	2000	-	-	-	
+120	110	-	-	-	1	-	-	
+120	140	-	21	600	-	-	-	
+120	290	-	-	-	-	1	0.9	
+120	305	1	-	-	-	-	-	
+118	1	-	-	-	-	-	-	
+118	365	-	-	-	-	-	-	
+113	1	-	-	-	-	-	-	
+113	365	-	-	-	-	-	-	
+220	75	76	-	-	-	-	-	
+220	90	-	45	2300	-	-	-	
+220	101	-	-	-	1	-	-	
+220	140	-	21	740	-	-	-	
+220	300	-	-	-	-	2	0.9	
+220	45	-	-	-	-	1	0.9	
+220	49	1	-	-	-	-	-	
+188	222	-	-	-	1	-	-	
+# end of file lmArable.par								
+								
+

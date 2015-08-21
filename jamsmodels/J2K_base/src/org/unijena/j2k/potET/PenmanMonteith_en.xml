@@ -1,0 +1,1153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>PenmanMonteith</title>
+  <subtitle>A component used for calculating potential land surface evaporation according to
+    Penman-Monteith. The calculation is based on <citetitle><xref linkend="Allen_1998"
+    /></citetitle>.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>PenmanMonteith</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>time</entry>
+          <entry>current time step</entry>
+        </row>
+        <row>
+          <entry>tempRes</entry>
+          <entry>temporal resolution [d | h | m]</entry>
+        </row>
+        <row>
+          <entry>wind</entry>
+          <entry>wind speed [m/s]</entry>
+        </row>
+        <row>
+          <entry>tmean</entry>
+          <entry>mean air temperature [°C]</entry>
+        </row>
+        <row>
+          <entry>rhum</entry>
+          <entry>relative humidity [%]</entry>
+        </row>
+        <row>
+          <entry>netRad</entry>
+          <entry>net radiation [MJ/m² tempRes]</entry>
+        </row>
+        <row>
+          <entry>actRsc0</entry>
+          <entry>stomatal resistance [s/m]</entry>
+        </row>
+        <row>
+          <entry>elevation</entry>
+          <entry>elevation above MSL of the spatial unit [m]</entry>
+        </row>
+        <row>
+          <entry>area</entry>
+          <entry>area of the spatial entity [m²]</entry>
+        </row>
+        <row>
+          <entry>actLAI</entry>
+          <entry>leaf area index [-]</entry>
+        </row>
+        <row>
+          <entry>actEffH</entry>
+          <entry>effective growth height of the vegetation [m]</entry>
+        </row>
+        <row>
+          <entry>potET</entry>
+          <entry>potential evaporation [mm/ tempRes]</entry>
+        </row>
+        <row>
+          <entry>actET</entry>
+          <entry>current evaporation [mm/ tempRes]</entry>
+        </row>
+        <row>
+          <entry>rs</entry>
+          <entry>evaporation resistance of the vegetation [s/m]</entry>
+        </row>
+        <row>
+          <entry>ra</entry>
+          <entry>areodynamic resistance of the stand [s/m]</entry>
+        </row>
+        <row>
+          <entry>dataCaching</entry>
+          <entry>Caching configuration: 0 - write cache, 1 - use cache, 2 - caching off</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>This module calculates the evaporation according to Penman-Monteith (<citetitle><xref
+          linkend="Monteith_1975"/></citetitle>) for different land covers. The calculation of the
+      stand evaporation is carried out in several steps, basically according to <citetitle><xref
+          linkend="Allen_1998"/></citetitle> considering various parameters. The potential
+      evaporation is calculated according to:</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>E</ns3:mi>
+              <ns3:mi>T</ns3:mi>
+              <ns3:mi>P</ns3:mi>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mfrac>
+                <ns3:mn>1</ns3:mn>
+                <ns3:mi>L</ns3:mi>
+              </ns3:mfrac>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mfrac>
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+                  <ns3:mo>×</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mo>(</ns3:mo>
+                      <ns3:mrow>
+                        <ns3:msub>
+                          <ns3:mi>R</ns3:mi>
+                          <ns3:mi>N</ns3:mi>
+                        </ns3:msub>
+                        <ns3:mo>-</ns3:mo>
+                        <ns3:mi>G</ns3:mi>
+                      </ns3:mrow>
+                      <ns3:mo>)</ns3:mo>
+                    </ns3:mrow>
+                    <ns3:mo>+</ns3:mo>
+                    <ns3:mrow>
+                      <ns3:mi>ρ</ns3:mi>
+                      <ns3:mo>×</ns3:mo>
+                      <ns3:mrow>
+                        <ns3:msub>
+                          <ns3:mi>c</ns3:mi>
+                          <ns3:mi>p</ns3:mi>
+                        </ns3:msub>
+                        <ns3:mo>×</ns3:mo>
+                        <ns3:mfrac>
+                          <ns3:mrow>
+                            <ns3:mrow>
+                              <ns3:mi>e</ns3:mi>
+                              <ns3:mi>s</ns3:mi>
+                            </ns3:mrow>
+                            <ns3:mo>-</ns3:mo>
+                            <ns3:mrow>
+                              <ns3:mi>e</ns3:mi>
+                              <ns3:mi>a</ns3:mi>
+                            </ns3:mrow>
+                          </ns3:mrow>
+                          <ns3:mrow>
+                            <ns3:mi>r</ns3:mi>
+                            <ns3:mi>a</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mfrac>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+                  <ns3:mo>+</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>γ</ns3:mi>
+                    <ns3:mo>×</ns3:mo>
+                    <ns3:mrow>
+                      <ns3:mo>(</ns3:mo>
+                      <ns3:mrow>
+                        <ns3:mn>1</ns3:mn>
+                        <ns3:mo>+</ns3:mo>
+                        <ns3:mfrac>
+                          <ns3:mrow>
+                            <ns3:mi>r</ns3:mi>
+                            <ns3:mi>s</ns3:mi>
+                          </ns3:mrow>
+                          <ns3:mrow>
+                            <ns3:mi>r</ns3:mi>
+                            <ns3:mi>a</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mfrac>
+                      </ns3:mrow>
+                      <ns3:mo>)</ns3:mo>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mfrac>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+    <para>with:</para> 
+    <para><emphasis role="italic">L .</emphasis>.. latent evaporation heat [MJ kg-1 ZS-1]</para> 
+    <para><emphasis role="italic">s</emphasis> ... slope saturation vapor pressure graph [hPa
+      K-1]</para> 
+    <para><emphasis role="italic">RN</emphasis> ... net radiation [MJ m-2 ZS-1]</para> 
+    <para><emphasis role="italic">G </emphasis>... soil heat flow [MJ m-2 ZS-1]</para>
+    <para><emphasis role="italic">ρ</emphasis> ... air density [kg m-3]</para> 
+    <para><emphasis role="italic">cp </emphasis>... specific heat capacity of air with constant
+      pressure [J kg-1K-1]</para> 
+    <para><emphasis role="italic">es</emphasis> ... saturation vapor pressure [kPa]</para> 
+    <para><emphasis role="italic">ea</emphasis> ... current vapor pressure [hPa]</para> 
+    <para><emphasis role="italic">ra</emphasis> ... aerodynamic resistance of land cover
+      [sm-1]</para> 
+    <para><emphasis role="italic">γ</emphasis> ... psychrometric constant [hPaK-1]</para> 
+    <para><emphasis role="italic">rs</emphasis> ... surface resistance of land cover [sm-1] </para><para>The <emphasis role="bold">latent evaporation heat </emphasis>(<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>L</ns3:mi>
+        </ns3:math>
+      </inlineequation>) is calculated using the mean air temperature <inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>T</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>v</ns3:mi>
+              <ns3:mi>g</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation> in °C according to: </para><para><equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>L</ns3:mi>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mi>25001</ns3:mi>
+                <ns3:mo>-</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>2.361</ns3:mi>
+                    <ns3:mo>×</ns3:mo>
+                    <ns3:msub>
+                      <ns3:mi>T</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>a</ns3:mi>
+                        <ns3:mi>v</ns3:mi>
+                        <ns3:mi>g</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:msub>
+                  </ns3:mrow>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mi>1000</ns3:mi>
+            </ns3:mfrac>
+          </ns3:mrow>
+  
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[MJ/kg/ZS]</ns3:mi>
+          </ns3:mrow>
+    
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para>
+    <para>The <emphasis role="bold">saturation vapor pressure </emphasis>(<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>e</ns3:mi>
+            <ns3:mi>s</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) in kPa of the air with temperature (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>T</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>v</ns3:mi>
+              <ns3:mi>g</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) is: </para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>e</ns3:mi>
+              <ns3:mi>s</ns3:mi>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mi>0.6108</ns3:mi>
+              <ns3:mo>×</ns3:mo>
+              <ns3:msup>
+                <ns3:mi>e</ns3:mi>
+                <ns3:mfrac>
+                  <ns3:mrow>
+                    <ns3:mi>17.27</ns3:mi>
+                    <ns3:mo>×</ns3:mo>
+                    <ns3:msub>
+                      <ns3:mi>T</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>a</ns3:mi>
+                        <ns3:mi>v</ns3:mi>
+                        <ns3:mi>g</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:msub>
+                  </ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mi>237.3</ns3:mi>
+                    <ns3:mo>+</ns3:mo>
+                    <ns3:msub>
+                      <ns3:mi>T</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>a</ns3:mi>
+                        <ns3:mi>v</ns3:mi>
+                        <ns3:mi>g</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:msub>
+                  </ns3:mrow>
+                </ns3:mfrac>
+              </ns3:msup>
+            </ns3:mrow>
+            
+          </ns3:mrow>
+         
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[kPa]</ns3:mi>
+          </ns3:mrow>
+     
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+     
+    <para>The <emphasis role="bold">current vapor pressure</emphasis> (<emphasis role="italic"
+        >ea</emphasis>) results from the saturation vapor pressure and the relative humidity (U in
+      [%]) according to: : </para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>e</ns3:mi>
+              <ns3:mi>a</ns3:mi>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>e</ns3:mi>
+                <ns3:mi>s</ns3:mi>
+              </ns3:mrow>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mfrac>
+                <ns3:mi>U</ns3:mi>
+                <ns3:mi>100</ns3:mi>
+              </ns3:mfrac>
+            </ns3:mrow>
+            
+          </ns3:mrow>
+         
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[kPa]</ns3:mi>
+          </ns3:mrow>
+    
+          
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+    <para>With the help of the saturation vapor pressure (es) and air temperature (T_{avg}) the
+        <emphasis role="bold">slope of the saturation vapor graph</emphasis> (s) is calculated
+      according to: </para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>s</ns3:mi>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>e</ns3:mi>
+                <ns3:mi>s</ns3:mi>
+              </ns3:mrow>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mfrac>
+                <ns3:mi>4098</ns3:mi>
+                <ns3:msup>
+                  <ns3:mrow>
+                    <ns3:mo>(</ns3:mo>
+                    <ns3:mrow>
+                      <ns3:msub>
+                        <ns3:mi>T</ns3:mi>
+                        <ns3:mrow>
+                          <ns3:mi>a</ns3:mi>
+                          <ns3:mi>v</ns3:mi>
+                          <ns3:mi>g</ns3:mi>
+                        </ns3:mrow>
+                      </ns3:msub>
+                      <ns3:mo>+</ns3:mo>
+                      <ns3:mi>237.3</ns3:mi>
+                    </ns3:mrow>
+                    <ns3:mo>)</ns3:mo>
+                  </ns3:mrow>
+                  <ns3:mn>2</ns3:mn>
+                </ns3:msup>
+              </ns3:mfrac>
+            </ns3:mrow>
+            
+          </ns3:mrow>
+         
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[kPa/°C]</ns3:mi>
+          </ns3:mrow>
+
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+    <para>The <emphasis role="bold">air pressure</emphasis> (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>P</ns3:mi>
+            <ns3:mi>z</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) in height  (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>z</ns3:mi>
+        </ns3:math>
+      </inlineequation>) is measured using the converted barometric height formula: </para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:msub>
+              <ns3:mi>P</ns3:mi>
+              <ns3:mi>z</ns3:mi>
+            </ns3:msub>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mi>101.3</ns3:mi>
+              <ns3:mo>×</ns3:mo>
+              <ns3:mrow>
+                <ns3:msup>
+                  <ns3:mi>e</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mo>-</ns3:mo>
+                      <ns3:mn>1</ns3:mn>
+                    </ns3:mrow>
+                    <ns3:mo>×</ns3:mo>
+                    <ns3:mfrac>
+                      <ns3:mi>9.811</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>8314.3</ns3:mi>
+                        <ns3:mo>×</ns3:mo>
+                        <ns3:msub>
+                          <ns3:mi>T</ns3:mi>
+                          <ns3:mrow>
+                            <ns3:mi>a</ns3:mi>
+                            <ns3:mi>b</ns3:mi>
+                            <ns3:mi>s</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:msub>
+                      </ns3:mrow>
+                    </ns3:mfrac>
+                  </ns3:mrow>
+                </ns3:msup>
+                <ns3:mo>×</ns3:mo>
+                <ns3:mi>z</ns3:mi>
+              </ns3:mrow>
+              
+            </ns3:mrow>
+          </ns3:mrow>
+    
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[kPa]</ns3:mi>
+          </ns3:mrow>
+    
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+    <para>with:</para> 
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>p</ns3:mi>
+            <ns3:mn>0</ns3:mn>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>... air pressure at MSL (= 101.3) [kPa]</para> 
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>g</ns3:mi>
+        </ns3:math>
+      </inlineequation>... gravitational acceleration (= 9.811) [ms-1]</para> 
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>R</ns3:mi>
+        </ns3:math>
+      </inlineequation>... gas constant (= 8314.3) [Jkmol-1K-1]</para> 
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>T</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>a</ns3:mi>
+              <ns3:mi>b</ns3:mi>
+              <ns3:mi>s</ns3:mi>
+            </ns3:mrow>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation> ... absolute air temperature [K]</para> 
+    
+    <para>The <emphasis role="bold">psychrometric constant </emphasis>(<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>γ</ns3:mi>
+        </ns3:math>
+      </inlineequation>)results from the specific heat capacity of the air (= <inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>1.013</ns3:mi>
+            <ns3:mo>×</ns3:mo>
+            <ns3:msup>
+              <ns3:mi>10</ns3:mi>
+              <ns3:mrow>
+                <ns3:mo>-</ns3:mo>
+                <ns3:mn>3</ns3:mn>
+              </ns3:mrow>
+            </ns3:msup>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>), air pressure<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>P</ns3:mi>
+            <ns3:mi>z</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>, the relation of mol weights of dry air and water vapor (= 0.622) and the
+      latent evaporation heat (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>L</ns3:mi>
+        </ns3:math>
+      </inlineequation>) according to: </para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>γ</ns3:mi>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mfrac>
+              <ns3:mrow>
+                <ns3:mi>1.013</ns3:mi>
+                <ns3:mo>×</ns3:mo>
+                <ns3:mrow>
+                  <ns3:msup>
+                    <ns3:mi>10</ns3:mi>
+                    <ns3:mrow>
+                      <ns3:mo>-</ns3:mo>
+                      <ns3:mn>3</ns3:mn>
+                    </ns3:mrow>
+                  </ns3:msup>
+                  <ns3:mo>×</ns3:mo>
+                  <ns3:msub>
+                    <ns3:mi>P</ns3:mi>
+                    <ns3:mi>z</ns3:mi>
+                  </ns3:msub>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>0.622</ns3:mi>
+                <ns3:mo>×</ns3:mo>
+                <ns3:mi>L</ns3:mi>
+              </ns3:mrow>
+            </ns3:mfrac>
+          </ns3:mrow>
+ 
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[kPa/°C]</ns3:mi>
+          </ns3:mrow>
+
+          
+          
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+
+    <para><emphasis role="bold">Calculation of stand-specific parameters </emphasis></para>
+    <para>The influence of various vegetation forms on the evaporation is considered in the
+      Penman-Monteith approach by two different resistances, the surface resistance (rs) and the
+      aerodynamic resistance (<emphasis role="italic">ra</emphasis>). In order to calculate the
+      resistances land-use specific parameters are required. Those are in detail: the leaf area
+      index LAI, the effective growth height (eff.Bh.), and the surface resistances at water
+      saturation. Their values for the different land cover classes are presented in <xref linkend="j2k.potET.PenmanMonteith.hlanu_par_fig1.png" xrefstyle="select: label"/>
+     : </para>
+    <para/>
+    <para></para>
+    <figure xml:id="j2k.potET.PenmanMonteith.hlanu_par_fig1.png">
+      <title>Land use parameters in different land cover classes</title>
+      <para><inlinemediaobject>
+          <imageobject>
+            <imagedata align="center" fileref="hlanu_par.png" scale="58" width="100%"/>
+          </imageobject>
+        </inlinemediaobject></para>
+    </figure>
+    <para>Moreover, stand-specific Albedo values are included which are used for the calculation of
+      the radiation balance. The leaf area index and effective growth height are represented in the
+      form of prominent positions (<emphasis role="italic">d1</emphasis>...<emphasis role="italic"
+        >d4</emphasis>) of the year. The points represent the beginning of the vegetation phase
+        (<emphasis role="italic">d1</emphasis>), reaching the maximum or full maturity (<emphasis
+        role="italic">d2</emphasis>), the phase of full maturity to point d3 and then the decline
+      until the end of the vegetation period (<emphasis role="italic">d4</emphasis>). The separate
+      points are represented by the daily Julian values (d1 = 110, d2 = 150, d3 = 250, d4 = 280) for
+      areas in about 400m height. For other heights (<emphasis role="italic">z</emphasis>) points
+      are approximated according to the following empirical relation:</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:msub>
+                <ns3:mi>d</ns3:mi>
+                <ns3:mn>1</ns3:mn>
+              </ns3:msub>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mi>z</ns3:mi>
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:msub>
+                  <ns3:mi>d</ns3:mi>
+                  <ns3:mn>1</ns3:mn>
+                </ns3:msub>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mi>400</ns3:mi>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>+</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>0.025</ns3:mi>
+                <ns3:mo>×</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>z</ns3:mi>
+                    <ns3:mo>-</ns3:mo>
+                    <ns3:mi>400</ns3:mi>
+                  </ns3:mrow>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:msub>
+                <ns3:mi>d</ns3:mi>
+                <ns3:mn>2</ns3:mn>
+              </ns3:msub>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mi>z</ns3:mi>
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:msub>
+                  <ns3:mi>d</ns3:mi>
+                  <ns3:mn>2</ns3:mn>
+                </ns3:msub>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mi>400</ns3:mi>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>+</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>0.025</ns3:mi>
+                <ns3:mo>×</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>z</ns3:mi>
+                    <ns3:mo>-</ns3:mo>
+                    <ns3:mi>400</ns3:mi>
+                  </ns3:mrow>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:msub>
+                <ns3:mi>d</ns3:mi>
+                <ns3:mn>3</ns3:mn>
+              </ns3:msub>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mi>z</ns3:mi>
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:msub>
+                  <ns3:mi>d</ns3:mi>
+                  <ns3:mn>3</ns3:mn>
+                </ns3:msub>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mi>400</ns3:mi>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>+</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>0.025</ns3:mi>
+                <ns3:mo>×</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>z</ns3:mi>
+                    <ns3:mo>-</ns3:mo>
+                    <ns3:mi>400</ns3:mi>
+                  </ns3:mrow>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:msub>
+                <ns3:mi>d</ns3:mi>
+                <ns3:mn>4</ns3:mn>
+              </ns3:msub>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                <ns3:mi>z</ns3:mi>
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:msub>
+                  <ns3:mi>d</ns3:mi>
+                  <ns3:mn>4</ns3:mn>
+                </ns3:msub>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mi>400</ns3:mi>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+              <ns3:mo>+</ns3:mo>
+              <ns3:mrow>
+                <ns3:mi>0.025</ns3:mi>
+                <ns3:mo>×</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mi>z</ns3:mi>
+                    <ns3:mo>-</ns3:mo>
+                    <ns3:mi>400</ns3:mi>
+                  </ns3:mrow>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+            
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para> 
+    <para>The values between the individual points are linearly interpolated. The aerodynamic
+      resistance (ra) for the vegetation with an effective growth height of less than 10m of the
+      specific land use class is calculated according to the following formula:</para>
+    <para><emphasis role="italic">
+      <equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+          <ns3:math display="inline">
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>r</ns3:mi>
+                <ns3:mi>a</ns3:mi>
+              </ns3:mrow>
+              <ns3:mo>=</ns3:mo>
+              <ns3:mrow>
+                <ns3:mfrac>
+                  <ns3:mi>9.5</ns3:mi>
+                  <ns3:mrow>
+                    <ns3:mi>v</ns3:mi>
+                    <ns3:mn>2</ns3:mn>
+                  </ns3:mrow>
+                </ns3:mfrac>
+                <ns3:mo>×</ns3:mo>
+                <ns3:msup>
+                  <ns3:mrow>
+                    <ns3:mo>(</ns3:mo>
+                    <ns3:mrow>
+                      <ns3:mi>log</ns3:mi>
+                      <ns3:mo>⁡</ns3:mo>
+                      <ns3:mfrac>
+                        <ns3:mn>2</ns3:mn>
+                        <ns3:mrow>
+                          <ns3:mi>z</ns3:mi>
+                          <ns3:mn>0</ns3:mn>
+                        </ns3:mrow>
+                      </ns3:mfrac>
+                    </ns3:mrow>
+                    <ns3:mo>)</ns3:mo>
+                  </ns3:mrow>
+                  <ns3:mn>2</ns3:mn>
+                </ns3:msup>
+              </ns3:mrow>
+              
+            </ns3:mrow>
+          
+            
+            <ns3:mi> &#160;</ns3:mi>
+            <ns3:mrow>
+              
+              <ns3:mi>[s/m]</ns3:mi>
+            </ns3:mrow>
+          
+            
+          </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+      </equation></emphasis> </para>
+      
+    <para>with</para> 
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>z</ns3:mi>
+            <ns3:mn>0</ns3:mn>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> ...aerodynamic roughness length (≈ 0.1*effective growth height) [m]</para> 
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>v</ns3:mi>
+            <ns3:mn>2</ns3:mn>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> ... wind speed in 2 m height [ms-1]</para> 
+    
+    <para>For effective growth heights greater or equal 10m the aerodynamic resistance is calculated
+      in a simplified way according to: </para><para><equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>r</ns3:mi>
+              <ns3:mi>a</ns3:mi>
+            </ns3:mrow>
+            <ns3:mo>=</ns3:mo>
+            <ns3:mfrac>
+              <ns3:mi>20</ns3:mi>
+              <ns3:mrow>
+                <ns3:msup>
+                  <ns3:mi>0.41</ns3:mi>
+                  <ns3:mn>2</ns3:mn>
+                </ns3:msup>
+                <ns3:mo>×</ns3:mo>
+                <ns3:mrow>
+                  <ns3:mi>v</ns3:mi>
+                  <ns3:mn>2</ns3:mn>
+                </ns3:mrow>
+                
+              </ns3:mrow>
+            </ns3:mfrac>
+          </ns3:mrow>
+  
+          
+          <ns3:mi> &#160;</ns3:mi>
+          <ns3:mrow>
+            
+            <ns3:mi>[s/m]</ns3:mi>
+          </ns3:mrow>
+          
+        </ns3:math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para><para>The <emphasis role="bold">surface resistance</emphasis> of the specific land use is calculated
+        according to: </para><para><emphasis role="italic"><equation>
+          <mediaobject>
+            <imageobject>
+              <imagedata align="center">
+          <ns3:math display="inline">
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mi>r</ns3:mi>
+                <ns3:mi>s</ns3:mi>
+              </ns3:mrow>
+              <ns3:mo>=</ns3:mo>
+              <ns3:msup>
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  <ns3:mrow>
+                    <ns3:mfrac>
+                      <ns3:mrow>
+                        <ns3:mn>1</ns3:mn>
+                        <ns3:mo>-</ns3:mo>
+                        <ns3:mi>A</ns3:mi>
+                      </ns3:mrow>
+                      <ns3:mrow>
+                        <ns3:mi>r</ns3:mi>
+                        <ns3:mi>s</ns3:mi>
+                        <ns3:mi>c</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:mfrac>
+                    <ns3:mo>+</ns3:mo>
+                    <ns3:mfrac>
+                      <ns3:mi>A</ns3:mi>
+                      <ns3:mrow>
+                        <ns3:mi>r</ns3:mi>
+                        <ns3:mi>s</ns3:mi>
+                        <ns3:mi>s</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:mfrac>
+                  </ns3:mrow>
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mo>-</ns3:mo>
+                  <ns3:mn>1</ns3:mn>
+                </ns3:mrow>
+              </ns3:msup>
+            </ns3:mrow>
+   
+            
+            <ns3:mi> &#160;</ns3:mi>
+            <ns3:mrow>
+              
+              <ns3:mi>[s/m]</ns3:mi>
+            </ns3:mrow>
+       
+            
+            
+          </ns3:math>
+              </imagedata>
+            </imageobject>
+          </mediaobject>
+        </equation></emphasis> </para>
+    <para>with</para> 
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>r</ns3:mi>
+            <ns3:mi>s</ns3:mi>
+            <ns3:mi>c</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> ... surface resistance [sm-1]</para> 
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>A</ns3:mi>
+        </ns3:math>
+      </inlineequation> ... 0.7LAI [-]</para> 
+    <para><inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>r</ns3:mi>
+            <ns3:mi>s</ns3:mi>
+            <ns3:mi>s</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+    </inlineequation></para>
+      <para>By multiplying with the area (<inlineequation>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>a</mi>
+              <mi>r</mi>
+              <mi>e</mi>
+              <mi>a</mi>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamyyaiaadkhacaWGLbGaamyyaaaa@39A1@</annotation>
+          </semantics>
+        </math>
+      </inlineequation>) of the spatial entity the dimension of <inlineequation>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>r</mi>
+              <mi>e</mi>
+              <mi>f</mi>
+              <mi>E</mi>
+              <mi>T</mi>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamOCaiaadwgacaWGMbGaamyraiaadsfaaaa@3A63@</annotation>
+          </semantics>
+        </math>
+      </inlineequation> and <inlineequation>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>a</mi>
+              <mi>c</mi>
+              <mi>t</mi>
+              <mi>E</mi>
+              <mi>T</mi>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamyyaiaadogacaWG0bGaamyraiaadsfaaaa@3A5E@</annotation>
+          </semantics>
+        </math>
+      </inlineequation> is converted from mm/m² to liters (L).</para>
+    <para>For further information see <citetitle><xref linkend="Allen_1998"/></citetitle>,
+      <citetitle><xref linkend="Monteith_1975"/></citetitle></para>
+  </sect2>
+    <bibliography> 
+      <title>Literature</title>      
+      <biblioentry xml:id="Allen_1998" xreflabel="Allen et.al 1998" role="inproceedings" >
+        <abbrev>Allen et.al 1998</abbrev>
+        <authorgroup>
+          <author><personname><firstname>R.G.</firstname><surname>Allen</surname></personname></author>
+          <author><personname><firstname>L.</firstname><surname>Pereira</surname></personname></author>
+          <author><personname><firstname>D.</firstname><surname>Raes</surname></personname></author>
+          <author><personname><firstname>M.</firstname><surname>Smith</surname></personname></author>
+        </authorgroup>
+        <title>Crop evapotranspiration: Guidelines for computing crop water requirements-FAO Irrigation and drainage paper 56</title>
+        <citetitle pubwork="journal">FAO</citetitle>
+        <address>Rom</address>
+        <volumenum>300</volumenum>
+        <pubdate>1998</pubdate>
+      </biblioentry>
+      <biblioentry xml:id="Monteith_1975" xreflabel="Monteith 1975">
+        <abbrev>Monteith 1975</abbrev>
+        <author><personname><firstname>J.L.</firstname><surname>Monteith</surname></personname></author>
+        <title>Vegetation and atmosphere, Vol.1 Principles</title>
+        <publisher>
+          <publishername>Academic Press</publishername>
+          <address>London</address>
+        </publisher>
+        <pubdate>1975</pubdate>
+      </biblioentry>
+    </bibliography>
+</sect1>

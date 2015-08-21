@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--  sample model  -->
+<!--<!DOCTYPE JAMSModel SYSTEM "jamsmodel.dtd">-->
+<model name="The smallmodel testmodel" author="Sven Kralisch" date="10.06.2005">
+    <component class="org.unijena.jamstesting.SEProvider" name="SEProvider">
+        <jamsvar name="max" value="1000"/>
+        <jamsvar name="test" value="3.4"/>
+    </component>
+    <compoundcomponent class="org.unijena.jams.tools.JAMSSimpleParaSampler" name="Sampler">
+        <jamsvar name="start" value="0"/>
+        <jamsvar name="end" value="1"/>
+        <jamsvar name="count" value="10"/>
+
+        <compoundcomponent class="org.unijena.jams.model.JAMSTemporalContext" name="TemporalContext">
+            <jamsvar name="timeInterval" value="1989-11-01 7:30 1989-11-01 7:30 6 1"/>
+            <compoundcomponent class="org.unijena.jams.model.JAMSSpatialContext" name="SpatialContext">
+                <jamsvar name="entities" provider="SEProvider" providervar="entities"/>
+                <component class="org.unijena.jamstesting.Testcomponent" name="Test">
+                    <jamsvar name="entities" provider="SEProvider" providervar="entities"/>
+                    <jamsvar name="initLength" provider="SpatialContext" providervar="currentEntity.xinit"/>
+                    <jamsvar name="lengthVal" provider="SpatialContext" providervar="currentEntity.x"/>
+                </component>
+                <component class="org.unijena.jamstesting.Testcomponent2" name="Test2">
+                    <jamsvar name="dValue2" provider="Sampler" providervar="parameter"/>
+                    <!--                <jamsvar name="dValue1" provider="Test" providervar="lengthVal"/>
+                    <jamsvar name="dValue2" provider="Test" providervar="lengthVal"/>
+                    <jamsvar name="dValue3" provider="Test" providervar="lengthVal"/>
+                    <jamsvar name="dValue4" provider="Test" providervar="lengthVal"/>
+                    <jamsvar name="dValue5" provider="Test" providervar="lengthVal"/>-->
+                    <jamsvar name="test" provider="SpatialContext" providervar="currentEntity.x"/>
+                    <jamsvar name="str" provider="Test" providervar="s"/>
+                </component>
+                <!--
+                <component class="org.unijena.jamstesting.Testcomponent3" name="Test3">
+                <jamsvar name="dValue" provider="Test" providervar="lengthVal"/>
+                </component>
+                <component class="org.unijena.jamstesting.SpatDataAccess" name="SpatDataAccess">
+                <jamsvar name="entity" provider="SpatialContext" providervar="currentEntity"/>           
+                </component>-->
+            </compoundcomponent>
+        </compoundcomponent>
+    </compoundcomponent>
+</model>

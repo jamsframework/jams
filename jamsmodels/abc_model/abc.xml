@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!--<!DOCTYPE JAMSModel SYSTEM "jamsmodel.dtd">-->
+
+<model name="abc model" author="D. Boyle and P. Krause" date="18.05.2006">
+    
+    <contextcomponent class="org.unijena.jams.tools.JAMSParaSampler" name="Sampler">
+        <var name="disable" value="true"/>
+        <var name="parameterIDs" value="abcModel.a;abcModel.b;abcModel.c"/>
+        <var name="boundaries" value="[0>1];[0>1];[0>1]"/>
+        <var name="sampleCount" value="1000"/>
+        <var name="goodness" attribute="e2"/>
+        
+        <contextcomponent class="org.unijena.jams.model.JAMSTemporalContext" name="TemporalContext">
+            <var name="timeInterval" value="1948-01-01 00:01 1986-12-01 00:00 1 1"/>
+
+            <component class="org.unijena.abc.Climate" name="ClimateReader">
+                <var name="fileName" value="D:\jamsmodels\abc_model\abc.dat"/>
+            </component>
+
+            <component class="org.unijena.abc.ABCModel" name="abcModel">
+                <var name="precip" context="ClimateReader" cvar="precip"/>
+                <var name="a" value="0.000354" />
+                <var name="b" value="0.6454" />
+                <var name="c" value="0.27" />
+                <var name="initStor" value="1000" />
+            </component>
+				
+            <component class="org.unijena.abc.Output" name="abcOutput">
+                <var name="time" context="TemporalContext" cvar="current"/>
+                <var name="fileName" value="D:\jamsmodels\abc_model\abc.out"/>
+                <var name="obsRunoff" context="ClimateReader" cvar="obsRunoff"/>
+                <var name="simRunoff" context="abcModel" cvar="simRunoff"/>
+            </component>
+        
+            <component class="org.unijena.j2k.efficiencies.StandardEfficiencyCalculator" name="EfficiencyCalculator">
+                <var name="timeInterval" context="TemporalContext" cvar="timeInterval"/>
+                <var name="effMethod" value="2"/>
+                <var name="validation" context="abcOutput" cvar="obsRunoff"/>
+                <var name="prediction" context="abcOutput" cvar="simRunoff"/>
+                <var name="e2" attribute="e2"/>
+            </component>
+            
+        </contextcomponent>
+    </contextcomponent>
+</model>

@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>org.unijena.j2k.radiation.CalcDailySolarRadiation</title>
+  <subtitle>Calculation of global solar radiation in daily or monthly temporal
+    resolution.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>CalcDailySolarRadiation</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>time</entry>
+          <entry>current time, date</entry>
+        </row>
+        <row>
+          <entry>sunh</entry>
+          <entry>daily sunshine hours [h/d]</entry>
+        </row>
+        <row>
+          <entry>sunhmax</entry>
+          <entry>maximum sunshine duration in h</entry>
+        </row>
+        <row>
+          <entry>actSlAsCf</entry>
+          <entry>slope-aspect correction factor</entry>
+        </row>
+        <row>
+          <entry>latitude</entry>
+          <entry>geographical latitude of the model entity [deg]</entry>
+        </row>
+        <row>
+          <entry>actExtRad</entry>
+          <entry>daily extraterrestrial radiation [MJ m-2d-1]</entry>
+        </row>
+        <row>
+          <entry>solRad</entry>
+          <entry>daily solar radiation [MJ m-2d-1]</entry>
+        </row>
+        <row>
+          <entry>angstrom_a</entry>
+          <entry>factor a of the Angstrom equation [-] [0..1]</entry>
+        </row>
+        <row>
+          <entry>angstrom_b</entry>
+          <entry>factor b of the Angstrom equation [-] [0..1]</entry>
+        </row>
+        <row>
+          <entry>tempRes</entry>
+          <entry>temporal resolution of the modeling [d | h | m]</entry>
+        </row>
+        <row>
+          <entry>dataCaching</entry>
+          <entry>caching configuration: 0 - write cache, 1 - use cache, 2 - caching off</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>The global solar radiation is the amount of radiation arriving on the earth surface. The
+      solar radiation is calculated by taking the extraterrestrial radiation substracting the amount
+      which is reflected or absorbed when passing the atmosphere. This amount can be estimated using
+      the Angstrom formula. In order to calculate the solar radiation the following individual
+      calculations are carried out in the module according to <citetitle><xref linkend="Allen_1998"/></citetitle> . For monthly
+      calculations the solar radiation is calculated for the 15th of the particular month. </para>
+    <para>Declination (d) of the sun for the Julian day (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>j</ns3:mi>
+            <ns3:mi>D</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>):</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>d</mi>
+              <mo>=</mo>
+              <mn>0.40954</mn>
+              <mo>&#x22C5;</mo>
+              <mi>sin</mi>
+              <mo stretchy="false">(</mo>
+              <mn>0.0172</mn>
+              <mo>&#x22C5;</mo>
+              <mo stretchy="false">(</mo>
+              <mi>j</mi>
+              <mi>D</mi>
+              <mo>&#x2212;</mo>
+              <mn>79.35</mn>
+              <mo stretchy="false">)</mo>
+              <mtext>&#x00A0;[rad]</mtext>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamizaiaadwgacaWGJbGaamiBaiabg2da9iaaicdacaGGUaGaaGinaiaaicdacaaI5aGaaGynaiaaisdacqGHflY1ciGGZbGaaiyAaiaac6gacaGGOaGaaGimaiaac6cacaaIWaGaaGymaiaaiEdacaaIYaGaeyyXICTaaiikaiaadQgacaWGebGaeyOeI0IaaG4naiaaiMdacaGGUaGaaG4maiaaiwdacaGGPaGaaeiiaiaabUfacaqGYbGaaeyyaiaabsgacaqGDbaaaa@5911@</annotation>
+          </semantics>
+        </math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+    <para>Hour angle at sunset for the particular geographical latitude (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>l</ns3:mi>
+            <ns3:mi>a</ns3:mi>
+            <ns3:mi>t</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation> in radians) and the declination (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>d</ns3:mi>
+        </ns3:math>
+      </inlineequation>):</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>s</mi>
+              <mi>w</mi>
+              <mo>=</mo>
+              <mi>arccos</mi>
+              <mo stretchy="false">(</mo>
+              <mo>&#x2212;</mo>
+              <mn>1</mn>
+              <mo>&#x22C5;</mo>
+              <mi>tan</mi>
+              <mo stretchy="false">(</mo>
+              <mi>l</mi>
+              <mi>a</mi>
+              <mi>t</mi>
+              <mo stretchy="false">)</mo>
+              <mo>&#x22C5;</mo>
+              <mi>tan</mi>
+              <mo stretchy="false">(</mo>
+              <mi>d</mi>
+              <mo stretchy="false">)</mo>
+              <mo stretchy="false">)</mo>
+              <mtext>&#x00A0;[rad]</mtext>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaam4CaiaadEhacqGH9aqpciGGHbGaaiOCaiaacogacaGGJbGaai4BaiaacohacaGGOaGaeyOeI0IaaGymaiabgwSixlGacshacaGGHbGaaiOBaiaacIcacaWGSbGaamyyaiaadshacaGGPaGaeyyXICTaciiDaiaacggacaGGUbGaaiikaiaadsgacaGGPaGaaiykaiaabccacaqGBbGaaeOCaiaabggacaqGKbGaaeyxaaaa@5746@</annotation>
+          </semantics>
+        </math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para>
+    <para>The maximum amount of sunshine hours for the Julian day  (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>j</ns3:mi>
+            <ns3:mi>D</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) from the hour angle (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>s</ns3:mi>
+            <ns3:mi>w</ns3:mi>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>):</para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <msub>
+                <mi>S</mi>
+                <mn>0</mn>
+              </msub>
+              <mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mn>24</mn>
+                </mrow>
+                <mi>&#x03A0;</mi>
+              </mfrac>
+              <mo>&#x22C5;</mo>
+              <mi>s</mi>
+              <mi>w</mi>
+              <mtext>&#x00A0;[h]</mtext>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaam4uamaaBaaaleaacaaIWaaabeaakiabg2da9maalaaabaGaaGOmaiaaisdaaeaacqqHGoauaaGaeyyXICTaam4CaiaadEhacaqGGaGaae4waiaabIgacaqGDbaaaa@4354@</annotation>
+          </semantics>
+        </math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation></para>
+    <para>By using the Angstrom formula with parameters <emphasis role="italic">a</emphasis> and
+        <emphasis role="italic">b</emphasis>, the relation between current (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mi>sunh</ns3:mi>
+        </ns3:math>
+      </inlineequation>) and maximum possible (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>S</ns3:mi>
+            <ns3:mn>0</ns3:mn>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) sunshine hours and the extraterrestrial radiation (<inlineequation>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>a</mi>
+              <mi>c</mi>
+              <mi>t</mi>
+              <mi>E</mi>
+              <mi>x</mi>
+              <mi>t</mi>
+              <mi>R</mi>
+              <mi>a</mi>
+              <mi>d</mi>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamyyaiaadogacaWG0bGaamyraiaadIhacaWG0bGaamOuaiaadggacaWGKbaaaa@3E21@</annotation>
+          </semantics>
+        </math>
+      </inlineequation>) the solar radiation (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:msub>
+            <ns3:mi>R</ns3:mi>
+            <ns3:mi>G</ns3:mi>
+          </ns3:msub>
+        </ns3:math>
+      </inlineequation>) is calculated according to:</para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>s</mi>
+              <mi>o</mi>
+              <mi>l</mi>
+              <mi>R</mi>
+              <mi>a</mi>
+              <mi>d</mi>
+              <mo>=</mo>
+              <mrow>
+                <mo>(</mo>
+                <mrow>
+                  <mi>a</mi>
+                  <mo>+</mo>
+                  <mi>b</mi>
+                  <mo>&#x22C5;</mo>
+                  <mfrac>
+                    <mi>S</mi>
+                    <mrow>
+                      <msub>
+                        <mi>S</mi>
+                        <mn>0</mn>
+                      </msub>
+                    </mrow>
+                  </mfrac>
+                </mrow>
+                <mo>)</mo>
+              </mrow>
+              <mo>&#x22C5;</mo>
+              <mi>a</mi>
+              <mi>c</mi>
+              <mi>t</mi>
+              <mi>E</mi>
+              <mi>x</mi>
+              <mi>t</mi>
+              <mi>R</mi>
+              <mi>a</mi>
+              <mi>d</mi>
+              <mtext>&#x00A0;</mtext>
+              <mrow>
+                <mo>[</mo>
+                <mrow>
+                  <mtext>MJ</mtext>
+                  <mo>&#x22C5;</mo>
+                  <msup>
+                    <mtext>m</mtext>
+                    <mrow>
+                      <mtext>-2</mtext>
+                    </mrow>
+                  </msup>
+                  <mo>&#x22C5;</mo>
+                  <msup>
+                    <mtext>d</mtext>
+                    <mrow>
+                      <mtext>-1</mtext>
+                    </mrow>
+                  </msup>
+                </mrow>
+                <mo>]</mo>
+              </mrow>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaam4Caiaad+gacaWGSbGaamOuaiaadggacaWGKbGaeyypa0ZaaeWaaeaacaWGHbGaey4kaSIaamOyaiabgwSixpaalaaabaGaam4uaaqaaiaadofadaWgaaWcbaGaaGimaaqabaaaaaGccaGLOaGaayzkaaGaeyyXICTaamyyaiaadogacaWG0bGaamyraiaadIhacaWG0bGaamOuaiaadggacaWGKbGaaeiiamaadmaabaGaaeytaiaabQeacqGHflY1caqGTbWaaWbaaSqabeaacaqGTaGaaeOmaaaakiabgwSixlaabsgadaahaaWcbeqaaiaab2cacaqGXaaaaaGccaGLBbGaayzxaaaaaa@5DFA@</annotation>
+          </semantics>
+        </math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation></para>
+    <para>For further information on contexts see also <citetitle><xref linkend="Allen_1998"
+        /></citetitle></para>
+  </sect2>
+  <bibliography xmlns="http://docbook.org/ns/docbook" version="5.0" xml:lang="en">
+    <biblioentry xml:id="Allen_1998" xreflabel="Allen et.al 1998" role="inproceedings" >
+      <abbrev>Allen et.al 1998</abbrev>
+      <authorgroup>
+        <author><personname><firstname>R.G.</firstname><surname>Allen</surname></personname></author>
+        <author><personname><firstname>L.</firstname><surname>Pereira</surname></personname></author>
+        <author><personname><firstname>D.</firstname><surname>Raes</surname></personname></author>
+        <author><personname><firstname>M.</firstname><surname>Smith</surname></personname></author>
+      </authorgroup>
+      <title>Crop evapotranspiration: Guidelines for computing crop water requirements-FAO Irrigation and drainage paper 56</title>
+      <citetitle pubwork="journal">FAO</citetitle>
+      <address>Rom</address>
+      <volumenum>300</volumenum>
+      <pubdate>1998</pubdate>
+    </biblioentry>
+  </bibliography>
+</sect1>

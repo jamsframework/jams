@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 xmlns="http://docbook.org/ns/docbook" version="5.0">
+    <title>Komponentenname_de</title>
+    <subtitle/>
+    <informaltable>
+        <tgroup cols="3">
+            <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+            <colspec colname="c2" colnum="2" colwidth="2.88*"/>
+            
+            <thead>
+                <row>
+                    <entry namest="c1" nameend="c2">Metainformationen</entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry>Modellprozess</entry>
+                    <entry namest="c2" nameend="newCol3">bitte ausfüllen</entry>
+                </row>
+                <row>
+                    <entry>Paket</entry>
+                    <entry namest="c2" nameend="newCol3"/>
+                </row>
+                <row>
+                    <entry>Autor</entry>
+                    <entry namest="c2" nameend="newCol3"/>
+                </row>
+                <row>
+                    <entry>Version</entry>
+                    <entry namest="c2" nameend="newCol3"/>
+                </row>
+                <row>
+                    <entry>Modifikationsdatum</entry>
+                    <entry namest="c2" nameend="newCol3"/>
+                </row>
+            </tbody>
+        </tgroup>
+    </informaltable>
+    <informaltable>
+        <tgroup cols="7">
+            <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+            <colspec colname="newCol2" colnum="2" colwidth="1.23*"/>
+            <colspec colname="c2" colnum="3" colwidth="1.28*"/>
+            <colspec colname="newCol4" colnum="4" colwidth="1.28*"/>
+            <colspec colname="newCol5" colnum="5" colwidth="1.71*"/>
+            <colspec colname="newCol6" colnum="6" colwidth="1.81*"/>
+            <colspec colname="newCol7" colnum="7" colwidth="1.76*"/>
+            <thead>
+                <row>
+                    <entry namest="c1" nameend="newCol7">Variablen</entry>
+                </row>
+                <row>
+                    <entry>Variable</entry>
+                    <entry>Beschreibung</entry>
+                    <entry>Einheit</entry>
+                    <entry>Wertebereich</entry>
+                    <entry>Datentyp</entry>
+                    <entry>Variablentyp</entry>
+                    <entry>Defaultwert</entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry>bitte ausfüllen</entry>
+                    <entry>bitte ausfüllen</entry>
+                    <entry/>
+                    <entry/>
+                    <entry/>
+                    <entry/>
+                    <entry/>
+                </row>
+                <row>
+                    <entry>bitte ausfüllen</entry>
+                    <entry>bitte ausfüllen</entry>
+                    <entry/>
+                    <entry/>
+                    <entry/>
+                    <entry/>
+                    <entry/>
+                </row>
+                <row>
+                    <entry>bitte ausfüllen</entry>
+                    <entry>bitte ausfüllen</entry>
+                    <entry/>
+                    <entry/>
+                    <entry/>
+                    <entry/>
+                    <entry/>
+                </row>
+            </tbody>
+        </tgroup>
+    </informaltable>
+   
+    <informaltable>
+        <tgroup cols="1">
+            <colspec colname="c2" colnum="1" colwidth="1.36*"/>
+            <thead>
+                <row>
+                    <entry>Beschreibung der Komponente</entry>
+                </row>
+            </thead>
+            <tbody>
+                <row>
+                    <entry>bitte ausfüllen</entry>
+                </row>
+            </tbody>
+        </tgroup>
+    </informaltable>
+    <informaltable width="1021">
+        <col width="2.08*"/>
+        <thead>
+            <tr>
+                <td>Literatur</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Literatur 1</td>
+            </tr>
+            <tr>
+                <td>bitte ausfüllen</td>
+            </tr>
+            <tr>
+                <td/>
+            </tr>
+            <tr>
+                <td/>
+            </tr>
+            <tr>
+                <td/>
+            </tr>
+        </tbody>
+    </informaltable>
+</sect1>

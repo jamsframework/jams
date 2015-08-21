@@ -1,0 +1,943 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>J2KProcessGroundwater</title>
+  <subtitle>A component used for the description of groundwater dynamics.</subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j2k.groundwater</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1.0*"/>
+      <colspec colname="c2" colnum="2" colwidth="3.0*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>area</entry>
+          <entry>attribute area</entry>
+        </row>        <row>
+          <entry>slope</entry>
+          <entry>slope of the model entity  [degree]</entry>
+        </row>        <row>
+          <entry>maxRG1</entry>
+          <entry>maximum storage capacity for the fast groundwater storage RG1 [l]</entry>
+        </row>        <row>
+          <entry>maxRG2</entry>
+          <entry>maximum storage capacity for the slow groundwater storage RG2 [l]</entry>
+        </row>        <row>
+          <entry>kRG1</entry>
+          <entry>recision coefficient k for the fast groundwater component RG1 [1/ts]</entry>
+        </row>        <row>
+          <entry>kRG2</entry>
+          <entry>recision coefficient k for the slow groundwater component RG2 [1/ts]</entry>
+        </row>        
+      <row>
+        <entry>actRG1</entry>
+        <entry>actual storage amount of the fast groundwater storage RG1 [l]</entry>
+      </row>        <row>
+        <entry>actRG2</entry>
+        <entry>actual storage amount of the slow groundwater storage RG2 [l]</entry>
+      </row>        <row>
+        <entry>inRG1</entry>
+        <entry>lateral inflow in the fast groundwater storage RG1 from neighboring areas [l]</entry>
+      </row>        <row>
+        <entry>inRG2</entry>
+        <entry>lateral inflow in the slow groundwater storage RG2 from neighboring areas [l]</entry>
+      </row>        <row>
+        <entry>outRG1</entry>
+        <entry>runoff from the fast groundwater storage RG1 [l]</entry>
+      </row>        <row>
+        <entry>outRG2</entry>
+        <entry>runoff from the slow groundwater storage RG2 [l]</entry>
+      </row>        <row>
+        <entry>genRG1</entry>
+        <entry>like RG1out [l]</entry>
+      </row>        <row>
+        <entry>genRG2</entry>
+        <entry>like RG2out [l]</entry>
+      </row>        <row>
+        <entry>percolation</entry>
+        <entry>percolation from the unsaturated soil [l]</entry>
+      </row>        <row>
+        <entry>gwExcess</entry>
+        <entry>amount of water which cannot stay on the groundwater area due to limited storage
+              capacity [l]</entry>
+      </row>        <row>
+        <entry>maxSoilStorage</entry>
+        <entry>maximum water storage capacity of the unsaturated soil [l]</entry>
+      </row>        <row>
+        <entry>actSoilStorage</entry>
+        <entry>actual water storage capacity of the unsaturated soil [l]</entry>
+      </row>        <row>
+        <entry>gwRG1Fact</entry>
+        <entry>calibration parameter for the runoff from the fast groundwater storage RG1 WB[0 ..
+              inf] [-]</entry>
+      </row>        <row>
+        <entry>gwRG2Fact</entry>
+        <entry>calibration parameter for the runoff from the slow groundwater storage RG2 WB[0 ..
+              inf] [-]</entry>
+      </row>        <row>
+        <entry>gwRG1RG2dist</entry>
+        <entry>calibration parameter for the allocation of the percolation rate on both groundwater
+              storages RG1 and RG2 WB [0 .. inf] [-]</entry>
+      </row>        <row>
+        <entry>gwCapRise</entry>
+        <entry>calibration parameter for the calculation of capillary rise WB[0-inf] [-]</entry>
+      </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>The model structure of the groundwater module in J2000 allows the presentation of the
+      groundwater runoff of all geological formations existing in the catchment area by considering
+      their storage and runoff behavior. Those formations have to be parameterized separately. The
+      geological units are subdivided into the upper groundwater storage (RG1) in the weathered
+      loose material with high permeability and short retention time and the lower groundwater
+      storage (RG2) in the matrix and in fissures and ravines of the bedrock with low permeability
+      and long retention time. Correspondingly, two basic runoff components are generated, a fast
+      one from the upper groundwater storage and a slow one from the lower groundwater storage.
+      Filling the groundwater storage results from the vertical runoff component of the soil module
+        (<emphasis role="italic">percolation</emphasis>), emptying can be done by the lateral
+      underground runoff components and the capillary rise on the unsaturated zone. The
+      parameterization of the groundwater storage is carried out using the maximum storage capacity
+      of the upper (<emphasis role="italic">maxRG1</emphasis>) and the lower groundwater storage
+        (<emphasis role="italic">maxRG2</emphasis>) as well as the retention coefficient for both
+      storages, (<emphasis role="italic">kRG1</emphasis>) and (<emphasis role="italic"
+        >kRG2</emphasis>). The maximum storage capacity can be estimated by multiplying the part of
+      the underground chamber with the thickness of the individual storages per m² standard area.
+      Both parameters have to be defined for every geological unit separately and have to be saved
+      in the corresponding parameter file. The following table (<xref xmlns:xlink="http://www.w3.org/1999/xlink"
+        linkend="j2k.groundwater.j2kProcessGroundwater.hgeo_par_fig1.png" xrefstyle="select: label"/>) shows an example of such a parameter
+      file. </para>
+    
+   
+    
+    <figure xml:id="j2k.groundwater.j2kProcessGroundwater.hgeo_par_fig1.png">
+      <title>hgeo.par</title>
+      
+      <para><inlinemediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="hgeo_par.png" scale="60" width="100%"></imagedata>
+        </imageobject>
+      </inlinemediaobject></para>
+    </figure>
+    
+    <para>The first process to be calculated is the capillary rise. It is assumed that this action
+      takes place in the slow groundwater storage RG2. The calculation is done using the actual
+      storage amount <emphasis role="italic">actRG2</emphasis>, the humidity deficit (<emphasis
+        role="italic">deltaSoilStor</emphasis>) or the relative saturation (<emphasis role="italic"
+        >satSoilStor</emphasis>) in the upper soil and the calibration parameter <emphasis
+        role="italic">gwCapRise</emphasis>. Capillary rise is calculated if the current storage
+      amount of the groundwater storage is higher than the soil humidity deficit and the calibration
+      parameter gwCapRise is above zero. By putting it to zero the capillary rise can be
+      prevented.</para> 
+    <para>If capillary rise is calculated, first the rise rate inSoilStor is calculated:</para> <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <ns3:math display="inline">
+        <ns3:mrow>
+          <ns3:mrow>
+            <ns3:mi>i</ns3:mi>
+            
+            <ns3:mi>n</ns3:mi>
+            
+            <ns3:mi>S</ns3:mi>
+            
+            <ns3:mi>o</ns3:mi>
+            
+            <ns3:mi>i</ns3:mi>
+            
+            <ns3:mi>l</ns3:mi>
+            
+            <ns3:mrow>
+              <ns3:mi>S</ns3:mi>
+              
+              <ns3:mi>t</ns3:mi>
+              
+              <ns3:mrow>
+                <ns3:mi>o</ns3:mi>
+                
+                <ns3:mi>r</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mo>=</ns3:mo>
+          
+          <ns3:mrow>
+            <ns3:mi>d</ns3:mi>
+            
+            <ns3:mi>e</ns3:mi>
+            
+            <ns3:mi>l</ns3:mi>
+            
+            <ns3:mi>t</ns3:mi>
+            
+            <ns3:mi>a</ns3:mi>
+            
+            <ns3:mi>S</ns3:mi>
+            
+            <ns3:mrow>
+              <ns3:mi>o</ns3:mi>
+              
+              <ns3:mi>i</ns3:mi>
+              
+              <ns3:mi>l</ns3:mi>
+              
+              <ns3:mi>S</ns3:mi>
+              
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>t</ns3:mi>
+                  
+                  <ns3:mi>o</ns3:mi>
+                  
+                  <ns3:mi>r</ns3:mi>
+                </ns3:mrow>
+                
+                <ns3:mo>×</ns3:mo>
+                
+                <ns3:mrow>
+                  <ns3:mo>(</ns3:mo>
+                  
+                  <ns3:mrow>
+                    <ns3:mn>1</ns3:mn>
+                    
+                    <ns3:mo>-</ns3:mo>
+                    
+                    <ns3:msup>
+                      <ns3:mrow>
+                        <ns3:mi>exp</ns3:mi>
+                      </ns3:mrow>
+                      
+                      <ns3:mfrac>
+                        <ns3:mrow>
+                          <ns3:mrow>
+                            <ns3:mo>-</ns3:mo>
+                            
+                            <ns3:mn>1</ns3:mn>
+                          </ns3:mrow>
+                          
+                          <ns3:mo>×</ns3:mo>
+                          
+                          <ns3:mrow>
+                            <ns3:mi>g</ns3:mi>
+                            
+                            <ns3:mi>w</ns3:mi>
+                            
+                            <ns3:mi>C</ns3:mi>
+                            
+                            <ns3:mi>a</ns3:mi>
+                            
+                            <ns3:mrow>
+                              <ns3:mi>p</ns3:mi>
+                              
+                              <ns3:mi>R</ns3:mi>
+                              
+                              <ns3:mi>i</ns3:mi>
+                              
+                              <ns3:mi>s</ns3:mi>
+                              
+                              <ns3:mi>e</ns3:mi>
+                            </ns3:mrow>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                        
+                        <ns3:mrow>
+                          <ns3:mi>s</ns3:mi>
+                          
+                          <ns3:mi>a</ns3:mi>
+                          
+                          <ns3:mi>t</ns3:mi>
+                          
+                          <ns3:mi>S</ns3:mi>
+                          
+                          <ns3:mi>o</ns3:mi>
+                          
+                          <ns3:mi>i</ns3:mi>
+                          
+                          <ns3:mrow>
+                            <ns3:mi>l</ns3:mi>
+                            
+                            <ns3:mi>S</ns3:mi>
+                            
+                            <ns3:mi>t</ns3:mi>
+                            
+                            <ns3:mi>o</ns3:mi>
+                            
+                            <ns3:mi>r</ns3:mi>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                      </ns3:mfrac>
+                    </ns3:msup>
+                  </ns3:mrow>
+                  
+                  <ns3:mo>)</ns3:mo>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:mrow>
+      </ns3:math>
+            
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>  
+    
+    <para>It is then extracted from the groundwater storage RG2 and added to the upper soil water
+      storage. After calculating the capillary rise the lateral inflow is considered. Hence, both
+      inflow components <emphasis role="italic">inRG1</emphasis> and <emphasis role="italic"
+        >inRG2</emphasis> are added to the corresponding storages <emphasis role="italic"
+        >actRG1</emphasis> and <emphasis role="italic">actRG2</emphasis>. If the maximum storage
+      capacity is exceeded, surplus water is directly given to the runoff component. </para>
+    <para>The allocation of the percolation from the upper soil is carried out according to the
+      slope of the specific model entity and a calibration coefficient (<emphasis role="italic"
+        >gwRG1RG2dist</emphasis>) in the following steps. First, the influence of the slope is
+      considered:</para>
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+            
+      <ns3:math display="inline">
+        <ns3:mrow>
+          <ns3:mrow>
+            <ns3:mi>s</ns3:mi>
+            
+            <ns3:mi>l</ns3:mi>
+            
+            <ns3:mi>o</ns3:mi>
+            
+            <ns3:mi>p</ns3:mi>
+            
+            <ns3:mrow>
+              <ns3:msub>
+                <ns3:mi>e_</ns3:mi>
+                
+                <ns3:mi> </ns3:mi>
+              </ns3:msub>
+              
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>w</ns3:mi>
+                  
+                  <ns3:mi>e</ns3:mi>
+                </ns3:mrow>
+                
+                <ns3:mi>i</ns3:mi>
+                
+                <ns3:mi>g</ns3:mi>
+                
+                <ns3:mi>h</ns3:mi>
+                
+                <ns3:mi>t</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mo>=</ns3:mo>
+          
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>tan</ns3:mi>
+            </ns3:mrow>
+            
+            <ns3:mrow>
+              <ns3:mo>(</ns3:mo>
+              
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>s</ns3:mi>
+                  
+                  <ns3:mi>l</ns3:mi>
+                  
+                  <ns3:mi>o</ns3:mi>
+                  
+                  <ns3:mi>p</ns3:mi>
+                  
+                  <ns3:mi>e</ns3:mi>
+                </ns3:mrow>
+                
+                <ns3:mo>×</ns3:mo>
+                
+                <ns3:mfrac>
+                  <ns3:mi>Π</ns3:mi>
+                  
+                  <ns3:mi>180</ns3:mi>
+                </ns3:mfrac>
+              </ns3:mrow>
+              
+              <ns3:mo>) </ns3:mo>
+            </ns3:mrow>
+            
+            <ns3:mrow>
+              <ns3:mo>[</ns3:mo>
+              
+              <ns3:mi>-</ns3:mi>
+              
+              <ns3:mo>]</ns3:mo>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:mrow>
+      </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+    
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <ns3:math display="inline">
+        <ns3:mrow>
+          <ns3:mrow>
+            <ns3:mi>g</ns3:mi>
+            
+            <ns3:mi>r</ns3:mi>
+            
+            <ns3:mi>a</ns3:mi>
+            
+            <ns3:mi>d</ns3:mi>
+            
+            <ns3:mi>h</ns3:mi>
+          </ns3:mrow>
+          
+          <ns3:mo>=</ns3:mo>
+          
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mo>(</ns3:mo>
+                
+                <ns3:mrow>
+                  <ns3:mi>1</ns3:mi>
+                  
+                  <ns3:mo>-</ns3:mo>
+                  
+                  <ns3:mrow>
+                    <ns3:mi>s</ns3:mi>
+                    
+                    <ns3:mi>l</ns3:mi>
+                    
+                    <ns3:mi>o</ns3:mi>
+                    
+                    <ns3:mi>p</ns3:mi>
+                    
+                    <ns3:mrow>
+                      <ns3:mi>e_</ns3:mi>
+                      
+                      <ns3:mrow>
+                        <ns3:mi>w</ns3:mi>
+                        
+                        <ns3:mi>e</ns3:mi>
+                      </ns3:mrow>
+                      
+                      <ns3:mi>i</ns3:mi>
+                      
+                      <ns3:mi>g</ns3:mi>
+                      
+                      <ns3:mrow>
+                        <ns3:mi>h</ns3:mi>
+                        
+                        <ns3:mi>t</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mrow>
+                
+                <ns3:mo>)</ns3:mo>
+              </ns3:mrow>
+              
+              <ns3:mo>×</ns3:mo>
+              
+              <ns3:mrow>
+                <ns3:mi>g</ns3:mi>
+                
+                <ns3:mi>w</ns3:mi>
+                
+                <ns3:mi>R</ns3:mi>
+                
+                <ns3:mi>G</ns3:mi>
+                
+                <ns3:mn>1</ns3:mn>
+                
+                <ns3:mi>R</ns3:mi>
+                
+                <ns3:mrow>
+                  <ns3:mi>G</ns3:mi>
+                  
+                  <ns3:mn>2</ns3:mn>
+                  
+                  <ns3:mi>d</ns3:mi>
+                  
+                  <ns3:mi>i</ns3:mi>
+                  
+                  <ns3:mrow>
+                    <ns3:mi>s</ns3:mi>
+                    
+                    <ns3:mi>t</ns3:mi>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            <ns3:mi> [-]</ns3:mi>
+          </ns3:mrow>
+        </ns3:mrow>
+      </ns3:math>
+      </imagedata>
+      </imageobject>
+      </mediaobject>
+      </equation> </para>
+    
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <ns3:math display="inline">
+        <ns3:mrow>
+          <ns3:mrow>
+            <ns3:mi>g</ns3:mi>
+            
+            <ns3:mi>r</ns3:mi>
+            
+            <ns3:mi>a</ns3:mi>
+            
+            <ns3:mi>d</ns3:mi>
+            
+            <ns3:mi>h</ns3:mi>
+          </ns3:mrow>
+          
+          <ns3:mo>=</ns3:mo>
+          
+          <ns3:mrow>
+            <ns3:munder>
+              <ns3:mo>min</ns3:mo>
+              
+              <ns3:mn>1</ns3:mn>
+            </ns3:munder>
+            
+            <ns3:mrow>
+              <ns3:mi>g</ns3:mi>
+              
+              <ns3:mi>r</ns3:mi>
+              
+              <ns3:mi>a</ns3:mi>
+              
+              <ns3:mi>d</ns3:mi>
+              
+              <ns3:mi>h</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:mrow>
+      </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation></para><para>Then the percolation rate is allocated: </para> <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <ns3:math display="inline">
+        <ns3:mrow>
+          <ns3:mrow>
+            <ns3:mi>p</ns3:mi>
+            
+            <ns3:mi>o</ns3:mi>
+            
+            <ns3:mi>t</ns3:mi>
+            
+            <ns3:mi>R</ns3:mi>
+            
+            <ns3:mrow>
+              <ns3:mi>G</ns3:mi>
+              
+              <ns3:mn>1</ns3:mn>
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mo>=</ns3:mo>
+          
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mo>(</ns3:mo>
+              
+              <ns3:mrow>
+                <ns3:mn>1</ns3:mn>
+                
+                <ns3:mo>-</ns3:mo>
+                
+                <ns3:mrow>
+                  <ns3:mi>g</ns3:mi>
+                  
+                  <ns3:mi>r</ns3:mi>
+                  
+                  <ns3:mi>a</ns3:mi>
+                  
+                  <ns3:mi>d</ns3:mi>
+                  
+                  <ns3:mi>h</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+              
+              <ns3:mo>)</ns3:mo>
+            </ns3:mrow>
+            
+            <ns3:mo>×</ns3:mo>
+            
+            <ns3:mrow>
+              <ns3:mi>p</ns3:mi>
+              
+              <ns3:mi>e</ns3:mi>
+              
+              <ns3:mi>r</ns3:mi>
+              
+              <ns3:mi>c</ns3:mi>
+              
+              <ns3:mi>o</ns3:mi>
+              
+              <ns3:mi>l</ns3:mi>
+              
+              <ns3:mrow>
+                <ns3:mi>a</ns3:mi>
+                
+                <ns3:mi>t</ns3:mi>
+                
+                <ns3:mi>i</ns3:mi>
+                
+                <ns3:mi>o</ns3:mi>
+                
+                <ns3:mi>n</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:mrow>
+      </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para>
+    
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+      <ns3:math display="inline">
+        <ns3:mrow>
+          <ns3:mrow>
+            <ns3:mi>p</ns3:mi>
+            
+            <ns3:mi>o</ns3:mi>
+            
+            <ns3:mi>t</ns3:mi>
+            
+            <ns3:mi>R</ns3:mi>
+            
+            <ns3:mrow>
+              <ns3:mi>G</ns3:mi>
+              
+              <ns3:mn>2</ns3:mn>
+            </ns3:mrow>
+          </ns3:mrow>
+          
+          <ns3:mo>=</ns3:mo>
+          
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>g</ns3:mi>
+              
+              <ns3:mi>r</ns3:mi>
+              
+              <ns3:mi>a</ns3:mi>
+              
+              <ns3:mi>d</ns3:mi>
+              
+              <ns3:mi>h</ns3:mi>
+            </ns3:mrow>
+            
+            <ns3:mo>×</ns3:mo>
+            
+            <ns3:mrow>
+              <ns3:mi>p</ns3:mi>
+              
+              <ns3:mi>e</ns3:mi>
+              
+              <ns3:mi>r</ns3:mi>
+              
+              <ns3:mi>c</ns3:mi>
+              
+              <ns3:mi>o</ns3:mi>
+              
+              <ns3:mi>l</ns3:mi>
+              
+              <ns3:mrow>
+                <ns3:mi>a</ns3:mi>
+                
+                <ns3:mi>t</ns3:mi>
+                
+                <ns3:mi>i</ns3:mi>
+                
+                <ns3:mi>o</ns3:mi>
+                
+                <ns3:mi>n</ns3:mi>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:mrow>
+      </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para> <para>The potential inflows are calibrated against the corresponding current storage. If RG2 cannot take the inflow pot_RG2 completely, the surplus is transferred to pot_RG1. If RG1 cannot take pot_RG1, the surplus is given to gwExcess. According to the model’s concept this variable can be assigned to a specific runoff component. </para>
+    <para>The calculation of water discharge is carried out according to the current storage amount
+      in form of a linear storage-outflow function. The storage retention coefficients (<emphasis
+        role="italic">kRG1</emphasis>, <emphasis role="italic">kRG2</emphasis>), which are
+      considered as the time water rests in the specific storage, are a factor of the current
+      storage volume (<emphasis role="italic">actRG1</emphasis> and <emphasis role="italic"
+        >actRG2</emphasis>) used for the calculation of the groundwater outflow (<emphasis
+          role="italic">outRG1</emphasis> and <emphasis role="italic">outRG2</emphasis>) as follows: </para><para><equation>
+            <mediaobject>
+              <imageobject>
+                <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mi>o</ns3:mi>
+              
+              <ns3:mi>u</ns3:mi>
+              
+              <ns3:mi>t</ns3:mi>
+              
+              <ns3:mi>R</ns3:mi>
+              
+              <ns3:mrow>
+                <ns3:mi>G</ns3:mi>
+                
+                <ns3:mn>1</ns3:mn>
+              </ns3:mrow>
+            </ns3:mrow>
+            
+            <ns3:mo>=</ns3:mo>
+            
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mfrac>
+                  <ns3:mn>1</ns3:mn>
+                  
+                  <ns3:mrow>
+                    <ns3:mrow>
+                      <ns3:mi>g</ns3:mi>
+                      
+                      <ns3:mi>w</ns3:mi>
+                      
+                      <ns3:mi>R</ns3:mi>
+                      
+                      <ns3:mi>G</ns3:mi>
+                      
+                      <ns3:mn>1</ns3:mn>
+                      
+                      <ns3:mi>F</ns3:mi>
+                      
+                      <ns3:mrow>
+                        <ns3:mi>a</ns3:mi>
+                        
+                        <ns3:mi>c</ns3:mi>
+                        
+                        <ns3:mi>t</ns3:mi>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                    
+                    <ns3:mo>×</ns3:mo>
+                    
+                    <ns3:mrow>
+                      <ns3:mi>k</ns3:mi>
+                      
+                      <ns3:mi>R</ns3:mi>
+                      
+                      <ns3:mrow>
+                        <ns3:mi>G</ns3:mi>
+                        
+                        <ns3:mn>1</ns3:mn>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                </ns3:mfrac>
+                
+                <ns3:mo>×</ns3:mo>
+                
+                <ns3:mrow>
+                  <ns3:mi>a</ns3:mi>
+                  
+                  <ns3:mi>c</ns3:mi>
+                  
+                  <ns3:mi>t</ns3:mi>
+                  
+                  <ns3:mi>R</ns3:mi>
+                  
+                  <ns3:mrow>
+                    <ns3:mi>G</ns3:mi>
+                    
+                    <ns3:mn>1 </ns3:mn>
+                  </ns3:mrow>
+                </ns3:mrow>
+              </ns3:mrow>
+              
+              <ns3:mi>[mm]</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+                  
+                </imagedata>
+              </imageobject>
+            </mediaobject>
+          </equation></para>
+      
+    <para><equation>
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center">
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mrow>
+              <ns3:mrow>
+                <ns3:mrow>
+                  <ns3:mi>o</ns3:mi>
+                  
+                  <ns3:mi>u</ns3:mi>
+                  
+                  <ns3:mi>t</ns3:mi>
+                  
+                  <ns3:mi>R</ns3:mi>
+                  
+                  <ns3:mrow>
+                    <ns3:mi>G</ns3:mi>
+                    
+                    <ns3:mn>1</ns3:mn>
+                  </ns3:mrow>
+                </ns3:mrow>
+                
+                <ns3:mo>=</ns3:mo>
+                
+                <ns3:mrow>
+                  <ns3:mrow>
+                    <ns3:mfrac>
+                      <ns3:mn>1</ns3:mn>
+                      
+                      <ns3:mrow>
+                        <ns3:mrow>
+                          <ns3:mi>g</ns3:mi>
+                          
+                          <ns3:mi>w</ns3:mi>
+                          
+                          <ns3:mi>R</ns3:mi>
+                          
+                          <ns3:mi>G</ns3:mi>
+                          
+                          <ns3:mn>2</ns3:mn>
+                          
+                          <ns3:mrow>
+                            <ns3:mi>F</ns3:mi>
+                            
+                            <ns3:mi>a</ns3:mi>
+                            
+                            <ns3:mi>c</ns3:mi>
+                          </ns3:mrow>
+                          
+                          <ns3:mi>t</ns3:mi>
+                        </ns3:mrow>
+                        
+                        <ns3:mo>×</ns3:mo>
+                        
+                        <ns3:mrow>
+                          <ns3:mi>k</ns3:mi>
+                          
+                          <ns3:mi>R</ns3:mi>
+                          
+                          <ns3:mrow>
+                            <ns3:mi>G</ns3:mi>
+                            
+                            <ns3:mn>2</ns3:mn>
+                          </ns3:mrow>
+                        </ns3:mrow>
+                      </ns3:mrow>
+                    </ns3:mfrac>
+                    
+                    <ns3:mo>×</ns3:mo>
+                    
+                    <ns3:mrow>
+                      <ns3:mi>a</ns3:mi>
+                      
+                      <ns3:mi>c</ns3:mi>
+                      
+                      <ns3:mi>t</ns3:mi>
+                      
+                      <ns3:mi>R</ns3:mi>
+                      
+                      <ns3:mrow>
+                        <ns3:mi>G</ns3:mi>
+                        
+                        <ns3:mn>2</ns3:mn>
+                      </ns3:mrow>
+                    </ns3:mrow>
+                  </ns3:mrow>
+                  
+                  <ns3:mi> [mm]</ns3:mi>
+                </ns3:mrow>
+              </ns3:mrow>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+          </imagedata>
+        </imageobject>
+      </mediaobject>
+    </equation> </para> 
+     <para>The groundwater dynamics can be calibrated using parameters <emphasis role="italic"
+       >gwRG1Fact</emphasis> and <emphasis role="italic">gwRG2Fact</emphasis>. </para>
+    <para>Zu weiterführenden Informationen siehe auch <citetitle><xref linkend="Krause_2001"
+        /></citetitle></para>
+  </sect2>
+    <bibliography>
+    <title>Literature</title> 
+      <biblioentry  xml:id="Krause_2001" xreflabel="Krause 2001">
+        <abbrev>Krause 2001</abbrev>
+        <author>
+          <personname>
+          <firstname>P.</firstname>
+          <surname>Krause</surname>
+          </personname>
+          </author>
+          <title>Das hydrologische Modellsystem J2000: Beschreibung und Anwendung in
+          großen Flußeinzugsgebieten</title>
+          <publisher>
+          <publishername>Schriften des Forschungszentrum Jülich: Reihe Umwelt/Environment</publishername>
+          </publisher>
+          <volumenum>Band 29</volumenum>
+         <pubdate>2001</pubdate>
+      </biblioentry>
+    </bibliography>
+</sect1>

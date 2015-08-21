@@ -1,0 +1,5 @@
+#JAMS workspace configuration
+#Fri Mar 06 13:46:35 CET 2009
+persistent=false
+description=Thorntwaite model sample data
+title=Thorntwaite

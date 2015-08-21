@@ -1,0 +1,5 @@
+====%name%====
+:Type: %type%
+:Access: %access%
+:Description: %description%
+:Unit: %unit%

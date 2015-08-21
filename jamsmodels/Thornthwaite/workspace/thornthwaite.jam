@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<model author="USGS" date="2009-03-06 00:00" helpbaseurl="" name="Thornthwaite Model" version="2.6">
+<description><![CDATA[Simple monthly water balance model for demonstration purposes]]></description>
+<var name="workspaceDirectory" value="Thornthwaite"/>
+<launcher>
+<group name="Main">
+<property attribute="workspaceDirectory" component="Thornthwaite Model" description="The directory containing the model's data" length="50" name="Workspace" range="0.0;0.0" type="JAMSDirName"/>
+<property attribute="timeInterval" component="TimeLoop" description="" name="Simulation period" range="0.0;0.0" type="JAMSTimeInterval"/>
+<property attribute="latitude" component="Daylen" description="Latitude of modelling area" name="Latitude" range="0.0;100.0" type="JAMSDouble"/>
+<property attribute="soilMoistStorCap" component="SoilMoisture" description="Storage capacity of soil" name="Soil storage" range="0.0;1000.0" type="JAMSDouble"/>
+<property attribute="runoffFactor" component="Runoff" description="Factor defining how much water will runoff/remain" name="Runoff factor" range="0.0;1.0" type="JAMSDouble"/>
+</group>
+</launcher>
+<contextcomponent class="jams.model.JAMSTemporalContext" name="TimeLoop">
+<var name="timeInterval" value="1960-01-01 00:00 1990-12-01 00:00 2 1"/>
+<var attribute="current" context="Thornthwaite Model" name="current"/>
+<component class="jams.components.gui.JAMSExecInfo" name="JAMSProgress">
+</component>
+<component class="gov.usgs.thornthwaite.Climate" name="ClimateReader">
+<var attribute="precip" context="TimeLoop" name="precip"/>
+<var name="fileName" value="local/thorn.dat"/>
+<var attribute="temp" context="TimeLoop" name="temp"/>
+</component>
+<component class="gov.usgs.thornthwaite.Daylen" name="Daylen">
+<var attribute="current" context="Thornthwaite Model" name="time"/>
+<var attribute="daylength" context="TimeLoop" name="daylength"/>
+<var name="latitude" value="45.033"/>
+</component>
+<component class="gov.usgs.thornthwaite.HamonET" name="HamonET">
+<var attribute="current" context="Thornthwaite Model" name="time"/>
+<var attribute="temp" context="TimeLoop" name="temp"/>
+<var attribute="potET" context="TimeLoop" name="potET"/>
+<var attribute="daylength" context="TimeLoop" name="daylength"/>
+</component>
+<component class="gov.usgs.thornthwaite.SoilMoisture" name="SoilMoisture">
+<var attribute="pmpe" context="TimeLoop" name="pmpe"/>
+<var attribute="precip" context="TimeLoop" name="precip"/>
+<var attribute="actET" context="TimeLoop" name="actET"/>
+<var attribute="dff" context="TimeLoop" name="dff"/>
+<var attribute="temp" context="TimeLoop" name="temp"/>
+<var attribute="potET" context="TimeLoop" name="potET"/>
+<var attribute="prestor" context="TimeLoop" name="prestor" value="150"/>
+<var attribute="soilMoistStor" context="TimeLoop" name="soilMoistStor"/>
+<var name="soilMoistStorCap" value="200.0"/>
+<var attribute="surfaceRunoff" context="TimeLoop" name="surfaceRunoff"/>
+</component>
+<component class="gov.usgs.thornthwaite.Snow" name="Snow">
+<var attribute="snowStorage" context="TimeLoop" name="snowStorage" value="0"/>
+<var attribute="precip" context="TimeLoop" name="precip"/>
+<var attribute="temp" context="TimeLoop" name="temp"/>
+<var attribute="potET" context="TimeLoop" name="potET"/>
+<var attribute="snowMelt" context="TimeLoop" name="snowMelt"/>
+</component>
+<component class="gov.usgs.thornthwaite.Runoff" name="Runoff">
+<var attribute="remain" context="TimeLoop" name="remain" value="150"/>
+<var attribute="precip" context="TimeLoop" name="precip"/>
+<var name="runoffFactor" value="0.1"/>
+<var attribute="runoff" context="TimeLoop" name="runoff"/>
+<var attribute="snowMelt" context="TimeLoop" name="snowMelt"/>
+<var attribute="surfaceRunoff" context="TimeLoop" name="surfaceRunoff"/>
+</component>
+<component class="gov.usgs.thornthwaite.Output" name="Output">
+<var attribute="current" context="Thornthwaite Model" name="time"/>
+<var attribute="runoff" context="TimeLoop" name="runoff"/>
+<var name="fileName" value="thorn.out"/>
+<var attribute="potET" context="TimeLoop" name="potET"/>
+<var attribute="daylength" context="TimeLoop" name="daylength"/>
+<var attribute="snowMelt" context="TimeLoop" name="snowMelt"/>
+<var attribute="soilMoistStor" context="TimeLoop" name="soilMoistStor"/>
+</component>
+<component class="jams.components.gui.TSPlot" name="Runoff Plot">
+<var name="rightAxisInverted" value="true"/>
+<var name="typeLeft" value="0"/>
+<var name="colorRight" value="lightgray"/>
+<var name="colorLeft" value="blue"/>
+<var attribute="precip" context="TimeLoop" name="valueRight"/>
+<var attribute="current" context="Thornthwaite Model" name="time"/>
+<var name="xAxisTitle" value="Time"/>
+<var name="rightAxisTitle" value="Precip [mm]"/>
+<var attribute="runoff" context="TimeLoop" name="valueLeft"/>
+<var name="typeRight" value="1"/>
+<var name="titleLeft" value="Runoff"/>
+<var name="titleRight" value="Precip"/>
+<var name="dateFormat" value="MM/yyyy"/>
+<var name="leftAxisTitle" value="Runoff [mm]"/>
+</component>
+<component class="jams.components.gui.TSPlot" name="PET Plot">
+<var name="rightAxisInverted" value="true"/>
+<var name="typeLeft" value="0"/>
+<var name="colorRight" value="lightgray"/>
+<var name="colorLeft" value="blue"/>
+<var attribute="precip" context="TimeLoop" name="valueRight"/>
+<var attribute="current" context="Thornthwaite Model" name="time"/>
+<var name="xAxisTitle" value="Time"/>
+<var name="rightAxisTitle" value="Precip [mm]"/>
+<var attribute="potET" context="TimeLoop" name="valueLeft"/>
+<var name="typeRight" value="1"/>
+<var name="titleLeft" value="PET"/>
+<var name="titleRight" value="Precip"/>
+<var name="dateFormat" value="MM/yyyy"/>
+<var name="leftAxisTitle" value="PET [mm]"/>
+</component>
+</contextcomponent>
+</model>

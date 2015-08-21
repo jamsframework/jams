@@ -1,0 +1,43 @@
+
+   >>> License Agreement <<<
+   
+   CDA - Class Dependency Analyzer
+
+   1. This program is freeware. All features are enabled.
+      It is provided as binary files only. No source code is included in this
+      distribution.
+
+   2. All copyrights to CDA are exclusively owned by the author - Manfred Duchrow.
+
+   3. You can freely distribute the program as long as you distribute
+      the complete package without changing.
+
+   4. CDA IS DISTRIBUTED "AS IS".
+      NO WARRANTY OF ANY KIND IS EXPRESSED OR IMPLIED. YOU
+      USE AT YOUR OWN RISK. THE AUTHOR WILL NOT BE LIABLE FOR
+      DATA LOSS, DAMAGES, LOSS OF PROFITS OR ANY OTHER KIND
+      OF LOSS WHILE USING OR MISUSING THIS SOFTWARE.
+
+   5. You may not use, copy, emulate, clone, rent, lease, sell, modify,
+      decompile, disassemble, otherwise reverse engineer, or transfer the
+      licensed program, or any subset of the licensed program, except as
+      provided for in this agreement.  Any such unauthorized use shall
+      result in immediate and automatic termination of this license and
+      may result in criminal and/or civil prosecution.
+
+      All rights not expressly granted here are reserved by Manfred Duchrow.
+
+   6. The terms of this license, as well as the CDA interface design
+      are subjects of changes in future versions of CDA.
+
+   7. Installing and using CDA signifies acceptance of these terms
+      and conditions of the license.
+
+   8. If you do not agree with the terms of this license you must remove
+      all CDA files from your storage devices and cease to use the
+      product.
+
+      Thank you for using CDA.
+                                        Manfred Duchrow
+                                        feedback@programmers-friend.org
+

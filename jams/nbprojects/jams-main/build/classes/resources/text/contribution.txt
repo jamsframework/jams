@@ -1,0 +1,20 @@
+Development:
+Sven Kralisch, Christian Fischer, Christian Schwartze,
+Robert Riedel, Christin Michel, Ronny Berndt
+
+Libraries:
+Apache Commons (http://commons.apache.org)
+GeoTools (http://www.geotools.org)
+GeoAPI (http://www.geoapi.org)
+JTS Topology Suite (http://www.vividsolutions.com/jts)
+Gluegen (http://jogamp.org/gluegen/www)
+JOGL (http://jogamp.org/jogl/www)
+JScience (http://jscience.org)
+JFreeChart (http://www.jfree.org/jfreechart)
+H2 Database (http://www.h2database.com)   
+JAMA (http://math.nist.gov/javanumerics/jama)  
+TROVE (http://trove.starlight-systems.com)
+Java Unified Expression Language (http://juel.sourceforge.net)
+WorldWind (http://worldwind.arc.nasa.gov)
+... and others
+                                                       

@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
+  <title>CalcRelativeHumidity</title>
+  <subtitle>A component for calculation of relative humidity from air temperature and absolute
+    humidity. </subtitle>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry nameend="c2" namest="c1">Metadata</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>classification</entry>
+          <entry>j3k.inputData</entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+  <sect2>
+    <title>Variables</title>
+  <informaltable>
+    <tgroup cols="2">
+      <colspec colname="c1" colnum="1" colwidth="1*"/>
+      <colspec colname="c2" colnum="2" colwidth="3*"/>
+      <thead>
+        <row>
+          <entry>Name</entry>
+          <entry>Description</entry>
+        </row>
+      </thead>
+      <tbody>
+        <row>
+          <entry>tmean</entry>
+          <entry>air temperature [°C]</entry>
+        </row>
+        <row>
+          <entry>ahum</entry>
+          <entry>absolute humidity [g/m³]</entry>
+        </row>
+        <row>
+          <entry>rhum</entry>
+          <entry>relative humidity [%]state variable relative humidity</entry>
+        </row>        
+      </tbody>
+    </tgroup>
+  </informaltable>
+  </sect2>
+  <sect2>
+    <title>Component Description</title>
+    <para>The relative humidity is calculated using the absolute humidity  (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>a</ns3:mi>
+            <ns3:mi>h</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>u</ns3:mi>
+              <ns3:mi>m</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) and the humidity. First, the saturation vapor pressure  (<inlineequation>
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <msub>
+                <mi>e</mi>
+                <mi>s</mi>
+              </msub>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaaeaaaaaaaaa8qacaWGLbWdamaaBaaaleaapeGaam4CaaWdaeqaaaaa@3850@</annotation>
+          </semantics>
+        </math>
+      </inlineequation>) is calculated, then the maximum humidity and relative humidity is
+      calculated as a relation between absolute and relative humidity : </para>
+    <para>
+      <equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <msub>
+                <mi>e</mi>
+                <mi>s</mi>
+              </msub>
+              <mo>=</mo>
+              <mn>0.6108</mn>
+              <mo>&#x00B7;</mo>
+              <msup>
+                <mtext>e</mtext>
+                <mrow>
+                  <mrow>
+                    <mo>(</mo>
+                    <mrow>
+                      <mfrac>
+                        <mrow>
+                          <mn>17.27</mn>
+                          <mo>&#x00B7;</mo>
+                          <mi>t</mi>
+                          <mi>m</mi>
+                          <mi>e</mi>
+                          <mi>a</mi>
+                          <mi>n</mi>
+                        </mrow>
+                        <mrow>
+                          <mn>237.3</mn>
+                          <mo>+</mo>
+                          <mi>t</mi>
+                          <mi>m</mi>
+                          <mi>e</mi>
+                          <mi>a</mi>
+                          <mi>n</mi>
+                        </mrow>
+                      </mfrac>
+                    </mrow>
+                    <mo>)</mo>
+                  </mrow>
+                </mrow>
+              </msup>
+              <mtext>&#x2003;</mtext>
+              <mo stretchy="false">[</mo>
+              <mtext>kPa</mtext>
+              <mo stretchy="false">]</mo>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaaeaaaaaaaaa8qacaWGLbWdamaaBaaaleaapeGaam4CaaWdaeqaaOWdbiabg2da9iaaicdacaGGUaGaaGOnaiaaigdacaaIWaGaaGioaiaacElacaqGLbWdamaaCaaaleqabaWdbmaabmaapaqaa8qadaWcaaWdaeaapeGaaGymaiaaiEdacaGGUaGaaGOmaiaaiEdacaGG3cGaamiDaiaad2gacaWGLbGaamyyaiaad6gaa8aabaWdbiaaikdacaaIZaGaaG4naiaac6cacaaIZaGaey4kaSIaamiDaiaad2gacaWGLbGaamyyaiaad6gaaaaacaGLOaGaayzkaaaaaOWdaiaaywW7peGaai4waiaabUgacaqGqbGaaeyyaiaac2faaaa@5B21@</annotation>
+          </semantics>
+        </math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation></para><para>The maximum humidity (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>m</ns3:mi>
+            <ns3:mi>h</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>u</ns3:mi>
+              <ns3:mi>m</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) results from this according to: </para><para><equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>m</mi>
+              <mi>h</mi>
+              <mi>u</mi>
+              <mi>m</mi>
+              <mo>=</mo>
+              <msub>
+                <mi>e</mi>
+                <mi>s</mi>
+              </msub>
+              <mo>&#x22C5;</mo>
+              <mn>10</mn>
+              <mo>&#x22C5;</mo>
+              <mfrac>
+                <mrow>
+                  <mn>216.7</mn>
+                </mrow>
+                <mrow>
+                  <mi>t</mi>
+                  <mi>m</mi>
+                  <mi>e</mi>
+                  <mi>a</mi>
+                  <mi>n</mi>
+                  <mo>+</mo>
+                  <mn>273.15</mn>
+                </mrow>
+              </mfrac>
+              <msup>
+                <mrow>
+                  <mtext>&#x00A0;[g/m</mtext>
+                </mrow>
+                <mtext>3</mtext>
+              </msup>
+              <mtext>]</mtext>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamyBaiaadIgacaWG1bGaamyBaiabg2da9iaadwgadaWgaaWcbaGaam4CaaqabaGccqGHflY1caaIXaGaaGimaiabgwSixpaalaaabaGaaGOmaiaaigdacaaI2aGaaiOlaiaaiEdaaeaacaWG0bGaamyBaiaadwgacaWGHbGaamOBaiabgUcaRiaaikdacaaI3aGaaG4maiaac6cacaaIXaGaaGynaaaacaqGGaGaae4waiaabEgacaqGVaGaaeyBamaaCaaaleqabaGaae4maaaakiaab2faaaa@5670@</annotation>
+          </semantics>
+        </math>
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation> </para><para>Finally, the relative humidity (<inlineequation>
+        <ns3:math display="inline">
+          <ns3:mrow>
+            <ns3:mi>r</ns3:mi>
+            <ns3:mi>h</ns3:mi>
+            <ns3:mrow>
+              <ns3:mi>u</ns3:mi>
+              <ns3:mi>m</ns3:mi>
+            </ns3:mrow>
+          </ns3:mrow>
+        </ns3:math>
+      </inlineequation>) is calculated according to:</para><para><equation>
+        <mediaobject>
+          <imageobject>
+            <imagedata align="center">
+        <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <semantics>
+            <mrow>
+              <mi>r</mi>
+              <mi>h</mi>
+              <mi>u</mi>
+              <mi>m</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>a</mi>
+                  <mi>h</mi>
+                  <mi>u</mi>
+                  <mi>m</mi>
+                </mrow>
+                <mrow>
+                  <mi>m</mi>
+                  <mi>h</mi>
+                  <mi>u</mi>
+                  <mi>m</mi>
+                </mrow>
+              </mfrac>
+              <mo>&#x22C5;</mo>
+              <mn>100</mn>
+              <mtext>&#x00A0;&#x00A0;[%]</mtext>
+            </mrow>
+            <annotation encoding="MathType-MTEF"
+              >MathType@MTEF@5@5@+=feaagCart1ev2aaatCvAUfeBSjuyZL2yd9gzLbvyNv2CaerbuLwBLnhiov2DGi1BTfMBaeXatLxBI9gBaerbd9wDYLwzYbItLDharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepC0xbbL8F4rqqrFfpeea0xe9Lq=Jc9vqaqpepm0xbba9pwe9Q8fs0=yqaqpepae9pg0FirpepeKkFr0xfr=xfr=xb9adbaqaaeGaciGaaiaabeqaamaabaabaaGcbaGaamOCaiaadIgacaWG1bGaamyBaiabg2da9maalaaabaGaamyyaiaadIgacaWG1bGaamyBaaqaaiaad2gacaWGObGaamyDaiaad2gaaaGaeyyXICTaaGymaiaaicdacaaIWaGaaeiiaiaabccacaqGBbGaaeyjaiaab2faaaa@4A89@</annotation>
+          </semantics>
+        </math>
+              
+            </imagedata>
+          </imageobject>
+        </mediaobject>
+      </equation>
+      </para></sect2>
+</sect1>

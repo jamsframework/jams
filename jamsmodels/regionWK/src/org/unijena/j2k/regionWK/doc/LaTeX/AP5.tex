@@ -1,0 +1,45 @@
+\section{Methoden zur deskriptiven statistischen Auswertung von Zeitreihen}
+
+\subsubsection*{Sourcen:} 	org.unijena.regionWK.Statistik.DeskriptiveStatistik.java
+\subsubsection*{Beschreibung:}
+Das Paket DeskriptiveStatistik ermöglicht die Berechnung von Lageparametern, Streuungsparametern, Formparametern und Extremwerten.
+
+Folgende Lageparameter können berechnet werden:
+\begin{itemize}
+ \item Arithmetisches Mittel,
+ \item Median,
+ \item erstes Quartil,
+ \item drittes Quartil.
+ \end{itemize}
+ 
+Zur Beschreibung der Streuung der Zeitreihe stehen folgende Maße zur Verfügung:
+\begin{itemize}
+ \item Spannweite,
+ \item Varianz,
+ \item Standardabweichung,
+ \item durchschnittliche Abweichung.
+\end{itemize}
+
+Formparameter beschreiben die Form der Verteilungsfunktion einer Zeitreihe und deren Abweichung von der Normalverteilung.
+
+Über die Schiefe ($g$) wird beschrieben ob und wie stark eine Verteilung in ihrer Symmetrie von der Normalverteilung abweicht. 
+
+\begin{tabular}{ll}
+Es gilt: &  \\ 
+$g = 0$  & für symmetrische Verteilungen (Median = Mittelwert),\\
+$g > 0$  & für linkssteile (= rechtsschiefe) Verteilungen ($\mathrm{Median < Mittelwert}$), \\
+$g < 0$  & für rechtssteile (= linksschiefe) Verteilungen ($\mathrm{Median > Mittelwert}$). \\
+\end{tabular}\\ 
+
+Der Exzess ($Ez$) beschreibt ob und wie stark eine Verteilung hinsichtlich ihrer Wölbung von der Normalverteilung (Exzess = 3) abweicht.
+
+\begin{tabular}{ll}
+Es gilt: &  \\ 
+$Ez = 0$  & gleiche Wölbung wie Normalverteilung,\\
+$Ez > 0$  & geringere Wölbung als Normalverteilung, \\
+$Ez < 0$  & stärkere Wölbung als Normalverteilung. \\
+\end{tabular}\\ 
+
+Die Extrema einer Zeitreihe werden durch die Berechnung von Minimum und Maximum abgebildet.
+
+

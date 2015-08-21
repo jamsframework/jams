@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 xmlns="http://docbook.org/ns/docbook" version="5.0">
+<title>org.jams.j2k.s_n.J2KNSoilLayer</title>
+<subtitle/>
+<informaltable><tgroup cols="3">
+<colspec colname="c1" colnum="1" colwidth="1.0*"/>
+<colspec colname="c2" colnum="2" colwidth="5.74*"/>
+<thead>
+<row>
+<entry namest="c1" nameend="c2">Metainformationen</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry>Komponente</entry>
+<entry namest="c2" nameend="newCol3">J2KNSoilLayer</entry>
+</row>
+<row>
+<entry>Modellprozess</entry>
+<entry namest="c2" nameend="newCol3">bitte ausfuellen</entry>
+</row>
+<row>
+<entry>Paket</entry>
+<entry namest="c2" nameend="newCol3">package org.jams.j2k.s_n</entry>
+</row>
+<row>
+<entry>Autor</entry>
+<entry namest="c2" nameend="newCol3">Manfred Fink</entry>
+</row>
+<row>
+<entry>Version</entry>
+<entry namest="c2" nameend="newCol3">1.0</entry>
+</row>
+<row>
+<entry>Modifikationsdatum</entry>
+<entry namest="c2" nameend="newCol3">2010-11-22</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+<informaltable>
+<tgroup cols="7">
+<colspec colname="c1" colnum="1" colwidth="1.0*"/>
+<colspec colname="newCol2" colnum="2" colwidth="2.96*"/>
+<colspec colname="c2" colnum="3" colwidth="1.15*"/>
+<colspec colname="newCol4" colnum="4" colwidth="1.23*"/>
+<colspec colname="newCol5" colnum="5" colwidth="1.1*"/>
+<colspec colname="newCol6" colnum="6" colwidth="1.25*"/>
+<colspec colname="newCol7" colnum="7" colwidth="1.28*"/>
+<thead>
+<row>
+<entry namest="c1" nameend="newCol7">Variablen</entry>
+</row>
+<row>
+<entry>Variable</entry>
+<entry>Beschreibung</entry>
+<entry>Einheit</entry>
+<entry>Wertebereich</entry>
+<entry>Datentyp</entry>
+<entry>Variablentyp</entry>
+<entry>Defaultwert</entry>
+</row>
+</thead>
+<tbody>
+
+<row>
+<entry>area</entry>
+<entry>attribute area</entry>
+<entry>m^2</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Layer</entry>
+<entry> number of soil layers</entry>
+<entry>-</entry>
+<entry>0.0...100.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>layerdepth</entry>
+<entry>depth of soil layer</entry>
+<entry>cm</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>totaldepth</entry>
+<entry>depth of soil profile</entry>
+<entry>cm</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>rootdepth</entry>
+<entry>in m actual depth of roots</entry>
+<entry>m</entry>
+<entry>0.0...100.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>soil_bulk_density</entry>
+<entry>soil bulk density</entry>
+<entry>kg*dm^3^-1</entry>
+<entry>0.0...20.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sat_LPS</entry>
+<entry>actual LPS in portion of sto_LPS soil water content</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sat_MPS</entry>
+<entry>actual MPS in portion of sto_MPS soil water content</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>stohru_MPS</entry>
+<entry>maximum MPS (Middle Pore Storage) soil water content</entry>
+<entry>L</entry>
+<entry>0.0...2000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>stohru_LPS</entry>
+<entry>maximum LPS (Large Pore Storage) soil water content</entry>
+<entry>L</entry>
+<entry>0.0...2000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>stohru_FPS</entry>
+<entry>maximum FPS (Fine Pore Storage) soil water content</entry>
+<entry>L</entry>
+<entry>0.0...2000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Soil_Temp_Layer</entry>
+<entry>soil temperature in layerdepth</entry>
+<entry>°C</entry>
+<entry>-70.0...70.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>C_org</entry>
+<entry>portion of organic Carbon in soil</entry>
+<entry>%</entry>
+<entry>0.0...100.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>NO3_Pool</entry>
+<entry>NO3-Pool, N content in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>NH4_Pool</entry>
+<entry>NH4-Pool, N content in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>N_activ_pool</entry>
+<entry>N-Organic Pool with reactive organic matter, N content in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>N_stabel_pool</entry>
+<entry>N-Organic Pool with stable organic matter, N content in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sN_activ_pool</entry>
+<entry>sum of N-Organic Pool with reactive organic matter, N content in the entire soil profile</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sN_stabel_pool</entry>
+<entry>sum of N-Organic Pool with stable organic matter, N content in the entire soil profile</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1.0E7</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sNO3_Pool</entry>
+<entry>sum of NO3-Pool, N content in the entire soil profile</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sNH4_Pool</entry>
+<entry>sum of NH4-Pool, N content in the entire soil profile</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sNResiduePool</entry>
+<entry>sum of NResiduePool, N content in the entire soil profile</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sinterflowNabs</entry>
+<entry>sum of soil layers of N in interflow absolute leaving the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E8</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sinterflowN</entry>
+<entry>sum of soil layers of N in interflow leaving the HRU</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Residue_pool</entry>
+<entry>Residue biomass in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>N_residue_pool_fresh</entry>
+<entry>N-Organic fresh Pool from Residue, N content in layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>aEP_h</entry>
+<entry>actual evaporation in Layer</entry>
+<entry>L</entry>
+<entry>0.0...1.0E8</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>w_layer_diff</entry>
+<entry>mps diffusion between layers value</entry>
+<entry>L</entry>
+<entry>0.0...1.0E8</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>RD1_out</entry>
+<entry>surface runoff leaving the HRU</entry>
+<entry>L</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>RD2_out</entry>
+<entry>interflow leaving the HRU in every layer</entry>
+<entry>L</entry>
+<entry>0.0...1.0E8</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>D_perco</entry>
+<entry>percolation leaving the HRU</entry>
+<entry>L</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Volati_trans</entry>
+<entry>voltalisation rate from NH4_Pool in N leaving the HRU</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>NH4inp</entry>
+<entry>NH4 fertilizer rate in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Nitri_trans</entry>
+<entry>nitrification rate from  NO3_Pool in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Denit_trans</entry>
+<entry>denitrification rate from  NO3_Pool in N leaving the HRU</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>SurfaceN</entry>
+<entry>Nitrate in surface runoff in N leaving the HRU</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>InterflowN</entry>
+<entry>Nitrate in interflow in N leaving the HRU for each layer</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>PercoN</entry>
+<entry>Nitrate in percolation in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>SurfaceNabs</entry>
+<entry>Nitrate in surface runoff in N absolute leaving the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>InterflowNabs</entry>
+<entry>Nitrate in interflow in N absolute leaving the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>PercoNabs</entry>
+<entry>Nitrate in percolation in N absolute leaving the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>SurfaceN_in</entry>
+<entry>Nitrate in surface runoff added to HRU layer in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>InterflowN_in</entry>
+<entry>Nitrate in interflow in added to HRU layer in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>BioNoptAct</entry>
+<entry>potential nitrogen content of plants in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>BioNAct</entry>
+<entry>actual nitrate nitrogen content of plants in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>actnup</entry>
+<entry>actual nitrate uptake of plants in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>infiltration_hor</entry>
+<entry>intfiltration poritions for the single horizonts</entry>
+<entry>L</entry>
+<entry>0.0...1.0E7</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>perco_hor</entry>
+<entry>percolation out ouf the single horizonts</entry>
+<entry>L</entry>
+<entry>0.0...1.0E7</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>actETP_h</entry>
+<entry>percolation out ouf the single horizonts</entry>
+<entry>L</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>fertNO3</entry>
+<entry> Nitrate input due to Fertilisation in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>fertNH4</entry>
+<entry> Ammonium input due to Fertilisation in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>fertstableorg</entry>
+<entry> Stable organig N input due to Fertilisation in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>fertactivorg</entry>
+<entry> Activ organig N input due to Fertilisation in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sum_Ninput</entry>
+<entry>Sum of N input due fertilisation and deposition in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>fertorgNfresh</entry>
+<entry>Current organic fertilizer amount added to residue pool</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...100000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>inp_biomass</entry>
+<entry> Input of plant residues</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...1000000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>inpN_biomass</entry>
+<entry>Nitrogen input of plant residues in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>precip</entry>
+<entry>precipitation</entry>
+<entry>mm</entry>
+<entry>0.0...1000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>time</entry>
+<entry>Current time</entry>
+<entry></entry>
+<entry>0.0...0.0</entry>
+<entry>jams.data.JAMSCalendar</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>dormancy</entry>
+<entry>indicates dormancy of plants</entry>
+<entry></entry>
+<entry>0.0...0.0</entry>
+<entry>jams.data.JAMSBoolean</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>App_time</entry>
+<entry>time since the last PIADIN application</entry>
+<entry>d</entry>
+<entry>0.0...400.0</entry>
+<entry>jams.data.JAMSInteger</entry>
+<entry>READWRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>nmin</entry>
+<entry>Mineral nitrogen content in the soil profile down to 60 cm depth in N</entry>
+<entry>kg*ha^-1</entry>
+<entry>0.0...10000.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>root_h</entry>
+<entry>Indicates whether roots can penetrate or not the soil layer</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSDoubleArray</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sedi_in</entry>
+<entry>Anmount of sediments entering the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>sedi_out</entry>
+<entry>Anmount of sediments leaving the HRU</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>NH4_in</entry>
+<entry>NH4 in surface runoff added to HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>residue_in</entry>
+<entry>Residue-N in surface runoff added to HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>activ_in</entry>
+<entry>Activ-N in surface runoff added to HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>stabel_in</entry>
+<entry>Stable-N in surface runoff added to HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>NH4_out</entry>
+<entry>NH4 in surface runoff leaving the HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>residue_out</entry>
+<entry>Residue-N in surface runoff leaving the HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>activ_out</entry>
+<entry>Activ-N in surface runoff leaving the HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>stabel_out</entry>
+<entry>Stable-N in surface runoff leaving the HRU in N</entry>
+<entry>kg</entry>
+<entry>0.0...1.0E9</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>WRITE</entry>
+<entry>%NULL%</entry>
+</row>
+<row>
+<entry>Beta_trans</entry>
+<entry>rate constant between N_activ_pool and N_stabel_pool = 0.00001</entry>
+<entry>-</entry>
+<entry>1.0E-5...1.0E-5</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.00001</entry>
+</row>
+<row>
+<entry>Beta_min</entry>
+<entry>rate factor between N_activ_pool and NO3_Pool to be calibrated</entry>
+<entry>-</entry>
+<entry>0.0010...0.0030</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.002</entry>
+</row>
+<row>
+<entry>Beta_rsd</entry>
+<entry>rate factor between Residue_pool and NO3_Pool to be calibrated</entry>
+<entry>-</entry>
+<entry>0.1...0.02</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.03</entry>
+</row>
+<row>
+<entry>Beta_NO3</entry>
+<entry>percolation coefitient to calibrate</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.2</entry>
+</row>
+<row>
+<entry>Beta_Ndist</entry>
+<entry>nitrogen uptake distribution parameter to calibrate</entry>
+<entry>-</entry>
+<entry>1.0...15.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>1</entry>
+</row>
+<row>
+<entry>infil_conc_factor</entry>
+<entry>infiltration bypass parameter to calibrate = 0 - 1</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>1</entry>
+</row>
+<row>
+<entry>denitfac</entry>
+<entry>denitrfcation saturation factor to calibrate</entry>
+<entry>-</entry>
+<entry>0.7...1.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.91</entry>
+</row>
+<row>
+<entry>deposition_factor</entry>
+<entry>concentration of Nitrate in rain in N</entry>
+<entry>kg*mm^-1*ha^-1</entry>
+<entry>0.0...0.1</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>0.03</entry>
+</row>
+<row>
+<entry>enrichment</entry>
+<entry>Enrichment factor for sediment bounded N-Pools</entry>
+<entry>-</entry>
+<entry>1.0...10.0</entry>
+<entry>jams.data.JAMSDouble</entry>
+<entry>READ</entry>
+<entry>1</entry>
+</row>
+<row>
+<entry>piadin</entry>
+<entry>Indicates PIADIN application</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSInteger</entry>
+<entry>READ</entry>
+<entry>0</entry>
+</row>
+<row>
+<entry>opti</entry>
+<entry>Indicates fertilazation optimization with plant demand</entry>
+<entry>-</entry>
+<entry>0.0...1.0</entry>
+<entry>jams.data.JAMSInteger</entry>
+<entry>READ</entry>
+<entry>0</entry>
+</row>
+ </tbody>
+</tgroup>
+</informaltable>
+</sect1>

@@ -1,0 +1,79 @@
+<!DOCTYPE html
+	PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <meta name="author" content="haran" />
+    <meta name="generator" content="JAMS" />
+
+    <link rel="stylesheet" type="text/css" href="/fileadmin/Geoinformatik/JAMS/prosimii-screen-alt.css" title="Prosimii" />
+    <link rel="schema.dc" href="http://purl.org/metadata/dublin_core_elements" />
+
+	<title>JAMS: System</title>
+	<meta name="generator" content="TYPO3 3.8 CMS" />
+
+	<script type="text/javascript">
+		/*<![CDATA[*/
+	<!--
+		browserName = navigator.appName;
+		browserVer = parseInt(navigator.appVersion);
+		var msie4 = (browserName == "Microsoft Internet Explorer" && browserVer >= 4);
+		if ((browserName == "Netscape" && browserVer >= 3) || msie4 || browserName=="Konqueror" || browserName=="Opera") {version = "n3";} else {version = "n2";}
+			// Blurring links:
+		function blurLink(theObject)	{	//
+			if (msie4)	{theObject.blur();}
+		}
+		
+	// -->
+		/*]]>*/
+	</script>
+
+
+</head>
+<body bgcolor="#FFFFFF">
+
+
+    <!-- ##### Header ##### -->
+
+    <div id="header">
+      <div class="superHeader">
+      </div>
+
+      <div class="midHeadergfx">
+	<img src="/fileadmin/Geoinformatik/JAMS/gfx/JAMSklein.gif">
+      </div>
+
+      <div class="midHeader">
+        <h1 class="headerTitle" lang="la"></h1>
+        <div class="headerSubTitle">{Jena Adaptable Modelling System}</div>
+
+        <div class="headerLinks">
+
+          <a href="http://www.uni-jena.de" target="_blank">Friedrich-Schiller-Universit&auml;t Jena &laquo;</a>
+          <a href="http://www.geogr.uni-jena.de" target="_blank">Institut f&uuml;r Geographie &laquo;</a>
+        </div>
+      </div>
+
+      <div class="subHeader">
+	<a href="/" onfocus="blurLink(this);">JAMS home</a>
+
+      </div>
+      <div class="headerFlags">
+	<!--#####flag2#####--><!--#####flag2#####-->
+      </div>
+
+    </div>
+
+<h1><p style='line-height:3px;margin-left:20px;'>JAMS components in %jar%</h1></p>
+<table border="0" cellpadding="10" width="100%">
+<tr id="footer"><td><font size="+1">Component list</font></td><td width="100%"><font size="+1">Details</font></td></tr>
+<tr><td valign="top">%complist%</td><td valign="top">%compdesc%</td></tr>
+</table>
+
+    <div id="footer">
+      <strong><a href="http://www.geoinf.uni-jena.de/4953.0.html">Impressum</a></strong>
+    </div>
+  
+</body>
+</html>

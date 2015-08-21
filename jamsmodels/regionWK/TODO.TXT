@@ -1,0 +1,6 @@
+topologie rausziehen
+Niederschlagskorrektur integrieren
+
+TSReader:
+- Metadaten sauber verarbeiten
+- separate Komponenten für die Auswertung von x,y-Werten (Init*DataRader)

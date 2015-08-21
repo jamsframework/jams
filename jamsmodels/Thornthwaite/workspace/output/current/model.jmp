@@ -1,0 +1,36 @@
+#JAMS-Modellparameterdatei
+#User: nsk
+#Model: Thornthwaite Model
+#Mon Oct 05 18:32:23 CEST 2009
+Runoff\ Plot.typeLeft=0
+Runoff\ Plot.titleLeft=Runoff
+SoilMoisture.soilMoistStorCap=200.0
+Runoff\ Plot.xAxisTitle=Time
+PET\ Plot.colorLeft=blue
+Runoff\ Plot.rightAxisInverted=true
+PET\ Plot.typeRight=1
+ClimateReader.fileName=local/thorn.dat
+Runoff\ Plot.rightAxisTitle=Precip [mm]
+PET\ Plot.typeLeft=0
+Runoff.remain=150
+PET\ Plot.dateFormat=MM/yyyy
+Runoff\ Plot.colorLeft=blue
+Runoff\ Plot.typeRight=1
+Runoff.runoffFactor=0.1
+SoilMoisture.prestor=150
+Daylen.latitude=45.033
+Runoff\ Plot.dateFormat=MM/yyyy
+PET\ Plot.leftAxisTitle=PET [mm]
+Snow.snowStorage=0
+Output.fileName=thorn.out
+Runoff\ Plot.titleRight=Precip
+Runoff\ Plot.leftAxisTitle=Runoff [mm]
+TemporalContext.timeInterval=1960-01-01 00\:00 1990-12-01 00\:00 2 1
+PET\ Plot.rightAxisInverted=true
+PET\ Plot.colorRight=lightgray
+PET\ Plot.titleLeft=PET
+PET\ Plot.rightAxisTitle=Precip [mm]
+Thornthwaite\ Model.workspaceDirectory=D\:\\jamsmodels\\Thornthwaite\\workspace
+PET\ Plot.titleRight=Precip
+PET\ Plot.xAxisTitle=Time
+Runoff\ Plot.colorRight=lightgray
