@@ -233,7 +233,11 @@ public class HTTPClient {
             } else {
                 location = new File(location, "unnamed");
             }
-
+            //do it again because file can also be a directory
+            if (location.getParentFile() != null){
+                FileTools.assertDirectory(location.getParentFile().getAbsolutePath());
+            }
+            
             FileTools.streamToFile(location, is);
         }
         return location;
