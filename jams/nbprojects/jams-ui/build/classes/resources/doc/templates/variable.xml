@@ -1,9 +1,0 @@
-<row>
-    <entry>%name%</entry>
-    <entry>%description%</entry>
-    <entry>%unit%</entry>
-    <entry>%lowerBound%...%upperBound%</entry>
-    <entry>%type%</entry>
-    <entry>%access%</entry>
-    <entry>%defaultValue%</entry>
-</row>

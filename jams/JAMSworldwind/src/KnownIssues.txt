@@ -1,2 +1,0 @@
--Anzeigefehler unter Mac OS X - JDK 7 Update 40
-    WorldWindWindow in linker unterer Ecke bis zum Resize des Fensters
