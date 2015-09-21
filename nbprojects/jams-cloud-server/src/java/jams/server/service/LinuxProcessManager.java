@@ -115,6 +115,7 @@ public class LinuxProcessManager extends AbstractProcessManager {
             "-Xms128M", 
             "-Xmx"+DEFAULT_MAX_MEMORY, 
             "-Dsun.java2d.d3d=false", 
+            "-Djava.awt.headless=true",
             //"-Xbootclasspath/a:$(find "+"lib -name \\*jar | awk {'sub(/$/,\":\",$1); printf $1'})",
             "-classpath",
             "" + runnableFile + ":lib/*:lib/lib/*",
