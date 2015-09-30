@@ -1,2 +1,0 @@
-* umrechnen auf gehalte pro s ! 
-* da p_content in mg/100g soil pro timespace
