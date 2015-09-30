@@ -1,5 +1,5 @@
 /*
- * User.java
+ * JobState.java
  * Created on 01.03.2014, 21:30:28
  *
  * This file is part of JAMS

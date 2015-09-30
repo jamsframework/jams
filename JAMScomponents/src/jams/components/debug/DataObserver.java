@@ -29,10 +29,10 @@ import jams.model.*;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 @JAMSComponentDescription(title = "Title",
-author = "Author",
-description = "Description",
-date = "YYYY-MM-DD",
-version = "1.0_0")
+        author = "Author",
+        description = "Description",
+        date = "YYYY-MM-DD",
+        version = "1.0_0")
 public class DataObserver extends JAMSComponent {
 
     /*
@@ -40,6 +40,10 @@ public class DataObserver extends JAMSComponent {
      */
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ)
     public Attribute.Double[] doubleAttribs;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            defaultValue = "false")
+    public Attribute.Boolean printValues;
 
     /*
      * Component run stages
@@ -50,22 +54,24 @@ public class DataObserver extends JAMSComponent {
 
     private String print(JAMSData[] values) {
         String s = "{";
-        
+
         if (values.length > 0) {
             s += values[0];
         }
-        
+
         for (int i = 1; i < values.length; i++) {
             s += " " + values[i];
         }
-        
+
         s += "}";
         return s;
     }
-    
+
     @Override
     public void run() {
-        getModel().getRuntime().println(print(doubleAttribs));
+        if (printValues.getValue()) {
+            getModel().getRuntime().println(print(doubleAttribs));
+        }
     }
 
     @Override
