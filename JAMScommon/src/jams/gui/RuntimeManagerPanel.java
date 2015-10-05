@@ -28,15 +28,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -46,10 +49,12 @@ import javax.swing.event.ListSelectionListener;
  */
 public class RuntimeManagerPanel extends JPanel {
 
+    private final static int UPDATE_INTERVAL_MILLIS = 1000;
     private JList runtimeList;
     private DefaultListModel listModel = new DefaultListModel();
     private JButton stopButton;
     private JPanel buttonPanel;
+    private transient ScheduledExecutorService exec;
 
     public RuntimeManagerPanel() {
 
@@ -121,8 +126,9 @@ public class RuntimeManagerPanel extends JPanel {
                 RuntimeManager.RuntimeInfo rtInfo = (RuntimeManager.RuntimeInfo) arg;
 
                 if (rtInfo.getEndTime() == null) {
-                    if (!listModel.contains(rtInfo))
+                    if (!listModel.contains(rtInfo)) {
                         listModel.addElement(rtInfo);
+                    }
                 } else {
 //                    int pos = listModel.lastIndexOf(rtInfo);
 //                    listModel.removeElement(rtInfo);
@@ -131,6 +137,26 @@ public class RuntimeManagerPanel extends JPanel {
                 }
             }
         });
+
+        exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        int i = runtimeList.getSelectedIndex();
+                        Object[] entries = listModel.toArray();
+                        listModel.removeAllElements();
+                        for (Object o : entries) {
+                            listModel.addElement(o);
+                        }
+                        runtimeList.setSelectedIndex(i);
+                    }
+                });
+            }
+        }, 0, UPDATE_INTERVAL_MILLIS, TimeUnit.MILLISECONDS);
 
         JScrollPane listScrollPane = new JScrollPane(runtimeList);
         this.add(listScrollPane, BorderLayout.CENTER);

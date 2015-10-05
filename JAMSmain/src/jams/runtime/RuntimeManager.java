@@ -31,7 +31,7 @@ import java.util.Observer;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  *
- * This singleton class is used to mangage all JAMSRuntime objects that are 
+ * This singleton class is used to mangage all JAMSRuntime objects that are
  * currently executing a model
  */
 public class RuntimeManager extends Observable {
@@ -44,6 +44,7 @@ public class RuntimeManager extends Observable {
 
     /**
      * Returns the singleton RuntimeManager instance
+     *
      * @return A RuntimeManager object
      */
     public static RuntimeManager getInstance() {
@@ -55,6 +56,7 @@ public class RuntimeManager extends Observable {
 
     /**
      * Adds a JAMSRuntime object
+     *
      * @param runtime A JAMSRuntime object
      */
     public void addRuntime(JAMSRuntime runtime) {
@@ -75,7 +77,7 @@ public class RuntimeManager extends Observable {
             public void update(Observable o, Object arg) {
 
                 JAMSRuntime rt = (JAMSRuntime) o;
-                if (rt.getState() == JAMSRuntime.STATE_STOP || rt.getState() == JAMSRuntime.STATE_PAUSE ) {
+                if (rt.getState() == JAMSRuntime.STATE_STOP || rt.getState() == JAMSRuntime.STATE_PAUSE) {
                     removeRuntime(rt);
                 }
             }
@@ -95,6 +97,7 @@ public class RuntimeManager extends Observable {
 
     /**
      * Returns number of currently managed JAMSRuntime instances
+     *
      * @return The number of currently managed JAMSRuntime instances
      */
     public int getNumberofInstances() {
@@ -112,29 +115,41 @@ public class RuntimeManager extends Observable {
             this.runtime = runtime;
         }
 
+        private String getProgressString() {
+            long max = runtime.getModel().getProgress()[1];
+            long cur = runtime.getModel().getProgress()[0];
+
+            if (max == 0) {
+                return String.format("%2d%%", max);
+            } else {
+                return String.format("%2.0f%%", (float) 100*cur/max);                
+            }
+        }
+
         @Override
         public String toString() {
             String result;
-            if (stringRepresentation == null) {
-                result = runtime.getModel().getName() + " [";
-                SimpleDateFormat sdf = new SimpleDateFormat();
-                result += "start=" + sdf.format(startTime.getTime()) + ", ";
-                if (runtime != null) {
-                    if (runtime.getModel().getWorkspace() != null) {
-                        result += "workspace=" + runtime.getModel().getWorkspaceDirectory().getAbsolutePath();
-                    } else {
-                        result += "workspace=null";
-                    }
+//            if (stringRepresentation == null) {
+            result = runtime.getModel().getName() + " [";
+            SimpleDateFormat sdf = new SimpleDateFormat();
+            result += "start=" + sdf.format(startTime.getTime()) + ", ";
+            result += "progress=" + getProgressString() + ", ";
+            if (runtime != null) {
+                if (runtime.getModel().getWorkspace() != null) {
+                    result += "workspace=" + runtime.getModel().getWorkspaceDirectory().getAbsolutePath();
+                } else {
+                    result += "workspace=null";
                 }
-                result += "]";
-                stringRepresentation = result;
-            } else {
-                result = stringRepresentation;
-//                if (endTime != null) {
-//                    SimpleDateFormat sdf = new SimpleDateFormat();
-//                    result += "-[" + sdf.format(endTime.getTime()) + "]";
-//                }
             }
+            result += "]";
+            stringRepresentation = result;
+//            } else {
+//                result = stringRepresentation;
+////                if (endTime != null) {
+////                    SimpleDateFormat sdf = new SimpleDateFormat();
+////                    result += "-[" + sdf.format(endTime.getTime()) + "]";
+////                }
+//            }
             return result;
         }
 
