@@ -21,6 +21,8 @@
  */
 package jams.runtime;
 
+import jams.data.Attribute;
+import jams.data.JAMSCalendar;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -108,7 +110,7 @@ public class RuntimeManager extends Observable {
 
         private Calendar startTime, endTime;
         private JAMSRuntime runtime;
-        private String stringRepresentation = null;
+//        private String stringRepresentation = null;
 
         public RuntimeInfo(Calendar startTime, JAMSRuntime runtime) {
             this.startTime = startTime;
@@ -131,7 +133,7 @@ public class RuntimeManager extends Observable {
             String result;
 //            if (stringRepresentation == null) {
             result = runtime.getModel().getName() + " [";
-            SimpleDateFormat sdf = new SimpleDateFormat();
+            SimpleDateFormat sdf = new SimpleDateFormat(Attribute.Calendar.DEFAULT_FORMAT_PATTERN + ":ss");
             result += "start=" + sdf.format(startTime.getTime()) + ", ";
             result += "progress=" + getProgressString() + ", ";
             if (runtime != null) {
@@ -142,7 +144,7 @@ public class RuntimeManager extends Observable {
                 }
             }
             result += "]";
-            stringRepresentation = result;
+//            stringRepresentation = result;
 //            } else {
 //                result = stringRepresentation;
 ////                if (endTime != null) {
