@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="doall">
+    
+    <property file="build.properties"/>
 
     <taskdef resource="net/sf/antcontrib/antcontrib.properties">
         <classpath>
@@ -31,8 +33,7 @@
 
     <target name="cleanlib">
         <delete>
-            <fileset dir="../lib" includes="**/*"/>
-            <fileset dir="../lib/lib" includes="**/*"/>
+            <fileset dir="../jams-bin" includes="**/*"/>
         </delete>
     </target>
 
@@ -93,7 +94,7 @@
             <property name="no.deps" value="true"/>
         </ant>
         <property file="jams.properties"/>
-        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../lib/juice-starter${main.postfix}.jar"/>
+        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../jams-bin/juice-starter${main.postfix}.jar"/>
         <echo>Created juicestarter</echo>
     </target>
 
@@ -104,18 +105,18 @@
             <property name="no.deps" value="true"/>
         </ant>
         <property file="jams.properties"/>
-        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../lib/jams-starter${main.postfix}.jar"/>
+        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../jams-bin/jams-starter${main.postfix}.jar"/>
         <echo>Created jamsstarter</echo>
     </target>
 
-    <target name="remotestarter">
+    <!--    <target name="remotestarter">
         <property name="starterproj" value="jams-starter"/>
         <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="jar">
             <property name="config" value="JAMS_Remote"/>
             <property name="no.deps" value="true"/>
         </ant>
         <property file="jams.properties"/>
-        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../lib/jamsremote-starter${main.postfix}.jar"/>
+        <move file="../nbprojects/${starterproj}/dist/${starterproj}${main.postfix}.jar" tofile="../jams-bin/jamsremote-starter${main.postfix}.jar"/>
         <echo>Created remotestarter</echo>
-    </target>
+    </target>-->
 </project>
