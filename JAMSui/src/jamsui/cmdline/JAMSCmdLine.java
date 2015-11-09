@@ -24,6 +24,7 @@ package jamsui.cmdline;
 
 import jams.io.*;
 import jams.*;
+import jams.tools.StringTools;
 
 /**
  *
@@ -85,6 +86,10 @@ public class JAMSCmdLine {
         this.parameterValues = (String) parser.getOptionValue(pValueOption, null);
         this.jmpFileName = (String) parser.getOptionValue(jmpValueOption, null);
         this.otherArgs = parser.getRemainingArgs();
+        
+        if (StringTools.isEmptyString(this.modelFileName) && otherArgs.length > 0 && !otherArgs[0].startsWith("-")) {
+            this.modelFileName = otherArgs[0];
+        }
     }
     
     /**

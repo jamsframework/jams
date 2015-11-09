@@ -1,31 +1,25 @@
-#JAMS configuration file
-#Fri Feb 20 11:04:21 CET 2015
+#JAMS-Konfigurationsdatei
+#Wed Nov 04 23:09:11 CET 2015
 progressfilename=
 infolog=
 libs=.;lib
 guiconfig=true
-docbook-home=
-debugmode=false
 model=
 charset=
-username=
 progressperiod=-1
 profiling=false
 defaultworkspace=true
 windowenable=true
 errordlg=true
 maxlibclasses=10000
-windowontop=false
-forcelocale=
 windowheight=600
 verbose=false
 maxrecentfiles=5
-recentfiles=
+recentfiles=D\:\\jamsapplication\\JAMS-Gehlberg\\j2k_gehlberg.jam
 debug=1
 guiconfigheight=600
 windowwidth=900
 guiconfigwidth=600
 preprocessing=true
 errorlog=
-helpbaseurl=
 floatformat=%f

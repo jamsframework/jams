@@ -357,7 +357,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             dataFactory = DefaultDataFactory.getDataFactory();
         }
     }
-
+   
     public String[] getLibs() {
         return StringTools.toArray(properties.getProperty("libs", ""), ";");
     }

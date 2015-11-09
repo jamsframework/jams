@@ -464,7 +464,7 @@ public class ModelDescriptor extends ComponentCollection {
 
 //                    mpd.setEnabled(false);
                 } catch (Exception ex) {
-                    throw (new JAMSException("Error while preprocessing model:\n" + StringTools.getStackTraceString(ex.getStackTrace()), ex));
+                    throw (new JAMSException("Error while preprocessing model: " + ex.getMessage() + "\n" + StringTools.getStackTraceString(ex.getStackTrace()), ex));
                 }
             }
         }

@@ -19,8 +19,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package jams.model;
+package jams.components.core;
 
+import jams.model.*;
 import jams.workspace.stores.OutputDataStore;
 import jams.JAMS;
 import jams.data.*;
@@ -44,7 +45,7 @@ import jams.workspace.stores.Filter;
     @VersionComments.Entry(version = "1.0_0", comment = "Initial Version"),
     @VersionComments.Entry(version = "1.1_0", comment = "Added time step output")
 })
-public class JAMSTemporalContext extends JAMSContext {
+public class TemporalContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Time interval of temporal context")
@@ -62,7 +63,7 @@ public class JAMSTemporalContext extends JAMSContext {
     private Attribute.Calendar lastValue;
     private int counter = 0;
 
-    public JAMSTemporalContext() {
+    public TemporalContext() {
         super();
     }
 
@@ -74,7 +75,7 @@ public class JAMSTemporalContext extends JAMSContext {
             public void trace() {
                 // check for filters on other contexts first
                 for (Filter filter : store.getFilters()) {
-                    if (filter.getContext() != JAMSTemporalContext.this) {
+                    if (filter.getContext() != TemporalContext.this) {
                         String s = filter.getContext().getTraceMark();
                         //Matcher matcher = filter.getPattern().matcher(s);
                         if (!filter.isFiltered(s)) {
@@ -87,7 +88,7 @@ public class JAMSTemporalContext extends JAMSContext {
 
                 // take care of filters in this context
                 for (Filter filter : store.getFilters()) {
-                    if (filter.getContext() == JAMSTemporalContext.this) {
+                    if (filter.getContext() == TemporalContext.this) {
                         //Matcher matcher = filter.getPattern().matcher(traceMark);
                         if (!filter.isFiltered(traceMark)) {
                             return;
@@ -168,7 +169,7 @@ public class JAMSTemporalContext extends JAMSContext {
             // if yes, return standard enumerator
             return new ComponentEnumerator() {
 
-                ComponentEnumerator ce = getChildrenEnumerator();
+                ComponentEnumerator ce = getTCChildrenEnumerator();
                 //DataTracer dataTracers = getDataTracer();
 
                 @Override
@@ -190,7 +191,7 @@ public class JAMSTemporalContext extends JAMSContext {
                     // check end of component elements list, if required switch to the next
                     // timestep start with the new Component list again
                     if (!ce.hasNext() && current.before(lastValue)) {
-                        for (DataTracer dataTracer : dataTracers) {
+                        for (DataTracer dataTracer : getDataTracers()) {
                             dataTracer.trace();
                         }
                         current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
@@ -254,6 +255,14 @@ public class JAMSTemporalContext extends JAMSContext {
                 }
             };
         }
+    }
+    
+    private DataTracer[] getDataTracers() {
+        return dataTracers; 
+    }
+    
+    private ComponentEnumerator getTCChildrenEnumerator() {
+        return getChildrenEnumerator();
     }
 
     @Override

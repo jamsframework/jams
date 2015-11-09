@@ -202,7 +202,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
         if (theProperties == null) {
             Properties p = new Properties();
             p.setProperty(MODEL_IDENTIFIER, "");
-            p.setProperty(LIBS_IDENTIFIER, ".;lib");
+            p.setProperty(LIBS_IDENTIFIER, "components");
             p.setProperty(DEBUG_IDENTIFIER, "1");
             p.setProperty(VERBOSITY_IDENTIFIER, "false");
             p.setProperty(INFOLOG_IDENTIFIER, "");

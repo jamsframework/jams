@@ -25,7 +25,7 @@ import jams.data.Attribute;
 import jams.tools.JAMSTools;
 import jams.model.Component;
 import jams.model.Context;
-import jams.model.JAMSSpatialContext;
+import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
 import jams.model.JAMSVarDescription.AccessType;
 import jams.model.Model;
@@ -199,7 +199,7 @@ public class metaModelOptimizer {
                     if (context.equals("")) {
                         context = currentContext;
                     }
-                    if (parent instanceof JAMSSpatialContext) {
+                    if (parent instanceof JAMSContext) {
                         contextEntityAttributes.put(currentContext, attr);
                     }
                     Field f = null;

@@ -224,7 +224,7 @@ public class LibTree extends JAMSTree {
                         // try to load the class and check if it's a subclass of JAMSComponent
                         Class<?> clazz = loader.loadClass(classString);
 
-                        if (JAMSComponent.class.isAssignableFrom(clazz)) {
+                        if (!clazz.isMemberClass() && clazz.getCanonicalName() != null && JAMSComponent.class.isAssignableFrom(clazz)) {
                             components.add(clazz);
                         }
 

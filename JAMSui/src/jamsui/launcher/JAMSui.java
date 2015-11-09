@@ -40,8 +40,8 @@ import jams.tools.FileTools;
 import jams.tools.StringTools;
 import jams.logging.NotificationLogHandler;
 import static jamsui.juice.JUICE.getJamsProperties;
-import java.awt.Frame;
 import java.awt.GraphicsEnvironment;
+import java.net.URISyntaxException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,7 +60,7 @@ public class JAMSui {
     static final Logger logger = Logger.getLogger(JAMSui.class.getName());
 
     /**
-     * JAMSui contructor
+     * JAMSui constructor
      *
      * @param cmdLine A JAMSCmdLine object containing the command line arguments
      */
@@ -75,6 +75,13 @@ public class JAMSui {
             baseDir = new File(propertyFileName).getParentFile();
         } else {
             //check for default file
+//            try {
+//                File jarFile = new File(JAMSui.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+//                baseDir = jarFile;//.getParentFile().getParentFile().getParentFile();
+//                System.setProperty("user.dir", baseDir.getAbsolutePath());//baseDir.getAbsolutePath());
+//            } catch (URISyntaxException ex) {
+//                Logger.getLogger(JAMSui.class.getName()).log(Level.SEVERE, null, ex);
+//            }
             propertyFileName = new File(baseDir, JAMS.DEFAULT_PARAMETER_FILENAME).getAbsolutePath();
         }
 
