@@ -223,7 +223,7 @@ public class JAMS {
             try {
                 File jarFile = new File(JAMS.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
                 baseDir = jarFile.getParentFile().getParentFile();
-//                System.setProperty("user.dir", baseDir.getAbsolutePath());
+                System.setProperty("user.dir", baseDir.getAbsolutePath());
             } catch (URISyntaxException ex) {
                 Logger.getLogger(JAMS.class.getName()).log(Level.SEVERE, null, ex);
             }
