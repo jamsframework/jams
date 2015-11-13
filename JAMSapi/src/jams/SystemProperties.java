@@ -64,7 +64,8 @@ public interface SystemProperties {
     String RECENT_TIMESERIES_OF_OBJECTIVE_CONFIGURATION = "objectiveconfiguration_recent_timeseries";
     String MAX_RECENT_FILES = "maxrecentfiles";
     String MAX_LIB_CLASSES = "maxlibclasses";
-
+    String DOCBOOK_HOME = "docbook-home";
+    
     /**
      * Adds an observer for some property
      * @param key The identifier for the property
