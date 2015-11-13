@@ -220,7 +220,7 @@ public class JUICEFrame extends JFrame {
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String stringValue = jfcProps.getSelectedFile().getAbsolutePath();
                     try {
-                        JAMSProperties properties = JUICE.getJamsProperties();
+                        SystemProperties properties = JUICE.getJamsProperties();
                         properties.save(stringValue);
                     } catch (IOException ioe) {
                         JAMSTools.handle(ioe);
@@ -475,15 +475,15 @@ public class JUICEFrame extends JFrame {
 
         jfcModels = GUIHelper.getJFileChooser(JAMSFileFilter.getModelFilter());
         jfcModels.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfcModels.setCurrentDirectory(JUICE.getBaseDir());
+        jfcModels.setCurrentDirectory(JAMS.getBaseDir());
 
         jfcParams = GUIHelper.getJFileChooser(JAMSFileFilter.getParameterFilter());
         jfcParams.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfcParams.setCurrentDirectory(JUICE.getBaseDir());
+        jfcParams.setCurrentDirectory(JAMS.getBaseDir());
 
         jfcProps = GUIHelper.getJFileChooser(JAMSFileFilter.getPropertyFilter());
         jfcProps.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfcProps.setCurrentDirectory(JUICE.getBaseDir());
+        jfcProps.setCurrentDirectory(JAMS.getBaseDir());
 
         // use outline or live drag mode for performance or look
         if (System.getProperty("os.name").contains("Windows")) {

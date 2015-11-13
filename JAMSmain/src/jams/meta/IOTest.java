@@ -22,7 +22,6 @@
 package jams.meta;
 
 import jams.JAMSException;
-import jams.ExceptionHandler;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.data.JAMSEntity;
@@ -35,8 +34,6 @@ import jams.tools.XMLTools;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.logging.Logger;
 import org.w3c.dom.Document;
 
 /**

@@ -302,7 +302,7 @@ public class DocumentationWizard {
         log.exiting(DocumentationWizard.class.toString(), "runDocumentationProcess");
     }
     
-    private JAMSProperties properties = null;
+    private SystemProperties properties = null;
     private File workspace = null;
     private Document modelDocument = null;
     private final ObservableLogHandler observable = 
@@ -311,7 +311,7 @@ public class DocumentationWizard {
                 Logger.getLogger(DocumentationGenerator.class.getName())
             });
     
-    public void createDocumentation(Frame parent, Document doc, JAMSProperties props, File savePath) {
+    public void createDocumentation(Frame parent, Document doc, SystemProperties props, File savePath) {
         properties = props;
         // ok hier gibt es mehrere möglichkeiten
         workspace = savePath.getParentFile();

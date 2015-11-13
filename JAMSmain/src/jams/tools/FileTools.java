@@ -327,7 +327,7 @@ public class FileTools {
     public static String createAbsoluteFileName(String dirName, String fileName) {
         //if relative path is provided, make absolute path!
         if (dirName.isEmpty()) {
-            dirName = System.getProperty("user.dir");
+            dirName = JAMS.getBaseDir().getAbsolutePath();
         }
         //in case directory is not terminated with slash, add slash
         File file = new File(dirName, fileName);

@@ -159,7 +159,15 @@ public class LibTree extends JAMSTree {
 
         for (int i = 0; i < libsArray.length; i++) {
             File file = new File(libsArray[i]);
+            
+            int overhead = 0;
 
+            if (!file.isAbsolute()) {
+                File file2 = file.getAbsoluteFile();
+                overhead = file2.getPath().length()-file.getPath().length();
+                file = file.getAbsoluteFile();
+            }
+            
             if (!file.exists()) {
                 continue;
             }
@@ -167,31 +175,29 @@ public class LibTree extends JAMSTree {
                 File[] f = file.listFiles();
                 for (int j = 0; j < f.length; j++) {
                     if (f[j].getName().endsWith(".jar")) {
-                        jarNode = createJARNode(f[j].toString(), JUICE.getLoader());
+                        jarNode = createJARNode(f[j].toString(), JUICE.getLoader(), overhead);
                         if (jarNode != null) {
                             root.add((DefaultMutableTreeNode) jarNode);
                         }
                     }
                 }
             } else {
-                jarNode = createJARNode(file.toString(), JUICE.getLoader());
+                jarNode = createJARNode(file.toString(), JUICE.getLoader(), overhead);
                 if (jarNode != null) {
                     root.add((DefaultMutableTreeNode) jarNode);
                 }
             }
-
         }
-
         return root;
     }
 
-    private JAMSNode createJARNode(String jar, ClassLoader loader) {
+    private JAMSNode createJARNode(String jar, ClassLoader loader, int overhead) {
 
         if (i >= maxClasses) {
             return null;
         }
 
-        JAMSNode jarRoot = new JAMSNode(jar, JAMSNode.ARCHIVE_TYPE, this);
+        JAMSNode jarRoot = new JAMSNode(jar.substring(overhead), JAMSNode.ARCHIVE_TYPE, this);
         ArrayList<Class> components = new ArrayList<Class>();
         JAMSNode compNode;
         String jarName = "", clazzName = "", clazzFullName = "";
@@ -199,9 +205,7 @@ public class LibTree extends JAMSTree {
         try {
             JarFile jfile = new JarFile(jar);
             File file = new File(jar);
-            //URLClassLoader loader = new URLClassLoader(new URL[]{file.toURL()});
             jarName = file.getCanonicalFile().getName();
-            //jarRoot = new JAMSNode(jarName, JAMSNode.PACKAGE_TYPE);
 
             Enumeration jarentries = jfile.entries();
             while (jarentries.hasMoreElements()) {

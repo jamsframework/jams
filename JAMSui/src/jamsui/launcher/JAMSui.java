@@ -39,9 +39,7 @@ import jams.model.Model;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
 import jams.logging.NotificationLogHandler;
-import static jamsui.juice.JUICE.getJamsProperties;
 import java.awt.GraphicsEnvironment;
-import java.net.URISyntaxException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,9 +52,8 @@ import org.xml.sax.SAXException;
  */
 public class JAMSui {
 
-    private static File baseDir = new File(System.getProperty("user.dir"));
     public static final String APP_TITLE = "JAMS";
-    protected SystemProperties properties;
+    protected JAMSProperties jamsProperties;
     static final Logger logger = Logger.getLogger(JAMSui.class.getName());
 
     /**
@@ -65,54 +62,47 @@ public class JAMSui {
      * @param cmdLine A JAMSCmdLine object containing the command line arguments
      */
     public JAMSui(JAMSCmdLine cmdLine) {
-        //create a JAMS default set of property values
-        properties = JAMSProperties.createProperties();
 
-        String propertyFileName;
-        if (cmdLine.getConfigFileName() != null) {
-            //check for file provided at command line
-            propertyFileName = cmdLine.getConfigFileName();
-            baseDir = new File(propertyFileName).getParentFile();
-        } else {
-            //check for default file
-//            try {
-//                File jarFile = new File(JAMSui.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-//                baseDir = jarFile;//.getParentFile().getParentFile().getParentFile();
-//                System.setProperty("user.dir", baseDir.getAbsolutePath());//baseDir.getAbsolutePath());
-//            } catch (URISyntaxException ex) {
-//                Logger.getLogger(JAMSui.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-            propertyFileName = new File(baseDir, JAMS.DEFAULT_PARAMETER_FILENAME).getAbsolutePath();
-        }
+        //create a JAMS default set of property values
+        jamsProperties = JAMSProperties.createProperties();
 
         //try to load property values from file
+        String fileName = null;
         try {
-            if (new File(propertyFileName).exists()) {
-                properties.load(propertyFileName);
+            if (cmdLine.getConfigFileName() != null) {
+                //check for  file provided at command line
+                fileName = cmdLine.getConfigFileName();
+                jamsProperties.load(fileName);
             } else {
-                properties.save();
+                //check for default file
+                File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
+                if (file.exists()) {
+                    fileName = file.getAbsolutePath();
+                    jamsProperties.load(fileName);
+                }
             }
+
         } catch (IOException ioe) {
-            logger.log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + propertyFileName, ioe);
+            logger.log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + fileName, ioe);
         }
 
-        JAMSTools.configureLocaleEncoding(properties);
+        JAMSTools.configureLocaleEncoding(jamsProperties);
 
         if (cmdLine.isNogui() || GraphicsEnvironment.isHeadless()) {
-            properties.setProperty(JAMSProperties.GUICONFIG_IDENTIFIER, "false");
-            properties.setProperty(JAMSProperties.WINDOWENABLE_IDENTIFIER, "false");
-            properties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "true");
-            properties.setProperty(JAMSProperties.ERRORDLG_IDENTIFIER, "false");
+            jamsProperties.setProperty(JAMSProperties.GUICONFIG_IDENTIFIER, "false");
+            jamsProperties.setProperty(JAMSProperties.WINDOWENABLE_IDENTIFIER, "false");
+            jamsProperties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "true");
+            jamsProperties.setProperty(JAMSProperties.ERRORDLG_IDENTIFIER, "false");
         }
 
-        boolean guiConfig = Boolean.parseBoolean(properties.getProperty(SystemProperties.GUICONFIG_IDENTIFIER, "false"));
+        boolean guiConfig = Boolean.parseBoolean(jamsProperties.getProperty(SystemProperties.GUICONFIG_IDENTIFIER, "false"));
 
         String modelFileName = cmdLine.getModelFileName();
         if (modelFileName != null) {
             modelFileName = new File(modelFileName).getAbsolutePath();
         }
 
-        String floatFormat = properties.getProperty(SystemProperties.FLOAT_FORMAT, "%f");
+        String floatFormat = jamsProperties.getProperty(SystemProperties.FLOAT_FORMAT, "%f");
         JAMS.setFloatFormat(floatFormat);
 
         // check if there is a model file provided
@@ -127,6 +117,17 @@ public class JAMSui {
             }
 
         } else {
+
+            boolean os64 = JAMSTools.is64Bit();
+            boolean vm64 = System.getProperty("os.arch").endsWith("64");
+
+            if (os64 != vm64) {
+                String osArch = (os64 ? "64 bit" : "32 bit");
+                String vmArch = (vm64 ? "64 bit" : "32 bit");
+                logger.warning(String.format("Architectures of OS (%s) and Java VM (%s) used with JAMS seem to differ.\n"
+                        + "You should update your Java VM to a matching version to avoid strange model behaviour.\n"
+                        + "Continue anyway?", osArch, vmArch));
+            }
 
             String cmdLineParameterValues = cmdLine.getParameterValues();
 
@@ -186,11 +187,11 @@ public class JAMSui {
 
                     // try to determine the default workspace directory
                     String defaultWorkspacePath = null;
-                    if (Boolean.parseBoolean(properties.getProperty(JAMSProperties.USE_DEFAULT_WS_PATH)) && !StringTools.isEmptyString(modelFileName)) {
+                    if (Boolean.parseBoolean(jamsProperties.getProperty(JAMSProperties.USE_DEFAULT_WS_PATH)) && !StringTools.isEmptyString(modelFileName)) {
                         defaultWorkspacePath = new File(modelFileName).getParent();
                     }
 
-                    runtime = new StandardRuntime(properties);
+                    runtime = new StandardRuntime(jamsProperties);
 
                     runtime.loadModel(modelDoc, defaultWorkspacePath);
 
@@ -244,9 +245,9 @@ public class JAMSui {
             }
         }
     }
-    
+
     private void setLaF() {
-        String desiredLookAndFeel = getJamsProperties().getProperty("lookandfeel");
+        String desiredLookAndFeel = jamsProperties.getProperty("lookandfeel");
         try {
             boolean successful = false;
             if (desiredLookAndFeel != null) {
@@ -273,12 +274,12 @@ public class JAMSui {
 
     protected void startGUI() {
         setLaF();
-        new JAMSFrame(null, properties).setVisible(true);
+        new JAMSFrame(null, jamsProperties).setVisible(true);
     }
 
     protected void startGUI(String modelFileName, String cmdLineParameterValues, Properties jmpParameters) {
         setLaF();
-        new JAMSFrame(null, properties, modelFileName, cmdLineParameterValues, jmpParameters).setVisible(true);
+        new JAMSFrame(null, jamsProperties, modelFileName, cmdLineParameterValues, jmpParameters).setVisible(true);
     }
 
     /**
@@ -290,15 +291,6 @@ public class JAMSui {
 
         new JAMSui(new JAMSCmdLine(args, APP_TITLE));
 
-    }
-
-    /**
-     * Get the JAMSui base directory
-     *
-     * @return The JAMSui base directory
-     */
-    public static File getBaseDir() {
-        return baseDir;
     }
 
     public static void registerLogger(LogOption option, Logger log) {

@@ -52,7 +52,6 @@ import jams.model.SmallModelState;
 import jams.io.ParameterProcessor;
 import jams.meta.ModelDescriptor;
 import jams.meta.ModelIO;
-import jams.model.Context;
 import jams.model.FullModelState;
 import jams.model.GUIComponent;
 import jams.model.JAMSContext;

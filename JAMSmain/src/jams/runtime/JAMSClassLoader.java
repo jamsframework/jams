@@ -66,7 +66,10 @@ public class JAMSClassLoader extends URLClassLoader {
         for (String lib : libs) {
 
             File dir = new File(lib);
-
+            if (!dir.isAbsolute()) {
+                dir = dir.getAbsoluteFile();
+            }
+            
             if (!dir.exists()) {
                 log.println(JAMS.i18n("DANGER_-_directory_") + dir.getAbsolutePath() + JAMS.i18n("_does_not_exist"));
                 continue;

@@ -25,9 +25,11 @@ import jams.meta.HelpComponent;
 import java.awt.Font;
 import java.awt.Image;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -83,16 +85,20 @@ public class JAMS {
     public static final String DEFAULT_PARAMETER_FILENAME = "default.jap";
     /**
      * Default output formatting for floating point data
-     */  
+     */
     private static String floatFormat = "%f";
     /**
      * Default icon which is used when an icon is missing
-     */  
+     */
     private static ImageIcon defaultIcon = new ImageIcon("/resouces/images/help.png");
-    
-    
     /**
-     * Return a localized string 
+     * Base directory
+     */
+    private static File baseDir;
+
+    /**
+     * Return a localized string
+     *
      * @param key A resource key
      * @return A localized string belonging to the resource key
      */
@@ -104,33 +110,33 @@ public class JAMS {
             return key;
         }
     }
-    
+
     /**
      * @param path url to icon
      * @return icon from path
      */
     public static ImageIcon getIcon(String path) {
         URL url = ClassLoader.getSystemClassLoader().getResource(path);
-        try{
+        try {
             ImageIcon icon = new ImageIcon(url);
             return icon;
-        }catch(NullPointerException npe){
+        } catch (NullPointerException npe) {
             Logger.getLogger(JAMS.class.getName()).log(Level.INFO, "Could not find image icon from " + path + " ;using default icon.");
             return defaultIcon;
         }
     }
-    
+
     public static ImageIcon getScaledIcon(String path, int width, int height) {
         return new ImageIcon(getIcon(path).getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH));
     }
-    
-    public static HelpComponent getHelpDocument(String key){                
+
+    public static HelpComponent getHelpDocument(String key) {
         String resourceName = "resources/help/i18n/" + key + "_" + Locale.getDefault().getLanguage() + ".html";
         InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(resourceName);
-        if (stream == null){
+        if (stream == null) {
             resourceName = "resources/help/i18n/" + key + ".html";
             stream = ClassLoader.getSystemClassLoader().getResourceAsStream(resourceName);
-            if (stream == null){
+            if (stream == null) {
                 HelpComponent help = new HelpComponent();
                 help.setHelpText("Resource " + resourceName + " was not found.");
                 return help;
@@ -139,12 +145,12 @@ public class JAMS {
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         String result = "";
         String line;
-        try{
-            while ((line = reader.readLine())!=null){
-                result += line;        
+        try {
+            while ((line = reader.readLine()) != null) {
+                result += line;
             }
             reader.close();
-        }catch(IOException ioe){
+        } catch (IOException ioe) {
             return null;
         }
         HelpComponent help = new HelpComponent();
@@ -193,22 +199,36 @@ public class JAMS {
     public static void setFloatFormat(String aFloatFormat) {
         floatFormat = aFloatFormat;
     }
-    
-    public static double getMissingDataValue(){
+
+    public static double getMissingDataValue() {
         return missingDataValue;
     }
-    
-        public static <T> T getMissingDataValue(Class<T> c){
-        if (c == Double.class)
-            return (T)new Double(getMissingDataValue());
-        else if (c == Integer.class)
-            return (T)new Integer(Integer.MAX_VALUE);
-        else if (c == Long.class)
-            return (T)new Long(Long.MAX_VALUE);
-        else if (c == String.class)
+
+    public static <T> T getMissingDataValue(Class<T> c) {
+        if (c == Double.class) {
+            return (T) new Double(getMissingDataValue());
+        } else if (c == Integer.class) {
+            return (T) new Integer(Integer.MAX_VALUE);
+        } else if (c == Long.class) {
+            return (T) new Long(Long.MAX_VALUE);
+        } else if (c == String.class) {
             return null;
-        else
+        } else {
             throw new JAMSException("No missing value defined for class type " + c.toString());
+        }
     }
-          
+
+    public static File getBaseDir() {
+        if (baseDir == null) {
+            try {
+                File jarFile = new File(JAMS.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+                baseDir = jarFile.getParentFile().getParentFile();
+//                System.setProperty("user.dir", baseDir.getAbsolutePath());
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(JAMS.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return baseDir;
+    }
+
 }

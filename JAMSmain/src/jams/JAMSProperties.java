@@ -131,9 +131,9 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
             return defaultValue;
         }
     }
-    
+
     /**
-     * Gets all properties 
+     * Gets all properties
      *
      * @return The property values
      */
@@ -157,10 +157,11 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
         if ((properties.getProperty(key) == null) || (!properties.getProperty(key).equals(value))) {
             //something has changed
-            if (value != null)
+            if (value != null) {
                 properties.setProperty(key, value);
-            else
+            } else {
                 properties.remove(key);
+            }
             property.setChanged();
             property.notifyObservers();
         }
@@ -223,7 +224,7 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
             p.setProperty(MAX_LIB_CLASSES, "10000");
 
             theProperties = new JAMSProperties(p);
-            theProperties.defaultFilename = System.getProperty("user.dir") + File.separator + JAMS.DEFAULT_PARAMETER_FILENAME;
+            theProperties.defaultFilename = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME).getAbsolutePath();
         }
 
         return theProperties;

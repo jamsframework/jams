@@ -70,11 +70,10 @@ public class JAMSExplorer {
         this.standAlone = standAlone;
 
         properties = JAMSProperties.createProperties();
-        String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
-        File file = new File(defaultFile);
-        if (file.exists() && standAlone) {
+        File defaultFile = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
+        if (defaultFile.exists() && standAlone) {
             try {
-                properties.load(defaultFile);
+                properties.load(defaultFile.getAbsolutePath());
             } catch (IOException ioe) {
                 Logger.getLogger(JAMSExplorer.class.getName()).log(Level.SEVERE, ioe.getMessage(), ioe);
             }

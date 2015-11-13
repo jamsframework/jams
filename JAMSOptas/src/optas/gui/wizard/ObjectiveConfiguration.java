@@ -143,15 +143,15 @@ public class ObjectiveConfiguration extends JPanel{
     public ObjectiveConfiguration(ModelDescriptor md, Logger logger){
         this.md = md;
         //load default property file, if its not existing, never mind as it is only used for the recent files entry
-        String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;        
-        defaultPropertyFile = new File(defaultFile);
-        if (defaultPropertyFile.exists()) {
-            try{
-                systemProperties.load(defaultFile);
-            }catch(IOException ioe){
-                //not serious
-            }
-        }
+//        String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;        
+//        defaultPropertyFile = new File(defaultFile);
+//        if (defaultPropertyFile.exists()) {
+//            try{
+//                systemProperties.load(defaultFile);
+//            }catch(IOException ioe){
+//                //not serious
+//            }
+//        }
         
         updateRecentTimeseriesList(null);
         

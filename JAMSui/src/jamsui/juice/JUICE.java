@@ -39,7 +39,9 @@ import jamsui.juice.gui.ModelView;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.launcher.JAMSui;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -55,8 +57,7 @@ public class JUICE {
     public static final int SCREEN_WIDTH = 1200;
     public static final int SCREEN_HEIGHT = 720;
     private static JUICEFrame juiceFrame;
-    private static JAMSProperties jamsProperties = JAMSProperties.createProperties();
-    private static File baseDir = null;
+    private static SystemProperties jamsProperties;
     private static ArrayList<ModelView> modelViews = new ArrayList<ModelView>();
     private static ClassLoader loader;
     private static JAMSCmdLine cmdLine;
@@ -97,20 +98,40 @@ public class JUICE {
 
         cmdLine = new JAMSCmdLine(args, JUICE.APP_TITLE);
 
+        //create a JAMS default set of property values
+        jamsProperties = JAMSProperties.createProperties();
+
+        //try to load property values from file
+        String fileName = null;
+        try {
+            if (cmdLine.getConfigFileName() != null) {
+                //check for  file provided at command line
+                fileName = cmdLine.getConfigFileName();
+                jamsProperties.load(fileName);
+            } else {
+                //check for default file
+                File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
+                if (file.exists()) {
+                    fileName = file.getAbsolutePath();
+                    jamsProperties.load(fileName);
+                }
+            }
+
+        } catch (IOException ioe) {
+            Logger.getLogger(JUICE.class.getName()).log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + fileName, ioe);
+        }
+
         try {
 
             //try to load property values from file
             if (cmdLine.getConfigFileName() != null) {
                 //check for file provided at command line
                 getJamsProperties().load(cmdLine.getConfigFileName());
-                baseDir = new File(cmdLine.getConfigFileName()).getParentFile();
             } else {
                 //check for default file
-                String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;
-                baseDir = new File(System.getProperty("user.dir"));
-                File file = new File(defaultFile);
+                File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
                 if (file.exists()) {
-                    getJamsProperties().load(defaultFile);
+                    getJamsProperties().load(file.getAbsolutePath());
                 }
             }
 
@@ -121,7 +142,7 @@ public class JUICE {
             String floatFormat = getJamsProperties().getProperty(SystemProperties.FLOAT_FORMAT, "%f");
             JAMS.setFloatFormat(floatFormat);
 
-            createJUICEFrame();
+            createJUICEFrame(null);
 
             if (cmdLine.getModelFileName() != null) {
                 juiceFrame.loadModel(cmdLine.getModelFileName());
@@ -140,7 +161,11 @@ public class JUICE {
         }
     }
 
-    public static void createJUICEFrame() {
+    public static void createJUICEFrame(SystemProperties p) {
+        
+        if (p != null) {
+            jamsProperties = p;
+        }
 
         String desiredLookAndFeel = getJamsProperties().getProperty("lookandfeel");
         try {
@@ -239,16 +264,8 @@ public class JUICE {
         return classesA;
     }
 
-    public static JAMSProperties getJamsProperties() {
+    public static SystemProperties getJamsProperties() {
         return JUICE.jamsProperties;
-    }
-
-    public static void setJamsProperties(JAMSProperties jamsProperties) {
-        JUICE.jamsProperties = jamsProperties;
-    }
-
-    public static File getBaseDir() {
-        return baseDir;
     }
 
     public static ArrayList<ModelView> getModelViews() {

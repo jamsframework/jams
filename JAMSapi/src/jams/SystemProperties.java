@@ -103,7 +103,6 @@ public interface SystemProperties {
 
     /**
      * Saves properties to a file
-     * @param fileName The name of the file to save properties to
      * @throws java.io.IOException
      */
     void save() throws IOException;

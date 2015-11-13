@@ -71,8 +71,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import jams.explorer.JAMSExplorer;
 import jams.explorer.ensembles.gui.EnsembleControlPanel;
-import jams.logging.MsgBoxLogHandler;
-import jams.logging.NotificationLogHandler;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 
@@ -104,6 +102,20 @@ public class JAMSFrame extends JAMSLauncher {
 
 //        MsgBoxLogHandler.getInstance().setParent(this);
 //        NotificationLogHandler.getInstance().setParent(this);
+
+        boolean os64 = JAMSTools.is64Bit();
+        boolean vm64 = System.getProperty("os.arch").endsWith("64");
+
+        if (os64 != vm64) {
+            String osArch = (os64 ? "64 bit" : "32 bit");
+            String vmArch = (vm64 ? "64 bit" : "32 bit");
+            int result = GUIHelper.showYesNoDlg(null, String.format("Architectures of OS (%s) and Java VM (%s) used with JAMS seem to differ.\n"
+                    + "You should update your Java VM to a matching version to avoid strange model behaviour.\n"
+                    + "Continue anyway?", osArch, vmArch), "Warning");
+            if (result == JOptionPane.NO_OPTION) {
+                System.exit(0);
+            }
+        }
 
         // take care of loggers
         JAMSLogging.getInstance().addObserver(new Observer() {
@@ -344,7 +356,7 @@ public class JAMSFrame extends JAMSLauncher {
                 }
                 JAMSFrame.this.dispose();
                 if (JUICE.getJuiceFrame() == null) {
-                    JUICE.createJUICEFrame();
+                    JUICE.createJUICEFrame(getProperties());
                 }
                 if (JAMSFrame.this.modelFilename != null) {
                     JUICE.getJuiceFrame().loadModel(JAMSFrame.this.modelFilename);
@@ -442,15 +454,15 @@ public class JAMSFrame extends JAMSLauncher {
 
         jfcProps = GUIHelper.getJFileChooser(JAMSFileFilter.getPropertyFilter());
         jfcProps.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfcProps.setCurrentDirectory(JAMSui.getBaseDir());
+        jfcProps.setCurrentDirectory(JAMS.getBaseDir());
 
         jfcModel = GUIHelper.getJFileChooser(JAMSFileFilter.getModelFilter());
         jfcModel.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfcModel.setCurrentDirectory(JAMSui.getBaseDir());
+        jfcModel.setCurrentDirectory(JAMS.getBaseDir());
 
         jfcParam = GUIHelper.getJFileChooser(JAMSFileFilter.getParameterFilter());
         jfcParam.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfcParam.setCurrentDirectory(JAMSui.getBaseDir());
+        jfcParam.setCurrentDirectory(JAMS.getBaseDir());
 
         // runtime manager dlg
         rtManagerDlg = new JDialog(this, JAMS.i18n("Runtime_Manager"));
