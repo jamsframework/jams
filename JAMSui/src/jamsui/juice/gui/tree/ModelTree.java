@@ -396,7 +396,7 @@ public class ModelTree extends JAMSTree {
     public Document getModelDocument(ModelDescriptor md) {
         return modelIO.getModelDocument(md);
     }
-
+    
     public ModelView getView() {
         return view;
     }

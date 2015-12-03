@@ -72,7 +72,7 @@ import org.w3c.dom.Document;
 import jams.explorer.JAMSExplorer;
 import jams.workspace.Workspace;
 
-/**
+/** 
  *
  * @author S. Kralisch
  */
@@ -83,7 +83,7 @@ public class ModelView {
     private static final int TREE_PANE_WIDTH = 250;
     private JInternalFrame frame;
     private File savePath;
-    private Document initialDoc;
+    private Document initialDoc, beforeLauncherDoc;
     private ModelTree tree;
     private ComponentPanel compEditPanel;
     //private HashMap<ComponentDescriptor, DataRepository> dataRepositories = new HashMap<ComponentDescriptor, DataRepository>();
@@ -283,8 +283,31 @@ public class ModelView {
      * loaded
      */
     public void runModelFromLauncher() {
-//        launcherPanel.updateProperties();
+
+        if (tree == null) {
+            return;
+        }
+
+        beforeLauncherDoc = getModelDoc();
         JAMSLauncher launcher = new JAMSLauncher(JUICE.getJuiceFrame(), JUICE.getJamsProperties(), getModelDoc(), getSavePath());
+        launcher.setObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object obj) {
+
+                String newXMLString = XMLTools.getStringFromDocument(getModelDoc());
+                String oldXMLString = XMLTools.getStringFromDocument(beforeLauncherDoc);
+
+                if (newXMLString.compareTo(oldXMLString) != 0) {
+                    int result = GUIHelper.showYesNoDlg(JUICE.getJuiceFrame(), JAMS.i18n("The_model_was_modified._Reload_anyway?"), JAMS.i18n("Unsaved_modifications"));
+                    if (result == JOptionPane.NO_OPTION) {
+                        return;
+                    }
+                }
+                
+                setTree(new ModelTree(ModelView.this, (Document) obj));
+
+            }
+        });
         launcher.setVisible(true);
     }
 
@@ -367,9 +390,10 @@ public class ModelView {
 
         //first logon to server
         JAMSCloudGraphicalController connector = JAMSCloudGraphicalController.createInstance(JUICE.getJamsProperties());
-        if (!connector.isConnected()){
-            if (connector.reconnect()==null)
+        if (!connector.isConnected()) {
+            if (connector.reconnect() == null) {
                 return null;
+            }
         }
         Controller client = connector.getClient();
 
@@ -387,7 +411,7 @@ public class ModelView {
             return null;
         }
         Workspace jamsWorkspace = runtime.getModel().getWorkspace();
-        
+
         String libs = JUICE.getJamsProperties().getProperty("libs");
         String compLibArray[] = libs.split(";");
         File compLibFile[] = new File[compLibArray.length];
@@ -418,16 +442,16 @@ public class ModelView {
             }
         }
         ws = connector.uploadWorkspace(jamsWorkspace, compLibFile, jamsuiLib, uploadFileFilter);
-        if (ws == null){
+        if (ws == null) {
             return null;
         }
-        
+
         runtime.getModel().getWorkspace().setID(ws.getId());
 
         InputStream modelStream = XMLTools.writeXmlFileToStream(initialDoc);
         jams.server.entities.File f = client.files().uploadFile(modelStream);
-        ws = client.workspaces().attachFile(ws, 
-                new WorkspaceFileAssociation(ws, f, WorkspaceFileAssociation.ROLE_MODEL, 
+        ws = client.workspaces().attachFile(ws,
+                new WorkspaceFileAssociation(ws, f, WorkspaceFileAssociation.ROLE_MODEL,
                         ModelView.this.savePath.getName()));
         return connector.startJob(ws, new File(ModelView.this.savePath.getName()));
     }
@@ -642,7 +666,7 @@ public class ModelView {
      }
      */
     public void setInitialState() {
-        this.initialDoc = tree.getModelDocument(getModelDescriptor());
+        this.initialDoc = getModelDoc();
     }
 
     public ModelDescriptor getModelDescriptor() {
@@ -716,13 +740,5 @@ public class ModelView {
             outputDSDlg = new OutputDSDlg(JUICE.getJuiceFrame(), this.getModelDescriptor());
         }
         return outputDSDlg;
-    }
-
-    public static void main(String[] args) {
-        String uploadFileFilter1 = "(.*\\.cache)|(.*\\.ser)|(.*\\.svn)|(.*/output/.*)|(.*\\.cdat)|(.*\\.log)";
-        String test = "Gehlberg/gehlberg.jam";
-
-        System.out.println(test.matches(uploadFileFilter1));
-
     }
 }

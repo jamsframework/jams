@@ -327,7 +327,7 @@ public class ModelIO {
             }
 
             //cd.linkComponentAttribute(name, view.getComponentDescriptor(context), attribute);
-                /*            }
+            /*            }
              try {
              if (cd.getComponentAttributes().get(name).accessType != ComponentAttribute.READ_ACCESS) {
              Class attributeType = cd.getComponentAttributes().get(name).type;

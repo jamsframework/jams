@@ -592,6 +592,8 @@ public class JAMSFrame extends JAMSLauncher {
         getMainMenu().add(helpMenu);
 
         setJMenuBar(getMainMenu());
+        
+        getToolBar().remove(1);
 
         JButton loadButton = new JButton(loadModelAction);
         loadButton.setText("");

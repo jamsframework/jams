@@ -36,7 +36,6 @@ import javax.swing.*;
 import jams.JAMS;
 import jams.JAMSFileFilter;
 import jams.JAMSLogging;
-import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.tools.JAMSTools;
 import jams.gui.AboutDlg;
@@ -728,7 +727,7 @@ public class JUICEFrame extends JFrame {
 
         JMenuItem runModelRemoteItem = new JMenuItem(runModelRemoteAction);
         runModelRemoteAction.setEnabled(false);
-        runModelRemoteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
+        runModelRemoteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
         modelMenu.add(runModelRemoteItem);
         
         JMenuItem dsItem = new JMenuItem(outputDSAction);

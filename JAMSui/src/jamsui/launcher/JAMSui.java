@@ -74,8 +74,12 @@ public class JAMSui {
                 fileName = cmdLine.getConfigFileName();
                 jamsProperties.load(fileName);
             } else {
-                //check for default file
-                File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
+                //check for default file in start/base directory
+                File file = new File(JAMS.getStartDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
+                if (!file.exists()) {
+                    file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
+                }
+
                 if (file.exists()) {
                     fileName = file.getAbsolutePath();
                     jamsProperties.load(fileName);

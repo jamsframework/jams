@@ -83,7 +83,7 @@ public class JAMSLauncher extends JFrame {
     protected Document modelDocument = null;
     private JTabbedPane tabbedPane = new JTabbedPane();
     private SystemProperties properties;
-    private JButton runButton;
+    private JButton runButton, updateButton;
     private HelpDlg helpDlg;
     protected String initialModelDocString = "";
     protected File loadPath;
@@ -91,10 +91,11 @@ public class JAMSLauncher extends JFrame {
     private Runnable modelLoading;
     private WorkerDlg loadModelDlg;
     private Font titledBorderFont;
-    private Action runModelAction;
+    private Action runModelAction, updateModelAction;
     private JToolBar toolBar;
     protected JAMSFullModelState state = null;
     protected boolean isEnsembleManagerEnabled;
+    private Observer observer;
 
     public JAMSLauncher(Window parent, SystemProperties properties) {
         this.properties = properties;
@@ -119,12 +120,12 @@ public class JAMSLauncher extends JFrame {
     }
 
     protected void init() throws HeadlessException, DOMException, NumberFormatException {
-       
+
         modelLoading = new ErrorCatchingRunnable() {
 
             @Override
             public void safeRun() {
-          
+
                 if (state != null) {
                     Model model = state.getModel();
                     runtime = model.getRuntime();
@@ -197,6 +198,17 @@ public class JAMSLauncher extends JFrame {
             }
         };
 
+        updateModelAction = new AbstractAction(JAMS.i18n("Update_Model")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (verifyInputs(false)) {
+                    updateProperties();
+                    observer.update(null, getModelDocument());
+                }
+            }
+        };
+
         loadModelDlg = new WorkerDlg(this, JAMS.i18n("Model_Setup"));
 
         // create some nice font for the border title
@@ -232,12 +244,19 @@ public class JAMSLauncher extends JFrame {
         runButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRun.png")));
         runButton.setEnabled(false);
 
+        updateButton = new JButton(updateModelAction);
+        updateButton.setText("");
+        updateButton.setToolTipText(JAMS.i18n("Update_Model"));
+        updateButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelSave.png")));
+        updateButton.setEnabled(false);
+
         tabbedPane.setTabPlacement(JTabbedPane.LEFT);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
 
         toolBar = new JToolBar();
         toolBar.setPreferredSize(new Dimension(0, 40));
         toolBar.add(runButton);
+        toolBar.add(updateButton);
 
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
@@ -379,6 +398,7 @@ public class JAMSLauncher extends JFrame {
             }
         }
         runButton.setEnabled(true);
+        updateButton.setEnabled(true);
     }
 
     private void drawProperty(JPanel contentPanel, JScrollPane scrollPane, GridBagLayout gbl,
@@ -512,6 +532,10 @@ public class JAMSLauncher extends JFrame {
     protected void exit() {
         setVisible(false);
         dispose();
+    }
+
+    public void setObserver(Observer observer) {
+        this.observer = observer;
     }
 
     protected void runModel() {
