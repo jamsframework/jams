@@ -105,16 +105,18 @@ public class JUICE {
         String fileName = null;
         try {
             if (cmdLine.getConfigFileName() != null) {
-                //check for  file provided at command line
-                fileName = cmdLine.getConfigFileName();
-                jamsProperties.load(fileName);
-            } else {
-                //check for default file in start/base directory
-                File file = new File(JAMS.getStartDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
-                if (!file.exists()) {
-                    file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
-                }                
                 
+                //check for the file provided at command line
+                fileName = cmdLine.getConfigFileName();
+                JAMS.initBaseDir(fileName);                
+                jamsProperties.load(fileName);
+            
+            } else {
+                
+                JAMS.initBaseDir();
+                
+                //check for the default file
+                File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
                 if (file.exists()) {
                     fileName = file.getAbsolutePath();
                     jamsProperties.load(fileName);
@@ -124,7 +126,7 @@ public class JUICE {
         } catch (IOException ioe) {
             Logger.getLogger(JUICE.class.getName()).log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + fileName, ioe);
         }
-
+        
         try {
 
             //try to load property values from file

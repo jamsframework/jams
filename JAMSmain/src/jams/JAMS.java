@@ -218,23 +218,38 @@ public class JAMS {
         }
     }
 
-    public static File getStartDir() {
-        if (startDir == null) {
-            startDir = new File(System.getProperty("user.dir"));
+    public static void initBaseDir(String parameterFileName) {
+
+        File f;
+
+        //check parameter file parent dir / user dir
+        f = new File(parameterFileName);
+        if (f.exists()) {
+            baseDir = f.getAbsoluteFile().getParentFile();
+            System.setProperty("user.dir", baseDir.getAbsolutePath());
+            return;
         }
-        return startDir;
+
+        //use install dir
+        try {
+            File jarFile = new File(JAMS.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            baseDir = jarFile.getParentFile().getParentFile();
+            System.setProperty("user.dir", baseDir.getAbsolutePath());
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(JAMS.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public static void initBaseDir() {
+        if (baseDir == null) {
+            initBaseDir(DEFAULT_PARAMETER_FILENAME);
+        }
     }
 
     public static File getBaseDir() {
         if (baseDir == null) {
-            try {
-                File jarFile = new File(JAMS.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-                baseDir = jarFile.getParentFile().getParentFile();
-                startDir = new File(System.getProperty("user.dir"));
-                System.setProperty("user.dir", baseDir.getAbsolutePath());
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(JAMS.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            initBaseDir();
         }
         return baseDir;
     }
