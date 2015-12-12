@@ -103,6 +103,8 @@ public class ABCModel extends JAMSComponent {
             getModel().getRuntime().sendHalt(JAMS.i18n("parameter_ABCModel_initStorage_unspecified"));
         else
             storage.setValue(initStorage.getValue());
+        
+        System.out.println("parameter S_0 muss größer als 0 sein!");
     }
     
     @Override

@@ -77,8 +77,7 @@ public class ABCDataReader extends JAMSComponent {
                 getModel().getRuntime().sendHalt("The  file " + fileName.getValue() + " is not existing. Aborting.");
             }
             reader = new BufferedReader(new FileReader(file));
-            reader.readLine();
-            reader.readLine();
+            while (!reader.readLine().startsWith("="));
             
             String line, token;
             while ((line = reader.readLine()) != null){
