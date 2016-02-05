@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import optas.efficiencies.UniversalEfficiencyCalculator;
 import optas.optimizer.OptimizerLibrary;

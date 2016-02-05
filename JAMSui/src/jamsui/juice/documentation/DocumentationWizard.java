@@ -5,7 +5,7 @@
 package jamsui.juice.documentation;
 
 import jams.JAMS;
-import jams.JAMSProperties;
+import jams.JAMSLogging;
 import jams.SystemProperties;
 import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
@@ -13,6 +13,8 @@ import jams.gui.tools.GUIHelper;
 import jams.tools.LogTools.ObservableLogHandler;
 import jamsui.juice.JUICE;
 import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
+import static jamsui.juice.documentation.DocumentationGenerator.log;
+import jamsui.launcher.JAMSui;
 import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -32,7 +34,6 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.CommandLineOptions;
 
-
 /**
  *
  * @author chris
@@ -40,9 +41,9 @@ import org.apache.fop.cli.CommandLineOptions;
 public class DocumentationWizard {
 
     static final Logger log = Logger.getLogger(DocumentationWizard.class.getName());
-    
+
     final String DOCUMENTATION_DIRECTORY = "/documentation/";
-    
+
     private void runXSLTProcessor(String docBookHome, String documentationHome, String outputXML) throws DocumentationException {
         log.fine("running xsltproc");
 
@@ -91,16 +92,18 @@ public class DocumentationWizard {
         }
     }
 
-    static class MyCommandLineOptions extends CommandLineOptions{
-        public FOUserAgent getFOUserAgent(){
+    static class MyCommandLineOptions extends CommandLineOptions {
+
+        public FOUserAgent getFOUserAgent() {
             return super.getFOUserAgent();
         }
-        public String getOutputFormat() throws FOPException{
+
+        public String getOutputFormat() throws FOPException {
             return super.getOutputFormat();
         }
     }
 
-     public static void startFOP(String[] args) throws DocumentationException {
+    public static void startFOP(String[] args) throws DocumentationException {
         //System.out.println("static CCL: "
         //    + Thread.currentThread().getContextClassLoader().toString());
         //System.out.println("static CL: " + Fop.class.getClassLoader().toString());
@@ -134,7 +137,7 @@ public class DocumentationWizard {
             // AWTRenderer closes with window shutdown, so exit() should not
             // be called here
             if (!MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputFormat)) {
-                
+
             }
         } catch (Exception e) {
             if (options != null) {
@@ -148,7 +151,7 @@ public class DocumentationWizard {
         }
     }
 
-    public static void startFOPWithDynamicClasspath(String[] args) throws DocumentationException{
+    public static void startFOPWithDynamicClasspath(String[] args) throws DocumentationException {
         try {
             URL[] urls = org.apache.fop.cli.Main.getJARList();
             //System.out.println("CCL: "
@@ -162,15 +165,15 @@ public class DocumentationWizard {
         } catch (Exception e) {
             System.err.println("Unable to start FOP:");
             e.printStackTrace();
-            throw new DocumentationException(DocumentationExceptionCause.ApacheFOPFailed, e.toString());            
+            throw new DocumentationException(DocumentationExceptionCause.ApacheFOPFailed, e.toString());
         }
     }
 
-    private String runApacheFOP(String inputFile, String outputFile, String optionalLibaries) throws DocumentationException{
+    private String runApacheFOP(String inputFile, String outputFile, String optionalLibaries) throws DocumentationException {
         log.fine("running Apache FOP");
         System.setProperty("fop.optional.lib", optionalLibaries);
         log.finest(System.getProperty("java.class.path"));
-        
+
         String args[] = new String[]{System.getProperty("java.class.path"), "-fo", inputFile, "-pdf", outputFile};
 
         String errorLog = null;
@@ -180,7 +183,7 @@ public class DocumentationWizard {
         if (org.apache.fop.cli.Main.checkDependencies()) {
             log.fine("startFOP");
             startFOP(args);
-        }else{
+        } else {
             throw new DocumentationException(DocumentationExceptionCause.FOPDependenciesIncomplete);
             //startFOPWithDynamicClasspath(args);
         }
@@ -201,8 +204,8 @@ public class DocumentationWizard {
         } finally {
             enableSystemExitCall();
         }*/
-    }    
-    
+    }
+
     DocumentationException innerException = null;
 
     private void openPDF(final File f) throws DocumentationException {
@@ -293,7 +296,6 @@ public class DocumentationWizard {
 //                new File(documentationOutputDir, children[i]).delete();
 //            }
 //            documentationOutputDir.delete();
-
         }
 
         openPDF(new File(documentationHome, Bundle.resources.getString("Filename") + ".pdf"));
@@ -301,16 +303,16 @@ public class DocumentationWizard {
         log.fine("finished");
         log.exiting(DocumentationWizard.class.toString(), "runDocumentationProcess");
     }
-    
+
     private SystemProperties properties = null;
     private File workspace = null;
     private Document modelDocument = null;
-    private final ObservableLogHandler observable = 
-            new ObservableLogHandler(new Logger[]{
-                Logger.getLogger(DocumentationWizard.class.getName()),
-                Logger.getLogger(DocumentationGenerator.class.getName())
-            });
-    
+    private final ObservableLogHandler observable
+            = new ObservableLogHandler(new Logger[]{
+        Logger.getLogger(DocumentationWizard.class.getName()),
+        Logger.getLogger(DocumentationGenerator.class.getName())
+    });
+
     public void createDocumentation(Frame parent, Document doc, SystemProperties props, File savePath) {
         properties = props;
         // ok hier gibt es mehrere möglichkeiten
@@ -318,6 +320,8 @@ public class DocumentationWizard {
         modelDocument = doc;
 
         ObserverWorkerDlg progress = new ObserverWorkerDlg(new WorkerDlg(parent, Bundle.resources.getString("Generating_Documentation")));
+        progress.getWorkerDlg().setAlwaysOnTop(true);
+        progress.getWorkerDlg().setModal(false);
         observable.deleteObservers();
         observable.addObserver(progress);
         observable.setLogLevel(Level.FINE);
@@ -328,12 +332,31 @@ public class DocumentationWizard {
             @Override
             public void run() {
                 try {
+                    JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, log);
+                    JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, DocumentationGenerator.log);
+                    JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.fo.PropertyList"));
+                    JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.fo.FONode"));
+                    JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.fonts.FontInfo"));
+                    JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.hyphenation.Hyphenator"));
+                    JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.layoutmgr.BreakingAlgorithm"));
+                    JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.render"));
+
                     runDocumentationProcess(workspace, modelDocument, properties.getProperty(SystemProperties.DOCBOOK_HOME_PATH));
+
+                    JAMSLogging.unregisterLogger(JAMSLogging.LogOption.CollectAndShow, log);
+                    JAMSLogging.unregisterLogger(JAMSLogging.LogOption.CollectAndShow, DocumentationGenerator.log);
+                    JAMSLogging.unregisterLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.fo.PropertyList"));
+                    JAMSLogging.unregisterLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.fo.FONode"));
+                    JAMSLogging.unregisterLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.fonts.FontInfo"));
+                    JAMSLogging.unregisterLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.hyphenation.Hyphenator"));
+                    JAMSLogging.unregisterLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.layoutmgr.BreakingAlgorithm"));
+                    JAMSLogging.unregisterLogger(JAMSLogging.LogOption.CollectAndShow, Logger.getLogger("org.apache.fop.render"));
                 } catch (DocumentationException e) {
                     GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), e.toString(), JAMS.i18n("Error"));
                 }
             }
         });
         progress.getWorkerDlg().execute();
+
     }
 }

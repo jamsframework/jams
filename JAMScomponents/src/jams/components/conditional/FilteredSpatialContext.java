@@ -21,11 +21,11 @@
  */
 package jams.components.conditional;
 
+import jams.components.core.SpatialContext;
 import jams.data.*;
 import jams.data.Attribute.Entity;
 import jams.data.Attribute.Entity.NoSuchAttributeException;
 import jams.model.JAMSComponentDescription;
-import jams.model.JAMSSpatialContext;
 import jams.model.JAMSVarDescription;
 import jams.model.VersionComments;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ import java.util.ArrayList;
             + "This is now changed to compareTo function."),
     @VersionComments.Entry(version = "1.2_0", comment = "Fixed wrong behaviour which was caused by the use of initAll() instead of init()")
 })
-public class FilteredSpatialContext extends JAMSSpatialContext {
+public class FilteredSpatialContext extends SpatialContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Double attribute to filter")

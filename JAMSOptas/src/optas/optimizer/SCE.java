@@ -23,16 +23,11 @@ package optas.optimizer;
 
 import optas.core.SampleLimitException;
 import Jama.Matrix;
-
 import java.util.Arrays;
 import jams.JAMS;
-
-import jams.model.*;
-import jams.runtime.StandardRuntime;
-import java.io.File;
+import jams.model.JAMSComponentDescription;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays.*;
 import java.util.StringTokenizer;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -50,7 +45,6 @@ import optas.core.ObjectiveAchievedException;
 import optas.optimizer.management.BooleanOptimizerParameter;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.StringOptimizerParameter;
-import optas.optimizer.parallel.ParallelExecution;
 import optas.optimizer.parallel.ParallelSequence;
 
 /**

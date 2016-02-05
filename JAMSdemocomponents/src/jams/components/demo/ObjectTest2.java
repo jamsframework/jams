@@ -23,7 +23,9 @@
 package jams.components.demo;
 
 import jams.data.*;
-import jams.model.*;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 
 /**
  *

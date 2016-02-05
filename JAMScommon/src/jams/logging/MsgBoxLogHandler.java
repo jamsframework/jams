@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package jams.logging;
+import jams.JAMS;
 import java.awt.Frame;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,7 +42,7 @@ public class MsgBoxLogHandler extends Handler {
         msgDialogHandling.add(Level.SEVERE);
         msgDialogHandling.add(Level.WARNING);
         msgDialogTitle.put(Level.OFF, "");
-        msgDialogTitle.put(Level.ALL, "General information");
+        msgDialogTitle.put(Level.ALL, "General_information");
         msgDialogTitle.put(Level.CONFIG, "Configuration");
         msgDialogTitle.put(Level.FINE, "Information");
         msgDialogTitle.put(Level.FINER, "Information");
@@ -77,7 +78,7 @@ public class MsgBoxLogHandler extends Handler {
                 MessageBoxWithDetailsDlg.showMessageBoxWithDetails(
                         parent, 
                         record.getMessage() == null ? record.getThrown().toString() : record.getMessage(),
-                        msgDialogTitle.get(record.getLevel()),
+                        JAMS.i18n(msgDialogTitle.get(record.getLevel())),
                         w.toString(),
                         msgDialogIcon.get(record.getLevel()));
                 try{
@@ -88,7 +89,7 @@ public class MsgBoxLogHandler extends Handler {
             }else{
                 MessageBoxWithDetailsDlg.showMessageBoxWithDetails(
                         parent, record.getMessage(),
-                        msgDialogTitle.get(record.getLevel()),
+                        JAMS.i18n(msgDialogTitle.get(record.getLevel())),
                         null,
                         msgDialogIcon.get(record.getLevel()));
             }

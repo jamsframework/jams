@@ -25,12 +25,9 @@ import optas.core.SampleLimitException;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.NumericOptimizerParameter;
 import Jama.Matrix;
-
 import java.util.Arrays;
 import jams.JAMS;
-
-import jams.model.*;
-import java.util.Arrays.*;
+import jams.model.JAMSComponentDescription;
 import java.util.Comparator;
 import java.util.StringTokenizer;
 import optas.optimizer.directsearch.PatternSearch;

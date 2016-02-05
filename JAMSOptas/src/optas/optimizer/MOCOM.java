@@ -27,7 +27,6 @@ import java.util.*;
 import jams.data.*;
 import jams.model.*;
 import jams.JAMS;
-import java.util.Arrays.*;
 import optas.optimizer.management.NumericOptimizerParameter;
 import optas.core.ObjectiveAchievedException;
 import optas.optimizer.management.OptimizerDescription;

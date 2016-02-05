@@ -23,9 +23,9 @@ package optas.optimizer;
 
 
 import optas.core.SampleLimitException;
-import jams.model.*;
 import Jama.*;
 import jams.JAMS;
+import jams.model.JAMSComponentDescription;
 import java.util.ArrayList;
 import java.util.Comparator;
 import optas.optimizer.management.SampleFactory.Sample;

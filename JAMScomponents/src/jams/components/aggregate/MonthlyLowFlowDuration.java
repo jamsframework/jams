@@ -21,9 +21,10 @@
  */
 package jams.components.aggregate;
 
-import jams.model.*;
 import jams.data.*;
-import java.util.GregorianCalendar;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 
 /**
  *

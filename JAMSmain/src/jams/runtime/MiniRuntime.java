@@ -30,7 +30,6 @@ import jams.data.DataFactory;
 import jams.data.JAMSData;
 import jams.data.DefaultDataFactory;
 import jams.model.Component;
-import jams.model.Context;
 import jams.model.GUIComponent;
 import jams.model.JAMSModel;
 import jams.model.SmallModelState;

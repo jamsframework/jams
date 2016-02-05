@@ -24,7 +24,9 @@
 package jams.components.datatransfer;
 
 import jams.data.*;
-import jams.model.*;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 
 /**
  *

@@ -27,8 +27,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 import jams.data.*;
-import jams.model.*;
 import jams.JAMS;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 import java.io.File;
 
 /**

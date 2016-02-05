@@ -21,6 +21,7 @@
  */
 package jams.components.conditional;
 
+import jams.model.JAMSContext;
 import jams.data.*;
 import jams.model.*;
 

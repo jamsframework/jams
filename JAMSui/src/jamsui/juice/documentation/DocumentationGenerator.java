@@ -1,16 +1,19 @@
 package jamsui.juice.documentation;
 
 import jams.JAMSException;
+import jams.JAMSLogging;
 import jams.JAMSProperties;
 import jams.JAMSVersion;
 import jams.data.Attribute;
 import jams.data.DefaultDataFactory;
 import jams.model.JAMSComponentDescription;
+import jams.model.JAMSModel;
 import jams.tools.FileTools;
 import jams.tools.StringTools;
 import jams.tools.XMLTools;
 import jamsui.juice.JUICE;
 import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
+import jamsui.launcher.JAMSui;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -41,8 +44,9 @@ import org.w3c.dom.NodeList;
  * @author sa63kul
  */
 public class DocumentationGenerator {
+
     static final Logger log = Logger.getLogger(DocumentationGenerator.class.getName());
-    
+
     private static final String DEFAULT_PACKAGE_ID = "<default package>";
     private final String AnnotationFileName = "Component_Annotation.";
     private final String templateFileName = "template";
@@ -135,7 +139,7 @@ public class DocumentationGenerator {
         }
 
         try {
-            loader = new URLClassLoader(new URL[]{jarFile.toURL()}, ClassLoader.getSystemClassLoader());
+            loader = new URLClassLoader(new URL[]{jarFile.toURI().toURL()}, ClassLoader.getSystemClassLoader());
         } catch (MalformedURLException mURLe) {
             mURLe.printStackTrace();
             throw new DocumentationException(DocumentationExceptionCause.unknownError, mURLe.toString());
@@ -200,6 +204,9 @@ public class DocumentationGenerator {
     }
 
     private String processModelStructure(Node node, Set<String> components) throws DocumentationException {
+        if (((Element) node).getAttribute("enabled").equals("false")) {
+            return "";
+        }
         if (node.getNodeName().equals("model") || node.getNodeName().equals("contextcomponent") || node.getNodeName().equals("component")) {
             Element e = (Element) node;
             String clazz = e.getAttribute("class");
@@ -325,7 +332,6 @@ public class DocumentationGenerator {
             log.log(Level.INFO, "warning: model date is not named");
         }
 
-
         mainTemplate = mainTemplate.replace("%model:name%", modelName);
         mainTemplate = mainTemplate.replace("%model:author%", modelAuthor);
         mainTemplate = mainTemplate.replace("%date%", DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault()).format(new Date()));
@@ -381,7 +387,7 @@ public class DocumentationGenerator {
                 return name.startsWith("Component_Annotation");
             }
         };
-        
+
         for (String fileName : documentationOutputDir.list(filter)) {
             new File(documentationOutputDir, fileName).delete();
         }
@@ -395,6 +401,19 @@ public class DocumentationGenerator {
             log.finest("lib : " + f);
             processAnnotations(documentationOutputDir, f);
         }
+        //also add the JAMSModel documentation which is not found in components libs
+        try {
+            Class<?> clazz = JAMSModel.class;
+            String desc = getAnnotation(clazz, "");
+            if (desc != null) {
+                automaticComponentDescriptions.put(clazz.getName(), desc);
+            }
+        } catch (java.lang.NoClassDefFoundError e) {
+            log.log(Level.WARNING, "Could not load class JAMSModel", e);
+        } catch (ClassNotFoundException cnfe) {
+            log.log(Level.WARNING, "Class not found for entry JAMSModel", cnfe);
+        }        
+        
         //write automatic annotations
         for (String component : automaticComponentDescriptions.keySet()) {
             String value = automaticComponentDescriptions.get(component);
@@ -463,7 +482,7 @@ public class DocumentationGenerator {
         try {
             languageIndependentComponentDescription = XMLTools.getDocument(languageIndependentComponentDescriptionFile.getAbsolutePath());
         } catch (JAMSException fnfe) {
-            log.log(Level.WARNING, "the documentation of " + componentName + " is incomplete", fnfe);
+            log.log(Level.WARNING, "the documentation of " + componentName + " is incomplete (" + languageIndependentComponentDescriptionFile.getAbsolutePath() + " is missing).");
             return null;
         }
 
@@ -536,7 +555,7 @@ public class DocumentationGenerator {
         try {
             languageDependentComponentDescription = XMLTools.getDocument(languageDependentComponentDescriptionFile.getAbsolutePath());
         } catch (JAMSException fnfe) {
-            log.log(Level.WARNING, "The documentation of " + componentName + " is incomplete", fnfe);
+            log.log(Level.WARNING, "The documentation of " + componentName + " is incomplete (" + languageDependentComponentDescriptionFile.getAbsolutePath() + " is missing).");
             return;
         }
 

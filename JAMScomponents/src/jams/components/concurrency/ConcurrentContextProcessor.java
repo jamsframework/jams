@@ -85,7 +85,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
     public void process(ContextDescriptor context, ModelDescriptor model, final JAMSRuntime rt) {
               
         if (!context.isEnabled() || (nthreads < 2)
-                || !jams.model.JAMSSpatialContext.class.isAssignableFrom(context.getClazz())) {
+                || !jams.components.core.SpatialContext.class.isAssignableFrom(context.getClazz())) {
             rt.sendErrorMsg(MessageFormat.format(JAMS.i18n("No_concurrent_processing_for_context"), context.getInstanceName()));
             return;
         }
@@ -96,7 +96,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
         ContextDescriptor controller = new ContextDescriptor(ConcurrentContext.class, null, model);
 
         // create container for the controller context as outermost element
-        ContextDescriptor cContainer = new ContextDescriptor(controller.getInstanceName() + "Container", jams.model.JAMSContext.class, null, model);
+        ContextDescriptor cContainer = new ContextDescriptor(controller.getInstanceName() + "Container", jams.components.core.Context.class, null, model);
 
         // create partitioner component
         Class partitionerClass;

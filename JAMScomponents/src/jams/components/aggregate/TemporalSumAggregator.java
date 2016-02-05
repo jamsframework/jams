@@ -21,8 +21,10 @@
  */
 package jams.components.aggregate;
 
-import jams.model.*;
 import jams.data.*;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
+import jams.model.JAMSVarDescription;
 import java.util.Calendar;
 
 /**

@@ -11,7 +11,8 @@ import jams.JAMS;
 import jams.JAMSException;
 import jams.gui.input.NotificationDlg;
 import jams.tools.StringTools;
-import java.awt.Frame;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -23,9 +24,20 @@ import java.util.logging.LogRecord;
 public class NotificationLogHandler extends Handler {
     public static NotificationDlg notificationDlg;
     static NotificationLogHandler instance = new NotificationLogHandler();
+    private static Map<Level, String> msgHeaderTitle;
     
     private NotificationLogHandler(){
         notificationDlg = new NotificationDlg(null, JAMS.i18n("Info"));
+        msgHeaderTitle = new HashMap();
+        msgHeaderTitle.put(Level.OFF, "");
+        msgHeaderTitle.put(Level.ALL, "General_information");
+        msgHeaderTitle.put(Level.CONFIG, "Configuration");
+        msgHeaderTitle.put(Level.FINE, "Information");
+        msgHeaderTitle.put(Level.FINER, "Information");
+        msgHeaderTitle.put(Level.FINEST, "Information");
+        msgHeaderTitle.put(Level.INFO, "Information");
+        msgHeaderTitle.put(Level.SEVERE, "Error");
+        msgHeaderTitle.put(Level.WARNING, "Warning");        
     }
     
     public static NotificationLogHandler getInstance(){
@@ -41,7 +53,7 @@ public class NotificationLogHandler extends Handler {
         if (record.getLevel().intValue() > Level.WARNING.intValue()) {
         }
         String[] line = record.getMessage().split("\n");
-        String level = JAMS.i18n(record.getLevel().toString());
+        String level = JAMS.i18n(msgHeaderTitle.get(record.getLevel()));
         String msg = level + ": " + line[0];
         for (int i = 1; i < line.length; i++) {
             msg += "\n" + String.format("%0" + level.length() + "d", 0).replace("0", " ") + line[i];

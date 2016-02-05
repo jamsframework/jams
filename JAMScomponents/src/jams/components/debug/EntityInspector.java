@@ -21,7 +21,6 @@
  */
 package jams.components.debug;
 
-import jams.JAMS;
 import jams.data.*;
 import jams.model.*;
 

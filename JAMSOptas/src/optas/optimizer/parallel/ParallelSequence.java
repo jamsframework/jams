@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import optas.data.DataCollection;
 import optas.core.ObjectiveAchievedException;
 import optas.optimizer.management.SampleFactory.Sample;
-import optas.optimizer.management.SampleFactory.SampleSO;
 import optas.io.ImportMonteCarloData;
 import optas.io.ImportMonteCarloException;
 

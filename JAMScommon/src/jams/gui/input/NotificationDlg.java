@@ -41,7 +41,6 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 
 /**

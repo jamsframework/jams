@@ -5,13 +5,10 @@
 
 package jams.model;
 
-import jams.io.BufferedFileWriter;
-import jams.model.JAMSFullModelState.ClassLoaderObjectInputStream;
 import jams.tools.JAMSTools;
 import jams.workspace.stores.DataStore;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;

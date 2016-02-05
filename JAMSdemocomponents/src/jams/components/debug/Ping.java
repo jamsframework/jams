@@ -23,7 +23,8 @@
 package jams.components.debug;
 
 import jams.JAMS;
-import jams.model.*;
+import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
 
 /**
  *

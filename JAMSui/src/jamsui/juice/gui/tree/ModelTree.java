@@ -406,12 +406,12 @@ public class ModelTree extends JAMSTree {
 
         // If smartExpand is true, expand only nodes that do not represent 
         // simple JAMSContext objects. Nodes representing subclasses of 
-        // JAMSContext will be expanded
+        // JAMSContext will be bexpanded
         if (smartExpand) {
             JAMSNode node = (JAMSNode) path.getLastPathComponent();
             if (node.getType() == JAMSNode.CONTEXT_TYPE) {
                 ComponentDescriptor cd = (ComponentDescriptor) node.getUserObject();
-                if (cd.getClazz() == JAMSContext.class) {
+                if (cd.getClazz().getName().equals("jams.components.core.Context")) {
                     return;
                 }
             }
