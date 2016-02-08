@@ -678,7 +678,7 @@ public class ModelView {
     }
 
     public void openExplorer() {
-
+        
         File workspaceFile = new File(getModelDescriptor().getWorkspacePath());
 
         if (!workspaceFile.isDirectory()) {
