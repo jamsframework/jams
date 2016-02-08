@@ -40,7 +40,6 @@ public class ObserverWorkerDlg extends WorkerDlgDecorator implements Observer{
         getWorkerDlg().progressBar.setLayout(new BorderLayout(5, 5));
         getWorkerDlg().progressBar.add(progressBarLabel, BorderLayout.CENTER);        
         //progressBarLabel.setStringPainted(true);
-        progressBarLabel.setText("test"); 
         
         getWorkerDlg().pack();
     }

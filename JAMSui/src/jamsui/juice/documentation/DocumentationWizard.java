@@ -13,8 +13,6 @@ import jams.gui.tools.GUIHelper;
 import jams.tools.LogTools.ObservableLogHandler;
 import jamsui.juice.JUICE;
 import jamsui.juice.documentation.DocumentationException.DocumentationExceptionCause;
-import static jamsui.juice.documentation.DocumentationGenerator.log;
-import jamsui.launcher.JAMSui;
 import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -324,7 +322,7 @@ public class DocumentationWizard {
         progress.getWorkerDlg().setModal(false);
         observable.deleteObservers();
         observable.addObserver(progress);
-        observable.setLogLevel(Level.FINE);
+        observable.setLogLevel(Level.INFO);
 
         progress.getWorkerDlg().setInderminate(true);
         progress.getWorkerDlg().setTask(new Runnable() {
