@@ -153,7 +153,7 @@ public class DocumentationGenerator {
             if (entry.getName().endsWith(".xml")) {
                 String filename = entry.getName().replaceAll("/", ".");
                 Tools.extractZipEntry(jFile, entry, new File(documentationOutputDir, filename));
-            } else if (entry.getName().endsWith(".png")) {
+            } else if (entry.getName().endsWith(".png") || entry.getName().endsWith(".jpg")) {
                 String filename = (new File(entry.getName())).getName();
                 try {
                     Tools.copyFile(jFile.getInputStream(entry), new FileOutputStream(new File(documentationOutputDir, filename)));

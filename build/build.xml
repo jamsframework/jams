@@ -29,6 +29,10 @@
 
     <target name="cleanproj">
         <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="clean"/>
+        <delete>
+            <fileset dir="../../jamsmodels/nbprojects/components/" includes="**/*"/>
+            <!--<fileset dir="../../lib/lib" includes="**/*"/>-->
+        </delete>
     </target>
 
     <target name="cleanlib">
