@@ -22,6 +22,7 @@
 package jams.explorer;
 
 import jams.JAMS;
+import jams.JAMSException;
 import jams.JAMSLogging;
 import jams.gui.tools.GUIHelper;
 import jams.tools.FileTools;
@@ -173,6 +174,8 @@ public class DisplayManager implements Observer {
                     Logger.getLogger(DisplayManager.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
                     Logger.getLogger(DisplayManager.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (JAMSException ex) {
+                    
                 }
                 break;
         }

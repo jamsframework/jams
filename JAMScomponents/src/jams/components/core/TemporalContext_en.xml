@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
-  <title>JAMSTemporalContext</title>
+  <title>TemporalContext</title>
   <subtitle>A component used for iterating in time.</subtitle>
   <informaltable>
     <tgroup cols="2">
@@ -54,15 +54,15 @@
     <para>This context component is used for iteration within a defined time interval (attribute
         <emphasis role="italic">timeInterval</emphasis>) which is given by start and end point (two
       objects of type <ns:code>Attribute.Calendar</ns:code>) as well as increment (consisting of
-      time unit and number). All child components/contexts of JAMSTemporalContext are executed once
+      time unit and number). All child components/contexts of TemporalContext are executed once
       for every discrete point in time which has been defined in this way. The current time is
       available in the attribute <emphasis role="italic">current</emphasis> (type
         <ns:code>Attribute.Calendar</ns:code>). For more information on contexts see also
           <citation><xref linkend="kralisch_coupling_2009"/></citation> or.
         <citation>kralisch_coupling_2009</citation>. An example for the implementation of a temporal
       context is shown in <xref xmlns:xlink="http://www.w3.org/1999/xlink"
-        linkend="jams.model.JAMSTemporalContext_fig1" xrefstyle="select: label"/> .<figure
-        xml:id="jams.model.JAMSTemporalContext_fig1">
+        linkend="jams.model.TemporalContext_fig1" xrefstyle="select: label"/> .<figure
+        xml:id="jams.model.TemporalContext_fig1">
         <title>Temporal context nested inside of a spatial context</title>
         <mediaobject>
           <imageobject>

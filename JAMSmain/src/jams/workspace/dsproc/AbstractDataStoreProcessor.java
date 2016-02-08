@@ -130,9 +130,9 @@ public abstract class AbstractDataStoreProcessor {
             this.size = Integer.parseInt(size);
 
             if (idType == null) {
-                if (type.equals("jams.model.JAMSTemporalContext")) {
+                if (type.equals("jams.components.core.TemporalContext")) {
                     this.idType = "JAMSCalendar";
-                } else if (type.equals("jams.model.JAMSSpatialContext")) {
+                } else if (type.equals("jams.components.core.SpatialContext")) {
                     this.idType = "JAMSLong";
                 } else if (type.contains("jams.components.optimizer") || type.contains("optas.optimizer") || type.contains("dump")) {
                     this.idType = "JAMSLong";

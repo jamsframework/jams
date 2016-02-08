@@ -604,8 +604,8 @@ public class ModelIO {
                 cd.setClazz(jams.model.JAMSContext.class);
         }
 
-        rootElement.setAttribute("name", cd.getInstanceName());
-        rootElement.setAttribute("class", cd.getClazz().getName());
+        rootElement.setAttribute("name", cd.getInstanceName());        
+        rootElement.setAttribute("class", cd.getClazz().getName().replace("jams.model.JAMSContext", "jams.components.core.Context"));
         rootElement.setAttribute("enabled", Boolean.toString(cd.isEnabled()));
         rootElement.setAttribute("version", cd.getVersion());
 

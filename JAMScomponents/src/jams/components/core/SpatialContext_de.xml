@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <sect1 version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:ns6="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1999/xhtml" xmlns:ns4="http://www.w3.org/2000/svg" xmlns:ns3="http://www.w3.org/1998/Math/MathML" xmlns:ns="http://docbook.org/ns/docbook" >
-  <title>JAMSSpatialContext</title>
+  <title>SpatialContext</title>
   <subtitle>Eine Komponente für die Iteration im Raum.</subtitle>
   <informaltable>
     <tgroup cols="2">
@@ -47,14 +47,14 @@
       es alle seine Kindkomponenten/-kontexte jeweils einmal für jede Einheit aus. Ein Beispiel für
       einen räumlichen Kontext, der in einen zeitlichen Kontext integriert ist, wird dargestellt in
         <xref xmlns:xlink="http://www.w3.org/1999/xlink"
-          linkend="jams.model.JAMSSpatialContext_fig1" xrefstyle="select: label"/>. Während es über die Liste der Einheiten
-      iteriert, bietet JAMSSpatialContext seinen Kindkomponenten/-kontexten Zugriff auf die
+          linkend="jams.model.SpatialContext_fig1" xrefstyle="select: label"/>. Während es über die Liste der Einheiten
+      iteriert, bietet SpatialContext seinen Kindkomponenten/-kontexten Zugriff auf die
       Attributwerte der aktuellen Einheit. Über die Methode <ns:code>getCurrent()</ns:code> des
       Attributs <emphasis role="italic">entities</emphasis> kann während der räumlichen Iteration
       bei Bedarf auf die aktuelle Modelleinheit zugegriffen werden. Für nähere Informationen zum
       Datenaustausch durch Kontexte und den Zugriff auf Attribute der Einheit von räumlichen
       Kontexten beziehen Sie sich bitte auf die Dokumentation von JAMS. <figure
-        xml:id="jams.model.JAMSSpatialContext_fig1">
+        xml:id="jams.model.SpatialContext_fig1">
         <title>Räumlicher Kontext, integriert in einen zeitlichen Kontext </title>
         <mediaobject>
           <imageobject>

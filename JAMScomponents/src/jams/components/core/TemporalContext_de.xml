@@ -5,7 +5,7 @@
        xmlns:ns4="http://www.w3.org/2000/svg"
        xmlns:ns3="http://www.w3.org/1998/Math/MathML"
        xmlns:ns="http://docbook.org/ns/docbook">
-  <title>JAMSTemporalContext</title>
+  <title>TemporalContext</title>
 
   <subtitle>Eine Komponente für die Iteration in der Zeit.</subtitle>
 
@@ -72,15 +72,15 @@
     <para>Diese Kontext-Komponente dient zur Iteration über ein definiertes Zeitintervall (Attribut
         <emphasis role="italic">timeInterval</emphasis>), welches durch Start- und Endpunkt (zwei
       Objekte vom Typ <ns:code>Attribute.Calendar</ns:code>) sowie Schrittweite (bestehend aus einer
-      Zeiteinheit und Anzahl) gegeben ist. Alle Kindkomponenten/-kontexte von JAMSTemporalContext
+      Zeiteinheit und Anzahl) gegeben ist. Alle Kindkomponenten/-kontexte von TemporalContext
       werden einmal für jeden der so definierten diskreten Zeitpunkte ausgeführt. Der aktuelle
       Zeitpunkt wird im Attribut <emphasis role="italic">current</emphasis> (Typ
         <ns:code>Attribute.Calendar</ns:code>) bereitgestellt. Zu weiterführenden Informationen über
       Kontexte siehe auch <citation><xref linkend="kralisch_coupling_2009"/></citation> bzw.
         <citation>kralisch_coupling_2009</citation>. Ein Beispiel für die Verwendung eines
       zeitlichen Kontextes ist in <xref xmlns:xlink="http://www.w3.org/1999/xlink"
-        linkend="jams.model.JAMSTemporalContext_fig1" xrefstyle="select: label"/> dargestellt.<figure
-        xml:id="jams.model.JAMSTemporalContext_fig1">
+        linkend="jams.model.TemporalContext_fig1" xrefstyle="select: label"/> dargestellt.<figure
+        xml:id="jams.model.TemporalContext_fig1">
         <title>Zeitlicher Kontext mit eingeschlossenem räumlichen Kontext</title>
         <mediaobject>
           <imageobject>

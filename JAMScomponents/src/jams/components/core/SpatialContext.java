@@ -1,5 +1,5 @@
 /*
- * JAMSSpatialContext.java
+ * SpatialContext.java
  * Created on 2. August 2005, 20:58
  *
  * This file is part of JAMS

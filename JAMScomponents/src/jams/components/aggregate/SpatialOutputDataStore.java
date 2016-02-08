@@ -34,9 +34,9 @@ public class SpatialOutputDataStore {
                 
     public void setHeader(Collection<Double> ids) throws IOException {
         writer.write("@context\n");
-        writer.write("jams.model.JAMSSpatialContext	HRULoop	" + ids.size() + "\n") ;
+        writer.write("jams.components.core.SpatialContext	HRULoop	" + ids.size() + "\n") ;
         writer.write("@ancestors\n");
-        writer.write("jams.model.JAMSTemporalContext	TimeLoop	9999\n");
+        writer.write("jams.components.core.TemporalContext	TimeLoop	9999\n");
         writer.write("@filters\n");
         writer.write("@attributes\n");
         writer.write("ID	value\n");

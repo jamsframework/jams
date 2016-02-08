@@ -1,5 +1,5 @@
 /*
- * JAMSTemporalContext.java
+ * DataLoop.java
  * Created on 24. April 2013, 14:24
  *
  * This file is part of JAMS

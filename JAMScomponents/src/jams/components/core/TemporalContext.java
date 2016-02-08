@@ -1,5 +1,5 @@
 /*
- * JAMSTemporalContext.java
+ * TemporalContext.java
  * Created on 31. Juli 2005, 20:24
  *
  * This file is part of JAMS

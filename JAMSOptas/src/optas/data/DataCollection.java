@@ -866,7 +866,7 @@ public class DataCollection extends DataSet implements Serializable{
         
         if (createNewFile) {
             write.write("@context\n");
-            write.write("jams.model.JAMSTemporalContext\tdump\t" + T + "\n");
+            write.write("jams.components.core.TemporalContext\tdump\t" + T + "\n");
             write.write("@ancestors" + "\n");
             write.write("optas.optimizer.generic\tsampler\t" + N + "\n");
             write.write("@filters" + "\n");

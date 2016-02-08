@@ -21,6 +21,8 @@
  */
 package jams.explorer.gui;
 
+import jams.JAMSException;
+import jams.JAMSLogging;
 import jams.workspace.dsproc.AbstractDataStoreProcessor;
 import java.awt.BorderLayout;
 import java.io.File;
@@ -41,6 +43,7 @@ public class OutputDSPanel extends JPanel {
     public OutputDSPanel(JAMSExplorer explorer, File file, String id) {
 
         this.setLayout(new BorderLayout());
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.Show, Logger.getLogger(OutputDSPanel.class.getName()));
 
         // create the spreadsheet
         this.spreadsheet = new JAMSSpreadSheet(explorer);
@@ -79,6 +82,8 @@ public class OutputDSPanel extends JPanel {
 
             this.add(tsp, BorderLayout.NORTH);
             this.add(this.spreadsheet, BorderLayout.CENTER);
+        } else {
+            throw new JAMSException("Unsupported datastore");
         }
     }
 

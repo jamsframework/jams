@@ -588,10 +588,10 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         if (cntxt.size() != 2) {
             return false;
         }
-        if (!(cntxt.get(0).getType().equals("jams.model.JAMSSpatialContext") || cntxt.get(0).getType().equals("jams.components.conditional.FilteredSpatialContext"))) {
+        if (!(cntxt.get(0).getType().equals("jams.components.core.SpatialContext") || cntxt.get(0).getType().equals("jams.components.conditional.FilteredSpatialContext"))) {
             return false;
         }
-        if (!cntxt.get(1).getType().equals("jams.model.JAMSTemporalContext")) {
+        if (!cntxt.get(1).getType().equals("jams.components.core.TemporalContext")) {
             return false;
         }
 
@@ -608,7 +608,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         if (cntxt.size() != 2) {
             return false;
         }
-        if (!cntxt.get(0).getType().equals("jams.model.JAMSTemporalContext")) {
+        if (!cntxt.get(0).getType().equals("jams.components.core.TemporalContext")) {
             return false;
         }
         if (!cntxt.get(1).getType().contains("jams.components.optimizer") &&
@@ -643,7 +643,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         if (cntxt.size() != 1) {
             return false;
         }
-        if (cntxt.get(0).getType().equals("jams.model.JAMSTemporalContext")) {
+        if (cntxt.get(0).getType().equals("jams.components.core.TemporalContext")) {
             return true;
         }
 
@@ -656,7 +656,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         if (cntxt.size() != 1) {
             return false;
         }
-        if (cntxt.get(0).getType().equals("jams.model.JAMSTemporalContext")) {
+        if (cntxt.get(0).getType().equals("jams.components.core.TemporalContext")) {
             return false;
         }
 
