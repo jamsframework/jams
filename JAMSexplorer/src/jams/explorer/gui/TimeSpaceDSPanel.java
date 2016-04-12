@@ -25,7 +25,6 @@ import jams.JAMS;
 import jams.JAMSLogging;
 import jams.JAMSLogging.LogOption;
 import jams.data.JAMSCalendar;
-import jams.explorer.JAMSExplorer;
 import jams.gui.tools.GUIHelper;
 import jams.tools.StringTools;
 import jams.workspace.dsproc.AbstractDataStoreProcessor;
@@ -80,7 +79,6 @@ import java.beans.PropertyChangeListener;
 import java.net.URI;
 import javax.swing.SwingWorker;
 import jams.explorer.spreadsheet.JAMSSpreadSheet;
-import javax.swing.SwingUtilities;
 
 /**
  *
@@ -428,7 +426,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         Logger globalLogger = Logger.getLogger("");
         GUIHelper.setupLogHandler(globalLogger, null);
 
-        DataStoreProcessor dsdb = new DataStoreProcessor(new File("e:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop.dat"));
+        DataStoreProcessor dsdb = new DataStoreProcessor(new File("d:/jamsapplication/JAMS-Gehlberg/output/current/HRULoop.dat"));
         //dsdb.removeDB();
         dsdb.addImportProgressObserver(new Observer() {
 
@@ -1217,8 +1215,7 @@ public class TimeSpaceDSPanel extends DSPanel {
             }
 
             @Override
-            public
-                    void done() {
+            public void done() {
 
                 if (m == null) {
 

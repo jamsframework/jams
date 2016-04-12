@@ -30,6 +30,7 @@ public class DataStatistic {
     double kurt;
     double skew;
     double mean;
+    double sum;
     double median;
     double quartil1;
     double quartil3;
@@ -74,6 +75,7 @@ public class DataStatistic {
 
         //Lageparameter
         mean = StatUtils.mean(data);
+        sum = StatUtils.sum(data);
         median = StatUtils.percentile(data, 50);
         quartil1 = StatUtils.percentile(data, 25);
         quartil3 = StatUtils.percentile(data, 75);
@@ -107,6 +109,10 @@ public class DataStatistic {
 
     public double getMean() {
         return mean;
+    }
+
+    public double getSum() {
+        return sum;
     }
 
     public double getMedian() {
@@ -163,6 +169,7 @@ public class DataStatistic {
         result.put(JAMS.i18n("MINIMUM"), getMin());
         result.put(JAMS.i18n("MAXIMUM"), getMax());
         result.put(JAMS.i18n("MITTELWERT"), getMean());
+        result.put(JAMS.i18n("SUMME"), getSum());
         result.put(JAMS.i18n("UNTERES_QUARTIL_(Q.25)"), getQuartil1());
         result.put(JAMS.i18n("MITTLERES_QUARTIL_(MEDIAN)"), getMedian());
         result.put(JAMS.i18n("OBERES_QUARTIL_(Q.75)"), getQuartil3());
