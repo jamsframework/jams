@@ -39,6 +39,7 @@ public class ModelModifier {
     private ModelDescriptor md;
     static final String OPTIMIZER_CONTEXT_NAME = "optimizer";
     static final String OBJECTIVE_COMPONENT_NAME = "objective";
+    static final String CONNECT_STRING = "___";
 
     public ModelModifier(ModelDescriptor md) {
         this.md = md;
@@ -87,7 +88,7 @@ public class ModelModifier {
             for (Objective o : oList) {
                 if (o.field instanceof ComponentField) {
                     ComponentField cf = (ComponentField) o.field;
-                    String attributeName = cf.getParent().getInstanceName() + "_" + cf.getName();
+                    String attributeName = cf.getParent().getInstanceName() + CONNECT_STRING + cf.getName();
 
                     optimizerContext.addDynamicAttribute(attributeName, Attribute.Double.class);
 
@@ -110,7 +111,7 @@ public class ModelModifier {
                     ContextAttribute ca = (ContextAttribute) o.field;
                     if (ca.getContext() == optimizerContext)
                         continue;
-                    String attributeName = ca.getContext().getInstanceName() + "_" + ca.getName();
+                    String attributeName = ca.getContext().getInstanceName() + CONNECT_STRING + ca.getName();
                     if (!optimizerContext.getDynamicAttributes().containsKey(attributeName)){
                         optimizerContext.addDynamicAttribute(attributeName, Attribute.Double.class);
                     }
@@ -154,7 +155,7 @@ public class ModelModifier {
             for (Parameter p : pList) {
                 if (p.field instanceof ComponentField) {
                     ComponentField cf = (ComponentField) p.field;
-                    String attributeName = cf.getParent().getInstanceName() + "_" + cf.getName();
+                    String attributeName = cf.getParent().getInstanceName() + CONNECT_STRING + cf.getName();
 
                     optimizerContext.addStaticAttribute(attributeName, Attribute.Double.class, cf.getValue());
 
@@ -166,7 +167,7 @@ public class ModelModifier {
                     ContextAttribute ca = (ContextAttribute) p.field;
                     if (ca.getContext() == optimizerContext)
                         continue;
-                    String attributeName = ca.getContext().getInstanceName() + "_" + ca.getName();
+                    String attributeName = ca.getContext().getInstanceName() + CONNECT_STRING + ca.getName();
                     
                     optimizerContext.addStaticAttribute(attributeName, Attribute.Double.class, ca.getValue());
                     

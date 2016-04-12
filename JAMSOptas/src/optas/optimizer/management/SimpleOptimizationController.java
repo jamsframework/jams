@@ -34,7 +34,7 @@ public class SimpleOptimizationController extends OptimizationController {
     public Attribute.String parameterization;
     
     Optimization optimization = null;
-        
+
     @Override
     public void init() {
         super.init();

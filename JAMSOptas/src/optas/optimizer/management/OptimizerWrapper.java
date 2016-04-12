@@ -105,6 +105,10 @@ public abstract class OptimizerWrapper extends JAMSContext {
 
     public OptimizerWrapper() {
     }
+    
+    @Override
+    public void initAll() {
+    }    
 
     @Override
     public void init() {
