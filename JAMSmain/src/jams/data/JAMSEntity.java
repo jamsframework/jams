@@ -24,9 +24,7 @@ package jams.data;
 import java.util.*;
 import com.vividsolutions.jts.geom.Geometry;
 import gnu.trove.map.hash.THashMap;
-
 import jams.JAMS;
-import jams.data.Attribute.Entity;
 
 /**
  *

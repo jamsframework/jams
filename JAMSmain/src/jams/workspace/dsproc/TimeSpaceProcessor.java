@@ -48,7 +48,7 @@ public class TimeSpaceProcessor extends Processor {
     private String spaceID, timeID;
     private String timeFilter = null;
     private DateFormat dFormat;
-    
+
     public TimeSpaceProcessor(File file) {
         this(new DataStoreProcessor(file));
     }
@@ -99,7 +99,6 @@ public class TimeSpaceProcessor extends Processor {
         query += " ORDER BY position";
 
 //        System.out.println(query);
-
         ResultSet rs = customSelectQuery(query);
         return rs;
     }
@@ -134,30 +133,31 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     public synchronized DataMatrix getCrossProduct(long[] entityIds, String[] dateIds) throws SQLException, IOException {
-        if (entityIds == null){
+        if (entityIds == null) {
             throw new NullPointerException("getCrossProduct: entityIds must not be null");
         }
-        if (dateIds == null){
+        if (dateIds == null) {
             throw new NullPointerException("getCrossProduct: dateIds must not be null");
         }
         double[][] matrix = new double[dateIds.length][entityIds.length];
         int idMap[] = null;
         Attribute.Calendar calendar = DefaultDataFactory.getDataFactory().createCalendar();
-        
+
         for (int i = 0; i < dateIds.length; i++) {
             calendar.setValue(dateIds[i]);
             DataMatrix col = getTemporalData(calendar);
-            if (col == null){
-                if (dsdb != null && dsdb.getFile() != null)
+            if (col == null) {
+                if (dsdb != null && dsdb.getFile() != null) {
                     throw new IOException("getCrossProduct: date " + calendar.toString() + " is not available in file " + this.dsdb.getFile().getAbsolutePath());
-                else
+                } else {
                     throw new IOException("getCrossProduct: date " + calendar.toString() + " is not available");
+                }
             }
             if (idMap == null) {
                 idMap = new int[entityIds.length];
 
                 for (int j = 0; j < entityIds.length; j++) {
-                    idMap[j] = col.getIDPosition(Long.toString(entityIds[j]));                    
+                    idMap[j] = col.getIDPosition(Long.toString(entityIds[j]));
                 }
             }
             double entities[] = col.getCol(0);
@@ -183,9 +183,9 @@ public class TimeSpaceProcessor extends Processor {
      * @throws java.io.IOException
      */
     private synchronized DataMatrix getTemporalData(Attribute.Calendar date) throws SQLException, IOException {
-       
+
         String filterString = date.toString(dFormat);
-        
+
         setTimeFilter(filterString);
         ResultSet rs = getData();
         DataMatrix result = null;
@@ -197,8 +197,15 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     private DataMatrix getAggregate(DataMatrix aggregate, int count, int weightAttribIndex) {
-        int i = -1;
+        
+        double a[][] = aggregate.getArray();
+        double w[] = new double[a.length];
+        for (int i = 0; i < a.length; i++) {
+            w[i] = a[i][weightAttribIndex]/count;
+        }    
 
+        int i = -1;        
+        
         for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
 
             if (attrib.isSelected()) {
@@ -207,9 +214,7 @@ public class TimeSpaceProcessor extends Processor {
 
                 // aggregate already contains the sum of all matrices, so just
                 // check if we need to calculate the mean
-                if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_MEAN) {
-
-                    double a[][] = aggregate.getArray();
+                if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_MEAN && count > 1) {
                     for (int k = 0; k < a.length; k++) {
                         a[k][i] /= count;
                     }
@@ -218,14 +223,14 @@ public class TimeSpaceProcessor extends Processor {
                 // if the weighting is set to WEIGHTING_DIV_AREA we will divide the results by the area
                 // of each single entity (given by its index (weightAttribIndex)
                 if ((attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) && (weightAttribIndex >= 0)) {
-
-                    double a[][] = aggregate.getArray();
                     for (int k = 0; k < a.length; k++) {
-                        a[k][i] /= a[k][weightAttribIndex];
+                        a[k][i] /= w[k];
                     }
-
+                } else if ((attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA) && (weightAttribIndex >= 0)) {
+                    for (int k = 0; k < a.length; k++) {
+                        a[k][i] *= w[k];
+                    }
                 }
-
             }
         }
         return aggregate;
@@ -277,8 +282,6 @@ public class TimeSpaceProcessor extends Processor {
                 processingProgressObservable.setProgress(percent);
             }
         }
-
-
 
 //        if ((aggregate != null) && (aggrType == 1)) {
 //            aggregate = aggregate.times(1d / count);
@@ -362,6 +365,12 @@ public class TimeSpaceProcessor extends Processor {
         JAMSCalendar utcCal = new JAMSCalendar();
         double[][] weights;
 
+        if (ids.length == 1) {
+            for (AbstractDataStoreProcessor.AttributeData a : dsdb.getAttributes()) {
+                a.setAggregationType(DataStoreProcessor.AttributeData.AGGREGATION_SUM);
+            }
+        }
+
         if (weightAttribIndex >= attributeIDs.length) {
             Logger.getLogger(TimeSpaceProcessor.class.getName()).log(Level.INFO, "Area attribute does not exist!");
             return null;
@@ -383,6 +392,8 @@ public class TimeSpaceProcessor extends Processor {
                 idPosition[i] = m.getIDPosition(String.valueOf(ids[i]));
                 a[i] = m.getRow(idPosition[i]);
             }
+
+            // calculate the weights based on the first dataset (dymamic weights not considered)
             weights = calcWeights(a, weightAttribIndex);
             data.add(getWeightedSum(a, weights));
             utcCal.setTimeInMillis(rs.getTimestamp(timeID, utcCal).getTime());
@@ -973,7 +984,6 @@ public class TimeSpaceProcessor extends Processor {
 //        tsproc.setAggregator("sum");
 //
 //        output(tsproc.getTemporalData());
-
         ArrayList<DataStoreProcessor.AttributeData> attribs = tsproc.getDataStoreProcessor().getAttributes();
         for (DataStoreProcessor.AttributeData attrib : attribs) {
             if (!attrib.getName().startsWith("act")) {
@@ -991,9 +1001,7 @@ public class TimeSpaceProcessor extends Processor {
             }
         });
 
-
 //        tsproc.deleteCache();
-
         int c = 4;
 
         DataMatrix m = null;

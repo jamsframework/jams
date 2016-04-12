@@ -33,6 +33,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
 import jams.JAMS;
+import jams.JAMSException;
 import jams.tools.JAMSTools;
 import jams.data.*;
 import jams.dataaccess.*;
@@ -1186,10 +1187,19 @@ public class JAMSContext extends JAMSComponent implements Context {
      * Update the attributes of the current entity of this context with the
      * output attributes of the accessing components
      */
-    @Override
     public void updateEntityData() {
         for (DataAccessor dataAccessor : dataAccessors) {
-            dataAccessor.write();
+            try {
+                dataAccessor.write();
+            } catch (ArithmeticException ae) {
+                String name = "";
+                for (String key : dataAccessorMap.keySet()) {
+                    if (dataAccessor == dataAccessorMap.get(key)) {
+                        name = key;
+                    }
+                }
+                throw new JAMSException("Problem occured while accessing attribute \"" + name + "\".", ae);
+            }
         }
     }
 
@@ -1202,7 +1212,7 @@ public class JAMSContext extends JAMSComponent implements Context {
     @Override
     public void updateComponentData(int index) {
         for (DataAccessor dataAccessor : dataAccessors) {
-            dataAccessor.setIndex(index); 
+            dataAccessor.setIndex(index);
             //read entity data before execution
             dataAccessor.read();
         }
