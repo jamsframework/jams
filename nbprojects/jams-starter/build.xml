@@ -37,7 +37,9 @@
         <ant antfile="../jams-explorer/build.xml" inheritall="false" target="clean"/>
         <ant antfile="../jams-ui/build.xml" inheritall="false" target="clean"/>
         <delete>
-            <fileset dir="../../jams-bin" includes="**/*"/>
+            <fileset dir="../../jams-bin" includes="**/*">
+                <exclude name="**/default.jap"/>
+            </fileset>
             <!--<fileset dir="../../lib/lib" includes="**/*"/>-->
         </delete>
     </target>     
