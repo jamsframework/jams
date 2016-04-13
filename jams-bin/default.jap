@@ -1,0 +1,27 @@
+#JAMS-Konfigurationsdatei
+#Wed Apr 13 09:06:41 CEST 2016
+infolog=
+libs=components;../../jamsmodels/nbprojects/components
+guiconfig=true
+docbook-home=docbook
+debugmode=false
+model=
+charset=
+username=
+profiling=false
+defaultworkspace=true
+windowenable=true
+errordlg=true
+maxlibclasses=10000
+windowontop=false
+windowheight=600
+verbose=false
+maxrecentfiles=5
+debug=1
+guiconfigheight=600
+windowwidth=900
+guiconfigwidth=600
+preprocessing=true
+errorlog=
+helpbaseurl=
+floatformat=%f
