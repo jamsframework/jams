@@ -274,23 +274,4 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     public void add(int field, int amount) {
         super.add(field, amount);
     }
-
-//    @Override
-//    public String getFormatPattern() {
-//        return FORMAT_PATTERN;
-//    }
-//
-//    @Override
-//    public TimeZone getTimeZone() {
-//        return TIME_ZONE;
-//    }
-    
-    public static void main(String[] args) {
-        double[][][] data = new double[1][2][3];
-        data[0][1][2] = 10;
-        HashMap<Integer, Integer> map = new HashMap();
-        
-        data[map.get(1)][1][2] = 1;
-        
-    }
 }
