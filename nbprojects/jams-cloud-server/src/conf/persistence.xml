@@ -8,6 +8,7 @@
     <class>jams.server.entities.Workspace</class>
     <class>jams.server.entities.WorkspaceFileAssociation</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
-    <properties/>
+    <properties>
+    </properties>
   </persistence-unit>
 </persistence>

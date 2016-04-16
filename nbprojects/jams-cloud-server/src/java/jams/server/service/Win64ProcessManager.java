@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  * @author christian
  */
 public class Win64ProcessManager extends AbstractProcessManager {
-    Logger logger = Logger.getLogger(LinuxProcessManager.class.getName());
+    Logger logger = Logger.getLogger(Win64ProcessManager.class.getName());
     
     @Override
     protected Integer getProcessPid(Process process) throws IOException{

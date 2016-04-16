@@ -45,17 +45,17 @@ public class ApplicationConfig extends Application {
     static Properties p = new Properties() {
         {
             Logger log = Logger.getLogger(ApplicationConfig.class.getName());                         
-            log.info("Try to set paths ..");
+            log.info("Try to set paths..");
             try {
                 load(new FileReader("settings.properties"));
                 SERVER_UPLOAD_DIRECTORY = getProperty("upload-directory");
                 SERVER_TMP_DIRECTORY = getProperty("tmp-directory");
                 SERVER_EXEC_DIRECTORY = getProperty("exec-directory");
 
-                log.info("Setting of paths were successful" + "\n" + 
-                        SERVER_UPLOAD_DIRECTORY + "\n" + 
-                        SERVER_TMP_DIRECTORY + "\n" + 
-                        SERVER_EXEC_DIRECTORY);
+                log.info("Setting of paths was successful [" +
+                        SERVER_UPLOAD_DIRECTORY + ", " + 
+                        SERVER_TMP_DIRECTORY + ", " + 
+                        SERVER_EXEC_DIRECTORY + "]");
             } catch (Throwable ioe) {
                 log.log(Level.SEVERE, ioe.getMessage(), ioe);
                 ioe.printStackTrace();

@@ -27,6 +27,8 @@ import jams.tools.FileTools;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -52,54 +54,57 @@ public class LinuxProcessManager extends AbstractProcessManager {
             } catch (Throwable e) {
                 return -1;
             }
+            
         }
         return -1;
     }
-
+    
     @Override
     public double getLoad(){
-        String command[] = {
-            "/bin/sh",
-            "-c",
-            "echo $(uptime | awk '{sub(\",\",\"\",$11); print $11}') / $(cat /proc/cpuinfo | grep processor | wc -l) | bc -l"
-        };
-        
-        BufferedReader reader1 = null, reader2 = null;
-        double result = Double.NaN;
-        
-        try {
-            Runtime runtime = Runtime.getRuntime();
-            Process getCPULoad = runtime.exec(command);
-            
-            reader1 = new BufferedReader(new InputStreamReader(getCPULoad.getInputStream()));            
-            int code = getCPULoad.waitFor();
-            String line = reader1.readLine();            
-            if (line != null){
-                result = Double.parseDouble(line);
-            }            
-            if (getCPULoad.getErrorStream().available()>0){
-                reader2 = new BufferedReader(new InputStreamReader(getCPULoad.getInputStream()));            
-                line = null;
-                while( (line = reader2.readLine()) != null){
-                    logger.log(Level.SEVERE, line);
-                }
-            }
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, e.toString(), e);
-            
-            return result;
-        } finally{
-            try{
-                if (reader1 != null)
-                    reader1.close();
-            }catch(IOException ioe){};
-            try{
-                if (reader2 != null)
-                    reader2.close();
-            }catch(IOException ioe){};
-        }
-        
-        return result;
+        OperatingSystemMXBean osmxb = ManagementFactory.getOperatingSystemMXBean();
+        return osmxb.getSystemLoadAverage() / osmxb.getAvailableProcessors() + 0.5;
+//        String command[] = {
+//            "/bin/sh",
+//            "-c",
+//            "echo $(uptime | awk '{sub(\",\",\"\",$11); print $11}') / $(cat /proc/cpuinfo | grep processor | wc -l) | bc -l"
+//        };
+//        
+//        BufferedReader reader1 = null, reader2 = null;
+//        double result = Double.NaN;
+//        
+//        try {
+//            Runtime runtime = Runtime.getRuntime();
+//            Process getCPULoad = runtime.exec(command);
+//            
+//            reader1 = new BufferedReader(new InputStreamReader(getCPULoad.getInputStream()));            
+//            int code = getCPULoad.waitFor();
+//            String line = reader1.readLine();            
+//            if (line != null){
+//                result = Double.parseDouble(line);
+//            }            
+//            if (getCPULoad.getErrorStream().available()>0){
+//                reader2 = new BufferedReader(new InputStreamReader(getCPULoad.getInputStream()));            
+//                line = null;
+//                while( (line = reader2.readLine()) != null){
+//                    logger.log(Level.SEVERE, line);
+//                }
+//            }
+//        } catch (Exception e) {
+//            logger.log(Level.SEVERE, e.toString(), e);
+//            
+//            return result;
+//        } finally{
+//            try{
+//                if (reader1 != null)
+//                    reader1.close();
+//            }catch(IOException ioe){};
+//            try{
+//                if (reader2 != null)
+//                    reader2.close();
+//            }catch(IOException ioe){};
+//        }
+//        
+//        return result;
     }
     
     @Override
