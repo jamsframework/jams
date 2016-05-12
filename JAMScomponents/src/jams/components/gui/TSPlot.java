@@ -69,14 +69,14 @@ import org.jfree.ui.RectangleEdge;
  */
 @JAMSComponentDescription(title = "Timeseries plot",
         author = "Sven Kralisch",
-        date = "2013-04-26",
+        date = "2014-01-23",
         description = "This component creates a graphical plot of time series data, "
         + "e.g. precipitation and runoff over time.",
         version = "1.0_2")
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
-    @VersionComments.Entry(version = "1.0_1", comment = "Changed default cache size"),
-    @VersionComments.Entry(version = "1.0_2", comment = "- Aligned font sizes for left/right axis labels\n"
+    @VersionComments.Entry(version = "1.0_0", date = "2006-09-18", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", date = "2013-08-13", comment = "Changed default cache size"),
+    @VersionComments.Entry(version = "1.0_2", date = "2014-01-23", comment = "- Aligned font sizes for left/right axis labels\n"
             + "- Added horizotal grid line and display option\n"
             + "- Added legend positioning option")
 })

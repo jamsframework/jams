@@ -46,13 +46,13 @@ import java.util.ArrayList;
         + "- automated time shift if start date of datastore is before start date of model\n"
         + "- automated aggregation if time steps of data store and model differ")
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
-    @VersionComments.Entry(version = "1.0_1", comment = "Cache functions removed, minor bug fixes"),
-    @VersionComments.Entry(version = "1.1", comment = "- Aggregation functions if time steps of data store and model differ\n"
+    @VersionComments.Entry(version = "1.0_0", date = "2008-10-20", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", date = "2013-06-17", comment = "Cache functions removed, minor bug fixes"),
+    @VersionComments.Entry(version = "1.1", date = "2014-02-16", comment = "- Aggregation functions if time steps of data store and model differ\n"
             + "- Fixed wrong time shift in case of monthly data\n"),
-    @VersionComments.Entry(version = "1.1_1", comment = "Fixed bug that caused wrong forward skipping "
+    @VersionComments.Entry(version = "1.1_1", date = "2014-05-14", comment = "Fixed bug that caused wrong forward skipping "
             + "if time offset was very long (> 68 years of daily data)"),
-    @VersionComments.Entry(version = "1.2", comment = "Added attributes to output"
+    @VersionComments.Entry(version = "1.2", date = "2014-06-20", comment = "Added attributes to output"
             + " column names and columns IDs for further use")
 })
 public class TSDataStoreReader extends JAMSComponent {

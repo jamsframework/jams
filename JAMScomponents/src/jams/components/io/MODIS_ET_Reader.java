@@ -43,7 +43,7 @@ import java.util.List;
         version = "1.0_0"
 )
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version")
+    @VersionComments.Entry(version = "1.0_0", date = "2016-04-13", comment = "Initial version")
 })
 public class MODIS_ET_Reader extends JAMSComponent {
 

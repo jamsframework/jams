@@ -41,7 +41,7 @@ import jams.model.VersionComments;
         + "conditionally execute components. This context must contain two components. "
         + "If \"value1\" equals \"value2\", the first one will be executed, otherwise the second one.",
         version = "1.0_1")
-@VersionComments(entries = @VersionComments.Entry(version = "1.0_1",
+@VersionComments(entries = @VersionComments.Entry(version = "1.0_1", date = "2015-02-18",
         comment = "Fixed minor issue with wrong counting of run() invocations"))
 public class DoubleConditionalContext extends JAMSContext {
 

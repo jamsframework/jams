@@ -42,8 +42,8 @@ import jams.workspace.stores.Filter;
         + "represent iteration over discrete time steps typically used in conceptional"
         + "environmental models")
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial Version"),
-    @VersionComments.Entry(version = "1.1_0", comment = "Added time step output")
+    @VersionComments.Entry(version = "1.0_0", date = "2005-07-31", comment = "Initial Version"),
+    @VersionComments.Entry(version = "1.1_0", date = "2015-03-16", comment = "Added time step output")
 })
 public class TemporalContext extends JAMSContext {
 

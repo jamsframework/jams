@@ -38,7 +38,7 @@ import jams.model.*;
         + "switch between alternative components. It executes child component number i "
         + "if the the given attribute matches the i-th value. If no value matches, the "
         + "i+1-th child component is executed (if existing).")
-@VersionComments(entries = @VersionComments.Entry(version = "1.0_1",
+@VersionComments(entries = @VersionComments.Entry(version = "1.0_1", date = "2015-02-18",
         comment = "Fixed minor issue with wrong counting of run() invocations"))
 public class SwitchContext extends JAMSContext {
 

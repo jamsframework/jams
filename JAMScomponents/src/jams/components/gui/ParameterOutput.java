@@ -40,14 +40,13 @@ import org.w3c.dom.Element;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 @JAMSComponentDescription(
-        title = "ParameterOutput",
         author = "Sven Kralisch",
         description = "Print list of all parameter values",
         date = "2014-01-17",
         version = "1.0_0"
 )
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),})
+    @VersionComments.Entry(version = "1.0_0", date = "2014-01-17", comment = "Initial version"),})
 public class ParameterOutput extends JAMSGUIComponent {
 
     @JAMSVarDescription(

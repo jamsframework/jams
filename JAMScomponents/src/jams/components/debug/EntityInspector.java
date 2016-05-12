@@ -36,7 +36,7 @@ import jams.model.*;
         version = "1.0_0"
 )
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version")
+    @VersionComments.Entry(version = "1.0_0", date = "2015-07-09", comment = "Initial version")
 })
 public class EntityInspector extends JAMSComponent {
 

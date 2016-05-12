@@ -34,7 +34,7 @@ import java.util.ArrayList;
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription(title = "JAMS spatial context",
+@JAMSComponentDescription(title = "Filtered spatial context",
         author = "Sven Kralisch",
         date = "2012-07-06",
         version = "1.2_0",
@@ -43,11 +43,11 @@ import java.util.ArrayList;
                 + "during model runtime. Therefore it can be used only for filtering over"
                 + "static attributes.")
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
-    @VersionComments.Entry(version = "1.1_0", comment = "added attribute \"attributeValuesAlternative\" as alternative "
+    @VersionComments.Entry(version = "1.0_0", date = "2012-07-06", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.1_0", date = "", comment = "added attribute \"attributeValuesAlternative\" as alternative "
             + "for \"attributeValues\". Version 1.0_0 compared attributeValues with startsWith function. "
             + "This is now changed to compareTo function."),
-    @VersionComments.Entry(version = "1.2_0", comment = "Fixed wrong behaviour which was caused by the use of initAll() instead of init()")
+    @VersionComments.Entry(version = "1.2_0", date = "2015-08-01", comment = "Fixed wrong behaviour which was caused by the use of initAll() instead of init()")
 })
 public class FilteredSpatialContext extends SpatialContext {
 

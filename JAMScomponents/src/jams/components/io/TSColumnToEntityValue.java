@@ -39,7 +39,7 @@ import jams.model.*;
         version = "1.0_0"
 )
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version")
+    @VersionComments.Entry(version = "1.0_0", date = "2014-06-20", comment = "Initial version")
 })
 public class TSColumnToEntityValue extends JAMSComponent {
 

@@ -38,7 +38,8 @@ import java.util.Map;
         version = "1.0_0"
 )
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version")
+    @VersionComments.Entry(version = "1.0_0", date = "2016-04-14", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.1_0", date = "2016-04-20", comment = "Fixed handling of missing data values")
 })
 public class MODIS_ET_Assigner extends JAMSComponent {
 
@@ -77,7 +78,7 @@ public class MODIS_ET_Assigner extends JAMSComponent {
     public Attribute.Calendar time;
 
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.WRITE,
+            access = JAMSVarDescription.AccessType.READWRITE,
             description = "MODIS ET value",
             unit = "mm"
     )
@@ -101,8 +102,12 @@ public class MODIS_ET_Assigner extends JAMSComponent {
 
         double value = modisETArray.getValue()[hru2idMap.get((int) hruID.getValue())];
         int days = time.getActualMaximum(Attribute.Calendar.DAY_OF_MONTH);
-        
-        modisET.setValue(value*hruArea.getValue()/days);
+
+        if (value < 0) {
+            value = modisET.getValue();
+        }
+
+        modisET.setValue(value * hruArea.getValue() / days);
 
     }
 

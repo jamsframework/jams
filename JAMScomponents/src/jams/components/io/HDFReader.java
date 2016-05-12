@@ -28,8 +28,8 @@ import ncsa.hdf.object.h4.H4SDS;
         version = "1.1_0",
         description = "This component reads data from MOD16 HDF files")
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
-    @VersionComments.Entry(version = "1.1_0", comment = "Fixed 0.1 bug, i.e. all "
+    @VersionComments.Entry(version = "1.0_0", date = "2014-01-17", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.1_0", date = "2015-08-03", comment = "Fixed 0.1 bug, i.e. all "
             + "pixel values are multiplied with 0.1 now "
             + "(http://www.ntsg.umt.edu/project/mod16#documentation)")
 })
