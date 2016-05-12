@@ -590,12 +590,12 @@ public class TimeSpaceDSPanel extends DSPanel {
         label = new JLabel(new ImageIcon(image));
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 12, 5, 1, 1, 0, 0);
 
-        image = new ImageIcon(ClassLoader.getSystemResource("jams/explorer/resources/images/jade_xdiva.png")).getImage();
+        image = new ImageIcon(ClassLoader.getSystemResource("jams/explorer/resources/images/jade_xdivw.png")).getImage();
         image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
         label = new JLabel(new ImageIcon(image));
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 13, 5, 1, 1, 0, 0);
 
-        image = new ImageIcon(ClassLoader.getSystemResource("jams/explorer/resources/images/jade_xtimesa.png")).getImage();
+        image = new ImageIcon(ClassLoader.getSystemResource("jams/explorer/resources/images/jade_xtimesw.png")).getImage();
         image = image.getScaledInstance((int) Math.round(image.getWidth(null) * scale), (int) Math.round(image.getHeight(null) * scale), Image.SCALE_SMOOTH);
         label = new JLabel(new ImageIcon(image));
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 14, 5, 1, 1, 0, 0);
@@ -781,6 +781,7 @@ public class TimeSpaceDSPanel extends DSPanel {
             DataTransfer3D transfer;
             DataMatrix[] m;
             ArrayList<String> attributeNames = new ArrayList();
+            int weightAttribIndex = -1;
 
             @Override
             public Void doInBackground() {
@@ -815,10 +816,24 @@ public class TimeSpaceDSPanel extends DSPanel {
 
                 try {
 
+                    // get the position of the weight attribute, if existing
+                    if (attribCombo.getSelectedIndex() != 0) {
+                        weightAttribIndex = 0;
+                        String weightAttribName = attribCombo.getSelectedItem().toString();
+                        for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
+                            if (attrib.getName().equals(weightAttribName)) {
+                                break;
+                            }
+                            if (attrib.isSelected()) {
+                                weightAttribIndex++;
+                            }
+                        }
+                    }
+
                     Object[] entities = entityList.getSelectedValuesList().toArray();
                     Object[] times = timeList.getSelectedValuesList().toArray();
                     String[] entitiesString = new String[entities.length];
-                    String[] attribs = attributeNames.toArray(new String[attributeNames.size()]);
+                    
 
                     int k = 0;
                     long[] entityIds = new long[entities.length];
@@ -834,22 +849,36 @@ public class TimeSpaceDSPanel extends DSPanel {
                         dateIds[k++] = (String) date.toString();
                     }
 
+                    if (weightAttribIndex >= 0) {
+
+                    }
+
                     m = new DataMatrix[attributeNames.size()];
+                    DataMatrix w;
+                    int c = 0;
                     for (int j = 0; j < attributeNames.size(); j++) {
-                        for (AbstractDataStoreProcessor.AttributeData attribute : attribList) {
-                            if (attribute.getName().equals(attributeNames.get(j))) {
-                                attribute.setSelected(true);
-                                m[j] = proc.getCrossProduct(entityIds, dateIds);
-                                attribute.setSelected(false);
-                            }
+//                        for (AbstractDataStoreProcessor.AttributeData attribute : attribList) {
+//                            if (attribute.getName().equals(attributeNames.get(j))) {
+//                                attribute.setSelected(true);
+                        if (j == weightAttribIndex) {
+                            w = proc.getCrossProduct(entityIds, dateIds, j);
+                        } else {
+                            m[c++] = proc.getCrossProduct(entityIds, dateIds, j);
                         }
 
+//                                attribute.setSelected(false);
+//                            }
+//                        }
                         progress = Math.round(((j + 1) * 100) / attributeNames.size());
                         setProgress(progress);
                     }
-
                     setProgress(100);
 
+                    if (attribCombo.getSelectedIndex() != 0) {
+                        attributeNames.remove(attribCombo.getSelectedItem().toString());
+                    }
+                    String[] attribs = attributeNames.toArray(new String[attributeNames.size()]);
+                    
                     transfer = new DataTransfer3D(m, entitiesString, dateIds, attribs);
 
                     ///new
