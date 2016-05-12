@@ -131,8 +131,12 @@ public class TimeSpaceProcessor extends Processor {
         rs.next();
         return rs.getInt("COUNT");
     }
-
+    
     public synchronized DataMatrix getCrossProduct(long[] entityIds, String[] dateIds) throws SQLException, IOException {
+        return getCrossProduct(entityIds, dateIds, 0);
+    }
+    
+    public synchronized DataMatrix getCrossProduct(long[] entityIds, String[] dateIds, int attributeID) throws SQLException, IOException {
         if (entityIds == null) {
             throw new NullPointerException("getCrossProduct: entityIds must not be null");
         }
@@ -151,7 +155,7 @@ public class TimeSpaceProcessor extends Processor {
                     throw new IOException("getCrossProduct: date " + calendar.toString() + " is not available in file " + this.dsdb.getFile().getAbsolutePath());
                 } else {
                     throw new IOException("getCrossProduct: date " + calendar.toString() + " is not available");
-                }
+                }                
             }
             if (idMap == null) {
                 idMap = new int[entityIds.length];
@@ -160,7 +164,7 @@ public class TimeSpaceProcessor extends Processor {
                     idMap[j] = col.getIDPosition(Long.toString(entityIds[j]));
                 }
             }
-            double entities[] = col.getCol(0);
+            double entities[] = col.getCol(attributeID);
             for (int j = 0; j < entityIds.length; j++) {
                 matrix[i][j] = entities[idMap[j]];
             }
@@ -197,15 +201,21 @@ public class TimeSpaceProcessor extends Processor {
     }
 
     private DataMatrix getAggregate(DataMatrix aggregate, int count, int weightAttribIndex) {
-        
+
         double a[][] = aggregate.getArray();
         double w[] = new double[a.length];
-        for (int i = 0; i < a.length; i++) {
-            w[i] = a[i][weightAttribIndex]/count;
-        }    
+        if (weightAttribIndex == -1) {
+            for (int i = 0; i < a.length; i++) {
+                w[i] = 1;
+            }
+        } else {
+            for (int i = 0; i < a.length; i++) {
+                w[i] = a[i][weightAttribIndex] / count;
+            }
+        }
 
-        int i = -1;        
-        
+        int i = -1;
+
         for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
 
             if (attrib.isSelected()) {

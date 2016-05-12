@@ -140,7 +140,8 @@ public abstract class Processor {
             } else if (weightAttribIndex >= 0) {
 
                 if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_MEAN) {
-                    if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA) {
+                    if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA ||
+                            attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) {
                         // if the relative weights have not been calculated yet
                         // do so now
                         if (relWeights == null) {
