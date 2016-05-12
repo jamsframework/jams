@@ -1,2 +1,0 @@
-WWJ-SDK-VERSION:	worldwind-daily-796.1631
-DATE:				25.08.2013 2:11:34
