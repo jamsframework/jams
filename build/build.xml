@@ -37,8 +37,10 @@
 
     <target name="cleanlib">
         <delete>
-            <fileset dir="../jams-bin" includes="**/*"/>
-        </delete>
+            <fileset dir="../jams-bin" includes="**/*">
+                <exclude name="**/default.jap"/>
+            </fileset>
+        </delete>                    
     </target>
 
     <!--target name="buildproj" description="Build all top level JAMS projects">
