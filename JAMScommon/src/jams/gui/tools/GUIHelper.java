@@ -67,7 +67,7 @@ public class GUIHelper {
     public static void removeGBComponent(Container cont, Component c) {
         cont.remove(c);
     }
-
+    
     /**
      * Add swing component to container using gridbag layout
      *
@@ -87,6 +87,37 @@ public class GUIHelper {
             double weightx, double weighty) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(2, 2, 2, 2);
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.gridwidth = width;
+        gbc.gridheight = height;
+        gbc.weightx = weightx;
+        gbc.weighty = weighty;
+        gbl.setConstraints(c, gbc);
+        return cont.add(c);
+    }    
+
+    /**
+     * Add swing component to container using gridbag layout
+     *
+     * @param cont Container object
+     * @param gbl Gridbag layout object
+     * @param c Component to be added
+     * @param x X position
+     * @param y Y position
+     * @param width Component width
+     * @param height Component height
+     * @param weightx Component weight in x direction
+     * @param weighty Component weight in y direction
+     * @param filling Filling strategy 
+     * @return Component added
+     */
+    public static Component addGBComponent(Container cont, GridBagLayout gbl, Component c,
+            int x, int y, int width, int height,
+            double weightx, double weighty, int filling) {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = filling;
         gbc.insets = new Insets(2, 2, 2, 2);
         gbc.gridx = x;
         gbc.gridy = y;

@@ -110,6 +110,93 @@ public abstract class Processor {
 
         double result[][] = new double[a.length][a[0].length];
         double relWeights[] = null;
+        double sumWeights = 0;
+        double absWeights[] = null;
+        int i = -1;
+
+        for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
+
+            if (!attrib.isSelected()) {
+                continue;
+            }
+
+            i++;
+
+            switch (attrib.getAggregationType()) {
+                
+                case DataStoreProcessor.AttributeData.AGGREGATION_MEAN:
+                    double weight = 1d / a.length;
+                    for (int j = 0; j < a.length; j++) {
+                        result[j][i] = weight;
+                    }
+                    break;
+                    
+                case DataStoreProcessor.AttributeData.AGGREGATION_SUM:
+                    for (int j = 0; j < a.length; j++) {
+                        result[j][i] = 1d;
+                    }
+                    break;
+                    
+                case DataStoreProcessor.AttributeData.AGGREGATION_WMEAN:
+                    if (relWeights == null) {
+                        relWeights = new double[a.length];
+
+                        if (sumWeights == 0) {
+                            for (int j = 0; j < a.length; j++) {
+                                sumWeights += a[j][weightAttribIndex];
+                            }
+                        }
+
+                        for (int j = 0; j < a.length; j++) {
+                            relWeights[j] = a[j][weightAttribIndex] / sumWeights;
+                        }
+                    }
+
+                    for (int j = 0; j < a.length; j++) {
+                        result[j][i] = relWeights[j];
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+
+            switch (attrib.getWeightingType()) {
+                
+                case DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA:
+                    if (sumWeights == 0) {
+                        for (int j = 0; j < a.length; j++) {
+                            sumWeights += a[j][weightAttribIndex];
+                        }
+                    }
+                    for (int j = 0; j < a.length; j++) {
+                        result[j][i] /= sumWeights;
+                    }
+                    break;
+                    
+                case DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA:
+                    if (sumWeights == 0) {
+                        for (int j = 0; j < a.length; j++) {
+                            sumWeights += a[j][weightAttribIndex];
+                        }
+                    }
+                    for (int j = 0; j < a.length; j++) {
+                        result[j][i] *= sumWeights;
+                    }
+                    break;
+                default:
+                    break;
+
+            }
+        }
+
+        return result;
+    }
+
+    protected double[][] calcWeights_old(double a[][], int weightAttribIndex) {
+
+        double result[][] = new double[a.length][a[0].length];
+        double relWeights[] = null;
         double absWeights[] = null;
         int i = -1;
 
@@ -140,8 +227,8 @@ public abstract class Processor {
             } else if (weightAttribIndex >= 0) {
 
                 if (attrib.getAggregationType() == DataStoreProcessor.AttributeData.AGGREGATION_MEAN) {
-                    if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA ||
-                            attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) {
+                    if (attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA
+                            || attrib.getWeightingType() == DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA) {
                         // if the relative weights have not been calculated yet
                         // do so now
                         if (relWeights == null) {

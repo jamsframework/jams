@@ -201,6 +201,7 @@ public abstract class AbstractDataStoreProcessor {
         public static final boolean SELECTION_DEFAULT = false;
         public static final int AGGREGATION_SUM = 1;
         public static final int AGGREGATION_MEAN = 2;
+        public static final int AGGREGATION_WMEAN = 3;
         public static final int WEIGHTING_NONE = 1;
         public static final int WEIGHTING_TIMES_AREA = 2;
         public static final int WEIGHTING_DIV_AREA = 3;

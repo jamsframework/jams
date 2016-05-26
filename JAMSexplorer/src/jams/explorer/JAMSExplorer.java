@@ -51,7 +51,7 @@ import jams.explorer.gui.ExplorerFrame;
 public class JAMSExplorer {
 
     public static final String APP_TITLE = JAMS.i18n("JADE");
-    public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 750;
+    public static final int SCREEN_WIDTH = 1200, SCREEN_HEIGHT = 760;
     protected ExplorerFrame explorerFrame;
     protected JAMSRuntime runtime;
     protected SystemProperties properties;

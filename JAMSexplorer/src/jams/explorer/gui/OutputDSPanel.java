@@ -31,6 +31,8 @@ import java.util.logging.Logger;
 import javax.swing.JPanel;
 import jams.explorer.JAMSExplorer;
 import jams.explorer.spreadsheet.JAMSSpreadSheet;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 
 /**
  *
@@ -43,6 +45,7 @@ public class OutputDSPanel extends JPanel {
     public OutputDSPanel(JAMSExplorer explorer, File file, String id) {
 
         this.setLayout(new BorderLayout());
+
         JAMSLogging.registerLogger(JAMSLogging.LogOption.Show, Logger.getLogger(OutputDSPanel.class.getName()));
 
         // create the spreadsheet
@@ -80,8 +83,13 @@ public class OutputDSPanel extends JPanel {
             tsp.setOutputSpreadSheet(this.spreadsheet);
             tsp.createProc(file);
 
-            this.add(tsp, BorderLayout.NORTH);
-            this.add(this.spreadsheet, BorderLayout.CENTER);
+            JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+            split.add(tsp);
+            split.add(spreadsheet);
+            split.setDividerLocation(300);
+            this.add(split, BorderLayout.CENTER);
+//            this.add(tsp, BorderLayout.NORTH);
+//            this.add(this.spreadsheet, BorderLayout.CENTER);
         } else {
             throw new JAMSException("Unsupported datastore");
         }

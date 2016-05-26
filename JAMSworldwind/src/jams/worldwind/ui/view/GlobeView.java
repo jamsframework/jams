@@ -190,7 +190,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     //Components of View
     private JPanel topPanel;
-    private JSlider opacitySlider, exaggSlider;
+    private JSlider internalOpacitySlider, outlineOpacitySlider, exaggSlider;
     private JSlider timeSeriesSlider;
     private JLabel timeSeriesSliderLabel;
     private JComboBox<String> activeLayerComboBox;
@@ -233,12 +233,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     }
 
     private void fillAttributesComboBox(int selectedIndex) {
-        
-        ItemListener[] listeners =  attributesComboBox.getItemListeners();
+
+        ItemListener[] listeners = attributesComboBox.getItemListeners();
         for (ItemListener il : listeners) {
             attributesComboBox.removeItemListener(il);
         }
-                
+
         this.attributesComboBox.removeAllItems();
         String[] attributes = data.getSortedAttributes();
         if (attributes != null) {
@@ -257,12 +257,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             //this.attributesComboBox.setEnabled(true);
             //this.classifyButton.setEnabled(true);
         }
-        
+
         for (ItemListener il : listeners) {
             attributesComboBox.addItemListener(il);
         }
-        
-    }  
+
+    }
 
     /**
      *
@@ -358,7 +358,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.setKeyboardShortcuts();
 
         //zoom to region after loading
-      /*
+        /*
          double[] br = new Shapefile(file).getBoundingRectangle();
          Sector s = new Sector(Angle.fromDegrees(br[0]),
          Angle.fromDegrees(br[1]),
@@ -560,10 +560,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         });
         this.fillComboBox();
 
-        opacitySlider = new JSlider(0, 100);
+        internalOpacitySlider = new JSlider(0, 100);
+        outlineOpacitySlider = new JSlider(0, 100);
 //        opacitySlider.setBorder(new TitledBorder("ACTIVE LAYER OPACITY"));
 //        opacitySlider.setName("ACTIVE_LAYER_OPACITY_SLIDER");
-        opacitySlider.setPaintTicks(false);
+        internalOpacitySlider.setPaintTicks(false);
+        outlineOpacitySlider.setPaintTicks(false);
         //opacitySlider.setMinorTickSpacing(5);
 //        opacitySlider.setMajorTickSpacing(25);
 //        Hashtable opacLabelTable = new Hashtable(5);
@@ -573,15 +575,25 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 //        opacLabelTable.put(new Integer(75), new JLabel("75%"));
 //        opacLabelTable.put(new Integer(100), new JLabel("100%"));
 //        opacitySlider.setLabelTable(opacLabelTable);
-        opacitySlider.setPaintLabels(false);
-        opacitySlider.setEnabled(false);
+        internalOpacitySlider.setPaintLabels(false);
+        outlineOpacitySlider.setPaintLabels(false);
+        internalOpacitySlider.setEnabled(false);
+        outlineOpacitySlider.setEnabled(false);
 //        slider.setSnapToTicks(true);
 
-        opacitySlider.addChangeListener(new ChangeListener() {
+        internalOpacitySlider.addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent e) {
-                opacitySliderStateChanged(e);
+                internalOpacitySliderStateChanged(e);
+            }
+        });
+
+        outlineOpacitySlider.addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                outlineSliderStateChanged(e);
             }
         });
 
@@ -608,9 +620,14 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         });
 
         JPanel sliderPanel1 = new JPanel();
-        sliderPanel1.setLayout(new GridLayout(2, 1));
+        sliderPanel1.setLayout(new GridLayout(3, 1));
         sliderPanel1.setBorder(new TitledBorder("Opacity & Exaggeration"));
-        sliderPanel1.add(opacitySlider);
+        sliderPanel1.setPreferredSize(new Dimension(100, 50));
+//        JPanel opaPanel = new JPanel();
+//        opaPanel.setLayout(new GridLayout(1, 2));
+        sliderPanel1.add(internalOpacitySlider);
+        sliderPanel1.add(outlineOpacitySlider);
+//        sliderPanel1.add(opaPanel);
         sliderPanel1.add(exaggSlider);
 
         JPanel sliderPanel2 = new JPanel();
@@ -930,12 +947,13 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 layer.setName(layerName + "_" + i);
             }
             i++;
-            getModel().getLayers().add(layer);
+            getModel().getLayers().add(layer);           
         }
         getPCS().firePropertyChange(Events.LAYER_ADDED, null, null);
         getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
 
         activeLayerComboBox.setSelectedIndex(activeLayerComboBox.getItemCount() - 1);
+        outlineOpacitySlider.setValue(50);
 //        theLayerView.setActiveLayerIndex(activeLayerComboBox.getItemCount() - 1);
 //        new DelayZoom(shp.getBoundingRectangle()).execute();
     }
@@ -1017,13 +1035,10 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         if (intervallView == null) {
 
             intervallView = new IntervallSettingsView(data, attributes);
+        } else if (this.attributesComboBox.getSelectedIndex() == lastClassifiedIndex) {
+            intervallView.show();
         } else {
-            if (this.attributesComboBox.getSelectedIndex() == lastClassifiedIndex) {
-                intervallView.show();
-            } else {
-                intervallView = new IntervallSettingsView(data, attributes);
-            }
-
+            intervallView = new IntervallSettingsView(data, attributes);
         }
         intervallView.show();
         lastClassifiedIndex = this.attributesComboBox.getSelectedIndex();
@@ -1235,12 +1250,15 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             } else {
                 showAttributeTableButton.setEnabled(false);
             }
-            opacitySlider.setEnabled(true);
-            opacitySlider.setValue((int) (l.getOpacity() * 100));
+            internalOpacitySlider.setEnabled(true);
+            internalOpacitySlider.setValue((int) (l.getOpacity() * 100));
+            outlineOpacitySlider.setEnabled(true);
+            outlineOpacitySlider.setValue((int) (l.getOpacity() * 100));
             getPCS().firePropertyChange(Events.ACTIVE_LAYER_CHANGED, null, index);
 
         } else {
-            opacitySlider.setEnabled(false);
+            internalOpacitySlider.setEnabled(false);
+            outlineOpacitySlider.setEnabled(false);
             timeSeriesSlider.setEnabled(false);
             showAttributeTableButton.setEnabled(false);
         }
@@ -1248,7 +1266,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
 //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="ChangeListener">
-    private void opacitySliderStateChanged(ChangeEvent e) {
+    private void internalOpacitySliderStateChanged(ChangeEvent e) {
         double value = (double) ((JSlider) e.getSource()).getValue() / 100.0;
         /*Component[] comp = topPanel.getComponents();
          for (Component o : comp) {
@@ -1262,11 +1280,27 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 AbstractSurfaceShape shape = (AbstractSurfaceShape) obj;
                 ShapeAttributes shapeAttr = shape.getAttributes();
                 shapeAttr.setInteriorOpacity(value);
+//                shapeAttr.setOutlineOpacity(value);
+            }
+        }
+        l.setOpacity(value);
+
+        getWorldWindow().redraw();
+    }
+
+    private void outlineSliderStateChanged(ChangeEvent e) {
+        double value = (double) ((JSlider) e.getSource()).getValue() / 100.0;
+        Layer l = getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
+        //if a renderable is found, opacity must be set for every Renderable
+        if (l.getClass().equals(RenderableLayer.class)) {
+            Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
+            for (Object obj : list) {
+                AbstractSurfaceShape shape = (AbstractSurfaceShape) obj;
+                ShapeAttributes shapeAttr = shape.getAttributes();
                 shapeAttr.setOutlineOpacity(value);
             }
-        } else {
-            l.setOpacity(value);
         }
+        l.setOpacity(value);
 
         getWorldWindow().redraw();
     }
@@ -1274,7 +1308,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private void timeSeriesSliderStateChanged(ChangeEvent e) {
         //System.out.println("TIME: " + year);
         int selectedIndex = this.attributesComboBox.getSelectedIndex();
-        
+
         if (timeSeriesSlider.isEnabled() && selectedIndex != -1) {
             Layer l = getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
 
@@ -1370,7 +1404,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
         public void addItem(Object anObject, boolean disabled) {
             try {
-            super.addItem(anObject);
+                super.addItem(anObject);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
