@@ -135,7 +135,7 @@ public class TimeSpaceProcessor extends Processor {
     public synchronized DataMatrix getCrossProduct(long[] entityIds, String[] dateIds) throws SQLException, IOException {
         return getCrossProduct(entityIds, dateIds, 0);
     }
-    
+      
     public synchronized DataMatrix getCrossProduct(long[] entityIds, String[] dateIds, int attributeID) throws SQLException, IOException {
         if (entityIds == null) {
             throw new NullPointerException("getCrossProduct: entityIds must not be null");

@@ -42,6 +42,34 @@ public class DataMatrix extends Matrix {
         return ids;
     }
 
+    public void elementMultiply(DataMatrix m) {
+
+        int colCount = this.getColumnDimension();
+        int rowCount = this.getRowDimension();
+        double[][] data1 = this.getArray();
+        double[][] data2 = m.getArray();
+
+        for (int i = 0; i < colCount; i++) {
+            for (int j = 0; j < rowCount; j++) {
+                data1[j][i] = data1[j][i] * data2[j][i];
+            }
+        }
+    }
+
+    public void elementDivide(DataMatrix m) {
+
+        int colCount = this.getColumnDimension();
+        int rowCount = this.getRowDimension();
+        double[][] data1 = this.getArray();
+        double[][] data2 = m.getArray();
+
+        for (int i = 0; i < colCount; i++) {
+            for (int j = 0; j < rowCount; j++) {
+                data1[j][i] = data1[j][i] / data2[j][i];
+            }
+        }
+    }
+
     public double[] getAvgRow() {
 
         double[] result = new double[this.getColumnDimension()];
@@ -53,7 +81,7 @@ public class DataMatrix extends Matrix {
             result[i] = 0;
             int counter = 0;
             for (int j = 0; j < rowCount; j++) {
-                if (data[j][i] != -9999 && Double.isFinite(data[j][i])){
+                if (data[j][i] != -9999 && Double.isFinite(data[j][i])) {
                     result[i] += data[j][i];
                     counter++;
                 }
@@ -75,7 +103,7 @@ public class DataMatrix extends Matrix {
             result[i] = 0;
             int counter = 0;
             for (int j = 0; j < colCount; j++) {
-                if (data[i][j] != -9999 && Double.isFinite(data[i][j])){
+                if (data[i][j] != -9999 && Double.isFinite(data[i][j])) {
                     result[i] += data[i][j];
                     counter++;
                 }
@@ -85,7 +113,7 @@ public class DataMatrix extends Matrix {
 
         return result;
     }
-    
+
     public double[] getSumRow() {
 
         double[] result = new double[this.getColumnDimension()];
@@ -155,17 +183,18 @@ public class DataMatrix extends Matrix {
 //        this.print(5, 3);
     }
 
-    public boolean equals(DataMatrix mat, double accuracy){
+    public boolean equals(DataMatrix mat, double accuracy) {
         int N = this.getRowDimension();
         int M = this.getColumnDimension();
-        if (N != mat.getRowDimension() ||
-            M != mat.getColumnDimension()){
+        if (N != mat.getRowDimension()
+                || M != mat.getColumnDimension()) {
             return false;
         }
-        for (int i=0;i<M;i++){
-            for (int j=0;j<N;j++){
-                if (Math.abs( this.get(i, j) - mat.get(i, j))>accuracy)
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++) {
+                if (Math.abs(this.get(i, j) - mat.get(i, j)) > accuracy) {
                     return false;
+                }
             }
         }
         return true;

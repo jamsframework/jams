@@ -105,7 +105,7 @@ public abstract class Processor {
             return false;
         }
     }
-
+    
     protected double[][] calcWeights(double a[][], int weightAttribIndex) {
 
         double result[][] = new double[a.length][a[0].length];

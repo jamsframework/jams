@@ -28,7 +28,6 @@ import jams.data.JAMSCalendar;
 import jams.gui.tools.GUIHelper;
 import jams.tools.StringTools;
 import jams.workspace.dsproc.AbstractDataStoreProcessor;
-import jams.workspace.dsproc.AbstractDataStoreProcessor.AttributeData;
 import jams.workspace.dsproc.DataMatrix;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -888,87 +887,86 @@ public class TimeSpaceDSPanel extends DSPanel {
                     }
                 });
 
-                ArrayList<AttributeData> attribList = proc.getDataStoreProcessor().getAttributes();
-
-                //save selected attributes
-                for (int i = 0; i < attribs.size(); i++) {
-                    JCheckBox cbox = (JCheckBox) attribs.get(i);
-                    if (cbox.isSelected()) {
-                        for (AbstractDataStoreProcessor.AttributeData attribute : attribList) {
-                            if (attribute.getName().equals(cbox.getText())) {
-                                attributeNames.add(cbox.getText());
-                            }
-                        }
-                    }
-                }
-
-                if (attributeNames.isEmpty()) {
-                    GUIHelper.showInfoDlg(parent, "Please select one or more attributes!", "SELECT ATTRIBUTES");
-                    return null;
-                }
-
                 try {
 
-                    // get the position of the weight attribute, if existing
-                    if (attribCombo.getSelectedIndex() != 0) {
-                        weightAttribIndex = 0;
-                        String weightAttribName = attribCombo.getSelectedItem().toString();
-                        for (DataStoreProcessor.AttributeData attrib : dsdb.getAttributes()) {
-                            if (attrib.getName().equals(weightAttribName)) {
-                                break;
-                            }
-                            if (attrib.isSelected()) {
-                                weightAttribIndex++;
-                            }
+                    String weightAttribName = attribCombo.getSelectedItem().toString();
+                    List entities = entityList.getSelectedValuesList();
+                    List times = timeList.getSelectedValuesList();
+                    String[] entitiesString = new String[entities.size()];
+
+                    // get number of selected attributes
+                    int numAttribs = 0;
+                    for (AbstractDataStoreProcessor.AttributeData attribute : proc.getDataStoreProcessor().getAttributes()) {
+                        if (attribute.isSelected()) {
+                            attributeNames.add(attribute.getName());
+                            numAttribs++;
                         }
                     }
+                    attributeNames.remove(weightAttribName);
 
-                    Object[] entities = entityList.getSelectedValuesList().toArray();
-                    Object[] times = timeList.getSelectedValuesList().toArray();
-                    String[] entitiesString = new String[entities.length];
+                    if (attributeNames.isEmpty()) {
+                        GUIHelper.showInfoDlg(parent, "Please select one or more attributes!", "Warning");
+                        return null;
+                    }
 
+                    // get selected entities
                     int k = 0;
-                    long[] entityIds = new long[entities.length];
+                    long[] entityIds = new long[entities.size()];
                     for (Object id : entities) {
                         entityIds[k] = Long.parseLong(id.toString());
                         entitiesString[k] = id.toString();
                         k++;
                     }
 
+                    // get selected time steps
                     k = 0;
-                    String[] dateIds = new String[times.length];
+                    String[] dateIds = new String[times.size()];
                     for (Object date : times) {
                         dateIds[k++] = (String) date.toString();
                     }
 
-                    if (weightAttribIndex >= 0) {
+                    DataMatrix w = null;
+                    int position = 0;
+                    List<DataMatrix> matrixList = new ArrayList();
+                    for (AbstractDataStoreProcessor.AttributeData attribute : proc.getDataStoreProcessor().getAttributes()) {
+                        if (attribute.isSelected() && attribute.getName().equals(weightAttribName)) {
 
-                    }
+                            w = proc.getCrossProduct(entityIds, dateIds, position);
 
-                    m = new DataMatrix[attributeNames.size()];
-                    DataMatrix w;
-                    int c = 0;
-                    for (int j = 0; j < attributeNames.size(); j++) {
-//                        for (AbstractDataStoreProcessor.AttributeData attribute : attribList) {
-//                            if (attribute.getName().equals(attributeNames.get(j))) {
-//                                attribute.setSelected(true);
-                        if (j == weightAttribIndex) {
-                            w = proc.getCrossProduct(entityIds, dateIds, j);
-                        } else {
-                            m[c++] = proc.getCrossProduct(entityIds, dateIds, j);
+                            position++;
+                            progress = Math.round(position * 100 / numAttribs);
+                            setProgress(progress);
                         }
+                    }
+                    for (AbstractDataStoreProcessor.AttributeData attribute : proc.getDataStoreProcessor().getAttributes()) {
+                        if (attribute.isSelected() && !attribute.getName().equals(weightAttribName)) {
 
-//                                attribute.setSelected(false);
-//                            }
-//                        }
-                        progress = Math.round(((j + 1) * 100) / attributeNames.size());
-                        setProgress(progress);
+                            DataMatrix m = proc.getCrossProduct(entityIds, dateIds, position);
+
+                            switch (attribute.getWeightingType()) {
+                                case DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA:
+                                    m.elementDivide(w);
+                                    break;
+
+                                case DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA:
+                                    m.elementMultiply(w);
+                                    break;
+
+                                default:
+                                    break;
+                            }
+
+                            matrixList.add(m);
+
+                            position++;
+                            progress = Math.round(position * 100 / numAttribs);
+                            setProgress(progress);
+                        }
                     }
                     setProgress(100);
 
-                    if (attribCombo.getSelectedIndex() != 0) {
-                        attributeNames.remove(attribCombo.getSelectedItem().toString());
-                    }
+                    m = matrixList.toArray(new DataMatrix[matrixList.size()]);
+
                     String[] attribs = attributeNames.toArray(new String[attributeNames.size()]);
 
                     transfer = new DataTransfer3D(m, entitiesString, dateIds, attribs);
@@ -1014,6 +1012,8 @@ public class TimeSpaceDSPanel extends DSPanel {
                     explorer.getRuntime().handle(ex);
                 } catch (IOException ex) {
                     explorer.getRuntime().handle(ex);
+                } catch (Throwable t) {
+                    explorer.getRuntime().handle(t);
                 }
                 return null;
             }
@@ -1428,33 +1428,76 @@ public class TimeSpaceDSPanel extends DSPanel {
     }
 
     private void showCrossProduct() {
-        workerDlg.setInderminate(false);
+        workerDlg.setInderminate(true);
         workerDlg.setProgress(0);
         workerDlg.setTask(new CancelableSwingWorker() {
 
-            DataMatrix m;
+            DataMatrix m, w;
 
             public Object doInBackground() {
                 try {
-                    Object[] objects2 = timeList.getSelectedValues();
-
-                    String[] ids2 = new String[objects2.length];
-                    for (int c = 0; c < ids2.length; c++) {
-                        ids2[c] = ((JAMSCalendar) objects2[c]).toString();
+                    List times = timeList.getSelectedValuesList();
+                    String[] dateIDs = new String[times.size()];
+                    for (int c = 0; c < dateIDs.length; c++) {
+                        dateIDs[c] = times.get(c).toString();
                     }
 
-                    Object[] objects3 = entityList.getSelectedValues();
-
-                    long[] ids3 = new long[objects3.length];
-                    for (int c = 0; c < ids3.length; c++) {
-                        ids3[c] = (Long) objects3[c];
+                    List entities = entityList.getSelectedValuesList();
+                    long[] entityIDs = new long[entities.size()];
+                    for (int c = 0; c < entityIDs.length; c++) {
+                        entityIDs[c] = Long.parseLong(entities.get(c).toString());
                     }
-                    m = getProc().getCrossProduct(ids3, ids2);
+
+                    String weightAttribName = attribCombo.getSelectedItem().toString();
+                    int position = 0;
+                    int weightingType = 0;
+                    for (AbstractDataStoreProcessor.AttributeData attribute : proc.getDataStoreProcessor().getAttributes()) {
+                        if (attribute.isSelected()) {
+                            if (!attribute.getName().equals(weightAttribName)) {
+                                m = getProc().getCrossProduct(entityIDs, dateIDs, position);
+                                weightingType = attribute.getWeightingType();
+                                break;
+                            }
+                            position++;
+                        }
+                    }
+                    position = 0;
+                    for (AbstractDataStoreProcessor.AttributeData attribute : proc.getDataStoreProcessor().getAttributes()) {
+                        if (attribute.isSelected()) {
+                            if (attribute.getName().equals(weightAttribName)) {
+                                w = getProc().getCrossProduct(entityIDs, dateIDs, position);
+                                break;
+                            }
+                            position++;
+                        }
+                    }
+
+                    if (w != null && m != null) {
+                        switch (weightingType) {
+                            case DataStoreProcessor.AttributeData.WEIGHTING_DIV_AREA:
+                                m.elementDivide(w);
+                                break;
+
+                            case DataStoreProcessor.AttributeData.WEIGHTING_TIMES_AREA:
+                                m.elementMultiply(w);
+                                break;
+
+                            default:
+                                break;
+                        }
+                    } else if (w != null) {
+                        m = w;
+                    } else if (w == null && m == null) {
+                        GUIHelper.showInfoDlg(parent, "Please select one or more attributes!", "Information");
+                    }
 
                 } catch (SQLException ex) {
                     Logger.getLogger(TimeSpaceDSPanel.class
                             .getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
+                    Logger.getLogger(TimeSpaceDSPanel.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                } catch (Throwable ex) {
                     Logger.getLogger(TimeSpaceDSPanel.class
                             .getName()).log(Level.SEVERE, null, ex);
                 }
