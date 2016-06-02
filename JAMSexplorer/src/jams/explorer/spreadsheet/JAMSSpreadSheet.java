@@ -102,7 +102,7 @@ public class JAMSSpreadSheet extends JPanel {
     private JAMSExplorer explorer;
 
     /* Messages */
-    final String ERR_MSG_CTS = JAMS.i18n("NO_TIME_SERIES_LOADED");
+    final String ERR_MSG_CTS = JAMS.i18n("NO_DATA_LOADED");
     public static final DataFlavor FLAVOR = DataFlavor.stringFlavor;
 
     final private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm") {
@@ -1077,11 +1077,14 @@ public class JAMSSpreadSheet extends JPanel {
 
     private void openCTS() {
 
-        if (table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)) {
-            JTSConfigurator jts;
-            jts = new JTSConfigurator((JFrame) explorer.getExplorerFrame(), this, explorer);
-        } else {
-
+        try {
+            if (table.getValueAt(0, 0).getClass().equals(JAMSCalendar.class)) {
+                JTSConfigurator jts;
+                jts = new JTSConfigurator((JFrame) explorer.getExplorerFrame(), this, explorer);
+            } else {
+                GUIHelper.showErrorDlg(this, ERR_MSG_CTS, JAMS.i18n("ERROR"));
+            }
+        } catch (IndexOutOfBoundsException ex) {
             GUIHelper.showErrorDlg(this, ERR_MSG_CTS, JAMS.i18n("ERROR"));
         }
         //ctstabs.addGraph(table);
@@ -1111,6 +1114,8 @@ public class JAMSSpreadSheet extends JPanel {
             jxys = new JXYConfigurator((JFrame) explorer.getExplorerFrame(), this, null, explorer);
         } catch (NullPointerException npe) {
             jxys = new JXYConfigurator((JFrame) explorer.getExplorerFrame(), this, null, explorer);
+        } catch (IndexOutOfBoundsException ex) {
+            GUIHelper.showErrorDlg(this, ERR_MSG_CTS, JAMS.i18n("ERROR"));
         }
     }
 
