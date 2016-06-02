@@ -203,7 +203,7 @@ public class DataTransfer3D implements Serializable {
             int k = this.timeStepToIndex.get(date);
             return this.data[i][j][k];
         } else {
-            return Double.NEGATIVE_INFINITY;
+            return Double.NaN;
         }
     }
 

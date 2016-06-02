@@ -13,6 +13,7 @@ import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.formats.shapefile.DBaseRecord;
 import gov.nasa.worldwind.formats.shapefile.Shapefile;
+import gov.nasa.worldwind.formats.shapefile.ShapefileRecord;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
@@ -72,13 +73,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static javax.management.Query.lt;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.Icon;
@@ -88,6 +90,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -158,6 +161,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             });
 
             instance.theFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            instance.theFrame.setSize(1024, 800);
+            instance.theFrame.setLocationRelativeTo(null);
+
         }
         return instance;
     }
@@ -211,6 +217,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private ColorRamp[] colorRampCollection;
 
     private int lastClassifiedIndex = -1;
+
+    private Map<SurfacePolygons, ShapeAttributeView> attributeDlgs = new HashMap();
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="constructors">
@@ -375,30 +383,106 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
             @Override
             public void selected(SelectEvent event) {
+
+                if (!event.isLeftClick()) {
+                    return;
+                }
+
                 Object o = event.getTopObject();
-                if (lastObject != o && o != null) {
-                    lastObject = o;
+
+//                if (lastObject != o && o != null) {
+                if (o != null) {
+//                    lastObject = o;
                     if (o instanceof SurfacePolygons) {
                         SurfacePolygons s = (SurfacePolygons) o;
 
                         s.setHighlighted(true);
-                        ((SurfacePolygons) lastObject).setHighlighted(false);
+
+//                        ((SurfacePolygons) lastObject).setHighlighted(false);
                         if (shapefileAttributesView != null && shapefileAttributesView.isVisible()) {
                             shapefileAttributesView.scrollToObject(o);
                         }
 
-                        /*         
-                         //System.out.println(s.getEntries().toString());
-                         JamsShapeAttributes bs = (JamsShapeAttributes) s.getAttributes();
-                         ShapefileRecord record = bs.getShapeAttributes();
-                         Set<Map.Entry<String, Object>> c = record.getAttributes().getEntries();
-                         for (Map.Entry<String, Object> e : c) {
-                         System.out.println(e.getKey() +":" +e.getValue());
-                         }*/
+                        Layer l = getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
+
+                        //only for Shapefile layers
+                        if (l.getClass().equals(RenderableLayer.class)) {
+
+                            DataTransfer3D dataTransfer = (DataTransfer3D) l.getValue(Events.DATATRANSFER3DDATA_APPEND);
+                            Integer timeIndex = timeSeriesSlider.getValue();
+                            JAMSCalendar date = dataTransfer.getSortedTimeSteps()[timeIndex];
+
+                            String[][] values = getEntityData(s, date, dataTransfer);
+
+                            ShapeAttributeView dlg = attributeDlgs.get(s);
+                            if (dlg != null && dlg.isFocusable()) {
+                                dlg.setData(values);
+                                dlg.setVisible(true);
+                                dlg.toFront();
+                            } else {
+                                dlg = new ShapeAttributeView(theFrame, "Entity Information", values);
+                                dlg.setPreferredSize(new Dimension(250, 300));
+                                dlg.pack();
+                                attributeDlgs.put(s, dlg);
+                                dlg.setVisible(true);
+                            }
+                        }
                     }
                 }
             }
         };
+    }
+
+    private String[][] getEntityData(SurfacePolygons s, JAMSCalendar date, DataTransfer3D dataTransfer) {
+
+        String column = dataTransfer.getKeyColumn();
+        JamsShapeAttributes sattr = (JamsShapeAttributes) s.getAttributes();
+        DBaseRecord dbrec = sattr.getShapeFileRecord().getAttributes();
+        String idString = dbrec.getValue(column).toString();
+        Set<Map.Entry<String, Object>> c = dbrec.getEntries();
+
+//                            System.out.println(dates[timeIndex].toString());
+        String values[][] = new String[dataTransfer.getSortedAttributes().length + c.size() + 2][2];
+        values[0][0] = "ID";
+        values[0][1] = idString;
+        values[1][0] = "time";
+        values[1][1] = date.toString();
+        //System.out.println("ID : " + idString);
+        int i = 2;
+        for (String attribute : dataTransfer.getSortedAttributes()) {
+            double dataValue = dataTransfer.getValue(idString, attribute, date);
+            values[i][0] = attribute;
+            values[i][1] = Double.toString(dataValue);
+            i++;
+            //System.out.println(attribute + " : " + dataValue);
+        }
+
+        for (Map.Entry<String, Object> e : c) {
+            values[i][0] = e.getKey();
+            values[i][1] = e.getValue().toString();
+            i++;
+        }
+
+        return values;
+    }
+
+    private void updateDlgs() {
+        Layer l = getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
+        //only for Shapefile layers
+        if (l.getClass().equals(RenderableLayer.class)) {
+
+            DataTransfer3D dataTransfer = (DataTransfer3D) l.getValue(Events.DATATRANSFER3DDATA_APPEND);
+            Integer timeIndex = timeSeriesSlider.getValue();
+            JAMSCalendar date = dataTransfer.getSortedTimeSteps()[timeIndex];
+
+            for (SurfacePolygons s : attributeDlgs.keySet()) {
+                String[][] values = getEntityData(s, date, dataTransfer);
+                ShapeAttributeView dlg = attributeDlgs.get(s);
+                if (dlg != null && dlg.isFocusable()) {
+                    dlg.setData(values);
+                }
+            }
+        }
     }
 
     private void removeListener() {
@@ -410,7 +494,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         intervallCollection = null;
         colorRampCollection = null;
 //        this.fillAttributesComboBox(-1);
-        createListener();
+//        createListener();
         timeSeriesSlider.setEnabled(false);
         timeSeriesSlider.setValue(0);
         attributesComboBox.setEnabled(false);
@@ -947,7 +1031,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 layer.setName(layerName + "_" + i);
             }
             i++;
-            getModel().getLayers().add(layer);           
+            getModel().getLayers().add(layer);
         }
         getPCS().firePropertyChange(Events.LAYER_ADDED, null, null);
         getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
@@ -1005,8 +1089,6 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
      *
      */
     public void show() {
-        this.theFrame.setSize(1024, 800);
-        this.theFrame.setLocationRelativeTo(null);
         this.theFrame.setVisible(true);
     }
 
@@ -1253,7 +1335,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
             internalOpacitySlider.setEnabled(true);
             internalOpacitySlider.setValue((int) (l.getOpacity() * 100));
             outlineOpacitySlider.setEnabled(true);
-            outlineOpacitySlider.setValue((int) (l.getOpacity() * 100));
+//            outlineOpacitySlider.setValue((int) (l.getOpacity() * 100));
             getPCS().firePropertyChange(Events.ACTIVE_LAYER_CHANGED, null, index);
 
         } else {
@@ -1300,7 +1382,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 shapeAttr.setOutlineOpacity(value);
             }
         }
-        l.setOpacity(value);
+//        l.setOpacity(value);
 
         getWorldWindow().redraw();
     }
@@ -1359,6 +1441,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 }
             }
             getWorldWindow().redraw();
+            updateDlgs();
         }
     }
 

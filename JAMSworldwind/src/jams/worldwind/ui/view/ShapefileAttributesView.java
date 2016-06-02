@@ -269,7 +269,7 @@ public class ShapefileAttributesView implements PropertyChangeListener, MouseLis
     @Override
     public void mouseClicked(MouseEvent e) {
         int row = this.theTable.getSelectedRow();
-        System.out.println("ROW: " + row);
+//        System.out.println("ROW: " + row);
         //this.theTable.scrollRectToVisible();
     }
 
