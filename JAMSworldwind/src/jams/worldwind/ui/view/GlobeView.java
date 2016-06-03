@@ -460,7 +460,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
         for (Map.Entry<String, Object> e : c) {
             values[i][0] = e.getKey();
-            values[i][1] = e.getValue().toString();
+            values[i][1] = String.valueOf(e.getValue());
             i++;
         }
 
