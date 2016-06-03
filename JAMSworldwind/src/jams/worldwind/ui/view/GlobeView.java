@@ -416,11 +416,12 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
                             ShapeAttributeView dlg = attributeDlgs.get(s);
                             if (dlg != null && dlg.isFocusable()) {
+                                dlg.setDataTransfer(dataTransfer);
                                 dlg.setData(values);
                                 dlg.setVisible(true);
                                 dlg.toFront();
                             } else {
-                                dlg = new ShapeAttributeView(theFrame, "Entity Information", values);
+                                dlg = new ShapeAttributeView(theFrame, "Entity " + values[0][1] + ": Information", values, dataTransfer);
                                 dlg.setPreferredSize(new Dimension(250, 300));
                                 dlg.pack();
                                 attributeDlgs.put(s, dlg);

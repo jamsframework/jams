@@ -21,6 +21,7 @@
  */
 package jams.worldwind.ui.view;
 
+import jams.worldwind.data.DataTransfer3D;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -36,45 +37,68 @@ import javax.swing.JTable;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 public class ShapeAttributeView extends JDialog {
-    
-    private JTable t;
 
-    public ShapeAttributeView(Frame owner, String title, String[][] data) {
+    private JTable t;
+    private DataTransfer3D dataTransfer;
+    private String id;
+    private Frame owner;
+    ShapeAttributePlot shapePlot;
+
+    public ShapeAttributeView(Frame owner, String title, String[][] data, DataTransfer3D dataTransfer) {
         super(owner, title);
+        this.owner = owner;
+        this.id = data[0][1];
+        this.setDataTransfer(dataTransfer);
         init();
         setData(data);
     }
-    
+
+    public void setDataTransfer(DataTransfer3D dataTransfer) {
+        this.dataTransfer = dataTransfer;
+    }
+
     public void setData(String[][] data) {
         t.setModel(new javax.swing.table.DefaultTableModel(
-            data,
-            new String [] {
-                "Attribute", "Value"
-            }
+                data,
+                new String[]{
+                    "Attribute", "Value"
+                }
         ) {
-            boolean[] canEdit = new boolean [] {
+            boolean[] canEdit = new boolean[]{
                 true, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
     }
 
     private void init() {
         this.setModal(false);
-        this.setAlwaysOnTop(true);
+//        this.setAlwaysOnTop(true);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setLayout(new BorderLayout());
         this.setLocationByPlatform(true);
-        
+
         t = new JTable();
-        
+
         JScrollPane sp = new JScrollPane();
         sp.setViewportView(t);
         getContentPane().add(sp, BorderLayout.CENTER);
-        
+
+        JButton plotButton = new JButton("Plot");
+        plotButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (shapePlot == null) {
+                    shapePlot = new ShapeAttributePlot(ShapeAttributeView.this, "Entity " + id + ": Data Plot", id, dataTransfer);
+                }
+                shapePlot.setVisible(true);
+                shapePlot.toFront();
+            }
+        });
+
         JButton closeButton = new JButton("Close");
         closeButton.addActionListener(new ActionListener() {
             @Override
@@ -83,21 +107,22 @@ public class ShapeAttributeView extends JDialog {
             }
         });
         JPanel buttonPanel = new JPanel();
+        buttonPanel.add(plotButton);
         buttonPanel.add(closeButton);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-        
+
 //        setPreferredSize(new Dimension(100, 150));
         this.pack();
     }
-    
+
     public static void main(String[] args) {
-        
+
         String[][] o = {{"0", "1"}, {"2", "3"}};
-        ShapeAttributeView d = new ShapeAttributeView(null, "TEST", o);
+        ShapeAttributeView d = new ShapeAttributeView(null, "TEST", o, null);
         d.setVisible(true);
         String[][] o2 = {{"0", "1"}, {"4", "5"}};
         d.setData(o2);
-        
+
     }
 
 }
