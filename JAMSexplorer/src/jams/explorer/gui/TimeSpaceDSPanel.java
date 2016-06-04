@@ -631,7 +631,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             AttribCheckBox attribCheck = new AttribCheckBox(attrib, attrib.getName());
             attribCheck.setSelected(attrib.isSelected());
-
+            
             attribCheck.addItemListener(new ItemListener() {
 
                 public void itemStateChanged(ItemEvent e) {
@@ -735,7 +735,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 //            JSeparator sep = new JSeparator();
 //            sep.setOrientation(SwingConstants.HORIZONTAL);
 //            GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, sep, 1, i+11, 25, 1, 0, 0);
-            i = i + 2;
+            i = i + 1;
         }
 
         JPanel space = new JPanel();
