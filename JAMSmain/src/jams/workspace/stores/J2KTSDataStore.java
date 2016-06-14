@@ -23,7 +23,6 @@ package jams.workspace.stores;
 
 import jams.JAMS;
 import jams.data.Attribute;
-import jams.data.JAMSCalendar;
 import jams.data.DefaultDataFactory;
 import jams.io.BufferedFileReader;
 import jams.runtime.JAMSRuntime;
@@ -166,7 +165,6 @@ public class J2KTSDataStore extends TSDataStore {
         }
 
         // create a DataSetDefinition object
-
         StringTokenizer tok1 = new StringTokenizer(statAttribVal.toString(), NEWLINE);
         tok1.nextToken();
         StringTokenizer tok2 = new StringTokenizer(tok1.nextToken(), SEPARATOR);
@@ -235,19 +233,28 @@ public class J2KTSDataStore extends TSDataStore {
                 }
             } else if (key.equalsIgnoreCase(TAGNAME_TEMP_RES)) {
                 String tres = tok2.nextToken();
-                if (tres.equals("d")) {
+                if (tres.endsWith("d")) {
                     timeUnit = Attribute.Calendar.DAY_OF_YEAR;
-                } else if (tres.equals("m")) {
+                } else if (tres.endsWith("m")) {
                     timeUnit = Attribute.Calendar.MONTH;
-                } else if (tres.equals("h")) {
+                } else if (tres.endsWith("h")) {
                     timeUnit = Attribute.Calendar.HOUR_OF_DAY;
+                }
+                if (tres.length() > 1) {
+                    try {
+                        timeUnitCount = Integer.parseInt(tres.substring(0, tres.length()-1));
+                    } catch (NumberFormatException nfe) {
+                        ws.getRuntime().handle(nfe);
+                        timeUnitCount = 1;
+                    }
+                } else {
+                    timeUnitCount = 1;
                 }
             }
         }
-        timeUnitCount = 1;
+
         currentDate.setValue(startDate);
         currentDate.setDateFormat(timeFormat);
-
 
         this.dsd = def;
 
@@ -328,19 +335,11 @@ public class J2KTSDataStore extends TSDataStore {
         return result;
     }
 
-    public static void main(String[] args) {
-        double a = Double.MIN_NORMAL;
-        System.out.println(a == 0);
-        double d = -a/a;
-        System.out.println(d);
-        System.out.println(a);
-        
-    }
-    
     @Override
-    public void skip(int count){
-        for (int i=0;i<count;i++)
+    public void skip(int count) {
+        for (int i = 0; i < count; i++) {
             getNext();
+        }
     }
 
 //    @Override
@@ -382,7 +381,7 @@ public class J2KTSDataStore extends TSDataStore {
     }
 
     @Override
-    public void setWorkspace(Workspace ws) throws IOException{        
+    public void setWorkspace(Workspace ws) throws IOException {
         this.ws = ws;
         long position = j2kTSFileReader.getPosition();
         if (j2kTSFileReader != null) {
@@ -392,14 +391,14 @@ public class J2KTSDataStore extends TSDataStore {
             }
         }
 
-        this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(new File(ws.getDirectory(),this.relativPath)));
+        this.j2kTSFileReader = new BufferedFileReader(new FileInputStream(new File(ws.getDirectory(), this.relativPath)));
         j2kTSFileReader.setPosition(position);
     }
 
-    private void readObject(ObjectInputStream in) throws IOException,ClassNotFoundException{
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         long position = in.readLong();
-        if (j2kTSFileReader != null) {            
+        if (j2kTSFileReader != null) {
             try {
                 j2kTSFileReader.close();
             } catch (Exception e) {
@@ -409,11 +408,11 @@ public class J2KTSDataStore extends TSDataStore {
         j2kTSFileReader.setPosition(position);
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException{
+    private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
-        try{
+        try {
             out.writeLong(j2kTSFileReader.getPosition());
-        }catch(Throwable t){
+        } catch (Throwable t) {
             out.writeLong(0);
         }
     }
