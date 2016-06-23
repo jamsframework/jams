@@ -386,7 +386,7 @@ public class RegionalisationLocalKriging extends JAMSComponent {
             // CALCULATE WEIGHTS
         
              // fill arrays for kriging procedure
-            double[][] filledArrays = fillStationKrigingArrays(this.entityX.getValue(), this.entityY.getValue(), this.entityElevation.getValue(), this.statX.getValue(), this.statY.getValue(), elev, this.nNS, wA);
+            double[][] filledArrays = fillStationKrigingArrays(this.entityX.getValue(), this.entityY.getValue(), this.entityElevation.getValue(), this.statX.getValue(), this.statY.getValue(), this.statElevation.getValue(), this.nNS, wA);
             double[] xStation = filledArrays[0]; // x coordinates of stations + entity
             double[] yStation = filledArrays[1]; // y coordinates of stations + entity
             double[] zStation = filledArrays[2]; // z coordinates of stations + entity
