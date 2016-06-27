@@ -422,7 +422,7 @@ public class ModelView {
         File jamsuiLib = getJAMSuiLib();
         String uploadFileFilter = JUICE.getJamsProperties().getProperty("uploadFileFilter");
         if (uploadFileFilter == null) {
-            uploadFileFilter = "(.*\\.cache)|(.*\\.ser)|(.*\\.svn)|(.*/output/.*)|(.*\\.cdat)|(.*\\.log)";
+            uploadFileFilter = "(.*\\.cache)|(.*\\.ser)|(.*\\.svn)|(.*/output/.*)|(.*/documentation/.*)|(.*\\.cdat)|(.*\\.log)";
         }
         //get remote id of my workspace
         jamsWorkspace.loadConfig();
