@@ -632,7 +632,7 @@ public class TSDataStore extends TableDataStore {
     }
 
     //convert dump into j2k file
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length < 1) {
             System.out.println("Usage dump2j2kFile workspaceDir [id]");
         }
@@ -650,7 +650,9 @@ public class TSDataStore extends TableDataStore {
         }
         if (args.length > 1) {
             String id = args[1];
-            convertTSDataStoreToJ2KFile(ws, id);
+//            convertTSDataStoreToJ2KFile(ws, id);
+            TSDumpProcessor asciiConverter = new TSDumpProcessor();
+            System.out.println(asciiConverter.toASCIIString((TSDataStore) ws.getInputDataStore(id)));
         } else {
             Set<String> inputDataStores = ws.getInputDataStoreIDs();
             for (String id : inputDataStores) {
