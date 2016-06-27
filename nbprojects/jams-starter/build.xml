@@ -24,7 +24,7 @@
         <ant antfile="../jams-explorer/build.xml" inheritall="false" target="jar"/>   
         <ant antfile="../jams-ui/build.xml" inheritall="false" target="jar"/>
     </target>
-    
+        
     <target name="-post-clean">
         <ant antfile="../jams-api/build.xml" inheritall="false" target="clean"/>
         <ant antfile="../jams-main/build.xml" inheritall="false" target="clean"/>
