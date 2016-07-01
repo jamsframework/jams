@@ -43,7 +43,8 @@ import java.util.List;
         version = "1.0_0"
 )
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", date = "2016-04-13", comment = "Initial version")
+    @VersionComments.Entry(version = "1.0_0", date = "2016-04-13", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", date = "2016-07-01", comment = "Fixed file read error at end of file")
 })
 public class MODIS_ET_Reader extends JAMSComponent {
 
@@ -158,7 +159,7 @@ public class MODIS_ET_Reader extends JAMSComponent {
 
         // read all data of current month
         int i = 0;
-        while (true) {
+        while (line != null) {
 
             String[] parts = line.split("\t");
             cMonth = Integer.parseInt(parts[0]) * 12 + Integer.parseInt(parts[1]);

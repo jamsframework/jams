@@ -80,7 +80,7 @@ public class MODIS_ET_Assigner extends JAMSComponent {
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
             description = "MODIS ET value",
-            unit = "mm"
+            unit = "L"
     )
     public Attribute.Double modisET;
 
