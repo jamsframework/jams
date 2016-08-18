@@ -16,6 +16,8 @@ public class ComponentField implements Comparable {
     public static final int READWRITE_ACCESS = 2;
     private String value = null;
     private String name = "";
+    private String description = "";
+    private String defaultValue = "";
     private Class type = null;
     private int accessType;
     private ArrayList<ContextAttribute> contextAttributes = new ArrayList<ContextAttribute>();
@@ -23,12 +25,14 @@ public class ComponentField implements Comparable {
     private ComponentDescriptor parent;
     private ContextDescriptor context;
 
-    public ComponentField(String name, Class type, int accessType, ComponentDescriptor parent) {
+    public ComponentField(String name, Class type, int accessType, String description, String defaultValue, ComponentDescriptor parent) {
         super();
         this.parent = parent;
         this.name = name;
         this.type = type;
         this.accessType = accessType;
+        this.description = description;
+        this.defaultValue = defaultValue;
     }
 
     public String getAttribute() {
@@ -186,6 +190,20 @@ public class ComponentField implements Comparable {
     public String getName() {
         return name;
     }
+    
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }        
+    
+    /**
+     * @return the defaultValue
+     */
+    public String getDefaultValue() {
+        return defaultValue;
+    }    
 
     /**
      * @return the type

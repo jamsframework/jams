@@ -30,9 +30,12 @@ import jams.gui.tools.GUIHelper;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import jams.JAMS;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.border.TitledBorder;
 
 /**
  *
@@ -139,7 +142,9 @@ public class ComponentInfoDlg extends JDialog {
 
                 JPanel fieldPanel = new JPanel();
                 varPanels.add(fieldPanel);
-                fieldPanel.setBorder(BorderFactory.createTitledBorder(field.getName()));
+                TitledBorder border = BorderFactory.createTitledBorder(field.getName());
+                border.setTitleFont(border.getTitleFont().deriveFont(Font.BOLD));
+                fieldPanel.setBorder(border);
                 GUIHelper.addGBComponent(contentPanel, mainLayout, fieldPanel, 0, pos++, 2, 1, 0, 0);
 
                 GridBagLayout fieldLayout = new GridBagLayout();

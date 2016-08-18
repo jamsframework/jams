@@ -60,11 +60,17 @@ import jams.meta.ComponentField;
 import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
 import jams.meta.ModelNode;
+import jams.model.JAMSVarDescription;
+import jams.tools.StringTools;
 import jamsui.juice.gui.tree.JAMSNode;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
+import java.util.Observable;
+import java.util.Observer;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -83,6 +89,7 @@ public class ComponentPanel extends JPanel {
     private Vector<String> varTableColumnIds = new Vector<String>(), attributeTableColumnIds = new Vector<String>();
     private DefaultTableModel varTableModel, attributeTableModel;
     private List<String> varNameList, attrNameList;
+    private List<Color> varValueFont;
     private int selectedVarRow, selectedAttrRow;
     private JButton attributeEditButton, attributeAddButton, attributeDeleteButton;
     private ContextAttributeDlg attrEditDlg;
@@ -134,12 +141,12 @@ public class ComponentPanel extends JPanel {
         });
 
         JPanel namePanel = new JPanel();
-        ((FlowLayout)namePanel.getLayout()).setVgap(0);
+        ((FlowLayout) namePanel.getLayout()).setVgap(0);
         namePanel.add(getTextField("name", "", false));
         namePanel.add(nameEditButton);
 
         JPanel typePanel = new JPanel();
-        ((FlowLayout)typePanel.getLayout()).setVgap(0);
+        ((FlowLayout) typePanel.getLayout()).setVgap(0);
         typePanel.add(getTextField("type", "", false));
 
         GUIHelper.addGBComponent(componentPanel, mainLayout, namePanel, 1, 0, 1, 1, 1.0, 1.0, GridBagConstraints.VERTICAL, GridBagConstraints.WEST);
@@ -151,6 +158,13 @@ public class ComponentPanel extends JPanel {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
+            }
+
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component c = super.prepareRenderer(renderer, row, column);
+                c.setForeground(getCellFontColor(row, column));
+                return c;
             }
         };
 
@@ -184,10 +198,14 @@ public class ComponentPanel extends JPanel {
         varTableModel = new DefaultTableModel(varTableColumnIds, 0);
         varTable.setModel(varTableModel);
         varTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-        
-        TableCellRenderer buttonRenderer = new JTableButtonRenderer();
-//        varTable.getColumn(5).setCellRenderer(buttonRenderer);
 
+//        varTable.getModel().addTableModelListener(new TableModelListener() {
+//            @Override
+//            public void tableChanged(TableModelEvent e) {
+//                System.out.println("YEAH");
+//                varTable.repaint();
+//            }
+//        });
         JScrollPane varTableScroll = new JScrollPane(varTable);
         varTableScroll.setPreferredSize(TABLE_DIMENSION);
 
@@ -323,6 +341,21 @@ public class ComponentPanel extends JPanel {
         add(componentPanel);
     }
 
+    private Color getCellFontColor(int row, int column) {
+        if (column != 4) {
+            return Color.BLACK;
+        } else {
+            return varValueFont.get(row);
+//            String name = componentDescriptor.getComponentFieldList().get(row);
+//            ComponentField var = componentDescriptor.getComponentFields().get(name);
+//            if (StringTools.isEmptyString(var.getValue())) {
+//                return Color.LIGHT_GRAY;
+//            } else {
+//                return Color.BLACK;
+//            }
+        }
+    }
+
     private void showAttributeEditDlg() {
 
         int tmpSelectedAttrRow = selectedAttrRow;
@@ -411,14 +444,12 @@ public class ComponentPanel extends JPanel {
 //                configLabel.setText(MODEL_CONFIG_STRING);
                 switchPanel.updateUI();
             }
-        } else {
-            if (switchPanel.getComponents()[0] != attributeConfigPanel) {
-                switchPanel.remove(switchPanel.getComponents()[0]);
-                attributeConfigPanel.setPreferredSize(switchPanel.getSize());
-                switchPanel.add(attributeConfigPanel);
+        } else if (switchPanel.getComponents()[0] != attributeConfigPanel) {
+            switchPanel.remove(switchPanel.getComponents()[0]);
+            attributeConfigPanel.setPreferredSize(switchPanel.getSize());
+            switchPanel.add(attributeConfigPanel);
 //                configLabel.setText(ATTR_CONFIG_STRING);
-                this.updateUI();
-            }
+            this.updateUI();
         }
 
         if (componentDescriptor.getType() == JAMSNode.COMPONENT_TYPE) {
@@ -439,9 +470,41 @@ public class ComponentPanel extends JPanel {
 
         updateCmpAttrs();
         updateCtxtAttrs();
+
+        componentDescriptor.addObserver(new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                ComponentField var = (ComponentField) arg;
+                int i = 0;
+                for (String name : varNameList) {
+                    if (var.getName().equals(name)) {
+
+                        if (!var.getAttribute().equals("")) {
+                            varTable.getModel().setValueAt(var.getContext() + "." + var.getAttribute(), i, 3);
+                        } else {
+                            varTable.getModel().setValueAt("", i, 3);
+                        }
+
+                        if (StringTools.isEmptyString(var.getValue())) {
+                            if (!JAMSVarDescription.NULL_VALUE.equals(var.getDefaultValue())) {
+                                varTable.getModel().setValueAt(var.getDefaultValue(), i, 4);
+                            } else {
+                                varTable.getModel().setValueAt("", i, 4);
+                            }
+                            varValueFont.set(i, Color.LIGHT_GRAY);
+                        } else {
+                            varTable.getModel().setValueAt(var.getValue(), i, 4);
+                            varValueFont.set(i, Color.BLACK);
+                        }
+                        break;
+                    }
+                    i++;
+                }
+            }
+        });
     }
 
-    private void updateCtxtAttrs() {
+    public void updateCtxtAttrs() {
 
         if (!(componentDescriptor instanceof ContextDescriptor)) {
             return;
@@ -480,6 +543,7 @@ public class ComponentPanel extends JPanel {
         selectedVarRow = -1;
 
         varNameList = componentDescriptor.getComponentFieldList();
+        varValueFont = new ArrayList();
 
         Vector<Vector<String>> tableData = new Vector<Vector<String>>();
         Vector<String> rowData;
@@ -511,7 +575,17 @@ public class ComponentPanel extends JPanel {
                 rowData.add("");
             }
 
-            rowData.add(var.getValue());
+            if (StringTools.isEmptyString(var.getValue())) {
+                if (!JAMSVarDescription.NULL_VALUE.equals(var.getDefaultValue())) {
+                    rowData.add(var.getDefaultValue());
+                } else {
+                    rowData.add("");
+                }
+                varValueFont.add(Color.LIGHT_GRAY);
+            } else {
+                rowData.add(var.getValue());
+                varValueFont.add(Color.BLACK);
+            }
 
             tableData.add(rowData);
         }
@@ -564,13 +638,6 @@ public class ComponentPanel extends JPanel {
         }
 
         ComponentDescriptor ancestorArray[] = ancestors.toArray(new ComponentDescriptor[ancestors.size()]);
-        attributeConfigPanel.update(attr, ancestorArray, componentDescriptor, varTable.getModel(), selectedVarRow);
-    }
-    
-    private static class JTableButtonRenderer implements TableCellRenderer {        
-        @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            JButton button = (JButton)value;
-            return button;  
-        }
+        attributeConfigPanel.update(componentDescriptor, attr, ancestorArray);
     }
 }

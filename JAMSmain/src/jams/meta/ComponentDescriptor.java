@@ -118,7 +118,7 @@ public class ComponentDescriptor extends Observable {
                     accessType = ComponentField.READWRITE_ACCESS;
                 }
 
-                getComponentFields().put(field.getName(), new ComponentField(field.getName(), field.getType(), accessType, this));
+                getComponentFields().put(field.getName(), new ComponentField(field.getName(), field.getType(), accessType, jvd.description(), jvd.defaultValue(), this));
                 getComponentFieldList().add(field.getName());
             }
         }
@@ -149,7 +149,7 @@ public class ComponentDescriptor extends Observable {
         copy.setEnabled(this.isEnabled());
         for (String name : componentFields.keySet()) {
             ComponentField ca = componentFields.get(name);
-            ComponentField caCopy = new ComponentField(ca.getName(), ca.getType(), ca.getAccessType(), copy);
+            ComponentField caCopy = new ComponentField(ca.getName(), ca.getType(), ca.getAccessType(), ca.getDescription(), ca.getDefaultValue(), copy);
             caCopy.setValue(ca.getValue());
             copy.componentFields.put(name, caCopy);
             if (ca.getContextAttributes().size() > 0) {
@@ -205,6 +205,10 @@ public class ComponentDescriptor extends Observable {
         }
 
     }
+    
+    public void setChanged() {
+        super.setChanged();
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -235,8 +239,8 @@ public class ComponentDescriptor extends Observable {
         }
     }
 
-    public ComponentField createComponentField(String name, Class type, int accessType) {
-        return new ComponentField(name, type, accessType, this);
+    public ComponentField createComponentField(String name, Class type, int accessType, String description, String defaultValue) {
+        return new ComponentField(name, type, accessType, description, defaultValue, this);
     }
 
     /**

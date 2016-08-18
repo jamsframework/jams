@@ -82,7 +82,7 @@ public class MODIS_ET_Reader extends JAMSComponent {
     )
     public Attribute.IntegerArray hruIDArray;
 
-    BufferedReader reader;
+    transient BufferedReader reader;
     int startMonth = 0, cMonth = 0, oldMonth = 0;
     String line = "";
     List<Integer> idList = new ArrayList();

@@ -129,7 +129,7 @@ public class ContextDescriptor extends ComponentDescriptor {
         ContextDescriptor copy = new ContextDescriptor(getInstanceName(), getClazz());
         for (String name : componentFields.keySet()) {
             ComponentField ca = componentFields.get(name);
-            ComponentField caCopy = new ComponentField(ca.getName(), ca.getType(), ca.getAccessType(), this);
+            ComponentField caCopy = new ComponentField(ca.getName(), ca.getType(), ca.getAccessType(), ca.getDescription(), ca.getDefaultValue(), this);
             caCopy.setValue(ca.getValue());
             copy.componentFields.put(name, caCopy);
             if (ca.getContextAttributes().size() > 0) {

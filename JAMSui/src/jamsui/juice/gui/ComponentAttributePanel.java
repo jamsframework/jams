@@ -36,9 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableModel;
 import jams.gui.tools.GUIHelper;
 import jams.gui.input.InputComponent;
 import jams.gui.input.InputComponentFactory;
@@ -62,7 +60,6 @@ import java.util.Comparator;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.text.Position;
 
@@ -79,23 +76,22 @@ public class ComponentAttributePanel extends JPanel {
     private InputComponent valueInput;
     private GridBagLayout infoLayout;
     private JTextField localNameText, linkText;
+    private JTextPane descriptionText;
     private JButton customAttributeButton;
     private JPanel listPanel, infoPanel, valuePanel;
     private Class type;
     private JList attributeList;
     private JToggleButton linkButton, setButton;
     private ComponentField field;
-    private TableModel tableModel;
-    private int selectedRow;
     private ActionListener linkButtonListener, setButtonListener;
     private ItemListener contextComboListener;
-    private DocumentListener customAttributeTextListener;
     private ListSelectionListener attributeListListener;
+    private ComponentDescriptor component;
     private boolean adjusting = false;
 
     public ComponentAttributePanel() {
 
-        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow, 
+        JAMSLogging.registerLogger(JAMSLogging.LogOption.CollectAndShow,
                 Logger.getLogger(this.getClass().getName()));
 
         this.setLayout(new BorderLayout());
@@ -120,6 +116,7 @@ public class ComponentAttributePanel extends JPanel {
         GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.i18n("Local_name:")), 0, 10, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
         GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.i18n("Link:")), 0, 15, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
         GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.i18n("Value:")), 0, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
+        GUIHelper.addGBComponent(infoPanel, infoLayout, new JLabel(JAMS.i18n("Info:")), 0, 12, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTHWEST);
 
         localNameText = new JTextField();
         localNameText.setEditable(false);
@@ -151,10 +148,17 @@ public class ComponentAttributePanel extends JPanel {
 
         GUIHelper.addGBComponent(infoPanel, infoLayout, setButton, 2, 20, 1, 1, 0, 0, GridBagConstraints.NONE, GridBagConstraints.NORTH);
 
+        descriptionText = new JTextPane();
+        descriptionText.setContentType("text/plain");
+        descriptionText.setEditable(false);
+        descriptionText.setBackground(localNameText.getBackground());
+        JScrollPane scroll = new JScrollPane(descriptionText);
+        scroll.setPreferredSize(new Dimension(320, 40));
+        GUIHelper.addGBComponent(infoPanel, infoLayout, scroll, 1, 12, 1, 1, 1, 0, GridBagConstraints.BOTH, GridBagConstraints.NORTHWEST);
+
         contextCombo = new JComboBox();
         listPanel.add(contextCombo, BorderLayout.NORTH);
 
-        
         customAttributeButton = new JButton(JAMS.i18n("Custom_Attribute"));
         customAttributeButton.addActionListener(new ActionListener() {
             @Override
@@ -228,14 +232,17 @@ public class ComponentAttributePanel extends JPanel {
                 Logger.getLogger(ComponentAttributePanel.class.getName()).warning(ex.getHeader() + "\n" + ex.getMessage());
             }
             linkText.setText(field.getContext() + "." + field.getAttribute());
-            tableModel.setValueAt(field.getContext() + "." + field.getAttribute(), selectedRow, 3);
+//            tableModel.setValueAt(field.getContext() + "." + field.getAttribute(), selectedRow, 3);
         }
 
         if (!linkButton.isSelected()) {
             field.unlinkFromAttribute();
             linkText.setText("");
-            tableModel.setValueAt("", selectedRow, 3);
+//            tableModel.setValueAt("", selectedRow, 3);
         }
+
+        this.component.setChanged();
+        this.component.notifyObservers(field);
 
     }
 
@@ -263,7 +270,11 @@ public class ComponentAttributePanel extends JPanel {
             //valueInput.getComponent().setEnabled(true);
             field.setValue(null);
         }
-        tableModel.setValueAt(field.getValue(), selectedRow, 4);
+//        tableModel.setValueAt(field.getValue(), selectedRow, 4);
+
+        this.component.setChanged();
+        this.component.notifyObservers(field);
+
     }
 
     private void updateAttributeLinkGUI() {
@@ -332,19 +343,21 @@ public class ComponentAttributePanel extends JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    public void update(ComponentField var, ComponentDescriptor ancestorArray[],
-            ComponentDescriptor component, TableModel tableModel, int selectedRow) {
+    public void update(ComponentDescriptor component, ComponentField var, ComponentDescriptor ancestorArray[]) {
 
         adjusting = true;
 
         this.field = var;
         this.type = var.getType();
-        this.tableModel = tableModel;
-        this.selectedRow = selectedRow;
+
+        this.component = component;
 
         //set component's and var's name
         localNameText.setText(var.getName());
 //        compNameText.setText(component.getInstanceName());
+
+        descriptionText.setText(var.getDescription());
+        descriptionText.setCaretPosition(0);
 
         //fill the context combo box
         this.contextCombo.setModel(new DefaultComboBoxModel(ancestorArray));
@@ -457,6 +470,7 @@ public class ComponentAttributePanel extends JPanel {
         contextCombo.setModel(new DefaultComboBoxModel());
         attributeList.setModel(new DefaultListModel());
         localNameText.setText(null);
+        descriptionText.setText(null);
 //        compNameText.setText(null);
         linkText.setText(null);
         if (valueInput != null) {
@@ -495,23 +509,6 @@ public class ComponentAttributePanel extends JPanel {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
                     updateRepository();
                 }
-            }
-        };
-
-        customAttributeTextListener = new DocumentListener() {
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                setAttributeLink();
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                setAttributeLink();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                setAttributeLink();
             }
         };
 
