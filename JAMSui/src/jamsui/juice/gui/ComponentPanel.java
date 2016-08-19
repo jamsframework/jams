@@ -81,7 +81,7 @@ public class ComponentPanel extends JPanel {
 
     private static final String DEFAULT_STRING = JAMS.i18n("[none]");
 //    ATTR_CONFIG_STRING = JAMS.i18n("Attribute_configuration:"), MODEL_CONFIG_STRING = JAMS.i18n("Model_configuration:"), ATTR_OVERVIEW_STRING = JAMS.i18n("Attribute_overview:");
-    private static final Dimension TABLE_DIMENSION = new Dimension(550, 200);
+    private static final Dimension TABLE_DIMENSION = new Dimension(530, 200);
     private ComponentDescriptor componentDescriptor = null;
     private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
     private JPanel componentPanel;
