@@ -81,7 +81,7 @@ public class ComponentPanel extends JPanel {
 
     private static final String DEFAULT_STRING = JAMS.i18n("[none]");
 //    ATTR_CONFIG_STRING = JAMS.i18n("Attribute_configuration:"), MODEL_CONFIG_STRING = JAMS.i18n("Model_configuration:"), ATTR_OVERVIEW_STRING = JAMS.i18n("Attribute_overview:");
-    private static final Dimension TABLE_DIMENSION = new Dimension(500, 200);
+    private static final Dimension TABLE_DIMENSION = new Dimension(550, 200);
     private ComponentDescriptor componentDescriptor = null;
     private HashMap<String, JTextField> textFields = new HashMap<String, JTextField>();
     private JPanel componentPanel;
@@ -193,19 +193,13 @@ public class ComponentPanel extends JPanel {
         varTableColumnIds.add("R/W");
         varTableColumnIds.add(JAMS.i18n("Context_Attribute"));
         varTableColumnIds.add(JAMS.i18n("Value"));
-        varTableColumnIds.add("");
+        varTableColumnIds.add(JAMS.i18n("Unit"));
+//        varTableColumnIds.add("");
 
         varTableModel = new DefaultTableModel(varTableColumnIds, 0);
         varTable.setModel(varTableModel);
         varTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
-//        varTable.getModel().addTableModelListener(new TableModelListener() {
-//            @Override
-//            public void tableChanged(TableModelEvent e) {
-//                System.out.println("YEAH");
-//                varTable.repaint();
-//            }
-//        });
         JScrollPane varTableScroll = new JScrollPane(varTable);
         varTableScroll.setPreferredSize(TABLE_DIMENSION);
 
@@ -320,7 +314,7 @@ public class ComponentPanel extends JPanel {
 //        configLabel = new JLabel(MODEL_CONFIG_STRING);
 //        configLabel.setFont(labelFont);
         switchPanel = new JPanel();
-        switchPanel.setBackground(Color.red);
+//        switchPanel.setBackground(Color.red);
 
 //        JLabel attrOverviewLabel = new JLabel(ATTR_OVERVIEW_STRING);
 //        attrOverviewLabel.setFont(labelFont);
@@ -346,13 +340,6 @@ public class ComponentPanel extends JPanel {
             return Color.BLACK;
         } else {
             return varValueFont.get(row);
-//            String name = componentDescriptor.getComponentFieldList().get(row);
-//            ComponentField var = componentDescriptor.getComponentFields().get(name);
-//            if (StringTools.isEmptyString(var.getValue())) {
-//                return Color.LIGHT_GRAY;
-//            } else {
-//                return Color.BLACK;
-//            }
         }
     }
 
@@ -446,7 +433,7 @@ public class ComponentPanel extends JPanel {
             }
         } else if (switchPanel.getComponents()[0] != attributeConfigPanel) {
             switchPanel.remove(switchPanel.getComponents()[0]);
-            attributeConfigPanel.setPreferredSize(switchPanel.getSize());
+            attributeConfigPanel.setPreferredSize(new Dimension(switchPanel.getSize().width-10, switchPanel.getSize().height));
             switchPanel.add(attributeConfigPanel);
 //                configLabel.setText(ATTR_CONFIG_STRING);
             this.updateUI();
@@ -587,6 +574,8 @@ public class ComponentPanel extends JPanel {
                 varValueFont.add(Color.BLACK);
             }
 
+            rowData.add(var.getUnit());
+            
             tableData.add(rowData);
         }
         varTableModel.setDataVector(tableData, varTableColumnIds);
@@ -595,7 +584,7 @@ public class ComponentPanel extends JPanel {
         varTable.getColumnModel().getColumn(1).setPreferredWidth(80);
         varTable.getColumnModel().getColumn(2).setMaxWidth(35);
         varTable.getColumnModel().getColumn(3).setPreferredWidth(150);
-        varTable.getColumnModel().getColumn(5).setPreferredWidth(20);
+        varTable.getColumnModel().getColumn(5).setPreferredWidth(30);
 
     }
 
