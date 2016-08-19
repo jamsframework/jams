@@ -18,6 +18,7 @@ public class ComponentField implements Comparable {
     private String name = "";
     private String description = "";
     private String defaultValue = "";
+    private String unit = "";
     private Class type = null;
     private int accessType;
     private ArrayList<ContextAttribute> contextAttributes = new ArrayList<ContextAttribute>();
@@ -25,7 +26,7 @@ public class ComponentField implements Comparable {
     private ComponentDescriptor parent;
     private ContextDescriptor context;
 
-    public ComponentField(String name, Class type, int accessType, String description, String defaultValue, ComponentDescriptor parent) {
+    public ComponentField(String name, Class type, int accessType, String description, String defaultValue, String unit, ComponentDescriptor parent) {
         super();
         this.parent = parent;
         this.name = name;
@@ -33,6 +34,7 @@ public class ComponentField implements Comparable {
         this.accessType = accessType;
         this.description = description;
         this.defaultValue = defaultValue;
+        this.unit = unit;
     }
 
     public String getAttribute() {
@@ -204,6 +206,13 @@ public class ComponentField implements Comparable {
     public String getDefaultValue() {
         return defaultValue;
     }    
+    
+    /**
+     * @return the description
+     */
+    public String getUnit() {
+        return unit;
+    }      
 
     /**
      * @return the type
