@@ -22,6 +22,7 @@
 package jams.server.client;
 
 import jams.JAMS;
+import jams.JAMSProperties;
 import jams.data.ArrayDataSupplier;
 import jams.runtime.StandardRuntime;
 import jams.server.client.error.ErrorHandler;
@@ -201,12 +202,41 @@ public class Controller {
         return new JobController(this);
     }
 
+    public static void main(String[] args) throws IOException {
+        Controller client = new Controller("http://localhost:8080/jamscloud/webresources", "admin", "jamscloud");
+
+        User user;
+        user = new User(2, "sven", "skralisch");
+        user.setEmail("nsk@uni-jena.de");
+        user.setName("Sven Kralisch");
+        user.setAdmin(1);
+        client.users().createUser(user);
+
+        user = new User(3, "annika", "akuenne");
+        user.setEmail("annika.kuenne@uni-jena.de");
+        user.setName("Annika Künne");
+        user.setAdmin(0);
+        client.users().createUser(user);
+
+        user = new User(4, "manfred", "mfink");
+        user.setEmail("manfred.fink@uni-jena.de");
+        user.setName("Manfred Fink");
+        user.setAdmin(0);
+        client.users().createUser(user);
+
+        user = new User(5, "juliana", "jsantos");
+        user.setEmail("juliana.santos@uni-jena.de");
+        user.setName("Juliana Santos");
+        user.setAdmin(0);
+        client.users().createUser(user);
+    }
+
     /**
      *
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main2(String[] args) throws IOException {
         Controller client = new Controller("http://kirk.geogr.uni-jena.de:8080/jams-cloud-server/webresources", "Christian", "jamscloud");
 
         User user = new User(5);
@@ -246,12 +276,12 @@ public class Controller {
         try {
             map = client.files().uploadFile(new ArrayDataSupplier(new File[]{f2, f3}),
                     new ErrorHandler<File>() {
-                        @Override
-                        public boolean handleError(File o, Throwable ex) {
-                            System.out.println("Unable to upload " + o);
-                            return true;
-                        }
-                    }
+                @Override
+                public boolean handleError(File o, Throwable ex) {
+                    System.out.println("Unable to upload " + o);
+                    return true;
+                }
+            }
             );
         } catch (IOException ioe) {
             System.out.println("File with ids " + map.get(f2).getId() + "/" + map.get(f3).getId() + " were uploaded successfully!");
@@ -280,12 +310,12 @@ public class Controller {
         jams.workspace.Workspace workspace = new JAMSWorkspace(new File("E:\\ModelData\\JAMS-Gehlberg"), new StandardRuntime(null));
         Workspace ws2 = uploader.uploadWorkspace(workspace, new File[]{new File("E:\\JAMS_rep\\JAMS\\lib")}, new File("E:\\JAMS_rep\\JAMS\\nbprojects\\jams-ui\\dist\\jams-ui.jar"), "",
                 new ErrorHandler<File>() {
-                    @Override
-                    public boolean handleError(File o, Throwable ex) {
-                        System.out.println("Unable to upload " + o);
-                        return true;
-                    }
-                });
+            @Override
+            public boolean handleError(File o, Throwable ex) {
+                System.out.println("Unable to upload " + o);
+                return true;
+            }
+        });
         if (ws2 != null) {
             System.out.println("Number of files: " + ws2.getFiles().size());
             System.out.println("Workspace of Wilde Gera Model was uploaded successfully with id " + ws2.getId());
@@ -322,4 +352,55 @@ public class Controller {
 
         client.close();
     }
+
+    public static void main3(String[] args) throws IOException {
+        Controller client = new Controller("http://localhost:8080/jams-cloud-server/webresources", "admin", "jamscloud");
+
+        JAMSWorkspaceUploader uploader = new JAMSWorkspaceUploader(client);
+        jams.workspace.Workspace workspace = new JAMSWorkspace(new File("d:\\jamsapplication\\JAMS-Gehlberg"), new StandardRuntime(JAMSProperties.createProperties()));
+        Workspace ws2 = uploader.uploadWorkspace(workspace, new File[]{new File("D:\\jams\\jams-bin\\components"), new File("D:\\jamsmodels\\nbprojects\\components")}, new File("d:\\jams\\jams-bin\\jams-headless.jar"), "",
+                new ErrorHandler<File>() {
+            @Override
+            public boolean handleError(File o, Throwable ex) {
+                System.out.println("Unable to upload " + o);
+                return true;
+            }
+        });
+        if (ws2 != null) {
+            System.out.println("Number of files: " + ws2.getFiles().size());
+            System.out.println("Workspace of Wilde Gera Model was uploaded successfully with id " + ws2.getId());
+            client.workspaces().downloadWorkspace(new File("E:/test_client/" + ws2.getId() + "/"), ws2);
+            System.out.println("Workspace of Wilde Gera Model was downloaded to E:/test_client/" + ws2.getId());
+            WorkspaceFileAssociation wfaModel = null;
+            for (WorkspaceFileAssociation f : ws2.getFiles()) {
+                if (f.getPath().endsWith("j2k_gehlberg.jam")) {
+                    wfaModel = f;
+                    break;
+                }
+            }
+            Job job = client.jobs().create(ws2, wfaModel);
+            if (job != null) {
+                System.out.println("Wilde Gera Model started successfully! " + "Job Id is: " + job.getId());
+            }
+            while (client.jobs().getState(job).isActive()) {
+                System.out.println("Job with id " + job.getId() + " still running!");
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            System.out.println("Job with id " + job.getId() + " finished after " + client.jobs().getState(job).getDuration() + " ms.");
+            Workspace ws3 = job.getWorkspace();
+            System.out.println("Workspace of " + ws3.getName() + " Model is downloading!");
+            client.jobs().download(new File("E:/test_client/" + ws3.getName()), job);
+            client.jobs().delete(job);
+            System.out.println("Job with id " + job.getId() + " deleted");
+            client.workspaces().delete(ws2);
+            System.out.println("Workspace of Wilde Gera Model was deleted!");
+        }
+
+        client.close();
+    }
+
 }

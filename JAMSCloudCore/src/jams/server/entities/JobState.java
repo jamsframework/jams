@@ -51,6 +51,9 @@ public class JobState implements Serializable {
     
     @XmlElement(name = "size", type = Long.class)
     private long size;
+    
+    @XmlElement(name = "progress", type = Float.class)
+    private float progress;
                 
     public JobState() {
     }
@@ -105,4 +108,18 @@ public class JobState implements Serializable {
     public String toString() {
         return "jams.server.entities.JobState";
     }    
+
+    /**
+     * @return the progress
+     */
+    public float getProgress() {
+        return progress;
+    }
+
+    /**
+     * @param progress the progress to set
+     */
+    public void setProgress(float progress) {
+        this.progress = progress;
+    }
 }

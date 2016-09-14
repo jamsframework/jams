@@ -22,6 +22,7 @@
 package jams.server.client;
 
 import jams.JAMS;
+import jams.JAMSException;
 import jams.server.client.error.ErrorHandler;
 import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
@@ -43,6 +44,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 
 /**
  *
@@ -132,9 +135,9 @@ public class JAMSWorkspaceUploader {
                     todoList.addAll(getClassPathFromManifest(nextFile));
                 } catch (IOException ioe) {
                     log(JAMSWorkspaceUploader.class, Level.WARNING, ioe.toString(), ioe);
-                }   
+                }
                 libList.add(nextFile);
-            }    
+            }
             doneList.add(nextFile);
         }
         return libList;
@@ -162,8 +165,7 @@ public class JAMSWorkspaceUploader {
 
     private Workspace attachFilesToWorkspace(
             Workspace ws, File baseDirectory,
-            Map<File, jams.server.entities.File> mapping, int role
-    ) {
+            Map<File, jams.server.entities.File> mapping, int role, String prefix) {
         TreeSet<WorkspaceFileAssociation> wfas = new TreeSet<>();
 
         Path basePath = Paths.get(baseDirectory.toString());
@@ -171,8 +173,8 @@ public class JAMSWorkspaceUploader {
             Path path = Paths.get(localFile.getAbsolutePath());
             String relativePath = basePath.relativize(path).toString();
             jams.server.entities.File serverFile = mapping.get(localFile);
-            if (serverFile == null){
-                log(getClass(),Level.WARNING, JAMS.i18n("Unable_to_upload_{0}"), localFile);
+            if (serverFile == null) {
+                log(getClass(), Level.WARNING, JAMS.i18n("Unable_to_upload_{0}"), localFile);
                 continue;
             }
             if (relativePath.startsWith("..")) {
@@ -182,6 +184,9 @@ public class JAMSWorkspaceUploader {
             //try to determine role automatically
             if (role < 0) {
                 role = determineRole(localFile, baseDirectory);
+            }
+            if (prefix != null) {
+                relativePath = prefix + relativePath;
             }
             wfas.add(new WorkspaceFileAssociation(ws, serverFile, role, relativePath));
         }
@@ -197,8 +202,6 @@ public class JAMSWorkspaceUploader {
         return ws;
     }
 
-    
-    
     private Workspace uploadWorkspaceFiles(Workspace ws, File wsDirectory, String fileExclusion, ErrorHandler<File> handler) throws IOException {
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Workspace_Files"), JAMS.i18n("Collecting"));
         Collection<File> workspaceFiles
@@ -209,30 +212,32 @@ public class JAMSWorkspaceUploader {
                 = fileController.uploadFile(workspaceFiles, handler);
 
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Workspace_Files"), JAMS.i18n("Attaching"));
-        ws = attachFilesToWorkspace(ws, wsDirectory, wsFileMapping, -1);
+        ws = attachFilesToWorkspace(ws, wsDirectory, wsFileMapping, -1, null);
         return ws;
     }
 
-    private Workspace uploadRuntimeLibs(Workspace ws, File jamsExecutable, ErrorHandler<File> handler) throws IOException {
+    private Workspace uploadRuntimeLibs(Workspace ws, File runtimeLibDir, ErrorHandler<File> handler) throws IOException {
         //collect all files
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Runtime_Libraries"), JAMS.i18n("Collecting"));
-        Collection<File> jamsRuntimeLibs
-                = findDependendLibraries(jamsExecutable);
+        Collection<File> runtimeLibFiles = FileUtils.listFiles(runtimeLibDir,
+                TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+//        Collection<File> runtimeLibFiles = Arrays.asList(runtimeLibDir.listFiles());
+//                findDependendLibraries(runtimeLibDir);
 
         //upload all files to server
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Runtime_Libraries"), JAMS.i18n("Uploading"));
         Map<File, jams.server.entities.File> runtimeLibMapping
-                = fileController.uploadFile(jamsRuntimeLibs, handler);
+                = fileController.uploadFile(runtimeLibFiles, handler);
 
         //now do the mapping
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Runtime_Libraries"), JAMS.i18n("Attaching"));
-        ws = attachFilesToWorkspace(ws, jamsExecutable.getParentFile(),
-                runtimeLibMapping, WorkspaceFileAssociation.ROLE_RUNTIMELIBRARY);
+        ws = attachFilesToWorkspace(ws, runtimeLibDir.getParentFile(),
+                runtimeLibMapping, WorkspaceFileAssociation.ROLE_RUNTIMELIBRARY, null);
 
-        WorkspaceFileAssociation wfa = new WorkspaceFileAssociation(ws,
-                runtimeLibMapping.get(jamsExecutable),
-                WorkspaceFileAssociation.ROLE_EXECUTABLE, jamsExecutable.getName());
-        ws = workspaceController.attachFile(ws, wfa);
+//        WorkspaceFileAssociation wfa = new WorkspaceFileAssociation(ws,
+//                runtimeLibMapping.get(runtimeLibDir),
+//                WorkspaceFileAssociation.ROLE_EXECUTABLE, runtimeLibDir.getName());
+//        ws = workspaceController.attachFile(ws, wfa);
         return ws;
     }
 
@@ -248,12 +253,15 @@ public class JAMSWorkspaceUploader {
             fileMapping.put(file, fileController.uploadFile(fileList, handler));
         }
         //attach files
+        int c = 0;
         log(getClass(), Level.FINE, JAMS.i18n("Processing_{0}_:{1}"), JAMS.i18n("Component_Libraries"), JAMS.i18n("Attaching"));
         for (File componentLibrary : componentLibaries) {
             Map<File, jams.server.entities.File> list = fileMapping.get(componentLibrary);
 
+            String prefix = "components/" + (c++) + "/";
+
             ws = attachFilesToWorkspace(ws, componentLibrary.getAbsoluteFile().getParentFile(),
-                    list, WorkspaceFileAssociation.ROLE_COMPONENTSLIBRARY);
+                    list, WorkspaceFileAssociation.ROLE_COMPONENTSLIBRARY, prefix);
         }
 
         return ws;
@@ -263,7 +271,7 @@ public class JAMSWorkspaceUploader {
      *
      * @param jamsWorkspace
      * @param componentLibaries
-     * @param jamsExecutable
+     * @param runtimeLibraries
      * @param fileExclusion
      * @return
      * @throws IOException
@@ -271,21 +279,25 @@ public class JAMSWorkspaceUploader {
     public Workspace uploadWorkspace(
             jams.workspace.Workspace jamsWorkspace,
             File componentLibaries[],
-            File jamsExecutable, String fileExclusion, 
+            File runtimeLibraries, String fileExclusion,
             ErrorHandler<File> handler) throws IOException {
 
         Workspace ws = getWorkspace(jamsWorkspace);
         File wsDirectory = jamsWorkspace.getDirectory();
 
-        ws = workspaceController.detachAll(ws);
-        
-        ws = uploadWorkspaceFiles(ws, wsDirectory, fileExclusion, handler);
-        ws = uploadComponentLibs(ws, componentLibaries, handler);
-        ws = uploadRuntimeLibs(ws, jamsExecutable, handler);
+        try {
+            ws = workspaceController.detachAll(ws);
 
-        //potentielle probleme die noch abfangen werden müssten
-        //a) doppelte bibliotheken, sortierung nach neuester bibo??
-        //b) was wenn das executable fehlt?
-        return ws;
+            ws = uploadWorkspaceFiles(ws, wsDirectory, fileExclusion, handler);
+            ws = uploadComponentLibs(ws, componentLibaries, handler);
+            ws = uploadRuntimeLibs(ws, runtimeLibraries, handler);
+            return ws;
+        } catch (javax.ws.rs.client.ResponseProcessingException rpex) {
+            if (rpex.getResponse().getStatus() == 403) {
+                throw new JAMSException(JAMS.i18n("No_permission_to_access_workspace_with_id_{0}"), rpex);
+            } else {
+                throw rpex;
+            }
+        }
     }
 }

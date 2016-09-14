@@ -164,13 +164,13 @@ public class Job implements Serializable, Comparable<Job> {
         return startTime;
     }
     
-    public WorkspaceFileAssociation getExecutableFile(){
-        for (WorkspaceFileAssociation wfa : this.getWorkspace().getFiles()){
-            if (wfa.getRole() == WorkspaceFileAssociation.ROLE_EXECUTABLE)
-                return wfa;
-        }
-        return null;
-    }
+//    public WorkspaceFileAssociation getExecutableFile(){
+//        for (WorkspaceFileAssociation wfa : this.getWorkspace().getFiles()){
+//            if (wfa.getRole() == WorkspaceFileAssociation.ROLE_EXECUTABLE)
+//                return wfa;
+//        }
+//        return null;
+//    }
     
     @Override
     public String toString() {

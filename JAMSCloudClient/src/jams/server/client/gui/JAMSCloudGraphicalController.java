@@ -50,7 +50,7 @@ public class JAMSCloudGraphicalController extends Observable {
 
     //saved data
     private String[] recentUrls = {"http://localhost:8080/jams-cloud-server/webresources"};
-    private String user = "Christian", pw = "jamscloud", serverUrl = "";
+    private String user = "jams", pw = "jamscloud", serverUrl = "";
     private boolean saveAccount = true;
     private SystemProperties p;
     private Controller client;
@@ -349,20 +349,20 @@ public class JAMSCloudGraphicalController extends Observable {
         private final jams.workspace.Workspace jamsWorkspace;
         private final String fileFilter;
         private final File[] compLibFile;
-        private final File uiLibFile;
+        private final File rtLibFile;
         private Workspace ws;
 
-        public UploadWorkspaceRunnable(jams.workspace.Workspace jamsWorkspace, File[] compLibFile, File uiLibFile, String fileFilter) {
+        public UploadWorkspaceRunnable(jams.workspace.Workspace jamsWorkspace, File[] compLibFile, File rtLibFile, String fileFilter) {
             this.jamsWorkspace = jamsWorkspace;
             this.compLibFile = compLibFile;
-            this.uiLibFile = uiLibFile;
+            this.rtLibFile = rtLibFile;
             this.fileFilter = fileFilter;
         }
 
         @Override
         public void safeRun() throws Exception {
             JAMSWorkspaceUploader uploader = new JAMSWorkspaceUploader(client);
-            ws = uploader.uploadWorkspace(jamsWorkspace, compLibFile, uiLibFile, fileFilter, new DefaultFileUploadErrorHandling());
+            ws = uploader.uploadWorkspace(jamsWorkspace, compLibFile, rtLibFile, fileFilter, new DefaultFileUploadErrorHandling());
         }
 
         public Workspace getWorkspace() {
@@ -374,29 +374,29 @@ public class JAMSCloudGraphicalController extends Observable {
      *
      * @param jamsWorkspace
      * @param compLibFile
-     * @param uiLibFile
+     * @param rtLibFile
      * @param fileFilter
      * @return
      * @throws IOException
      */
     public Workspace uploadWorkspace(
             jams.workspace.Workspace jamsWorkspace,
-            File[] compLibFile, File uiLibFile,
+            File[] compLibFile, File rtLibFile,
             String fileFilter) throws IOException {
 
         if (!isConnected()) {
             throw new IOException("Not connected to server!");
         }
 
-        if (!uiLibFile.exists() || !uiLibFile.isFile()) {
-            throw new IOException("Unable to upload workspace! Paths are incorrect!");
+        if (!rtLibFile.exists() || !rtLibFile.isDirectory()) {
+            throw new IOException("Unable to upload workspace! Runtime libraries path is incorrect!");
         }
 
         observable.deleteObserver(worker);
         observable.addObserver(worker);
         worker.getWorkerDlg().setInderminate(true);
         worker.getWorkerDlg().setModal(true);
-        UploadWorkspaceRunnable uploadWsTask = new UploadWorkspaceRunnable(jamsWorkspace, compLibFile, uiLibFile, fileFilter);
+        UploadWorkspaceRunnable uploadWsTask = new UploadWorkspaceRunnable(jamsWorkspace, compLibFile, rtLibFile, fileFilter);
         worker.getWorkerDlg().setTask(uploadWsTask);
         worker.getWorkerDlg().execute();
 

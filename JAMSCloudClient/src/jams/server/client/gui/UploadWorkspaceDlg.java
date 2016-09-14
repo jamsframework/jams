@@ -56,7 +56,7 @@ public class UploadWorkspaceDlg extends JDialog{
     JLabel compLibPathLabel = new JLabel("Path to components library ");
     JButton chooseCompLib = new JButton("Choose");
     
-    JTextField uiLibPath = new JTextField();
+    JTextField rtLibPath = new JTextField();
     JLabel uiLibPathLabel = new JLabel("Path to executable library ");
     JButton chooseUiLib = new JButton("Choose");
     
@@ -147,7 +147,7 @@ public class UploadWorkspaceDlg extends JDialog{
                 .addGroup(mainLayout.createSequentialGroup()
                         .addComponent(uiLibPathLabel, 100, 200, 500)
                         .addContainerGap()
-                        .addComponent(uiLibPath, 200, 200, 200)
+                        .addComponent(rtLibPath, 200, 200, 200)
                         .addContainerGap()
                         .addComponent(chooseUiLib)
                 )
@@ -173,7 +173,7 @@ public class UploadWorkspaceDlg extends JDialog{
                 )
                 .addGroup(mainLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(uiLibPathLabel,25,25,25)
-                        .addComponent(uiLibPath,25,25,25)
+                        .addComponent(rtLibPath,25,25,25)
                         .addComponent(chooseUiLib,25,25,25)
                 )
                 .addGap(20, 20, 20)
@@ -227,21 +227,21 @@ public class UploadWorkspaceDlg extends JDialog{
                 jfc.setMultiSelectionEnabled(false);
                 if (jfc.showOpenDialog(wsPath) == JFileChooser.APPROVE_OPTION){
                     File f = jfc.getSelectedFile();
-                    uiLibPath.setText(f.getAbsolutePath());
+                    rtLibPath.setText(f.getAbsolutePath());
                 }
             }
         });        
         
-        uiLibPath.getDocument().addDocumentListener(new DocumentListener() {
+        rtLibPath.getDocument().addDocumentListener(new DocumentListener() {
 
             @Override
             public void insertUpdate(DocumentEvent e) {
-                File f = new File(uiLibPath.getText());
+                File f = new File(rtLibPath.getText());
                 if (!f.exists() || !f.isFile() || !f.getName().endsWith(".jar")){
-                    uiLibPath.setBackground(Color.red);
+                    rtLibPath.setBackground(Color.red);
                     uiOk = false;
                 }else{
-                    uiLibPath.setBackground(Color.white);
+                    rtLibPath.setBackground(Color.white);
                     uiOk = true;
                 }
                 uploadButton.setEnabled(uiOk & wsOk & libOk);
@@ -249,12 +249,12 @@ public class UploadWorkspaceDlg extends JDialog{
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                File f = new File(uiLibPath.getText());
+                File f = new File(rtLibPath.getText());
                 if (!f.exists() || !f.isFile() || !f.getName().endsWith(".jar")){
-                    uiLibPath.setBackground(Color.red);
+                    rtLibPath.setBackground(Color.red);
                     uiOk = false;
                 }else{
-                    uiLibPath.setBackground(Color.white);
+                    rtLibPath.setBackground(Color.white);
                     uiOk = true;
                 }
                 uploadButton.setEnabled(uiOk & wsOk & libOk);
@@ -262,12 +262,12 @@ public class UploadWorkspaceDlg extends JDialog{
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                File f = new File(uiLibPath.getText());
+                File f = new File(rtLibPath.getText());
                 if (!f.exists() || !f.isFile() || !f.getName().endsWith(".jar")){
-                    uiLibPath.setBackground(Color.red);
+                    rtLibPath.setBackground(Color.red);
                     uiOk = false;
                 }else{
-                    uiLibPath.setBackground(Color.white);
+                    rtLibPath.setBackground(Color.white);
                     uiOk = true;
                 }
                 uploadButton.setEnabled(uiOk & wsOk & libOk);
@@ -412,12 +412,12 @@ public class UploadWorkspaceDlg extends JDialog{
         }
         File workspaceDirectory = new File(wsPath.getText());
         File compLibFile   = new File(compLibPath.getText());
-        File uiLibFile     = new File(uiLibPath.getText());   
+        File rtLibFile     = new File(rtLibPath.getText());   
         String name = wsName.getText();
         
         JAMSWorkspace workspace = new JAMSWorkspace(workspaceDirectory, new StandardRuntime(null));
         JAMSWorkspaceUploader uploader = new JAMSWorkspaceUploader(controller);
-        uploader.uploadWorkspace(workspace, new File[]{compLibFile}, uiLibFile, "", 
+        uploader.uploadWorkspace(workspace, new File[]{compLibFile}, rtLibFile, "", 
                 new DefaultFileUploadErrorHandling() );
         
         uploadSuccessful=true;
@@ -430,7 +430,7 @@ public class UploadWorkspaceDlg extends JDialog{
     public boolean validateInput(){
         File workspaceFile = new File(wsPath.getText());
         File compLibFile   = new File(compLibPath.getText());
-        File uiLibFile     = new File(uiLibPath.getText());                
+        File uiLibFile     = new File(rtLibPath.getText());                
         
         if (!workspaceFile.exists() || !workspaceFile.isDirectory()) 
             return false;
