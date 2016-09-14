@@ -609,8 +609,8 @@ public class JUICEFrame extends JFrame {
         outputDSButton.setToolTipText(JAMS.i18n("Model_output"));
         outputDSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataOutput3.png")));
         toolBar.add(outputDSButton);
-        
-        toolBar.addSeparator();        
+
+        toolBar.addSeparator();
 
         JButton jadeButton = new JButton(jadeAction);
         jadeButton.setText("");
@@ -629,7 +629,7 @@ public class JUICEFrame extends JFrame {
         browseButton.setToolTipText(JAMS.i18n("Browse_WS_Dir"));
         browseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_browse.png")));
         toolBar.add(browseButton);
-        
+
         toolBar.addSeparator();
 
         JButton copyGUIButton = new JButton(copyModelGUIAction);
@@ -904,7 +904,7 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.runModelFromLauncherAction.setEnabled(true);
                     JUICEFrame.this.jadeAction.setEnabled(true);
                     JUICEFrame.this.wsBrowseAction.setEnabled(true);
-                    JUICEFrame.this.wsPrefsAction.setEnabled(true);                    
+                    JUICEFrame.this.wsPrefsAction.setEnabled(true);
                     JUICEFrame.this.copyModelGUIAction.setEnabled(true);
                     JUICEFrame.this.saveAsModelAction.setEnabled(true);
                     JUICEFrame.this.OptimizationWizardAction.setEnabled(true);
@@ -917,7 +917,7 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.runModelFromLauncherAction.setEnabled(false);
                     JUICEFrame.this.jadeAction.setEnabled(false);
                     JUICEFrame.this.wsBrowseAction.setEnabled(false);
-                    JUICEFrame.this.wsPrefsAction.setEnabled(false);                    
+                    JUICEFrame.this.wsPrefsAction.setEnabled(false);
                     JUICEFrame.this.copyModelGUIAction.setEnabled(false);
                     JUICEFrame.this.pasteModelGUIAction.setEnabled(false);
                     JUICEFrame.this.saveModelAction.setEnabled(false);
