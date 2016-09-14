@@ -13,17 +13,21 @@
 
     <target name="-post-jar">
         <if>
-            <or>
-                <equals arg1="${application.title}" arg2="jams-components"/>
-            </or>
+            <equals arg1="${application.title}" arg2="jams-components"/>
             <then>
                 <copy file="${dist.jar}" tofile="${comp.dir}/${application.title}${main.postfix}.jar"/>
+<!--                <copy todir="${comp.dir}/lib">
+                    <fileset dir="dist/lib">
+                        <exclude name="**/*jams-*.jar"/>
+                    </fileset>
+                </copy>                -->
             </then>
         </if>
         <if>
             <or>
                 <!--<equals arg1="${application.title}" arg2="jams-components"/>-->
                 <!--<equals arg1="${application.title}" arg2="jams-main"/>-->
+                <equals arg1="${application.title}" arg2="jams-headless"/>
                 <equals arg1="${application.title}" arg2="jams-starter"/>
             </or>
             <then>
@@ -31,7 +35,12 @@
             </then>
         </if>
         <if>
-            <available file="dist/lib" type="dir"/>
+<!--            <and>
+                <not>
+                    <equals arg1="${application.title}" arg2="jams-components"/>
+                </not>-->
+                <available file="dist/lib" type="dir"/>
+            <!--</and>-->
             <then>
                 <copy todir="${bin.dir}/lib">
                     <fileset dir="dist/lib">
