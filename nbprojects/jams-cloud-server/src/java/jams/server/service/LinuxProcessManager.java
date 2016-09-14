@@ -24,14 +24,11 @@ package jams.server.service;
 import jams.server.entities.Job;
 import jams.server.entities.WorkspaceFileAssociation;
 import jams.tools.FileTools;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -39,9 +36,9 @@ import java.util.logging.Logger;
  * @author christian
  */
 public class LinuxProcessManager extends AbstractProcessManager {
-    
+
     Logger logger = Logger.getLogger(LinuxProcessManager.class.getName());
-        
+
     @Override
     protected Integer getProcessPid(Process process) throws IOException {
         logger.fine("obtaining process id");
@@ -54,15 +51,17 @@ public class LinuxProcessManager extends AbstractProcessManager {
             } catch (Throwable e) {
                 return -1;
             }
-            
+
         }
         return -1;
     }
-    
+
     @Override
-    public double getLoad(){
+    public double getLoad() {
         OperatingSystemMXBean osmxb = ManagementFactory.getOperatingSystemMXBean();
-        return osmxb.getSystemLoadAverage() / osmxb.getAvailableProcessors() + 0.5;
+//        return osmxb.getSystemLoadAverage() / osmxb.getAvailableProcessors() + 0.5;
+        int cores = Runtime.getRuntime().availableProcessors()/2;
+        return osmxb.getSystemLoadAverage()/cores;
 //        String command[] = {
 //            "/bin/sh",
 //            "-c",
@@ -106,39 +105,39 @@ public class LinuxProcessManager extends AbstractProcessManager {
 //        
 //        return result;
     }
-    
+
     @Override
-    public ProcessBuilder getProcessBuilder(Job job) throws IOException {                
+    public ProcessBuilder getProcessBuilder(Job job) throws IOException {
         String modelFile = FileTools.normalizePath(job.getModelFile().getPath());
-        WorkspaceFileAssociation wfa = job.getExecutableFile();
-        if (wfa == null)
-            return null;
-        String runnableFile = FileTools.normalizePath(wfa.getPath());
-        
+//        WorkspaceFileAssociation wfa = job.getExecutableFile();
+//        if (wfa == null) {
+//            return null;
+//        }
+//        String runnableFile = FileTools.normalizePath(wfa.getPath());
+
         String command[] = {
             "java",
-            "-Xms128M", 
-            "-Xmx"+DEFAULT_MAX_MEMORY, 
-            "-Dsun.java2d.d3d=false", 
-            "-Djava.awt.headless=true",
+            "-Xms128M",
+            "-Xmx" + ApplicationConfig.SERVER_MAX_MEM,
+            //"-Djava.awt.headless=true",
             //"-Xbootclasspath/a:$(find "+"lib -name \\*jar | awk {'sub(/$/,\":\",$1); printf $1'})",
-            "-classpath",
-            "" + runnableFile + ":lib/*:lib/lib/*",
+            "-cp",
+            "lib/*",
             //"-jar", 
             //runnableFile, 
             "jamsui.launcher.JAMSui",
-            "-c", 
-            DEFAULT_JAP_FILE,
+            "-c",
+            "cloud.jap",
             "-n",
             "-m",
-            modelFile, 
+            modelFile,
             ">" + DEFAULT_INFO_LOG + " 2>&1&"};
-                
+
         logger.fine("start process: " + Arrays.toString(command));
-        
-        return new ProcessBuilder(command);                
+
+        return new ProcessBuilder(command);
     }
-   
+
     @Override
     public boolean isProcessActive(int pid) throws IOException {
         if (pid == -1) {
@@ -155,21 +154,21 @@ public class LinuxProcessManager extends AbstractProcessManager {
             return false;
         }
     }
-                
+
     @Override
-    public void killProcess(int pid){
+    public void killProcess(int pid) {
         if (pid == -1) {
             return;
         }
 
         try {
             Runtime runtime = Runtime.getRuntime();
-            Process killProcess = runtime.exec(new String[]{"kill", ""+pid});
+            Process killProcess = runtime.exec(new String[]{"kill", "" + pid});
 
             int killProcessExitCode = killProcess.waitFor();
             return;
         } catch (Exception e) {
             return;
-        }      
-    }        
+        }
+    }
 }

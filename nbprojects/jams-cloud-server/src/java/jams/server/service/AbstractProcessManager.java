@@ -32,7 +32,9 @@ import jams.tools.FileTools;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -46,11 +48,11 @@ import javax.ws.rs.core.StreamingOutput;
  */
 public abstract class AbstractProcessManager implements ProcessManager {
 
-    final protected String DEFAULT_JAP_FILE = "default.jap";
+    final protected String DEFAULT_JAP_FILE = "cloud.jap";
     final protected String DEFAULT_INFO_LOG = "info.log";
     final protected String DEFAULT_ERROR_LOG = "error.log";
 
-    final protected String DEFAULT_MAX_MEMORY = "24g";
+//    final protected String DEFAULT_MAX_MEMORY = "256g";
 
     protected abstract Integer getProcessPid(Process process) throws IOException;
 
@@ -170,6 +172,19 @@ public abstract class AbstractProcessManager implements ProcessManager {
         state.setDuration((new Date()).getTime() - job.getStartTime().getTime());
         state.setJob(job);
         state.setSize(FileTools.getDirectorySize(getLocalExecDir(job)));
+        try {
+            java.io.File progressFile = new java.io.File(getLocalExecDir(job) + "/" + "progress.log");
+            RandomAccessFile randomAccessFile = new RandomAccessFile(progressFile, "r");
+            randomAccessFile.seek(progressFile.length() - 6);
+            byte[] b = new byte[4];
+            randomAccessFile.read(b, 0, 4);
+            float progress = Float.parseFloat(new String(b, "UTF-8").replace(",", "."));
+            state.setProgress(progress);
+        } catch (IOException ioe) {
+
+        } catch (NumberFormatException ioe) {
+
+        }
         return state;
     }
 
@@ -198,10 +213,8 @@ public abstract class AbstractProcessManager implements ProcessManager {
                     em.refresh(dbFile);
 
                     ws.assignFile(dbFile, WorkspaceFileAssociation.ROLE_OUTPUT, relPath);
-                } else {
-                    if (!wfa.equals(job.getModelFile())) {
-                        oldWFAs.remove(wfa);
-                    }
+                } else if (!wfa.equals(job.getModelFile())) {
+                    oldWFAs.remove(wfa);
                 }
             }
         }

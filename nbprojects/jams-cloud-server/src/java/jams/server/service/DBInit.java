@@ -21,9 +21,7 @@
  */
 package jams.server.service;
 
-import static jams.server.service.ApplicationConfig.SERVER_EXEC_DIRECTORY;
-import static jams.server.service.ApplicationConfig.SERVER_TMP_DIRECTORY;
-import static jams.server.service.ApplicationConfig.SERVER_UPLOAD_DIRECTORY;
+import java.io.File;
 import java.io.FileReader;
 import java.util.Properties;
 import javax.ejb.Singleton;
@@ -57,6 +55,8 @@ public class DBInit {
     static Properties p = new Properties() {
         {                  
             try {
+//                File f = new File("settings.properties");
+//                System.out.println(">>>>>>>>>>>>>> " + f.getAbsolutePath());
                 load(new FileReader("settings.properties"));
                 DATABASE_URL = getProperty("databaseUrl");
                 DATABASE_USER = getProperty("databaseUser");
@@ -86,5 +86,6 @@ public class DBInit {
                     + i.getDescription() + " from file: " + i.getScript());
         }
         flyway.migrate();
+                
     }
 }

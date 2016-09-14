@@ -25,7 +25,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.WinNT;
 import jams.server.entities.Job;
-import jams.server.entities.WorkspaceFileAssociation;
 import jams.tools.FileTools;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -65,25 +64,30 @@ public class Win64ProcessManager extends AbstractProcessManager {
     //todo
     @Override
     public double getLoad(){
+        
+//        wmic cpu get loadpercentage
         return 0.0;
     }
+    
     @Override
     public ProcessBuilder getProcessBuilder(Job job) throws IOException {
 
         String modelFile = FileTools.normalizePath(job.getModelFile().getPath());
-        WorkspaceFileAssociation wfa = job.getExecutableFile();
-        if (wfa == null)
-            return null;
-        String runnableFile = FileTools.normalizePath(wfa.getPath());
+//        WorkspaceFileAssociation wfa = job.getExecutableFile();
+//        if (wfa == null)
+//            return null;
+//        String runnableFile = FileTools.normalizePath(wfa.getPath());
+//        String classpath = FileTools.normalizePath(job.getWorkspace());
         
         String command[] = {
             "java",
             "-Xms128M", 
-            "-Xmx"+DEFAULT_MAX_MEMORY,
-            "-jar", 
-            runnableFile, 
-            "-c", 
-            DEFAULT_JAP_FILE,
+            "-Xmx" + ApplicationConfig.SERVER_MAX_MEM,
+            "-cp",
+            "lib/*", 
+            "jamsui.launcher.JAMSui", 
+            "-c",
+            "cloud.jap", 
             "-n",
             "-m",
             modelFile, 

@@ -41,6 +41,7 @@ public class ApplicationConfig extends Application {
     public static String SERVER_UPLOAD_DIRECTORY = null;//"e:/test_server/uploaded/";
     public static String SERVER_TMP_DIRECTORY=  null;//"E:/test_server/tmp/";
     public static String SERVER_EXEC_DIRECTORY = null;//"E:/test_server/exec/";
+    public static String SERVER_MAX_MEM = null;
     
     static Properties p = new Properties() {
         {
@@ -51,6 +52,10 @@ public class ApplicationConfig extends Application {
                 SERVER_UPLOAD_DIRECTORY = getProperty("upload-directory");
                 SERVER_TMP_DIRECTORY = getProperty("tmp-directory");
                 SERVER_EXEC_DIRECTORY = getProperty("exec-directory");
+                SERVER_MAX_MEM = getProperty("server-max-mem");
+                if (SERVER_MAX_MEM == null) {
+                    SERVER_MAX_MEM = "8g";
+                }
 
                 log.info("Setting of paths was successful [" +
                         SERVER_UPLOAD_DIRECTORY + ", " + 

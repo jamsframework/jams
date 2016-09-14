@@ -23,7 +23,6 @@
 package jams.server.session;
 
 import jams.server.entities.File;
-import jams.server.entities.User;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
