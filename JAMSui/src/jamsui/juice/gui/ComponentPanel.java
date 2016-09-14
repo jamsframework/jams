@@ -69,8 +69,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -170,6 +168,7 @@ public class ComponentPanel extends JPanel {
 
         varTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListSelectionModel varRowSM = varTable.getSelectionModel();
+        
         varRowSM.addListSelectionListener(new ListSelectionListener() {
 
             @Override

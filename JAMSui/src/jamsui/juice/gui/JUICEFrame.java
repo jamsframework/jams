@@ -44,9 +44,12 @@ import jams.gui.LogViewDlg;
 import jams.gui.PropertyDlg;
 import jams.gui.RuntimeManagerPanel;
 import jams.gui.WorkerDlg;
+import jams.gui.WorkspaceDlg;
 import jams.meta.ModelDescriptor;
 import jams.server.client.gui.BrowseJAMSCloudDlg;
 import jams.server.client.gui.JAMSCloudToolbar;
+import jams.workspace.InvalidWorkspaceException;
+import jams.workspace.JAMSWorkspace;
 import jamsui.juice.*;
 import jamsui.juice.documentation.DocumentationWizard;
 import jamsui.juice.gui.tree.LibTree;
@@ -67,6 +70,7 @@ import org.w3c.dom.Node;
  * @author S. Kralisch
  */
 public class JUICEFrame extends JFrame {
+
     static final Logger log = Logger.getLogger(JUICEFrame.class.getName());
     private static final int TREE_PANE_WIDTH = 250, RT_MANAGER_HEIGHT = 600;
     private static final int DIVIDER_WIDTH = 8;
@@ -107,21 +111,22 @@ public class JUICEFrame extends JFrame {
     private Action runModelAction;
     private Action runModelRemoteAction;
     private Action runModelFromLauncherAction;
-    private Action explorerAction;
-    private Action browserAction;
+    private Action jadeAction;
+    private Action wsBrowseAction;
     private Action infoLogAction;
     private Action errorLogAction;
     private Action onlineAction;
     private Action outputDSAction;
+    private Action wsPrefsAction;
 
-    public JUICEFrame() {        
+    public JUICEFrame() {
         JAMSLogging.registerLogger(JAMSLogging.LogOption.Show, log);
         init();
     }
 
     private void init() {
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        
+
         this.addWindowListener(new WindowListener() {
             @Override
             public void windowActivated(WindowEvent e) {
@@ -156,16 +161,16 @@ public class JUICEFrame extends JFrame {
         remoteControlAction = new AbstractAction(JAMS.i18n("Start_Remote_Control")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if ( jamsCloudBrowser == null ){
+                if (jamsCloudBrowser == null) {
                     jamsCloudBrowser = new BrowseJAMSCloudDlg(JUICEFrame.this, JUICE.getJamsProperties());
-                    jamsCloudBrowser.init();                    
+                    jamsCloudBrowser.init();
                     jamsCloudBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                }                                       
+                }
                 GUIHelper.centerOnParent(jamsCloudBrowser, true);
-                jamsCloudBrowser.setVisible(true);                
+                jamsCloudBrowser.setVisible(true);
             }
         };
-        
+
         editPrefsAction = new AbstractAction(JAMS.i18n("Edit_Preferences...")) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -299,7 +304,7 @@ public class JUICEFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 final ModelView view = getCurrentView();
                 try {
-                    
+
                     OptimizerConfiguration conf = new OptimizerConfiguration(view.getModelDescriptor(),
                             Logger.getLogger(JUICE.class.getName()));
 
@@ -308,7 +313,7 @@ public class JUICEFrame extends JFrame {
                         public void actionPerformed(ActionEvent e) {
 
                             OptimizerConfiguration wizard = (OptimizerConfiguration) e.getSource();
-                            if (wizard.getSuccessState()){
+                            if (wizard.getSuccessState()) {
                                 ModelDescriptor newModelDoc = wizard.getModelDescriptor();
                                 view.setModelDescriptor(newModelDoc);
                                 view.loadModel(view.getModelDoc());
@@ -323,13 +328,13 @@ public class JUICEFrame extends JFrame {
                 }
             }
         };
-        
+
         ObjectiveWizardAction = new AbstractAction(JAMS.i18n("Configure_Efficiencies")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final ModelView view = getCurrentView();
                 try {
-                    
+
                     ObjectiveConfiguration conf = new ObjectiveConfiguration(view.getModelDescriptor(),
                             Logger.getLogger(JUICE.class.getName()));
 
@@ -351,7 +356,7 @@ public class JUICEFrame extends JFrame {
                 }
             }
         };
-        
+
         GenerateDocumentationGUIAction = new AbstractAction(JAMS.i18n("Generate_Docu")) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -400,14 +405,14 @@ public class JUICEFrame extends JFrame {
                 view.runModel();
             }
         };
-        
+
         runModelRemoteAction = new AbstractAction(JAMS.i18n("Run_Model_Remote")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
-                try{
+                try {
                     view.runModelInCloud();
-                }catch(IOException ioe){
+                } catch (IOException ioe) {
                     log.log(Level.SEVERE, ioe.toString(), ioe);
                 }
             }
@@ -449,7 +454,7 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        explorerAction = new AbstractAction(JAMS.i18n("DATA_EXPLORER")) {
+        jadeAction = new AbstractAction(JAMS.i18n("DATA_EXPLORER")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
@@ -457,11 +462,33 @@ public class JUICEFrame extends JFrame {
             }
         };
 
-        browserAction = new AbstractAction(JAMS.i18n("Browse_WS_Dir")) {
+        wsBrowseAction = new AbstractAction(JAMS.i18n("Browse_WS_Dir")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
                 view.openWSBrowser();
+            }
+        };
+
+        wsPrefsAction = new AbstractAction(JAMS.i18n("EDIT_WORKSPACE...")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                WorkspaceDlg wsDlg = new WorkspaceDlg(JUICEFrame.this);
+                ModelView view = getCurrentView();
+
+                JAMSWorkspace ws = view.getWorkspace();
+                if (ws == null) {
+                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));
+                    return;
+                }
+
+                try {
+                    ws.init();
+                    wsDlg.setVisible(ws);
+                } catch (InvalidWorkspaceException ex) {
+                    GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));
+                }
+
             }
         };
 
@@ -517,7 +544,6 @@ public class JUICEFrame extends JFrame {
         mainSplitPane.setOneTouchExpandable(true);
         mainSplitPane.setDividerSize(DIVIDER_WIDTH);
 
-
         getContentPane().add(mainSplitPane, java.awt.BorderLayout.CENTER);
 
         JToolBar toolBar = new JToolBar();
@@ -572,24 +598,38 @@ public class JUICEFrame extends JFrame {
         modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
         toolBar.add(modelGUIRunButton);
 
-        JButton modelRunRemoteButton = new JButton(runModelRemoteAction);        
+        JButton modelRunRemoteButton = new JButton(runModelRemoteAction);
         modelRunRemoteButton.setText("");
         modelRunRemoteButton.setToolTipText(JAMS.i18n("Run_Model_Remote"));
         modelRunRemoteButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunCloud.png")));
         toolBar.add(modelRunRemoteButton);
-                
+
         JButton outputDSButton = new JButton(outputDSAction);
         outputDSButton.setText("");
         outputDSButton.setToolTipText(JAMS.i18n("Model_output"));
         outputDSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataOutput3.png")));
         toolBar.add(outputDSButton);
+        
+        toolBar.addSeparator();        
 
-        JButton explorerButton = new JButton(explorerAction);
-        explorerButton.setText("");
-        explorerButton.setToolTipText(JAMS.i18n("JADE"));
-        explorerButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Layers_small.png")));
-        toolBar.add(explorerButton);
+        JButton jadeButton = new JButton(jadeAction);
+        jadeButton.setText("");
+        jadeButton.setToolTipText(JAMS.i18n("JADE"));
+        jadeButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_jade.png")));
+        toolBar.add(jadeButton);
 
+        JButton wsPrefsButton = new JButton(wsPrefsAction);
+        wsPrefsButton.setText("");
+        wsPrefsButton.setToolTipText(JAMS.i18n("EDIT_WORKSPACE..."));
+        wsPrefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_prefs.png")));
+        toolBar.add(wsPrefsButton);
+
+        JButton browseButton = new JButton(wsBrowseAction);
+        browseButton.setText("");
+        browseButton.setToolTipText(JAMS.i18n("Browse_WS_Dir"));
+        browseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_browse.png")));
+        toolBar.add(browseButton);
+        
         toolBar.addSeparator();
 
         JButton copyGUIButton = new JButton(copyModelGUIAction);
@@ -632,7 +672,7 @@ public class JUICEFrame extends JFrame {
 
         jamsServerToolbar = new JAMSCloudToolbar(JUICE.getJamsProperties());
         toolBar.add(jamsServerToolbar);
-                
+
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
 
@@ -666,7 +706,7 @@ public class JUICEFrame extends JFrame {
         JMenuItem loadModelItem = new JMenuItem(loadModelAction);
         loadModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
         fileMenu.add(loadModelItem);
-        
+
         recentMenu = new JMenu(JAMS.i18n("Recent_Files"));
         updateRecentMenu();
         fileMenu.add(recentMenu);
@@ -680,12 +720,11 @@ public class JUICEFrame extends JFrame {
         fileMenu.add(saveAsModelItem);
 
         fileMenu.add(new JSeparator());
-        
+
         JMenuItem remoteControlItem = new JMenuItem(remoteControlAction);
         remoteControlItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         fileMenu.add(remoteControlItem);
-        
-        
+
         JMenuItem exitItem = new JMenuItem(exitAction);
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         fileMenu.add(exitItem);
@@ -725,24 +764,36 @@ public class JUICEFrame extends JFrame {
         runModelItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
         modelMenu.add(runModelItem);
 
+        JMenuItem runModelInLauncherItem = new JMenuItem(runModelFromLauncherAction);
+        runModelFromLauncherAction.setEnabled(false);
+        modelMenu.add(runModelInLauncherItem);
+
         JMenuItem runModelRemoteItem = new JMenuItem(runModelRemoteAction);
         runModelRemoteAction.setEnabled(false);
         runModelRemoteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
         modelMenu.add(runModelRemoteItem);
-        
+
+        modelMenu.add(new JSeparator());
+
         JMenuItem dsItem = new JMenuItem(outputDSAction);
         outputDSAction.setEnabled(false);
         dsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         modelMenu.add(dsItem);
 
-        JMenuItem jadeItem = new JMenuItem(explorerAction);
-        explorerAction.setEnabled(false);
+        JMenuItem jadeItem = new JMenuItem(jadeAction);
+        jadeAction.setEnabled(false);
         jadeItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, ActionEvent.CTRL_MASK));
         modelMenu.add(jadeItem);
 
-        JMenuItem browserItem = new JMenuItem(browserAction);
+        JMenuItem browserItem = new JMenuItem(wsBrowseAction);
+        wsBrowseAction.setEnabled(false);
         browserItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
         modelMenu.add(browserItem);
+
+        JMenuItem workspaceDlgItem = new JMenuItem(wsPrefsAction);
+        wsPrefsAction.setEnabled(false);
+        workspaceDlgItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
+        modelMenu.add(workspaceDlgItem);
 
         modelMenu.add(new JSeparator());
 
@@ -755,10 +806,6 @@ public class JUICEFrame extends JFrame {
         modelMenu.add(saveModelParamItem);
 
         modelMenu.add(new JSeparator());
-
-        JMenuItem runModelInLauncherItem = new JMenuItem(runModelFromLauncherAction);
-        runModelFromLauncherAction.setEnabled(false);
-        modelMenu.add(runModelInLauncherItem);
 
         JMenuItem copyModelParameterItem = new JMenuItem(copyModelGUIAction);
         copyModelGUIAction.setEnabled(false);
@@ -776,9 +823,9 @@ public class JUICEFrame extends JFrame {
         ObjectiveWizardItem = new JMenuItem(ObjectiveWizardAction);
         ObjectiveWizardAction.setEnabled(false);
         modelMenu.add(ObjectiveWizardItem);
-                
+
         modelMenu.add(new JSeparator());
-        
+
         JMenuItem GenerateDocumentationItem = new JMenuItem(GenerateDocumentationGUIAction);
         GenerateDocumentationGUIAction.setEnabled(true);
         modelMenu.add(GenerateDocumentationItem);
@@ -855,18 +902,22 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.runModelAction.setEnabled(true);
                     JUICEFrame.this.runModelRemoteAction.setEnabled(true);
                     JUICEFrame.this.runModelFromLauncherAction.setEnabled(true);
-                    JUICEFrame.this.explorerAction.setEnabled(true);
+                    JUICEFrame.this.jadeAction.setEnabled(true);
+                    JUICEFrame.this.wsBrowseAction.setEnabled(true);
+                    JUICEFrame.this.wsPrefsAction.setEnabled(true);                    
                     JUICEFrame.this.copyModelGUIAction.setEnabled(true);
                     JUICEFrame.this.saveAsModelAction.setEnabled(true);
-                    JUICEFrame.this.OptimizationWizardAction.setEnabled(true);                    
-                    JUICEFrame.this.ObjectiveWizardAction.setEnabled(true);                    
+                    JUICEFrame.this.OptimizationWizardAction.setEnabled(true);
+                    JUICEFrame.this.ObjectiveWizardAction.setEnabled(true);
                 } else {
                     JUICEFrame.this.modelMenu.setEnabled(false);
                     JUICEFrame.this.outputDSAction.setEnabled(false);
                     JUICEFrame.this.runModelAction.setEnabled(false);
                     JUICEFrame.this.runModelRemoteAction.setEnabled(false);
                     JUICEFrame.this.runModelFromLauncherAction.setEnabled(false);
-                    JUICEFrame.this.explorerAction.setEnabled(false);
+                    JUICEFrame.this.jadeAction.setEnabled(false);
+                    JUICEFrame.this.wsBrowseAction.setEnabled(false);
+                    JUICEFrame.this.wsPrefsAction.setEnabled(false);                    
                     JUICEFrame.this.copyModelGUIAction.setEnabled(false);
                     JUICEFrame.this.pasteModelGUIAction.setEnabled(false);
                     JUICEFrame.this.saveModelAction.setEnabled(false);
@@ -1014,7 +1065,7 @@ public class JUICEFrame extends JFrame {
     }
 
     public Action getJADEAction() {
-        return explorerAction;
+        return jadeAction;
     }
 
     private class WindowItem extends JMenuItem {

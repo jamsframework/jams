@@ -430,6 +430,8 @@ public class FileTools {
                 if (f.isDirectory()) {
                     continue;
                 }
+                
+                try {
                 BufferedOutputStream bos = new BufferedOutputStream(
                         new FileOutputStream(f));
 
@@ -439,6 +441,9 @@ public class FileTools {
 
                 bos.flush();
                 bos.close();
+                } catch (IOException ioe) {
+                    System.out.println("sht");
+                }
             }
         }
         zipFile.close();

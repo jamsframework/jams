@@ -230,4 +230,11 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
 
         return theProperties;
     }
+
+    /**
+     * @return the properties
+     */
+    public Properties getProperties() {
+        return properties;
+    }
 }

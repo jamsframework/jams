@@ -90,14 +90,13 @@ public class ExplorerFrame extends JFrame {
     protected static final int DIVIDER_WIDTH = 6;
     protected JFileChooser jfc = GUIHelper.getJFileChooser();
     protected WorkerDlg openWSDlg;
-    protected Action openWSAction, openSTPAction, exitAction, editWSAction, editPrefsAction,
+    protected Action openWSAction, openSTPAction, exitAction, editPrefsAction,
             sensitivityAnalysisAction, reloadWSAction, importDataAction, browseServerAction;
     protected JLabel statusLabel;
     protected JSplitPane mainSplitPane;
     protected JTabbedPane tPane;
     protected JAMSExplorer explorer;
     protected PropertyDlg propertyDlg;
-    protected WorkspaceDlg wsDlg;
     protected Document modelDoc = null;    
     protected BrowseJAMSCloudDlg jamsCloudBrowser = null;
     private JMenuItem saveEnsembleItem;
@@ -110,8 +109,6 @@ public class ExplorerFrame extends JFrame {
     private void init() {
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
-        wsDlg = new WorkspaceDlg(this);
 
         createListener();
 
@@ -128,14 +125,6 @@ public class ExplorerFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 open();
-            }
-        };
-
-        editWSAction = new AbstractAction(JAMS.i18n("EDIT_WORKSPACE...")) {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                wsDlg.setVisible(explorer.getWorkspace());
             }
         };
 
@@ -234,13 +223,13 @@ public class ExplorerFrame extends JFrame {
         reloadWSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Reload.png")));
         toolBar.add(reloadWSButton);
 
-        JButton wsEditButton = new JButton(editWSAction);
+//        JButton wsEditButton = new JButton(editWSAction);
         JButton stpButton = new JButton(openSTPAction);
 
-        wsEditButton.setText("");
-        wsEditButton.setToolTipText((String) editWSAction.getValue(Action.NAME));
-        wsEditButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
-        toolBar.add(wsEditButton);
+//        wsEditButton.setText("");
+//        wsEditButton.setToolTipText((String) editWSAction.getValue(Action.NAME));
+//        wsEditButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
+//        toolBar.add(wsEditButton);
 
         stpButton.setText("");
         stpButton.setToolTipText((String) openSTPAction.getValue(Action.NAME));
@@ -272,8 +261,8 @@ public class ExplorerFrame extends JFrame {
         JMenu prefsMenu = new JMenu(JAMS.i18n("PREFERENCES"));
         mainMenu.add(prefsMenu);
 
-        JMenuItem editWSItem = new JMenuItem(editWSAction);
-        prefsMenu.add(editWSItem);
+//        JMenuItem editWSItem = new JMenuItem(editWSAction);
+//        prefsMenu.add(editWSItem);
 
         if (explorer.isStandAlone()) {
             JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
@@ -563,7 +552,7 @@ public class ExplorerFrame extends JFrame {
         JAMSWorkspace workspace = explorer.getWorkspace();
 
         if (workspace == null) {
-            editWSAction.setEnabled(false);
+//            editWSAction.setEnabled(false);
             reloadWSAction.setEnabled(false);
             importDataAction.setEnabled(false);
         } else {
@@ -571,7 +560,7 @@ public class ExplorerFrame extends JFrame {
             jfc.setSelectedFile(workspace.getDirectory());
             setTitle(JAMSExplorer.APP_TITLE + " [" + workspace.getDirectory().toString() + "]");
 //            updateMainPanel(new JPanel());
-            editWSAction.setEnabled(true);
+//            editWSAction.setEnabled(true);
             reloadWSAction.setEnabled(true);
             importDataAction.setEnabled(true);
 

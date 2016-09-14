@@ -40,6 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
@@ -80,14 +81,16 @@ public class WorkspaceDlg extends JDialog {
         
         idInput = new IntegerInput();
         
+        
         descriptionInput = new JTextArea();
         JScrollPane descriptionScroll = new JScrollPane(descriptionInput);
         descriptionScroll.setPreferredSize(new Dimension(200, 100));
         persistenceInput = new BooleanInput();
 
-        GUIHelper.addGBComponent(mainPanel, gbl, titleInput.getComponent(), 20, 10, 1, 1, 1, 1);
-        GUIHelper.addGBComponent(mainPanel, gbl, descriptionScroll, 20, 20, 1, 1, 1, 1);
+        GUIHelper.addGBComponent(mainPanel, gbl, titleInput.getComponent(), 20, 10, 2, 1, 1, 1);
+        GUIHelper.addGBComponent(mainPanel, gbl, descriptionScroll, 20, 20, 2, 1, 1, 1);
         GUIHelper.addGBComponent(mainPanel, gbl, idInput.getComponent(), 20, 30, 1, 1, 1, 1);
+        GUIHelper.addGBComponent(mainPanel, gbl, new JLabel(" (Leave empty to auto-generate a new one)"), 21, 30, 1, 1, 1, 1);
         GUIHelper.addGBComponent(mainPanel, gbl, persistenceInput.getComponent(), 20, 40, 1, 1, 1, 1);
 
         JButton okButton = new JButton("OK");
@@ -97,7 +100,13 @@ public class WorkspaceDlg extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 ws.setTitle(titleInput.getValue());
                 ws.setDescription(descriptionInput.getText());
-                ws.setID(Integer.parseInt(idInput.getValue()));
+                int id;
+                try {
+                    id = Integer.parseInt(idInput.getValue());
+                } catch (NumberFormatException ex) {
+                    id = -1;
+                }
+                ws.setID(id);
                 if (persistenceInput.getValue().equalsIgnoreCase("true")) {
                     ws.setPersistent(true);
                 } else {

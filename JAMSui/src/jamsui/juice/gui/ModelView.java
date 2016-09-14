@@ -70,9 +70,15 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import org.w3c.dom.Document;
 import jams.explorer.JAMSExplorer;
+import jams.tools.StringTools;
+import jams.workspace.JAMSWorkspace;
 import jams.workspace.Workspace;
+import java.io.FileNotFoundException;
+import java.io.RandomAccessFile;
+import java.util.Arrays;
+import java.util.Properties;
 
-/** 
+/**
  *
  * @author S. Kralisch
  */
@@ -121,23 +127,7 @@ public class ModelView {
             public void run() {
                 try {
                     // create the runtime
-                    runtime = new StandardRuntime(JUICE.getJamsProperties());
-
-                    // add info and error log output
-                    runtime.addInfoLogObserver(new Observer() {
-
-                        @Override
-                        public void update(Observable obs, Object obj) {
-                            JUICE.getJuiceFrame().getInfoDlg().appendText(obj.toString());
-                        }
-                    });
-                    runtime.addErrorLogObserver(new Observer() {
-
-                        @Override
-                        public void update(Observable obs, Object obj) {
-                            JUICE.getJuiceFrame().getErrorDlg().appendText(obj.toString());
-                        }
-                    });
+                    runtime = createRuntime();
 
                     // load the model
                     Document modelDoc = getModelDoc();
@@ -303,7 +293,7 @@ public class ModelView {
                         return;
                     }
                 }
-                
+
                 setTree(new ModelTree(ModelView.this, (Document) obj));
 
             }
@@ -412,14 +402,18 @@ public class ModelView {
         }
         Workspace jamsWorkspace = runtime.getModel().getWorkspace();
 
-        String libs = JUICE.getJamsProperties().getProperty("libs");
+        String libs = JUICE.getJamsProperties().getProperty(JAMSProperties.LIBS_IDENTIFIER);
+        String newLibs = "";
         String compLibArray[] = libs.split(";");
         File compLibFile[] = new File[compLibArray.length];
         for (int i = 0; i < compLibArray.length; i++) {
             compLibFile[i] = new File(compLibArray[i]);
+            newLibs += "components/" + i + "/" + compLibFile[i].getName() + ";";
         }
+        newLibs = newLibs.substring(0, newLibs.length() - 1);
 
-        File jamsuiLib = getJAMSuiLib();
+//        File jamsuiLib = getJAMSuiLib();
+        File libDir = JAMS.getLibDir();
         String uploadFileFilter = JUICE.getJamsProperties().getProperty("uploadFileFilter");
         if (uploadFileFilter == null) {
             uploadFileFilter = "(.*\\.cache)|(.*\\.ser)|(.*\\.svn)|(.*/output/.*)|(.*/documentation/.*)|(.*\\.cdat)|(.*\\.log)";
@@ -441,19 +435,44 @@ public class ModelView {
                 runtime.getModel().getWorkspace().setTitle(title);
             }
         }
-        ws = connector.uploadWorkspace(jamsWorkspace, compLibFile, jamsuiLib, uploadFileFilter);
+        
+        ws = connector.uploadWorkspace(jamsWorkspace, compLibFile, libDir, uploadFileFilter);
         if (ws == null) {
             return null;
         }
 
         runtime.getModel().getWorkspace().setID(ws.getId());
 
-        InputStream modelStream = XMLTools.writeXmlFileToStream(initialDoc);
-        jams.server.entities.File f = client.files().uploadFile(modelStream);
+        InputStream inputStream;
+        jams.server.entities.File f;
+
+        inputStream = XMLTools.writeXmlToStream(initialDoc);
+        f = client.files().uploadFile(inputStream);
         ws = client.workspaces().attachFile(ws,
                 new WorkspaceFileAssociation(ws, f, WorkspaceFileAssociation.ROLE_MODEL,
                         ModelView.this.savePath.getName()));
+
+        Properties props = (Properties) JUICE.getJamsProperties().getProperties().clone();
+        props.setProperty(JAMSProperties.LIBS_IDENTIFIER, newLibs);
+        props.setProperty("progressperiod", "1000");
+        props.setProperty("progressfilename", "progress.log");
+        inputStream = XMLTools.propertiesToStream(props);
+        f = client.files().uploadFile(inputStream);
+        ws = client.workspaces().attachFile(ws,
+                new WorkspaceFileAssociation(ws, f, WorkspaceFileAssociation.ROLE_JAPFILE, "cloud.jap"));
+
         return connector.startJob(ws, new File(ModelView.this.savePath.getName()));
+    }
+
+    public static void main(String[] args) throws IOException {
+        java.io.File progressFile = new java.io.File("D:\\temp\\jamscloud\\exec\\admin\\21\\progress.log");
+        RandomAccessFile randomAccessFile = new RandomAccessFile(progressFile, "r");
+        randomAccessFile.seek(progressFile.length() - 6);
+        byte[] b = new byte[4];
+        randomAccessFile.read(b, 0, 4);
+        String str = new String(b, "UTF-8");
+        float progress = Float.parseFloat(new String(b, "UTF-8").replace(",", "."));
+        System.out.println(progress);
     }
 
     public static String getNextViewName() {
@@ -677,8 +696,43 @@ public class ModelView {
         this.modelDescriptor = md;
     }
 
+    private JAMSRuntime createRuntime() {
+        JAMSRuntime rt = new StandardRuntime(JUICE.getJamsProperties());
+
+        // add info and error log output
+        rt.addInfoLogObserver(new Observer() {
+
+            @Override
+            public void update(Observable obs, Object obj) {
+                JUICE.getJuiceFrame().getInfoDlg().appendText(obj.toString());
+            }
+        });
+        rt.addErrorLogObserver(new Observer() {
+
+            @Override
+            public void update(Observable obs, Object obj) {
+                JUICE.getJuiceFrame().getErrorDlg().appendText(obj.toString());
+            }
+        });
+        return rt;
+    }
+
+    public JAMSWorkspace getWorkspace() {
+
+        File workspaceFile = new File(this.getModelDescriptor().getWorkspacePath());
+        if (!workspaceFile.isDirectory()) {
+            if (this.getSavePath() != null) {
+                workspaceFile = this.getSavePath().getParentFile();
+            } else {
+                return null;
+            }
+        }
+//        return runtime.getModel().getWorkspace();
+        return new JAMSWorkspace(workspaceFile, createRuntime(), true);
+    }
+
     public void openExplorer() {
-        
+
         File workspaceFile = new File(getModelDescriptor().getWorkspacePath());
 
         if (!workspaceFile.isDirectory()) {

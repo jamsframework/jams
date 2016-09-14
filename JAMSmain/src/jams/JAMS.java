@@ -94,7 +94,7 @@ public class JAMS {
     /**
      * Base/Start directory
      */
-    private static File baseDir, startDir;
+    private static File baseDir, libDir;
 
     /**
      * Return a localized string
@@ -221,6 +221,7 @@ public class JAMS {
     public static void initBaseDir(String parameterFileName) {
 
         File f;
+        libDir = new File("lib").getAbsoluteFile();
 
         //check parameter file parent dir / user dir
         f = new File(parameterFileName);
@@ -245,6 +246,13 @@ public class JAMS {
         if (baseDir == null) {
             initBaseDir(DEFAULT_PARAMETER_FILENAME);
         }
+    }
+
+    public static File getLibDir() {
+        if (libDir == null) {
+            initBaseDir();
+        }
+        return libDir;
     }
 
     public static File getBaseDir() {
