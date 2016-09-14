@@ -24,6 +24,7 @@ package jams;
 
 import java.io.IOException;
 import java.util.Observer;
+import java.util.Properties;
 
 /**
  *
@@ -115,6 +116,8 @@ public interface SystemProperties {
      */
     void setProperty(String key, String value);
 
+    Properties getProperties();
+    
     @Override
     String toString();
 
