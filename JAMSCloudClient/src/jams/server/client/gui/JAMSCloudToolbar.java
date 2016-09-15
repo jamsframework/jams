@@ -32,17 +32,17 @@ import javax.swing.JToolBar;
  * @author christian
  */
 public class JAMSCloudToolbar extends JToolBar {
-
+    
     Logger log = Logger.getLogger(JAMSCloudToolbar.class.getName());
-
+    
     SystemProperties p = null;
     JButton connectButton = new JButton();
     JProgressBar serverLoad = new JProgressBar();
-
+    
     ImageIcon connect1 = new ImageIcon(getClass().getResource("/resources/images/connect1.png"));
     ImageIcon connect2 = new ImageIcon(getClass().getResource("/resources/images/connect2.png"));
     ImageIcon connect3 = new ImageIcon(getClass().getResource("/resources/images/connect3.png"));
-
+    
     boolean isConnected = false;
     JAMSCloudGraphicalController connector = null;
 
@@ -53,40 +53,63 @@ public class JAMSCloudToolbar extends JToolBar {
     public JAMSCloudToolbar(SystemProperties p) {
         JAMSLogging.registerLogger(JAMSLogging.LogOption.Show, log);
         this.p = p;
+        
+        serverLoad.setToolTipText("Server Load");
 
         JPanel panel = new JPanel(new BorderLayout());
 //        panel.setBorder(BorderFactory.createTitledBorder("Server-Load"));
 
         JPanel loadPanel = new JPanel(new BorderLayout());
-        loadPanel.add(new JLabel("Server-Load"), BorderLayout.NORTH);
-        loadPanel.add(serverLoad, BorderLayout.CENTER);
-        panel.add(loadPanel, BorderLayout.CENTER);
-        panel.add(connectButton, BorderLayout.WEST);
-        panel.setMaximumSize(new Dimension(300, 50));
-        panel.setMinimumSize(new Dimension(150, 10));
-        panel.setPreferredSize(new Dimension(200, 32));
-        add(panel);
+//        loadPanel.add(new JLabel("Load"), BorderLayout.NORTH);
+//        serverLoad.setOrientation(VERTICAL);
+//        loadPanel.add(serverLoad, BorderLayout.CENTER);
+//        panel.add(loadPanel, BorderLayout.CENTER);
+//        panel.add(connectButton, BorderLayout.WEST);
+//        panel.setMaximumSize(new Dimension(150, 50));
+////        panel.setMinimumSize(new Dimension(50, 10));
+//        panel.setPreferredSize(new Dimension(100, 32));
+//        add(panel);
+        
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(connectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(serverLoad, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+//                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(connectButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+//                .addGap(3, 3, 3)
+                .addComponent(serverLoad, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6))
+        );
+        
         this.serverLoad.setIndeterminate(false);
-
+        
         connector = JAMSCloudGraphicalController.createInstance(JAMSCloudToolbar.this.p);
         connector.addObserver(new Observer() {
-
+            
             @Override
             public void update(Observable o, Object arg) {
                 setConnectionState((JAMSCloudEvents) arg);
             }
         });
-
+        
         if (connector.isConnected()) {
             setConnectionState(JAMSCloudEvents.CONNECT);
         } else {
             setConnectionState(JAMSCloudEvents.DISCONNECT);
         }
-
+        
         Timer timer = new Timer();
-
+        
         timer.schedule(new TimerTask() {
-
+            
             @Override
             public void run() {
                 try {
@@ -99,9 +122,9 @@ public class JAMSCloudToolbar extends JToolBar {
                 }
             }
         }, 5000, 5000);
-
+        
         connectButton.addActionListener(new ActionListener() {
-
+            
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isConnected) {
@@ -156,8 +179,9 @@ public class JAMSCloudToolbar extends JToolBar {
      * @param url
      */
     protected void setServerUrl(String url) {
-        if (url.length() > 20) {
-            serverLoad.setString(url.substring(0, 20) + "...");
+        if (url.length() > 30) {    
+            url = url.substring(url.indexOf("://")+3);
+            serverLoad.setString(url.substring(0, 30) + "...");
         } else {
             serverLoad.setString(url);
         }
