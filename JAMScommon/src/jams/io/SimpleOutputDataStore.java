@@ -105,8 +105,8 @@ public class SimpleOutputDataStore {
     }
     //This is a fixed size ascii number format
     //DO NOT Change this format! 
-    DecimalFormat df2EPos = new DecimalFormat( "+0.00000E000;-0.00000E000", new DecimalFormatSymbols(Locale.ENGLISH) );
-    DecimalFormat df2ENeg = new DecimalFormat( "+0.00000E00;-0.00000E00", new DecimalFormatSymbols(Locale.ENGLISH) );
+    DecimalFormat df2EPos = new DecimalFormat( "+0.00000E0000;-0.00000E0000", new DecimalFormatSymbols(Locale.ENGLISH) );
+    DecimalFormat df2ENeg = new DecimalFormat( "+0.00000E000;-0.00000E000", new DecimalFormatSymbols(Locale.ENGLISH) );
                 
     public void writeData(String entry, DataSupplier<Double> values) throws IOException{
         raf.seek(raf.length());
@@ -119,7 +119,7 @@ public class SimpleOutputDataStore {
             if (Double.isInfinite(x) || Double.isNaN(x)){
                 x = -9999.;
             }            
-            //make sure that every entry has exactly the size of 13 bytes!!
+            //make sure that every entry has exactly the size of 14 bytes!!
             String result = df2EPos.format(x);
             if (result.contains("E-"))
                 result = df2ENeg.format(x);
@@ -130,15 +130,15 @@ public class SimpleOutputDataStore {
         raf.writeBytes(strBuffer.toString());          
     }
     
-    byte buffer[] = new byte[12];
+    byte buffer[] = new byte[13];
     
     public double getData(String entry, int position) throws IOException{
         if (position==-1)
             return jams.JAMS.getMissingDataValue();
         //18 size of date
-        //13 size of each double plus tab
+        //14 size of each double plus tab
 
-        raf.seek(entryMap.get(entry)+17+13*position);     
+        raf.seek(entryMap.get(entry)+17+14*position);     
         
         raf.readFully(buffer);
         String s = new String(buffer);

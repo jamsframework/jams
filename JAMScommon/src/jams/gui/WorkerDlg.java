@@ -21,6 +21,7 @@
  */
 package jams.gui;
 
+import jams.gui.tools.GUIHelper;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Window;
@@ -44,7 +45,7 @@ public class WorkerDlg extends JDialog {
     protected JProgressBar progressBar;
     protected JLabel label = null;
     protected JPanel mainPanel = null;
-            
+
     public WorkerDlg(Window owner, String title) {
         this(owner, title, "");
     }
@@ -59,7 +60,7 @@ public class WorkerDlg extends JDialog {
 
         this.setLocationRelativeTo(owner);
 
-        mainPanel = new JPanel(new BorderLayout());        
+        mainPanel = new JPanel(new BorderLayout());
         this.setResizable(false);
 
         if (!message.equals("")) {
@@ -74,17 +75,17 @@ public class WorkerDlg extends JDialog {
         this.add(mainPanel);
         this.pack();
     }
-    
-    public JPanel getMainPanel(){
+
+    public JPanel getMainPanel() {
         return mainPanel;
     }
-    
-    public void setMainPanel(JPanel mainPanel){
+
+    public void setMainPanel(JPanel mainPanel) {
         this.remove(this.mainPanel);
-        this.mainPanel = mainPanel; 
+        this.mainPanel = mainPanel;
         this.add(mainPanel);
     }
-    
+
     public void setInderminate(boolean value) {
         if (value) {
             progressBar.setStringPainted(false);
@@ -132,10 +133,11 @@ public class WorkerDlg extends JDialog {
     }
 
     /**
-     * Set a task to be executed
-     * This method should only be used when the tasks involves no Swing related
-     * methods, since they should only be applied in the event dispatching
-     * thread. In this case, use setTask(SwingWorker worker) instead.
+     * Set a task to be executed This method should only be used when the tasks
+     * involves no Swing related methods, since they should only be applied in
+     * the event dispatching thread. In this case, use setTask(SwingWorker
+     * worker) instead.
+     *
      * @param task The task
      */
     public void setTask(Runnable task) {
@@ -156,15 +158,16 @@ public class WorkerDlg extends JDialog {
      * be used if Swing related methods are to be executed. In this case, these
      * should be executed in the done() method of the SwingWorker, i.e. within
      * the event dispatching thread
+     *
      * @param worker The SwingWorker
      */
     public synchronized void setTask(SwingWorker worker) {
         this.worker = worker;
     }
-    
-    public void setMessage(String text){
-        this.label.setText(text);        
-        this.invalidate(); 
+
+    public void setMessage(String text) {
+        this.label.setText(text);
+        this.invalidate();
         this.pack();
     }
 }
