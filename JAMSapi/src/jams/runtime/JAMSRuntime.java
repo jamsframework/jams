@@ -26,7 +26,6 @@ import java.io.Serializable;
 import java.util.*;
 import javax.swing.JFrame;
 import jams.data.JAMSData;
-import jams.model.Context;
 import jams.model.SmallModelState;
 import jams.model.GUIComponent;
 import jams.model.Model;
