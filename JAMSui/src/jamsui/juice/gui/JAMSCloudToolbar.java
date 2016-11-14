@@ -278,6 +278,9 @@ public class JAMSCloudToolbar extends JToolBar {
 
     protected void syncWorkspace() {
         try {
+            if (juiceFrame.getCurrentView() == null) {
+                return;
+            }
             Workspace wslocal = juiceFrame.getCurrentView().getWorkspace();
             wslocal.loadConfig();
             SynchronizeDlg dlg = new SynchronizeDlg(juiceFrame, wslocal, properties);
@@ -303,6 +306,9 @@ public class JAMSCloudToolbar extends JToolBar {
     public Job runModelInCloud() throws IOException {
 
         Controller client = connector.getClient();
+        if (juiceFrame.getCurrentView() == null) {
+            return null;
+        }
         Workspace jamsWorkspace = juiceFrame.getCurrentView().getWorkspace();
 
         String libs = properties.getProperty(JAMSProperties.LIBS_IDENTIFIER);
