@@ -178,6 +178,7 @@ public abstract class AbstractProcessManager implements ProcessManager {
             randomAccessFile.seek(progressFile.length() - 6);
             byte[] b = new byte[4];
             randomAccessFile.read(b, 0, 4);
+            randomAccessFile.close();
             float progress = Float.parseFloat(new String(b, "UTF-8").replace(",", "."));
             state.setProgress(progress);
         } catch (IOException ioe) {
