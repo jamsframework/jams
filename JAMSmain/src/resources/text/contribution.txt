@@ -16,5 +16,5 @@ JAMA (http://math.nist.gov/javanumerics/jama)
 TROVE (http://trove.starlight-systems.com)
 Java Unified Expression Language (http://juel.sourceforge.net)
 WorldWind (http://worldwind.arc.nasa.gov)
-... and others
+... and many others
                                                        
