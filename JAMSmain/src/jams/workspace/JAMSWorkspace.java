@@ -99,7 +99,7 @@ public class JAMSWorkspace implements Workspace {
         this.currentStores = new ArrayList<DataStore>();
         this.readonly = readonly;
     }
-
+    
     public void init() throws InvalidWorkspaceException {
         this.contextStores.clear();
         this.inputDataStores.clear();
@@ -226,7 +226,7 @@ public class JAMSWorkspace implements Workspace {
 //                    + directory.toString() + JAMS.i18n("_does_not_contain_config_file"));
 //        }
 
-        this.loadConfig();
+//        this.loadConfig();
         
         File inDir = new File(directory, properties.getProperty("INPUT_DIR_NAME"));
         File outDir = new File(directory, properties.getProperty("OUTPUT_DIR_NAME"));

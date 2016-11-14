@@ -65,19 +65,16 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.w3c.dom.Document;
@@ -106,8 +103,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
     private HashMap<String, Integer> idMap;
     transient private SmallModelState state = null;
     private DataFactory dataFactory = DefaultDataFactory.getDataFactory();
-    private transient Logger progressLogger;
     private transient ScheduledExecutorService progressService;
+    private transient Runnable progressRunnable;
+    private transient FileWriter progressWriter;
+//    private transient Logger progressLogger;
+//    private transient FileHandler logFileHandler;
 
     public StandardRuntime(SystemProperties properties) {
         this.properties = properties;
@@ -356,7 +356,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             dataFactory = DefaultDataFactory.getDataFactory();
         }
     }
-   
+
     public String[] getLibs() {
         return StringTools.toArray(properties.getProperty("libs", ""), ";");
     }
@@ -481,17 +481,30 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     private void finishProgressLogging() {
 
+//            long[] progress = getModel().getProgress();
+//            String p;
+//            if (progress[1] > -1) {
+//                p = String.format("%1.2f", (double) progress[0] / progress[1]);
+//            } else {
+//                p = String.format("%1.2f", 0);
+//            }
+//            progressLogger.log(Level.INFO, p);
+//            progressLogger.removeHandler(logFileHandler);
+//            logFileHandler.close();
         if (progressService != null) {
             progressService.shutdownNow();
-            long[] progress = getModel().getProgress();
-            String p;
-            if (progress[1] > -1) {
-                p = String.format("%1.2f", (double) progress[0] / progress[1]);
-            } else {
-                p = String.format("%1.2f", 0);
-            }
-            progressLogger.log(Level.INFO, p);
         }
+        if (progressRunnable != null) {
+            progressRunnable.run();
+        }
+        if (progressWriter != null) {
+            try {
+                progressWriter.close();
+            } catch (IOException ex) {
+                handle(ex, true);
+            }
+        }
+
     }
 
     private void setupProgressLogging() throws IOException {
@@ -504,40 +517,46 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             return;
         }
 
-        if (progressLogger == null) {
-            progressLogger = Logger.getLogger(StandardRuntime.this.toString());
-            FileHandler fh = new FileHandler(progressFileName, true);
-            Formatter formatter = new Formatter() {
+//        if (progressLogger == null) {
+//            progressLogger = Logger.getLogger(StandardRuntime.this.toString());
+//            logFileHandler = new FileHandler(progressFileName, true);
+//            Formatter formatter = new Formatter() {
+//
+//                @Override
+//                public synchronized String format(LogRecord record) {
+//                    long time = record.getMillis();
+//                    String message = record.getMessage();
+//                    return String.format("%d %s\r\n", time, message);
+//                }
+//            };
+//            logFileHandler.setFormatter(formatter);
+//            progressLogger.addHandler(logFileHandler);
+//            progressLogger.setUseParentHandlers(false);
+//        }
+        progressWriter = new FileWriter(progressFileName);
 
-                @Override
-                public synchronized String format(LogRecord record) {
-                    long time = record.getMillis();
-                    String message = record.getMessage();
-                    return String.format("%d %s\r\n", time, message);
-                }
-            };
-            fh.setFormatter(formatter);
-            progressLogger.addHandler(fh);
-            progressLogger.setUseParentHandlers(false);
-        }
-
-        progressService = Executors.newSingleThreadScheduledExecutor();
-        progressService.scheduleAtFixedRate(new Runnable() {
+        progressRunnable = new Runnable() {
 
             @Override
             public void run() {
-                if (getState() == JAMSRuntime.STATE_RUN) {
-                    long[] progress = getModel().getProgress();
-                    String p;
-                    if (progress[1] > -1) {
-                        p = String.format("%1.2f", (double) progress[0] / progress[1]);
-                    } else {
-                        p = String.format("%1.2f", 0);
-                    }
-                    progressLogger.log(Level.INFO, p);
+                long[] progress = getModel().getProgress();
+                float f;
+                if (progress[1] > 0) {
+                    f = (float) progress[0] / progress[1];
+                } else {
+                    f = 0;
+                }
+                try {
+                    progressWriter.write(String.format(Locale.ENGLISH, "%d %1.2f\r\n", System.currentTimeMillis(), f));
+                    progressWriter.flush();
+                } catch (IOException ex) {
+                    handle(ex, false);
                 }
             }
-        }, 0, progressperiod, TimeUnit.MILLISECONDS);
+        };
+
+        progressService = Executors.newSingleThreadScheduledExecutor();
+        progressService.scheduleAtFixedRate(progressRunnable, 0, progressperiod, TimeUnit.MILLISECONDS);
 
     }
 
