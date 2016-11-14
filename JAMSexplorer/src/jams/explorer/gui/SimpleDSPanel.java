@@ -59,8 +59,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import jams.workspace.dsproc.DataMatrix;
 import jams.workspace.dsproc.DataStoreProcessor;
-import jams.workspace.dsproc.DataStoreProcessorOMS;
 import jams.workspace.dsproc.SimpleSerieProcessor;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.ListModel;
 
 /**
  *
@@ -127,6 +131,13 @@ public class SimpleDSPanel extends DSPanel {
             showFreeTempMean();
         }
     };
+    private Action loadParams = new AbstractAction(JAMS.i18n("SAVE_PARAMS")) {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            loadParams();
+        }
+    };
 
     public SimpleDSPanel() {
         init();
@@ -137,6 +148,7 @@ public class SimpleDSPanel extends DSPanel {
         for (Action a : actions) {
             a.setEnabled(false);
         }
+        loadParams.setEnabled(false);
 
         freeTempMean.setEnabled(false);
         cacheReset.setEnabled(false);
@@ -152,15 +164,18 @@ public class SimpleDSPanel extends DSPanel {
 
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    if (timeList.getSelectedValues().length == 0) {
+                    if (timeList.getSelectedValuesList().isEmpty()) {
                         mean.setEnabled(false);
                         showData.setEnabled(false);
-                    } else if (timeList.getSelectedValues().length == 1) {
+                        loadParams.setEnabled(false);
+                    } else if (timeList.getSelectedValuesList().size() == 1) {
                         showData.setEnabled(true);
                         mean.setEnabled(false);
+                        loadParams.setEnabled(true);
                     } else {
                         mean.setEnabled(true);
                         showData.setEnabled(true);
+                        loadParams.setEnabled(false);
                     }
                 }
             }
@@ -216,7 +231,7 @@ public class SimpleDSPanel extends DSPanel {
         buttonPanelA.setPreferredSize(LIST_DIMENSION);
         JButton button;
 
-        for (int i = 0; i <= 1; i++) {
+        for (int i = 0; i < 1; i++) {
             Action a = actions[i];
             button = new JButton(a);
             button.setPreferredSize(ACTION_BUTTON_DIM);
@@ -230,7 +245,7 @@ public class SimpleDSPanel extends DSPanel {
         filterPanel.add(new JLabel(JAMS.i18n("FILTER:")));
         timeField = new JTextField();
         timeField.setEnabled(false);
-        timeField.setToolTipText(JAMS.i18n("DATE_EXPRESSION_IN_SQL_SYNTAX,_E.G._1992-11-%_FOR_ALL_NOVEMBER_VALUES_IN_1992"));
+        timeField.setToolTipText(JAMS.i18n("DATE_EXPRESSION_WITH_WILDCARDS"));
         timeField.setPreferredSize(new Dimension(ACTION_BUTTON_DIM.width - 20, timeField.getPreferredSize().height));
         timeField.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -258,6 +273,10 @@ public class SimpleDSPanel extends DSPanel {
         filterPanel.add(button);
 
         buttonPanelA.add(filterPanel);
+
+        button = new JButton(loadParams);
+        button.setPreferredSize(ACTION_BUTTON_DIM);
+        buttonPanelA.add(button);
 
         GUIHelper.addGBComponent(this, mainLayout, buttonPanelA, 40, 20, 1, 1, 0, 0);
         /*
@@ -410,12 +429,12 @@ public class SimpleDSPanel extends DSPanel {
         label = new JLabel("1");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 10, 5, 1, 1, 0, 0);
-        label = new JLabel("a/A");
+//        label = new JLabel("a/A");
+//        label.setHorizontalAlignment(SwingConstants.CENTER);
+//        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 11, 5, 1, 1, 0, 0);
+        label = new JLabel("l->mm");
         label.setHorizontalAlignment(SwingConstants.CENTER);
         GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 11, 5, 1, 1, 0, 0);
-        label = new JLabel("l->mm");
-        label.setHorizontalAlignment(SwingConstants.LEFT);
-        GUIHelper.addGBComponent(aggregationPanel, aggregationLayout, label, 12, 5, 1, 1, 0, 0);
 
         int i = 0;
         ArrayList<JCheckBox> allChecks = new ArrayList<JCheckBox>();
@@ -713,10 +732,8 @@ public class SimpleDSPanel extends DSPanel {
         workerDlg.execute();
     }
 
-    private void showFreeTempMean() {
-
-        String filter = timeField.getText();
-        if (!filter.contains("%") && !filter.contains("?")) {
+    private void loadParams() {
+        if (timeList.getSelectedValuesList().isEmpty()) {
             return;
         }
 
@@ -724,22 +741,49 @@ public class SimpleDSPanel extends DSPanel {
         workerDlg.setProgress(0);
         workerDlg.setTask(new CancelableSwingWorker() {
 
-            DataMatrix m;
+            DataMatrix m = null;
 
             public Object doInBackground() {
                 try {
-                    String filter = timeField.getText();
-                    m = getProc().calcTemporalMean(filter);
+                    SimpleSerieProcessor proc = getProc();
+                    // check if number of selected ids is equal to all ids
+                    // if so, we better derive temp avg from monthly means
+                    Object[] objects = timeList.getSelectedValues();
+
+                    String[] ids = new String[objects.length];
+                    int c = 0;
+                    for (Object o : objects) {
+                        ids[c++] = o.toString();
+                    }
+                    m = proc.getData(ids);
                 } catch (SQLException ex) {
-                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
-                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 return null;
             }
 
+            @Override
             public void done() {
-                loadData(m, false);
+                int i = 0;
+                String s = "";
+                for (String attrib : dsdb.getSelectedDoubleAttribs()) {
+                    s += attrib.replace("___", ".") + "=" + m.get(0, i++) + "\n";
+                }
+                
+                JFileChooser jfc = new JFileChooser(explorer.getWorkspace().getDirectory());
+                jfc.setSelectedFile(new File(explorer.getWorkspace().getDirectory(), "opt_params_" + timeList.getSelectedValue() + ".jmp"));
+                if (jfc.showSaveDialog(explorer.getExplorerFrame()) == JFileChooser.APPROVE_OPTION) {
+                    PrintWriter out = null;
+                    try {
+                        out = new PrintWriter(jfc.getSelectedFile());
+                        out.println(s);
+                        out.close();
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, "File not found!", ex);
+                    } finally {
+                        out.close();
+                    }
+                }
             }
 
             public int cancel() {
@@ -750,9 +794,65 @@ public class SimpleDSPanel extends DSPanel {
         workerDlg.execute();
     }
 
+    private void showFreeTempMean() {
+
+        String filter = timeField.getText();
+        if (filter.isEmpty()) {
+            return;
+        }
+        filter = filter.replaceAll("\\*", ".*");
+        ListModel model = timeList.getModel();
+        List<Integer> a = new ArrayList();
+        for (int i = 0; i < model.getSize(); i++) {
+            String item = model.getElementAt(i).toString();
+            if (item.matches(filter)) {
+                a.add(i);
+            }
+        }
+        int indices[] = new int[a.size()];
+        for (int i = 0; i < indices.length; i++) {
+            indices[i] = a.get(i);
+        }
+        timeList.setSelectedIndices(indices);
+
+//        String filter = timeField.getText();
+//        if (!filter.contains("%") && !filter.contains("?")) {
+//            return;
+//        }
+//
+//        workerDlg.setInderminate(false);
+//        workerDlg.setProgress(0);
+//        workerDlg.setTask(new CancelableSwingWorker() {
+//
+//            DataMatrix m;
+//
+//            public Object doInBackground() {
+//                try {
+//                    String filter = timeField.getText();
+//                    m = getProc().calcTemporalMean(filter);
+//                } catch (SQLException ex) {
+//                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
+//                } catch (IOException ex) {
+//                    Logger.getLogger(SimpleDSPanel.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                return null;
+//            }
+//
+//            public void done() {
+//                loadData(m, false);
+//            }
+//
+//            public int cancel() {
+//                getProc().sendAbortOperation();
+//                return 0;
+//            }
+//        });
+//        workerDlg.execute();
+    }
+
     private void toggleFreeTempMeanButton() {
         String filter = timeField.getText();
-        if (!filter.contains("%") && !filter.contains("?")) {
+        if (filter.isEmpty()) {
             freeTempMean.setEnabled(false);
         } else {
             freeTempMean.setEnabled(true);
