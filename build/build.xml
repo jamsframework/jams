@@ -2,6 +2,7 @@
 <project default="doall">
     
     <property file="build.properties"/>
+    <property name="modeldirectory" value="../../jamsmodels/nbprojects/components/"/>
 
     <taskdef resource="net/sf/antcontrib/antcontrib.properties">
         <classpath>
@@ -29,10 +30,15 @@
 
     <target name="cleanproj">
         <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="clean"/>
-        <delete>
-            <fileset dir="../../jamsmodels/nbprojects/components/" includes="**/*"/>
-            <!--<fileset dir="../../lib/lib" includes="**/*"/>-->
-        </delete>
+        <if>
+          <available file="${directory}" type="dir" />
+          <then>
+            <delete>
+                <fileset dir="${directory}" includes="**/*"/>
+                <!--<fileset dir="../../lib/lib" includes="**/*"/>-->
+            </delete>
+          </then>
+        </if>
     </target>
 
     <target name="cleanlib">
