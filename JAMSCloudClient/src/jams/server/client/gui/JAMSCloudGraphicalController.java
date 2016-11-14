@@ -50,7 +50,7 @@ public class JAMSCloudGraphicalController extends Observable {
     private static final Logger log = Logger.getLogger(JAMSCloudGraphicalController.class.getName());
 
     //saved data
-    private String[] recentUrls = {"http://localhost:8080/jams-cloud-server/webresources"};
+    private String[] recentUrls = {"http://localhost:8080/jamscloud/webresources"};
     private String user = "jams", pw = "jamscloud", serverUrl = "";
     private boolean saveAccount = true;
     private SystemProperties p;
