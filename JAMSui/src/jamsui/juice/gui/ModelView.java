@@ -70,12 +70,9 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import org.w3c.dom.Document;
 import jams.explorer.JAMSExplorer;
-import jams.tools.StringTools;
+import jams.gui.tools.GUIState;
 import jams.workspace.JAMSWorkspace;
 import jams.workspace.Workspace;
-import java.io.FileNotFoundException;
-import java.io.RandomAccessFile;
-import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -106,6 +103,7 @@ public class ModelView {
     private ModelDescriptor modelDescriptor = new ModelDescriptor();
     private OutputDSDlg outputDSDlg;
 //    private PanelDlg launcherPanelDlg;
+
 
     public ModelView(JDesktopPane parentPanel) {
         this(getNextViewName(), parentPanel);
@@ -155,6 +153,39 @@ public class ModelView {
 
         // create the internal frame
         frame = new JInternalFrame();
+        
+        frame.addInternalFrameListener(new InternalFrameListener() {
+            @Override
+            public void internalFrameOpened(InternalFrameEvent e) {
+            }
+
+            @Override
+            public void internalFrameClosing(InternalFrameEvent e) {
+            }
+
+            @Override
+            public void internalFrameClosed(InternalFrameEvent e) {
+            }
+
+            @Override
+            public void internalFrameIconified(InternalFrameEvent e) {
+            }
+
+            @Override
+            public void internalFrameDeiconified(InternalFrameEvent e) {
+            }
+
+            @Override
+            public void internalFrameActivated(InternalFrameEvent e) {
+                GUIState.setWorkspace(getWorkspace());
+                GUIState.setSavePath(getSavePath());
+                GUIState.setModelDescriptor(getModelDescriptor());
+            }
+
+            @Override
+            public void internalFrameDeactivated(InternalFrameEvent e) {
+            }
+        });
 
         frame.setClosable(true);
         frame.setIconifiable(true);
@@ -379,7 +410,7 @@ public class ModelView {
     public Job runModelInCloud() throws IOException {
 
         //first logon to server
-        JAMSCloudGraphicalController connector = JAMSCloudGraphicalController.createInstance(JUICE.getJamsProperties());
+        JAMSCloudGraphicalController connector = JAMSCloudGraphicalController.createInstance(JUICE.getJuiceFrame(), JUICE.getJamsProperties());
         if (!connector.isConnected()) {
             if (connector.reconnect() == null) {
                 return null;
@@ -393,7 +424,7 @@ public class ModelView {
 
         // check if runtime has been created successfully
         if (runtime == null) {
-            log.log(Level.SEVERE, "Unable to create runtime");
+//            log.log(Level.SEVERE, "Unable to create runtime");
             return null;
         }
         if (runtime.getModel() == null) {
@@ -435,7 +466,7 @@ public class ModelView {
                 runtime.getModel().getWorkspace().setTitle(title);
             }
         }
-        
+
         ws = connector.uploadWorkspace(jamsWorkspace, compLibFile, libDir, uploadFileFilter);
         if (ws == null) {
             return null;
@@ -462,17 +493,6 @@ public class ModelView {
                 new WorkspaceFileAssociation(ws, f, WorkspaceFileAssociation.ROLE_JAPFILE, "cloud.jap"));
 
         return connector.startJob(ws, new File(ModelView.this.savePath.getName()));
-    }
-
-    public static void main(String[] args) throws IOException {
-        java.io.File progressFile = new java.io.File("D:\\temp\\jamscloud\\exec\\admin\\21\\progress.log");
-        RandomAccessFile randomAccessFile = new RandomAccessFile(progressFile, "r");
-        randomAccessFile.seek(progressFile.length() - 6);
-        byte[] b = new byte[4];
-        randomAccessFile.read(b, 0, 4);
-        String str = new String(b, "UTF-8");
-        float progress = Float.parseFloat(new String(b, "UTF-8").replace(",", "."));
-        System.out.println(progress);
     }
 
     public static String getNextViewName() {
@@ -783,6 +803,10 @@ public class ModelView {
         } catch (IOException ex) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), "\"" + workspacePath + "\"" + JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));
         }
+
+    }
+
+    public void createWS() {
 
     }
 

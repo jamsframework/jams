@@ -45,9 +45,9 @@ import jams.gui.PropertyDlg;
 import jams.gui.RuntimeManagerPanel;
 import jams.gui.WorkerDlg;
 import jams.gui.WorkspaceDlg;
+import jams.gui.tools.GUIState;
 import jams.meta.ModelDescriptor;
 import jams.server.client.gui.BrowseJAMSCloudDlg;
-import jams.server.client.gui.JAMSCloudToolbar;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
 import jamsui.juice.*;
@@ -57,7 +57,6 @@ import jamsui.juice.gui.tree.ModelTree;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import optas.gui.wizard.ObjectiveConfiguration;
 import optas.gui.wizard.OptimizerConfiguration;
@@ -109,7 +108,6 @@ public class JUICEFrame extends JFrame {
     private Action loadModelParamAction;
     private Action saveModelParamAction;
     private Action runModelAction;
-    private Action runModelRemoteAction;
     private Action runModelFromLauncherAction;
     private Action jadeAction;
     private Action wsBrowseAction;
@@ -118,6 +116,7 @@ public class JUICEFrame extends JFrame {
     private Action onlineAction;
     private Action outputDSAction;
     private Action wsPrefsAction;
+    private Action wsCreateAction;
 
     public JUICEFrame() {
         JAMSLogging.registerLogger(JAMSLogging.LogOption.Show, log);
@@ -126,6 +125,8 @@ public class JUICEFrame extends JFrame {
 
     private void init() {
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        
+        GUIState.setMainWindow(this);
 
         this.addWindowListener(new WindowListener() {
             @Override
@@ -157,7 +158,7 @@ public class JUICEFrame extends JFrame {
             public void windowOpened(WindowEvent e) {
             }
         });
-
+        
         remoteControlAction = new AbstractAction(JAMS.i18n("Start_Remote_Control")) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -373,7 +374,7 @@ public class JUICEFrame extends JFrame {
         loadModelParamAction = new AbstractAction(JAMS.i18n("Load_Model_Parameter...")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jfcParams.setSelectedFile(new File(""));
+                jfcParams.setSelectedFile(new File(getCurrentView().getWorkspace().getDirectory(), "."));
                 int result = jfcParams.showOpenDialog(JUICEFrame.this);
 
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -403,18 +404,6 @@ public class JUICEFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
                 view.runModel();
-            }
-        };
-
-        runModelRemoteAction = new AbstractAction(JAMS.i18n("Run_Model_Remote")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ModelView view = getCurrentView();
-                try {
-                    view.runModelInCloud();
-                } catch (IOException ioe) {
-                    log.log(Level.SEVERE, ioe.toString(), ioe);
-                }
             }
         };
 
@@ -467,6 +456,14 @@ public class JUICEFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 ModelView view = getCurrentView();
                 view.openWSBrowser();
+            }
+        };
+
+        wsCreateAction = new AbstractAction(JAMS.i18n("Create_WS_Dir")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = getCurrentView();
+                view.createWS();
             }
         };
 
@@ -583,6 +580,18 @@ public class JUICEFrame extends JFrame {
         prefsButton.setToolTipText(JAMS.i18n("Edit_Preferences..."));
         prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
         toolBar.add(prefsButton);
+        
+        JButton infoLogButton = new JButton(infoLogAction);
+        infoLogButton.setText("");
+        infoLogButton.setToolTipText(JAMS.i18n("Show_Info_Log..."));
+        infoLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/InfoLog.png")));
+        toolBar.add(infoLogButton);
+
+        JButton errorLogButton = new JButton(errorLogAction);
+        errorLogButton.setText("");
+        errorLogButton.setToolTipText(JAMS.i18n("Show_Error_Log..."));
+        errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
+        toolBar.add(errorLogButton);        
 
         toolBar.addSeparator();
 
@@ -598,82 +607,80 @@ public class JUICEFrame extends JFrame {
         modelGUIRunButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunLauncher.png")));
         toolBar.add(modelGUIRunButton);
 
-        JButton modelRunRemoteButton = new JButton(runModelRemoteAction);
-        modelRunRemoteButton.setText("");
-        modelRunRemoteButton.setToolTipText(JAMS.i18n("Run_Model_Remote"));
-        modelRunRemoteButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunCloud.png")));
-        toolBar.add(modelRunRemoteButton);
+//        JButton modelRunRemoteButton = new JButton(runModelRemoteAction);
+//        modelRunRemoteButton.setText("");
+//        modelRunRemoteButton.setToolTipText(JAMS.i18n("Run_Model_Remote"));
+//        modelRunRemoteButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunCloud.png")));
+//        toolBar.add(modelRunRemoteButton);
+
+        toolBar.addSeparator();
 
         JButton outputDSButton = new JButton(outputDSAction);
         outputDSButton.setText("");
         outputDSButton.setToolTipText(JAMS.i18n("Model_output"));
-        outputDSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataOutput3.png")));
+        outputDSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataOutput2.png")));
         toolBar.add(outputDSButton);
 
-        toolBar.addSeparator();
-
-        JButton jadeButton = new JButton(jadeAction);
-        jadeButton.setText("");
-        jadeButton.setToolTipText(JAMS.i18n("JADE"));
-        jadeButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_jade.png")));
-        toolBar.add(jadeButton);
+        JButton wsBrowseButton = new JButton(wsBrowseAction);
+        wsBrowseButton.setText("");
+        wsBrowseButton.setToolTipText(JAMS.i18n("Browse_WS_Dir"));
+        wsBrowseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_browse.png")));
+        toolBar.add(wsBrowseButton);
 
         JButton wsPrefsButton = new JButton(wsPrefsAction);
         wsPrefsButton.setText("");
         wsPrefsButton.setToolTipText(JAMS.i18n("EDIT_WORKSPACE..."));
         wsPrefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_prefs.png")));
         toolBar.add(wsPrefsButton);
+        
+        JButton jadeButton = new JButton(jadeAction);
+        jadeButton.setText("");
+        jadeButton.setToolTipText(JAMS.i18n("JADE"));
+        jadeButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_jade.png")));
+        toolBar.add(jadeButton);
 
-        JButton browseButton = new JButton(wsBrowseAction);
-        browseButton.setText("");
-        browseButton.setToolTipText(JAMS.i18n("Browse_WS_Dir"));
-        browseButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_browse.png")));
-        toolBar.add(browseButton);
+//        JButton wsCreateButton = new JButton(wsCreateAction);
+//        wsCreateButton.setText("");
+//        wsCreateButton.setToolTipText(JAMS.i18n("Create_WS_Dir"));
+//        wsCreateButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_new.png")));
+//        toolBar.add(wsCreateButton);
 
-        toolBar.addSeparator();
+//        toolBar.addSeparator();
 
-        JButton copyGUIButton = new JButton(copyModelGUIAction);
-        copyGUIButton.setText("");
-        copyGUIButton.setToolTipText(JAMS.i18n("Copy_Model_GUI"));
-        copyGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Copy.png")));
-        toolBar.add(copyGUIButton);
+//        JButton copyGUIButton = new JButton(copyModelGUIAction);
+//        copyGUIButton.setText("");
+//        copyGUIButton.setToolTipText(JAMS.i18n("Copy_Model_GUI"));
+//        copyGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Copy.png")));
+//        toolBar.add(copyGUIButton);
+//
+//        JButton pasteGUIButton = new JButton(pasteModelGUIAction);
+//        pasteGUIButton.setText("");
+//        pasteGUIButton.setToolTipText(JAMS.i18n("Paste_Model_GUI"));
+//        pasteGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Paste.png")));
+//        toolBar.add(pasteGUIButton);
 
-        JButton pasteGUIButton = new JButton(pasteModelGUIAction);
-        pasteGUIButton.setText("");
-        pasteGUIButton.setToolTipText(JAMS.i18n("Paste_Model_GUI"));
-        pasteGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Paste.png")));
-        toolBar.add(pasteGUIButton);
+//        toolBar.addSeparator();
+//
+//        JButton helpButton = new JButton(onlineAction);
+//        helpButton.setText("");
+//        helpButton.setToolTipText(JAMS.i18n("JAMS_online..."));
+//        helpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Browser.png")));
+//        toolBar.add(helpButton);
+//
+//        JButton exitButton = new JButton(exitAction);
+//        exitButton.setText("");
+//        exitButton.setToolTipText(JAMS.i18n("Exit"));
+//        exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
+//        toolBar.add(exitButton);
 
-        JButton infoLogButton = new JButton(infoLogAction);
-        infoLogButton.setText("");
-        infoLogButton.setToolTipText(JAMS.i18n("Show_Info_Log..."));
-        infoLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/InfoLog.png")));
-        toolBar.add(infoLogButton);
 
-        JButton errorLogButton = new JButton(errorLogAction);
-        errorLogButton.setText("");
-        errorLogButton.setToolTipText(JAMS.i18n("Show_Error_Log..."));
-        errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
-        toolBar.add(errorLogButton);
-
-        toolBar.addSeparator();
-
-        JButton helpButton = new JButton(onlineAction);
-        helpButton.setText("");
-        helpButton.setToolTipText(JAMS.i18n("JAMS_online..."));
-        helpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Browser.png")));
-        toolBar.add(helpButton);
-
-        JButton exitButton = new JButton(exitAction);
-        exitButton.setText("");
-        exitButton.setToolTipText(JAMS.i18n("Exit"));
-        exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
-        toolBar.add(exitButton);
-
-        jamsServerToolbar = new JAMSCloudToolbar(JUICE.getJamsProperties());
-        toolBar.add(jamsServerToolbar);
-
-        getContentPane().add(toolBar, BorderLayout.NORTH);
+        JPanel toolbarPanel = new JPanel();
+        toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.X_AXIS));
+        jamsServerToolbar = new JAMSCloudToolbar(this, JUICE.getJamsProperties());
+        
+        toolbarPanel.add(toolBar);
+        toolbarPanel.add(jamsServerToolbar);
+        getContentPane().add(toolbarPanel, BorderLayout.PAGE_START);
 
 
         /*
@@ -768,10 +775,10 @@ public class JUICEFrame extends JFrame {
         runModelFromLauncherAction.setEnabled(false);
         modelMenu.add(runModelInLauncherItem);
 
-        JMenuItem runModelRemoteItem = new JMenuItem(runModelRemoteAction);
-        runModelRemoteAction.setEnabled(false);
-        runModelRemoteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
-        modelMenu.add(runModelRemoteItem);
+//        JMenuItem runModelRemoteItem = new JMenuItem(runModelRemoteAction);
+//        runModelRemoteAction.setEnabled(false);
+//        runModelRemoteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+//        modelMenu.add(runModelRemoteItem);
 
         modelMenu.add(new JSeparator());
 
@@ -794,6 +801,11 @@ public class JUICEFrame extends JFrame {
         wsPrefsAction.setEnabled(false);
         workspaceDlgItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
         modelMenu.add(workspaceDlgItem);
+
+        JMenuItem workspaceNewItem = new JMenuItem(wsCreateAction);
+        wsCreateAction.setEnabled(false);
+//        workspaceNewItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
+        modelMenu.add(workspaceNewItem);
 
         modelMenu.add(new JSeparator());
 
@@ -900,11 +912,12 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.saveModelAction.setEnabled(true);
                     JUICEFrame.this.outputDSAction.setEnabled(true);
                     JUICEFrame.this.runModelAction.setEnabled(true);
-                    JUICEFrame.this.runModelRemoteAction.setEnabled(true);
+//                    JUICEFrame.this.runModelRemoteAction.setEnabled(true);
                     JUICEFrame.this.runModelFromLauncherAction.setEnabled(true);
                     JUICEFrame.this.jadeAction.setEnabled(true);
                     JUICEFrame.this.wsBrowseAction.setEnabled(true);
                     JUICEFrame.this.wsPrefsAction.setEnabled(true);
+                    JUICEFrame.this.wsCreateAction.setEnabled(true);
                     JUICEFrame.this.copyModelGUIAction.setEnabled(true);
                     JUICEFrame.this.saveAsModelAction.setEnabled(true);
                     JUICEFrame.this.OptimizationWizardAction.setEnabled(true);
@@ -913,11 +926,12 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.modelMenu.setEnabled(false);
                     JUICEFrame.this.outputDSAction.setEnabled(false);
                     JUICEFrame.this.runModelAction.setEnabled(false);
-                    JUICEFrame.this.runModelRemoteAction.setEnabled(false);
+//                    JUICEFrame.this.runModelRemoteAction.setEnabled(false);
                     JUICEFrame.this.runModelFromLauncherAction.setEnabled(false);
                     JUICEFrame.this.jadeAction.setEnabled(false);
                     JUICEFrame.this.wsBrowseAction.setEnabled(false);
                     JUICEFrame.this.wsPrefsAction.setEnabled(false);
+                    JUICEFrame.this.wsCreateAction.setEnabled(false);
                     JUICEFrame.this.copyModelGUIAction.setEnabled(false);
                     JUICEFrame.this.pasteModelGUIAction.setEnabled(false);
                     JUICEFrame.this.saveModelAction.setEnabled(false);
