@@ -31,10 +31,10 @@
     <target name="cleanproj">
         <ant antfile="../nbprojects/jams-starter/build.xml" inheritall="false" target="clean"/>
         <if>
-          <available file="${directory}" type="dir" />
+          <available file="${modeldirectory}" type="dir" />
           <then>
             <delete>
-                <fileset dir="${directory}" includes="**/*"/>
+                <fileset dir="${modeldirectory}" includes="**/*"/>
                 <!--<fileset dir="../../lib/lib" includes="**/*"/>-->
             </delete>
           </then>
