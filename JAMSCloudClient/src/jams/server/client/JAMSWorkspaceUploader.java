@@ -33,6 +33,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -294,7 +295,7 @@ public class JAMSWorkspaceUploader {
             return ws;
         } catch (javax.ws.rs.client.ResponseProcessingException rpex) {
             if (rpex.getResponse().getStatus() == 403) {
-                throw new JAMSException(JAMS.i18n("No_permission_to_access_workspace_with_id_{0}"), rpex);
+                throw new JAMSException(MessageFormat.format(JAMS.i18n("No_permission_to_access_workspace_with_id"), jamsWorkspace.getID()), rpex);
             } else {
                 throw rpex;
             }

@@ -83,7 +83,7 @@ public class WorkspaceController {
      * @return the newly created workspace
      */
     public Workspace create(Workspace ws) {
-        log(getClass(), Level.FINE, JAMS.i18n("creating_a_new_workspace."));
+        log(getClass(), Level.FINE, JAMS.i18n("Creating_a_new_workspace"));
         return client.httpPost(urlStr + "/workspace/create", "PUT", ws, Workspace.class);
     }
 
@@ -93,7 +93,7 @@ public class WorkspaceController {
      * @return the workspace with that id or an empty list
      */
     public Workspaces find(int id) {
-        log(getClass(), Level.FINE, JAMS.i18n("searching_for_workspace_with_id_{0}"),id);
+        log(getClass(), Level.FINE, JAMS.i18n("Searching_for_workspace_with_id_{0}"),id);
         return client.httpGet(urlStr + "/workspace/" + id, Workspaces.class);
     }
     
@@ -365,7 +365,7 @@ public class WorkspaceController {
             root.getSyncMode() == FileSync.SyncMode.DUPLICATE ||
             root.getSyncMode() == FileSync.SyncMode.UPDATE){
             try{
-                this.downloadFile(root.getTargetFile(), root.getServerFile());
+                this.downloadFile(root.getTargetFile().getParentFile(), root.getServerFile());
             }catch(IOException ioe){
                 log(getClass(),Level.SEVERE, "Unable to download " + root.getServerFile().getFileName(), ioe);
                 return false;

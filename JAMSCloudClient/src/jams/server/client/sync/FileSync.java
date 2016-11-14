@@ -5,7 +5,6 @@
  */
 package jams.server.client.sync;
 
-import jams.server.client.Controller;
 import jams.server.client.WorkspaceController;
 import jams.server.entities.WorkspaceFileAssociation;
 import java.io.File;

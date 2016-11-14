@@ -52,12 +52,12 @@ public abstract class JAMSServerTree extends JTree {
         JPanel renderer = new JPanel();
         JLabel item = new JLabel(" ");
         DefaultTreeCellRenderer defaultRenderer = new DefaultTreeCellRenderer();
-        Font defaultFont = new Font("Times New Roman", PLAIN, 9);
+        Font defaultFont = new Font("Arial", PLAIN, 10);
         Color backgroundSelectionColor;
         Color backgroundNonSelectionColor;
 
         public WorkspaceCellRenderer() {
-            backgroundSelectionColor = defaultRenderer.getBackgroundSelectionColor();
+            backgroundSelectionColor = new Color(220, 220, 220);//defaultRenderer.getBackgroundSelectionColor();
             backgroundNonSelectionColor = defaultRenderer.getBackgroundNonSelectionColor();
             renderer.setLayout(new BorderLayout());
             renderer.add(item, BorderLayout.CENTER);
@@ -141,7 +141,7 @@ public abstract class JAMSServerTree extends JTree {
                     JobNode jobNode = (JobNode) value;
                     item.setText(jobNode.toString());
                     if (jobNode.getJob().getPID() > 0) {
-                        item.setForeground(Color.green);
+                        item.setForeground(Color.GREEN.darker().darker());
                         item.setIcon(workingIcon);
                     } else {
                         item.setForeground(Color.black);

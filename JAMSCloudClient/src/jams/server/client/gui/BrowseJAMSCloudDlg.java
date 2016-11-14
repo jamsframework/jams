@@ -27,6 +27,7 @@ import jams.JAMSLogging;
 import jams.SystemProperties;
 import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
+import jams.gui.tools.GUIState;
 import jams.server.client.Controller;
 import jams.server.client.FileController;
 import jams.server.client.JobController;
@@ -101,6 +102,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
 
     final String infoLogFile = "info.log";
     final String errorLog = "error.log";
+    private Window parent;
 
     Jobs jobs = null;
 
@@ -158,7 +160,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
             showErrorLogAction = null;
 
     SystemProperties p = null;
-    WorkerDlg worker = new WorkerDlg(this, "Request is being processed .. ");
+    WorkerDlg worker = new WorkerDlg(this, "Request is being processed...");
 
     Observer myObserver = new Observer() {
         @Override
@@ -180,12 +182,14 @@ public class BrowseJAMSCloudDlg extends JDialog {
     public BrowseJAMSCloudDlg(Window w, SystemProperties p) {
         super(w, JAMS.i18n("JAMS-Cloud"));
 
+        this.parent = w;
+
         JAMSLogging.registerLogger(JAMSLogging.LogOption.Show,
                 Logger.getLogger(BrowseJAMSCloudDlg.class.getName()));
         isConnected = false;
         this.p = p;
 
-        connector = JAMSCloudGraphicalController.createInstance(p);
+        connector = JAMSCloudGraphicalController.createInstance(w, p);
         connector.addObserver(myObserver);
     }
 
@@ -318,14 +322,14 @@ public class BrowseJAMSCloudDlg extends JDialog {
 
     @Override
     public void setVisible(boolean flag) {
-        if (flag == true) {
-            if (connect() == false)
+        if (flag) {
+            if (connect() == false) {
                 return;
+            }
             updateViewAction();
         } else {
             disconnect();
         }
-
         super.setVisible(flag);
     }
 
@@ -346,7 +350,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
             InputStream is = connector.getClient().files().getFileAsStream(wfa.getFile());
             ViewStreamDlg dlg = new ViewStreamDlg(BrowseJAMSCloudDlg.this, is, wfa.getFileName());
             dlg.setResizable(true);
-            GUIHelper.centerOnParent(this, true);
+            GUIHelper.centerOnParent(dlg, true);
             dlg.setVisible(true);
         } catch (IOException ioe) {
             log.log(Level.SEVERE, ioe.toString(), ioe);
@@ -385,7 +389,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
         } else {
             log.severe(JAMS.i18n("Workspace_with_id:%1_was_not_deleted,_since it_is_read-only!")
                     .replace("%1", Integer.toString(ws.getId())));
-        }     
+        }
     }
 
     private void deleteJob(Job job) {
@@ -471,7 +475,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
             return;
         }
 
-        WorkerDlg dlg = new WorkerDlg(null, JAMS.i18n("Retrieving_data"));
+        WorkerDlg dlg = new WorkerDlg(parent, JAMS.i18n("Retrieving_data"));
         dlg.setInderminate(true);
         dlg.setTask(new Runnable() {
 
@@ -611,7 +615,14 @@ public class BrowseJAMSCloudDlg extends JDialog {
                     @Override
                     public void safeRun() throws Exception {
                         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                        int result = jfc.showSaveDialog(jfc);
+                        try {
+                            jfc.setSelectedFile(GUIState.getSavePath().getParentFile());
+                            jfc.setCurrentDirectory(GUIState.getSavePath().getParentFile());
+                        } catch (java.lang.IndexOutOfBoundsException ex) {
+                            jfc.setSelectedFile(GUIState.getSavePath().getParentFile());
+                            jfc.setCurrentDirectory(GUIState.getSavePath().getParentFile());
+                        }
+                        int result = jfc.showSaveDialog(BrowseJAMSCloudDlg.this);
                         if (result == JFileChooser.APPROVE_OPTION) {
                             File target = jfc.getSelectedFile();
                             connector.downloadWorkspace(arg, target);
@@ -635,7 +646,14 @@ public class BrowseJAMSCloudDlg extends JDialog {
                     @Override
                     public void safeRun() throws Exception {
                         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                        int result = jfc.showSaveDialog(jfc);
+                        try {
+                            jfc.setSelectedFile(GUIState.getSavePath().getParentFile());
+                            jfc.setCurrentDirectory(GUIState.getSavePath().getParentFile());
+                        } catch (java.lang.IndexOutOfBoundsException ex) {
+                            jfc.setSelectedFile(GUIState.getSavePath().getParentFile());
+                            jfc.setCurrentDirectory(GUIState.getSavePath().getParentFile());
+                        }
+                        int result = jfc.showSaveDialog(BrowseJAMSCloudDlg.this);
                         if (result == JFileChooser.APPROVE_OPTION) {
                             File target = jfc.getSelectedFile();
                             connector.downloadFile(arg, target);
@@ -894,8 +912,13 @@ public class BrowseJAMSCloudDlg extends JDialog {
                 statusLabel.setText(arg.toString());
             }
         });
-        updateViewAction();
+//        updateViewAction();
+        this.setURL(connector.getServerUrl());
         return true;
+    }
+
+    private void setURL(String url) {
+        setTitle(JAMS.i18n("JAMS-Cloud") + " [" + url + "] ");
     }
 
     private void disconnect() {

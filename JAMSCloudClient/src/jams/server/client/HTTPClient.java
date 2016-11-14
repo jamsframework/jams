@@ -229,12 +229,12 @@ public class HTTPClient {
             Header name[] = httpResponse.getHeaders("fileName");
             FileTools.assertDirectory(location.getAbsolutePath());
             if (name.length > 0 && name[0].getValue() != null) {
-                location = new File(location, name[0].getValue());
+                location = new File(location, new File(name[0].getValue()).getName());
             } else {
                 location = new File(location, "unnamed");
             }
             //do it again because file can also be a directory
-            if (location.getParentFile() != null){
+                if (location.getParentFile() != null){
                 FileTools.assertDirectory(location.getParentFile().getAbsolutePath());
             }
             

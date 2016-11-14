@@ -7,10 +7,12 @@ package jams.server.client.gui;
 
 import jams.ErrorCatchingRunnable;
 import jams.JAMS;
+import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIHelper;
+import jams.runtime.StandardRuntime;
 import jams.server.client.Controller;
 import jams.server.client.sync.DirectorySync;
 import jams.server.client.sync.FileSync;
@@ -20,6 +22,7 @@ import jams.server.entities.Job;
 import jams.server.entities.Jobs;
 import jams.server.entities.Workspace;
 import jams.tools.LogTools.ObservableLogHandler;
+import jams.workspace.JAMSWorkspace;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -31,11 +34,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import static javax.swing.GroupLayout.DEFAULT_SIZE;
+import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -50,114 +56,31 @@ import javax.swing.SwingWorker;
  * @author christian
  */
 public class SynchronizeDlg extends JDialog {
+
     static Logger log = Logger.getLogger(SynchronizeDlg.class.getName());
-    
-    /**
-     *
-     */
-    protected Font defaultFont = new Font("Times New Roman", Font.PLAIN, 10);
-
-    /**
-     *
-     */
+    protected Font defaultFont = new Font("Arial", Font.PLAIN, 10);
     protected SyncTable syncTable = null;
-    
-    /**
-     *
-     */
     protected JButton okButton = new JButton(JAMS.i18n("Synchronize"));
-
-    /**
-     *
-     */
     protected JButton cancelButton = new JButton(JAMS.i18n("Cancel"));
-
-    /**
-     *
-     */
-    protected JCheckBox showAllJobs = new JCheckBox("show all jobs from user");
-    
-    /**
-     *
-     */
+    protected JCheckBox showAllJobs = new JCheckBox("Show all jobs");
     protected jams.workspace.Workspace localWorkspace = null;
-
-    /**
-     *
-     */
     protected Workspace remoteWs = null;
-
-    /**
-     *
-     */
     protected Component tableSyncModeCells[];
-    
-    /**
-     *
-     */
-    protected JLabel checkLabel = new JLabel("<html>"+JAMS.i18n("check")+"</html>");
-
-    /**
-     *
-     */
+    protected JLabel checkLabel = new JLabel("<html>" + JAMS.i18n("check") + "</html>");
     protected JComboBox<Job> jobChooser = new JComboBox();
-
-    /**
-     *
-     */
     protected JButton syncNewOnly = new JButton(JAMS.i18n("only_new")),
- 
-    /**
-     *
-     */
-    syncAll     = new JButton(JAMS.i18n("all")),
-
-    /**
-     *
-     */
-    syncNothing = new JButton(JAMS.i18n("none")),
-
-    /**
-     *
-     */
-    invertSelection = new JButton(JAMS.i18n("invert_selection"));
-        
-    /**
-     *
-     */
+            syncAll = new JButton(JAMS.i18n("all")),
+            syncNothing = new JButton(JAMS.i18n("none")),
+            invertSelection = new JButton(JAMS.i18n("invert_selection"));
     protected ObserverWorkerDlg syncWorkspaceWorker = new ObserverWorkerDlg(
             new WorkerDlg(SynchronizeDlg.this, JAMS.i18n("Synchronizing_Workspace")));
-    
-    /**
-     *
-     */
     protected ObservableLogHandler observable = new ObservableLogHandler(new Logger[]{Logger.getLogger(Controller.class.getName())});
-    
-    /**
-     *
-     */
     protected Jobs jobs = null;
-
-    /**
-     *
-     */
     protected Job selectedJob = null;
-
-    /**
-     *
-     */
     protected int localWorkspaceID = -1;
-    
-    /**
-     *
-     */
     protected JAMSCloudGraphicalController connector = null;
-
-    /**
-     *
-     */
     protected SystemProperties p;
-    
+
     /**
      *
      * @param w
@@ -166,78 +89,83 @@ public class SynchronizeDlg extends JDialog {
      * @throws IOException
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public SynchronizeDlg(Window w, jams.workspace.Workspace localWorkspace, SystemProperties p) throws IOException{
-        super(w,"Synchronize Workspace");
+    public SynchronizeDlg(Window w, jams.workspace.Workspace localWorkspace, SystemProperties p) throws IOException {
+        super(w, "Synchronize Workspace");
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         this.p = p;
-        connector = JAMSCloudGraphicalController.createInstance(p);          
+        connector = JAMSCloudGraphicalController.createInstance(w, p);
+        connector.connect();
         this.localWorkspace = localWorkspace;
-                                
-        GUIHelper.centerOnParent(this, rootPaneCheckingEnabled);                      
-        init();        
-        GUIHelper.centerOnParent(this, rootPaneCheckingEnabled);        
+
+        GUIHelper.centerOnParent(this, rootPaneCheckingEnabled);
+        init();
+        GUIHelper.centerOnParent(this, rootPaneCheckingEnabled);
     }
-        
+
     @Override
-    public void setVisible(boolean flag){
-        if (flag == true){
-            try{                
-                if (!connector.isConnected()){
-                    if ( connector.reconnect() == null )
+    public void setVisible(boolean flag) {
+        if (flag == true) {
+            try {
+                if (!connector.isConnected()) {
+                    if (connector.reconnect() == null) {
                         return;
+                    }
                 }
-            }catch(IOException ioe){
+            } catch (IOException ioe) {
                 log.log(Level.SEVERE, "Unable to connect", ioe);
                 return;
             }
-        }else{
-            
-        }                
+        } else {
+
+        }
         super.setVisible(flag);
     }
-    
-    private void setupSelectionButton(JButton bn){
+
+    private void setupSelectionButton(JButton bn) {
         MouseAdapter ma = new MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent e){
-                JButton bn = (JButton)e.getSource();
+            public void mouseEntered(MouseEvent e) {
+                JButton bn = (JButton) e.getSource();
                 String text = bn.getClientProperty("text").toString();
-                bn.setText("<html><u>"+text+"</u></html>");
+                bn.setText("<html><u>" + text + "</u></html>");
                 bn.setCursor(new Cursor(Cursor.HAND_CURSOR));
             }
+
             @Override
-            public void mouseExited(MouseEvent e){
-                JButton bn = (JButton)e.getSource();
+            public void mouseExited(MouseEvent e) {
+                JButton bn = (JButton) e.getSource();
                 String text = bn.getClientProperty("text").toString();
-                bn.setText("<html>"+text+"</html>");
+                bn.setText("<html>" + text + "</html>");
             }
         };
-        
-        bn.setBorder(null); 
+
+        bn.setBorder(null);
         bn.setOpaque(false);
         bn.setContentAreaFilled(false);
         bn.setForeground(Color.blue);
-        bn.setFont(defaultFont);           
+        bn.setFont(defaultFont);
         bn.addMouseListener(ma);
         bn.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         bn.putClientProperty("text", bn.getText());
+        bn.setText("<html>" + bn.getClientProperty("text").toString() + "</html>");
     }
-    
-    private void init() throws IOException{                
+
+    private void init() throws IOException {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
 
         JPanel northPanel = new JPanel(new BorderLayout());
         northPanel.add(jobChooser, BorderLayout.CENTER);
         northPanel.add(showAllJobs, BorderLayout.EAST);
-        
+
         localWorkspaceID = localWorkspace.getID();
-        if (localWorkspaceID == -1){
+        if (localWorkspaceID == -1) {
             showAllJobs.setSelected(true);
         }
         jobs = connector.getClient().jobs().find();
-        for (Job job : jobs.getJobs()){
+        for (Job job : jobs.getJobs()) {
             Workspace ancestor = job.getWorkspace().getAncestor();
-            if (ancestor!=null && ancestor.getName().equals(localWorkspace.getTitle())){
+            if (ancestor != null && ancestor.getName().equals(localWorkspace.getTitle())) {
                 jobChooser.addItem(job);
             }
         }
@@ -246,16 +174,16 @@ public class SynchronizeDlg extends JDialog {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (jobChooser.getSelectedItem()!=null){
-                    selectedJob = (Job)jobChooser.getSelectedItem();
+                if (jobChooser.getSelectedItem() != null) {
+                    selectedJob = (Job) jobChooser.getSelectedItem();
                     WorkerDlg worker = new WorkerDlg(SynchronizeDlg.this, "Loading jobs .. ");
                     worker.setTask(new SwingWorker() {
 
                         @Override
                         protected Object doInBackground() throws Exception {
-                            try{
+                            try {
                                 syncTable.setServerWorkspace(selectedJob.getWorkspace());
-                            }catch(Throwable t){
+                            } catch (Throwable t) {
                                 t.printStackTrace();
                             }
                             return null;
@@ -263,63 +191,64 @@ public class SynchronizeDlg extends JDialog {
                     });
                     worker.execute();
                 }
-                
+
             }
         });
-                
+
         showAllJobs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                jobChooser.removeAllItems();
                 for (Job job : jobs.getJobs()) {
                     Workspace ancestor = job.getWorkspace().getAncestor();
-                    if (showAllJobs.isSelected() || 
-                            (ancestor != null && ancestor.getId() == localWorkspaceID)) {
+                    if (showAllJobs.isSelected()
+                            || (ancestor != null && ancestor.getId() == localWorkspaceID)) {
                         jobChooser.addItem(job);
                     }
                 }
             }
         });
-        
+
         syncTable = new SyncTable(connector.getClient(), defaultFont);
         syncTable.setLocalWorkspace(localWorkspace.getDirectory());
-        
-        if (jobChooser.getItemCount()>0)
-            jobChooser.setSelectedItem(jobChooser.getItemAt(0));
-        
+
+        if (jobChooser.getItemCount() > 0) {
+            jobChooser.setSelectedItem(jobChooser.getItemAt(jobChooser.getItemCount()-1));
+        }
+
         JScrollPane tableScroll = new JScrollPane(syncTable);
         mainPanel.add(tableScroll, BorderLayout.CENTER);
 
-        
         setupSelectionButton(syncNewOnly);
         setupSelectionButton(syncAll);
         setupSelectionButton(syncNothing);
         setupSelectionButton(invertSelection);
         checkLabel.setFont(defaultFont);
-        
+
         JPanel buttonPanel = new JPanel();
         GroupLayout layout = new GroupLayout(buttonPanel);
         buttonPanel.setLayout(layout);
-                
+
         layout.setHorizontalGroup(layout.createParallelGroup()
                 .addGroup(layout.createSequentialGroup()
-                        .addGap(5, 10, 15)
-                        .addComponent(checkLabel)
-                        .addComponent(syncAll)
-                        .addComponent(syncNothing)
-                        .addComponent(syncNewOnly)
-                        .addComponent(invertSelection)
+                        .addContainerGap()
+                        .addComponent(checkLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(syncAll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(syncNothing, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(syncNewOnly, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(invertSelection, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 1000, 1000)
                 )
                 .addGap(25, 25, 25)
-                .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 1000, 1000)
+                .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(okButton)
-                        .addGap(25, 25, 25)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)
                         .addContainerGap()
                 )
         );
-        
+
         layout.setVerticalGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup()
                         .addComponent(checkLabel)
@@ -331,25 +260,24 @@ public class SynchronizeDlg extends JDialog {
                 .addGroup(layout.createParallelGroup()
                         .addComponent(okButton)
                         .addComponent(cancelButton)
-                        
                 )
                 .addContainerGap()
         );
-        
+
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
-        
+
         mainPanel.add(northPanel, BorderLayout.NORTH);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
         this.add(mainPanel);
-        
+
         initActions();
-        
+
         setSize(new Dimension(640, 480));
         invalidate();
         pack();
     }
-    
+
     private void initActions() {
         okButton.addActionListener(new ActionListener() {
 
@@ -363,17 +291,17 @@ public class SynchronizeDlg extends JDialog {
         cancelButton.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {                
+            public void actionPerformed(ActionEvent e) {
                 SynchronizeDlg.this.setVisible(false);
             }
         });
-        
+
         syncNewOnly.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 FileSync fs = syncTable.getModel().getRoot();
-                
+
                 fs.applySyncFilter(new FileSync.SyncFilter() {
 
                     @Override
@@ -386,17 +314,17 @@ public class SynchronizeDlg extends JDialog {
                         return !ds.isExisting();
                     }
                 });
-                
+
                 syncTable.getModel().fireTableDataChanged();
             }
         });
-        
+
         syncAll.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 FileSync fs = syncTable.getModel().getRoot();
-                
+
                 fs.applySyncFilter(new FileSync.SyncFilter() {
 
                     @Override
@@ -412,13 +340,13 @@ public class SynchronizeDlg extends JDialog {
                 syncTable.getModel().fireTableDataChanged();
             }
         });
-        
+
         syncNothing.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 FileSync fs = syncTable.getModel().getRoot();
-                
+
                 fs.applySyncFilter(new FileSync.SyncFilter() {
 
                     @Override
@@ -434,13 +362,13 @@ public class SynchronizeDlg extends JDialog {
                 syncTable.getModel().fireTableDataChanged();
             }
         });
-        
+
         invertSelection.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 FileSync fs = syncTable.getModel().getRoot();
-                
+
                 fs.applySyncFilter(new FileSync.SyncFilter() {
 
                     @Override
@@ -465,16 +393,16 @@ public class SynchronizeDlg extends JDialog {
             @Override
             public void safeRun() {
                 FileSync root = syncTable.getModel().getRoot();
-                
+
                 WorkspaceController wc = connector.getClient().workspaces();
-                
+
                 observable.addObserver(syncWorkspaceWorker);
-                if (root instanceof DirectorySync){
-                    wc.synchronizeWorkspace((DirectorySync)root);
+                if (root instanceof DirectorySync) {
+                    wc.synchronizeWorkspace((DirectorySync) root);
                 }
-                observable.deleteObserver(syncWorkspaceWorker);                
+                observable.deleteObserver(syncWorkspaceWorker);
             }
-        });        
+        });
         syncWorkspaceWorker.getWorkerDlg().execute();
     }
 
@@ -482,17 +410,18 @@ public class SynchronizeDlg extends JDialog {
      *
      * @param args
      */
-    public static void main(String[] args) {
-        /*Controller client = new Controller("http://localhost:8080/jams-server/webresources");
-        client.connect("Blubb", "test");
+    public static void main(String[] args) throws IOException {
 
-        JAMSWorkspace wslocal = new JAMSWorkspace(new File("E:/ModelData/JAMS-Gehlberg"), new StandardRuntime(JAMSProperties.createProperties()));
+        SystemProperties properties = JAMSProperties.createProperties();
+        properties.load("d:/jamsapplication/nsk.jap");
+
+        JAMSWorkspace wslocal = new JAMSWorkspace(new File("D:\\jamsmodeldata\\J2000_Kaidu_ERA_interim_PM"), new StandardRuntime(properties));
         wslocal.loadConfig();
-        
-        SynchronizeDlg dlg = new SynchronizeDlg((Window) null, client, wslocal);
+
+        SynchronizeDlg dlg = new SynchronizeDlg((Window) null, wslocal, properties);
         dlg.setSize(new Dimension(640, 480));
         dlg.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dlg.setVisible(true);*/
+        dlg.setVisible(true);
 
     }
 }
