@@ -183,7 +183,6 @@ public class ExplorerFrame extends JFrame {
         setTitle(JAMSExplorer.APP_TITLE);
 
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        jfc.setSelectedFile(new File("/Users/bigr/Documents/BA-Arbeit/trunk/JAMSworldwind/shapefiles/J2000_Dudh-Kosi/"));
         //jfc.setSelectedFile(new File(System.getProperty("user.dir")));
 
         tPane = new JTabbedPane();
@@ -278,8 +277,8 @@ public class ExplorerFrame extends JFrame {
 
         fileMenu.addSeparator();
         
-        JMenuItem browserServer = new JMenuItem(browseServerAction);
-        fileMenu.add(browserServer);
+//        JMenuItem browserServer = new JMenuItem(browseServerAction);
+//        fileMenu.add(browserServer);
         
         JMenuItem importData = new JMenuItem(importDataAction);
         fileMenu.add(importData);
@@ -505,8 +504,9 @@ public class ExplorerFrame extends JFrame {
             return;
         }
         try{
-            SynchronizeDlg synchronizer = new SynchronizeDlg(this, ws, explorer.getProperties());            
-            GUIHelper.centerOnParent(synchronizer, false);
+            SynchronizeDlg synchronizer = new SynchronizeDlg(this, ws, explorer.getProperties());         
+            synchronizer.setPreferredSize(new Dimension(640, 480));
+            GUIHelper.centerOnParent(synchronizer, true);
             synchronizer.setVisible(true);
         }catch(IOException ioe){
             ioe.printStackTrace();
