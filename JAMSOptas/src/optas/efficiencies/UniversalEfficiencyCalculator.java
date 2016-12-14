@@ -20,7 +20,7 @@ import optas.efficiencies.VolumeError.VolumeErrorType;
 
 /**
  *
- * @author chris
+ * @author Chris, KGE added by IG.
  */
 public class UniversalEfficiencyCalculator extends JAMSComponent{
 
@@ -142,6 +142,18 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     defaultValue = "0")
     public Attribute.Double[] log_likelihood_normalized;
 
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description",
+    defaultValue = "0")
+    public Attribute.Double[] kge;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "file name of optimization process description",
+    defaultValue = "0")
+    public Attribute.Double[] kge_normalized;
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
     description = "file name of optimization process description",
@@ -153,11 +165,11 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     description = "file name of optimization process description")
     public Attribute.Calendar time;
 
-    static final public int RMSE = 0, NSE1=1,NSE2=2,LNSE1=3,LNSE2=4,AVE=5,R2=6,RBIAS=7;
+    static final public int RMSE=0,NSE1=1,NSE2=2,LNSE1=3,LNSE2=4,AVE=5,R2=6,RBIAS=7,KGE=8;
 
     static public String[] availableEfficiencies = {
         "Root Mean Square Error", "Nash Sutcliffe (e1)", "Nash Sutcliffe (e2)",
-        "log Nash Sutcliffe (le1)", "log Nash Sutcliffe (le2)", "Average Volume Error", "r2", "relative bias"};
+        "log Nash Sutcliffe (le1)", "log Nash Sutcliffe (le2)", "Average Volume Error", "r2", "relative bias", "KGE", "normalized KGE"};
 
     ArrayList<Double> measurementList[], simulationList[];
     ArrayList<TimeInterval> timeIntervalList;
@@ -168,7 +180,9 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
                          calcAve= new VolumeError(VolumeErrorType.Absolute),
                          calcR2 = new CorrelationError(),
                          calcPBias = new VolumeError(VolumeErrorType.Relative),
-                         calcLogLikelihood = new LogLikelihood();
+                         calcLogLikelihood = new LogLikelihood(),
+                         calcKGE = new KGE(); 
+
 
     int m = 0;
     boolean firstIteration = true;
@@ -294,6 +308,9 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
         if (r2_normalized==null || r2_normalized.length < m) r2_normalized = new Attribute.Double[m];
         if (ave_normalized==null || ave_normalized.length < m) ave_normalized = new Attribute.Double[m];
         if (bias_normalized==null || bias_normalized.length < m) bias_normalized = new Attribute.Double[m];
+        if (kge==null || kge.length < m) kge = new Attribute.Double[m]; 
+        if (kge_normalized==null || kge_normalized.length < m) kge_normalized = new Attribute.Double[m];
+
         
         for (int k=0;k<m;k++){
             double m[] = new double[measurementList[k].size()],
@@ -310,6 +327,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             if (r2[k] == null) r2[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (ave[k] == null) ave[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (bias[k] == null) bias[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (kge[k] == null) kge[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (e1_normalized[k] == null) e1_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (e2_normalized[k] == null) e2_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (le1_normalized[k] == null) le1_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
@@ -317,6 +335,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             if (r2_normalized[k] == null) r2_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (ave_normalized[k] == null) ave_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (bias_normalized[k] == null) bias_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (kge_normalized[k] == null) kge_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
             
             setObjective(m,s,k,e1,e1_normalized,calcE1);
             setObjective(m,s,k,e2,e2_normalized,calcE2);
@@ -326,6 +345,8 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             setObjective(m,s,k,r2,r2_normalized,calcR2);
             setObjective(m,s,k,bias,bias_normalized,calcPBias);
             setObjective(m,s,k,log_likelihood, log_likelihood_normalized, calcLogLikelihood);
+	    setObjective(m,s,k,kge, kge_normalized, calcKGE); 
+
                         
             this.getModel().getRuntime().println("*****************************************************");
             this.getModel().getRuntime().println("*******Measurement:" + this.measurementAttributeName[k]);
@@ -337,6 +358,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             this.getModel().getRuntime().println("*******AVE:   " + round(this.ave[k].getValue()) + "  (" + round(this.ave_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******R2:    " + round(this.r2[k].getValue()) + "  (" + round(this.r2_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******Bias:  " + round(this.bias[k].getValue()) + "  (" + round(this.bias_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******KGE:   " + round(this.kge[k].getValue()) + "  (" + round(this.kge_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("\n");
         }
         this.getModel().getRuntime().println("--------------------------------------------------------");
