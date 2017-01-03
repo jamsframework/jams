@@ -20,7 +20,7 @@ public class KGE extends EfficiencyCalculator {
         double r = 0;
         double alpha = 0;
         double beta = 0;
-        double avgm, avgs, sum, varm, vars;
+        double avgm, avgs, sum, varm, vars, sigm, sigs;
         avgm = avgs = sum = varm = vars = 0.;
 
         for (int i = 0; i < m.length; i++) {
@@ -35,15 +35,17 @@ public class KGE extends EfficiencyCalculator {
             varm += Math.pow(Math.abs(m[i] - avgm), pow);
             vars += Math.pow(Math.abs(s[i] - avgs), pow);
         }
-
-        double sigm = Math.sqrt(varm);
-        double sigs = Math.sqrt(vars);
-
-        alpha = sigs / sigm; // IG : 0 should maybe be cared about
-        beta = (avgs - avgm) / sigm;
-        r = sum / (sigs * sigm);
+        sum /= m.length;
+        varm /= m.length;
+        vars /= s.length;
+        sigm = Math.sqrt(varm);
+        sigs = Math.sqrt(vars);
         
-        return 1- Math.sqrt(Math.pow(alpha - 1, pow) + Math.pow(beta - 1, pow) + Math.pow(r - 1, pow));
+        alpha = (sigs * avgm) / (sigm * avgs); // IG : 0 should maybe be cared about
+        beta = avgs / avgm;
+        r = sum / (sigs * sigm);
+
+        return 1 - Math.sqrt(Math.pow(alpha - 1, pow) + Math.pow(beta - 1, pow) + Math.pow(r - 1, pow));
     }
 
     public double calcNormative(double t1[], double t2[]) {
