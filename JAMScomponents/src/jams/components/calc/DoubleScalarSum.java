@@ -29,10 +29,10 @@ import jams.model.*;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 @JAMSComponentDescription(
-        title = "DoubleDivide",
+        title = "DoubleScalarSum",
         author = "Sven Kralisch",
-        description = "Divide a double value by another one and return the result",
-        date = "2016-05-18",
+        description = "Summates double value operands and returns the result",
+        date = "2017-01-24",
         version = "1.0_0"
 )
 @VersionComments(entries = {
