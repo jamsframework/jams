@@ -1,12 +1,18 @@
 export default {
 	mutations: {
-		signIn(state, payload) {
+		queriedIsConnected(state) {
+			state.queriedIsConnected = true;
+		},
+		setUserInfo(state, payload) {
 			state.eMailAddress = payload.eMailAddress;
 			state.id = payload.id;
 			state.isAdmin = payload.isAdmin;
 			state.isSignedIn = true;
 			state.name = payload.name;
 			state.username = payload.username;
+		},
+		signIn(state) {
+			state.isSignedIn = true;
 		},
 		signOut(state) {
 			state.isSignedIn = false;
@@ -21,6 +27,7 @@ export default {
 		isAdmin: false,
 		isSignedIn: false,
 		name: "",
+		queriedIsConnected: false,
 		username: ""
 	}
 };

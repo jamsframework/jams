@@ -4,8 +4,8 @@ export default {
 	data() {
 		return {
 			isRedirect: !!this.$router.currentRoute.query.from,
-			password: "jamscloud",
-			username: "admin"
+			password: "",
+			username: ""
 		};
 	},
 	methods: {
@@ -24,12 +24,15 @@ export default {
 			this.$http.get(url, options).then((response) => {
 				response.json().then((data) => {
 					// Store that user is signed in
+					this.$store.commit("user/signIn");
+
+					// Store user data
 					this.$store.commit({
 						eMailAddress: data.email,
 						id: data.id,
 						isAdmin: data.admin === 1,
 						name: data.name,
-						type: "user/signIn",
+						type: "user/setUserInfo",
 						username: data.login
 					});
 
@@ -75,7 +78,7 @@ export default {
 	mounted() {
 		// If user is already signed in, redirect to home page
 		if (this.$store.state.user.isSignedIn) {
-			this.$router.push("/");
+			this.$router.replace("/");
 			return;
 		}
 
@@ -88,6 +91,11 @@ export default {
 	},
 	watch: {
 		"$route"(to, from) {
+			if (this.$store.state.user.isSignedIn) {
+				this.$router.replace("/");
+				return;
+			}
+
 			this.isRedirect = !!this.$router.currentRoute.query.from;
 
 			if (this.isRedirect) {

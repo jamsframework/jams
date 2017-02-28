@@ -1,25 +1,6 @@
-import Vue from "vue";
-
 import config from "../../config";
 
 export default {
-	beforeCreate() {
-		// Allow cookies for requests to API (for cross-origin requests)
-		Vue.http.options.credentials = true;
-
-		// Intercept responses
-		Vue.http.interceptors.push(function(request, next) {
-			next(function(response) {
-				this.$store.commit("setIsConnected", response.status !== 0);
-
-				if (response.status === 403) {
-					console.debug("Intercepted 403. SHould redirect!");
-					Vue.router.push("/sign-in");
-					console.debug("Intercepted 403. Should have redirected!");
-				}
-			});
-		});
-	},
 	created() {
 		this.getVersion();
 		setInterval(this.getVersion, config.connectionInterval);

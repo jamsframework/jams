@@ -3,9 +3,9 @@
 		<nav class="flex-list">
 			<router-link class="flex-list-item" exact to="/">Jobs</router-link>
 			<router-link class="flex-list-item flex" to="/workspaces">Workspaces</router-link>
-			<router-link class="flex-list-item" to="/account" v-if="$store.state.user.isSignedIn">{{$store.state.user.name}}</router-link>
+			<router-link class="flex-list-item" to="/account" v-if="$store.state.user.isSignedIn">Account</router-link>
 			<router-link class="flex-list-item" to="/sign-in" v-if="!$store.state.user.isSignedIn">Sign in</router-link>
-			<router-link class="flex-list-item" to="/sign-out" v-if="$store.state.user.isSignedIn">Sign out</router-link>
+			<!--<router-link class="flex-list-item" to="/sign-out" v-if="$store.state.user.isSignedIn">Sign out</router-link>-->
 		</nav>
 	</header>
 
