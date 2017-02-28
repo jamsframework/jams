@@ -15,7 +15,12 @@ export default {
 			state.isSignedIn = true;
 		},
 		signOut(state) {
+			state.eMailAddress = "";
+			state.id = 0;
+			state.isAdmin = false;
 			state.isSignedIn = false;
+			state.name = "";
+			state.username = "";
 		}
 	},
 

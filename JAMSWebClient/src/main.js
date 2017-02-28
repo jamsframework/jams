@@ -33,6 +33,10 @@ Vue.http.interceptors.push(function(request, next) {
 				// console.debug("Intercepted 403. Should have redirected!");
 				break;
 			default:
+				this.$store.commit("flashes/add", {
+					message: "The server sent an unexpected response.",
+					type: 1
+				});
 				console.error("unexpected response:", request, response);
 		}
 	});
