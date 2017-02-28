@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 
 import account from "../views/account/account/account.vue";
+import accountPassword from "../views/account/password/password.vue";
 // import config from "../config";
 import jobsList from "../views/jobs/list/list.vue";
 import jobsShow from "../views/jobs/show/show.vue";
@@ -18,10 +19,6 @@ const router = new VueRouter({
 	mode: "history",
 	routes: [
 		{
-			path: "/jobs",
-			redirect: "/"
-		},
-		{
 			component: jobsList,
 			meta: {
 				requiresAuth: true
@@ -34,6 +31,17 @@ const router = new VueRouter({
 				requiresAuth: true
 			},
 			path: "/account"
+		},
+		{
+			component: accountPassword,
+			meta: {
+				requiresAuth: true
+			},
+			path: "/account/password"
+		},
+		{
+			path: "/jobs",
+			redirect: "/"
 		},
 		{
 			component: jobsShow,

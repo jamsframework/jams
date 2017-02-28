@@ -23,8 +23,6 @@ export default {
 				password: ""
 			};
 
-			console.debug(body);
-
 			this.$http.put(url, body).then((response) => {
 				response.json().then((data) => {
 					// Update user data locally
