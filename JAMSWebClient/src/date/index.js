@@ -22,6 +22,20 @@ export function formatDateTime(value) {
 	return formatDate(value) + " " + formatTime(value);
 }
 
+// formatDuration takes a duration in microseconds and returns a string of the
+// duration in a readable format.
+export function formatDuration(value) {
+	value /= 1000000;
+
+	if (value < 60) {
+		return value + " s";
+	} else if (value < 3600) {
+		return Math.round(value / 60) + " min";
+	} else {
+		return Math.round(value / 60 / 60) + " h";
+	}
+}
+
 // formatTime takes a date string and returns a string in the format
 // “hh:mm:ss”.
 export function formatTime(value) {
