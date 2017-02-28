@@ -10,9 +10,6 @@ export default {
 			return date.getFullYear() + "-" +
 				((date.getMonth() + 1) < 10 ? "0" : "") + (date.getMonth() + 1) + "-" +
 				(date.getDate() < 10 ? "0" : "") + date.getDate() + " ";
-		},
-		showWorkspace(id) {
-			this.$router.push("/workspaces/show/" + id);
 		}
 	},
 	mounted() {
