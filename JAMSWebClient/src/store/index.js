@@ -12,8 +12,10 @@ export default new Vuex.Store({
 		user
 	},
 	mutations: {
+		setIsConnected(state, isConnected) {
+			state.isConnected = isConnected;
+		},
 		setJamsCloudServerVersion(state, version) {
-			state.isConnected = true;
 			state.jamsCloudServerVersion = version;
 		}
 	},
