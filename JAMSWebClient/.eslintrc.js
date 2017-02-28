@@ -15,7 +15,7 @@ module.exports = {
 	"rules": {
 		"arrow-parens": ["error", "always"],
 		"generator-star-spacing": 0,
-		"indent": ["error", "tab"],
+		"indent": ["error", "tab", {"SwitchCase": 1}],
 		"no-debugger": process.env.NODE_ENV === "production" ? "error" : 0,
 		"no-tabs": 0,
 		"quotes": ["error", "double"],
