@@ -1,10 +1,10 @@
 import config from "../../../config";
-import date from "../../../date";
+import {formatDateTime} from "../../../date";
 
 export default {
 	computed: {
 		formattedCreationDate: function() {
-			return date.formatDate(this.workspace.creationDate);
+			return formatDateTime(this.workspace.creationDate);
 		}
 	},
 	data() {

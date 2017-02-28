@@ -1,5 +1,5 @@
 import config from "../../../config";
-import date from "../../../date";
+import {formatDateTime} from "../../../date";
 
 export default {
 	beforeDestroy() {
@@ -13,7 +13,7 @@ export default {
 		};
 	},
 	methods: {
-		formatDate: date.formatDate,
+		formatDateTime,
 		getJobs() {
 			const url = config.baseUrl + "/job/find";
 

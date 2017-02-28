@@ -1,10 +1,10 @@
 import config from "../../../config";
-import date from "../../../date";
+import {formatDateTime} from "../../../date";
 
 export default {
 	computed: {
 		formattedStartTime: function() {
-			return date.formatDate(this.job.startTime);
+			return formatDateTime(this.job.startTime);
 		}
 	},
 	data() {

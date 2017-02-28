@@ -1,5 +1,5 @@
 import config from "../../../config";
-import date from "../../../date";
+import {formatDateTime} from "../../../date";
 
 export default {
 	data() {
@@ -8,7 +8,7 @@ export default {
 		};
 	},
 	methods: {
-		formatDate: date.formatDate
+		formatDateTime
 	},
 	mounted() {
 		const url = config.baseUrl + "/workspace/find";
