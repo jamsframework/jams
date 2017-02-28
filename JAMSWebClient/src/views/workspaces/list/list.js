@@ -17,11 +17,7 @@ export default {
 	mounted() {
 		const url = config.baseUrl + "/workspace/find";
 
-		const options = {
-			credentials: true
-		};
-
-		this.$http.get(url, options).then((response) => {
+		this.$http.get(url).then((response) => {
 			response.json().then((data) => {
 				console.debug(response.data);
 				this.workspaces = data.workspaces;

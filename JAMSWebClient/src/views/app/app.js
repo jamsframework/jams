@@ -1,6 +1,11 @@
+import Vue from "vue";
+
 import config from "../../config";
 
 export default {
+	beforeCreate() {
+		Vue.http.options.credentials = true;
+	},
 	created() {
 		this.connect();
 		setInterval(this.connect, config.connectionInterval);

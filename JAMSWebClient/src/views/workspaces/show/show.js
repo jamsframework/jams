@@ -18,11 +18,7 @@ export default {
 		const workspaceId = this.$router.currentRoute.params.id;
 		const url = config.baseUrl + "/workspace/" + workspaceId;
 
-		const options = {
-			credentials: true
-		};
-
-		this.$http.get(url, options).then((response) => {
+		this.$http.get(url).then((response) => {
 			response.json().then((data) => {
 				console.debug(response.data);
 				this.workspace = data.workspaces[0];

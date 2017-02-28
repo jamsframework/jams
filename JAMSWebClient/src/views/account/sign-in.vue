@@ -38,7 +38,6 @@ export default {
 			const url = config.baseUrl + "/user/login";
 
 			const options = {
-				credentials: true,
 				params: {
 					login: this.username,
 					password: this.password
