@@ -1,4 +1,5 @@
 import config from "../../../config";
+import date from "../../../date";
 
 export default {
 	data() {
@@ -7,12 +8,7 @@ export default {
 		};
 	},
 	methods: {
-		formatDate(value) {
-			let date = new Date(value);
-			return date.getFullYear() + "-" +
-				((date.getMonth() + 1) < 10 ? "0" : "") + (date.getMonth() + 1) + "-" +
-				(date.getDate() < 10 ? "0" : "") + date.getDate() + " ";
-		}
+		formatDate: date.formatDate
 	},
 	mounted() {
 		const url = config.baseUrl + "/workspace/find";

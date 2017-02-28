@@ -1,4 +1,6 @@
 export default {
+	// formatDate takes a date string and returns a string in the format
+	// “yyyy-mm-dd”.
 	formatDate(value) {
 		const date = new Date(value);
 

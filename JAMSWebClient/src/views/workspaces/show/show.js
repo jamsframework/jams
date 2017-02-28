@@ -1,18 +1,19 @@
 import config from "../../../config";
+import date from "../../../date";
 
 export default {
+	computed: {
+		formattedCreationDate: function() {
+			return date.formatDate(this.workspace.creationDate);
+		}
+	},
 	data() {
 		return {
 			workspace: null
 		};
 	},
 	methods: {
-		formatDate(value) {
-			let date = new Date(value);
-			return date.getFullYear() + "-" +
-				((date.getMonth() + 1) < 10 ? "0" : "") + (date.getMonth() + 1) + "-" +
-				(date.getDate() < 10 ? "0" : "") + date.getDate() + " ";
-		}
+
 	},
 	mounted() {
 		const workspaceId = this.$router.currentRoute.params.id;
