@@ -1,13 +1,13 @@
 <div id="site">
-	<header id="site-header">
-		<nav class="flex-list">
-			<router-link class="flex-list-item" exact to="/">Jobs</router-link>
-			<router-link class="flex-list-item flex" to="/workspaces">Workspaces</router-link>
-			<router-link class="flex-list-item" to="/account" v-if="$store.state.user.isSignedIn">Account</router-link>
-			<router-link class="flex-list-item" to="/sign-in" v-if="!$store.state.user.isSignedIn">Sign in</router-link>
-			<!--<router-link class="flex-list-item" to="/sign-out" v-if="$store.state.user.isSignedIn">Sign out</router-link>-->
-		</nav>
-	</header>
+	<nav id="site-header">
+		<ul class="flex-list">
+			<li class="flex-list-item"><router-link exact to="/">Jobs</router-link></li>
+			<li class="flex-list-item flex"><router-link to="/workspaces">Workspaces</router-link></li>
+			<li class="flex-list-item" v-if="$store.state.user.isSignedIn"><router-link to="/account">Account</router-link></li>
+			<li class="flex-list-item" v-if="!$store.state.user.isSignedIn"><router-link to="/sign-in">Sign in</router-link></li>
+			<!--<li class="flex-list-item" v-if="$store.state.user.isSignedIn"><router-link class="flex-list-item" to="/sign-out">Sign out</router-link></li>-->
+		</ul>
+	</nav>
 
 	<div class="flash" :class="{'flash-error': flash.type === 1}" v-for="flash in $store.state.flashes.flashes">
 		<div class="flash-cell">{{flash.message}}</div>
@@ -17,8 +17,8 @@
 		<router-view></router-view>
 	</div>
 
-	<footer id="site-footer">
+	<div id="site-footer">
 		<div :title="'JAMS Cloud Server: version ' + $store.state.jamsCloudServerVersion" v-if="$store.state.isConnected">Connected to JAMS Cloud Server</div>
 		<div class="connection-status-unconnected" v-else>Not connected to JAMS Cloud Server (server not reachable)</div>
-	</footer>
+	</div>
 </div>
