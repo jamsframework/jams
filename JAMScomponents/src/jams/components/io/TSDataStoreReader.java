@@ -275,6 +275,11 @@ public class TSDataStoreReader extends JAMSComponent {
 
         // check if we have different step size in store and model
         if (storeUnit != targetUnit || storeUnitCount != targetUnitCount) {
+            
+            if (time == null) {
+                getModel().getRuntime().sendHalt("Time steps in datastore " + store.getID() + " and model are different while time is not set!"
+                        + " Please set the time atrtibute or adapt your datastore");
+            }
 
             // if both units have a constant duration, calculate this duration and the related ratio
             if (storeUnit > Attribute.Calendar.MONTH && targetUnit > Attribute.Calendar.MONTH) {
@@ -339,7 +344,7 @@ public class TSDataStoreReader extends JAMSComponent {
     @Override
     public void run() {
 
-        if (tsRatio == 1 || time == null) {
+        if (tsRatio == 1) {
 
             DefaultDataSet ds = store.getNext();
             DataValue[] data = ds.getData();
