@@ -1,3 +1,5 @@
+import date from "../../../date/date.js";
+
 export default {
 	data() {
 		return {
@@ -5,12 +7,7 @@ export default {
 		};
 	},
 	methods: {
-		formatDate(value) {
-			let date = new Date(value);
-			return date.getFullYear() + "-" +
-				((date.getMonth() + 1) < 10 ? "0" : "") + (date.getMonth() + 1) + "-" +
-				(date.getDate() < 10 ? "0" : "") + date.getDate() + " ";
-		}
+		formatDate: date.formatDate
 	},
 	mounted() {
 		const url = "http://localhost:8080/jamscloud/webresources/job/find";

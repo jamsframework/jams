@@ -1,8 +1,15 @@
+import date from "../../../date/date.js";
+
 export default {
+	computed: {
+		formattedStartTime: function() {
+			return date.formatDate(this.job.startTime);
+		}
+	},
 	data() {
 		return {
-			isActive: false,
 			duration: 0,
+			isActive: false,
 			job: null,
 			progress: 1,
 			size: 0
