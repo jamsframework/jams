@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
-import account from "../views/account/account.vue";
+import account from "../views/account/account/account.vue";
 // import config from "../config";
 import jobsList from "../views/jobs/list/list.vue";
 import jobsShow from "../views/jobs/show/show.vue";

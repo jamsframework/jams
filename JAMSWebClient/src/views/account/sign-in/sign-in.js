@@ -51,12 +51,11 @@ export default {
 					this.$store.commit("user/signIn");
 
 					// Store user data
-					this.$store.commit({
+					this.$store.commit("user/setUserInfo", {
 						eMailAddress: data.email,
 						id: data.id,
 						isAdmin: data.admin === 1,
 						name: data.name,
-						type: "user/setUserInfo",
 						username: data.login
 					});
 

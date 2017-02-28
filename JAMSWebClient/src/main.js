@@ -32,6 +32,8 @@ Vue.http.interceptors.push(function(request, next) {
 				// Vue.router.push("/sign-in");
 				// console.debug("Intercepted 403. Should have redirected!");
 				break;
+			case 409:
+				break;
 			default:
 				this.$store.commit("flashes/add", {
 					message: "The server sent an unexpected response.",

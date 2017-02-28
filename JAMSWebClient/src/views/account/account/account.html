@@ -1,0 +1,24 @@
+<div>
+	<h1>Account</h1>
+
+	<form class="box center max-width-small" @submit.prevent="save">
+		<div class="vertical-list-item">
+			<label for="username">Username:</label>
+			<input id="username" type="text" v-model="username">
+		</div>
+
+		<div class="vertical-list-item">
+			<label for="name">Name:</label>
+			<input id="name" type="text" v-model="name">
+		</div>
+
+		<div class="vertical-list-item">
+			<label for="eMailAddress">E-mail address:</label>
+			<input id="eMailAddress" type="text" v-model="eMailAddress">
+		</div>
+
+		<div class="vertical-list-item">
+			<button class="primary" type="submit">Save</button>
+		</div>
+	</form>
+</div>
