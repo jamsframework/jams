@@ -25,6 +25,7 @@ Vue.http.interceptors.push(function(request, next) {
 
 		switch (response.status) {
 			case 0:
+			case 200:
 				break;
 			case 403:
 				console.debug("Intercepted 403. Should redirect!");
