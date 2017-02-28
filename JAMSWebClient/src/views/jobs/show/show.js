@@ -1,24 +1,3 @@
-<template>
-	<div class="center max-width-medium">
-		<h1>Job</h1>
-
-		<div class="box" v-if="job !== null">
-			<div>Job</div>
-			<div class="small">
-				<span class="tag">ID: {{job.id}}</span>
-				<span class="tag">Started: {{date.format(job.startTime)}}</span>
-				<span class="tag">Active: {{isActive}}</span>
-				<span class="tag">Progress: {{progress}}</span>
-				<span class="tag">Duration: {{duration}}</span>
-				<span class="tag">Size: {{Math.ceil(size / 1024 / 1024)}} MiB</span>
-				<span class="tag">Model: {{job.modelFile.path}}</span>
-				<router-link class="tag" :to="'/workspaces/show/' + job.workspace.id">Workspace {{job.workspace.id}}</router-link>
-			</div>
-		</div>
-	</div>
-</template>
-
-<script>
 export default {
 	data() {
 		return {
@@ -61,4 +40,3 @@ export default {
 		});
 	}
 };
-</script>

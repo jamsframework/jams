@@ -1,0 +1,13 @@
+<div class="center max-width-medium">
+	<h1>Workspaces</h1>
+
+	<div class="box clickable" @click="showWorkspace(workspace.id)" v-for="workspace in workspaces">
+		<div>{{workspace.name}}</div>
+		<div class="small">
+			<span class="tag">ID: {{workspace.id}}</span>
+			<span class="tag">Size: {{Math.ceil(workspace.workspaceSize / 1024 / 1024)}} MiB</span>
+			<span class="tag">Created: {{formatDate(workspace.creationDate)}}</span>
+			<span class="tag">Read-only: {{workspace.readOnly}}</span>
+		</div>
+	</div>
+</div>

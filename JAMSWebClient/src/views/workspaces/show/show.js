@@ -1,0 +1,34 @@
+export default {
+	data() {
+		return {
+			workspace: null
+		};
+	},
+	methods: {
+		formatDate(value) {
+			let date = new Date(value);
+			return date.getFullYear() + "-" +
+				((date.getMonth() + 1) < 10 ? "0" : "") + (date.getMonth() + 1) + "-" +
+				(date.getDate() < 10 ? "0" : "") + date.getDate() + " ";
+		}
+	},
+	mounted() {
+		const workspaceId = this.$router.currentRoute.params.id;
+		const url = "http://localhost:8080/jamscloud/webresources/workspace/" + workspaceId;
+
+		const options = {
+			credentials: true
+		};
+
+		this.$http.get(url, options).then((response) => {
+			response.json().then((data) => {
+				console.debug(response.data);
+				this.workspace = data.workspaces[0];
+			}, (response) => {
+				console.error("Jobs: Parsing JSON response failed:", response);
+			});
+		}, (response) => {
+			console.error("Jobs: Unexpected response:", response);
+		});
+	}
+};

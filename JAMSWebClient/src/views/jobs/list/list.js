@@ -1,21 +1,3 @@
-<template>
-	<div class="center max-width-medium">
-		<h1>Jobs</h1>
-
-		<div class="box" v-for="job in jobs">
-			<div>Job</div>
-			<div class="small">
-				<span class="tag">ID: {{job.id}}</span>
-				<span class="tag">Started: {{formatDate(job.startTime)}}</span>
-				<span class="tag">Model: {{job.modelFile.path}}</span>
-				<router-link class="tag" :to="'/workspaces/show/' + job.workspace.id">Workspace {{job.workspace.id}}</router-link>
-				<router-link class="tag" :to="'/jobs/show/' + job.id">Details</router-link>
-			</div>
-		</div>
-	</div>
-</template>
-
-<script>
 export default {
 	data() {
 		return {
@@ -49,4 +31,3 @@ export default {
 		});
 	}
 };
-</script>
