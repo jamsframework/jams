@@ -11,4 +11,11 @@
 			<router-link class="tag" :to="'/jobs/show/' + job.id">Details</router-link>
 		</div>
 	</div>
+
+	<div id="jobs-server-load" v-if="$store.state.isConnected && serverLoad !== -1">
+		Server load
+		<div id="jobs-server-load-bar" :title="'Server load is ' + Math.round(serverLoad * 100) + '%'">
+			<div id="jobs-server-load-value" :style="{width: serverLoad * 100 + '%'}"></div>
+		</div>
+	</div>
 </div>
