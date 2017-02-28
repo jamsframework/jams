@@ -119,6 +119,12 @@ button.primary:active,
 	background: #569E3D;
 }
 
+button.primary:disabled {
+	background-color: rgba(229, 229, 229, 0.5);
+	color: rgba(102, 102, 102, 0.5);
+	cursor: default;
+}
+
 button.danger:focus,
 button.primary:focus,
 .button.danger:focus,

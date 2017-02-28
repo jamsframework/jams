@@ -1,8 +1,32 @@
 import config from "../../../config";
+import * as storage from "../../../storage";
 
 export default {
+	beforeCreate() {
+		// If user is already signed in, redirect to home page
+		if (this.$store.state.user.isSignedIn) {
+			this.$router.replace("/");
+			return;
+		}
+
+		if (!storage.cookieStorageIsAvailable) {
+			this.$store.commit("flashes/add", {
+				message: "Please enable cookies, and refresh the page.",
+				type: 1
+			});
+			return;
+		}
+
+		if (this.isRedirect) {
+			this.$store.commit("flashes/add", {
+				message: "Please sign in to access this page.",
+				type: 0
+			});
+		}
+	},
 	data() {
 		return {
+			canSignIn: storage.cookieStorageIsAvailable,
 			isRedirect: !!this.$router.currentRoute.query.from,
 			password: "",
 			username: ""
@@ -52,40 +76,12 @@ export default {
 					console.error("SignIn: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				switch (response.status) {
-				case 0:
-					this.$store.commit("flashes/add", {
-						message: "The server could not be reached.",
-						type: 1
-					});
-					return;
-				case 403:
+				if (response.status === 403) {
 					this.$store.commit("flashes/add", {
 						message: "Your username or password is not correct.",
 						type: 1
 					});
-					return;
-				default:
-					this.$store.commit("flashes/add", {
-						message: "You could not be signed in because the server sent an unexpected response.",
-						type: 1
-					});
-					console.error("SignIn: Unexpected response:", response);
 				}
-			});
-		}
-	},
-	mounted() {
-		// If user is already signed in, redirect to home page
-		if (this.$store.state.user.isSignedIn) {
-			this.$router.replace("/");
-			return;
-		}
-
-		if (this.isRedirect) {
-			this.$store.commit("flashes/add", {
-				message: "Please sign in to access this page.",
-				type: 0
 			});
 		}
 	},
@@ -93,6 +89,14 @@ export default {
 		"$route"(to, from) {
 			if (this.$store.state.user.isSignedIn) {
 				this.$router.replace("/");
+				return;
+			}
+
+			if (!storage.cookieStorageIsAvailable) {
+				this.$store.commit("flashes/add", {
+					message: "Please enable cookies, and refresh the page.",
+					type: 1
+				});
 				return;
 			}
 

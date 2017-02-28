@@ -4,16 +4,16 @@
 	<form class="box center max-width-small" @submit.prevent="submit">
 		<div class="vertical-list-item">
 			<label for="username">Your username:</label>
-			<input id="username" placeholder="Username" type="text" v-model="username">
+			<input :disabled="!canSignIn" id="username" placeholder="Username" type="text" v-model="username">
 		</div>
 
 		<div class="vertical-list-item">
 			<label for="password">Your password:</label>
-			<input id="password" placeholder="Password" type="password" v-model="password">
+			<input :disabled="!canSignIn" id="password" placeholder="Password" type="password" v-model="password">
 		</div>
 
 		<div class="vertical-list-item">
-			<button class="primary" type="submit">Sign in</button>
+			<button class="primary" :disabled="!canSignIn" type="submit">Sign in</button>
 		</div>
 	</form>
 </div>
