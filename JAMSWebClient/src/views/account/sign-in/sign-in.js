@@ -1,27 +1,4 @@
-<template>
-	<div>
-		<h1>Sign in</h1>
-
-		<form class="box center max-width-small" @submit.prevent="submit">
-			<div class="vertical-list-item">
-				<label for="username">Your username:</label>
-				<input id="username" placeholder="Username" type="text" v-model="username">
-			</div>
-
-			<div class="vertical-list-item">
-				<label for="password">Your password:</label>
-				<input id="password" placeholder="Password" type="password" v-model="password">
-			</div>
-
-			<div class="vertical-list-item">
-				<button class="primary" type="submit">Sign in</button>
-			</div>
-		</form>
-	</div>
-</template>
-
-<script>
-import config from "../../config";
+import config from "../../../config";
 
 export default {
 	data() {
@@ -45,7 +22,6 @@ export default {
 			};
 
 			this.$http.get(url, options).then((response) => {
-				// Parse response as JSON
 				response.json().then((data) => {
 					// Store that user is signed in
 					this.$store.commit({
@@ -123,4 +99,3 @@ export default {
 		}
 	}
 };
-</script>

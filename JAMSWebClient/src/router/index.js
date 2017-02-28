@@ -5,7 +5,7 @@ import account from "../views/account/account.vue";
 import jobsList from "../views/jobs/list/list.vue";
 import jobsShow from "../views/jobs/show/show.vue";
 import notFound from "../views/not-found.vue";
-import signIn from "../views/account/sign-in.vue";
+import signIn from "../views/account/sign-in/sign-in.vue";
 import signOut from "../views/account/sign-out.vue";
 import store from "../store/index";
 import workspacesList from "../views/workspaces/list/list.vue";

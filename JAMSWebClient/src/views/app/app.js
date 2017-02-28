@@ -11,6 +11,12 @@ export default {
 		Vue.http.interceptors.push(function(request, next) {
 			next(function(response) {
 				this.$store.commit("setIsConnected", response.status !== 0);
+
+				if (response.status === 403) {
+					console.debug("Intercepted 403. SHould redirect!");
+					Vue.router.push("/sign-in");
+					console.debug("Intercepted 403. Should have redirected!");
+				}
 			});
 		});
 	},
