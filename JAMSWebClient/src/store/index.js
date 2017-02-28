@@ -12,6 +12,9 @@ export default new Vuex.Store({
 		user
 	},
 	mutations: {
+		setDateLastRequest(state, date) {
+			state.dateLastRequest = date;
+		},
 		setIsConnected(state, isConnected) {
 			state.isConnected = isConnected;
 		},
@@ -20,8 +23,15 @@ export default new Vuex.Store({
 		}
 	},
 	state: {
+		// Date of last request (in milliseconds)
+		dateLastRequest: 0,
+
+		// Whether JAMS Cloud Server could be reached on last request
 		isConnected: false,
+
+		// Version of JAMS Cloud Server
 		jamsCloudServerVersion: ""
+
 	},
 	// Set strict=false in production mode to avoid performance penalty, see
 	// <http://vuex.vuejs.org/en/strict.html>.

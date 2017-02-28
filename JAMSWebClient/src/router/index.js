@@ -102,8 +102,6 @@ router.beforeEach((to, from, next) => {
 			}, (response) => {
 				console.error("router: Parsing JSON response failed:", response);
 			});
-		}, (response) => {
-			console.error("router: Unexpected response:", response);
 		});
 
 		// Block navigation while request is running
@@ -112,9 +110,8 @@ router.beforeEach((to, from, next) => {
 		return;
 	}
 
-	// If page or any parent page requires authentication
+	// If page or any parent page requires authentication, redirect to sign-in page
 	if (to.matched.some((record) => record.meta.requiresAuth) && !store.state.user.isSignedIn) {
-		// Redirect to sign-in page
 		next({
 			path: "/sign-in",
 			query: {
@@ -127,6 +124,7 @@ router.beforeEach((to, from, next) => {
 	// Delete flash messages from previous page
 	store.commit("flashes/clear");
 
+	// Navigate to the destination page
 	next();
 });
 

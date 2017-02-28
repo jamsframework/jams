@@ -3,7 +3,7 @@ import config from "../../config";
 export default {
 	created() {
 		this.getVersion();
-		setInterval(this.getVersion, config.connectionInterval);
+		this.ping();
 	},
 	methods: {
 		// Get JAMS Cloud Server version
@@ -23,9 +23,19 @@ export default {
 				}, (response) => {
 					console.error("app: Parsing text response failed:", response);
 				});
-			}, (response) => {
-				console.error("app: Unexpected response:", response);
 			});
+		},
+		// ping periodically sends a request to the server to see if it is still
+		// reachable.
+		ping() {
+			let delay = config.pingInterval - (Date.now() - this.$store.state.dateLastRequest);
+
+			if (delay <= 0) {
+				this.getVersion();
+				delay = config.pingInterval;
+			}
+
+			setTimeout(this.ping, delay);
 		}
 	}
 };

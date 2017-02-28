@@ -11,27 +11,36 @@ Vue.use(VueCookie);
 Vue.use(VueResource);
 sync(store, router);
 
+// Allow cookies for cross-origin requests (i.e. for requests to API)
+Vue.http.options.credentials = true;
+
+// Intercept responses
+Vue.http.interceptors.push(function(request, next) {
+	// Save when request was sent
+	store.commit("setDateLastRequest", Date.now());
+
+	next(function(response) {
+		// Update connection status
+		store.commit("setIsConnected", response.status !== 0);
+
+		switch (response.status) {
+			case 0:
+				break;
+			case 403:
+				console.debug("Intercepted 403. Should redirect!");
+				// Vue.router.push("/sign-in");
+				// console.debug("Intercepted 403. Should have redirected!");
+				break;
+			default:
+				console.error("unexpected response:", request, response);
+		}
+	});
+});
+
 /* eslint-disable no-new */
 new Vue({
 	el: "#app",
 	render: (h) => h(app), // Replace <div id="app"></div> in index.html with app
 	router,
 	store
-});
-
-// Allow cookies for cross-origin requests (i.e. for requests to API)
-Vue.http.options.credentials = true;
-
-// Intercept responses
-Vue.http.interceptors.push(function(request, next) {
-	next(function(response) {
-		// Update connection status
-		this.$store.commit("setIsConnected", response.status !== 0);
-
-		if (response.status === 403) {
-			console.debug("Intercepted 403. Should redirect!");
-			// Vue.router.push("/sign-in");
-			// console.debug("Intercepted 403. Should have redirected!");
-		}
-	});
 });
