@@ -35,6 +35,10 @@ export default {
 			this.$store.commit("flashes/clear");
 
 			if (this.newPassword === "" && this.newPasswordRepeated === "") {
+				this.$store.commit("flashes/add", {
+					message: "Enter a new password.",
+					type: 1
+				});
 				return;
 			}
 
