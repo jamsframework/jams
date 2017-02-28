@@ -1,8 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import flashes from "./flashes.js";
-import user from "./user.js";
+import flashes from "./modules/flashes.js";
+import user from "./modules/user.js";
 
 Vue.use(Vuex);
 
