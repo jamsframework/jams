@@ -1,4 +1,5 @@
-import date from "../../../date/date.js";
+import config from "../../../config";
+import date from "../../../date";
 
 export default {
 	data() {
@@ -10,7 +11,7 @@ export default {
 		formatDate: date.formatDate
 	},
 	mounted() {
-		const url = "http://localhost:8080/jamscloud/webresources/job/find";
+		const url = config.baseUrl + "/job/find";
 
 		const options = {
 			credentials: true

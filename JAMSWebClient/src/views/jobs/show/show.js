@@ -1,4 +1,5 @@
-import date from "../../../date/date.js";
+import config from "../../../config";
+import date from "../../../date";
 
 export default {
 	computed: {
@@ -20,7 +21,7 @@ export default {
 	},
 	mounted() {
 		const jobId = this.$router.currentRoute.params.id;
-		const url = "http://localhost:8080/jamscloud/webresources/job/" + jobId + "/state";
+		const url = config.baseUrl + "/job/" + jobId + "/state";
 
 		const options = {
 			credentials: true

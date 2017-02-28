@@ -1,6 +1,8 @@
+import config from "../../config";
+
 export default {
 	created() {
-		const url = "http://localhost:8080/jamscloud/webresources/version";
+		const url = config.baseUrl + "/version";
 
 		const options = {
 			credentials: true,
@@ -10,7 +12,6 @@ export default {
 		};
 
 		this.$http.get(url, options).then((response) => {
-			// Parse response as JSON
 			response.text().then((data) => {
 				this.$store.commit("setJamsCloudServerVersion", data);
 			}, (response) => {

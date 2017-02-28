@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import config from "../../config";
+
 export default {
 	data() {
 		return {
@@ -33,7 +35,7 @@ export default {
 		submit() {
 			this.$store.commit("flashes/clear");
 
-			const url = "http://localhost:8080/jamscloud/webresources/user/login";
+			const url = config.baseUrl + "/user/login";
 
 			const options = {
 				credentials: true,

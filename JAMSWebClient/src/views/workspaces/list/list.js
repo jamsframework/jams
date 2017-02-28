@@ -1,3 +1,5 @@
+import config from "../../../config";
+
 export default {
 	data() {
 		return {
@@ -13,7 +15,7 @@ export default {
 		}
 	},
 	mounted() {
-		const url = "http://localhost:8080/jamscloud/webresources/workspace/find";
+		const url = config.baseUrl + "/workspace/find";
 
 		const options = {
 			credentials: true

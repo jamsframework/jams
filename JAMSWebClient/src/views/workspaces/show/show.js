@@ -1,3 +1,5 @@
+import config from "../../../config";
+
 export default {
 	data() {
 		return {
@@ -14,7 +16,7 @@ export default {
 	},
 	mounted() {
 		const workspaceId = this.$router.currentRoute.params.id;
-		const url = "http://localhost:8080/jamscloud/webresources/workspace/" + workspaceId;
+		const url = config.baseUrl + "/workspace/" + workspaceId;
 
 		const options = {
 			credentials: true
