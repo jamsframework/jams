@@ -11,7 +11,17 @@ export default new Vuex.Store({
 		flashes,
 		user
 	},
-	// Set strict=false in production mode because of performance penalty, see
+	mutations: {
+		setJamsCloudServerVersion(state, version) {
+			state.isConnected = true;
+			state.jamsCloudServerVersion = version;
+		}
+	},
+	state: {
+		isConnected: false,
+		jamsCloudServerVersion: ""
+	},
+	// Set strict=false in production mode to avoid performance penalty, see
 	// <http://vuex.vuejs.org/en/strict.html>.
 	strict: process.env.NODE_ENV !== "production"
 });

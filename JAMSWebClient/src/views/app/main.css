@@ -12,13 +12,8 @@ html {
 }
 
 body {
-	display: -webkit-flex;
-	display:         flex;
 	font-size: 1.7em;
-	min-height: 100%;
-
-	-webkit-flex-direction: column;
-	        flex-direction: column;
+	height: 100%;
 }
 
 a {
@@ -159,8 +154,20 @@ h2 {
 	max-width: 30rem;
 }
 
-#site-footer {
+#site {
+	display: -webkit-flex;
+	display:         flex;
+	min-height: 100%;
 
+	-webkit-flex-direction: column;
+	        flex-direction: column;
+}
+
+#site-footer {
+	color: rgba(0, 0, 0, 0.25);
+	font-size: smaller;
+	margin: 2rem;
+	text-align: center;
 }
 
 #site-header {
@@ -192,7 +199,6 @@ small,
 		margin-right: 2rem;
 	}
 
-	#site-footer,
 	#site-header {
 		margin-top: 2rem;
 	}
