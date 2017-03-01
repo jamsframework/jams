@@ -1,4 +1,5 @@
 #jobs-server-load {
+	color: rgba(0, 0, 0, 0.25);
 	cursor: default;
 	font-size: smaller;
 	margin: 2rem;
@@ -6,7 +7,7 @@
 }
 
 	#jobs-server-load-bar {
-		background: rgba(0, 0, 0, 0.21);
+		background: rgba(0, 0, 0, 0.15);
 		border-radius: 10px;
 		height: 0.7rem;
 		margin: 0.3rem auto;
@@ -15,7 +16,7 @@
 	}
 
 		#jobs-server-load-value {
-			background: rgb(240, 222, 65);
+			background: rgb(240, 231, 118);
 			height: 100%;
 
 			-webkit-transition-duration: 0.5s;
