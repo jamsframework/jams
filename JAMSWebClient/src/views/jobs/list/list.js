@@ -24,7 +24,10 @@ export default {
 					console.error("jobs: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				console.error("jobs: Unexpected response:", response);
+				this.$store.commit("flashes/add", {
+					message: "Job list couldn’t be loaded",
+					type: 1
+				});
 			});
 		},
 		getServerLoad() {
@@ -36,8 +39,6 @@ export default {
 				}, (response) => {
 					console.error("jobs: Parsing JSON response failed:", response);
 				});
-			}, (response) => {
-				console.error("jobs: Unexpected response:", response);
 			});
 		}
 	},

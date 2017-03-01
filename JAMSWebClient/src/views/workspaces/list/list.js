@@ -21,7 +21,10 @@ export default {
 				console.error("Jobs: Parsing JSON response failed:", response);
 			});
 		}, (response) => {
-			console.error("Jobs: Unexpected response:", response);
+			this.$store.commit("flashes/add", {
+				message: "Workspace list couldn’t be loaded",
+				type: 1
+			});
 		});
 	}
 };

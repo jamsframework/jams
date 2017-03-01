@@ -80,7 +80,13 @@ export default {
 						message: "Your username or password is not correct.",
 						type: 1
 					});
+					return;
 				}
+
+				this.$store.commit("flashes/add", {
+					message: "Couldn’t sign in",
+					type: 1
+				});
 			});
 		}
 	},

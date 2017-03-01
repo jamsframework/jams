@@ -82,6 +82,11 @@ export default {
 				}, (response) => {
 					console.error("account: Parsing JSON response failed:", response);
 				});
+			}, (response) => {
+				this.$store.commit("flashes/add", {
+					message: "Password couldn’t be saved",
+					type: 1
+				});
 			});
 		}
 	}

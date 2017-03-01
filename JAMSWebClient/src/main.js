@@ -35,10 +35,6 @@ Vue.http.interceptors.push(function(request, next) {
 			case 409:
 				break;
 			default:
-				this.$store.commit("flashes/add", {
-					message: "The server sent an unexpected response.",
-					type: 1
-				});
 				console.error("unexpected response:", request, response);
 		}
 	});

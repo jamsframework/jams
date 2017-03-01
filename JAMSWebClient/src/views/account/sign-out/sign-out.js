@@ -16,6 +16,11 @@ export default {
 				message: "You signed out successfully.",
 				type: 0
 			});
+		}, (response) => {
+			this.$store.commit("flashes/add", {
+				message: "Couldn’t sign out",
+				type: 1
+			});
 		});
 	}
 };

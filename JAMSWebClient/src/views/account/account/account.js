@@ -46,7 +46,13 @@ export default {
 						message: "This username is already in use.",
 						type: 1
 					});
+					return;
 				}
+
+				this.$store.commit("flashes/add", {
+					message: "Account info couldn’t be saved",
+					type: 1
+				});
 			});
 		}
 	}
