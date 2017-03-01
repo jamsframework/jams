@@ -2,4 +2,4 @@
 
 <script src="./show.js"></script>
 
-<style scoped src="./show.css"></style>
+<style src="./show.css"></style>

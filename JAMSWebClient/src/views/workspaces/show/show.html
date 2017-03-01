@@ -9,16 +9,16 @@
 			<span class="tag">Read-only: {{workspace.readOnly}}</span>
 		</div>
 
-		<div class="files" v-if="workspace.WorkspaceFileAssociation.length > 0">
+		<div class="workspace-files" v-if="workspace.WorkspaceFileAssociation.length > 0">
 			<div>Files ({{workspace.WorkspaceFileAssociation.length}}):</div>
 			<ul class="small">
-				<li v-for="file in workspace.WorkspaceFileAssociation">
+				<li class="workspace-file-list-item" v-for="file in workspace.WorkspaceFileAssociation">
 					<span class="code" :title="'File ID: ' + file.ID">{{file.path}}</span>
 				</li>
 			</ul>
 		</div>
 
-		<div class="files" v-else>
+		<div class="workspace-files" v-else>
 			<div>Files (0)</div>
 		</div>
 	</div>

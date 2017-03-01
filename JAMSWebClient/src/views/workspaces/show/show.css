@@ -1,3 +1,7 @@
-.files {
+.workspace-files {
 	margin-top: 1rem;
+}
+
+.workspace-file-list-item {
+	display: block;
 }
