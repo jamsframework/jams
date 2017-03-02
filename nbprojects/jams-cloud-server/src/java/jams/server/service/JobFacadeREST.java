@@ -187,7 +187,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     
     @GET
     @Path("find")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response find(@Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
@@ -200,7 +200,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (list == null){
             return Response.status(Status.NOT_FOUND).build();
         }        
-        return Response.ok(new Jobs(list), MediaType.APPLICATION_XML_TYPE).build();
+        return Response.ok(new Jobs(list)).build();
     }
     
     @GET
@@ -318,7 +318,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         
     @GET
     @Path("{id}/state")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response getState(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
@@ -336,7 +336,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         try{
             updateJob(job);
             JobState state = processManager.state(job);
-            return Response.ok(state, MediaType.APPLICATION_XML_TYPE).build();
+            return Response.ok(state).build();
         }catch(IOException ioe){
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
@@ -345,7 +345,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     
     @GET
     @Path("load")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response load(@Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
@@ -353,7 +353,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         }
         
         double load = processManager.getLoad();
-        return Response.ok(Double.toString(load), MediaType.APPLICATION_XML_TYPE).build();        
+        return Response.ok(Double.toString(load)).build();
     }
     
     @GET

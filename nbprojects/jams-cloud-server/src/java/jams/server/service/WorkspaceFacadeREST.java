@@ -146,7 +146,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
 
     @GET
     @Path("{id}")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response find(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
         if (user == null) {
@@ -157,17 +157,17 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         if (ws != null) {
             workspaces.add(ws);
         }else{
-            return Response.ok(workspaces, MediaType.APPLICATION_XML).build();
+            return Response.ok(workspaces).build();
         }
         if (user.getAdmin() > 0 || user.getId() == ws.getUser().getId()) {
-            return Response.ok(workspaces, MediaType.APPLICATION_XML).build();
+            return Response.ok(workspaces).build();
         }
-        return Response.ok(workspaces, MediaType.APPLICATION_XML).build();
+        return Response.ok(workspaces).build();
     }
 
     @GET
     @Path("find")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response findAll(@QueryParam("name") String name, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
 
@@ -186,7 +186,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
             filteredList = workspaces;
         }
 
-        return Response.ok(new Workspaces(filteredList), MediaType.APPLICATION_XML).build();
+        return Response.ok(new Workspaces(filteredList)).build();
     }
 
     @POST

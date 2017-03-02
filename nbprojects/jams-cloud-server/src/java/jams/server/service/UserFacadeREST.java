@@ -78,7 +78,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
 
     @PUT
     @Path("{id}")
-    @Consumes({"application/xml", "application/json"})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response edit(@PathParam("id") Integer id, User entity, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
         if (user == null){
@@ -93,7 +93,7 @@ public class UserFacadeREST extends AbstractFacade<User> {
 
     @DELETE
     @Path("{id}")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         if (isAdmin(req)) {
             User o = super.find(id);
@@ -107,10 +107,10 @@ public class UserFacadeREST extends AbstractFacade<User> {
 
     @GET
     @Path("{id}")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response find(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         if (isAdmin(req)) {
-            return Response.ok(super.find(id),MediaType.APPLICATION_XML).build();
+            return Response.ok(super.find(id)).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
@@ -151,9 +151,8 @@ public class UserFacadeREST extends AbstractFacade<User> {
 
     @GET
     @Path("login")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response login(@QueryParam("login") String login, @QueryParam("password") String password, @Context HttpServletRequest req) {
-
         HttpSession session = req.getSession(true);
 
         List result = findByNameAndPassword(login, password);
@@ -163,22 +162,22 @@ public class UserFacadeREST extends AbstractFacade<User> {
             user = (User) result.get(0);
             session.setAttribute("userid", user.getId());
             session.setAttribute("userlogin", user.getLogin());
-            return Response.ok(user,MediaType.APPLICATION_XML_TYPE).build();            
+            return Response.ok(user).build();
         } else {
             session.setAttribute("userid", "-1");
             session.setAttribute("userlogin", "");
             return Response.status(Status.FORBIDDEN).build();            
         }
     }
-    
+
     @GET
     @Path("isConnected")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response isConnected(@Context HttpServletRequest req) {
         if (!isLoggedIn(req)) {
-            return Response.ok(Boolean.toString(false), MediaType.APPLICATION_XML_TYPE).build();
+            return Response.ok(Boolean.toString(false)).build();
         }        
-        return Response.ok(Boolean.toString(true), MediaType.APPLICATION_XML_TYPE).build();
+        return Response.ok(Boolean.toString(true)).build();
     }
 
     private List findByNameAndPassword(String login, String password) {

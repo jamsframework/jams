@@ -27,6 +27,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -44,7 +45,7 @@ public class ServerInformationREST  {
         
     @GET
     @Path("version")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
     public Response version(@Context HttpServletRequest req) {    
         req.getSession();
         return Response.ok(VERSION).build();
