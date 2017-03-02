@@ -46,7 +46,8 @@ public class MonthlyLowFlowDuration extends JAMSComponent {
     public Attribute.Calendar time;
                 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "lowFlowThresholds")
+    description = "lowFlowThresholds (12 semicolon-separated values - one for"
+            + " each month")
     public Attribute.Double[] lowFlowThresholds;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
