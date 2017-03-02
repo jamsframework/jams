@@ -81,14 +81,40 @@ public class UserFacadeREST extends AbstractFacade<User> {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response edit(@PathParam("id") Integer id, User entity, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
-        if (user == null){
+
+        if (user == null || (user.getId() != id && user.getAdmin() == 0)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-        if (user.getId() == id || user.getAdmin()>0) {
-            super.edit(entity);
-            return Response.ok(user).build();
+
+        // Get unchanged version of entity
+        User originalEntity = getEntityManager().find(User.class, id);
+
+        // Prevent creating new user
+        if (originalEntity == null) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
-        return Response.status(Response.Status.FORBIDDEN).build();
+
+        // Prevent changing the login to another user’s login
+        if (!isLoginAvailable(entity.getLogin(), id)) {
+            return Response.status(Response.Status.CONFLICT).build();
+        }
+
+        originalEntity.setEmail(entity.getEmail());
+        originalEntity.setLogin(entity.getLogin());
+        originalEntity.setName(entity.getName());
+
+        // Only update admin role if user is actually admin
+        if (user.getAdmin() > 0) {
+            originalEntity.setAdmin(entity.getAdmin());
+        }
+
+        // Only update password if it is not empty
+        if (!entity.getPassword().isEmpty()) {
+            originalEntity.setPassword(entity.getPassword());
+        }
+
+        super.edit(originalEntity);
+        return Response.ok(user).build();
     }
 
     @DELETE
@@ -205,4 +231,12 @@ public class UserFacadeREST extends AbstractFacade<User> {
                 .getResultList();
     }
 
+    private boolean isLoginAvailable(String login, Integer id) {
+        return em.createQuery(
+                "SELECT u FROM User u WHERE u.login LIKE :login AND u.id != :id")
+                .setParameter("id", id)
+                .setParameter("login", login)
+                .getResultList()
+                .isEmpty();
+    }
 }
