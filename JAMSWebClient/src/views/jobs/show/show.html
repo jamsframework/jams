@@ -1,7 +1,7 @@
-<div class="center max-width-medium">
+<div v-if="job">
 	<h1>Job</h1>
 
-	<div class="box" v-if="job !== null">
+	<div class="box center max-width-large">
 		<div>Job</div>
 		<div class="small">
 			<span class="tag">Started: {{formattedStartTime}}</span>
@@ -12,5 +12,17 @@
 			<span class="tag">Model: {{job.modelFile.path}}</span>
 			<router-link class="tag" :to="'/workspaces/show/' + job.workspace.id">Workspace {{job.workspace.id}}</router-link>
 		</div>
+	</div>
+
+	<h3>Info log</h3>
+	<div class="box center max-width-large">
+		<pre v-if="infoLog">{{infoLog}}</pre>
+		<div class="text-center" v-else><em>No info</em></div>
+	</div>
+
+	<h3>Error log</h3>
+	<div class="box center max-width-large">
+		<pre v-if="errorLog">{{errorLog}}</pre>
+		<div class="text-center" v-else><em>No errors</em></div>
 	</div>
 </div>

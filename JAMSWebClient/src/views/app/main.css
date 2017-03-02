@@ -4,7 +4,7 @@
 	        box-sizing: border-box;
 }
 
-body, li, ul {
+body, li, pre, ul {
 	margin: 0;
 	padding: 0;
 }
@@ -36,9 +36,9 @@ a:hover {
 	color: #0092ff;
 }
 
-h1, h2 {
+h1, h2, h3 {
 	font-weight: normal;
-	margin: 1rem 0 0;
+	margin: 2rem 0 0;
 	text-align: center;
 }
 
@@ -46,12 +46,23 @@ h1 {
 	font-size: 3rem;
 }
 
-h1:first-child {
-	margin-top: 0;
+h3 {
+	margin-top: 3rem;
 }
 
 ul {
 	list-style: none;
+}
+
+	li {
+		display: inline-block;
+	}
+
+pre {
+	font-family: monospace;
+	line-height: 1.4;
+	overflow-x: auto;
+	white-space: pre;
 }
 
 .box {
@@ -160,6 +171,10 @@ ul {
 		        flex: 1 0 auto;
 	}
 
+.max-width-large {
+	max-width: 100rem;
+}
+
 .max-width-medium {
 	max-width: 68rem;
 }
@@ -185,7 +200,7 @@ ul {
 	color: rgba(0, 0, 0, 0.25);
 	cursor: default;
 	font-size: smaller;
-	margin: 2rem;
+	margin: 4rem 0 2rem;
 	text-align: center;
 }
 

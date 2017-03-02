@@ -48,7 +48,7 @@ const router = new VueRouter({
 			meta: {
 				requiresAuth: true
 			},
-			path: "/jobs/show/:id"
+			path: "/jobs/show/:id/:logType?"
 		},
 		{
 			component: signIn,
