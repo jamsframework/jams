@@ -83,6 +83,7 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(cors.CrossOriginResourceSharingFilter.class);
         resources.add(jams.server.service.FileFacadeREST.class);
         resources.add(jams.server.service.JobFacadeREST.class);
         resources.add(jams.server.service.ServerInformationREST.class);
