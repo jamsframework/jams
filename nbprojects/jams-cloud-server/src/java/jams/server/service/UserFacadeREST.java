@@ -169,6 +169,16 @@ public class UserFacadeREST extends AbstractFacade<User> {
             return Response.status(Status.FORBIDDEN).build();            
         }
     }
+    
+    @GET
+    @Path("logout")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Response logout(@Context HttpServletRequest req) {
+        HttpSession session = req.getSession(true);
+        session.setAttribute("userid", "-1");
+        session.setAttribute("userlogin", "");
+        return Response.ok().build();
+    }
 
     @GET
     @Path("isConnected")

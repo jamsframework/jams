@@ -27,6 +27,7 @@ GET     /user/count
 PUT     /user/create
 GET     /user/isConnected
 GET     /user/login?login={string}&password={string}
+GET     /user/logout
 GET     /user/{from}/{to}
 DELETE  /user/{id}
 GET     /user/{id}
