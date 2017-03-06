@@ -476,7 +476,7 @@ public class ExplorerFrame extends JFrame {
 
     public void open(File workspaceFile) throws InvalidWorkspaceException {
         String[] libs = StringTools.toArray(explorer.getProperties().getProperty(SystemProperties.LIBS_IDENTIFIER, ""), ";");
-        JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), true);
+        JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), false);
         workspace.init();
         //workspace.setLibs(libs);
         explorer.getDisplayManager().removeAllDisplays();
