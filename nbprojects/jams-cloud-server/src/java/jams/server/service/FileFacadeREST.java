@@ -78,8 +78,8 @@ public class FileFacadeREST extends AbstractFacade<File> {
 
     @POST
     @Path("hash")
-    @Consumes({"application/xml", "application/json"})
-    @Produces({"application/xml", "application/json"})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response getHash(Files files, @Context HttpServletRequest req) {
         if (!isLoggedIn(req)) {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -99,13 +99,13 @@ public class FileFacadeREST extends AbstractFacade<File> {
                 }
             }
         }
-        return Response.ok(files, MediaType.APPLICATION_XML_TYPE).build();
+        return Response.ok(files).build();
     }
     
     @POST
     @Path("exists")
-    @Consumes({"application/xml", "application/json"})
-    @Produces({"application/xml", "application/json"})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response exists(Files files, @Context HttpServletRequest req) {
         if (!isLoggedIn(req)) {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -117,12 +117,12 @@ public class FileFacadeREST extends AbstractFacade<File> {
             if (!list.isEmpty())
                 result.add(list.get(0));                
         }
-        return Response.ok(result, MediaType.APPLICATION_XML_TYPE).build();
+        return Response.ok(result).build();
     }
 
     @GET
     @Path("{id}")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response find(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
         if (user == null) {
@@ -133,14 +133,14 @@ public class FileFacadeREST extends AbstractFacade<File> {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         if (user.getAdmin() > 0) {
-            return Response.ok(f, MediaType.APPLICATION_XML).build();
+            return Response.ok(f).build();
         }
         return Response.status(Response.Status.FORBIDDEN).build();
     }
     
     @GET
     @Path("clean")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response clean(@Context HttpServletRequest req) {
         User user = getCurrentUser(req);
         if (user == null) {
@@ -149,7 +149,7 @@ public class FileFacadeREST extends AbstractFacade<File> {
                          
         removeUnusedFiles(em);
         
-        return Response.ok("Ok", MediaType.APPLICATION_XML).build();
+        return Response.ok("Ok").build();
     }
     
     static public void removeUnusedFiles(EntityManager em){

@@ -68,8 +68,8 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
 
     @PUT
     @Path("create")
-    @Consumes({"application/xml", "application/json"})
-    @Produces({"application/xml"})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response create(Workspace entity, @Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
@@ -80,12 +80,12 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
         if (entity.getId() == null) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-        return Response.ok(entity, MediaType.APPLICATION_XML_TYPE).build();
+        return Response.ok(entity).build();
     }
 
     @PUT
     @Path("{id}")
-    @Consumes({"application/xml", "application/json"})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response edit(@PathParam("id") Integer id, Workspace entity, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
         if (user == null) {
@@ -114,7 +114,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
 
     @GET
     @Path("{id}/delete")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response remove(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
         if (user == null) {
@@ -191,8 +191,8 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
 
     @POST
     @Path("{id}/assign")
-    @Consumes({"application/xml", "application/json"})
-    @Produces({"application/xml"})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response assignFile(@PathParam("id") Integer wsID,
             WorkspaceFileAssociations entity, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
@@ -227,7 +227,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
 
     @GET
     @Path("{id}/detach")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response detachFile(@PathParam("id") Integer wsID,
             @QueryParam("RELATIVE_PATH") String path, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
@@ -256,7 +256,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
 
     @GET
     @Path("{id}/detachAll")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response detachAllFiles(@PathParam("id") Integer wsID,
             @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
@@ -281,7 +281,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
     
     @GET
     @Path("reset")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response reset(@PathParam("id") Integer wsID, @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
         if (user == null) {
@@ -297,7 +297,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
             }
         }
         removeUnusedFiles(em);
-        return Response.ok("Successful", MediaType.APPLICATION_XML_TYPE).build();
+        return Response.ok("Successful").build();
     }
 
     @GET
@@ -374,9 +374,9 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
 
     @GET
     @Path("count")
-    @Produces("text/plain")
+    @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON})
     public Response countREST(@Context HttpServletRequest req) {
-        return Response.ok(String.valueOf(super.count()), MediaType.TEXT_PLAIN).build();
+        return Response.ok(String.valueOf(super.count())).build();
     }
 
     @Override

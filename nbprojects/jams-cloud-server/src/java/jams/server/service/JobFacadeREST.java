@@ -135,8 +135,8 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     
     @GET
     @Path("create")
-    @Consumes({"application/xml", "application/json"})
-    @Produces({"application/xml"})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response create(@QueryParam("workspace") Integer wsID, 
             @QueryParam("file") Integer wfaID, @Context HttpServletRequest req) {
         
@@ -177,7 +177,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         try{            
             job = processManager.deploy(job);       
             em.persist(job);
-            return Response.ok(job, MediaType.APPLICATION_XML_TYPE).build();
+            return Response.ok(job).build();
         }catch(Throwable ioe){
             Logger logger = Logger.getLogger(JobFacadeREST.class.getName());
             logger.log(Level.SEVERE,ioe.getMessage(),ioe);
@@ -205,7 +205,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     
     @GET
     @Path("reset")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response reset(@Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
@@ -217,12 +217,12 @@ public class JobFacadeREST extends AbstractFacade<Job> {
                 remove(job);
             }
         }        
-        return Response.ok("Successful", MediaType.APPLICATION_XML_TYPE).build();
+        return Response.ok("Successful").build();
     }
     
     @GET
     @Path("findActive")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response activeJobs(@Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
@@ -243,12 +243,12 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             }
         }
         
-        return Response.ok(new Jobs(activeList), MediaType.APPLICATION_XML_TYPE).build();
+        return Response.ok(new Jobs(activeList)).build();
     }
     
     @GET
     @Path("findAll")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response findAll(@Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
@@ -263,7 +263,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             return Response.status(Status.NOT_FOUND).build();
         }
         
-        return Response.ok(new Jobs(list), MediaType.APPLICATION_XML_TYPE).build();
+        return Response.ok(new Jobs(list)).build();
     }
     
     @GET
@@ -358,7 +358,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     
     @GET
     @Path("{id}/kill")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response kill(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
@@ -376,7 +376,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         try{
             JobState state = processManager.kill(job);
             updateJob(job);
-            return Response.ok(state, MediaType.APPLICATION_XML_TYPE).build();
+            return Response.ok(state).build();
         }catch(IOException ioe){
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
@@ -385,7 +385,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     
     @GET
     @Path("{id}/delete")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response delete(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
@@ -410,7 +410,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
                 Utilities.deleteWorkspace(currentUser, ws);
                 em.remove(ws);                
             }
-            return Response.ok(job, MediaType.APPLICATION_XML_TYPE).build();
+            return Response.ok(job).build();
         }catch(IOException ioe){
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
@@ -419,7 +419,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     
     @GET
     @Path("{id}/refresh")
-    @Produces({"application/xml"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response refresh(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {

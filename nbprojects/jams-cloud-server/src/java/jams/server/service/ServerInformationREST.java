@@ -45,7 +45,7 @@ public class ServerInformationREST  {
         
     @GET
     @Path("version")
-    @Produces({MediaType.APPLICATION_XML, MediaType.TEXT_PLAIN})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response version(@Context HttpServletRequest req) {    
         req.getSession();
         return Response.ok(VERSION).build();

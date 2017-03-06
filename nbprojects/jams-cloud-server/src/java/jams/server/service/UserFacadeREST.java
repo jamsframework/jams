@@ -59,16 +59,16 @@ public class UserFacadeREST extends AbstractFacade<User> {
         
     @PUT
     @Path("create")
-    @Consumes({"application/xml", "application/json"})
-    @Produces({"application/xml"})
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response create(User entity, @Context HttpServletRequest req) {
         if (isAdmin(req)) {
             if (!findByName(entity.getLogin()).isEmpty())
-                return Response.ok("Login is already existing",MediaType.TEXT_PLAIN).build();
+                return Response.status(Response.Status.CONFLICT).build();
             
             super.create(entity);
             if (entity.getId() != null)
-                return Response.ok(entity,MediaType.APPLICATION_XML_TYPE).build();
+                return Response.ok(entity).build();
             else{
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
@@ -144,10 +144,10 @@ public class UserFacadeREST extends AbstractFacade<User> {
    
     @GET
     @Path("all")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response findAll(@Context HttpServletRequest req) {
         if (isAdmin(req)) {
-            return Response.ok(new Users(super.findAll()),MediaType.APPLICATION_XML).build();       
+            return Response.ok(new Users(super.findAll())).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
@@ -155,19 +155,19 @@ public class UserFacadeREST extends AbstractFacade<User> {
 
     @GET
     @Path("{from}/{to}")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response findRange(@PathParam("from") Integer from, @PathParam("to") Integer to, @Context HttpServletRequest req) {
         if (!isAdmin(req)) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-        return Response.ok(new Users(super.findRange(new int[]{from, to})),MediaType.APPLICATION_XML).build();       
+        return Response.ok(new Users(super.findRange(new int[]{from, to}))).build();
     }
 
     @GET
     @Path("count")
-    @Produces("text/plain")
+    @Produces({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON})
     public Response countREST(@Context HttpServletRequest req) {
-        return Response.ok(String.valueOf(super.count()),MediaType.TEXT_PLAIN).build();       
+        return Response.ok(String.valueOf(super.count())).build();
     }
 
     @Override
