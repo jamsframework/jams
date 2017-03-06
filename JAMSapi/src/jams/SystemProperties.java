@@ -66,6 +66,7 @@ public interface SystemProperties {
     String MAX_RECENT_FILES = "maxrecentfiles";
     String MAX_LIB_CLASSES = "maxlibclasses";
     String DOCBOOK_HOME = "docbook-home";
+    String EXPLORER_DECIMAL_DIGITS = "explorerdigits";
     
     /**
      * Adds an observer for some property

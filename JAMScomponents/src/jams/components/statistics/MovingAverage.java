@@ -7,7 +7,6 @@ package jams.components.statistics;
 
 import jams.JAMS;
 import jams.data.Attribute;
-import jams.data.Attribute.Calendar;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 

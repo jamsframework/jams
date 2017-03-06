@@ -6,6 +6,7 @@
 package jams.server.client.gui.tree;
 
 import jams.server.entities.Job;
+import jams.server.entities.JobState;
 import jams.server.entities.User;
 import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
@@ -151,7 +152,24 @@ public class JAMSServerTreeNodes {
         public JobNode(Job job) {
             super(job);
         }
-
+        
+        @Override
+        public String toString() {
+            Job job = getJob();
+//            JobState state = getJobState();
+            
+            
+            String s;
+            if (job.getWorkspace().getName() != null){
+                s = String.format("Job %05d - %s", job.getId(), job.getWorkspace().getName());
+            }else{
+                s = String.format("Job %05d", job.getId());
+            }
+//            if (state.isActive()) {
+//                s += String.format(" (%3d", Math.round((state.getProgress()*100)));
+//            }
+            return s;
+        }
         /**
          *
          * @return
@@ -159,16 +177,16 @@ public class JAMSServerTreeNodes {
         public Job getJob(){
             return (Job)getUserObject();
         }
-        
-        @Override
-        public String toString() {
-            Job job = getJob();
-            if (job.getWorkspace().getName() != null){
-                return String.format("Job %05d - %s", job.getId(), job.getWorkspace().getName());
-            }else{
-                return String.format("Job %05d", job.getId());
-            }
-        }
+//        
+//        @Override
+//        public String toString() {
+//            Job job = getJob();
+//            if (job.getWorkspace().getName() != null){
+//                return String.format("Job %05d - %s", job.getId(), job.getWorkspace().getName());
+//            }else{
+//                return String.format("Job %05d", job.getId());
+//            }
+//            }
         
         @Override
         public int compareTo(SortedMutableTreeNode o) {

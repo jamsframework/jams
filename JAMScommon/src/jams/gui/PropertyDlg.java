@@ -47,7 +47,7 @@ public class PropertyDlg extends JDialog {
     private JSpinner debugSpinner;
     private JComboBox<String> locale;
     private FileInput infoFile,  errorFile, docbookDir;
-    private TextInput windowHeight,  windowWidth, helpBaseURL, userName, charset;
+    private TextInput windowHeight,  windowWidth, helpBaseURL, userName, charset, explorerDigits;
     private SystemProperties properties;
     public static final int APPROVE_OPTION = 1;
     public static final int CANCEL_OPTION = 0;
@@ -205,6 +205,12 @@ public class PropertyDlg extends JDialog {
         docbookDir.setPreferredSize(new Dimension(286, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, docbookDir, 1, y, 1, 1, 1, 1);
 
+        y++;
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Explorer_Dec_Digits")), 0, y, 1, 1, 0, 0);
+        explorerDigits = new TextInput();
+        explorerDigits.getComponent().setPreferredSize(new Dimension(300, JCOMP_HEIGHT));
+        GUIHelper.addGBComponent(contentPanel, gbl, explorerDigits, 1, y, 1, 1, 1, 1);
+
         JButton okButton = new JButton(JAMS.i18n("OK"));
         okButton.addActionListener(new ActionListener() {
 
@@ -308,6 +314,7 @@ public class PropertyDlg extends JDialog {
         helpBaseURL.setValue(properties.getProperty(SystemProperties.HELPBASEURL_IDENTIFIER));
 
         docbookDir.setValue(properties.getProperty(SystemProperties.DOCBOOK_HOME_PATH));
+        explorerDigits.setValue(properties.getProperty(SystemProperties.EXPLORER_DECIMAL_DIGITS));
     }
 
     public void validateProperties() {
@@ -341,6 +348,7 @@ public class PropertyDlg extends JDialog {
         properties.setProperty(SystemProperties.USERNAME_IDENTIFIER, userName.getValue());
         properties.setProperty(SystemProperties.HELPBASEURL_IDENTIFIER, helpBaseURL.getValue());
         properties.setProperty(SystemProperties.DOCBOOK_HOME_PATH, docbookDir.getValue());
+        properties.setProperty(SystemProperties.EXPLORER_DECIMAL_DIGITS, explorerDigits.getValue());
     }
 
     public SystemProperties getProperties() {

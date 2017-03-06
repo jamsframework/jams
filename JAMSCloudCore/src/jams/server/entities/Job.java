@@ -127,7 +127,7 @@ public class Job implements Serializable, Comparable<Job> {
 
     public void setWorkspace(Workspace workspace) {
         this.workspace = workspace;
-    }
+    }    
     
     public WorkspaceFileAssociation getModelFile(){
         return modelFile;

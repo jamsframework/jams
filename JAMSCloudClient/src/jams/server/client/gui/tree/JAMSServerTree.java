@@ -141,6 +141,7 @@ public abstract class JAMSServerTree extends JTree {
                     JobNode jobNode = (JobNode) value;
                     item.setText(jobNode.toString());
                     if (jobNode.getJob().getPID() > 0) {
+//                    if (jobNode.getJobState().isActive()) {
                         item.setForeground(Color.GREEN.darker().darker());
                         item.setIcon(workingIcon);
                     } else {

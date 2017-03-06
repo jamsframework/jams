@@ -14,6 +14,7 @@ package jams.explorer.spreadsheet;
 import jams.JAMS;
 import jams.JAMSFileFilter;
 import jams.JAMSLogging;
+import jams.SystemProperties;
 import java.util.Vector;
 import java.awt.event.*;
 import java.awt.*;
@@ -889,15 +890,17 @@ public class JAMSSpreadSheet extends JPanel {
     }
 
     private void formatDoubleArray(double[] rowBuffer) {
-        // shorten double values to four decimal digits
+        // shorten double values to six decimal digits
+        int digits = Integer.parseInt(this.explorer.getProperties().getProperty(SystemProperties.EXPLORER_DECIMAL_DIGITS, "8"));
+        long factor = (long) Math.pow(10, digits);
         for (int i = 0; i < rowBuffer.length; i++) {
             if (!Double.isNaN(rowBuffer[i]) && !Double.isInfinite(rowBuffer[i])) {
-                double testValue = 10000 * rowBuffer[i];
+                double testValue = factor * rowBuffer[i];
 
                 if (testValue - Math.floor(testValue) < 0.5) {
-                    rowBuffer[i] = Math.floor(testValue) / 10000.;
+                    rowBuffer[i] = Math.floor(testValue) / factor;
                 } else {
-                    rowBuffer[i] = Math.ceil(testValue) / 10000.;
+                    rowBuffer[i] = Math.ceil(testValue) / factor;
                 }
                 //this works not for values larger LONG.Max
                 //rowBuffer[i] = Math.round(rowBuffer[i] * 10000.) / 10000.;
@@ -1055,6 +1058,7 @@ public class JAMSSpreadSheet extends JPanel {
 
             arrayVector.add(rowBuffer);
         }
+        store.close();
 
         this.tmodel = new JAMSTableModel();
         tmodel.setTimeRuns(true);

@@ -93,7 +93,7 @@ public class WorkspaceController {
      * @return the workspace with that id or an empty list
      */
     public Workspaces find(int id) {
-        log(getClass(), Level.FINE, JAMS.i18n("Searching_for_workspace_with_id_{0}"),id);
+        log(getClass(), Level.FINE, JAMS.i18n("searching_for_workspace_with_id_{0}"),id);
         return client.httpGet(urlStr + "/workspace/" + id, Workspaces.class);
     }
     
@@ -132,7 +132,7 @@ public class WorkspaceController {
         } else {
             return client.httpGet(urlStr + "/workspace/find?name=" + name, Workspaces.class);
         }
-
+        
     }
 
     /**

@@ -79,7 +79,6 @@ import optas.io.NetCDFFileWriter;
 import org.w3c.dom.Document;
 
 //import reg.viewer.Viewer;
-
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
@@ -97,12 +96,12 @@ public class ExplorerFrame extends JFrame {
     protected JTabbedPane tPane;
     protected JAMSExplorer explorer;
     protected PropertyDlg propertyDlg;
-    protected Document modelDoc = null;    
+    protected Document modelDoc = null;
     protected BrowseJAMSCloudDlg jamsCloudBrowser = null;
     private JMenuItem saveEnsembleItem;
 
     public ExplorerFrame(JAMSExplorer explorer) {
-        this.explorer = explorer;        
+        this.explorer = explorer;
         init();
     }
 
@@ -139,22 +138,21 @@ public class ExplorerFrame extends JFrame {
                 }
             }
         };
-        
+
         browseServerAction = new AbstractAction(JAMS.i18n("Start_Remote_Control")) {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 browseJAMSCloud();
             }
-        }; 
-                
+        };
+
         importDataAction = new AbstractAction(JAMS.i18n("IMPORT_DATA")) {
 
             public void actionPerformed(ActionEvent e) {
                 importData();
             }
         };
-
 
         openSTPAction = new AbstractAction(JAMS.i18n("STACKED_TIME_PLOT")) {
 
@@ -163,7 +161,6 @@ public class ExplorerFrame extends JFrame {
                 STPConfigurator stp = new STPConfigurator((JAMSExplorer) explorer);
             }
         };
-
 
         reloadWSAction = new AbstractAction(JAMS.i18n("RELOAD_WORKSPACE")) {
 
@@ -229,7 +226,6 @@ public class ExplorerFrame extends JFrame {
 //        wsEditButton.setToolTipText((String) editWSAction.getValue(Action.NAME));
 //        wsEditButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
 //        toolBar.add(wsEditButton);
-
         stpButton.setText("");
         stpButton.setToolTipText((String) openSTPAction.getValue(Action.NAME));
         stpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/stp.png")));
@@ -239,7 +235,7 @@ public class ExplorerFrame extends JFrame {
 
         JPanel toolBarPanel = new JPanel();
         toolBarPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        toolBarPanel.add(toolBar);        
+        toolBarPanel.add(toolBar);
 
         getContentPane().add(toolBarPanel, BorderLayout.NORTH);
 
@@ -257,15 +253,13 @@ public class ExplorerFrame extends JFrame {
         JMenu fileMenu = new JMenu(JAMS.i18n("FILE"));
         mainMenu.add(fileMenu);
 
-        JMenu prefsMenu = new JMenu(JAMS.i18n("PREFERENCES"));
-        mainMenu.add(prefsMenu);
-
 //        JMenuItem editWSItem = new JMenuItem(editWSAction);
 //        prefsMenu.add(editWSItem);
-
         if (explorer.isStandAlone()) {
+            JMenu prefsMenu = new JMenu(JAMS.i18n("PREFERENCES"));
             JMenuItem editPrefsItem = new JMenuItem(editPrefsAction);
             prefsMenu.add(editPrefsItem);
+            mainMenu.add(prefsMenu);
         }
 
         JMenu plotMenu = new JMenu(JAMS.i18n("PLOT"));
@@ -276,13 +270,12 @@ public class ExplorerFrame extends JFrame {
         fileMenu.add(openWSItem);
 
         fileMenu.addSeparator();
-        
+
 //        JMenuItem browserServer = new JMenuItem(browseServerAction);
 //        fileMenu.add(browserServer);
-        
         JMenuItem importData = new JMenuItem(importDataAction);
         fileMenu.add(importData);
-                        
+
         JMenuItem exitItem = new JMenuItem(exitAction);
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
         fileMenu.add(exitItem);
@@ -290,8 +283,7 @@ public class ExplorerFrame extends JFrame {
         JMenuItem stpItem = new JMenuItem(openSTPAction);
 //        stpIcon.setAccelerator()
         plotMenu.add(stpItem);
-        
-        
+
         //<editor-fold defaultstate="collapsed" desc="Ensembles Menu">
         JMenu ensemblesMenu = new JMenu("Ensembles");
         {
@@ -307,29 +299,30 @@ public class ExplorerFrame extends JFrame {
             });
             newEnsembleItem.setEnabled(true);
             ensemblesMenu.add(newEnsembleItem);
-           
+
             saveEnsembleItem = new JMenuItem(new AbstractAction(JAMS.i18n("SAVE_ENSEMBLE")) {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String name = JOptionPane.showInputDialog(rootPane, JAMS.i18n("PLEASE_ENTER_A_FILENAME"));
                     Component pane = ExplorerFrame.this.getTPane().getSelectedComponent();
-                    if (!(pane instanceof DataCollectionView))
+                    if (!(pane instanceof DataCollectionView)) {
                         return;
+                    }
 
-                    DataCollectionView view = (DataCollectionView)pane;
+                    DataCollectionView view = (DataCollectionView) pane;
                     String path = explorer.getWorkspace().getOutputDataDirectory().getAbsolutePath() + "/" + name;
-                    if (!explorer.getWorkspace().getOutputDataDirectory().exists()){
+                    if (!explorer.getWorkspace().getOutputDataDirectory().exists()) {
                         explorer.getWorkspace().getOutputDataDirectory().mkdirs();
                     }
-                    if (!path.endsWith(".cdat")){
+                    if (!path.endsWith(".cdat")) {
                         path = path.concat(".cdat");
-                    }                   
+                    }
                     view.getDataCollection().save(new File(path));
                 }
             });
             saveEnsembleItem.setEnabled(true);
-            ensemblesMenu.add(saveEnsembleItem);            
+            ensemblesMenu.add(saveEnsembleItem);
         }
 
         tPane.addChangeListener(new ChangeListener() {
@@ -347,7 +340,7 @@ public class ExplorerFrame extends JFrame {
 
         mainMenu.add(ensemblesMenu);
         //</editor-fold>
-        
+
         // NetCDF Menu
         JMenu netCDFMenu = new JMenu("NetCDF");
         mainMenu.add(netCDFMenu);
@@ -402,7 +395,7 @@ public class ExplorerFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                
+
                 JFileChooser chooser = new JFileChooser();
                 chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 chooser.setFileFilter(new FileFilter() {
@@ -464,7 +457,7 @@ public class ExplorerFrame extends JFrame {
                 }
             }
         });
-        
+
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(d.width, JAMSExplorer.SCREEN_WIDTH), Math.min(d.height, JAMSExplorer.SCREEN_HEIGHT));
@@ -473,6 +466,7 @@ public class ExplorerFrame extends JFrame {
 
     /**
      * hook to adapt toolbar in deriving classes
+     *
      * @param toolBar
      * @return adapted toolbar
      */
@@ -480,7 +474,6 @@ public class ExplorerFrame extends JFrame {
         return toolBar;
     }
 
-        
     public void open(File workspaceFile) throws InvalidWorkspaceException {
         String[] libs = StringTools.toArray(explorer.getProperties().getProperty(SystemProperties.LIBS_IDENTIFIER, ""), ";");
         JAMSWorkspace workspace = new JAMSWorkspace(workspaceFile, explorer.getRuntime(), true);
@@ -491,36 +484,36 @@ public class ExplorerFrame extends JFrame {
         this.update();
     }
 
-    protected void importData(){
-        JAMSWorkspace ws = explorer.getWorkspace();      
-        try{
+    protected void importData() {
+        JAMSWorkspace ws = explorer.getWorkspace();
+        try {
             ws.init();
-        }catch(InvalidWorkspaceException iwe){
+        } catch (InvalidWorkspaceException iwe) {
             iwe.printStackTrace();
             return;
         }
         int id = ws.getID();
-        if (id == -1){
+        if (id == -1) {
             return;
         }
-        try{
-            SynchronizeDlg synchronizer = new SynchronizeDlg(this, ws, explorer.getProperties());         
+        try {
+            SynchronizeDlg synchronizer = new SynchronizeDlg(this, ws, explorer.getProperties());
             synchronizer.setPreferredSize(new Dimension(640, 480));
             GUIHelper.centerOnParent(synchronizer, true);
             synchronizer.setVisible(true);
-        }catch(IOException ioe){
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
     }
-    
-    protected void browseJAMSCloud(){
-        if ( jamsCloudBrowser == null ){
+
+    protected void browseJAMSCloud() {
+        if (jamsCloudBrowser == null) {
             jamsCloudBrowser = new BrowseJAMSCloudDlg(ExplorerFrame.this, ExplorerFrame.this.explorer.getProperties());
             jamsCloudBrowser.init();
-            jamsCloudBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);            
-        }                
+            jamsCloudBrowser.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        }
         GUIHelper.centerOnScreen(jamsCloudBrowser, true);
-        jamsCloudBrowser.setVisible(true);        
+        jamsCloudBrowser.setVisible(true);
     }
 
     protected void open() {
@@ -624,7 +617,6 @@ public class ExplorerFrame extends JFrame {
     protected void exit() {
 
         //Viewer.destroy();
-
         for (Window window : ((JAMSExplorer) explorer).getChildWindows()) {
             window.dispose();
         }

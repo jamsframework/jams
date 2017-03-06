@@ -8,7 +8,6 @@ import jams.data.Attribute;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
-import java.util.Calendar;
 
 /**
  *

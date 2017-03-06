@@ -8,7 +8,6 @@ package jams.components.statistics;
 import jams.JAMS;
 import jams.data.AbstractDataSupplier;
 import jams.data.Attribute;
-import jams.math.statistics.MannKendall.*;
 import jams.model.JAMSComponent;
 import jams.model.JAMSVarDescription;
 

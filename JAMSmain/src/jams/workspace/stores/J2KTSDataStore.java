@@ -215,8 +215,14 @@ public class J2KTSDataStore extends TSDataStore {
                 missingData = Double.parseDouble(missingDataValue);
             } else if (key.equalsIgnoreCase(TAGNAME_DATASTART) || key.equalsIgnoreCase(TAGNAME_DATAEND)) {
 
-                String dateFormat = DATE_TIME_FORMAT_PATTERN_J2K;
                 String dateString = tok2.nextToken();
+                String dateFormat;
+                if (dateString.contains("-")) {
+                    dateFormat = Attribute.Calendar.DEFAULT_FORMAT_PATTERN;
+                } else {
+                    dateFormat = DATE_TIME_FORMAT_PATTERN_J2K;
+                }
+
                 if (tok2.hasMoreTokens()) {
                     dateString += " " + tok2.nextToken();
                 }
@@ -242,7 +248,7 @@ public class J2KTSDataStore extends TSDataStore {
                 }
                 if (tres.length() > 1) {
                     try {
-                        timeUnitCount = Integer.parseInt(tres.substring(0, tres.length()-1));
+                        timeUnitCount = Integer.parseInt(tres.substring(0, tres.length() - 1));
                     } catch (NumberFormatException nfe) {
                         ws.getRuntime().handle(nfe);
                         timeUnitCount = 1;
