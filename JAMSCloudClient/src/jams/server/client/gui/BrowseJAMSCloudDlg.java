@@ -970,9 +970,9 @@ public class BrowseJAMSCloudDlg extends JDialog {
             User user = connector.getClient().getUser();
             Workspaces wsList = connector.getClient().workspaces().findAll(null);
             Jobs jobList = connector.getClient().jobs().find();
-
+                        
             workspaceTree.generateModel(user, wsList);
-            jobsTree.generateModel(user, jobList);
+            jobsTree.generateModel(user, jobList, connector.getClient().jobs());
         } catch (ProcessingException t) {
             log.log(Level.SEVERE, t.getMessage(), t);
         }

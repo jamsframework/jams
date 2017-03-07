@@ -5,6 +5,7 @@
  */
 package jams.server.client.gui.tree;
 
+import jams.server.client.JobController;
 import jams.server.entities.Job;
 import jams.server.entities.JobState;
 import jams.server.entities.User;
@@ -52,7 +53,7 @@ public class JAMSServerTreeNodes {
             super.insert(newChild, childIndex);
             Collections.sort(this.children, nodeComparator);
         }
-        
+
         /**
          *
          */
@@ -67,10 +68,10 @@ public class JAMSServerTreeNodes {
                     }
                     if (s1.isLeaf() && !s2.isLeaf()) {
                         return 1;
-                    }                    
+                    }
                     return s1.compareTo(s2);
                 }
-                return o1.toString().compareToIgnoreCase(o2.toString());                                
+                return o1.toString().compareToIgnoreCase(o2.toString());
             }
 
             @Override
@@ -88,17 +89,18 @@ public class JAMSServerTreeNodes {
     /**
      *
      */
-    static public class UserNode extends SortedMutableTreeNode {        
+    static public class UserNode extends SortedMutableTreeNode {
+
         private UserNode(User user) {
             super(user);
         }
 
         @Override
         public String toString() {
-            return ((User)userObject).getName();
-        }                
+            return ((User) userObject).getName();
+        }
     }
-        
+
     /**
      *
      */
@@ -111,29 +113,30 @@ public class JAMSServerTreeNodes {
         public WorkspaceNode(Workspace ws) {
             super(ws);
         }
-        
+
         /**
          *
          * @return
          */
-        public Workspace getWorkspace(){
-            return (Workspace)userObject;
+        public Workspace getWorkspace() {
+            return (Workspace) userObject;
         }
 
         @Override
         public String toString() {
             Workspace ws = getWorkspace();
-            if (ws.getName()!=null)
+            if (ws.getName() != null) {
                 return String.format("Workspace %05d - %s", ws.getId(), ws.getName());
-            else
+            } else {
                 return String.format("Workspace %05d", ws.getId());
-        }        
-        
+            }
+        }
+
         @Override
         public int compareTo(SortedMutableTreeNode o) {
-            if (o instanceof WorkspaceNode){
+            if (o instanceof WorkspaceNode) {
                 WorkspaceNode o1 = this;
-                WorkspaceNode o2 = (WorkspaceNode)o;
+                WorkspaceNode o2 = (WorkspaceNode) o;
                 return o1.getWorkspace().getId().compareTo(o2.getWorkspace().getId());
             }
             return this.toString().compareToIgnoreCase(o.toString());
@@ -143,39 +146,41 @@ public class JAMSServerTreeNodes {
     /**
      *
      */
-    static public class JobNode extends SortedMutableTreeNode {    
+    static public class JobNode extends SortedMutableTreeNode {
+
+        JobState state;
 
         /**
          *
          * @param job
          */
-        public JobNode(Job job) {
+        public JobNode(Job job, JobState state) {
             super(job);
+            this.state = state;
         }
-        
+
         @Override
         public String toString() {
             Job job = getJob();
-//            JobState state = getJobState();
-            
-            
+
             String s;
-            if (job.getWorkspace().getName() != null){
+            if (job.getWorkspace().getName() != null) {
                 s = String.format("Job %05d - %s", job.getId(), job.getWorkspace().getName());
-            }else{
+            } else {
                 s = String.format("Job %05d", job.getId());
             }
-//            if (state.isActive()) {
-//                s += String.format(" (%3d", Math.round((state.getProgress()*100)));
-//            }
+            if (state != null) {
+                s += String.format(" (%d%%)", Math.round((state.getProgress() * 100)));
+            }
             return s;
         }
+
         /**
          *
          * @return
          */
-        public Job getJob(){
-            return (Job)getUserObject();
+        public Job getJob() {
+            return (Job) getUserObject();
         }
 //        
 //        @Override
@@ -187,12 +192,12 @@ public class JAMSServerTreeNodes {
 //                return String.format("Job %05d", job.getId());
 //            }
 //            }
-        
+
         @Override
         public int compareTo(SortedMutableTreeNode o) {
-            if (o instanceof JobNode){
+            if (o instanceof JobNode) {
                 JobNode o1 = this;
-                JobNode o2 = (JobNode)o;
+                JobNode o2 = (JobNode) o;
                 return o1.getJob().getId().compareTo(o2.getJob().getId());
             }
             return this.toString().compareToIgnoreCase(o.toString());
@@ -202,7 +207,7 @@ public class JAMSServerTreeNodes {
     /**
      *
      */
-    static public class WFANode extends SortedMutableTreeNode {    
+    static public class WFANode extends SortedMutableTreeNode {
 
         WorkspaceFileAssociation wfa;
         String fileName;
@@ -214,7 +219,7 @@ public class JAMSServerTreeNodes {
          */
         public WFANode(WorkspaceFileAssociation wfa) {
             super(wfa);
-            
+
             this.wfa = wfa;
             String path = wfa.getPath().replace("\\\\", "\\");
             path = path.replace("//", "/");
@@ -232,10 +237,10 @@ public class JAMSServerTreeNodes {
          *
          * @return
          */
-        public WorkspaceFileAssociation getWFA(){
+        public WorkspaceFileAssociation getWFA() {
             return wfa;
         }
-        
+
         /**
          *
          * @return
@@ -257,13 +262,13 @@ public class JAMSServerTreeNodes {
             return fileName;
         }
     }
-    
+
     /**
      *
      * @param user
      * @return
      */
-    static public SortedMutableTreeNode getNode(User user){
+    static public SortedMutableTreeNode getNode(User user) {
         return new UserNode(user);
     }
 
@@ -272,7 +277,7 @@ public class JAMSServerTreeNodes {
      * @param ws
      * @return
      */
-    static public SortedMutableTreeNode getNode(Workspace ws){
+    static public SortedMutableTreeNode getNode(Workspace ws) {
         return new WorkspaceNode(ws);
     }
 
@@ -281,7 +286,7 @@ public class JAMSServerTreeNodes {
      * @param wfa
      * @return
      */
-    static public SortedMutableTreeNode getNode(WorkspaceFileAssociation wfa){
+    static public SortedMutableTreeNode getNode(WorkspaceFileAssociation wfa) {
         return new WFANode(wfa);
     }
 
@@ -290,8 +295,8 @@ public class JAMSServerTreeNodes {
      * @param job
      * @return
      */
-    static public SortedMutableTreeNode getNode(Job job){
-        return new JobNode(job);
+    static public SortedMutableTreeNode getNode(Job job, JobState state){
+        return new JobNode(job, state);
     }
 
     /**
@@ -299,7 +304,7 @@ public class JAMSServerTreeNodes {
      * @param string
      * @return
      */
-    static public SortedMutableTreeNode getNode(String string){
+    static public SortedMutableTreeNode getNode(String string) {
         return new SortedMutableTreeNode(string);
     }
 }

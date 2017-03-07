@@ -26,6 +26,7 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 /**
@@ -76,9 +77,9 @@ public abstract class JAMSServerTree extends JTree {
                 } else {
                     renderer.setBackground(backgroundNonSelectionColor);
                 }
-                renderer.setMinimumSize(new Dimension(200, 15));
-                renderer.setPreferredSize(new Dimension(200, 20));
-                renderer.setMaximumSize(new Dimension(200, 25));
+                renderer.setMinimumSize(new Dimension(300, 15));
+                renderer.setPreferredSize(new Dimension(300, 20));
+                renderer.setMaximumSize(new Dimension(300, 25));
                 
                 renderer.setEnabled(tree.isEnabled());
                 renderer.setAlignmentX(0.0f);
@@ -88,9 +89,9 @@ public abstract class JAMSServerTree extends JTree {
                 item.setIcon(folderIcon);
                 
                 if (value instanceof WFANode){
-                    renderer.setMinimumSize(new Dimension(200, 12));
-                    renderer.setPreferredSize(new Dimension(200, 17));
-                    renderer.setMaximumSize(new Dimension(200, 22));
+                    renderer.setMinimumSize(new Dimension(300, 12));
+                    renderer.setPreferredSize(new Dimension(300, 17));
+                    renderer.setMaximumSize(new Dimension(300, 22));
                     
                     WFANode wfaNode = (WFANode)value;
                     switch (wfaNode.getWFA().getRole()){
@@ -116,17 +117,17 @@ public abstract class JAMSServerTree extends JTree {
                 }
                 
                 if (value instanceof UserNode) {
-                    renderer.setMinimumSize(new Dimension(200, 20));
-                    renderer.setPreferredSize(new Dimension(200, 25));
-                    renderer.setMaximumSize(new Dimension(200, 35));
+                    renderer.setMinimumSize(new Dimension(300, 20));
+                    renderer.setPreferredSize(new Dimension(300, 25));
+                    renderer.setMaximumSize(new Dimension(300, 35));
                 
                     item.setIcon(userIcon);                    
                 }
                 
                 if (value instanceof WorkspaceNode) {
-                    renderer.setMinimumSize(new Dimension(200, 12));
-                    renderer.setPreferredSize(new Dimension(200, 17));
-                    renderer.setMaximumSize(new Dimension(200, 22));
+                    renderer.setMinimumSize(new Dimension(300, 12));
+                    renderer.setPreferredSize(new Dimension(300, 17));
+                    renderer.setMaximumSize(new Dimension(300, 22));
                     
                     WorkspaceNode wsNode = (WorkspaceNode) value;
                     item.setText(wsNode.toString());
@@ -134,14 +135,13 @@ public abstract class JAMSServerTree extends JTree {
                 }
 
                 if (value instanceof JobNode) {
-                    renderer.setMinimumSize(new Dimension(200, 12));
-                    renderer.setPreferredSize(new Dimension(200, 17));
-                    renderer.setMaximumSize(new Dimension(200, 22));
+                    renderer.setMinimumSize(new Dimension(300, 12));
+                    renderer.setPreferredSize(new Dimension(300, 17));
+                    renderer.setMaximumSize(new Dimension(300, 22));
                     
                     JobNode jobNode = (JobNode) value;
                     item.setText(jobNode.toString());
                     if (jobNode.getJob().getPID() > 0) {
-//                    if (jobNode.getJobState().isActive()) {
                         item.setForeground(Color.GREEN.darker().darker());
                         item.setIcon(workingIcon);
                     } else {

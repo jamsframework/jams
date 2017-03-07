@@ -5,9 +5,11 @@
  */
 package jams.server.client.gui.tree;
 
+import jams.server.client.JobController;
 import jams.server.client.gui.tree.JAMSServerTreeNodes.JobNode;
 import jams.server.client.gui.tree.JAMSServerTreeNodes.SortedMutableTreeNode;
 import jams.server.entities.Job;
+import jams.server.entities.JobState;
 import jams.server.entities.Jobs;
 import jams.server.entities.User;
 import jams.server.entities.WorkspaceFileAssociation;
@@ -19,7 +21,7 @@ import javax.swing.tree.DefaultTreeModel;
  * @author christian
  */
 public class JobsTree extends JAMSServerTree {
-    
+     
     /**
      *
      */
@@ -27,8 +29,8 @@ public class JobsTree extends JAMSServerTree {
         super();
     }
         
-    private DefaultMutableTreeNode createJobNode(Job job) {
-        SortedMutableTreeNode top = JAMSServerTreeNodes.getNode(job);
+    private DefaultMutableTreeNode createJobNode(Job job, JobState state) {
+        SortedMutableTreeNode top = JAMSServerTreeNodes.getNode(job, state);
 
         for (WorkspaceFileAssociation wfa : job.getWorkspace().getFiles()) {            
             attachWFAtoTree(wfa, top);
@@ -41,7 +43,7 @@ public class JobsTree extends JAMSServerTree {
      * @param job
      */
     public void updateNode(Job job){
-        DefaultMutableTreeNode newNode = createJobNode(job);        
+        DefaultMutableTreeNode newNode = createJobNode(job, null);        
         DefaultMutableTreeNode oldNode = findNode(getRoot(), job);
         if (oldNode == null)
             return;
@@ -87,16 +89,23 @@ public class JobsTree extends JAMSServerTree {
         return null;
     }
         
+    JobController c;
     /**
      *
      * @param user
      * @param jobs
+     * @param c
      */
-    public void generateModel(User user, Jobs jobs) {
+    public void generateModel(User user, Jobs jobs, JobController c) {
         SortedMutableTreeNode root = JAMSServerTreeNodes.getNode(user);
-
+        this.c = c;
+        
         for (Job job : jobs.getJobs()) {
-            root.add(createJobNode(job));
+            JobState state = null;
+            if (job.getPID() > 0) {
+                state = c.getState(job);
+            }
+            root.add(createJobNode(job, state));
         }
 
         DefaultTreeModel model = new DefaultTreeModel(root);
