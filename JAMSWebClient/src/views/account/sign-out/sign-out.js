@@ -13,7 +13,7 @@ export default {
 			this.$store.commit("user/signOut");
 
 			this.$store.commit("flashes/add", {
-				message: "You signed out successfully.",
+				message: "Signed out",
 				type: 0
 			});
 		}, (response) => {

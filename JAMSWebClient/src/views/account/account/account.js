@@ -35,7 +35,7 @@ export default {
 					});
 
 					this.$store.commit("flashes/add", {
-						message: "Updated account information successfully."
+						message: "Updated account information"
 					});
 				}, (response) => {
 					console.error("account: Parsing JSON response failed:", response);
@@ -43,7 +43,7 @@ export default {
 			}, (response) => {
 				if (response.status === 409) {
 					this.$store.commit("flashes/add", {
-						message: "This username is already in use.",
+						message: "Username is already in use",
 						type: 1
 					});
 					return;

@@ -11,7 +11,7 @@ export default {
 
 		if (!storage.cookieStorageIsAvailable) {
 			this.$store.commit("flashes/add", {
-				message: "Please enable cookies, and refresh the page.",
+				message: "Please enable cookies and refresh the page",
 				type: 1
 			});
 			return;
@@ -19,7 +19,7 @@ export default {
 
 		if (this.isRedirect) {
 			this.$store.commit("flashes/add", {
-				message: "Please sign in to access this page.",
+				message: "Sign in to access this page",
 				type: 0
 			});
 		}
@@ -69,15 +69,15 @@ export default {
 					this.$router.push("/");
 				}, (response) => {
 					this.$store.commit("flashes/add", {
-						message: "You could not be signed in because the server sent an unexpected response.",
+						message: "Couldn’t sign in",
 						type: 1
 					});
-					console.error("SignIn: Parsing JSON response failed:", response);
+					console.error("sign-in: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
 				if (response.status === 403) {
 					this.$store.commit("flashes/add", {
-						message: "Your username or password is not correct.",
+						message: "Your username or password is not correct",
 						type: 1
 					});
 					return;
@@ -99,7 +99,7 @@ export default {
 
 			if (!storage.cookieStorageIsAvailable) {
 				this.$store.commit("flashes/add", {
-					message: "Please enable cookies, and refresh the page.",
+					message: "Please enable cookies and refresh the page",
 					type: 1
 				});
 				return;
@@ -109,7 +109,7 @@ export default {
 
 			if (this.isRedirect) {
 				this.$store.commit("flashes/add", {
-					message: "Please sign in to access this page.",
+					message: "Sign in to access this page",
 					type: 0
 				});
 			}

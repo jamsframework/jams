@@ -36,7 +36,7 @@ export default {
 
 			if (this.newPassword === "" && this.newPasswordRepeated === "") {
 				this.$store.commit("flashes/add", {
-					message: "Enter a new password.",
+					message: "Enter a password",
 					type: 1
 				});
 				return;
@@ -44,7 +44,7 @@ export default {
 
 			if (this.newPassword !== this.newPasswordRepeated) {
 				this.$store.commit("flashes/add", {
-					message: "The password and repeated password do not match.",
+					message: "Password and repeated password do not match",
 					type: 1
 				});
 				return;
@@ -77,7 +77,7 @@ export default {
 					}
 
 					this.$store.commit("flashes/add", {
-						message: "Updated password successfully."
+						message: "Saved password"
 					});
 				}, (response) => {
 					console.error("account: Parsing JSON response failed:", response);
