@@ -19,7 +19,7 @@ export function getCookie(name) {
 	return decodeURIComponent(cookies.substring(startIndex, endIndex));
 }
 
-// isAvailable returns whether cookie storage are available.
+// isAvailable returns whether cookie storage is available.
 export function isAvailable() {
 	return navigator.cookieEnabled;
 }
