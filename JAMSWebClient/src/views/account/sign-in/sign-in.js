@@ -27,7 +27,7 @@ export default {
 	data() {
 		return {
 			canSignIn: storage.cookieStorageIsAvailable,
-			isRedirect: !!this.$router.currentRoute.query.from,
+			isRedirect: !!this.$route.query.from,
 			password: "",
 			username: ""
 		};
@@ -61,7 +61,7 @@ export default {
 
 					// If user was redirected to sign-in page, redirect back to source
 					if (this.isRedirect) {
-						this.$router.push(this.$router.currentRoute.query.from);
+						this.$router.push(this.$route.query.from);
 						return;
 					}
 
@@ -105,7 +105,7 @@ export default {
 				return;
 			}
 
-			this.isRedirect = !!this.$router.currentRoute.query.from;
+			this.isRedirect = !!this.$route.query.from;
 
 			if (this.isRedirect) {
 				this.$store.commit("flashes/add", {

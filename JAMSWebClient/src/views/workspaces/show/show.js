@@ -16,7 +16,7 @@ export default {
 
 	},
 	mounted() {
-		const workspaceId = this.$router.currentRoute.params.id;
+		const workspaceId = this.$route.params.id;
 		const url = config.baseUrl + "/workspace/" + workspaceId;
 
 		this.$http.get(url).then((response) => {
