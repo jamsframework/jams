@@ -2,7 +2,7 @@ import config from "../../../config";
 import * as storage from "../../../storage";
 
 export default {
-	beforeCreate() {
+	created() {
 		// If user is already signed in, redirect to home page
 		if (this.$store.state.user.isSignedIn) {
 			this.$router.replace("/");
