@@ -40,6 +40,34 @@ export default {
 					console.error("jobs: Parsing JSON response failed:", response);
 				});
 			});
+		},
+		removeJob(job) {
+			const message = "Remove job?";
+
+			if (!window.confirm(message)) {
+				return;
+			}
+
+			const url = config.baseUrl + "/job/" + job.id + "/delete";
+
+			this.$http.get(url).then((response) => {
+				response.json().then((data) => {
+					for (let i = 0; i < this.jobs.length; i++) {
+						if (this.jobs[i].id === data.id) {
+							this.jobs.splice(i, 1);
+							break;
+						}
+					}
+				}, (response) => {
+					console.error("jobs: Parsing JSON response failed:", response);
+				});
+			}, (response) => {
+				console.debug(response);
+				this.$store.commit("flashes/add", {
+					message: "Job couldn’t be removed",
+					type: 1
+				});
+			});
 		}
 	},
 	mounted() {

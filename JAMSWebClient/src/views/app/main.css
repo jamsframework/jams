@@ -29,6 +29,7 @@ body {
 
 a {
 	color: #0079D3;
+	cursor: pointer;
 	text-decoration: none;
 }
 

@@ -7,6 +7,7 @@
 			<span class="tag">Started: {{formatDateTime(job.startTime)}}</span>
 			<span class="tag">Model: {{job.modelFile.path}}</span>
 			<router-link class="tag" :to="'/workspaces/show/' + job.workspace.id">Workspace {{job.workspace.id}}</router-link>
+			<a class="tag" @click="removeJob(job)">Remove</a>
 			<router-link class="tag" :to="'/jobs/show/' + job.id">Details</router-link>
 		</div>
 	</div>
