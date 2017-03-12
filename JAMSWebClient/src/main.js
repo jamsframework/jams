@@ -26,12 +26,12 @@ Vue.http.interceptors.push(function(request, next) {
 
 		switch (response.status) {
 			case 0:
-				handle403();
+				handle403(response);
 				break;
 			case 200:
 				break;
 			case 403:
-				handle403();
+				handle403(response);
 				break;
 			case 409:
 				break;
@@ -47,8 +47,8 @@ let isHandling403 = false;
 // handle403 handles HTTP status code 403 Forbidden responses. If the user is
 // signed in locally, it is checked whether he is still signed in on the server.
 // If he is not, he is redirected to the sign-in page.
-function handle403() {
-	if (isHandling403) {
+function handle403(response) {
+	if (isHandling403 || response.url.indexOf(config.baseUrl + "/user/login") === 0) {
 		return;
 	}
 
