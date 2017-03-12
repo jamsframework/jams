@@ -25,7 +25,7 @@ export default {
 			size: 0,
 
 			// Logs
-			errorlog: "",
+			errorLog: "",
 			infoLog: ""
 		};
 	},
@@ -61,15 +61,11 @@ export default {
 			const url = config.baseUrl + "/job/" + jobId + "/" + type + "log";
 
 			this.$http.get(url).then((response) => {
-				console.debug(response);
-
 				response.blob().then((data) => {
-					console.debug(data);
-
 					const reader = new FileReader();
 					reader.addEventListener("loadend", () => {
 						if (type === "error") {
-							this.errorlog = reader.result;
+							this.errorLog = reader.result;
 						} else if (type === "info") {
 							this.infoLog = reader.result;
 						}
