@@ -8,7 +8,7 @@ export default {
 			return;
 		}
 
-		const url = config.baseUrl + "/user/logout";
+		const url = config.apiBaseUrl + "/user/logout";
 
 		this.$http.get(url).then((response) => {
 			this.$store.commit("user/signOut");

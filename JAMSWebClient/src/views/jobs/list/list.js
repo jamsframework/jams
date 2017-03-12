@@ -16,7 +16,7 @@ export default {
 	methods: {
 		formatDateTime,
 		getJobs() {
-			const url = config.baseUrl + "/job/find";
+			const url = config.apiBaseUrl + "/job/find";
 
 			this.$http.get(url).then((response) => {
 				response.json().then((data) => {
@@ -29,7 +29,7 @@ export default {
 			});
 		},
 		getServerLoad() {
-			const url = config.baseUrl + "/job/load";
+			const url = config.apiBaseUrl + "/job/load";
 
 			this.$http.get(url).then((response) => {
 				response.json().then((data) => {
@@ -46,7 +46,7 @@ export default {
 				return;
 			}
 
-			const url = config.baseUrl + "/job/" + job.id + "/delete";
+			const url = config.apiBaseUrl + "/job/" + job.id + "/delete";
 
 			this.$http.get(url).then((response) => {
 				response.json().then((data) => {

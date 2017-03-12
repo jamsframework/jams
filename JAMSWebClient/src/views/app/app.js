@@ -8,7 +8,7 @@ export default {
 	methods: {
 		// Get JAMS Cloud Server version
 		getVersion() {
-			const url = config.baseUrl + "/version";
+			const url = config.apiBaseUrl + "/version";
 
 			const options = {
 				headers: {

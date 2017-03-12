@@ -31,7 +31,7 @@ export default {
 		submit() {
 			flashes.clear();
 
-			const url = config.baseUrl + "/user/login";
+			const url = config.apiBaseUrl + "/user/login";
 
 			const options = {
 				params: {

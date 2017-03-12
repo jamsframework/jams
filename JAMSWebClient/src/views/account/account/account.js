@@ -13,7 +13,7 @@ export default {
 		save() {
 			flashes.clear();
 
-			const url = config.baseUrl + "/user/" + this.$store.state.user.id;
+			const url = config.apiBaseUrl + "/user/" + this.$store.state.user.id;
 
 			const body = {
 				admin: this.$store.state.user.isAdmin ? 1 : 0,

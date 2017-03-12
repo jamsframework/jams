@@ -48,7 +48,7 @@ let isHandling403 = false;
 // signed in locally, it is checked whether he is still signed in on the server.
 // If he is not, he is redirected to the sign-in page.
 function handle403(response) {
-	if (isHandling403 || response.url.indexOf(config.baseUrl + "/user/login") === 0) {
+	if (isHandling403 || response.url.indexOf(config.apiBaseUrl + "/user/login") === 0) {
 		return;
 	}
 
@@ -65,7 +65,7 @@ function handle403(response) {
 		return;
 	}
 
-	const url = config.baseUrl + "/user/isConnected";
+	const url = config.apiBaseUrl + "/user/isConnected";
 
 	const options = {
 		credentials: true

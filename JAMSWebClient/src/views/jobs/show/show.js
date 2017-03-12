@@ -33,7 +33,7 @@ export default {
 	methods: {
 		getJob() {
 			const jobId = this.$route.params.id;
-			const url = config.baseUrl + "/job/" + jobId + "/state";
+			const url = config.apiBaseUrl + "/job/" + jobId + "/state";
 
 			this.$http.get(url).then((response) => {
 				response.json().then((data) => {
@@ -56,7 +56,7 @@ export default {
 			}
 
 			const jobId = this.$route.params.id;
-			const url = config.baseUrl + "/job/" + jobId + "/" + type + "log";
+			const url = config.apiBaseUrl + "/job/" + jobId + "/" + type + "log";
 
 			this.$http.get(url).then((response) => {
 				response.blob().then((data) => {

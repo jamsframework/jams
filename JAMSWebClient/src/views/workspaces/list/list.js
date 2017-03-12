@@ -15,7 +15,7 @@ export default {
 	},
 	methods: {
 		getWorkspaces() {
-			const url = config.baseUrl + "/workspace/find";
+			const url = config.apiBaseUrl + "/workspace/find";
 
 			this.$http.get(url).then((response) => {
 				response.json().then((data) => {
@@ -36,7 +36,7 @@ export default {
 				return;
 			}
 
-			const url = config.baseUrl + "/workspace/" + workspace.id + "/delete";
+			const url = config.apiBaseUrl + "/workspace/" + workspace.id + "/delete";
 
 			this.$http.get(url).then((response) => {
 				response.json().then((data) => {
