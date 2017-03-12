@@ -56,7 +56,7 @@ function handle403(response) {
 
 	if (!store.state.user.isSignedIn) {
 		router.push({
-			path: "/sign-in",
+			name: "signIn",
 			query: {
 				from: router.currentRoute.fullPath
 			}
@@ -85,7 +85,7 @@ function handle403(response) {
 
 			// Redirect to sign-in page
 			router.push({
-				path: "/sign-in",
+				name: "signIn",
 				query: {
 					from: router.currentRoute.fullPath
 				}

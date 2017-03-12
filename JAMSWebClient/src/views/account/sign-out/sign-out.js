@@ -4,7 +4,7 @@ import * as flashes from "../../../flashes";
 export default {
 	beforeCreate() {
 		if (!this.$store.state.user.isSignedIn) {
-			this.$router.push("/");
+			this.$router.push({name: "jobs"});
 			return;
 		}
 

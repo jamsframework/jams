@@ -7,7 +7,7 @@
 			<span class="tag">Created: {{formatDateTime(workspace.creationDate)}}</span>
 			<span class="tag">Size: {{Math.ceil(workspace.workspaceSize / 1024 / 1024)}} MiB</span>
 			<a class="tag" @click="removeWorkspace(workspace)">Remove</a>
-			<router-link class="tag" :to="'/workspaces/show/' + workspace.id">Details</router-link>
+			<router-link class="tag" :to="{name: 'workspace', params: {id: workspace.id}}">Details</router-link>
 		</div>
 	</div>
 

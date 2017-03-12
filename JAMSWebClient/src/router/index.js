@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 
 import account from "../views/account/account/account.vue";
 import accountPassword from "../views/account/password/password.vue";
+import buildConfig from "../../config";
 import * as flashes from "../flashes";
 import jobsList from "../views/jobs/list/list.vue";
 import jobsShow from "../views/jobs/show/show.vue";
@@ -15,6 +16,13 @@ import workspacesShow from "../views/workspaces/show/show.vue";
 
 Vue.use(VueRouter);
 
+let basePath = process.env.NODE_ENV === "production"
+	? buildConfig.build.assetsPublicPath
+	: buildConfig.dev.assetsPublicPath;
+
+// Remove trailing slashes from basePath
+basePath = basePath.replace(/\/+$/, "");
+
 const router = new VueRouter({
 	mode: "history",
 	routes: [
@@ -23,54 +31,62 @@ const router = new VueRouter({
 			meta: {
 				requiresAuth: true
 			},
-			path: "/"
+			name: "jobs",
+			path: basePath + "/"
 		},
 		{
 			component: account,
 			meta: {
 				requiresAuth: true
 			},
-			path: "/account"
+			name: "account",
+			path: basePath + "/account"
 		},
 		{
 			component: accountPassword,
 			meta: {
 				requiresAuth: true
 			},
-			path: "/account/password"
+			name: "accountPassword",
+			path: basePath + "/account/password"
 		},
 		{
-			path: "/jobs",
-			redirect: "/"
+			path: basePath + "/jobs",
+			redirect: basePath + "/"
 		},
 		{
 			component: jobsShow,
 			meta: {
 				requiresAuth: true
 			},
-			path: "/jobs/show/:id/:logType?"
+			name: "job",
+			path: basePath + "/jobs/show/:id/:logType?"
 		},
 		{
 			component: signIn,
-			path: "/sign-in"
+			name: "signIn",
+			path: basePath + "/sign-in"
 		},
 		{
 			component: signOut,
-			path: "/sign-out"
+			name: "signOut",
+			path: basePath + "/sign-out"
 		},
 		{
 			component: workspacesList,
 			meta: {
 				requiresAuth: true
 			},
-			path: "/workspaces"
+			name: "workspaces",
+			path: basePath + "/workspaces"
 		},
 		{
 			component: workspacesShow,
 			meta: {
 				requiresAuth: true
 			},
-			path: "/workspaces/show/:id"
+			name: "workspace",
+			path: basePath + "/workspaces/show/:id"
 		},
 		{
 			component: notFound,
@@ -84,7 +100,7 @@ router.beforeEach((to, from, next) => {
 	// If page or any parent page requires authentication, redirect to sign-in page
 	if (to.matched.some((record) => record.meta.requiresAuth) && !store.state.user.isSignedIn) {
 		next({
-			path: "/sign-in",
+			name: "signIn",
 			query: {
 				from: to.fullPath
 			}

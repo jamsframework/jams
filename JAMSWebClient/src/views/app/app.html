@@ -1,11 +1,21 @@
 <div id="site">
 	<nav id="site-header">
 		<ul class="flex-list">
-			<li class="flex-list-item"><router-link exact to="/">Jobs</router-link></li>
-			<li class="flex-list-item flex"><router-link to="/workspaces">Workspaces</router-link></li>
-			<li class="flex-list-item" :title="'Signed in as ' + $store.state.user.username" v-if="$store.state.user.isSignedIn"><router-link to="/account">Account</router-link></li>
-			<li class="flex-list-item" v-if="!$store.state.user.isSignedIn"><router-link to="/sign-in">Sign in</router-link></li>
-			<li class="flex-list-item" v-if="$store.state.user.isSignedIn"><router-link class="flex-list-item" to="/sign-out">Sign out</router-link></li>
+			<li class="flex-list-item">
+				<router-link exact :to="{name: 'jobs'}">Jobs</router-link>
+			</li>
+			<li class="flex-list-item flex">
+				<router-link :to="{name: 'workspaces'}">Workspaces</router-link>
+			</li>
+			<li class="flex-list-item" :title="'Signed in as ' + $store.state.user.username" v-if="$store.state.user.isSignedIn">
+				<router-link :to="{name: 'account'}">Account</router-link>
+			</li>
+			<li class="flex-list-item" v-if="!$store.state.user.isSignedIn">
+				<router-link :to="{name: 'signIn'}">Sign in</router-link>
+			</li>
+			<li class="flex-list-item" v-if="$store.state.user.isSignedIn">
+				<router-link :to="{name: 'signOut'}">Sign out</router-link>
+			</li>
 		</ul>
 	</nav>
 

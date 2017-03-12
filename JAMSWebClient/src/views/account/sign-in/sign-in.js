@@ -6,7 +6,7 @@ export default {
 	created() {
 		// If user is already signed in, redirect to home page
 		if (this.$store.state.user.isSignedIn) {
-			this.$router.replace("/");
+			this.$router.replace({name: "jobs"});
 			return;
 		}
 
@@ -61,7 +61,7 @@ export default {
 					}
 
 					// Redirect to home page
-					this.$router.push("/");
+					this.$router.push({name: "jobs"});
 				}, (response) => {
 					flashes.error("Couldn’t sign in");
 					console.error("sign-in: Parsing JSON response failed:", response);
@@ -79,7 +79,7 @@ export default {
 	watch: {
 		"$route"(to, from) {
 			if (this.$store.state.user.isSignedIn) {
-				this.$router.replace("/");
+				this.$router.replace({name: "jobs"});
 				return;
 			}
 

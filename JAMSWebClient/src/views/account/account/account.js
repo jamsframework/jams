@@ -35,13 +35,13 @@ export default {
 						username: data.login
 					});
 
-					flashes.info("Updated account information")
+					flashes.info("Updated account information");
 				}, (response) => {
 					console.error("account: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
 				if (response.status === 409) {
-					flashes.error("Username is already in use")
+					flashes.error("Username is already in use");
 					return;
 				}
 
