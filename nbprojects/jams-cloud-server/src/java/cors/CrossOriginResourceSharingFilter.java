@@ -21,6 +21,7 @@
  */
 package cors;
 
+import java.util.Objects;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
@@ -33,9 +34,17 @@ import javax.ws.rs.ext.Provider;
 public class CrossOriginResourceSharingFilter implements ContainerResponseFilter {
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext response) {
+        String origin = requestContext.getHeaderString("Origin");
+
+        if (!Objects.equals(origin, "http://localhost:38081")
+                && Objects.equals(origin, "http://worf.geogr.uni-jena.de:8081")
+                && Objects.equals(origin, "https://worf.geogr.uni-jena.de:8081")) {
+            return;
+        }
+
         response.getHeaders().putSingle("Access-Control-Allow-Credentials", "true");
         response.getHeaders().putSingle("Access-Control-Allow-Headers", "Content-Type");
         response.getHeaders().putSingle("Access-Control-Allow-Methods", "DELETE, GET, POST, PUT");
-        response.getHeaders().putSingle("Access-Control-Allow-Origin", "http://localhost:38081");
+        response.getHeaders().putSingle("Access-Control-Allow-Origin", origin);
     }
 }
