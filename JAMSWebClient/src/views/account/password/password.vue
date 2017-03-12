@@ -22,6 +22,7 @@
 
 <script>
 import config from "../../../config";
+import * as flashes from "../../../flashes";
 
 export default {
 	data() {
@@ -32,21 +33,15 @@ export default {
 	},
 	methods: {
 		save() {
-			this.$store.commit("flashes/clear");
+			flashes.clear();
 
 			if (this.newPassword === "" && this.newPasswordRepeated === "") {
-				this.$store.commit("flashes/add", {
-					message: "Enter a password",
-					type: 1
-				});
+				flashes.error("Enter a password");
 				return;
 			}
 
 			if (this.newPassword !== this.newPasswordRepeated) {
-				this.$store.commit("flashes/add", {
-					message: "Password and repeated password do not match",
-					type: 1
-				});
+				flashes.error("Password and repeated password do not match");
 				return;
 			}
 
@@ -76,17 +71,12 @@ export default {
 						document.activeElement.blur();
 					}
 
-					this.$store.commit("flashes/add", {
-						message: "Saved password"
-					});
+					flashes.info("Saved password");
 				}, (response) => {
 					console.error("account: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				this.$store.commit("flashes/add", {
-					message: "Password couldn’t be saved",
-					type: 1
-				});
+				flashes.error("Password couldn’t be saved");
 			});
 		}
 	}

@@ -1,4 +1,5 @@
 import config from "../../../config";
+import * as flashes from "../../../flashes";
 
 export default {
 	data() {
@@ -10,7 +11,7 @@ export default {
 	},
 	methods: {
 		save() {
-			this.$store.commit("flashes/clear");
+			flashes.clear();
 
 			const url = config.baseUrl + "/user/" + this.$store.state.user.id;
 
@@ -34,25 +35,17 @@ export default {
 						username: data.login
 					});
 
-					this.$store.commit("flashes/add", {
-						message: "Updated account information"
-					});
+					flashes.info("Updated account information")
 				}, (response) => {
 					console.error("account: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
 				if (response.status === 409) {
-					this.$store.commit("flashes/add", {
-						message: "Username is already in use",
-						type: 1
-					});
+					flashes.error("Username is already in use")
 					return;
 				}
 
-				this.$store.commit("flashes/add", {
-					message: "Account info couldn’t be saved",
-					type: 1
-				});
+				flashes.error("Account info couldn’t be saved");
 			});
 		}
 	}

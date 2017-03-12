@@ -1,4 +1,5 @@
 import config from "../../../config";
+import * as flashes from "../../../flashes";
 import {formatDateTime} from "../../../date";
 
 export default {
@@ -24,10 +25,7 @@ export default {
 					console.error("jobs: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				this.$store.commit("flashes/add", {
-					message: "Job list couldn’t be loaded",
-					type: 1
-				});
+				flashes.error("Job list couldn’t be loaded");
 			});
 		},
 		getServerLoad() {
@@ -62,11 +60,7 @@ export default {
 					console.error("jobs: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				console.debug(response);
-				this.$store.commit("flashes/add", {
-					message: "Job couldn’t be removed",
-					type: 1
-				});
+				flashes.error("Job couldn’t be removed");
 			});
 		}
 	},

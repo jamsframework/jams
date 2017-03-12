@@ -1,4 +1,5 @@
 import config from "../../../config";
+import * as flashes from "../../../flashes";
 
 export default {
 	beforeCreate() {
@@ -11,16 +12,9 @@ export default {
 
 		this.$http.get(url).then((response) => {
 			this.$store.commit("user/signOut");
-
-			this.$store.commit("flashes/add", {
-				message: "Signed out",
-				type: 0
-			});
+			flashes.info("Signed out");
 		}, (response) => {
-			this.$store.commit("flashes/add", {
-				message: "Couldn’t sign out",
-				type: 1
-			});
+			flashes.error("Couldn’t sign out");
 		});
 	}
 };

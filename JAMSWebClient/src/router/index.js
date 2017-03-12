@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 
 import account from "../views/account/account/account.vue";
 import accountPassword from "../views/account/password/password.vue";
+import * as flashes from "../flashes";
 import jobsList from "../views/jobs/list/list.vue";
 import jobsShow from "../views/jobs/show/show.vue";
 import notFound from "../views/not-found.vue";
@@ -92,7 +93,7 @@ router.beforeEach((to, from, next) => {
 	}
 
 	// Delete flash messages from previous page
-	store.commit("flashes/clear");
+	flashes.clear();
 
 	// Navigate to the destination page
 	next();

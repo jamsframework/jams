@@ -1,5 +1,8 @@
 import config from "../../../config";
+import * as flashes from "../../../flashes";
 import {formatDateTime} from "../../../date";
+
+const flashId = "workspaces.error";
 
 export default {
 	created() {
@@ -21,13 +24,12 @@ export default {
 					console.error("workspaces: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				this.$store.commit("flashes/add", {
-					message: "Workspace list couldn’t be loaded",
-					type: 1
-				});
+				flashes.error("Workspace list couldn’t be loaded");
 			});
 		},
 		removeWorkspace(workspace) {
+			flashes.clear(flashId);
+
 			const message = "Remove workspace “" + workspace.name + "”?";
 
 			if (!window.confirm(message)) {
@@ -48,10 +50,7 @@ export default {
 					console.error("workspaces: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				this.$store.commit("flashes/add", {
-					message: "Workspace couldn’t be removed",
-					type: 1
-				});
+				flashes.error("Workspace “" + workspace.name + "” couldn’t be removed", flashId);
 			});
 		},
 		formatDateTime

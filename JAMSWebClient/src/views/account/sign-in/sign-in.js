@@ -1,4 +1,5 @@
 import config from "../../../config";
+import * as flashes from "../../../flashes";
 import * as storage from "../../../storage";
 
 export default {
@@ -10,18 +11,12 @@ export default {
 		}
 
 		if (!storage.cookieStorageIsAvailable) {
-			this.$store.commit("flashes/add", {
-				message: "Please enable cookies and refresh the page",
-				type: 1
-			});
+			flashes.error("Please enable cookies and refresh the page");
 			return;
 		}
 
 		if (this.isRedirect) {
-			this.$store.commit("flashes/add", {
-				message: "Sign in to access this page",
-				type: 0
-			});
+			flashes.info("Sign in to access this page");
 		}
 	},
 	data() {
@@ -34,7 +29,7 @@ export default {
 	},
 	methods: {
 		submit() {
-			this.$store.commit("flashes/clear");
+			flashes.clear();
 
 			const url = config.baseUrl + "/user/login";
 
@@ -68,25 +63,16 @@ export default {
 					// Redirect to home page
 					this.$router.push("/");
 				}, (response) => {
-					this.$store.commit("flashes/add", {
-						message: "Couldn’t sign in",
-						type: 1
-					});
+					flashes.error("Couldn’t sign in");
 					console.error("sign-in: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
 				if (response.status === 403) {
-					this.$store.commit("flashes/add", {
-						message: "Your username or password is not correct",
-						type: 1
-					});
+					flashes.error("Your username or password is not correct");
 					return;
 				}
 
-				this.$store.commit("flashes/add", {
-					message: "Couldn’t sign in",
-					type: 1
-				});
+				flashes.error("Couldn’t sign in");
 			});
 		}
 	},
@@ -98,20 +84,14 @@ export default {
 			}
 
 			if (!storage.cookieStorageIsAvailable) {
-				this.$store.commit("flashes/add", {
-					message: "Please enable cookies and refresh the page",
-					type: 1
-				});
+				flashes.error("Please enable cookies and refresh the page");
 				return;
 			}
 
 			this.isRedirect = !!this.$route.query.from;
 
 			if (this.isRedirect) {
-				this.$store.commit("flashes/add", {
-					message: "Sign in to access this page",
-					type: 0
-				});
+				flashes.info("Sign in to access this page");
 			}
 		}
 	}

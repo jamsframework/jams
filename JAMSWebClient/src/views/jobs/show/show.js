@@ -1,4 +1,5 @@
 import config from "../../../config";
+import * as flashes from "../../../flashes";
 import {formatDateTime, formatDuration} from "../../../date";
 
 export default {
@@ -45,10 +46,7 @@ export default {
 					console.error("jobs: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				this.$store.commit("flashes/add", {
-					message: "Job info couldn’t be loaded",
-					type: 1
-				});
+				flashes.error("Job info couldn’t be loaded");
 			});
 		},
 		getLog(type) {
@@ -74,10 +72,7 @@ export default {
 				});
 			}, (response) => {
 				const logType = type === "error" ? "Error" : "Info";
-				this.$store.commit("flashes/add", {
-					message: logType + " log couldn’t be loaded",
-					type: 1
-				});
+				flashes.error(logType + " log couldn’t be loaded");
 			});
 		}
 	}
