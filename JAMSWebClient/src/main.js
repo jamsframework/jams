@@ -17,23 +17,23 @@ Vue.http.interceptors.push(function(request, next) {
 	store.commit("setDateLastRequest", Date.now());
 
 	next(function(response) {
-		// Update connection status
-		store.commit("setIsConnected", response.status !== 0);
+		const serverIsReachable = response.status >= 100 && response.status <= 499;
+		store.commit("setIsConnected", serverIsReachable);
 
-		switch (response.status) {
-			case 0:
-				handle403(response);
-				break;
-			case 200:
-				break;
-			case 403:
-				handle403(response);
-				break;
-			case 409:
-				break;
-			default:
-				console.error("unexpected response:", request, response);
+		if (response.status === 0 || response.status === 403) {
+			handle403(response);
+			return;
 		}
+
+		if (response.status >= 200 && response.status <= 299) {
+			return;
+		}
+
+		if (response.status === 409) {
+			return;
+		}
+
+		console.error("unexpected response:", request, response);
 	});
 });
 
