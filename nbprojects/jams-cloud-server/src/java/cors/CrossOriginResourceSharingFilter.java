@@ -22,6 +22,8 @@
 package cors;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
@@ -32,13 +34,19 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 public class CrossOriginResourceSharingFilter implements ContainerResponseFilter {
+    private static final Pattern allowedOrigin = Pattern.compile("^https?://[0-9a-zA-Z]+\\.geogr\\.uni\\-jena\\.de");
+
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext response) {
         String origin = requestContext.getHeaderString("Origin");
 
-        if (!Objects.equals(origin, "http://localhost:38081")
-                && Objects.equals(origin, "http://worf.geogr.uni-jena.de:8081")
-                && Objects.equals(origin, "https://worf.geogr.uni-jena.de:8081")) {
+        if (origin == null) {
+            return;
+        }
+
+        Matcher matcher = allowedOrigin.matcher(origin);
+
+        if (!matcher.find() && !Objects.equals(origin, "http://localhost:38081")) {
             return;
         }
 
