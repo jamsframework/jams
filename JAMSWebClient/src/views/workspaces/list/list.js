@@ -14,6 +14,9 @@ export default {
 		};
 	},
 	methods: {
+		getDownloadUrl(workspaceId) {
+			return config.apiBaseUrl + "/workspace/download/" + workspaceId;
+		},
 		getWorkspaces() {
 			const url = config.apiBaseUrl + "/workspace/find";
 

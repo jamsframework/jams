@@ -31,6 +31,9 @@ export default {
 		};
 	},
 	methods: {
+		getDownloadUrl(workspaceId) {
+			return config.apiBaseUrl + "/workspace/download/" + workspaceId;
+		},
 		getJob() {
 			const jobId = this.$route.params.id;
 			const url = config.apiBaseUrl + "/job/" + jobId + "/state";

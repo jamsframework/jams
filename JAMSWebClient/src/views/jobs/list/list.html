@@ -6,6 +6,7 @@
 		<div class="small">
 			<span class="tag">Started: {{formatDateTime(job.startTime)}}</span>
 			<span class="tag">Model: {{job.modelFile.path}}</span>
+			<a class="tag" :href="getDownloadUrl(job.workspace.id)">Download</a>
 			<router-link class="tag" :to="{name: 'workspace', params: {id: job.workspace.id}}">Workspace {{job.workspace.id}}</router-link>
 			<a class="tag" @click="removeJob(job)">Remove</a>
 			<router-link class="tag" :to="{name: 'job', params: {id: job.id}}">Details</router-link>

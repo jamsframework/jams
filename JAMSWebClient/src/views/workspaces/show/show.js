@@ -28,6 +28,9 @@ export default {
 		};
 	},
 	methods: {
+		getDownloadUrl(workspaceId) {
+			return config.apiBaseUrl + "/workspace/download/" + workspaceId;
+		},
 		// sort sorts files alphabetically by file path.
 		sort(files) {
 			files.sort((a, b) => {

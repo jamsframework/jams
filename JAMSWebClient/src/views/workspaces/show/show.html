@@ -6,7 +6,7 @@
 		<div class="small">
 			<span class="tag">Created: {{formattedCreationDate}}</span>
 			<span class="tag">Size: {{Math.ceil(workspace.workspaceSize / 1024 / 1024)}} MiB</span>
-			<span class="tag">Read-only: {{workspace.readOnly}}</span>
+			<a class="tag" :href="getDownloadUrl(workspace.id)">Download</a>
 		</div>
 
 		<div class="workspace-files" v-if="workspace.WorkspaceFileAssociation.length > 0">

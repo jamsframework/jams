@@ -14,6 +14,9 @@ export default {
 		};
 	},
 	methods: {
+		getDownloadUrl(workspaceId) {
+			return config.apiBaseUrl + "/workspace/download/" + workspaceId;
+		},
 		formatDateTime,
 		getJobs() {
 			const url = config.apiBaseUrl + "/job/find";

@@ -10,6 +10,7 @@
 			<span class="tag">Duration: {{formattedDuration}}</span>
 			<span class="tag">Size: {{Math.ceil(size / 1024 / 1024)}} MiB</span>
 			<span class="tag">Model: {{job.modelFile.path}}</span>
+			<a class="tag" :href="getDownloadUrl(job.workspace.id)">Download</a>
 			<router-link class="tag" :to="{name: 'workspace', params: {id: job.workspace.id}}">Workspace {{job.workspace.id}}</router-link>
 		</div>
 	</div>
