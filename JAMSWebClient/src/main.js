@@ -1,16 +1,12 @@
 import Vue from "vue";
-import VueCookie from "vue-cookie";
 import VueResource from "vue-resource";
-import {sync} from "vuex-router-sync";
 
 import app from "./views/app/app.vue";
 import config from "./config";
 import router from "./router/index.js";
 import store from "./store/index.js";
 
-Vue.use(VueCookie);
 Vue.use(VueResource);
-sync(store, router);
 
 // Allow cookies for cross-origin requests (i.e. for requests to API)
 Vue.http.options.credentials = true;

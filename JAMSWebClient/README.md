@@ -4,18 +4,18 @@ JAMS Web Client is a web front-end for JAMS Cloud Server.
 
 ## Development
 
-JAMS Web Client is a single-page application (SPA). It is built with the JavaScript framework Vue.js.
+JAMS Web Client is a single-page application (SPA). It is built with the JavaScript framework [Vue.js](https://vuejs.org).
 
-### Documentation of used components
+### Used components
 
 * [vue](https://vuejs.org)
-* [vue-cookie](https://github.com/alfhen/vue-cookie) for handling cookies
 * [vue-resource](https://github.com/pagekit/vue-resource) for HTTP requests
-* [vue-router](https://github.com/vuejs/vue-router) for handling routing
-* [vuex](https://github.com/vuejs/vuex) for handling application state
-* [vuex-router-sync](https://github.com/vuejs/vuex-router-sync) for syncing routes and application state
+* [vue-router](https://github.com/vuejs/vue-router) for routing
+* [vuex](https://github.com/vuejs/vuex) to share application state across modules
 
 ### Installation
+
+Check out the repository, then change to the project directory.
 
 To install all dependencies:
 
@@ -54,4 +54,8 @@ To build for production with minification:
 npm run build
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+Alternatively, you can use the custom build script that calls the above command and creates an archive ready for upload:
+
+```bash
+./1-deploy.sh
+```
