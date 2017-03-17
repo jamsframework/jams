@@ -2,6 +2,10 @@
 	margin-top: 1rem;
 }
 
-.workspace-file-list-item {
-	display: block;
+#workspace-file-list {
+	margin: 1rem;
 }
+
+	.workspace-file-list-item {
+		display: block;
+	}

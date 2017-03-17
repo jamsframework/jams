@@ -7,27 +7,37 @@ export default {
 			return formatDateTime(this.workspace.creationDate);
 		}
 	},
+	created() {
+		const workspaceId = this.$route.params.id;
+		const url = config.apiBaseUrl + "/workspace/" + workspaceId;
+
+		this.$http.get(url).then((response) => {
+			response.json().then((data) => {
+				this.workspace = data.workspaces[0];
+				this.sort(this.workspace.WorkspaceFileAssociation);
+			}, (response) => {
+				console.error("workspace: Parsing JSON response failed:", response);
+			});
+		}, (response) => {
+			console.error("workspace: Unexpected response:", response);
+		});
+	},
 	data() {
 		return {
 			workspace: null
 		};
 	},
 	methods: {
-
-	},
-	mounted() {
-		const workspaceId = this.$route.params.id;
-		const url = config.apiBaseUrl + "/workspace/" + workspaceId;
-
-		this.$http.get(url).then((response) => {
-			response.json().then((data) => {
-				console.debug(response.data);
-				this.workspace = data.workspaces[0];
-			}, (response) => {
-				console.error("Jobs: Parsing JSON response failed:", response);
+		// sort sorts files alphabetically by file path.
+		sort(files) {
+			files.sort((a, b) => {
+				if (a.path < b.path) {
+					return -1;
+				} else if (a.path > b.path) {
+					return 1;
+				}
+				return 0;
 			});
-		}, (response) => {
-			console.error("Jobs: Unexpected response:", response);
-		});
+		}
 	}
 };
