@@ -345,7 +345,7 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
 
     @GET
     @Path("download/{id}")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces("application/zip")
     public Response downloadWorkspace(@PathParam("id") Integer wsID,
             @Context HttpServletRequest req) {
         User user = getCurrentUser(req);
@@ -363,7 +363,13 @@ public class WorkspaceFacadeREST extends AbstractFacade<Workspace> {
                 if (so == null) {
                     return Response.status(Response.Status.NOT_FOUND).build();
                 }
-                return Response.ok(so).header("fileName", ws.getName() + ".zip").build();
+
+                String filename = ws.getName() + ".zip";
+
+                return Response.ok(so)
+                    .header("Content-Disposition", "attachment; filename=\"" + filename + "\"")
+                    .header("fileName", filename)
+                    .build();
             } catch (Throwable ioe) {
                 ioe.printStackTrace();
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
