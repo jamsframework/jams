@@ -26,4 +26,17 @@
 		<pre class="text-smaller" v-if="errorLog">{{errorLog}}</pre>
 		<div class="text-center" v-else><em>Empty</em></div>
 	</div>
+
+	<h3>Files</h3>
+	<div class="box center max-width-large" v-if="job.workspace.WorkspaceFileAssociation.length > 0">
+		<ul class="text-smaller">
+			<li class="workspace-file-list-item" v-for="file in job.workspace.WorkspaceFileAssociation">
+				<span class="code">{{file.path}}</span>
+			</li>
+		</ul>
+	</div>
+
+	<div class="box center max-width-large" v-else>
+		<div class="text-center"><em>No files</em></div>
+	</div>
 </div>

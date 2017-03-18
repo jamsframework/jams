@@ -45,6 +45,8 @@ export default {
 					this.job = data.job;
 					this.progress = data.progress;
 					this.size = data.size;
+
+					this.sort(this.job.workspace.WorkspaceFileAssociation);
 				}, (response) => {
 					console.error("jobs: Parsing JSON response failed:", response);
 				});
@@ -91,6 +93,17 @@ export default {
 				this.$router.push({name: "jobs"});
 			}, (response) => {
 				flashes.error("Job couldn’t be removed");
+			});
+		},
+		// sort sorts files alphabetically by file path.
+		sort(files) {
+			files.sort((a, b) => {
+				if (a.path < b.path) {
+					return -1;
+				} else if (a.path > b.path) {
+					return 1;
+				}
+				return 0;
 			});
 		}
 	}
