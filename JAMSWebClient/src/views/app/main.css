@@ -209,11 +209,6 @@ pre {
 	margin: 1rem 1rem 0;
 }
 
-small,
-.small {
-	font-size: smaller;
-}
-
 .tag {
 	margin-right: 1rem;
 }
@@ -224,6 +219,10 @@ small,
 
 .text-center {
 	text-align: center;
+}
+
+.text-smaller {
+	font-size: smaller;
 }
 
 @media (min-width: 768px) {

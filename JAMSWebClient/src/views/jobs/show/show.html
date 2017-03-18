@@ -3,27 +3,27 @@
 
 	<div class="box center max-width-large">
 		<div>Job</div>
-		<div class="small">
+		<div class="text-smaller">
 			<span class="tag">Started: {{formattedStartTime}}</span>
-			<span class="tag">Active: {{isActive}}</span>
-			<span class="tag">Progress: {{progress}}</span>
-			<span class="tag">Duration: {{formattedDuration}}</span>
-			<span class="tag">Size: {{Math.ceil(size / 1024 / 1024)}} MiB</span>
 			<span class="tag">Model: {{job.modelFile.path}}</span>
+			<span class="tag">Size: {{Math.ceil(size / 1024 / 1024)}} MiB</span>
 			<a class="tag" :href="getDownloadUrl(job.workspace.id)">Download</a>
-			<router-link class="tag" :to="{name: 'workspace', params: {id: job.workspace.id}}">Workspace {{job.workspace.id}}</router-link>
+			<a class="tag" @click="removeJob(job.id)">Remove</a>
+			<!--<span class="tag">Duration: {{formattedDuration}}</span>-->
+			<!--<span class="tag">Active: {{isActive}}</span>-->
+			<!--<span class="tag">Progress: {{progress}}</span>-->
 		</div>
 	</div>
 
 	<h3>Info log</h3>
 	<div class="box center max-width-large">
-		<pre v-if="infoLog">{{infoLog}}</pre>
-		<div class="text-center" v-else><em>No info</em></div>
+		<pre class="text-smaller" v-if="infoLog">{{infoLog}}</pre>
+		<div class="text-center" v-else><em>Empty</em></div>
 	</div>
 
 	<h3>Error log</h3>
 	<div class="box center max-width-large">
-		<pre v-if="errorLog">{{errorLog}}</pre>
-		<div class="text-center" v-else><em>No errors</em></div>
+		<pre class="text-smaller" v-if="errorLog">{{errorLog}}</pre>
+		<div class="text-center" v-else><em>Empty</em></div>
 	</div>
 </div>

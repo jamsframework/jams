@@ -42,14 +42,14 @@ export default {
 				});
 			});
 		},
-		removeJob(job) {
+		removeJob(jobId) {
 			const message = "Remove job?";
 
 			if (!window.confirm(message)) {
 				return;
 			}
 
-			const url = config.apiBaseUrl + "/job/" + job.id + "/delete";
+			const url = config.apiBaseUrl + "/job/" + jobId + "/delete";
 
 			this.$http.get(url).then((response) => {
 				response.json().then((data) => {

@@ -77,6 +77,21 @@ export default {
 				const logType = type === "error" ? "Error" : "Info";
 				flashes.error(logType + " log couldn’t be loaded");
 			});
+		},
+		removeJob(jobId) {
+			const message = "Remove job?";
+
+			if (!window.confirm(message)) {
+				return;
+			}
+
+			const url = config.apiBaseUrl + "/job/" + jobId + "/delete";
+
+			this.$http.get(url).then((response) => {
+				this.$router.push({name: "jobs"});
+			}, (response) => {
+				flashes.error("Job couldn’t be removed");
+			});
 		}
 	}
 };
