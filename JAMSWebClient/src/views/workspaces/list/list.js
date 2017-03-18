@@ -2,15 +2,21 @@ import config from "../../../config";
 import * as flashes from "../../../flashes";
 import {formatDateTime} from "../../../date";
 
-const flashId = "workspaces.error";
+const flashId = "errRemoveWorkspace";
 
 export default {
+	beforeDestroy() {
+		clearInterval(this.workspacesIntervalId);
+	},
 	created() {
 		this.getWorkspaces();
+
+		this.workspacesIntervalId = setInterval(this.getWorkspaces, config.workspacesInterval);
 	},
 	data() {
 		return {
-			workspaces: []
+			workspaces: [],
+			workspacesIntervalId: 0
 		};
 	},
 	methods: {

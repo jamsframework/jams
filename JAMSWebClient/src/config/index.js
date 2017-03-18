@@ -10,5 +10,8 @@ export default {
 	pingInterval: 30 * 1000,
 
 	// Interval (in milliseconds) between checking server load
-	serverLoadInterval: 10 * 1000
+	serverLoadInterval: 10 * 1000,
+
+	// Interval (in milliseconds) between checking workspaces
+	workspacesInterval: 10 * 1000
 };
