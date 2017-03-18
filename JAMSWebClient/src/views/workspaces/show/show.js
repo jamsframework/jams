@@ -1,5 +1,8 @@
 import config from "../../../config";
+import * as flashes from "../../../flashes";
 import {formatDateTime} from "../../../date";
+
+const flashId = "errRemoveWorkspace";
 
 export default {
 	computed: {
@@ -30,6 +33,23 @@ export default {
 	methods: {
 		getDownloadUrl(workspaceId) {
 			return config.apiBaseUrl + "/workspace/download/" + workspaceId;
+		},
+		removeWorkspace(workspace) {
+			flashes.clear(flashId);
+
+			const message = "Remove workspace “" + workspace.name + "”?";
+
+			if (!window.confirm(message)) {
+				return;
+			}
+
+			const url = config.apiBaseUrl + "/workspace/" + workspace.id + "/delete";
+
+			this.$http.get(url).then((response) => {
+				this.$router.push({name: "workspaces"});
+			}, (response) => {
+				flashes.error("Workspace “" + workspace.name + "” couldn’t be removed", flashId);
+			});
 		},
 		// sort sorts files alphabetically by file path.
 		sort(files) {
