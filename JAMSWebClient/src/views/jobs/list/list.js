@@ -2,15 +2,26 @@ import config from "../../../config";
 import * as flashes from "../../../flashes";
 import {formatDateTime} from "../../../date";
 
+const flashId = "stoppedJob";
+
 export default {
 	beforeDestroy() {
-		clearInterval(this.intervalId);
+		clearInterval(this.jobsIntervalId);
+		clearInterval(this.serverLoadIntervalId);
+	},
+	created() {
+		this.getJobs();
+		this.getServerLoad();
+
+		this.jobsIntervalId = setInterval(this.getJobs, config.jobsInterval);
+		this.serverLoadIntervalId = setInterval(this.getServerLoad, config.serverLoadInterval);
 	},
 	data() {
 		return {
-			intervalId: 0,
 			jobs: [],
-			serverLoad: -1
+			jobsIntervalId: 0,
+			serverLoad: -1,
+			serverLoadIntervalId: 0
 		};
 	},
 	methods: {
@@ -65,12 +76,26 @@ export default {
 			}, (response) => {
 				flashes.error("Job couldn’t be removed");
 			});
-		}
-	},
-	mounted() {
-		this.getJobs();
-		this.getServerLoad();
+		},
+		stopJob(jobId) {
+			flashes.clear(flashId);
+			const message = "Stop job?";
 
-		this.intervalId = setInterval(this.getServerLoad, config.serverLoadInterval);
+			if (!window.confirm(message)) {
+				return;
+			}
+
+			const url = config.apiBaseUrl + "/job/" + jobId + "/kill";
+
+			this.$http.get(url).then((response) => {
+				response.json().then((data) => {
+					flashes.info("Stopped job", flashId);
+				}, (response) => {
+					console.error("jobs: Parsing JSON response failed:", response);
+				});
+			}, (response) => {
+				flashes.error("Job couldn’t be stopped");
+			});
+		}
 	}
 };

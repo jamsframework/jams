@@ -7,14 +7,16 @@
 			<span class="tag">Started: {{formatDateTime(job.startTime)}}</span>
 			<span class="tag">Model: {{job.modelFile.path}}</span>
 			<span class="tag">Size: {{Math.ceil(job.workspace.workspaceSize / 1024 / 1024)}} MiB</span>
-			<a class="tag" :href="getDownloadUrl(job.workspace.id)">Download</a>
-			<a class="tag" @click="removeJob(job.id)">Remove</a>
+			<a class="tag" :href="getDownloadUrl(job.workspace.id)" v-if="job.PID === -1">Download</a>
+			<a class="tag" @click="removeJob(job.id)" v-if="job.PID === -1">Remove</a>
+			<span class="tag" v-if="job.PID !== -1">Running</span>
+			<a class="tag" @click="stopJob(job.id)" v-if="job.PID !== -1">Stop</a>
 			<router-link class="tag" :to="{name: 'job', params: {id: job.id}}">Details</router-link>
 		</div>
 	</div>
 
 	<div class="box" v-if="jobs.length === 0">
-		<div class="text-center">No jobs</div>
+		<div class="text-center"><em>No jobs</em></div>
 	</div>
 
 	<div id="jobs-server-load" :title="'Server load: ' + Math.round(serverLoad * 100) + '%'" v-if="$store.state.isConnected && serverLoad !== -1">
