@@ -1,7 +1,7 @@
 <div class="center max-width-medium">
 	<h1>Workspaces</h1>
 
-	<div class="box" v-for="workspace in workspaces">
+	<div class="box" :key="workspace.id" v-for="workspace in workspaces" v-if="!workspace.hasOwnProperty('ancestor')">
 		<div>{{workspace.name}}</div>
 		<div class="small">
 			<span class="tag">Created: {{formatDateTime(workspace.creationDate)}}</span>
