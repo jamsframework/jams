@@ -4,7 +4,7 @@ export default {
 		: "http://localhost:8080/jamscloud/webresources",
 
 	// Interval (in milliseconds) between checking jobs
-	jobsInterval: 10 * 1000,
+	jobsInterval: 5 * 1000,
 
 	// Interval (in milliseconds) between checking connection to JAMS Cloud Server
 	pingInterval: 30 * 1000,

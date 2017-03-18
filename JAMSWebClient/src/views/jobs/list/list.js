@@ -2,8 +2,6 @@ import config from "../../../config";
 import * as flashes from "../../../flashes";
 import {formatDateTime} from "../../../date";
 
-const flashId = "stoppedJob";
-
 export default {
 	beforeDestroy() {
 		clearInterval(this.jobsIntervalId);
@@ -78,7 +76,6 @@ export default {
 			});
 		},
 		stopJob(jobId) {
-			flashes.clear(flashId);
 			const message = "Stop job?";
 
 			if (!window.confirm(message)) {
@@ -89,7 +86,12 @@ export default {
 
 			this.$http.get(url).then((response) => {
 				response.json().then((data) => {
-					flashes.info("Stopped job", flashId);
+					for (let i = 0, length = this.jobs.length; i < length; i++) {
+						if (this.jobs[i].id === data.job.id) {
+							this.jobs[i].PID = -2;
+							break;
+						}
+					}
 				}, (response) => {
 					console.error("jobs: Parsing JSON response failed:", response);
 				});
