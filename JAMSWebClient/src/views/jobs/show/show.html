@@ -7,11 +7,12 @@
 			<span class="tag">Started: {{formattedStartTime}}</span>
 			<span class="tag">Model: {{job.modelFile.path}}</span>
 			<span class="tag">Size: {{Math.ceil(size / 1024 / 1024)}} MiB</span>
-			<a class="tag" :href="getDownloadUrl(job.workspace.id)">Download</a>
-			<a class="tag" @click="removeJob(job.id)">Remove</a>
+			<a class="tag" :href="getDownloadUrl(job.workspace.id)" v-if="job.PID === -1">Download</a>
+			<span class="tag" v-if="job.PID > -1">Running ({{Math.round(progress * 100)}}%)</span>
+			<span class="tag" v-if="job.PID === -2">Stopping</span>
+			<a class="tag" @click="removeJob(job.id)" v-if="job.PID <= -1">Remove</a>
+			<a class="tag" @click="stopJob(job.id)" v-if="job.PID > -1">Stop</a>
 			<!--<span class="tag">Duration: {{formattedDuration}}</span>-->
-			<!--<span class="tag">Active: {{isActive}}</span>-->
-			<!--<span class="tag">Progress: {{progress}}</span>-->
 		</div>
 	</div>
 

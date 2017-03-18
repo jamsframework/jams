@@ -2,7 +2,16 @@ import config from "../../../config";
 import * as flashes from "../../../flashes";
 import {formatDateTime, formatDuration} from "../../../date";
 
+const flashIdErrorLog = "1";
+const flashIdInfoLog = "2";
+const flashIdGetJob = "3";
+const flashIdRemoveJob = "4";
+const flashIdStopJob = "5";
+
 export default {
+	beforeDestroy() {
+		this.clearIntervals();
+	},
 	computed: {
 		formattedStartTime: function() {
 			return formatDateTime(this.job.startTime);
@@ -15,6 +24,10 @@ export default {
 		this.getJob();
 		this.getLog("error");
 		this.getLog("info");
+
+		this.jobIntervalId = setInterval(this.getJob, config.jobsInterval);
+		this.errorLogIntervalId = setInterval(() => { this.getLog("error"); }, config.jobsInterval);
+		this.infoLogIntervalId = setInterval(() => { this.getLog("info"); }, config.jobsInterval);
 	},
 	data() {
 		return {
@@ -22,19 +35,28 @@ export default {
 			duration: 0,
 			isActive: false,
 			job: null,
-			progress: 1,
+			jobIntervalId: 0,
+			progress: 0,
 			size: 0,
 
 			// Logs
 			errorLog: "",
-			infoLog: ""
+			errorLogIntervalId: 0,
+			infoLog: "",
+			infoLogIntervalId: 0
 		};
 	},
 	methods: {
+		clearIntervals() {
+			clearInterval(this.jobIntervalId);
+			clearInterval(this.errorLogIntervalId);
+			clearInterval(this.infoLogIntervalId);
+		},
 		getDownloadUrl(workspaceId) {
 			return config.apiBaseUrl + "/workspace/download/" + workspaceId;
 		},
 		getJob() {
+			flashes.clear(flashIdGetJob);
 			const jobId = this.$route.params.id;
 			const url = config.apiBaseUrl + "/job/" + jobId + "/state";
 
@@ -47,11 +69,16 @@ export default {
 					this.size = data.size;
 
 					this.sort(this.job.workspace.WorkspaceFileAssociation);
+
+					// Stop refreshing if the job completed
+					if (this.job.PID === -1) {
+						this.clearIntervals();
+					}
 				}, (response) => {
 					console.error("jobs: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				flashes.error("Job info couldn’t be loaded");
+				flashes.error("Job info couldn’t be loaded", flashIdGetJob);
 			});
 		},
 		getLog(type) {
@@ -59,6 +86,9 @@ export default {
 				console.error("jobs show: unknown log type");
 				return;
 			}
+
+			const flashId = type === "error" ? flashIdErrorLog : flashIdInfoLog;
+			flashes.clear(flashId);
 
 			const jobId = this.$route.params.id;
 			const url = config.apiBaseUrl + "/job/" + jobId + "/" + type + "log";
@@ -77,10 +107,11 @@ export default {
 				});
 			}, (response) => {
 				const logType = type === "error" ? "Error" : "Info";
-				flashes.error(logType + " log couldn’t be loaded");
+				flashes.error(logType + " log couldn’t be loaded", flashId);
 			});
 		},
 		removeJob(jobId) {
+			flashes.clear(flashIdRemoveJob);
 			const message = "Remove job?";
 
 			if (!window.confirm(message)) {
@@ -92,7 +123,7 @@ export default {
 			this.$http.get(url).then((response) => {
 				this.$router.push({name: "jobs"});
 			}, (response) => {
-				flashes.error("Job couldn’t be removed");
+				flashes.error("Job couldn’t be removed", flashIdRemoveJob);
 			});
 		},
 		// sort sorts files alphabetically by file path.
@@ -104,6 +135,27 @@ export default {
 					return 1;
 				}
 				return 0;
+			});
+		},
+		stopJob(jobId) {
+			flashes.clear(flashIdStopJob);
+			const message = "Stop job?";
+
+			if (!window.confirm(message)) {
+				return;
+			}
+
+			const url = config.apiBaseUrl + "/job/" + jobId + "/kill";
+
+			this.$http.get(url).then((response) => {
+				response.json().then((data) => {
+					console.debug(data);
+					this.job.PID = -2;
+				}, (response) => {
+					console.error("jobs: Parsing JSON response failed:", response);
+				});
+			}, (response) => {
+				flashes.error("Job couldn’t be stopped", flashIdStopJob);
 			});
 		}
 	}
