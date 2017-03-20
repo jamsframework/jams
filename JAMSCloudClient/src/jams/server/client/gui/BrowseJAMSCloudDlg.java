@@ -616,7 +616,10 @@ public class BrowseJAMSCloudDlg extends JDialog {
                         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                         try {
                             jfc.setSelectedFile(GUIState.getSavePath().getParentFile());
-                            jfc.setCurrentDirectory(GUIState.getSavePath().getParentFile());
+                            File safePath = GUIState.getSavePath();
+                            if (safePath != null) {
+                                jfc.setCurrentDirectory(safePath.getParentFile());
+                            }
                         } catch (java.lang.IndexOutOfBoundsException ex) {
                             jfc.setSelectedFile(GUIState.getSavePath().getParentFile());
                             jfc.setCurrentDirectory(GUIState.getSavePath().getParentFile());
@@ -969,7 +972,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
             User user = connector.getClient().getUser();
             Workspaces wsList = connector.getClient().workspaces().findAll(null);
             Jobs jobList = connector.getClient().jobs().find();
-                        
+
             workspaceTree.generateModel(user, wsList);
             jobsTree.generateModel(user, jobList, connector.getClient().jobs());
         } catch (ProcessingException t) {
