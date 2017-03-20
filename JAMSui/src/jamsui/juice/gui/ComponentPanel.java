@@ -168,7 +168,7 @@ public class ComponentPanel extends JPanel {
 
         varTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListSelectionModel varRowSM = varTable.getSelectionModel();
-        
+
         varRowSM.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -432,7 +432,7 @@ public class ComponentPanel extends JPanel {
             }
         } else if (switchPanel.getComponents()[0] != attributeConfigPanel) {
             switchPanel.remove(switchPanel.getComponents()[0]);
-            attributeConfigPanel.setPreferredSize(new Dimension(switchPanel.getSize().width-10, switchPanel.getSize().height));
+            attributeConfigPanel.setPreferredSize(new Dimension(switchPanel.getSize().width - 10, switchPanel.getSize().height));
             switchPanel.add(attributeConfigPanel);
 //                configLabel.setText(ATTR_CONFIG_STRING);
             this.updateUI();
@@ -460,6 +460,10 @@ public class ComponentPanel extends JPanel {
         componentDescriptor.addObserver(new Observer() {
             @Override
             public void update(Observable o, Object arg) {
+
+                if (arg == null) {
+                    return;
+                }
                 ComponentField var = (ComponentField) arg;
                 int i = 0;
                 for (String name : varNameList) {
@@ -574,7 +578,7 @@ public class ComponentPanel extends JPanel {
             }
 
             rowData.add(var.getUnit());
-            
+
             tableData.add(rowData);
         }
         varTableModel.setDataVector(tableData, varTableColumnIds);

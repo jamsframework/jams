@@ -37,8 +37,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "jobState")
 public class JobState implements Serializable {
     
-    @XmlElement(name = "job", type = Job.class)
-    private Job job;
+    @XmlElement(name = "jobid", type = Long.class)
+    private long jobID;
     
     @XmlElement(name = "active", type = Boolean.class)
     private boolean active;
@@ -58,14 +58,14 @@ public class JobState implements Serializable {
     public JobState() {
     }
     
-    public JobState(Job job, boolean active, Date startDate) {
-        this.job = job;
+    public JobState(long jobID, boolean active, Date startDate) {
+        this.jobID = jobID;
         this.active = active;
         this.startDate = startDate;
     }
 
-    public Job getJob(){
-        return job;
+    public long getJobID(){
+        return jobID;
     }
     
     public boolean isActive(){
@@ -84,8 +84,8 @@ public class JobState implements Serializable {
         return size;
     }
     
-    public void setJob(Job job){
-        this.job = job;
+    public void setJobID(long jobID){
+        this.jobID = jobID;
     }
     
     public void setActive(boolean active){

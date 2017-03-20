@@ -466,8 +466,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
         if (!isConnected) {
             return;
         }
-        JobState state = connector.getClient().jobs().getState(job);
-        jobsTree.updateNode(state.getJob());
+        jobsTree.updateNode(job);
     }
 
     private void updateViewAction() {

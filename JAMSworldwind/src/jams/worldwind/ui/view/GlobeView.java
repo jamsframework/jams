@@ -13,7 +13,6 @@ import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.formats.shapefile.DBaseRecord;
 import gov.nasa.worldwind.formats.shapefile.Shapefile;
-import gov.nasa.worldwind.formats.shapefile.ShapefileRecord;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.geom.Sector;
@@ -90,7 +89,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -101,10 +99,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.TitledBorder;
@@ -204,6 +205,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private JToggleButton selectObjectsToggleButton;
     private JButton showAttributeTableButton;
     private JButton classifyButton;
+    private JTextField delayEdit;
+    private Timer playTimer;
+    private ActionListener playTaskPerformer;
 
     private DataTransfer3D data;
 
@@ -733,9 +737,57 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
         this.timeSeriesSliderLabel = new JLabel("No Data", JLabel.CENTER);
         this.timeSeriesSliderLabel.setEnabled(true);
+        JButton playButton = new JButton(">");
+        JButton pauseButton = new JButton("||");
+        delayEdit = new JTextField("1");
+        delayEdit.setPreferredSize(new Dimension((int) delayEdit.getPreferredSize().getWidth() * 3, (int) delayEdit.getPreferredSize().getHeight()));
+        JPanel playPanel = new JPanel();
+        playPanel.add(playButton);
+        playPanel.add(delayEdit);
+        playPanel.add(pauseButton);
+        playPanel.add(timeSeriesSliderLabel);
+
+        playTaskPerformer = new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (timeSeriesSlider.getValue() < timeSeriesSlider.getMaximum()) {
+                            timeSeriesSlider.setValue(timeSeriesSlider.getValue() + 1);
+                        } else {
+                            timeSeriesSlider.setValue(timeSeriesSlider.getMinimum());
+                        }
+                    }
+                });
+            }
+        };
+
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (playTimer != null) {
+                    playTimer.stop();
+                }
+                int time = 0;
+                try {
+                    time = Integer.parseInt(delayEdit.getText());
+                } catch (NumberFormatException nfe) {
+                    return;
+                }
+                playTimer = new Timer(time, playTaskPerformer);
+                playTimer.start();
+            }
+        });
+
+        pauseButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                playTimer.stop();
+            }
+        });
 
         sliderPanel2.add(timeSeriesSlider);
-        sliderPanel2.add(timeSeriesSliderLabel);
+        sliderPanel2.add(playPanel);
 
         this.topPanel = new JPanel();
         GridBagLayout gbl = new GridBagLayout();
@@ -1395,6 +1447,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         if (timeSeriesSlider.isEnabled() && selectedIndex != -1) {
             Layer l = getModel().getLayers().getLayerByName(activeLayerComboBox.getSelectedItem().toString());
 
+            if (l == null) {
+                return;
+            }
             //only for Shapefile layers
             if (l.getClass().equals(RenderableLayer.class)) {
                 Iterable<Renderable> list = ((RenderableLayer) l).getRenderables();
