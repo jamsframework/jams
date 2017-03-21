@@ -739,7 +739,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.timeSeriesSliderLabel.setEnabled(true);
         JButton playButton = new JButton(">");
         JButton pauseButton = new JButton("||");
-        delayEdit = new JTextField("1");
+        delayEdit = new JTextField("10");
         delayEdit.setPreferredSize(new Dimension((int) delayEdit.getPreferredSize().getWidth() * 3, (int) delayEdit.getPreferredSize().getHeight()));
         JPanel playPanel = new JPanel();
         playPanel.add(playButton);
