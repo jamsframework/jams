@@ -21,7 +21,7 @@ Vue.http.interceptors.push(function(request, next) {
 		store.commit("setIsConnected", serverIsReachable);
 
 		if (response.status === 0 || response.status === 403) {
-			handle403(response);
+			checkSignInStatus(response);
 			return;
 		}
 
@@ -37,18 +37,17 @@ Vue.http.interceptors.push(function(request, next) {
 	});
 });
 
-/* eslint-disable no-unused-vars */
-let isHandling403 = false;
+let isCheckingSignInStatus = false;
 
-// handle403 handles HTTP status code 403 Forbidden responses. If the user is
-// signed in locally, it is checked whether he is still signed in on the server.
-// If he is not, he is redirected to the sign-in page.
-function handle403(response) {
-	if (isHandling403 || response.url.indexOf(config.apiBaseUrl + "/user/login") === 0) {
+// checkSignInStatus checks whether the user is signed in locally, and if yes,
+// checks whether the user is still signed in on the server. If not, the user is
+// redirected to the sign-in page.
+function checkSignInStatus(response) {
+	if (isCheckingSignInStatus || router.currentRoute.name === "signIn") {
 		return;
 	}
 
-	isHandling403 = true;
+	isCheckingSignInStatus = true;
 
 	if (!store.state.user.isSignedIn) {
 		router.push({
@@ -57,7 +56,7 @@ function handle403(response) {
 				from: router.currentRoute.fullPath
 			}
 		});
-		isHandling403 = false;
+		isCheckingSignInStatus = false;
 		return;
 	}
 
@@ -72,7 +71,7 @@ function handle403(response) {
 			// If user is signed in on server, the 403 response must mean the
 			// action is forbidden even for signed in users
 			if (data === true) {
-				isHandling403 = false;
+				isCheckingSignInStatus = false;
 				return;
 			}
 
@@ -86,10 +85,10 @@ function handle403(response) {
 					from: router.currentRoute.fullPath
 				}
 			});
-			isHandling403 = false;
+			isCheckingSignInStatus = false;
 		}, (response) => {
 			console.error("main: Parsing JSON response failed:", response);
-			isHandling403 = false;
+			isCheckingSignInStatus = false;
 		});
 	});
 }
