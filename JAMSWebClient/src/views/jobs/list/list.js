@@ -9,6 +9,9 @@ export default {
 	beforeDestroy() {
 		clearInterval(this.jobsIntervalId);
 		clearInterval(this.serverLoadIntervalId);
+
+		window.removeEventListener("online", this.getJobs);
+		window.removeEventListener("online", this.getServerLoad);
 	},
 	created() {
 		this.getJobs(true);
@@ -16,6 +19,9 @@ export default {
 
 		this.jobsIntervalId = setInterval(this.getJobs, config.jobsInterval);
 		this.serverLoadIntervalId = setInterval(this.getServerLoad, config.serverLoadInterval);
+
+		window.addEventListener("online", this.getJobs);
+		window.addEventListener("online", this.getServerLoad);
 	},
 	data() {
 		return {
@@ -33,7 +39,11 @@ export default {
 		formatDateTime,
 
 		getJobs(force = false) {
-			if (!force && (!this.$store.state.isConnected || !this.$store.state.isOnline)) {
+			if (!this.$store.state.isOnline) {
+				return;
+			}
+
+			if (!force && !this.$store.state.isConnected) {
 				return;
 			}
 
@@ -53,7 +63,11 @@ export default {
 		},
 
 		getServerLoad(force = false) {
-			if (!force && (!this.$store.state.isConnected || !this.$store.state.isOnline)) {
+			if (!this.$store.state.isOnline) {
+				return;
+			}
+
+			if (!force && !this.$store.state.isConnected) {
 				return;
 			}
 

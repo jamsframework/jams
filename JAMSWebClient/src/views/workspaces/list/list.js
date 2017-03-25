@@ -8,10 +8,12 @@ const flashIdRemovingWorkspaceFailed = 2;
 export default {
 	beforeDestroy() {
 		clearInterval(this.workspacesIntervalId);
+		window.removeEventListener("online", this.getWorkspaces);
 	},
 	created() {
 		this.getWorkspaces(true);
 		this.workspacesIntervalId = setInterval(this.getWorkspaces, config.workspacesInterval);
+		window.addEventListener("online", this.getWorkspaces);
 	},
 	data() {
 		return {
@@ -27,7 +29,11 @@ export default {
 		},
 
 		getWorkspaces(force = false) {
-			if (!force && (!this.$store.state.isConnected || !this.$store.state.isOnline)) {
+			if (!this.$store.state.isOnline) {
+				return;
+			}
+
+			if (!force && !this.$store.state.isConnected) {
 				return;
 			}
 
