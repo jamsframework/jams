@@ -4,10 +4,15 @@ export default {
 	created() {
 		this.getVersion();
 		this.ping();
+		this.watchOnlineStatus();
 	},
 	methods: {
-		// Get JAMS Cloud Server version
+		// getVersion retrieves the JAMS Cloud Server version.
 		getVersion() {
+			if (!this.$store.state.isOnline) {
+				return;
+			}
+
 			const url = config.apiBaseUrl + "/version";
 
 			const options = {
@@ -25,6 +30,7 @@ export default {
 				});
 			});
 		},
+
 		// ping periodically sends a request to the server to see if it is still
 		// reachable.
 		ping() {
@@ -36,6 +42,20 @@ export default {
 			}
 
 			setTimeout(this.ping, delay);
+		},
+
+		// watchOnlineStatus observes the online status as reported by the
+		// browser.
+		watchOnlineStatus() {
+			this.$store.commit("setIsOnline", navigator.onLine);
+
+			window.addEventListener("offline", () => {
+				this.$store.commit("setIsOnline", false);
+			});
+
+			window.addEventListener("online", () => {
+				this.$store.commit("setIsOnline", true);
+			});
 		}
 	}
 };

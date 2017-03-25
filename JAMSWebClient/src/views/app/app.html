@@ -29,6 +29,10 @@
 
 	<div id="site-footer">
 		<div :title="'JAMS Cloud Server: version ' + $store.state.jamsCloudServerVersion" v-if="$store.state.isConnected">Connected to JAMS Cloud Server</div>
-		<div class="connection-status-unconnected" v-else>Not connected to JAMS Cloud Server (server not reachable)</div>
+		<div class="connection-status-unconnected" v-else>
+			Not connected to JAMS Cloud Server<br>
+			<small v-if="!$store.state.isOnline">(You are offline)</small>
+			<small v-else>(Server not reachable)</small>
+		</div>
 	</div>
 </div>

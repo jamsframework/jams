@@ -12,12 +12,24 @@ export default new Vuex.Store({
 		user
 	},
 	mutations: {
+		// setDateLastRequest saves the timestamp of the most recent request
+		// to the server.
 		setDateLastRequest(state, date) {
 			state.dateLastRequest = date;
 		},
+
+		// setIsConnected saves whether the server is reachable.
 		setIsConnected(state, isConnected) {
 			state.isConnected = isConnected;
 		},
+
+		// setIsOnline saves whether the user’s browser reports it is online.
+		setIsOnline(state, isOnline) {
+			state.isConnected = isOnline;
+			state.isOnline = isOnline;
+		},
+
+		// setJamsCloudServerVersion saves the version of JAMS Cloud Server.
 		setJamsCloudServerVersion(state, version) {
 			state.jamsCloudServerVersion = version;
 		}
@@ -26,8 +38,11 @@ export default new Vuex.Store({
 		// Date of last request (in milliseconds)
 		dateLastRequest: 0,
 
-		// Whether JAMS Cloud Server could be reached on last request
+		// Whether JAMS Cloud Server can be reached
 		isConnected: false,
+
+		// Whether the user is connected to the Internet
+		isOnline: false,
 
 		// Version of JAMS Cloud Server
 		jamsCloudServerVersion: ""

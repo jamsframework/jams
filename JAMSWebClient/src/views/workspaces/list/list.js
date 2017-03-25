@@ -2,15 +2,15 @@ import config from "../../../config";
 import * as flashes from "../../../flashes";
 import {formatDateTime} from "../../../date";
 
-const flashId = "errRemoveWorkspace";
+const flashIdLoadingWorkspacesFailed = 1;
+const flashIdRemovingWorkspaceFailed = 2;
 
 export default {
 	beforeDestroy() {
 		clearInterval(this.workspacesIntervalId);
 	},
 	created() {
-		this.getWorkspaces();
-
+		this.getWorkspaces(true);
 		this.workspacesIntervalId = setInterval(this.getWorkspaces, config.workspacesInterval);
 	},
 	data() {
@@ -20,10 +20,19 @@ export default {
 		};
 	},
 	methods: {
+		formatDateTime,
+
 		getDownloadUrl(workspaceId) {
 			return config.apiBaseUrl + "/workspace/download/" + workspaceId;
 		},
-		getWorkspaces() {
+
+		getWorkspaces(force = false) {
+			if (!force && (!this.$store.state.isConnected || !this.$store.state.isOnline)) {
+				return;
+			}
+
+			flashes.clear(flashIdLoadingWorkspacesFailed);
+
 			const url = config.apiBaseUrl + "/workspace/find";
 
 			this.$http.get(url).then((response) => {
@@ -33,11 +42,12 @@ export default {
 					console.error("workspaces: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				flashes.error("Workspace list couldn’t be loaded");
+				flashes.error("Workspace list couldn’t be loaded", flashIdLoadingWorkspacesFailed);
 			});
 		},
+
 		removeWorkspace(workspace) {
-			flashes.clear(flashId);
+			flashes.clear(flashIdRemovingWorkspaceFailed);
 
 			const message = "Remove workspace “" + workspace.name + "”?";
 
@@ -59,9 +69,8 @@ export default {
 					console.error("workspaces: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				flashes.error("Workspace “" + workspace.name + "” couldn’t be removed", flashId);
+				flashes.error("Workspace “" + workspace.name + "” couldn’t be removed", flashIdRemovingWorkspaceFailed);
 			});
-		},
-		formatDateTime
+		}
 	}
 };

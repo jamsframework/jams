@@ -21,7 +21,7 @@ Vue.http.interceptors.push(function(request, next) {
 		store.commit("setIsConnected", serverIsReachable);
 
 		if (response.status === 0 || response.status === 403) {
-			checkSignInStatus(response);
+			checkSignInStatus();
 			return;
 		}
 
@@ -42,7 +42,7 @@ let isCheckingSignInStatus = false;
 // checkSignInStatus checks whether the user is signed in locally, and if yes,
 // checks whether the user is still signed in on the server. If not, the user is
 // redirected to the sign-in page.
-function checkSignInStatus(response) {
+function checkSignInStatus() {
 	if (isCheckingSignInStatus || router.currentRoute.name === "signIn") {
 		return;
 	}
@@ -90,6 +90,8 @@ function checkSignInStatus(response) {
 			console.error("main: Parsing JSON response failed:", response);
 			isCheckingSignInStatus = false;
 		});
+	}, () => {
+		isCheckingSignInStatus = false;
 	});
 }
 

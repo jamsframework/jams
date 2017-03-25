@@ -20,7 +20,7 @@
 		<div class="text-center"><em>No jobs</em></div>
 	</div>
 
-	<div id="jobs-server-load" :title="'Server load: ' + Math.round(serverLoad * 100) + '%'" v-if="$store.state.isConnected && serverLoad !== -1">
+	<div id="jobs-server-load" :title="'Server load: ' + Math.round(serverLoad * 100) + '%'" v-if="serverLoad !== -1">
 		Server load
 		<div id="jobs-server-load-bar">
 			<div id="jobs-server-load-value" :style="{width: serverLoad * 100 + '%'}"></div>

@@ -21,9 +21,9 @@ export default {
 		}
 	},
 	created() {
-		this.getJob();
-		this.getLog("error");
-		this.getLog("info");
+		this.getJob(true);
+		this.getLog("error", true);
+		this.getLog("info", true);
 
 		this.jobIntervalId = setInterval(this.getJob, config.jobsInterval);
 		this.errorLogIntervalId = setInterval(() => { this.getLog("error"); }, config.jobsInterval);
@@ -52,10 +52,16 @@ export default {
 			clearInterval(this.errorLogIntervalId);
 			clearInterval(this.infoLogIntervalId);
 		},
+
 		getDownloadUrl(workspaceId) {
 			return config.apiBaseUrl + "/workspace/download/" + workspaceId;
 		},
-		getJob() {
+
+		getJob(force = false) {
+			if (!force && (!this.$store.state.isConnected || !this.$store.state.isOnline)) {
+				return;
+			}
+
 			flashes.clear(flashIdGetJob);
 			const jobId = this.$route.params.id;
 			const url = config.apiBaseUrl + "/job/" + jobId + "/state";
@@ -81,7 +87,12 @@ export default {
 				flashes.error("Job info couldn’t be loaded", flashIdGetJob);
 			});
 		},
-		getLog(type) {
+
+		getLog(type, force = false) {
+			if (!force && (!this.$store.state.isConnected || !this.$store.state.isOnline)) {
+				return;
+			}
+
 			if (type !== "error" && type !== "info") {
 				console.error("jobs show: unknown log type");
 				return;
@@ -110,6 +121,7 @@ export default {
 				flashes.error(logType + " log couldn’t be loaded", flashId);
 			});
 		},
+
 		removeJob(jobId) {
 			flashes.clear(flashIdRemoveJob);
 			const message = "Remove job?";
@@ -126,6 +138,7 @@ export default {
 				flashes.error("Job couldn’t be removed", flashIdRemoveJob);
 			});
 		},
+
 		// sort sorts files alphabetically by file path.
 		sort(files) {
 			files.sort((a, b) => {
@@ -137,6 +150,7 @@ export default {
 				return 0;
 			});
 		},
+
 		stopJob(jobId) {
 			flashes.clear(flashIdStopJob);
 			const message = "Stop job?";

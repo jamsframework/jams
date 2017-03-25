@@ -2,14 +2,17 @@ import config from "../../../config";
 import * as flashes from "../../../flashes";
 import {formatDateTime} from "../../../date";
 
+const flashIdLoadingJobsFailed = 1;
+const flashIdRemovingJobFailed = 2;
+
 export default {
 	beforeDestroy() {
 		clearInterval(this.jobsIntervalId);
 		clearInterval(this.serverLoadIntervalId);
 	},
 	created() {
-		this.getJobs();
-		this.getServerLoad();
+		this.getJobs(true);
+		this.getServerLoad(true);
 
 		this.jobsIntervalId = setInterval(this.getJobs, config.jobsInterval);
 		this.serverLoadIntervalId = setInterval(this.getServerLoad, config.serverLoadInterval);
@@ -26,8 +29,16 @@ export default {
 		getDownloadUrl(workspaceId) {
 			return config.apiBaseUrl + "/workspace/download/" + workspaceId;
 		},
+
 		formatDateTime,
-		getJobs() {
+
+		getJobs(force = false) {
+			if (!force && (!this.$store.state.isConnected || !this.$store.state.isOnline)) {
+				return;
+			}
+
+			flashes.clear(flashIdLoadingJobsFailed);
+
 			const url = config.apiBaseUrl + "/job/find";
 
 			this.$http.get(url).then((response) => {
@@ -37,10 +48,15 @@ export default {
 					console.error("jobs: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				flashes.error("Job list couldn’t be loaded");
+				flashes.error("Job list couldn’t be loaded", flashIdLoadingJobsFailed);
 			});
 		},
-		getServerLoad() {
+
+		getServerLoad(force = false) {
+			if (!force && (!this.$store.state.isConnected || !this.$store.state.isOnline)) {
+				return;
+			}
+
 			const url = config.apiBaseUrl + "/job/load";
 
 			this.$http.get(url).then((response) => {
@@ -51,7 +67,10 @@ export default {
 				});
 			});
 		},
+
 		removeJob(jobId) {
+			flashes.clear(flashIdRemovingJobFailed);
+
 			const message = "Remove job?";
 
 			if (!window.confirm(message)) {
@@ -72,9 +91,10 @@ export default {
 					console.error("jobs: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				flashes.error("Job couldn’t be removed");
+				flashes.error("Job couldn’t be removed", flashIdRemovingJobFailed);
 			});
 		},
+
 		stopJob(jobId) {
 			const message = "Stop job?";
 
