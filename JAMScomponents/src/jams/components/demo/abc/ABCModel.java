@@ -72,7 +72,7 @@ public class ABCModel extends JAMSComponent {
             public Attribute.Double precip;
         
     @JAMSVarDescription(
-    access = JAMSVarDescription.AccessType.WRITE,
+    access = JAMSVarDescription.AccessType.READWRITE,
             description = "The current storage content",
             lowerBound = 0,
             upperBound = Double.POSITIVE_INFINITY
