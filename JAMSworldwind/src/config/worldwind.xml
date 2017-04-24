@@ -5,7 +5,7 @@
   ~ All Rights Reserved.
   -->
 
-<!--$Id: worldwind.xml 1484 2013-06-25 19:23:10Z tgaskins $-->
+<!--$Id: worldwind.xml 2348 2014-09-25 23:35:46Z dcollins $-->
 <!--Default World Wind configuration values-->
 <!--Any of these can be overridden by specifying an application configuration document-->
 <!--An alternate document to this one can also be specified-->
@@ -20,6 +20,8 @@
               value="gov.nasa.worldwind.globes.Earth"/>
     <Property name="gov.nasa.worldwind.avkey.EarthElevationModelConfigFile"
               value="config/Earth/EarthElevations2.xml"/>
+    <Property name="gov.nasa.worldwind.globes.GeographicProjectionClassName"
+              value="gov.nasa.worldwind.globes.projections.ProjectionEquirectangular"/>
     <Property name="gov.nasa.worldwind.avkey.InitialLatitude" value="38"/>
     <Property name="gov.nasa.worldwind.avkey.InitialAltitude" value="19.07e6"/>
     <Property name="gov.nasa.worldwind.avkey.ViewClassName" value="gov.nasa.worldwind.view.orbit.BasicOrbitView"/>
@@ -32,6 +34,8 @@
     <Property name="gov.nasa.worldwind.avkey.ElevationModelFactory"
               value="gov.nasa.worldwind.terrain.BasicElevationModelFactory"/>
     <Property name="gov.nasa.worldwind.avkey.LayerFactory" value="gov.nasa.worldwind.layers.BasicLayerFactory"/>
+    <Property name="gov.nasa.worldwind.avkey.ShapefileLayerFactory"
+              value="gov.nasa.worldwind.formats.shapefile.ShapefileLayerFactory"/>
     <Property name="gov.nasa.worldwind.avkey.WebViewFactory"
               value="gov.nasa.worldwind.util.webview.BasicWebViewFactory"/>
     <Property name="gov.nasa.worldwind.avkey.TessellatorClassName"
@@ -72,7 +76,8 @@
     <Property name="gov.nasa.worldwind.avkey.URLConnectTimeout" value="8000"/>
     <Property name="gov.nasa.worldwind.avkey.URLReadTimeout" value="10000"/>
     <Property name="gov.nasa.worldwind.avkey.TextureCacheSize" value="500000000"/>
-    <Property name="gov.nasa.worldwind.avkey.ElevationTileCacheSize" value="10000000"/>
+    <Property name="gov.nasa.worldwind.avkey.ElevationTileCacheSize" value="20000000"/>
+    <Property name="gov.nasa.worldwind.avkey.ElevationExtremesLookupCacheSize" value="20000000"/>
     <Property name="gov.nasa.worldwind.avkey.SectorGeometryCacheSize" value="10000000"/>
     <Property name="gov.nasa.worldwind.avkey.TextureTileCacheSize" value="10000000"/>
     <Property name="gov.nasa.worldwind.avkey.PlacenameLayerCacheSize" value="4000000"/>
@@ -94,5 +99,5 @@
          Examples: http://myserver.com/milstd2525/   (web server)
                    jar:file:milstd2525-symbols.zip!  (local zip archive)  -->
     <Property name="gov.nasa.worldwind.avkey.MilStd2525IconRetrieverPath"
-              value="http://worldwind.arc.nasa.gov/milstd2525c/rev1/"/>
+              value="https://worldwind.arc.nasa.gov/milstd2525c/rev1/"/>
 </WorldWindConfiguration>

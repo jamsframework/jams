@@ -29,6 +29,7 @@ import gov.nasa.worldwind.util.StatusBar;
 import gov.nasa.worldwindx.examples.util.HighlightController;
 import gov.nasa.worldwindx.examples.util.ScreenSelector;
 import gov.nasa.worldwindx.examples.util.ScreenShotAction;
+import jams.JAMS;
 import jams.JAMSLogging;
 import jams.data.JAMSCalendar;
 import jams.tools.JAMSTools;
@@ -739,7 +740,8 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         this.timeSeriesSliderLabel.setEnabled(true);
         JButton playButton = new JButton(">");
         JButton pauseButton = new JButton("||");
-        delayEdit = new JTextField("10");
+        delayEdit = new JTextField("100");
+        delayEdit.setToolTipText(JAMS.i18n("Time_in_milliseconds"));
         delayEdit.setPreferredSize(new Dimension((int) delayEdit.getPreferredSize().getWidth() * 3, (int) delayEdit.getPreferredSize().getHeight()));
         JPanel playPanel = new JPanel();
         playPanel.add(playButton);
@@ -1014,14 +1016,14 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
     private void showLayersActionListener(ActionEvent e) {
         if (theLayerView == null) {
-            this.theLayerView = new LayerListView();
+            this.theLayerView = new LayerListView(theFrame);
         }
         if (((JCheckBoxMenuItem) e.getSource()).isSelected()) {
             getPCS().addPropertyChangeListener(this.theLayerView);
-            this.theLayerView.show(true);
+            this.theLayerView.setVisible(true);
             this.theFrame.toFront();
         } else {
-            this.theLayerView.show(false);
+            this.theLayerView.setVisible(false);
             this.theFrame.toFront();
         }
     }

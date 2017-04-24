@@ -6,12 +6,12 @@
   -->
 
 <!-- Bing imagery -->
-<!--$Id: BingImagery.xml 1171 2013-02-11 21:45:02Z dcollins $-->
+<!--$Id: BingImagery.xml 1713 2013-11-11 20:34:56Z tgaskins $-->
 <Layer version="1" layerType="TiledImageLayer">
     <DisplayName>Bing Imagery</DisplayName>
     <Service serviceName="OGC:WMS" version="1.1.1">
-        <GetCapabilitiesURL>http://worldwind27.arc.nasa.gov/wms/virtualearth</GetCapabilitiesURL>
-        <GetMapURL>http://worldwind27.arc.nasa.gov/wms/virtualearth</GetMapURL>
+        <GetCapabilitiesURL>https://worldwind27.arc.nasa.gov/wms/virtualearth</GetCapabilitiesURL>
+        <GetMapURL>https://worldwind27.arc.nasa.gov/wms/virtualearth</GetMapURL>
         <LayerNames>ve</LayerNames>
     </Service>
     <RetrievePropertiesFromService>true</RetrievePropertiesFromService>
@@ -41,9 +41,6 @@
             <LatLon units="degrees" latitude="90" longitude="180"/>
         </NorthEast>
     </Sector>
-    <ForceLevelZeroLoads>true</ForceLevelZeroLoads>
-    <RetainLevelZeroTiles>true</RetainLevelZeroTiles>
-    <UseTransparentTextures>false</UseTransparentTextures>
     <ScreenCredit creditType="ScreenImage">
         <FileName>images/Bing_32x32.png</FileName>
         <Link>http://www.microsoft.com/maps/assets/docs/terms.aspx/</Link>
