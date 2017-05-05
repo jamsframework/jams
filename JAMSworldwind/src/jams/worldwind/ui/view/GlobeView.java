@@ -931,7 +931,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
 
         controls.add(new JCheckBoxMenuItem());
 
-        JMenuItem listLayers = new JCheckBoxMenuItem("Show Layers");
+        JMenuItem listLayers = new JMenuItem("Show Layers");
         stroke = KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
         listLayers.setAccelerator(stroke);
         listLayers.addActionListener(new ActionListener() {
@@ -1017,15 +1017,9 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
     private void showLayersActionListener(ActionEvent e) {
         if (theLayerView == null) {
             this.theLayerView = new LayerListView(theFrame);
+            this.theLayerView.setLocationRelativeTo(theFrame);
         }
-        if (((JCheckBoxMenuItem) e.getSource()).isSelected()) {
-            getPCS().addPropertyChangeListener(this.theLayerView);
-            this.theLayerView.setVisible(true);
-            this.theFrame.toFront();
-        } else {
-            this.theLayerView.setVisible(false);
-            this.theFrame.toFront();
-        }
+        this.theLayerView.setVisible(true);
     }
     // </editor-fold>  
 

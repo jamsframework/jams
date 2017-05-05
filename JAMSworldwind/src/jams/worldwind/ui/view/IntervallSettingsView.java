@@ -38,7 +38,7 @@ public class IntervallSettingsView {
     }
 */
     private void createGUI() {
-        this.intervallSettingsFrame = new JFrame("Classify Data");
+        this.intervallSettingsFrame = new JFrame("Data Classification");
         this.intervallSettingsFrame.setIconImages(JAMSTools.getJAMSIcons());        
         this.intervallSettingsPanel = new IntervallSettingsPanel(this, dataValues, this.attributes);
 

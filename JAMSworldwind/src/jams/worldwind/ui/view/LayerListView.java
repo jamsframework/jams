@@ -5,6 +5,7 @@ import jams.worldwind.handler.LayerListItemTransferHandler;
 import jams.worldwind.events.Events;
 import jams.worldwind.ui.model.LayerListModel;
 import jams.worldwind.ui.renderer.LayerListRenderer;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.DropMode;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -28,10 +30,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author Ronny Berndt <ronny.berndt at uni-jena.de>
  */
-public class LayerListView implements PropertyChangeListener, ActionListener {
+public class LayerListView extends JDialog implements PropertyChangeListener, ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(LayerListView.class);
-    private JFrame theFrame;
+//    private JFrame theFrame;
     private JScrollPane scrollPane;
     private JList layers;
     private LayerListModel layerModel;
@@ -41,11 +43,15 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
     /**
      *
      */
-    public LayerListView() {
+    public LayerListView(Frame parent) {
+        
+        super(parent, "Layers");
         //Observer.getInstance().addPropertyChangeListener(this);
         this.layerModel = new LayerListModel();
-
-        theFrame = new JFrame("Layers");
+        
+//        theFrame = new JFrame("Layers");
+//        theFrame.setIconImages(JAMSTools.getJAMSIcons());
+        
         layers = new JList(layerModel);
 
         layers.setDragEnabled(
@@ -57,9 +63,9 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
         layers.setTransferHandler(
                 new LayerListItemTransferHandler(layerModel));
 
-        theFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
-        theFrame.setLayout(
+        this.setLayout(
                 new GridLayout(1, 1));
 
         scrollPane = new JScrollPane(layers);
@@ -135,9 +141,9 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
                 });
         //layers.setComponentPopupMenu(createPopupMenu());
 
-        theFrame.add(scrollPane);
+        this.add(scrollPane);
 
-        theFrame.setSize(
+        this.setSize(
                 200, 600);
 
         this.indexToRemove = -1;
@@ -167,11 +173,11 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
         //MouseListener popupListener = new PopupListener(popup);
         //layers.addMouseListener(popupListener);
     }
-
-    void dispose() {
-        this.theFrame.setVisible(false);
-        this.theFrame.dispose();
-    }
+//
+//    void dispose() {
+//        this.theFrame.setVisible(false);
+//        this.theFrame.dispose();
+//    }
 
     /**
      *
@@ -213,7 +219,7 @@ public class LayerListView implements PropertyChangeListener, ActionListener {
         }
     }
 
-    void show(boolean b) {
-        theFrame.setVisible(b);
-    }
+//    void show(boolean b) {
+//        theFrame.setVisible(b);
+//    }
 }

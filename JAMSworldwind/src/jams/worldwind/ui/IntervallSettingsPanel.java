@@ -32,6 +32,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -168,7 +170,14 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                calculateButtonActionListener(e);
+                SwingWorker worker = new SwingWorker() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        calculateButtonActionListener();
+                        return null;
+                    }
+                };
+                worker.execute();
             }
         });
 
@@ -286,7 +295,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
     }
 
     //<editor-fold defaultstate="collapsed" desc="ActionListener">
-    private void calculateButtonActionListener(ActionEvent e) {
+    private void calculateButtonActionListener() {
 
         logger.info("Starting Classification...");
         String attribute = (String) this.attributeNameComboBox.getSelectedItem();

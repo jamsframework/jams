@@ -329,10 +329,10 @@ public abstract class OptimizerWrapper extends JAMSContext {
     }
 
     @Override
-    public long getNumberOfIterations(){
-        //return this.maxn.getValue();
-        return Integer.MAX_VALUE;
-    }
+    public long getRunCount() {
+        return this.iterationCounter.getValue();
+    }    
+    
     @Override
     public void run() {
         try {

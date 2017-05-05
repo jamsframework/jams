@@ -254,6 +254,7 @@ public class DefaultDataFactory implements DataFactory {
             interfaceLookup.put(Attribute.Long.class, JAMSLong.class);
             interfaceLookup.put(Attribute.LongArray.class, JAMSLongArray.class);
             interfaceLookup.put(Attribute.Object.class, JAMSObject.class);
+            interfaceLookup.put(Attribute.ObjectArray.class, JAMSObjectArray.class);
             interfaceLookup.put(Attribute.String.class, JAMSString.class);
             interfaceLookup.put(Attribute.StringArray.class, JAMSStringArray.class);
             interfaceLookup.put(Attribute.TimeInterval.class, JAMSTimeInterval.class);

@@ -131,11 +131,11 @@ public class TimeSpaceProcessor extends Processor {
         rs.next();
         return rs.getInt("COUNT");
     }
-    
+
     public synchronized DataMatrix getCrossProduct(long[] entityIds, String[] dateIds) throws SQLException, IOException {
         return getCrossProduct(entityIds, dateIds, 0);
     }
-      
+
     public synchronized DataMatrix getCrossProduct(long[] entityIds, String[] dateIds, int attributeID) throws SQLException, IOException {
         if (entityIds == null) {
             throw new NullPointerException("getCrossProduct: entityIds must not be null");
@@ -155,7 +155,7 @@ public class TimeSpaceProcessor extends Processor {
                     throw new IOException("getCrossProduct: date " + calendar.toString() + " is not available in file " + this.dsdb.getFile().getAbsolutePath());
                 } else {
                     throw new IOException("getCrossProduct: date " + calendar.toString() + " is not available");
-                }                
+                }
             }
             if (idMap == null) {
                 idMap = new int[entityIds.length];
@@ -375,6 +375,12 @@ public class TimeSpaceProcessor extends Processor {
         JAMSCalendar utcCal = new JAMSCalendar();
         double[][] weights;
 
+        int[] aggregationTypes = new int[dsdb.getAttributes().size()];
+        int c = 0;
+        for (AbstractDataStoreProcessor.AttributeData a : dsdb.getAttributes()) {
+            aggregationTypes[c++] = a.getAggregationType();
+        }
+
         if (ids.length == 1) {
             for (AbstractDataStoreProcessor.AttributeData a : dsdb.getAttributes()) {
                 a.setAggregationType(DataStoreProcessor.AttributeData.AGGREGATION_SUM);
@@ -445,6 +451,11 @@ public class TimeSpaceProcessor extends Processor {
 
         DataMatrix result = new DataMatrix(dataArray, timeStampArray, attributeIDs);
 
+        c = 0;
+        for (AbstractDataStoreProcessor.AttributeData a : dsdb.getAttributes()) {
+            a.setAggregationType(aggregationTypes[c++]);
+        }        
+        
         return result;
     }
 

@@ -74,6 +74,12 @@ public class SimpleOptimizationController extends OptimizationController {
     }
     
     @Override
+    public long getNumberOfIterations(){
+        //return this.maxn.getValue();
+        return (long) ((NumericOptimizerParameter) this.optimization.getOptimizerDescription().getPropertyMap().get("maxn")).getValue();
+    }    
+    
+    @Override
     public void procedure() {
 
         OptimizationConfiguration conf = new OptimizationConfiguration(optimization);
