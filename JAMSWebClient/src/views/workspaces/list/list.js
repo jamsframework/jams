@@ -36,6 +36,10 @@ export default {
 		},
 
 		getWorkspaces(force = false) {
+			if (this.isLoading) {
+				return;
+			}
+
 			if (!this.$store.state.isOnline) {
 				return;
 			}
@@ -51,9 +55,6 @@ export default {
 
 			const promise = this.$http.get(url, {
 				before(request) {
-					if (this.request) {
-						this.request.abort();
-					}
 					this.request = request;
 				}
 			});
