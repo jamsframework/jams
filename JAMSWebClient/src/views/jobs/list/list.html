@@ -16,8 +16,9 @@
 		</div>
 	</div>
 
-	<div class="box" v-if="jobs.length === 0">
-		<div class="text-center"><em>No jobs</em></div>
+	<div class="box text-center" v-if="jobs.length === 0">
+		<em v-if="isLoading && !hasLoadedOnce">Loading…</em>
+		<em v-else>No jobs</em>
 	</div>
 
 	<div id="jobs-server-load" :title="'Server load: ' + Math.round(serverLoad * 100) + '%'" v-if="serverLoad !== -1">

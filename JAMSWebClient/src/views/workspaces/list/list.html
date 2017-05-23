@@ -12,7 +12,8 @@
 		</div>
 	</div>
 
-	<div class="box" v-if="workspaces.length === 0">
-		<div class="text-center"><em>No workspaces</em></div>
+	<div class="box text-center" v-if="workspaces.length === 0">
+		<em v-if="isLoading && !hasLoadedOnce">Loading…</em>
+		<em v-else>No workspaces</em>
 	</div>
 </div>

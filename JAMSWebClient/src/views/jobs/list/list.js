@@ -7,6 +7,10 @@ const flashIdRemovingJobFailed = 2;
 
 export default {
 	beforeDestroy() {
+		if (this.request) {
+			this.request.abort();
+		}
+
 		clearInterval(this.jobsIntervalId);
 		clearInterval(this.serverLoadIntervalId);
 
@@ -25,8 +29,11 @@ export default {
 	},
 	data() {
 		return {
+			hasLoadedOnce: false,
+			isLoading: false,
 			jobs: [],
 			jobsIntervalId: 0,
+			request: null,
 			serverLoad: -1,
 			serverLoadIntervalId: 0
 		};
@@ -47,18 +54,32 @@ export default {
 				return;
 			}
 
+			this.isLoading = true;
 			flashes.clear(flashIdLoadingJobsFailed);
 
 			const url = config.apiBaseUrl + "/job/find";
 
-			this.$http.get(url).then((response) => {
+			const promise = this.$http.get(url, {
+				before(request) {
+					if (this.request) {
+						this.request.abort();
+					}
+					this.request = request;
+				}
+			});
+
+			promise.then((response) => {
 				response.json().then((data) => {
 					this.jobs = data.jobs;
+					this.hasLoadedOnce = true;
+					this.isLoading = false;
 				}, (response) => {
 					console.error("jobs: Parsing JSON response failed:", response);
+					this.isLoading = false;
 				});
 			}, (response) => {
 				flashes.error("Job list couldn’t be loaded", flashIdLoadingJobsFailed);
+				this.isLoading = false;
 			});
 		},
 

@@ -7,6 +7,10 @@ const flashIdRemovingWorkspaceFailed = 2;
 
 export default {
 	beforeDestroy() {
+		if (this.request) {
+			this.request.abort();
+		}
+
 		clearInterval(this.workspacesIntervalId);
 		window.removeEventListener("online", this.getWorkspaces);
 	},
@@ -17,6 +21,9 @@ export default {
 	},
 	data() {
 		return {
+			hasLoadedOnce: false,
+			isLoading: false,
+			request: null,
 			workspaces: [],
 			workspacesIntervalId: 0
 		};
@@ -37,18 +44,32 @@ export default {
 				return;
 			}
 
+			this.isLoading = true;
 			flashes.clear(flashIdLoadingWorkspacesFailed);
 
 			const url = config.apiBaseUrl + "/workspace/find";
 
-			this.$http.get(url).then((response) => {
+			const promise = this.$http.get(url, {
+				before(request) {
+					if (this.request) {
+						this.request.abort();
+					}
+					this.request = request;
+				}
+			});
+
+			promise.then((response) => {
 				response.json().then((data) => {
 					this.workspaces = data.workspaces;
+					this.hasLoadedOnce = true;
+					this.isLoading = false;
 				}, (response) => {
 					console.error("workspaces: Parsing JSON response failed:", response);
+					this.isLoading = false;
 				});
 			}, (response) => {
 				flashes.error("Workspace list couldn’t be loaded", flashIdLoadingWorkspacesFailed);
+				this.isLoading = false;
 			});
 		},
 
