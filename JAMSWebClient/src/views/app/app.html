@@ -7,6 +7,9 @@
 			<li class="flex-list-item flex">
 				<router-link :to="{name: 'workspaces'}">Workspaces</router-link>
 			</li>
+			<li class="flex-list-item" v-if="$store.state.user.isAdmin">
+				<router-link :to="{name: 'adminJobsList'}">Administration</router-link>
+			</li>
 			<li class="flex-list-item" :title="'Signed in as ' + $store.state.user.username" v-if="$store.state.user.isSignedIn">
 				<router-link :to="{name: 'account'}">Account</router-link>
 			</li>

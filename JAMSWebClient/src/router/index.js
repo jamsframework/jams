@@ -3,6 +3,8 @@ import VueRouter from "vue-router";
 
 import account from "../views/account/account/account.vue";
 import accountPassword from "../views/account/password/password.vue";
+import adminJobsList from "../views/admin/jobs/list/list.vue";
+import adminUsersCreate from "../views/admin/users/create/create.vue";
 import buildConfig from "../../config";
 import * as flashes from "../flashes";
 import jobsList from "../views/jobs/list/list.vue";
@@ -23,13 +25,17 @@ let basePath = process.env.NODE_ENV === "production"
 // Remove trailing slashes from basePath
 basePath = basePath.replace(/\/+$/, "");
 
+// Access levels are used to restrict access to pages
+const ACCESS_LEVEL_ADMIN = 2;
+const ACCESS_LEVEL_USER = 1;
+
 const router = new VueRouter({
 	mode: "history",
 	routes: [
 		{
 			component: jobsList,
 			meta: {
-				requiresAuth: true
+				accessLevel: ACCESS_LEVEL_USER
 			},
 			name: "jobs",
 			path: basePath + "/"
@@ -37,15 +43,31 @@ const router = new VueRouter({
 		{
 			component: account,
 			meta: {
-				requiresAuth: true
+				accessLevel: ACCESS_LEVEL_USER
 			},
 			name: "account",
 			path: basePath + "/account"
 		},
 		{
+			component: adminJobsList,
+			meta: {
+				accessLevel: ACCESS_LEVEL_ADMIN
+			},
+			name: "adminJobsList",
+			path: basePath + "/admin/jobs/list"
+		},
+		{
+			component: adminUsersCreate,
+			meta: {
+				accessLevel: ACCESS_LEVEL_ADMIN
+			},
+			name: "adminUsersCreate",
+			path: basePath + "/admin/users/create"
+		},
+		{
 			component: accountPassword,
 			meta: {
-				requiresAuth: true
+				accessLevel: ACCESS_LEVEL_USER
 			},
 			name: "accountPassword",
 			path: basePath + "/account/password"
@@ -57,7 +79,7 @@ const router = new VueRouter({
 		{
 			component: jobsShow,
 			meta: {
-				requiresAuth: true
+				accessLevel: ACCESS_LEVEL_USER
 			},
 			name: "job",
 			path: basePath + "/jobs/show/:id/:logType?"
@@ -75,7 +97,7 @@ const router = new VueRouter({
 		{
 			component: workspacesList,
 			meta: {
-				requiresAuth: true
+				accessLevel: ACCESS_LEVEL_USER
 			},
 			name: "workspaces",
 			path: basePath + "/workspaces"
@@ -83,7 +105,7 @@ const router = new VueRouter({
 		{
 			component: workspacesShow,
 			meta: {
-				requiresAuth: true
+				accessLevel: ACCESS_LEVEL_USER
 			},
 			name: "workspace",
 			path: basePath + "/workspaces/show/:id"
@@ -98,13 +120,19 @@ const router = new VueRouter({
 // Check rules before navigating to a page
 router.beforeEach((to, from, next) => {
 	// If page or any parent page requires authentication, redirect to sign-in page
-	if (to.matched.some((record) => record.meta.requiresAuth) && !store.state.user.isSignedIn) {
+	if (to.matched.some((record) => record.meta.accessLevel) && !store.state.user.isSignedIn) {
 		next({
 			name: "signIn",
 			query: {
 				from: to.fullPath
 			}
 		});
+		return;
+	}
+
+	// If page or any parent page requires admin rights
+	if (to.matched.some((record) => record.meta.accessLevel >= ACCESS_LEVEL_ADMIN) && !store.state.user.isAdmin) {
+		flashes.add("You are not allowed to access this page.", flashes.TYPE_ERROR);
 		return;
 	}
 
