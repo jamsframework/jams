@@ -170,7 +170,7 @@ public abstract class AbstractProcessManager implements ProcessManager {
         state.setActive(pidWasFound);
         state.setStartDate(job.getStartTime());
         state.setDuration((new Date()).getTime() - job.getStartTime().getTime());
-        state.setJob(job);
+        state.setJobID(job.getId());
         state.setSize(FileTools.getDirectorySize(getLocalExecDir(job)));
         try {
             java.io.File progressFile = new java.io.File(getLocalExecDir(job) + "/" + "progress.log");
