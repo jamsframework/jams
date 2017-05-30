@@ -58,15 +58,15 @@ import javax.ws.rs.core.StreamingOutput;
 public class JobFacadeREST extends AbstractFacade<Job> {
 
     Logger logger = Logger.getLogger(JobFacadeREST.class.getName());
-    
+
     @PersistenceContext(unitName = "jams-serverPU")
     private EntityManager em;
-    
-    static ProcessManager processManager = 
-            System.getProperty("os.name").contains("Windows") ? new Win64ProcessManager() : 
-            System.getProperty("os.name").contains("Linux") ? new LinuxProcessManager() : 
+
+    static ProcessManager processManager =
+            System.getProperty("os.name").contains("Windows") ? new Win64ProcessManager() :
+            System.getProperty("os.name").contains("Linux") ? new LinuxProcessManager() :
             new LinuxProcessManager();
-    
+
     public JobFacadeREST() {
         super(Job.class);
     }
@@ -77,20 +77,20 @@ public class JobFacadeREST extends AbstractFacade<Job> {
                 .setParameter("id", id)
                 .getResultList();
     }
-    
+
     private List<Job> getJobsForUser(int ownerID){
         return em.createQuery(
                 "SELECT w FROM Job w WHERE w.ownerID = :ownerID")
                 .setParameter("ownerID", ownerID)
                 .getResultList();
     }
-    
+
     private List<Job> getAllJobs() {
         return em.createQuery(
                 "SELECT w FROM Job w ")
                 .getResultList();
     }
-       
+
     private Job updateJob(Job job){
         if (job.getPID()==-1){
             return job;
@@ -102,14 +102,14 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             }
             Workspace ws = processManager.updateWorkspace(job, em);
             job.setWorkspace(ws);
-            em.persist(job);    
+            em.persist(job);
             return job;
         }catch(IOException ioe){
             logger.log(Level.SEVERE,ioe.getMessage(),ioe);
         }
         return job;
     }
-        
+
     private List<Job> updateJobs(List<Job> jobs){
         ArrayList<Job> returnList = new ArrayList<>();
         for (Job job : jobs){
@@ -117,41 +117,41 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         }
         return returnList;
     }
-    
+
     private Workspace duplicateWorkspace(Workspace ws){
-        Workspace ws_clone = new Workspace(ws);        
+        Workspace ws_clone = new Workspace(ws);
         ws_clone.setReadOnly(true);
         getEntityManager().persist(ws_clone);
         getEntityManager().flush();
         getEntityManager().refresh(ws_clone);
         for (WorkspaceFileAssociation wfa : ws.getFiles()){
             ws_clone.assignFile(wfa.getFile(), wfa.getRole(), wfa.getPath());
-        }        
+        }
         getEntityManager().persist(ws_clone);
         getEntityManager().flush();
         getEntityManager().refresh(ws_clone);
         return ws_clone;
     }
-    
+
     @GET
     @Path("create")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Response create(@QueryParam("workspace") Integer wsID, 
+    public Response create(@QueryParam("workspace") Integer wsID,
             @QueryParam("file") Integer wfaID, @Context HttpServletRequest req) {
-        
+
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+
         //perform cleanup at first
         try{
             processManager.cleanUp(currentUser, new Jobs(findAll()));
         }catch(IOException ioe){
             Logger.getLogger(getClass().getName()).warning(ioe.toString());
         }
-        
+
         List<Workspace> list = getWorkspaceWithID(wsID);
         if (list == null || list.isEmpty()){
             return Response.status(Status.NOT_FOUND).build();
@@ -173,18 +173,18 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (!create(job) || job.getId()==null){
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
-        
-        try{            
-            job = processManager.deploy(job);       
+
+        try{
+            job = processManager.deploy(job);
             em.persist(job);
             return Response.ok(job).build();
         }catch(Throwable ioe){
             Logger logger = Logger.getLogger(JobFacadeREST.class.getName());
             logger.log(Level.SEVERE,ioe.getMessage(),ioe);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-        }                
+        }
     }
-    
+
     @GET
     @Path("find")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -193,16 +193,16 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        
-        List<Job> list = getJobsForUser(currentUser.getId());        
+
+        List<Job> list = getJobsForUser(currentUser.getId());
         //do update
         list = updateJobs(list);
         if (list == null){
             return Response.status(Status.NOT_FOUND).build();
-        }        
+        }
         return Response.ok(new Jobs(list)).build();
     }
-    
+
     @GET
     @Path("reset")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -210,16 +210,16 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         User currentUser = getCurrentUser(req);
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
-        }        
+        }
         List<Job> list = getJobsForUser(currentUser.getId());
         if (list != null){
             for (Job job : list){
                 remove(job);
             }
-        }        
+        }
         return Response.ok("Successful").build();
     }
-    
+
     @GET
     @Path("findActive")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -228,7 +228,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+
         List<Job> list = getJobsForUser(currentUser.getId());
         if (list == null || list.isEmpty()){
             return Response.status(Status.NOT_FOUND).build();
@@ -236,16 +236,16 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         ArrayList<Job> activeList = new ArrayList<Job>();
         //do update
         list = updateJobs(list);
-        
+
         for (Job job : list){
             if (job.getPID()>-1){
                 activeList.add(job);
             }
         }
-        
+
         return Response.ok(new Jobs(activeList)).build();
     }
-    
+
     @GET
     @Path("findAll")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -256,16 +256,16 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         }
         if (currentUser.getAdmin()==0)
             return Response.status(Status.FORBIDDEN).build();
-        
+
         List<Job> list = getAllJobs();
-        list = updateJobs(list);        
+        list = updateJobs(list);
         if (list == null || list.isEmpty()){
             return Response.status(Status.NOT_FOUND).build();
         }
-        
+
         return Response.ok(new Jobs(list)).build();
     }
-    
+
     @GET
     @Path("{id}/infolog")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -274,7 +274,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+
         Job job = find(id);
         if (job == null){
             return Response.status(Status.NOT_FOUND).build();
@@ -283,14 +283,14 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             return Response.status(Status.FORBIDDEN).build();
         }
         try{
-            StreamingOutput so = processManager.streamInfoLog(job);        
+            StreamingOutput so = processManager.streamInfoLog(job);
             return Response.ok(so).header("fileName", "info.log").build();
         }catch(IOException ioe){
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @GET
     @Path("{id}/errorlog")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
@@ -299,7 +299,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+
         Job job = find(id);
         if (job == null){
             return Response.status(Status.NOT_FOUND).build();
@@ -308,14 +308,14 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             return Response.status(Status.FORBIDDEN).build();
         }
         try{
-            StreamingOutput so = processManager.streamErrorLog(job);        
+            StreamingOutput so = processManager.streamErrorLog(job);
             return Response.ok(so).header("fileName", "error.log").build();
         }catch(IOException ioe){
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-        
+
     @GET
     @Path("{id}/state")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -324,7 +324,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+
         Job job = find(id);
         if (job == null){
             return Response.status(Status.NOT_FOUND).build();
@@ -332,7 +332,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (job.getOwner().getId() != currentUser.getId()){
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+
         try{
             updateJob(job);
             JobState state = processManager.state(job);
@@ -342,7 +342,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @GET
     @Path("load")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -351,11 +351,11 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+
         double load = processManager.getLoad();
         return Response.ok(Double.toString(load)).build();
     }
-    
+
     @GET
     @Path("{id}/kill")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -364,7 +364,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+
         Job job = find(id);
         if (job == null){
             return Response.status(Status.NOT_FOUND).build();
@@ -372,7 +372,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (job.getOwner().getId() != currentUser.getId()){
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+
         try{
             JobState state = processManager.kill(job);
             updateJob(job);
@@ -382,7 +382,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @GET
     @Path("{id}/delete")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -391,32 +391,35 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+
         Job job = find(id);
-        if (job == null){
+        
+        if (job == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
-        if (job.getOwner().getId() != currentUser.getId()){
+
+        // If user is not owner and not admin, deny
+        if (job.getOwner().getId() != currentUser.getId() && currentUser.getAdmin() != 1) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        
-        try{
-            JobState state = processManager.kill(job);            
-            if (state!=null && state.isActive()){
+
+        try {
+            JobState state = processManager.kill(job);
+            if (state != null && state.isActive()) {
                 return Response.status(Status.REQUEST_TIMEOUT).build();
-            }else{
-                Workspace ws = job.getWorkspace();                
-                super.remove(job);                
+            } else {
+                Workspace ws = job.getWorkspace();
+                super.remove(job);
                 Utilities.deleteWorkspace(currentUser, ws);
-                em.remove(ws);                
+                em.remove(ws);
             }
             return Response.ok(job).build();
-        }catch(IOException ioe){
+        } catch (IOException ioe) {
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-    
+
     @GET
     @Path("{id}/refresh")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -425,7 +428,7 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        
+
         Job job = find(id);
         if (job == null){
             return Response.status(Status.NOT_FOUND).build();
@@ -435,13 +438,13 @@ public class JobFacadeREST extends AbstractFacade<Job> {
         }
 
         job = updateJob(job);
-        
+
         Workspace ws = job.getWorkspace();
-        return Response.ok(ws).build();            
+        return Response.ok(ws).build();
     }
-    
+
     @Override
     protected EntityManager getEntityManager() {
         return em;
-    }    
+    }
 }
