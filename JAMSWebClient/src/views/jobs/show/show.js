@@ -2,22 +2,20 @@ import config from "../../../config";
 import * as flashes from "../../../flashes";
 import {formatDateTime, formatDuration} from "../../../date";
 
-const flashIdLoadingErrorLogFailed = 1;
-const flashIdLoadingInfoLogFailed = 2;
-const flashIdLoadingJobFailed = 3;
-const flashIdRemovingJobFailed = 4;
-const flashIdStoppingJobFailed = 5;
+const FLASH_LOADING_ERROR_LOG_FAILED = 1;
+const FLASH_LOADING_INFO_LOG_FAILED = 2;
+const FLASH_LOADING_JOB_FAILED = 3;
+const FLASH_LOADING_JOB_STATE_FAILED = 4;
+const FLASH_REMOVING_JOB_FAILED = 5;
+const FLASH_STOPPING_JOB_FAILED = 6;
 
 const ERROR_LOG = "error";
 const INFO_LOG = "info";
 const JOB = "job";
+const JOB_STATE = "job-state";
 
 export default {
 	beforeDestroy() {
-		if (this.requests[JOB]) {
-			this.requests[JOB].abort();
-		}
-
 		if (this.requests[ERROR_LOG]) {
 			this.requests[ERROR_LOG].abort();
 		}
@@ -26,39 +24,53 @@ export default {
 			this.requests[INFO_LOG].abort();
 		}
 
+		if (this.requests[JOB]) {
+			this.requests[JOB].abort();
+		}
+
+		if (this.requests[JOB_STATE]) {
+			this.requests[JOB_STATE].abort();
+		}
+
 		this.clearIntervals();
 
-		window.removeEventListener("online", this.getJob);
 		window.removeEventListener("online", this.getErrorLog);
 		window.removeEventListener("online", this.getInfoLog);
+		window.removeEventListener("online", this.getJob);
+		window.removeEventListener("online", this.getJobState);
 	},
 	computed: {
 		formattedStartTime: function() {
-			return formatDateTime(this.job.startTime);
-		},
-		formattedDuration: function() {
-			return formatDuration(this.duration);
+			return formatDateTime(this.startTime);
 		}
 	},
 	created() {
 		this.getJob(true);
+		this.getJobState(true);
 		this.getLog(ERROR_LOG, true);
 		this.getLog(INFO_LOG, true);
 
 		this.intervalIds[ERROR_LOG] = setInterval(this.getErrorLog, config.jobsInterval);
 		this.intervalIds[INFO_LOG] = setInterval(this.getInfoLog, config.jobsInterval);
-		this.intervalIds[JOB] = setInterval(this.getJob, config.jobsInterval);
+		this.intervalIds[JOB_STATE] = setInterval(this.getJobState, config.jobsInterval);
 
 		window.addEventListener("online", this.getErrorLog);
 		window.addEventListener("online", this.getInfoLog);
 		window.addEventListener("online", this.getJob);
+		window.addEventListener("online", this.getJobState);
 	},
 	data() {
 		return {
 			// Job
+			jobId: this.$route.params.id,
+			modelFile: null,
+			startDate: "",
+			workspace: null,
+
+			// Job state
 			duration: 0,
 			isActive: false,
-			job: null,
+			isStopping: false,
 			progress: 0,
 			size: 0,
 
@@ -90,7 +102,7 @@ export default {
 		clearIntervals() {
 			clearInterval(this.intervalIds[ERROR_LOG]);
 			clearInterval(this.intervalIds[INFO_LOG]);
-			clearInterval(this.intervalIds[JOB]);
+			clearInterval(this.intervalIds[JOB_STATE]);
 		},
 
 		getDownloadUrl(workspaceId) {
@@ -98,7 +110,7 @@ export default {
 		},
 
 		getJob(force = false) {
-			if (this.isLoading[JOB]) {
+			if (this.isLoading[JOB] || this.modelFile) {
 				return;
 			}
 
@@ -111,10 +123,9 @@ export default {
 			}
 
 			this.isLoading[JOB] = true;
-			flashes.clear(flashIdLoadingJobFailed);
+			flashes.clear(FLASH_LOADING_JOB_FAILED);
 
-			const jobId = this.$route.params.id;
-			const url = config.apiBaseUrl + "/job/" + jobId + "/state";
+			const url = config.apiBaseUrl + "/job/" + this.jobId;
 
 			const promise = this.$http.get(url, {
 				before(request) {
@@ -124,26 +135,66 @@ export default {
 
 			promise.then((response) => {
 				response.json().then((data) => {
-					this.duration = data.duration;
-					this.isActive = data.active;
-					this.job = data.job;
-					this.progress = data.progress;
-					this.size = data.size;
+					this.modelFile = data.modelFile;
+					this.startTime = data.startTime;
+					this.workspace = data.workspace;
 
-					this.sort(this.job.workspace.WorkspaceFileAssociation);
-
-					// Stop refreshing if the job completed
-					if (this.job.PID === -1) {
-						this.clearIntervals();
-					}
+					this.sort(this.workspace.WorkspaceFileAssociation);
 					this.isLoading[JOB] = false;
 				}, (response) => {
 					console.error("job: Parsing JSON response failed:", response);
 					this.isLoading[JOB] = false;
 				});
 			}, (response) => {
-				flashes.error("Job info couldn’t be loaded", flashIdLoadingJobFailed);
+				flashes.error("Job info couldn’t be loaded", FLASH_LOADING_JOB_FAILED);
 				this.isLoading[JOB] = false;
+			});
+		},
+
+		getJobState(force = false) {
+			if (this.isLoading[JOB_STATE]) {
+				return;
+			}
+
+			if (!this.$store.state.isOnline) {
+				return;
+			}
+
+			if (!force && !this.$store.state.isConnected) {
+				return;
+			}
+
+			this.isLoading[JOB_STATE] = true;
+			flashes.clear(FLASH_LOADING_JOB_STATE_FAILED);
+
+			const url = config.apiBaseUrl + "/job/" + this.jobId + "/state";
+
+			const promise = this.$http.get(url, {
+				before(request) {
+					this.requests[JOB_STATE] = request;
+				}
+			});
+
+			promise.then((response) => {
+				response.json().then((data) => {
+					this.duration = data.duration;
+					this.isActive = data.active;
+					this.isStopping = false;
+					this.progress = data.progress;
+					this.size = data.size;
+
+					// Stop refreshing if the job completed
+					if (!this.isActive) {
+						this.clearIntervals();
+					}
+					this.isLoading[JOB_STATE] = false;
+				}, (response) => {
+					console.error("job: Parsing JSON response failed:", response);
+					this.isLoading[JOB_STATE] = false;
+				});
+			}, (response) => {
+				flashes.error("Job state couldn’t be loaded", FLASH_LOADING_JOB_STATE_FAILED);
+				this.isLoading[JOB_STATE] = false;
 			});
 		},
 
@@ -174,11 +225,10 @@ export default {
 			}
 
 			this.isLoading[type] = true;
-			const flashId = type === ERROR_LOG ? flashIdLoadingErrorLogFailed : flashIdLoadingInfoLogFailed;
+			const flashId = type === ERROR_LOG ? FLASH_LOADING_ERROR_LOG_FAILED : FLASH_LOADING_INFO_LOG_FAILED;
 			flashes.clear(flashId);
 
-			const jobId = this.$route.params.id;
-			const url = config.apiBaseUrl + "/job/" + jobId + "/" + type + "log";
+			const url = config.apiBaseUrl + "/job/" + this.jobId + "/" + type + "log";
 
 			const promise = this.$http.get(url, {
 				before(request) {
@@ -205,7 +255,7 @@ export default {
 		},
 
 		removeJob(jobId) {
-			flashes.clear(flashIdRemovingJobFailed);
+			flashes.clear(FLASH_REMOVING_JOB_FAILED);
 			const message = "Remove job?";
 
 			if (!window.confirm(message)) {
@@ -217,7 +267,7 @@ export default {
 			this.$http.get(url).then((response) => {
 				this.$router.push({name: "jobs"});
 			}, (response) => {
-				flashes.error("Job couldn’t be removed", flashIdRemovingJobFailed);
+				flashes.error("Job couldn’t be removed", FLASH_REMOVING_JOB_FAILED);
 			});
 		},
 
@@ -234,7 +284,7 @@ export default {
 		},
 
 		stopJob(jobId) {
-			flashes.clear(flashIdStoppingJobFailed);
+			flashes.clear(FLASH_STOPPING_JOB_FAILED);
 			const message = "Stop job?";
 
 			if (!window.confirm(message)) {
@@ -245,13 +295,12 @@ export default {
 
 			this.$http.get(url).then((response) => {
 				response.json().then((data) => {
-					console.debug(data);
-					this.job.PID = -2;
+					this.isStopping = true;
 				}, (response) => {
 					console.error("job: Parsing JSON response failed:", response);
 				});
 			}, (response) => {
-				flashes.error("Job couldn’t be stopped", flashIdStoppingJobFailed);
+				flashes.error("Job couldn’t be stopped", FLASH_STOPPING_JOB_FAILED);
 			});
 		}
 	}
