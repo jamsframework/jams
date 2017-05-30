@@ -267,25 +267,53 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     }
 
     @GET
-    @Path("{id}/infolog")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response infolog(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+    @Path("{id}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Response getJob(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
+
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
 
         Job job = find(id);
-        if (job == null){
+
+        if (job == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
-        if (job.getOwner().getId() != currentUser.getId()){
+
+        if (job.getOwner().getId() != currentUser.getId() && currentUser.getAdmin() != 1) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        try{
+
+        updateJob(job);
+        return Response.ok(job).build();
+    }
+
+    @GET
+    @Path("{id}/infolog")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response infolog(@PathParam("id") Integer id, @Context HttpServletRequest req) {
+        User currentUser = getCurrentUser(req);
+
+        if (currentUser == null) {
+            return Response.status(Status.FORBIDDEN).build();
+        }
+
+        Job job = find(id);
+
+        if (job == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+
+        if (job.getOwner().getId() != currentUser.getId() && currentUser.getAdmin() != 1) {
+            return Response.status(Status.FORBIDDEN).build();
+        }
+
+        try {
             StreamingOutput so = processManager.streamInfoLog(job);
             return Response.ok(so).header("fileName", "info.log").build();
-        }catch(IOException ioe){
+        } catch(IOException ioe) {
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -296,21 +324,25 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response errorlog(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
+
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
 
         Job job = find(id);
-        if (job == null){
+
+        if (job == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
-        if (job.getOwner().getId() != currentUser.getId()){
+
+        if (job.getOwner().getId() != currentUser.getId() && currentUser.getAdmin() != 1) {
             return Response.status(Status.FORBIDDEN).build();
         }
-        try{
+
+        try {
             StreamingOutput so = processManager.streamErrorLog(job);
             return Response.ok(so).header("fileName", "error.log").build();
-        }catch(IOException ioe){
+        } catch(IOException ioe) {
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -321,23 +353,26 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response getState(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
+
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
 
         Job job = find(id);
-        if (job == null){
+
+        if (job == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
-        if (job.getOwner().getId() != currentUser.getId()){
+
+        if (job.getOwner().getId() != currentUser.getId() && currentUser.getAdmin() != 1) {
             return Response.status(Status.FORBIDDEN).build();
         }
 
-        try{
+        try {
             updateJob(job);
             JobState state = processManager.state(job);
             return Response.ok(state).build();
-        }catch(IOException ioe){
+        } catch(IOException ioe) {
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -361,23 +396,26 @@ public class JobFacadeREST extends AbstractFacade<Job> {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response kill(@PathParam("id") Integer id, @Context HttpServletRequest req) {
         User currentUser = getCurrentUser(req);
+
         if (currentUser == null) {
             return Response.status(Status.FORBIDDEN).build();
         }
 
         Job job = find(id);
-        if (job == null){
+
+        if (job == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
-        if (job.getOwner().getId() != currentUser.getId()){
+
+        if (job.getOwner().getId() != currentUser.getId() && currentUser.getAdmin() != 1) {
             return Response.status(Status.FORBIDDEN).build();
         }
 
-        try{
+        try {
             JobState state = processManager.kill(job);
             updateJob(job);
             return Response.ok(state).build();
-        }catch(IOException ioe){
+        } catch(IOException ioe) {
             ioe.printStackTrace();
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
