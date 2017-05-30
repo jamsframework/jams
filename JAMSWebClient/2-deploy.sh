@@ -3,7 +3,7 @@
 # run on the server that hosts the website. The script unpacks the uploaded
 # archive and moves it into the correct location.
 
-DIR=~/websites/jams-web-client
+DIR=/home/modis/websites/jams-web-client
 cd "$DIR"
 
 # Unpack archive to temporary location

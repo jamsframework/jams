@@ -13,11 +13,11 @@ mv ./dist ~/.Trash/;
 mkdir ./dist;
 npm run build;
 
-# Compress files
+# Create archive
 tar -c -J --options xz:9 -v ./dist > ./dist.tar.xz
 
 # Upload to server
-scp ./dist.tar.xz worf:~/websites/jams-web-client/
+scp ./dist.tar.xz worf.geogr.uni-jena.de:/home/modis/websites/jams-web-client/
 
 # Delete archive
 mv ./dist.tar.xz ~/.Trash
