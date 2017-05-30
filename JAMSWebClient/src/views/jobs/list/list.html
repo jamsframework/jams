@@ -1,4 +1,4 @@
-<div class="center max-width-large">
+<div class="center max-width-medium">
 	<h1>Jobs</h1>
 
 	<div class="box" :key="job.id" v-for="job in jobs">
@@ -6,7 +6,6 @@
 		<div class="text-smaller">
 			<span class="tag">Started: {{formatDateTime(job.startTime)}}</span>
 			<span class="tag">Model: {{job.modelFile.path}}</span>
-			<span class="tag">Size: {{Math.ceil(job.workspace.workspaceSize / 1024 / 1024)}} MiB</span>
 			<a class="tag" :href="getDownloadUrl(job.workspace.id)" v-if="job.PID === -1">Download</a>
 			<span class="tag" v-if="job.PID > -1">Running</span>
 			<span class="tag" v-if="job.PID === -2">Stopping</span>
