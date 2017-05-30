@@ -70,7 +70,6 @@ export default {
 			});
 
 			promise.then((response) => {
-				console.debug(response);
 				response.json().then((data) => {
 					this.jobs = data.jobs;
 					this.hasLoadedOnce = true;
