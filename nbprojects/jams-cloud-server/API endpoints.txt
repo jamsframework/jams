@@ -15,6 +15,7 @@ GET     /job/findActive
 GET     /job/findAll
 GET     /job/load
 GET     /job/reset
+GET     /job/{id}
 GET     /job/{id}/delete
 GET     /job/{id}/errorlog
 GET     /job/{id}/infolog
