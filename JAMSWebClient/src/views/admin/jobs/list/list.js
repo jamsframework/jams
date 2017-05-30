@@ -143,7 +143,7 @@ export default {
 			this.$http.get(url).then((response) => {
 				response.json().then((data) => {
 					for (let i = 0, length = this.jobs.length; i < length; i++) {
-						if (this.jobs[i].id === data.job.id) {
+						if (this.jobs[i].id === data.jobid) {
 							this.jobs[i].PID = -2;
 							break;
 						}
