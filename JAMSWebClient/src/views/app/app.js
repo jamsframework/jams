@@ -2,14 +2,14 @@ import config from "../../config";
 
 export default {
 	created() {
-		this.getVersion();
+		this.getVersion(true);
 		this.ping();
 		this.watchOnlineStatus();
 	},
 	methods: {
 		// getVersion retrieves the JAMS Cloud Server version.
-		getVersion() {
-			if (!this.$store.state.isOnline) {
+		getVersion(force = false) {
+			if (!this.$store.state.isOnline && !force) {
 				return;
 			}
 
