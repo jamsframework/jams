@@ -60,7 +60,7 @@ export default {
 		window.addEventListener("online", this.getJobState);
 	},
 	data() {
-		return {
+		const data = {
 			// Job
 			jobId: this.$route.params.id,
 			modelFile: null,
@@ -73,30 +73,30 @@ export default {
 			isStopping: false,
 			progress: 0,
 			size: 0,
-
-			// Logs
-			logs: {
-				ERROR_LOG: "",
-				INFO_LOG: ""
-			},
-
-			// Requests
-			intervalIds: {
-				ERROR_LOG: 0,
-				INFO_LOG: 0,
-				JOB: 0
-			},
-			isLoading: {
-				ERROR_LOG: false,
-				INFO_LOG: false,
-				JOB: false
-			},
-			requests: {
-				ERROR_LOG: null,
-				INFO_LOG: null,
-				JOB: null
-			}
 		};
+
+		// Logs
+		data.logs = {};
+		data.logs[ERROR_LOG] = "";
+		data.logs[INFO_LOG] = "";
+
+		// Requests
+		data.intervalIds = {};
+		data.intervalIds[ERROR_LOG] = 0;
+		data.intervalIds[INFO_LOG] = 0;
+		data.intervalIds[JOB] = 0;
+
+		data.isLoading = {};
+		data.isLoading[ERROR_LOG] = false;
+		data.isLoading[INFO_LOG] = false;
+		data.isLoading[JOB] = false;
+
+		data.requests = {};
+		data.requests[ERROR_LOG] = null;
+		data.requests[INFO_LOG] = null;
+		data.requests[JOB] = null;
+
+		return data;
 	},
 	methods: {
 		clearIntervals() {
@@ -171,6 +171,9 @@ export default {
 
 			const promise = this.$http.get(url, {
 				before(request) {
+					if (this.requests[JOB_STATE]) {
+						this.requests[JOB_STATE].abort();
+					}
 					this.requests[JOB_STATE] = request;
 				}
 			});
@@ -232,21 +235,16 @@ export default {
 
 			const promise = this.$http.get(url, {
 				before(request) {
+					if (this.requests[type]) {
+						this.requests[type].abort();
+					}
 					this.requests[type] = request;
 				}
 			});
 
 			promise.then((response) => {
-				response.blob().then((data) => {
-					const reader = new FileReader();
-					reader.addEventListener("loadend", () => {
-						this.logs[type] = reader.result;
-						this.isLoading[type] = false;
-					});
-					reader.readAsText(data);
-				}, () => {
-					this.isLoading[type] = false;
-				});
+				this.logs[type] = response.bodyText;
+				this.isLoading[type] = false;
 			}, (response) => {
 				const logType = type === ERROR_LOG ? "Error" : "Info";
 				flashes.error(logType + " log couldn’t be loaded", flashId);
