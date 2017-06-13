@@ -17,7 +17,7 @@ npm run build;
 tar -c -J --options xz:9 -v ./dist > ./dist.tar.xz
 
 # Upload to server
-scp ./dist.tar.xz worf.geogr.uni-jena.de:/home/modis/websites/jams-web-client/
+scp ./dist.tar.xz modis@worf.geogr.uni-jena.de:/home/modis/websites/jams-web-client/
 
 # Delete archive
 mv ./dist.tar.xz ~/.Trash
