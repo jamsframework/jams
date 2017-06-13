@@ -7,16 +7,17 @@ DIR=/home/modis/websites/jams-web-client
 cd "$DIR"
 
 # Unpack archive to temporary location
-mkdir ./temp
-tar -xf ./dist.tar.xz -C ./temp
+TIMESTAMP=`date +%s`
+TEMP_DIR=./temp-$TIMESTAMP
+mkdir "$TEMP_DIR"
+tar -xf ./dist.tar.xz -C "$TEMP_DIR"
 
 # Move current website to backup location
-mv ./dist ./dist.bak
+mv ./dist ./dist-$TIMESTAMP.bak
 
 # Move new website to live location
-mv ./temp/dist ./dist
+mv $TEMP_DIR/dist ./dist
 
 # Clean up
-rmdir ./temp
+rmdir "$TEMP_DIR"
 rm ./dist.tar.xz
-rm -r ./dist.bak

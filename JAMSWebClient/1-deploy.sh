@@ -5,13 +5,14 @@
 # running. Tested on macOS.
 
 # Go to project root directory
-DIR=~/Dev/Projects/JAMSWebClient;
-cd "$DIR";
+DIR=~/Dev/Projects/JAMSWebClient
+cd "$DIR"
 
 # Build static website
-mv ./dist ~/.Trash/;
-mkdir ./dist;
-npm run build;
+TIMESTAMP=`date +%s`
+mv ./dist ~/.Trash/dist-$TIMESTAMP.bak
+mkdir ./dist
+npm run build
 
 # Create archive
 tar -c -J --options xz:9 -v ./dist > ./dist.tar.xz
@@ -20,6 +21,6 @@ tar -c -J --options xz:9 -v ./dist > ./dist.tar.xz
 scp ./dist.tar.xz modis@worf.geogr.uni-jena.de:/home/modis/websites/jams-web-client/
 
 # Delete archive
-mv ./dist.tar.xz ~/.Trash
+rm ./dist.tar.xz
 
 echo "==> SSH into the server and execute '/home/modis/websites/jams-web-client/2-deploy.sh' there."
