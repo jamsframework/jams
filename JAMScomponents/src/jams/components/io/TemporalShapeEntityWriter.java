@@ -30,6 +30,7 @@ import jams.data.Attribute;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
+import jams.model.VersionComments;
 import jams.tools.FileTools;
 import java.io.File;
 import java.io.IOException;
@@ -41,83 +42,95 @@ import java.util.HashSet;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-@JAMSComponentDescription (title = "ShapeEntityReader",
-                           author = "Sven Kralisch",
-                           description = "Reads a shape file and creates a " +
-"list of JAMS entities containing an entity for each feature. An attribute " +
-"name must be provided in order to identify the id field used in the shape file")
+@JAMSComponentDescription(title = "TemporalShapeEntityWriter",
+        author = "Christian Fischer",
+        description = "Reads a source shape file containing "
+        + "geometries features that match a given EntityCollection. Running in "
+        + "a time loop, this component creates a new Shapefile for each "
+        + "given attribute containing the old geometries and a single entity "
+        + "attribute value at certain time steps.",
+        version = "1.0_1")
+@VersionComments(entries = {
+    @VersionComments.Entry(version = "1.0_0", date = "2006-09-18", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", date = "2017-06-21", comment = "Fixed descriptions")
+})
 public class TemporalShapeEntityWriter extends JAMSComponent {
 
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "Name of the shape file")
-    public Attribute.Boolean isEnabled[];
-    
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "Name of the shape file")
-    public Attribute.String srcShapeFile;
-    
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "Name of identifying attribute in shape file")
-    public Attribute.String idName;
-    
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "names of attributes to be created")
-    public Attribute.String attributeNames[];
-    
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "names of attributes to be created")
-    public Attribute.String attributes[];
-    
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.READ,
-                         description = "time ",
-                         defaultValue = "1970-01-01 00:00")
-    public Attribute.Calendar time;
-    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "custom number of hrus to filter",
-    defaultValue = "")
+            description = "Defines of attributes are considered or not. "
+                    + "One value per attribute.")
+    public Attribute.Boolean isEnabled[];
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Name of the source Shapefile, relative to workspace")
+    public Attribute.String srcShapeFile;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Name of ID attribute in the Shapefile")
+    public Attribute.String idName;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Names of attributes to be created")
+    public Attribute.String attributeNames[];
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Attributes to be output")
+    public Attribute.String attributes[];
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "The current model time",
+            defaultValue = "1970-01-01 00:00")
+    public Attribute.Calendar time;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Custom number of hrus to filter",
+            defaultValue = "")
     public Attribute.String idFilters;
-    
-    @JAMSVarDescription (access = JAMSVarDescription.AccessType.WRITE,
-                         description = "Entity collection to be created")
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Entity collection to be used as input")
     public Attribute.EntityCollection entities;
-        
+
     SimpleOutputDataStore outData[] = null;
     SpatialOutputDataStore outData2[] = null;
     File dbfFileOriginal = null;
     ShapeFileOutputDataStore shpStore[] = null;
     HashSet<Double> selectedIds = null;
-    
+
     boolean isHeaderWritten = false;
-           
+
     Attribute.Calendar lastTimeStep = null;
     int n = 0;
-    
-    private class EntityDataProvider extends AbstractDataSupplier<Double, Attribute.EntityCollection>{
+
+    private class EntityDataProvider extends AbstractDataSupplier<Double, Attribute.EntityCollection> {
+
         String name = "";
-        public EntityDataProvider(String name, Attribute.EntityCollection input){
+
+        public EntityDataProvider(String name, Attribute.EntityCollection input) {
             super(input);
             this.name = name;
         }
+
         @Override
-        public int size(){
+        public int size() {
             return input.getEntities().size();
         }
+
         @Override
-        public Double get(int i){
+        public Double get(int i) {
             return input.getEntities().get(i).getDouble(name);
         }
     }
-    
+
     EntityDataProvider entityDataProviders[];
-    
-    protected boolean isIDSelected(double id) {      
+
+    protected boolean isIDSelected(double id) {
         if (!this.idFilters.getValue().isEmpty()) {
-            if (selectedIds != null){
+            if (selectedIds != null) {
                 return selectedIds.contains(id);
             }
             selectedIds = new HashSet<Double>();
-            
+
             String idFilter[] = idFilters.getValue().split(";");
             for (String filter : idFilter) {
                 try {
@@ -129,53 +142,54 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
                         ids[1] = ids[1].replace("]", "");
                         double id0 = Double.parseDouble(ids[0]);
                         double id1 = Double.parseDouble(ids[1]);
-                        while (id0 <= id1){
+                        while (id0 <= id1) {
                             selectedIds.add(id0);
                             id0++;
                         }
                     } else {
                         double idF = Double.parseDouble(filter);
                         selectedIds.add(idF);
-                    }                    
+                    }
                 } catch (Throwable nfe) {
                     getModel().getRuntime().sendErrorMsg("Error: Could not parse filter string:" + filter);
                     return false;
                 }
             }
             return selectedIds.contains(id);
-            
+
         } else {
             return true;
-        }        
+        }
     }
+
     @Override
     public void init() {
-        n = attributeNames.length;
-        
+        n = attributes.length;
+
         isHeaderWritten = false;
-        outData = new SimpleOutputDataStore[n];        
-        outData2 = new SpatialOutputDataStore[n];        
+        outData = new SimpleOutputDataStore[n];
+        outData2 = new SpatialOutputDataStore[n];
         shpStore = new ShapeFileOutputDataStore[n];
         entityDataProviders = new EntityDataProvider[n];
-                
+
         //copy shapefile to output directory
-        for (int i = 0; i < n; i++) {            
-            if (!isEnabled[i].getValue()){
+        for (int i = 0; i < n; i++) {
+            if (!isEnabled[i].getValue()) {
                 continue;
             }
             String path = getModel().getWorkspace().getOutputDataDirectory().getAbsolutePath();
-            String fileName = this.getInstanceName()+"_"+attributeNames[i];
-                    
-            File f = new File(FileTools.createAbsoluteFileName(path,fileName + ".dat"));
-            File f2 = new File(FileTools.createAbsoluteFileName(path,fileName + "_SODS.dat"));
+            String fileName = this.getInstanceName() + "_" + attributeNames[i];
+
+            File f = new File(FileTools.createAbsoluteFileName(path, fileName + ".dat"));
+            File f2 = new File(FileTools.createAbsoluteFileName(path, fileName + "_SODS.dat"));
             entityDataProviders[i] = new EntityDataProvider(this.attributes[i].getValue(), entities);
             try {
                 outData[i] = new SimpleOutputDataStore(f, false);
                 outData2[i] = new SpatialOutputDataStore(f2);
             } catch (IOException ioe) {
                 getModel().getRuntime().sendHalt("Can't write to output file:" + f);
-            } 
-            
+            }
+
             File originalShpFile = new File(FileTools.createAbsoluteFileName(getModel().getWorkspacePath(), srcShapeFile.getValue()));
             File newDBFFile = new File(path + "/" + fileName);
             newDBFFile.mkdirs();
@@ -185,19 +199,19 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
                 getModel().getRuntime().sendErrorMsg(MessageFormat.format(ioe.toString(), getInstanceName()));
             }
         }
-        
+
     }
-                           
+
     @Override
-    public void run(){
+    public void run() {
         /*if (lastTimeStep==null){
             lastTimeStep = time.getValue();
             return;
         }*/
-        if (this.time.getTimeInMillis() == JAMS.getMissingDataValue(Long.class)){
+        if (this.time.getTimeInMillis() == JAMS.getMissingDataValue(Long.class)) {
             return;
         }
-        if (lastTimeStep != null && this.time.getTimeInMillis() == lastTimeStep.getTimeInMillis()){
+        if (lastTimeStep != null && this.time.getTimeInMillis() == lastTimeStep.getTimeInMillis()) {
             return;
         }
         lastTimeStep = time.getValue();
@@ -211,7 +225,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
                     for (int j = 0; j < entities.getEntities().size(); j++) {
                         double iid = entities.getEntities().get(j).getId();
                         //if not selected, do nothing        
-                        if (!isIDSelected(iid)){
+                        if (!isIDSelected(iid)) {
                             return;
                         }
                         ids.add(iid);
@@ -219,8 +233,8 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
                     outData[i].setHeader(ids);
                     outData2[i].setHeader(ids);
                 }
-                               
-                outData[i].writeData(time.toString(), entityDataProviders[i]);                        
+
+                outData[i].writeData(time.toString(), entityDataProviders[i]);
                 outData2[i].writeData(time.toString(), entityDataProviders[i]);
             }
             isHeaderWritten = true;
@@ -228,7 +242,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
             ioe.printStackTrace();
         }
     }
-    
+
     @Override
     public void cleanup() {
         for (int i = 0; i < n; i++) {
@@ -246,7 +260,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
                 if (!isEnabled[i].getValue()) {
                     continue;
                 }
-                          
+
                 outData[i].close();
                 outData2[i].close();
             }
