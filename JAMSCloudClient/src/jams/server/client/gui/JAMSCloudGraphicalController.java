@@ -11,6 +11,7 @@ import jams.SystemProperties;
 import jams.gui.CancelableWorkerDlg;
 import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
+import jams.gui.tools.GUIState;
 import jams.server.client.Controller;
 import jams.server.client.FileController;
 import jams.server.client.JAMSWorkspaceUploader;
@@ -323,7 +324,7 @@ public class JAMSCloudGraphicalController extends Observable {
      * @param target
      */
     public void downloadWorkspace(Workspace ws, File target) {
-        WorkerDlg dlg = new WorkerDlg(null, "Download Workspace ... ");
+        WorkerDlg dlg = new WorkerDlg(GUIState.getMainWindow(), "Download Workspace ... ");
         dlg.setInderminate(true);
         dlg.setTask(new DownloadRunnable(ws, target));
         dlg.execute();
@@ -335,7 +336,7 @@ public class JAMSCloudGraphicalController extends Observable {
      * @param target
      */
     public void downloadFile(WorkspaceFileAssociation wfa, File target) {
-        WorkerDlg dlg = new WorkerDlg(null, "Download file ... ");
+        WorkerDlg dlg = new WorkerDlg(GUIState.getMainWindow(), "Download file ... ");
         dlg.setInderminate(true);
         dlg.setTask(new DownloadRunnable(wfa, target));
         dlg.execute();
