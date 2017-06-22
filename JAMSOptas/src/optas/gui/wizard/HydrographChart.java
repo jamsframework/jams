@@ -7,6 +7,7 @@ package optas.gui.wizard;
 
 import jams.JAMS;
 import jams.gui.WorkerDlg;
+import jams.gui.tools.GUIState;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.Calendar;
@@ -378,7 +379,7 @@ public class HydrographChart {
         }else if (panel != null && !panel.isShowing()){
             SwingUtilities.invokeLater(r);
         }else{
-            WorkerDlg progress = new WorkerDlg(null, "Updating plot");
+            WorkerDlg progress = new WorkerDlg(GUIState.getMainWindow(), "Updating plot");
             progress.setInderminate(true);
             progress.setTask(r);
             progress.execute();

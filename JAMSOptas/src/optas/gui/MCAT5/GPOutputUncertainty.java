@@ -11,6 +11,7 @@ import jams.data.Attribute.Calendar;
 import jams.gui.WorkerDlg;
 import jams.gui.input.CalendarInput;
 import jams.gui.input.ValueChangeListener;
+import jams.gui.tools.GUIState;
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -496,7 +497,7 @@ public class GPOutputUncertainty extends MCAT5Plot {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                WorkerDlg progress = new WorkerDlg(null, "Updating plot");
+                WorkerDlg progress = new WorkerDlg(GUIState.getMainWindow(), "Updating plot");
                 progress.setInderminate(true);
                 progress.setTask(new Runnable() {
                     public void run() {

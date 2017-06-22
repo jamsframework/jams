@@ -10,6 +10,7 @@ import jams.data.Attribute.TimeInterval;
 import jams.data.DefaultDataFactory;
 import jams.gui.input.CalendarInput;
 import jams.gui.input.ValueChangeListener;
+import jams.gui.tools.GUIState;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -109,6 +110,7 @@ public class TimeFilterDialog extends JDialog{
     boolean isApproved = false;
 
     public TimeFilterDialog(TimeSerie timeserie){
+        super(GUIState.getMainWindow());
         this.timeserie = timeserie;
         init(timeserie,null); //1,2,3
     }
