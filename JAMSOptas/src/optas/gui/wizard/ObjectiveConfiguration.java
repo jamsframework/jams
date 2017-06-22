@@ -249,6 +249,7 @@ public class ObjectiveConfiguration extends JPanel{
                         timeList.setSelectedIndex(-1);
                     }
                     filterList.setTimeFilters(od.getTimeFilters());   
+                    filterList.updateUI();
                     updateButtonStates();
                 }
             }
@@ -341,7 +342,8 @@ public class ObjectiveConfiguration extends JPanel{
             public void tableChanged(TimeFilterTableInput tfti) {                                
                 ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();
                 od.setTimeFilters(filterList.getTimeFilters());
-                hydroChart.setTimeFilters(filterList.getTimeFilters()); //1                
+                hydroChart.setTimeFilters(filterList.getTimeFilters()); //1      
+                filterList.updateUI();
             }
 
             @Override
@@ -349,6 +351,7 @@ public class ObjectiveConfiguration extends JPanel{
                 ObjectiveDescription od = (ObjectiveDescription)objectivesList.getSelectedItem();
                 od.setTimeFilters(filterList.getTimeFilters());                
                 hydroChart.setTimeFilters(filterList.getTimeFilters(), true);                
+                filterList.updateUI();
             }
         });
         
@@ -364,6 +367,7 @@ public class ObjectiveConfiguration extends JPanel{
                         hydroChart.setSelectedTimeFilter(f);
                     }
                 }
+                filterList.updateUI();                
             }
         });
         chartPanel.addChartMouseListener(new ChartMouseListener() {
@@ -533,13 +537,14 @@ public class ObjectiveConfiguration extends JPanel{
                 ObjectiveConfiguration.this.hydroChart.setHydrograph(ts);                
                 
                 JAMSTools.addToRecentFiles(systemProperties, SystemProperties.RECENT_TIMESERIES_OF_OBJECTIVE_CONFIGURATION, f.getAbsolutePath());
-                try {
-                    systemProperties.save(defaultPropertyFile.getAbsolutePath());
-                } catch (IOException ioe) {
-                }
+//                try {
+//                    systemProperties.save(defaultPropertyFile.getAbsolutePath());
+//                } catch (IOException ioe) {
+//                }
                 updateRecentTimeseriesList(f);
             }
             filterList.setTimeSeries(ts);        
+            filterList.updateUI();
         }
     }
                 
@@ -599,12 +604,12 @@ public class ObjectiveConfiguration extends JPanel{
         timeList.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("Time_Attribute")));
         timeList.setEnabled(false);
         
-        JScrollPane scrollbar = new JScrollPane(filterList);
+        JScrollPane scrollPane = new JScrollPane(filterList);
                 
-        scrollbar.setPreferredSize(new Dimension(520, 400));
-        scrollbar.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("time_filters")));
+        scrollPane.setPreferredSize(new Dimension(520, 400));
+        scrollPane.setBorder(BorderFactory.createTitledBorder(JAMS.i18n("time_filters")));
         timeIntervalPanel.setLayout(new BorderLayout());
-        timeIntervalPanel.add(scrollbar, BorderLayout.WEST);
+        timeIntervalPanel.add(scrollPane, BorderLayout.WEST);
         chartPanel = new PatchedChartPanel(hydroChart.getChart(), true);
         JPanel hydroChartPanel = new JPanel();
         GroupLayout hydroChartLayout = new GroupLayout(hydroChartPanel);
