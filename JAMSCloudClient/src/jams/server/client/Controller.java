@@ -203,30 +203,12 @@ public class Controller {
     }
 
     public static void main(String[] args) throws IOException {
-        Controller client = new Controller("http://localhost:8080/jamscloud/webresources", "admin", "jamscloud");
+        Controller client = new Controller("http://data.geogr.uni-jena.de:8080/jamscloud/webresources", "adminusername", "adminpassword");
 
         User user;
-        user = new User(2, "sven", "skralisch");
-        user.setEmail("nsk@uni-jena.de");
-        user.setName("Sven Kralisch");
-        user.setAdmin(1);
-        client.users().createUser(user);
-
-        user = new User(3, "annika", "akuenne");
-        user.setEmail("annika.kuenne@uni-jena.de");
-        user.setName("Annika Künne");
-        user.setAdmin(0);
-        client.users().createUser(user);
-
-        user = new User(4, "manfred", "mfink");
-        user.setEmail("manfred.fink@uni-jena.de");
-        user.setName("Manfred Fink");
-        user.setAdmin(0);
-        client.users().createUser(user);
-
-        user = new User(5, "juliana", "jsantos");
-        user.setEmail("juliana.santos@uni-jena.de");
-        user.setName("Juliana Santos");
+        user = new User(10, "username", "password");
+        user.setEmail("markus.meinhardt@uni-jena.de");
+        user.setName("Markus Meinhardt");
         user.setAdmin(0);
         client.users().createUser(user);
     }
