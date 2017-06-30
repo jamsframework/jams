@@ -155,11 +155,11 @@ public class TSPlot extends JAMSGUIComponent {
     public Attribute.Calendar time;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "Values to be plotted on left x-axis")
+            description = "Values to be plotted on left y-axis")
     public Attribute.Double[] valueLeft;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "Values to be plotted on right x-axis")
+            description = "Values to be plotted on right y-axis")
     public Attribute.Double[] valueRight;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,

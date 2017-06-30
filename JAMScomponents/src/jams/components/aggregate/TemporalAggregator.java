@@ -27,18 +27,18 @@ import jams.model.JAMSVarDescription;
 public class TemporalAggregator extends TemporalAggregatorBase {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-    description = "The be aggregated results")
+            description = "The be aggregated results")
     public Attribute.Double[] outputAttributes;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "The value(s) to be aggregated")
+            description = "The value(s) to be aggregated")
     public Attribute.Double[] inputAttributes;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "The value(s) to be aggregated",
-    defaultValue="1.0")
+            description = "The value(s) to be aggregated",
+            defaultValue = "1.0")
     public Attribute.Double weight;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
             description = "The value(s) to be aggregated",
             defaultValue = "")
@@ -76,7 +76,7 @@ public class TemporalAggregator extends TemporalAggregatorBase {
             Aggregator.AggregationMode innerMode = getAggregationModeID(i);
             AggregationTimePeriod innerTimeUnitID = getInnerTimeUnitID();
             jams.aggregators.TemporalAggregator<Double> aggregator = null;
-                    
+
             if (innerTimeUnitID.equals(AggregationTimePeriod.CUSTOM)) {
                 aggregator = new BasicTemporalAggregator<Double>(
                         DoubleAggregator.create(innerMode),
@@ -86,7 +86,7 @@ public class TemporalAggregator extends TemporalAggregatorBase {
                         DoubleAggregator.create(innerMode),
                         innerTimeUnitID);
             }
-            
+
             aggregator.addConsumer(new DataConsumer(outputAttributes[i]));
             aggregator.init();
             aggregators[i] = aggregator;
