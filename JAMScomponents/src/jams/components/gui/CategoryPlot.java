@@ -22,49 +22,20 @@
 package jams.components.gui;
 
 import java.awt.BorderLayout;
-import jams.JAMS;
 import java.awt.Color;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.DatasetRenderingOrder;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYAreaRenderer;
-import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
-import org.jfree.chart.renderer.xy.XYDotRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
-import org.jfree.chart.renderer.xy.XYStepRenderer;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
 import jams.data.*;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSGUIComponent;
 import jams.model.JAMSVarDescription;
 import jams.model.VersionComments;
-import java.awt.Font;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Iterator;
-import java.util.List;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.xy.StandardXYBarPainter;
-import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeriesDataItem;
-import org.jfree.ui.RectangleEdge;
 
 /**
  *
@@ -99,18 +70,26 @@ public class CategoryPlot extends JAMSGUIComponent {
     public Attribute.StringArray colors;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Values for row/columns combinations to be plotted")
+    public Attribute.Double[] values;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Row keys")
+    public Attribute.String[] rowKeys;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Column keys")
+    public Attribute.String[] columnKeys;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Title string for x axis",
-            defaultValue = "xAxisTitle")
+            defaultValue = "")
     public Attribute.String xAxisTitle;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Title string for y-axis",
             defaultValue = "yAxisTitle")
     public Attribute.String yAxisTitle;
-
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "Values to be plotted on y-axis")
-    public Attribute.Double[] values;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Paint horizontal/vertical grid lines?",
@@ -125,6 +104,8 @@ public class CategoryPlot extends JAMSGUIComponent {
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
     transient CategoryDataset dataset;
     transient JFreeChart chart;
+    ChartPanel chartPanel;
+    JPanel panel;
 
     public CategoryPlot() {
         colorTable.put("yellow", Color.yellow);
@@ -142,27 +123,24 @@ public class CategoryPlot extends JAMSGUIComponent {
 
     @Override
     public JPanel getPanel() {
+//        String title = getInstanceName();
+//        if (this.plotTitle != null) {
+//            title = plotTitle.getValue();
+//        }
+//
+//        chart = ChartFactory.createBarChart(
+//                title,
+//                xAxisTitle.getValue(),
+//                yAxisTitle.getValue(),
+//                new DefaultCategoryDataset(),
+//                PlotOrientation.VERTICAL,
+//                true, true, false);
+//
+//        chartPanel = new ChartPanel(chart, true);
 
-        dataset = new DefaultCategoryDataset();
-
-        String title = getInstanceName();
-        if (this.plotTitle != null) {
-            title = plotTitle.getValue();
-        }
-
-        chart = ChartFactory.createBarChart(
-                title,
-                xAxisTitle.getValue(),
-                yAxisTitle.getValue(),
-                dataset,
-                PlotOrientation.VERTICAL,
-                true, true, false);
-
-        ChartPanel chartPanel = new ChartPanel(chart, true);
-
-        JPanel panel = new JPanel();
+        panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.add(chartPanel, BorderLayout.CENTER);
+//        panel.add(chartPanel, BorderLayout.CENTER);
 
         return panel;
     }
@@ -174,7 +152,28 @@ public class CategoryPlot extends JAMSGUIComponent {
 
     @Override
     public void run() {
+
         dataset = createDataset();
+
+        String title = getInstanceName();
+        if (this.plotTitle != null) {
+            title = plotTitle.getValue();
+        }
+
+//        panel.remove(chartPanel);
+        chart = ChartFactory.createBarChart(
+                title,
+                xAxisTitle.getValue(),
+                yAxisTitle.getValue(),
+                dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false);
+
+        chartPanel = new ChartPanel(chart, true);
+
+        panel.add(chartPanel, BorderLayout.CENTER);
+
+        panel.updateUI();
     }
 
     @Override
@@ -182,6 +181,21 @@ public class CategoryPlot extends JAMSGUIComponent {
     }
 
     private CategoryDataset createDataset() {
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        
+        for (int i = 0; i < values.length; i++) {
+            double value = values[i].getValue();
+            String col = columnKeys[i].getValue();
+            String row = rowKeys[i].getValue();
+            
+            dataset.addValue(value, row, col);
+        }
+
+        return dataset;
+    }
+
+    private CategoryDataset createDataset_() {
         final String fiat = "FIAT";
         final String audi = "AUDI";
         final String ford = "FORD";
@@ -199,13 +213,13 @@ public class CategoryPlot extends JAMSGUIComponent {
 
         dataset.addValue(5.0, audi, speed);
         dataset.addValue(6.0, audi, userrating);
-        dataset.addValue(10.0, audi, millage);
+//        dataset.addValue(10.0, audi, millage);
         dataset.addValue(4.0, audi, safety);
 
         dataset.addValue(4.0, ford, speed);
         dataset.addValue(2.0, ford, userrating);
         dataset.addValue(3.0, ford, millage);
-        dataset.addValue(6.0, ford, safety);
+//        dataset.addValue(6.0, ford, safety);
 
         return dataset;
     }

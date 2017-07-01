@@ -112,6 +112,12 @@ public class LongTermAggregation extends JAMSComponent {
             for (Attribute.DoubleArray da : aggregate) {
                 da.setValue(new double[maxn]);
             }
+        } else if (targetUnit.getValue().equals("year")) {
+            field = Attribute.Calendar.YEAR;
+            maxn = 1;
+            for (Attribute.DoubleArray da : aggregate) {
+                da.setValue(new double[maxn]);
+            }
         } else if (targetUnit.getValue().equals("irregular")) {
             field = -1;
             maxn = 1;            
@@ -137,6 +143,9 @@ public class LongTermAggregation extends JAMSComponent {
             int index = time.get(field);
             if (field != Attribute.Calendar.MONTH) {
                 index--;
+            }
+            if (field == Attribute.Calendar.YEAR) {
+                index = 0;
             }
             for (int i = 0; i < inputAttribute.length; i++) {
                 if (calcAverage[i].getValue()) {
