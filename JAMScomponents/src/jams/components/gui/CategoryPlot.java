@@ -92,14 +92,14 @@ public class CategoryPlot extends JAMSGUIComponent {
     public Attribute.String yAxisTitle;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "Paint horizontal/vertical grid lines?",
+            description = "Create a vertical plot? Otherwise it will be horizontal.",
             defaultValue = "true")
-    public Attribute.Boolean paintGridLines;
+    public Attribute.Boolean plotVertical;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "Paint legend right of the plot?",
+            description = "Plot the data in cleanup stage? If not, data are plotted in run stage.",
             defaultValue = "false")
-    public Attribute.Boolean legendRight;
+    public Attribute.Boolean plotInCleanup;
 
     HashMap<String, Color> colorTable = new HashMap<String, Color>();
     transient CategoryDataset dataset;
@@ -152,7 +152,19 @@ public class CategoryPlot extends JAMSGUIComponent {
 
     @Override
     public void run() {
+        if (!plotInCleanup.getValue()) {
+            plotData();
+        }
+    }
 
+    @Override
+    public void cleanup() {
+        if (plotInCleanup.getValue()) {
+            plotData();
+        }
+    }
+
+    private void plotData() {
         dataset = createDataset();
 
         String title = getInstanceName();
@@ -160,13 +172,14 @@ public class CategoryPlot extends JAMSGUIComponent {
             title = plotTitle.getValue();
         }
 
-//        panel.remove(chartPanel);
+        PlotOrientation po = (plotVertical.getValue() ? PlotOrientation.VERTICAL : PlotOrientation.HORIZONTAL);
+
         chart = ChartFactory.createBarChart(
                 title,
                 xAxisTitle.getValue(),
                 yAxisTitle.getValue(),
                 dataset,
-                PlotOrientation.VERTICAL,
+                po,
                 true, true, false);
 
         chartPanel = new ChartPanel(chart, true);
@@ -176,26 +189,22 @@ public class CategoryPlot extends JAMSGUIComponent {
         panel.updateUI();
     }
 
-    @Override
-    public void cleanup() {
-    }
-
     private CategoryDataset createDataset() {
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        
+
         for (int i = 0; i < values.length; i++) {
             double value = values[i].getValue();
             String col = columnKeys[i].getValue();
             String row = rowKeys[i].getValue();
-            
+
             dataset.addValue(value, row, col);
         }
 
         return dataset;
     }
 
-    private CategoryDataset createDataset_() {
+    private CategoryDataset createExampleDataset() {
         final String fiat = "FIAT";
         final String audi = "AUDI";
         final String ford = "FORD";
