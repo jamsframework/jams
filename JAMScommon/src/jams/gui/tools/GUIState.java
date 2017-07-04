@@ -25,6 +25,7 @@ import jams.meta.ModelDescriptor;
 import jams.workspace.Workspace;
 import java.awt.Window;
 import java.io.File;
+import java.nio.file.Paths;
 
 /**
  *
@@ -33,7 +34,7 @@ import java.io.File;
 public class GUIState {
 
     private static Workspace workspace;
-    private static File savePath;
+    private static File savePath = Paths.get("").toFile();
     private static ModelDescriptor modelDescriptor;
     private static Window mainWindow;
 
