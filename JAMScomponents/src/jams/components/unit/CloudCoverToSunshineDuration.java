@@ -21,15 +21,27 @@
  */
 package jams.components.unit;
 
+import jams.data.*;
+import jams.model.*;
 import jams.data.Attribute;
 import jams.data.Attribute.Calendar;
 import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 
 /**
  *
  * @author christian
+ * 
+ * 
  */
+
+@JAMSComponentDescription(
+        title="Converts clt into sunh",
+        author="Christian Fischer",
+        date="1. December 2010",
+        description=" Bug for cloud cover fixed (old: sunh = maxSunh * cloudCoverFraction * 0.01  ;new: sunh = maxSunh * (1 - (cloudCoverFraction * 0.01))")
+
 public class CloudCoverToSunshineDuration extends JAMSComponent {
 
     @JAMSVarDescription(
@@ -52,6 +64,6 @@ public class CloudCoverToSunshineDuration extends JAMSComponent {
     
     @Override
     public void run() {
-        sunh.setValue(maxSunh.getValue() * cloudCoverFraction.getValue() * 0.01);
+        sunh.setValue(maxSunh.getValue() * (1 - (cloudCoverFraction.getValue() * 0.01)));
     }
 }
