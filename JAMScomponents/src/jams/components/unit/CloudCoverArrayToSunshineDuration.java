@@ -63,7 +63,7 @@ public class CloudCoverArrayToSunshineDuration extends JAMSComponent {
         }
                                 
         for (int i=0;i<n;i++){
-            sunhArray[i] = maxSunhArray[i] * cltArray[i]  * 0.01;
+            sunhArray[i] = maxSunhArray[i] * (1 - (cltArray[i]  * 0.01));
         }
         
         sunh.setValue(sunhArray);
