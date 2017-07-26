@@ -45,7 +45,7 @@ public class Boolean_Switch extends JAMSComponent {
      */
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            description = "Boollean Input"
+            description = "Boolean Input"
     )
     public Attribute.Boolean B_input;
     @JAMSVarDescription(
