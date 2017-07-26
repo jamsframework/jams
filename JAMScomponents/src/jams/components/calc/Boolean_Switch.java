@@ -31,7 +31,7 @@ import jams.model.*;
 @JAMSComponentDescription(
         title = "Boolean_Switch",
         author = "Manfred Fink",
-        description = "Allows not and copy operation for a boolean variable",
+        description = "Performes a boolean NOT operation or just a copy of the input variable",
         date = "2017-03-28",
         version = "1.0_0"
 )
@@ -50,12 +50,12 @@ public class Boolean_Switch extends JAMSComponent {
     public Attribute.Boolean B_input;
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            description = "Determines whether output is input or not input (true, boolean NOT; false, copy)"
+            description = "Determines whether output is just a copy or performing a NOT operation (true, boolean NOT; false, copy)"
     )
     public Attribute.Boolean Copy_or_Not;
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            description = "Result of d1/d2"
+            description = "Result"
     )
     public Attribute.Boolean B_Output;
 
