@@ -1,5 +1,5 @@
 main.majorversion=3
-main.minorversion=7
+main.minorversion=8
 main.revision=00
 api.majorversion=1
 api.minorversion=2

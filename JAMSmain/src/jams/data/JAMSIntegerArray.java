@@ -44,7 +44,7 @@ public class JAMSIntegerArray implements Attribute.IntegerArray {
         } else {
             s += value[0];
             for (int i = 1; i < value.length; i++) {
-                s += "," + value[i];
+                s += ";" + value[i];
             }
         }
         return s;

@@ -13,6 +13,7 @@ import jams.meta.ContextAttribute;
 import jams.meta.ContextDescriptor;
 import jams.meta.ModelDescriptor;
 import jams.tools.JAMSTools;
+import jams.tools.StringTools;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -82,6 +83,7 @@ public class ObjectiveConfiguration extends JPanel{
     DefaultComboBoxModel<ObjectiveDescription> objectives = new DefaultComboBoxModel();
     HashSet<ActionListener> listeners = new HashSet<ActionListener>();
     ModelDescriptor md = null;
+    File savePath = null;
     
     JDialog dialog = null;
     JButton addObjective = new JButton("+"), rmObjective = new JButton("-"), editObjective = new JButton("..");
@@ -140,8 +142,9 @@ public class ObjectiveConfiguration extends JPanel{
             }
         };
             
-    public ObjectiveConfiguration(ModelDescriptor md, Logger logger){
+    public ObjectiveConfiguration(ModelDescriptor md, File savePath, Logger logger){
         this.md = md;
+        this.savePath = savePath;
         //load default property file, if its not existing, never mind as it is only used for the recent files entry
 //        String defaultFile = System.getProperty("user.dir") + System.getProperty("file.separator") + JAMS.DEFAULT_PARAMETER_FILENAME;        
 //        defaultPropertyFile = new File(defaultFile);
@@ -583,6 +586,15 @@ public class ObjectiveConfiguration extends JPanel{
     }
             
     private void initGUI(){
+        
+        File f;
+        if (!StringTools.isEmptyString(md.getWorkspacePath())) {
+            f = new File(md.getWorkspacePath());
+        } else {
+            f = savePath;
+        }
+        timeseriesFileChooser.setSelectedFile(f);
+        
         GroupLayout layout = new GroupLayout(this);
         
         hydroChart.setFilterMode(HydrographChart.FilterMode.SINGLE_ROW);

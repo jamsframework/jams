@@ -335,8 +335,8 @@ public class JUICEFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 final ModelView view = getCurrentView();
                 try {
-
-                    ObjectiveConfiguration conf = new ObjectiveConfiguration(view.getModelDescriptor(),
+                    
+                    ObjectiveConfiguration conf = new ObjectiveConfiguration(view.getModelDescriptor(), view.getSavePath(), 
                             Logger.getLogger(JUICE.class.getName()));
 
                     conf.addActionListener(new ActionListener() {
