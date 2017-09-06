@@ -55,17 +55,18 @@ public abstract class AbstractDICalc extends JAMSComponent {
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            description = "The simulation time interval"
+            description = "Size of aggregation window for baseline "
+                    + "statistics (e.g. \"7\" for weekly stats)",
+            defaultValue = "7"
     )
-    public Attribute.TimeInterval timeInterval;
+    public Attribute.Integer tempRes;
 
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            description = "Temporal resolution of baseline statistics [daily,weekly,monthly]",
-            defaultValue = "weekly"
+            access = JAMSVarDescription.AccessType.READWRITE,
+            description = "Counter of overall values stored"
     )
-    public Attribute.String tres;
-
+    public Attribute.Integer counter;
+    
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             description = "Output of long-term statistics for each(!) entity",
@@ -73,55 +74,44 @@ public abstract class AbstractDICalc extends JAMSComponent {
     )
     public Attribute.Boolean debug;
 
-    private int statRes = 0;
+    protected int statRes = 0, tres = 1;
 
     /*
      *  Component run stages
      */
     @Override
     public void init() {
-        if (tres.getValue().equals("weekly")) {
-            statRes = 53;
-        } else if (tres.getValue().equals("monthly")) {
-            statRes = 12;
-        } else if (tres.getValue().equals("daily")) {
-            statRes = 366;
-        } else {
-            getModel().getRuntime().sendHalt("Value of parameter tres must be "
-                    + "either \"monhtly\" or \"weekly\" or \"daily\"");
-        }
+        // leapyears not considered for stats calculation
+        tres = tempRes.getValue();
+        statRes = 365 / tres;
     }
-
+    
+    @Override
+    public void initAll() {
+        counter.setValue(0);
+    }    
+    
     @Override
     public abstract void run();
 
-    protected int getTimeIndex(Attribute.Calendar time) {
-        switch (statRes) {
-            case 12:
-                return time.get(Calendar.MONTH);
-            case 53:
-                return time.get(Calendar.WEEK_OF_YEAR) - 1;
-            default:
-                return time.get(java.util.Calendar.DAY_OF_YEAR) - 1;
-        }
-    }
-
-    protected Stats calcStats(List<Double> valueList) {
+    protected Stats calcStats(double[] valueList) {
 
         List<Double>[] groupedValues = new List[statRes];
         for (int i = 0; i < groupedValues.length; i++) {
             groupedValues[i] = new ArrayList();
         }
 
-        Attribute.Calendar time = getModel().getRuntime().getDataFactory().createCalendar();
-        time.setValue(timeInterval.getStart());
-
+        //sort values into corresponding slots of long-term stats
+        int index = 0;
         for (double value : valueList) {
-            int timeIndex = getTimeIndex(time);
-            groupedValues[timeIndex].add(value);
-            time.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
+            groupedValues[index].add(value);
+            index++;
+            if (index == statRes) {
+                index = 0;
+            }
         }
 
+        // calculate the mean, min and max for each slot of long-term stats
         Stats stats = new Stats(groupedValues.length);
 
         for (int i = 0; i < groupedValues.length; i++) {
@@ -155,7 +145,7 @@ public abstract class AbstractDICalc extends JAMSComponent {
         return stats;
     }
 
-    class Stats {
+    public class Stats {
 
         double min[];
         double max[];

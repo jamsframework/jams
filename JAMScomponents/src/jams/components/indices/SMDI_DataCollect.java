@@ -24,8 +24,6 @@ package jams.components.indices;
 import jams.data.*;
 import jams.data.Attribute.Calendar;
 import jams.model.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -54,30 +52,121 @@ public class SMDI_DataCollect extends JAMSComponent {
     public Attribute.Double soilWater;
 
     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE,
+            description = "The simulation time interval"
+    )
+    public Attribute.TimeInterval simulationTimeInterval;
+
+    @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             description = "Current date"
     )
     public Attribute.Calendar date;
 
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READWRITE,
-            description = "List of collected soil water content values"
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Size of aggregation window for baseline "
+            + "statistics (e.g. \"7\" for weekly stats)",
+            defaultValue = "7"
     )
-    public Attribute.Object swValues;
+    public Attribute.Integer tempRes;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE,
+            description = "Sum of recent values collected"
+    )
+    public Attribute.Double soilWater_sum;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE,
+            description = "Counter of overall values stored"
+    )
+    public Attribute.Integer counter;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE,
+            description = "Array of collected soil water content values"
+    )
+    public Attribute.DoubleArray swValues;
+
+
+    int arraySize, tres;
 
     /*
      *  Component run stages
      */
     @Override
+    public void init() {
+        tres = tempRes.getValue();
+        arraySize = (int) simulationTimeInterval.getNumberOfTimesteps() / tres;
+    }
+
+    @Override
     public void initAll() {
-        List<Double> list = new ArrayList();
-        swValues.setValue(list);
+        swValues.setValue(new double[arraySize]);
+        soilWater_sum.setValue(0);
+        counter.setValue(0);
     }
 
     @Override
     public void run() {
-        List<Double> list = (List) swValues.getValue();
-        list.add(soilWater.getValue());
 
+        int day = date.get(Attribute.Calendar.DAY_OF_YEAR);
+        
+        //ignore the last day in leapyears for stats calculation
+        if (day > 365) {
+            return;
+        }
+        
+        double s = soilWater_sum.getValue();
+        int c = counter.getValue();
+
+        if (day == 1 && c > 0) {
+            Attribute.Calendar dolly = date.clone();
+            dolly.add(Calendar.DAY_OF_YEAR, -1);
+            day = dolly.get(Calendar.DAY_OF_YEAR);
+            //get number of remaining values not yet counted
+            int n = day % tres;
+            //get value from recent slot and add remaining soilWater_sum
+            int oldSlot = counter.getValue() - 1;
+            double oldValue = swValues.getValue()[oldSlot];
+            double newValue = (oldValue * tres + s) / (tres + n);
+            //write back new value
+            swValues.getValue()[oldSlot] = newValue;
+            s = 0;
+        }
+        
+        s = s + soilWater.getValue();
+
+        if (day % tres == 0) {
+            swValues.getValue()[c] = s / tres;
+            counter.setValue(c+1);
+            s = 0;
+        }
+
+        soilWater_sum.setValue(s);
     }
+//
+//    public static void main(String[] args) {
+//        Attribute.Calendar c = JAMSDataFactory.createCalendar();
+//        c.set(2016, 11, 31, 0, 0, 0);
+//        System.out.println(c.get(Calendar.WEEK_OF_YEAR));
+////        c.add(Calendar.DAY_OF_YEAR, -1);
+//        int day = c.get(Calendar.DAY_OF_YEAR);
+//        System.out.println(day);
+//        System.out.println(c);
+//        int slot = day / 7 - 1;
+//        System.out.println(slot);
+//        System.out.println(day % 7);
+//
+//        Attribute.Calendar c2 = JAMSDataFactory.createCalendar();
+//        c2.set(2015, 11, 31, 0, 0, 0);
+//        Attribute.TimeInterval ti = JAMSDataFactory.createTimeInterval();
+//        ti.setStart(c);
+//        ti.setEnd(c2);
+//        ti.setTimeUnit(6);
+//        ti.setTimeUnitCount(1);
+//        
+//        System.out.println(ti.getNumberOfTimesteps());
+//    }
 }

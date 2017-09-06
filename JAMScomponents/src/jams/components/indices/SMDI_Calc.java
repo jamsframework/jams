@@ -24,8 +24,6 @@ package jams.components.indices;
 import jams.data.*;
 import jams.data.Attribute.Calendar;
 import jams.model.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,13 +49,19 @@ public class SMDI_Calc extends AbstractDICalc {
             access = JAMSVarDescription.AccessType.READ,
             description = "List of collected soil water content values"
     )
-    public Attribute.Object swValues;
+    public Attribute.DoubleArray swValues;
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
             description = "Statistics for SMDI calculation"
     )
     public Attribute.Object smdiStats;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.WRITE,
+            description = "Current soil water average"
+    )
+    public Attribute.Double currentSW;
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
@@ -71,23 +75,37 @@ public class SMDI_Calc extends AbstractDICalc {
     )
     public Attribute.Double smdi;
 
-    private int statRes = 0;
-
     @Override
     public void run() {
-        
+
         Stats stats;
-        
+
         if (smdiStats.getValue() == null) {
-            stats = calcStats((List) swValues.getValue());
+            stats = calcStats(swValues.getValue());
             smdiStats.setValue(stats);
+        } else {
+            stats = (Stats) smdiStats.getValue();
         }
 
-        stats = (Stats) smdiStats.getValue();        
-        int timeIndex = getTimeIndex(date);
+        //get the Julian day
+        int day = date.get(Calendar.DAY_OF_YEAR);
 
-        List<Double> list = (List) swValues.getValue();
-        double sw = list.remove(0);
+        //ignore the last day in leapyears, as there is not stats
+        //instead, the value from the last time step will stay unchanged
+        if (day > 365) {
+            return;
+        }
+
+        if (day % tres != 0) {
+            return;
+        }
+
+        //calc current index
+        int timeIndex = (day / tres) - 1;
+
+        int c = counter.getValue();
+        double sw = swValues.getValue()[c];
+        counter.setValue(c + 1);
 
         double msw = stats.median[timeIndex];
         double min = stats.min[timeIndex];
@@ -111,6 +129,8 @@ public class SMDI_Calc extends AbstractDICalc {
 
         smdi.setValue(smdi_);
         sd.setValue(sd_);
+        currentSW.setValue(sw);
+
     }
 
 }
