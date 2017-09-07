@@ -113,20 +113,23 @@ public class SMDI_DataCollect extends JAMSComponent {
 
         int day = date.get(Attribute.Calendar.DAY_OF_YEAR);
         
-        //ignore the last day in leapyears for stats calculation
-        if (day > 365) {
+        //aggregate the last day in leapyears with the last collected value
+        if (day == 366) {
+            int oldSlot = counter.getValue() - 1;
+            double oldValue = swValues.getValue()[oldSlot];
+            double newValue = (oldValue * tres + soilWater.getValue()) / (tres + 1);
+            swValues.getValue()[oldSlot] = newValue;
             return;
         }
         
         double s = soilWater_sum.getValue();
         int c = counter.getValue();
 
-        if (day == 1 && c > 0) {
-            Attribute.Calendar dolly = date.clone();
-            dolly.add(Calendar.DAY_OF_YEAR, -1);
-            day = dolly.get(Calendar.DAY_OF_YEAR);
+        //aggregate the remaining values not yet collected eith the last
+        //collected values
+        if (day == 1 && tres > 1 && c > 0) {
             //get number of remaining values not yet counted
-            int n = day % tres;
+            int n = 365 % tres;
             //get value from recent slot and add remaining soilWater_sum
             int oldSlot = counter.getValue() - 1;
             double oldValue = swValues.getValue()[oldSlot];

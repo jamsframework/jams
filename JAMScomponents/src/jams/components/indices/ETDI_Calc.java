@@ -22,8 +22,8 @@
 package jams.components.indices;
 
 import jams.data.*;
+import jams.data.Attribute.Calendar;
 import jams.model.*;
-import java.util.List;
 
 /**
  *
@@ -48,14 +48,20 @@ public class ETDI_Calc extends AbstractDICalc {
             access = JAMSVarDescription.AccessType.READ,
             description = "List of collected soil water content values"
     )
-    public Attribute.Object wsValues;
+    public Attribute.DoubleArray wsValues;
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
             description = "Statistics for SMDI calculation"
     )
     public Attribute.Object etdiStats;
-
+    
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.WRITE,
+            description = "Current soil water average"
+    )
+    public Attribute.Double currentWS;
+    
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
             description = "Water stress anomaly"
@@ -68,45 +74,61 @@ public class ETDI_Calc extends AbstractDICalc {
     )
     public Attribute.Double etdi;
 
-    
     @Override
     public void run() {
 
         Stats stats;
-        
+
         if (etdiStats.getValue() == null) {
-            stats = calcStats((List) wsValues.getValue());
+            stats = calcStats(wsValues.getValue());
             etdiStats.setValue(stats);
+        } else {
+            stats = (Stats) etdiStats.getValue();
         }
 
-        stats = (Stats) etdiStats.getValue();
-        int timeIndex = getTimeIndex(date);
+        //get the Julian day
+        int day = date.get(Calendar.DAY_OF_YEAR);
 
-        List<Double> list = (List) wsValues.getValue();
-        double ws = list.remove(0);
+        //ignore the last day in leapyears, as there is not stats
+        //instead, the value from the last time step will stay unchanged
+        if (day > 365) {
+            return;
+        }
+
+        if (day % tres != 0) {
+            return;
+        }
+
+        //calc current index
+        int timeIndex = (day / tres) - 1;
+        
+        int c = counter.getValue();
+        double ws = wsValues.getValue()[c];
+        counter.setValue(c + 1);        
 
         double mws = stats.median[timeIndex];
         double min = stats.min[timeIndex];
         double max = stats.max[timeIndex];
 
-        double ws_, etdi_;
+        double wsa_, etdi_;
 
         if (ws <= mws) {
             if (mws == min) {
-                ws_ = 0;
+                wsa_ = 0;
             } else {
-                ws_ = 100 * (mws - ws) / (mws - min);
+                wsa_ = 100 * (mws - ws) / (mws - min);
             }
         } else if (mws == max) {
-            ws_ = 0;
+            wsa_ = 0;
         } else {
-            ws_ = 100 * (mws - ws) / (max - mws);
+            wsa_ = 100 * (mws - ws) / (max - mws);
         }
 
-        etdi_ = 0.5 * etdi.getValue() + ws_ / 50;
+        etdi_ = 0.5 * etdi.getValue() + wsa_ / 50;
 
         etdi.setValue(etdi_);
-        wsa.setValue(ws_);
+        wsa.setValue(wsa_);
+        currentWS.setValue(ws);
     }
 
 }

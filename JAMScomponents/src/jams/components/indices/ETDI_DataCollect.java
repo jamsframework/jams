@@ -23,8 +23,6 @@ package jams.components.indices;
 
 import jams.data.*;
 import jams.model.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -58,6 +56,12 @@ public class ETDI_DataCollect extends JAMSComponent {
             defaultValue = "0"
     )
     public Attribute.Double actET;
+    
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE,
+            description = "The simulation time interval"
+    )
+    public Attribute.TimeInterval simulationTimeInterval;
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
@@ -66,23 +70,110 @@ public class ETDI_DataCollect extends JAMSComponent {
     public Attribute.Calendar date;
 
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READWRITE,
-            description = "List of collected water stress values"
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Size of aggregation window for baseline "
+            + "statistics (e.g. \"7\" for weekly stats)",
+            defaultValue = "7"
     )
-    public Attribute.Object wsValues;
+    public Attribute.Integer tempRes;    
+    
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE,
+            description = "Sum of recent potET values collected"
+    )
+    public Attribute.Double potET_sum;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE,
+            description = "Sum of recent actET values collected"
+    )
+    public Attribute.Double actET_sum;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE,
+            description = "Counter of overall values stored"
+    )
+    public Attribute.Integer counter;    
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE,
+            description = "Array of collected water stress values"
+    )
+    public Attribute.DoubleArray wsValues;
+
+    
+
+    int arraySize, tres;
 
     /*
      *  Component run stages
      */
     @Override
+    public void init() {
+        tres = tempRes.getValue();
+        arraySize = (int) simulationTimeInterval.getNumberOfTimesteps() / tres;
+    }
+
+    @Override
     public void initAll() {
-        List<Double> list = new ArrayList();
-        wsValues.setValue(list);
+        wsValues.setValue(new double[arraySize]);
+        potET_sum.setValue(0);
+        counter.setValue(0);
     }
 
     @Override
     public void run() {
-        List<Double> list = (List) wsValues.getValue();
-        list.add((potET.getValue() - actET.getValue()) / potET.getValue());
-    }
+
+        int day = date.get(Attribute.Calendar.DAY_OF_YEAR);
+        
+        //aggregate the last day in leapyears with the last collected value
+        if (day == 366) {
+            int oldSlot = counter.getValue() - 1;
+            double oldValue = wsValues.getValue()[oldSlot];
+            //calculate the new WS value
+            double ws = (potET.getValue() - actET.getValue()) / potET.getValue();
+            double newValue = (oldValue * tres + ws) / (tres + 1);
+            wsValues.getValue()[oldSlot] = newValue;
+            return;
+        }
+        
+        double sPET = potET_sum.getValue();
+        double sAET = actET_sum.getValue();
+        int c = counter.getValue();
+
+        //aggregate the remaining values not yet collected eith the last
+        //collected values
+        if (day == 1 && tres > 1 && c > 0) {
+            //get number of remaining values not yet counted
+            int n = 365 % tres;
+            //get value from recent slot and add remaining soilWater_sum
+            int oldSlot = counter.getValue() - 1;
+            double oldValue = wsValues.getValue()[oldSlot];
+            //calculate the new average WS value for the remaining days
+            double ws = (sPET - sAET) / sPET;
+            //calculate weighted mean of old and new WS values
+            double newValue = (oldValue * tres + ws * n) / (tres + n);
+            //write back new value
+            wsValues.getValue()[oldSlot] = newValue;
+            sPET = 0;
+            sAET = 0;
+        }        
+        
+        //sum up actET and potET values
+        sPET = sPET + potET.getValue();
+        sAET = sAET + actET.getValue();
+
+        if (day % tres == 0) {
+            //calculate the WS based on actET/potET sums
+            double ws = (sPET - sAET) / sPET;
+            wsValues.getValue()[c] = ws;
+            counter.setValue(c+1);
+            sPET = 0;
+            sAET = 0;
+        }
+
+        potET_sum.setValue(sPET);
+        actET_sum.setValue(sAET);
+    }    
+    
 }
