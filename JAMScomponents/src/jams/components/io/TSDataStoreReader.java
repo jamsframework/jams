@@ -347,6 +347,11 @@ public class TSDataStoreReader extends JAMSComponent {
         if (tsRatio == 1) {
 
             DefaultDataSet ds = store.getNext();
+            if (ds == null) {
+                getModel().getRuntime().sendHalt("Empty dataset found in "
+                        + "component " + this.getInstanceName() + " (" + time + ")");
+            }
+            
             DataValue[] data = ds.getData();
             for (int i = 1; i < data.length; i++) {
                 doubles[i - 1] = data[i].getDouble();
