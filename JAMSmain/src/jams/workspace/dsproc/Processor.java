@@ -133,7 +133,7 @@ public abstract class Processor {
                     
                 case DataStoreProcessor.AttributeData.AGGREGATION_SUM:
                     for (int j = 0; j < a.length; j++) {
-                        result[j][i] = 1d;
+                        result[j][i] = 1;
                     }
                     break;
                     
