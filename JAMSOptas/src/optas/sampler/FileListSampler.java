@@ -25,8 +25,6 @@ import optas.optimizer.management.NumericOptimizerParameter;
 import optas.optimizer.management.OptimizerDescription;
 import optas.optimizer.management.StringOptimizerParameter;
 import optas.optimizer.parallel.ParallelSequence;
-import umontreal.iro.lecuyer.hups.PointSetIterator;
-import umontreal.iro.lecuyer.hups.SobolSequence;
 
 @SuppressWarnings("unchecked")
 @JAMSComponentDescription(
