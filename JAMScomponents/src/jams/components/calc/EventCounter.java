@@ -137,10 +137,10 @@ public class EventCounter extends JAMSComponent {
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
-            description = "Event counter",
+            description = "Accumulated event occurrence",
             defaultValue = "0"
     )
-    public Attribute.Double counter;
+    public Attribute.Double result_accum;
 
     private Operator st, steq, gt, gteq, eq;
     private Expression exp;
@@ -235,7 +235,7 @@ public class EventCounter extends JAMSComponent {
 
         result.setValue(r);
         if (r == 1) {
-            counter.setValue(counter.getValue() + 1);
+            result_accum.setValue(result_accum.getValue() + 1);
         }
     }
 
