@@ -50,6 +50,7 @@ import jams.explorer.gui.TreePanel;
 import jams.explorer.spreadsheet.SpreadsheetConstants;
 import jams.explorer.tree.DSTreeNode;
 import jams.explorer.tree.FileObject;
+import java.util.Map;
 
 /**
  *
@@ -103,6 +104,14 @@ public class DisplayManager implements Observer {
         dataPanels.remove(name);
     }
 
+    public void removeDisplay(Component panel) {
+        for (Map.Entry<String, Component> e : dataPanels.entrySet()) {
+            if (e.getValue() == panel) {
+                removeDisplay(e.getKey());
+            }
+        }
+    }    
+    
     public void displayDS(DSTreeNode node) {
 
         String dsID;

@@ -90,7 +90,8 @@ public class ExplorerFrame extends JFrame {
     protected JFileChooser jfc = GUIHelper.getJFileChooser();
     protected WorkerDlg openWSDlg;
     protected Action openWSAction, openSTPAction, exitAction, editPrefsAction,
-            sensitivityAnalysisAction, reloadWSAction, importDataAction, browseServerAction;
+            sensitivityAnalysisAction, reloadWSAction, importDataAction, 
+            browseServerAction, closeCurrentPanelAction;
     protected JLabel statusLabel;
     protected JSplitPane mainSplitPane;
     protected JTabbedPane tPane;
@@ -169,6 +170,14 @@ public class ExplorerFrame extends JFrame {
                 update();
             }
         };
+        
+        closeCurrentPanelAction = new AbstractAction(JAMS.i18n("Close_Current_Panel")) {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                explorer.getDisplayManager().removeDisplay(tPane.getSelectedComponent());
+            }
+        };
 
         update();
 
@@ -218,6 +227,13 @@ public class ExplorerFrame extends JFrame {
         reloadWSButton.setToolTipText((String) reloadWSAction.getValue(Action.NAME));
         reloadWSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Reload.png")));
         toolBar.add(reloadWSButton);
+       
+        JButton closeCurrentPanelButton = new JButton(closeCurrentPanelAction);
+        closeCurrentPanelButton.setText("");
+        closeCurrentPanelButton.setToolTipText((String) closeCurrentPanelAction.getValue(Action.NAME));
+        closeCurrentPanelButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/close.png")));
+        toolBar.add(closeCurrentPanelButton);        
+        
 
 //        JButton wsEditButton = new JButton(editWSAction);
         JButton stpButton = new JButton(openSTPAction);
@@ -226,10 +242,10 @@ public class ExplorerFrame extends JFrame {
 //        wsEditButton.setToolTipText((String) editWSAction.getValue(Action.NAME));
 //        wsEditButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
 //        toolBar.add(wsEditButton);
-        stpButton.setText("");
-        stpButton.setToolTipText((String) openSTPAction.getValue(Action.NAME));
-        stpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/stp.png")));
-        toolBar.add(stpButton);
+//        stpButton.setText("");
+//        stpButton.setToolTipText((String) openSTPAction.getValue(Action.NAME));
+//        stpButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/stp.png")));
+//        toolBar.add(stpButton);
 
         toolBar = processToolBarHook(toolBar);
 
