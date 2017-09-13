@@ -41,7 +41,7 @@ public class KGE extends EfficiencyCalculator {
         sigm = Math.sqrt(varm);
         sigs = Math.sqrt(vars);
         
-        alpha = (sigs * avgm) / (sigm * avgs); // IG : 0 should maybe be cared about
+        alpha = sigs /sigm; // IG : 0 should maybe be cared about
         beta = avgs / avgm;
         r = sum / (sigs * sigm);
 
