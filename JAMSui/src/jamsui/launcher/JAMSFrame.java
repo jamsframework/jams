@@ -172,7 +172,7 @@ public class JAMSFrame extends JAMSLauncher {
             String xmlString = FileTools.fileToString(fileName);
             if (args != null) {
                 for (int i = 0; i < args.length; i++) {
-                    xmlString = xmlString.replaceAll("%" + i, args[i]);
+                    xmlString = xmlString.replaceAll("%" + i + "%", args[i]);
                 }
             }
 
