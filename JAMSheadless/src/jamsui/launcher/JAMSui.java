@@ -157,7 +157,7 @@ public class JAMSui {
                 String[] args = StringTools.toArray(cmdLineParameterValues, ";");
                 if (args != null) {
                     for (int i = 0; i < args.length; i++) {
-                        xmlString = xmlString.replaceAll("%" + i, args[i]);
+                        xmlString = xmlString.replaceAll("%" + i + "%", args[i]);
                     }
                 }
 
