@@ -214,7 +214,7 @@ public class JAMSFrame extends JAMSLauncher {
 
         //GUIHelper.showInfoDlg(JAMSLauncher.this, "Model has been successfully loaded!", "Info");
     }
-
+    
     @Override
     protected void init() throws HeadlessException, DOMException, NumberFormatException {
 

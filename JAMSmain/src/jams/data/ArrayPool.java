@@ -77,7 +77,7 @@ public class ArrayPool<T> implements Serializable {
         if (freeId == null) {
             allocatedObjects++;
             if (allocatedObjects >= Power) {
-                System.out.println("Memory Pool allocated: " + allocatedObjects);
+//                System.out.println("Memory Pool allocated: " + allocatedObjects);
                 Power *= 10;
             }
             return (T) Array.newInstance(c,size); 

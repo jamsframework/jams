@@ -219,9 +219,9 @@ public class RegionalSensitivityAnalyser extends MCAT5Plot {
         XYSeries dataset = null;
         for (int i = 0; i < boxes.length; i++) {
             if (i == 0) {
-                dataset = new XYSeries("best group");
-            } else if (i == boxes.length - 1) {
                 dataset = new XYSeries("worst group");
+            } else if (i == boxes.length - 1) {
+                dataset = new XYSeries("best group");
             } else {
                 dataset = new XYSeries(i);
             }
