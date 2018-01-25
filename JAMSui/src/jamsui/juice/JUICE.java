@@ -40,10 +40,12 @@ import jamsui.juice.gui.tree.LibTree;
 import jamsui.launcher.JAMSui;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 /**
@@ -105,16 +107,16 @@ public class JUICE {
         String fileName = null;
         try {
             if (cmdLine.getConfigFileName() != null) {
-                
+
                 //check for the file provided at command line
                 fileName = cmdLine.getConfigFileName();
-                JAMS.initBaseDir(fileName);                
+                JAMS.initBaseDir(fileName);
                 jamsProperties.load(fileName);
-            
+
             } else {
-                
+
                 JAMS.initBaseDir();
-                
+
                 //check for the default file
                 File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
                 if (file.exists()) {
@@ -126,7 +128,7 @@ public class JUICE {
         } catch (IOException ioe) {
             Logger.getLogger(JUICE.class.getName()).log(Level.SEVERE, JAMS.i18n("Error_while_loading_config_from") + fileName, ioe);
         }
-        
+
         try {
 
             //try to load property values from file
@@ -168,7 +170,7 @@ public class JUICE {
     }
 
     public static void createJUICEFrame(SystemProperties p) {
-        
+
         if (p != null) {
             jamsProperties = p;
         }
@@ -196,11 +198,20 @@ public class JUICE {
             }
         }
 
-        juiceFrame = new JUICEFrame();
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                public void run() {
 
-//        MsgBoxLogHandler.getInstance().setParent(juiceFrame);
-//        NotificationLogHandler.getInstance().setParent(juiceFrame);
-        juiceFrame.setVisible(true);
+                    juiceFrame = new JUICEFrame();
+
+                    //        MsgBoxLogHandler.getInstance().setParent(juiceFrame);
+                    //        NotificationLogHandler.getInstance().setParent(juiceFrame);
+                    juiceFrame.setVisible(true);
+                }
+            });
+        } catch (InterruptedException | InvocationTargetException ex) {
+            JAMSTools.handle(ex);
+        }
 
         int maxLibClasses = Integer.parseInt(getJamsProperties().getProperty(SystemProperties.MAX_LIB_CLASSES));
 
@@ -215,6 +226,7 @@ public class JUICE {
                 JUICE.updateLibs();
             }
         });
+
     }
 
     public static void updateLibs() {
@@ -232,7 +244,7 @@ public class JUICE {
             });
             loadLibsDlg.execute();
         } catch (Throwable t) {
-            t.printStackTrace();
+            JAMSTools.handle(t);
         }
     }
 
