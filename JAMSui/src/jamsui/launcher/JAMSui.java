@@ -43,6 +43,7 @@ import java.awt.GraphicsEnvironment;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -70,22 +71,22 @@ public class JAMSui {
         String fileName = null;
         try {
             if (cmdLine.getConfigFileName() != null) {
-                
+
                 //check for  file provided at command line
                 fileName = cmdLine.getConfigFileName();
                 JAMS.initBaseDir(fileName);
                 jamsProperties.load(fileName);
-            
+
             } else {
-                
+
                 JAMS.initBaseDir();
-                
+
                 //check for the default file
                 File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
                 if (file.exists()) {
                     fileName = file.getAbsolutePath();
                     jamsProperties.load(fileName);
-                }                
+                }
 
             }
 
@@ -281,12 +282,20 @@ public class JAMSui {
 
     protected void startGUI() {
         setLaF();
-        new JAMSFrame(null, jamsProperties).setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new JAMSFrame(null, jamsProperties).setVisible(true);
+            }
+        });
     }
 
-    protected void startGUI(String modelFileName, String cmdLineParameterValues, Properties jmpParameters) {
+    protected void startGUI(final String modelFileName, final String cmdLineParameterValues, final Properties jmpParameters) {
         setLaF();
-        new JAMSFrame(null, jamsProperties, modelFileName, cmdLineParameterValues, jmpParameters).setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new JAMSFrame(null, jamsProperties, modelFileName, cmdLineParameterValues, jmpParameters).setVisible(true);
+            }
+        });
     }
 
     /**
