@@ -245,6 +245,12 @@ public class J2KTSDataStore extends TSDataStore {
                     timeUnit = Attribute.Calendar.MONTH;
                 } else if (tres.endsWith("h")) {
                     timeUnit = Attribute.Calendar.HOUR_OF_DAY;
+                } else if (tres.endsWith("n") || tres.endsWith("min")) {
+                    timeUnit = Attribute.Calendar.MINUTE;
+                } else if (tres.endsWith("y")) {
+                    timeUnit = Attribute.Calendar.YEAR;
+                } else {
+                    timeUnit = Attribute.Calendar.SECOND;
                 }
                 if (tres.length() > 1) {
                     try {
