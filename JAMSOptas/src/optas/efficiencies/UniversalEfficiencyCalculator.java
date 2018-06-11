@@ -48,109 +48,109 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value e1",
+    description = "efficiency value: Nash-Sutcliffe-Efficiency (power=1)",
     defaultValue = "0")
     public Attribute.Double[] e1;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value e2",
+    description = "efficiency value: Nash-Sutcliffe-Efficiency (power=2)",
     defaultValue = "0")
     public Attribute.Double[] e2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value le1",
+    description = "efficiency value: log. Nash-Sutcliffe-Efficiency (power=1)",
     defaultValue = "0")
     public Attribute.Double[] le1;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value le2",
+    description = "efficiency value: log. Nash-Sutcliffe-Efficiency (power=2)",
     defaultValue = "0")
     public Attribute.Double[] le2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value ave",
+    description = "efficiency value: Absolute Volume Error",
     defaultValue = "0")
     public Attribute.Double[] ave;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value r2",
+    description = "efficiency value: R²",
     defaultValue = "0")
     public Attribute.Double[] r2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value bias",
+    description = "efficiency value: Relative Bias",
     defaultValue = "0")
     public Attribute.Double[] bias;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value e1_normalized",
+    description = "efficiency value: Normalized e1",
     defaultValue = "0")
     public Attribute.Double[] e1_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value e2_normalized",
+    description = "efficiency value: Normalized e2",
     defaultValue = "0")
     public Attribute.Double[] e2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value le1_normalized",
+    description = "efficiency value: Normalized le1",
     defaultValue = "0")
     public Attribute.Double[] le1_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value le2_normalized",
+    description = "efficiency value: Normalized le2",
     defaultValue = "0")
     public Attribute.Double[] le2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value ave_normalized",
+    description = "efficiency value: Normalized ave",
     defaultValue = "0")
     public Attribute.Double[] ave_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value r2_normalized",
+    description = "efficiency value: Normalized r2",
     defaultValue = "0")
     public Attribute.Double[] r2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value bias_normalized",
+    description = "efficiency value: Normalized bias",
     defaultValue = "0")
     public Attribute.Double[] bias_normalized;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value log_likelihood",
+    description = "efficiency value: log. Maximumn Likelihood Efficiency",
     defaultValue = "0")
     public Attribute.Double[] log_likelihood;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value log_likelihood_normalized",
+    description = "efficiency value: Normalized log_likelihood",
     defaultValue = "0")
     public Attribute.Double[] log_likelihood_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value kge",
+    description = "efficiency value: Kling-Gupta-Efficiency",
     defaultValue = "0")
     public Attribute.Double[] kge;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "efficiency value kge_normalized",
+    description = "efficiency value: Normalized kge",
     defaultValue = "0")
     public Attribute.Double[] kge_normalized;
 
