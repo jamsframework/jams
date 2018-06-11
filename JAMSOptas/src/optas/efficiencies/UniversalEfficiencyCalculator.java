@@ -26,143 +26,143 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
-    defaultValue="unknown")
+    description = "names of measured attribute(s)",
+    defaultValue="")
     public Attribute.String[] measurementAttributeName;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
-    description = "file name of optimization process description")
+    description = "measured attribute(s)")
     public Attribute.Double[] measurement;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
-    defaultValue="unknown")
+    description = "names of simulated attribute(s)",
+    defaultValue="")
     public Attribute.String[] simulationAttributeName;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
-    description = "file name of optimization process description")
+    description = "simulated attribute(s)")
     public Attribute.Double[] simulation;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value e1",
     defaultValue = "0")
     public Attribute.Double[] e1;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value e2",
     defaultValue = "0")
     public Attribute.Double[] e2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value le1",
     defaultValue = "0")
     public Attribute.Double[] le1;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value le2",
     defaultValue = "0")
     public Attribute.Double[] le2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value ave",
     defaultValue = "0")
     public Attribute.Double[] ave;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value r2",
     defaultValue = "0")
     public Attribute.Double[] r2;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value bias",
     defaultValue = "0")
     public Attribute.Double[] bias;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value e1_normalized",
     defaultValue = "0")
     public Attribute.Double[] e1_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value e2_normalized",
     defaultValue = "0")
     public Attribute.Double[] e2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value le1_normalized",
     defaultValue = "0")
     public Attribute.Double[] le1_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value le2_normalized",
     defaultValue = "0")
     public Attribute.Double[] le2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value ave_normalized",
     defaultValue = "0")
     public Attribute.Double[] ave_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value r2_normalized",
     defaultValue = "0")
     public Attribute.Double[] r2_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value bias_normalized",
     defaultValue = "0")
     public Attribute.Double[] bias_normalized;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value log_likelihood",
     defaultValue = "0")
     public Attribute.Double[] log_likelihood;
     
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value log_likelihood_normalized",
     defaultValue = "0")
     public Attribute.Double[] log_likelihood_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value kge",
     defaultValue = "0")
     public Attribute.Double[] kge;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
     update = JAMSVarDescription.UpdateType.INIT,
-    description = "file name of optimization process description",
+    description = "efficiency value kge_normalized",
     defaultValue = "0")
     public Attribute.Double[] kge_normalized;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
-    description = "file name of optimization process description",
+    description = "time interval(s) to take into account",
     defaultValue="")
     public Attribute.String timeInterval;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
-    description = "file name of optimization process description")
+    description = "current model time")
     public Attribute.Calendar time;
 
     static final public int RMSE=0,NSE1=1,NSE2=2,LNSE1=3,LNSE2=4,AVE=5,R2=6,RBIAS=7,KGE=8;
