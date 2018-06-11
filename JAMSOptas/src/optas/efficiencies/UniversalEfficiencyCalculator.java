@@ -283,15 +283,16 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     public void cleanup(){
         firstIteration = false;
 
-        this.getModel().getRuntime().println("--------------------------------------------------------");
-        this.getModel().getRuntime().println("*******UniversalEfficiencyCalculator:" + this.getInstanceName());        
-        this.getModel().getRuntime().println("*******Timesteps  :" + this.timeIntervalList.size());
+        this.getModel().getRuntime().println("");
+        this.getModel().getRuntime().println("************************************************************");
+        this.getModel().getRuntime().println("*******UniversalEfficiencyCalculator: " + this.getInstanceName());        
+        this.getModel().getRuntime().println("*******Time periods: " + this.timeIntervalList.size());
         for (int i = 0; i < Math.min(5, timeIntervalList.size()); i++) {
-                this.getModel().getRuntime().println("*******(" + i + ")        :" + this.timeIntervalList.get(i));
-            }
-            if (timeIntervalList.size() > 5) {
-                this.getModel().getRuntime().println("********          :...");
-            }
+            this.getModel().getRuntime().println("*******(" + (i+1) + ")         : " + this.timeIntervalList.get(i));
+        }
+        if (timeIntervalList.size() > 5) {
+            this.getModel().getRuntime().println("*******         : ...");
+        }
             
             
         if (e1==null || e1.length < m) e1 = new Attribute.Double[m];
@@ -348,19 +349,18 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
 	    setObjective(m,s,k,kge, kge_normalized, calcKGE); 
 
                         
-            this.getModel().getRuntime().println("*****************************************************");
-            this.getModel().getRuntime().println("*******Measurement:" + this.measurementAttributeName[k]);
-            this.getModel().getRuntime().println("*******Simulation :" + this.simulationAttributeName[k]);            
+            this.getModel().getRuntime().println("************************************************************");
+            this.getModel().getRuntime().println("*******Measurement: " + this.measurementAttributeName[k]);
+            this.getModel().getRuntime().println("*******Simulation : " + this.simulationAttributeName[k]);            
             this.getModel().getRuntime().println("*******E1:    " + round(this.e1[k].getValue()) + "  (" + round(this.e1_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******E2:    " + round(this.e2[k].getValue()) + "  (" + round(this.e2_normalized[k].getValue()) + ")");
-            this.getModel().getRuntime().println("*******le1:   " + round(this.le1[k].getValue()) + "  (" + round(this.le1_normalized[k].getValue()) + ")");
-            this.getModel().getRuntime().println("*******le2:   " + round(this.le2[k].getValue()) + "  (" + round(this.le2_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******logE1: " + round(this.le1[k].getValue()) + "  (" + round(this.le1_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******logE2: " + round(this.le2[k].getValue()) + "  (" + round(this.le2_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******AVE:   " + round(this.ave[k].getValue()) + "  (" + round(this.ave_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******R2:    " + round(this.r2[k].getValue()) + "  (" + round(this.r2_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******Bias:  " + round(this.bias[k].getValue()) + "  (" + round(this.bias_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******KGE:   " + round(this.kge[k].getValue()) + "  (" + round(this.kge_normalized[k].getValue()) + ")");
-            this.getModel().getRuntime().println("\n");
         }
-        this.getModel().getRuntime().println("--------------------------------------------------------");
+            this.getModel().getRuntime().println("************************************************************");
     }
 }
