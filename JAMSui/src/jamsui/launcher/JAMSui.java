@@ -86,6 +86,9 @@ public class JAMSui {
                 if (file.exists()) {
                     fileName = file.getAbsolutePath();
                     jamsProperties.load(fileName);
+                } else {
+                    fileName = file.getAbsolutePath();
+                    jamsProperties.save(fileName);
                 }
 
             }

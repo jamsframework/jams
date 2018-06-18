@@ -165,6 +165,11 @@ public class CategoryPlot extends JAMSGUIComponent {
     }
 
     private void plotData() {
+        
+        if (panel == null) {
+            return;
+        }
+        
         dataset = createDataset();
 
         String title = getInstanceName();

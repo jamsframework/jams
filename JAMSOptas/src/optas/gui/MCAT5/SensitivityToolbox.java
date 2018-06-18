@@ -8,6 +8,7 @@ import jams.JAMS;
 import jams.gui.WorkerDlg;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -244,6 +245,7 @@ public class SensitivityToolbox extends MCAT5Plot {
         PatchedChartPanel chartPanel = new PatchedChartPanel(chart);
         chartPanel.setMinimumDrawWidth( 0 );
         chartPanel.setMinimumDrawHeight( 0 );
+//        chartPanel.setPreferredSize(new Dimension(MAXIMUM_WIDTH, MAXIMUM_HEIGHT));
         chartPanel.setMaximumDrawWidth( MAXIMUM_WIDTH );
         chartPanel.setMaximumDrawHeight( MAXIMUM_HEIGHT );
         
