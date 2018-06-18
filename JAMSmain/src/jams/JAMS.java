@@ -220,25 +220,27 @@ public class JAMS {
 
     public static void initBaseDir(String parameterFileName) {
 
-        File f;
-        libDir = new File("lib").getAbsoluteFile();
+        File f = new File(parameterFileName);
 
         //check parameter file parent dir / user dir
-        f = new File(parameterFileName);
         if (f.exists()) {
+
+            // use parameter file parent dir
             baseDir = f.getAbsoluteFile().getParentFile();
-            System.setProperty("user.dir", baseDir.getAbsolutePath());
-            return;
+
+        } else {
+
+            // try to use install dir
+            try {
+                File jarFile = new File(JAMS.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+                baseDir = jarFile.getParentFile().getParentFile();
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(JAMS.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
-        //use install dir
-        try {
-            File jarFile = new File(JAMS.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            baseDir = jarFile.getParentFile().getParentFile();
-            System.setProperty("user.dir", baseDir.getAbsolutePath());
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(JAMS.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        System.setProperty("user.dir", baseDir.getAbsolutePath());
+        libDir = new File(baseDir, "lib");
 
     }
 
