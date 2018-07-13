@@ -888,7 +888,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     @Override
     public void sendErrorMsg(String str) {
-        errorLog.print(JAMS.i18n("ERROR") + ": " + str + "\n");
+        errorLog.print(JAMS.i18n("ERROR") + getCallerID() + ": " + str + "\n");
     }
 
     @Override

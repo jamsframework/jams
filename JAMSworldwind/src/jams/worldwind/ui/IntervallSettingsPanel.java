@@ -165,6 +165,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
 
         this.calculateButton = new JButton("Calculate");
         this.applyButton = new JButton("Apply");
+        this.applyButton.setEnabled(false);
 
         this.calculateButton.addActionListener(new ActionListener() {
 
@@ -297,6 +298,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
     //<editor-fold defaultstate="collapsed" desc="ActionListener">
     private void calculateButtonActionListener() {
 
+        this.applyButton.setEnabled(false);
         logger.info("Starting Classification...");
         String attribute = (String) this.attributeNameComboBox.getSelectedItem();
         int numberOfClasses = (Integer) this.numClassesSpinner.getValue();
@@ -373,6 +375,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
             listModel.addElement(this.intervall.get(i));
         }
         this.breakPoints.setModel(listModel);
+        this.applyButton.setEnabled(true);
     }
 
     private void setHistogramMarkers() {

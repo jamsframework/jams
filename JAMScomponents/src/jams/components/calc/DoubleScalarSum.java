@@ -31,7 +31,7 @@ import jams.model.*;
 @JAMSComponentDescription(
         title = "DoubleScalarSum",
         author = "Sven Kralisch",
-        description = "Summates double value operands and returns the result",
+        description = "Summarizes double value operands and returns the result",
         date = "2017-01-24",
         version = "1.0_0"
 )

@@ -45,6 +45,7 @@ import optas.data.DataCollection;
 import jams.explorer.JAMSExplorer;
 import jams.explorer.gui.ImportMonteCarloDataPanel;
 import jams.gui.WorkerDlg;
+import javax.swing.tree.TreeSelectionModel;
 
 /**
  *
@@ -62,7 +63,7 @@ public class DSTree extends JAMSTree {
     private JAMSExplorer explorer;
 
     JMenuItem addToEnsembleItem = new JMenuItem(JAMS.i18n("ADD_TO_ENSEMBLE"));
-
+      
     public DSTree(JAMSExplorer explorer) {
         super();
 

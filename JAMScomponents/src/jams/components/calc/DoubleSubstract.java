@@ -1,6 +1,6 @@
 /*
- * DoubleDivide.java
- * Created on 18.05.2016, 15:51:19
+ * DoubleSubstract.java
+ * Created on 11.07.2018, 15:51:19
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -23,57 +23,85 @@ package jams.components.calc;
 
 import jams.data.*;
 import jams.model.*;
-import static ucar.unidata.util.Format.d;
 
 /**
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 @JAMSComponentDescription(
-        title = "DoubleScalarSubtract",
-        author = "Annika Kuenne",
-        description = "subtracts double value operands and returns the result",
-        date = "2017-01-24",
+        title = "DoubleSubstract",
+        author = "Sven Kralisch",
+        description = "Substracts two double values and return the result",
+        date = "2018-07-11",
         version = "1.0_0"
 )
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version")
 })
-public class DoubleScalarSubtract extends JAMSComponent {
+public class DoubleSubstract extends JAMSComponent {
 
     /*
      *  Component attributes
      */
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            description = "Operand1"
+            description = "First operand"
     )
     public Attribute.Double[] d1;
-
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            description = "Operand2"
+            description = "Second operand"
     )
     public Attribute.Double[] d2;
-
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            description = "Subtract of operands"
+            description = "Result of d1-d2 (element-wise)"
     )
     public Attribute.Double[] result;
+
+    Runnable job;
 
     /*
      *  Component run stages
      */
     @Override
+    public void init() {
+        
+        if (d1.length == result.length) {
+            getModel().getRuntime().sendHalt("Attribute result has wrong length, should be length of d1");
+        }
+        
+        if (d1.length == d2.length) {
+
+            job = new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < d1.length; i++) {
+                        result[i].setValue(d1[i].getValue() - d2[i].getValue());
+                    }
+                }
+            };
+
+        } else if (d2.length == 1) {
+
+            job = new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < d1.length; i++) {
+                        result[i].setValue(d1[i].getValue() - d2[0].getValue());
+                    }
+                }
+            };
+
+        } else {
+
+            getModel().getRuntime().sendHalt("Attribute d2 has wrong length, should be 1 or length of d1");
+
+        }
+    }
+
+    @Override
     public void run() {
-        if (d1.length != d2.length || d1.length != result.length) {
-            getModel().getRuntime().sendHalt("Manno! Check number of attributes for d1, d2, result!");
-        }
-        double s = 0;
-        for (int i = 0; i < d1.length; i++) {
-            s = d1[i].getValue() - d2[i].getValue();
-            result[i].setValue(s);
-        }
+        job.run();
     }
 }

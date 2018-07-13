@@ -1,6 +1,6 @@
 /*
- * DoubleDivide.java
- * Created on 18.05.2016, 15:51:19
+ * DoubleAdd.java
+ * Created on 11.07.2018, 15:51:19
  *
  * This file is part of JAMS
  * Copyright (C) FSU Jena
@@ -29,16 +29,16 @@ import jams.model.*;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 @JAMSComponentDescription(
-        title = "DoubleDivide",
+        title = "DoubleAdd",
         author = "Sven Kralisch",
-        description = "Divide a double value by another one and return the result",
-        date = "2016-05-18",
+        description = "Add two double values and return the result",
+        date = "2018-07-11",
         version = "1.0_0"
 )
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version")
 })
-public class DoubleDivide extends JAMSComponent {
+public class DoubleAdd extends JAMSComponent {
 
     /*
      *  Component attributes
@@ -55,7 +55,7 @@ public class DoubleDivide extends JAMSComponent {
     public Attribute.Double[] d2;
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            description = "Result of d1/d2"
+            description = "Result of d1+d2 (element-wise)"
     )
     public Attribute.Double[] result;
 
@@ -66,13 +66,18 @@ public class DoubleDivide extends JAMSComponent {
      */
     @Override
     public void init() {
+        
+        if (d1.length == result.length) {
+            getModel().getRuntime().sendHalt("Attribute result has wrong length, should be length of d1");
+        }
+        
         if (d1.length == d2.length) {
 
             job = new Runnable() {
                 @Override
                 public void run() {
                     for (int i = 0; i < d1.length; i++) {
-                        result[i].setValue(d1[i].getValue() / d2[i].getValue());
+                        result[i].setValue(d1[i].getValue() + d2[i].getValue());
                     }
                 }
             };
@@ -83,7 +88,7 @@ public class DoubleDivide extends JAMSComponent {
                 @Override
                 public void run() {
                     for (int i = 0; i < d1.length; i++) {
-                        result[i].setValue(d1[i].getValue() / d2[0].getValue());
+                        result[i].setValue(d1[i].getValue() + d2[0].getValue());
                     }
                 }
             };

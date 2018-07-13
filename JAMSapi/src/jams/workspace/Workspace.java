@@ -280,7 +280,7 @@ public interface Workspace extends Serializable {
     void setTitle(String title);
 
     /**
-     * returnes a list of all input data stores which has been created
+     * returns a list of all input data stores which has been created
      */
     ArrayList<DataStore> getRegisteredDataStores();
 

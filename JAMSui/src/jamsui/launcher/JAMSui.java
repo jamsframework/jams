@@ -221,7 +221,7 @@ public class JAMSui {
                     String snapshotFileName = cmdLine.getSnapshotFileName();
                     if (snapshotFileName != null) {
                         File snapshotFile = new File(snapshotFileName);
-                        if (!snapshotFile.exists()) {
+                        if (snapshotFile.exists()) {
                             final JAMSFullModelState state = new JAMSFullModelState(snapshotFile);
 
                             Model model = state.getModel();
