@@ -49,11 +49,12 @@ import java.util.HashSet;
         + "a time loop, this component creates a new Shapefile for each "
         + "given attribute containing the old geometries and a single entity "
         + "attribute value at certain time steps.",
+        date = "2018-09-10",
         version = "1.0_1")
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", date = "2006-09-18", comment = "Initial version"),
-    @VersionComments.Entry(version = "1.0_1", date = "2017-06-21", comment = "Fixed descriptions")
-})
+    @VersionComments.Entry(version = "1.0_1", date = "2017-06-21", comment = "Fixed descriptions"),
+    @VersionComments.Entry(version = "1.0_2", date = "2018-09-10", comment = "Fixed bug with non-existing folder when using persistent output")})
 public class TemporalShapeEntityWriter extends JAMSComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -184,10 +185,12 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
             File f2 = new File(FileTools.createAbsoluteFileName(path, fileName + "_SODS.dat"));
             entityDataProviders[i] = new EntityDataProvider(this.attributes[i].getValue(), entities);
             try {
+                f.getParentFile().mkdirs();
+                f2.getParentFile().mkdirs();
                 outData[i] = new SimpleOutputDataStore(f, false);
                 outData2[i] = new SpatialOutputDataStore(f2);
             } catch (IOException ioe) {
-                getModel().getRuntime().sendHalt("Can't write to output file:" + f);
+                getModel().getRuntime().sendHalt("Can't write to output file: " + f);
             }
 
             File originalShpFile = new File(FileTools.createAbsoluteFileName(getModel().getWorkspacePath(), srcShapeFile.getValue()));

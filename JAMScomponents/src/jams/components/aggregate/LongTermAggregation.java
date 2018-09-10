@@ -21,6 +21,7 @@
  */
 package jams.components.aggregate;
 
+import jams.JAMS;
 import jams.data.*;
 import jams.model.*;
 
@@ -29,15 +30,16 @@ import jams.model.*;
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
 @JAMSComponentDescription(
-        title = "Title",
-        author = "Author",
-        description = "Description",
-        date = "YYYY-MM-DD",
-        version = "1.0_0"
+        title = "LongTermAggregation",
+        author = "Sven Kralisch",
+        description = "Calculates longterm aggregates, e.g. average daily temperature",
+        date = "2017-06-29",
+        version = "1.0_2"
 )
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
-    @VersionComments.Entry(version = "1.0_1", comment = "Some improvements")
+    @VersionComments.Entry(version = "1.0_0", date = "2017-06-29", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", comment = "Some improvements"),
+    @VersionComments.Entry(version = "1.0_2", date = "2018-09-10", comment = "Some improvements")
 })
 public class LongTermAggregation extends JAMSComponent {
 
@@ -64,7 +66,7 @@ public class LongTermAggregation extends JAMSComponent {
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            description = "day, week, month, irregular"
+            description = "day (of year), week (of year), month (of year), year (overall aggregate), irregular (not implemented)"
     )
     public Attribute.String targetUnit;
 
@@ -79,14 +81,14 @@ public class LongTermAggregation extends JAMSComponent {
             description = "Aggregation result"
     )
     public Attribute.DoubleArray[] aggregate;
-    
+
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
             description = "number of values"
     )
-    public Attribute.IntegerArray nValues;
+    public Attribute.IntegerArray[] nValues;
 
-    int count[], field;
+    int count[][], field;
 
     /*
      *  Component run stages
@@ -120,7 +122,7 @@ public class LongTermAggregation extends JAMSComponent {
             }
         } else if (targetUnit.getValue().equals("irregular")) {
             field = -1;
-            maxn = 1;            
+            maxn = 1;
             for (Attribute.DoubleArray da : aggregate) {
                 da.setValue(new double[maxn]);
             }
@@ -131,14 +133,16 @@ public class LongTermAggregation extends JAMSComponent {
                 da.setValue(new double[maxn]);
             }
         }
-        count = new int[maxn];
+        count = new int[inputAttribute.length][maxn];
     }
 
     @Override
     public void run() {
         if (field < 0) {
-            count[0]++;
-            //TODO: implementation for irregular time intervals
+            for (int i = 0; i < inputAttribute.length; i++) {
+                count[i][0]++;
+                //TODO: implementation for irregular time intervals
+            }
         } else {
             int index = time.get(field);
             if (field != Attribute.Calendar.MONTH) {
@@ -148,18 +152,26 @@ public class LongTermAggregation extends JAMSComponent {
                 index = 0;
             }
             for (int i = 0; i < inputAttribute.length; i++) {
+
+                if (inputAttribute[i].getValue() == JAMS.getMissingDataValue()) {
+                    continue;
+                }
+
                 if (calcAverage[i].getValue()) {
-                    double result = (aggregate[i].getValue()[index] * count[index] + inputAttribute[i].getValue()) / (count[index] + 1);
+                    double result = (aggregate[i].getValue()[index] * count[i][index] + inputAttribute[i].getValue()) / (count[i][index] + 1);
                     aggregate[i].getValue()[index] = result;
                 } else {
                     double result = aggregate[i].getValue()[index] + inputAttribute[i].getValue();
-                    aggregate[i].getValue()[index] = result;                    
+                    aggregate[i].getValue()[index] = result;
                 }
+                count[i][index]++;
             }
-            count[index]++;
             
+
         }
-        nValues.setValue(count);
+        for (int i = 0; i < nValues.length; i++) {
+            nValues[i].setValue(count[i]);
+        }
     }
 
     @Override
