@@ -80,9 +80,17 @@ public class JAMS {
      */
     public static final String DEFAULT_MODEL_PARAMETER_FILENAME = "model.jmp";
     /**
-     * Default name of parameter output file
+     * Default name of info log file
      */
-    public static final String DEFAULT_PARAMETER_FILENAME = "default.jap";
+    public static final String DEFAULT_INFOLOG_FILENAME = "info.log";
+    /**
+     * Default name of error log file
+     */
+    public static final String DEFAULT_ERRORLOG_FILENAME = "error.log";
+    /**
+     * Default name of JAMS property file
+     */
+    public static final String DEFAULT_PROPERTY_FILENAME = "default.jap";
     /**
      * Default output formatting for floating point data
      */
@@ -246,7 +254,7 @@ public class JAMS {
 
     public static void initBaseDir() {
         if (baseDir == null) {
-            initBaseDir(DEFAULT_PARAMETER_FILENAME);
+            initBaseDir(DEFAULT_PROPERTY_FILENAME);
         }
     }
 

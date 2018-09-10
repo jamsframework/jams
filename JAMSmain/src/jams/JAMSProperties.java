@@ -224,9 +224,11 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
             p.setProperty(MAX_LIB_CLASSES, "10000");
             p.setProperty(DOCBOOK_HOME, "docbook");
             p.setProperty(EXPLORER_DECIMAL_DIGITS, "8");
+            p.setProperty(AUTO_SAVE_LOGS, "true");
+            p.setProperty(AUTO_SAVE_PARAMS, "true");
 
             theProperties = new JAMSProperties(p);
-            theProperties.defaultFilename = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME).getAbsolutePath();
+            theProperties.defaultFilename = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PROPERTY_FILENAME).getAbsolutePath();
         }
 
         return theProperties;

@@ -231,16 +231,12 @@ public class MiniRuntime implements JAMSRuntime {
     }
 
     @Override
-    public void loadModel(Document modelDocument, String defaultWorkspacePath) {
+    public void loadModel(Document modelDocument, String defaultWorkspacePath, String modelFilePath) {
     }
 
     @Override
     public ClassLoader getClassLoader() {
         return ClassLoader.getSystemClassLoader();
-    }
-
-    @Override
-    public void saveModelParameter() {
     }
 
     @Override

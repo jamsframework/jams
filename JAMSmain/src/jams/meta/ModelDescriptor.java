@@ -53,7 +53,7 @@ public class ModelDescriptor extends ComponentCollection {
     private ArrayList<MetaProcessorDescriptor> preprocessors = new ArrayList();
     private HashMap<String, AttributeList> attributeLists = new HashMap();
     private ModelProperties modelProperties;
-    private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "", modelName = "";
+    private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "", modelFilePath = "", modelName = "";
     private ModelNode rootNode;
 
     public ModelDescriptor() {
@@ -71,6 +71,7 @@ public class ModelDescriptor extends ComponentCollection {
         this.helpBaseUrl = md.helpBaseUrl;
         this.modelName = md.modelName;
         this.workspacePath = md.workspacePath;
+        this.modelFilePath = md.modelFilePath;
 
         //are those safe??
         this.modelProperties = md.getModelProperties();
@@ -395,6 +396,14 @@ public class ModelDescriptor extends ComponentCollection {
         this.workspacePath = workspacePath;
     }
 
+    public String getModelFilePath() {
+        return modelFilePath;
+    }
+
+    public void setModelFilePath(String modelFilePath) {
+        this.modelFilePath = modelFilePath;
+    }
+    
     /**
      * @return the rootNode
      */

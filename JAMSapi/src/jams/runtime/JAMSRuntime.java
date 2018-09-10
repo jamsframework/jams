@@ -103,7 +103,7 @@ public interface JAMSRuntime extends Serializable {
 
     public void runModel() throws Exception;
 
-    public void loadModel(Document modelDocument, String defaultWorkspacePath);
+    public void loadModel(Document modelDocument, String defaultWorkspacePath, String modelFilePath);
 
     public Model getModel();
 
@@ -112,7 +112,5 @@ public interface JAMSRuntime extends Serializable {
     public Document getModelDocument();
 
     public ClassLoader getClassLoader();
-
-    public void saveModelParameter();
 
 }

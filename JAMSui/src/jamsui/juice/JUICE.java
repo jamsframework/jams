@@ -118,7 +118,7 @@ public class JUICE {
                 JAMS.initBaseDir();
 
                 //check for the default file
-                File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
+                File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PROPERTY_FILENAME);
                 if (file.exists()) {
                     fileName = file.getAbsolutePath();
                     jamsProperties.load(fileName);
@@ -137,7 +137,7 @@ public class JUICE {
                 getJamsProperties().load(cmdLine.getConfigFileName());
             } else {
                 //check for default file
-                File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
+                File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PROPERTY_FILENAME);
                 if (file.exists()) {
                     getJamsProperties().load(file.getAbsolutePath());
                 }

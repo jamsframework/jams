@@ -1,6 +1,7 @@
-Development:
-Sven Kralisch, Christian Fischer, Christian Schwartze,
-Robert Riedel, Christin Michel, Ronny Berndt
+JAMS & Components:
+Sven Kralisch, Peter Krause, Christian Fischer, 
+Manfred Fink, Robert Riedel, Christin Michel, 
+Ronny Berndt and many others
 
 Libraries:
 Apache Commons (http://commons.apache.org)
@@ -14,7 +15,7 @@ JFreeChart (http://www.jfree.org/jfreechart)
 H2 Database (http://www.h2database.com)   
 JAMA (http://math.nist.gov/javanumerics/jama)  
 TROVE (http://trove.starlight-systems.com)
-Java Unified Expression Language (http://juel.sourceforge.net)
+JUEL (http://juel.sourceforge.net)
 WorldWind (http://worldwind.arc.nasa.gov)
 ... and many others
                                                        

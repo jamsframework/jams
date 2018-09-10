@@ -136,8 +136,14 @@ public class ModelView {
                         if (Boolean.parseBoolean(JUICE.getJamsProperties().getProperty(JAMSProperties.USE_DEFAULT_WS_PATH)) && (getSavePath() != null)) {
                             defaultWorkspacePath = getSavePath().getParent();
                         }
+                        
+                        String modelFilePath = null;
+                        if (getSavePath() != null) {
+                            modelFilePath = getSavePath().getAbsolutePath();
+                        }
 
-                        runtime.loadModel(modelDoc, defaultWorkspacePath);
+                        
+                        runtime.loadModel(modelDoc, defaultWorkspacePath, modelFilePath);
 
                     } else {
                         runtime = null;

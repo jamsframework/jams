@@ -114,8 +114,9 @@ public class ModelLoader {
         }
 
         jamsModel.getRuntime().println(JAMS.i18n("*************************************"), JAMS.STANDARD);
-        jamsModel.getRuntime().println(JAMS.i18n("model_____:_") + jamsModel.getName(), JAMS.STANDARD);
-        jamsModel.getRuntime().println(JAMS.i18n("workspace_:_") + jamsModel.getWorkspacePath(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.i18n("model_____:_") + md.getModelName(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.i18n("workspace_:_") + md.getWorkspacePath(), JAMS.STANDARD);
+        jamsModel.getRuntime().println(JAMS.i18n("modelfile_:_") + md.getModelFilePath(), JAMS.STANDARD);
         jamsModel.getRuntime().println(JAMS.i18n("author____:_") + md.getAuthor(), JAMS.STANDARD);
         jamsModel.getRuntime().println(JAMS.i18n("date______:_") + md.getDate(), JAMS.STANDARD);
         jamsModel.getRuntime().println(JAMS.i18n("*************************************"), JAMS.STANDARD);

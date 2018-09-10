@@ -70,7 +70,7 @@ public class JAMSExplorer {
         this.standAlone = standAlone;
 
         properties = JAMSProperties.createProperties();
-        File defaultFile = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
+        File defaultFile = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PROPERTY_FILENAME);
         if (defaultFile.exists() && standAlone) {
             try {
                 properties.load(defaultFile.getAbsolutePath());

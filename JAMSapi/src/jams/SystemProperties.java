@@ -67,6 +67,8 @@ public interface SystemProperties {
     String MAX_LIB_CLASSES = "maxlibclasses";
     String DOCBOOK_HOME = "docbook-home";
     String EXPLORER_DECIMAL_DIGITS = "explorerdigits";
+    String AUTO_SAVE_LOGS = "autosavelogs";
+    String AUTO_SAVE_PARAMS = "autosaveparams";
     
     /**
      * Adds an observer for some property

@@ -43,7 +43,8 @@ public class PropertyDlg extends JDialog {
 
     private static final int JCOMP_HEIGHT = 20;
     private FileListInput list;
-    private BooleanInput verboseCheck, debugMode, windowEnable,  windowOnTop,  errorDlg, profiling, defaultWSPath, preprocessing;
+    private BooleanInput verboseCheck, debugMode, windowEnable,  windowOnTop,  errorDlg, profiling, defaultWSPath, preprocessing, 
+            autoSaveLogs, autoSaveParams;
     private JSpinner debugSpinner;
     private JComboBox<String> locale;
     private FileInput infoFile,  errorFile, docbookDir;
@@ -117,6 +118,18 @@ public class PropertyDlg extends JDialog {
         debugSpinner.setPreferredSize(new Dimension(35, 26));
         GUIHelper.addGBComponent(contentPanel, gbl, spinnerPanel, 1, y, 1, 1, 0, 0);
 
+        y++;
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Auto_save_logs:")), 0, y, 1, 1, 0, 0);
+        autoSaveLogs = new BooleanInput();
+        autoSaveLogs.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
+        GUIHelper.addGBComponent(contentPanel, gbl, autoSaveLogs, 1, y, 1, 1, 1, 1);
+        
+        y++;
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Auto_save_params:")), 0, y, 1, 1, 0, 0);
+        autoSaveParams = new BooleanInput();
+        autoSaveParams.setPreferredSize(new Dimension(295, JCOMP_HEIGHT));
+        GUIHelper.addGBComponent(contentPanel, gbl, autoSaveParams, 1, y, 1, 1, 1, 1);
+               
         y++;
         GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("Info_log_file:")), 0, y, 1, 1, 0, 0);
         infoFile = new FileInput();
@@ -315,6 +328,9 @@ public class PropertyDlg extends JDialog {
 
         docbookDir.setValue(properties.getProperty(SystemProperties.DOCBOOK_HOME_PATH));
         explorerDigits.setValue(properties.getProperty(SystemProperties.EXPLORER_DECIMAL_DIGITS));
+        
+        autoSaveLogs.setValue(properties.getProperty(SystemProperties.AUTO_SAVE_LOGS));
+        autoSaveParams.setValue(properties.getProperty(SystemProperties.AUTO_SAVE_PARAMS));
     }
 
     public void validateProperties() {
@@ -349,6 +365,8 @@ public class PropertyDlg extends JDialog {
         properties.setProperty(SystemProperties.HELPBASEURL_IDENTIFIER, helpBaseURL.getValue());
         properties.setProperty(SystemProperties.DOCBOOK_HOME_PATH, docbookDir.getValue());
         properties.setProperty(SystemProperties.EXPLORER_DECIMAL_DIGITS, explorerDigits.getValue());
+        properties.setProperty(SystemProperties.AUTO_SAVE_LOGS, autoSaveLogs.getValue());
+        properties.setProperty(SystemProperties.AUTO_SAVE_PARAMS, autoSaveParams.getValue());
     }
 
     public SystemProperties getProperties() {

@@ -116,9 +116,6 @@ public class JAMSModel extends JAMSContext implements Model {
             return;
         }
 
-        // save current model parameter to workspace output directory
-        getRuntime().saveModelParameter();
-
         super.init();
 
         if (!doRun) {

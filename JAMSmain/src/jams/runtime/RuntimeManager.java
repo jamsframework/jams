@@ -138,7 +138,7 @@ public class RuntimeManager extends Observable {
             result += "progress=" + getProgressString() + ", ";
             if (runtime != null) {
                 if (runtime.getModel().getWorkspace() != null) {
-                    result += "workspace=" + runtime.getModel().getWorkspaceDirectory().getAbsolutePath();
+                    result += "workspace=" + runtime.getModel().getWorkspace().getDirectory().getAbsolutePath();
                 } else {
                     result += "workspace=null";
                 }

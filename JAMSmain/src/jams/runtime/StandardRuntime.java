@@ -119,9 +119,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
      *
      * @param modelDocument the XML document
      * @param defaultWorkspacePath the path to the workspace
+     * @param modelFilePath the path to the model
      */
     @Override
-    public void loadModel(Document modelDocument, String defaultWorkspacePath) {
+    public void loadModel(Document modelDocument, String defaultWorkspacePath, String modelFilePath) {
 
         this.modelDocument = modelDocument;
 
@@ -149,6 +150,10 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             if (StringTools.isEmptyString(md.getWorkspacePath()) && (defaultWorkspacePath != null)) {
                 md.setWorkspacePath(defaultWorkspacePath);
                 this.println(JAMS.i18n("no_workspace_defined_use_loadpath") + defaultWorkspacePath, JAMS.STANDARD);
+            }
+
+            if (modelFilePath != null) {
+                md.setModelFilePath(modelFilePath);
             }
 
             this.println("", JAMS.STANDARD);
@@ -450,6 +455,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             model.init();
         }
 
+        if (Boolean.parseBoolean(properties.getProperty(SystemProperties.AUTO_SAVE_PARAMS, "1"))) {
+            // save current model parameter to workspace output directory
+            saveModelParameter();
+        }
+
         if (this.getState() == JAMSRuntime.STATE_RUN) {
             model.initAll();
         }
@@ -472,6 +482,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         finishModelExecution(System.currentTimeMillis() - start);
         finishProgressLogging();
 
+        if (Boolean.parseBoolean(properties.getProperty(SystemProperties.AUTO_SAVE_LOGS, "1"))) {
+            // save error/info log to workspace
+            saveModelLogs();
+        }
+
         if (this.getState() != JAMSRuntime.STATE_PAUSE) {
             model = null;
             classLoader = null;
@@ -481,16 +496,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
 
     private void finishProgressLogging() {
 
-//            long[] progress = getModel().getProgress();
-//            String p;
-//            if (progress[1] > -1) {
-//                p = String.format("%1.2f", (double) progress[0] / progress[1]);
-//            } else {
-//                p = String.format("%1.2f", 0);
-//            }
-//            progressLogger.log(Level.INFO, p);
-//            progressLogger.removeHandler(logFileHandler);
-//            logFileHandler.close();
         if (progressService != null) {
             progressService.shutdownNow();
         }
@@ -517,22 +522,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             return;
         }
 
-//        if (progressLogger == null) {
-//            progressLogger = Logger.getLogger(StandardRuntime.this.toString());
-//            logFileHandler = new FileHandler(progressFileName, true);
-//            Formatter formatter = new Formatter() {
-//
-//                @Override
-//                public synchronized String format(LogRecord record) {
-//                    long time = record.getMillis();
-//                    String message = record.getMessage();
-//                    return String.format("%d %s\r\n", time, message);
-//                }
-//            };
-//            logFileHandler.setFormatter(formatter);
-//            progressLogger.addHandler(logFileHandler);
-//            progressLogger.setUseParentHandlers(false);
-//        }
         progressWriter = new FileWriter(progressFileName);
 
         progressRunnable = new Runnable() {
@@ -965,8 +954,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         guiComponents.add(component);
     }
 
-    @Override
-    public void saveModelParameter() {
+    private void saveModelParameter() {
 
         // save the model's parameter set to the workspace output dir, if it exists
         if (this.model.getWorkspace() == null) {
@@ -974,10 +962,34 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         }
 
         try {
-            File modelFile = new File(this.model.getWorkspace().getOutputDataDirectory().getPath()
-                    + File.separator + JAMS.DEFAULT_MODEL_PARAMETER_FILENAME);
+            File modelFile = new File(this.model.getWorkspace().getOutputDataDirectory(), JAMS.DEFAULT_MODEL_PARAMETER_FILENAME);
             modelFile.getParentFile().mkdirs();
             ParameterProcessor.saveParams(this.modelDocument, modelFile, this.properties.getProperty(SystemProperties.USERNAME_IDENTIFIER), null);
+        } catch (IOException ioe) {
+            getModel().getRuntime().handle(ioe);
+        }
+    }
+
+    private void saveModelLogs() {
+
+        // save the model's logs to the workspace output dir, if it exists
+        if (this.model.getWorkspace() == null) {
+            return;
+        }
+
+        try {
+            File infoLogFile = new File(this.model.getWorkspace().getOutputDataDirectory(), JAMS.DEFAULT_INFOLOG_FILENAME);
+            infoLogFile.getParentFile().mkdirs();
+            PrintStream is = new PrintStream(infoLogFile);
+            is.printf(getInfoLog());
+            is.close();
+
+            File errorLogFile = new File(this.model.getWorkspace().getOutputDataDirectory(), JAMS.DEFAULT_ERRORLOG_FILENAME);
+            errorLogFile.getParentFile().mkdirs();
+            PrintStream es = new PrintStream(errorLogFile);
+            es.printf(getErrorLog());
+            es.close();
+
         } catch (IOException ioe) {
             getModel().getRuntime().handle(ioe);
         }

@@ -81,7 +81,7 @@ public class JAMSui {
                 JAMS.initBaseDir();
 
                 //check for the default file
-                File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PARAMETER_FILENAME);
+                File file = new File(JAMS.getBaseDir(), JAMS.DEFAULT_PROPERTY_FILENAME);
                 if (file.exists()) {
                     fileName = file.getAbsolutePath();
                     jamsProperties.load(fileName);
@@ -176,7 +176,7 @@ public class JAMSui {
 
                 runtime = new StandardRuntime(jamsProperties);
 
-                runtime.loadModel(modelDoc, defaultWorkspacePath);
+                runtime.loadModel(modelDoc, defaultWorkspacePath, modelFileName);
 
                 // if workspace has not been provided, check if the document has been
                 // read from file and try to use parent directory instead

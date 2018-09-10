@@ -168,7 +168,7 @@ public class JAMSLauncher extends JFrame {
                 });
 
                 // load the model
-                runtime.loadModel(modelDocCopy, defaultWorkspacePath);
+                runtime.loadModel(modelDocCopy, defaultWorkspacePath, loadPath.getAbsolutePath());
 
                 // if workspace has not been provided, check if the document has been
                 // read from file and try to use parent directory instead
