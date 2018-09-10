@@ -50,7 +50,7 @@ import java.util.HashSet;
         + "given attribute containing the old geometries and a single entity "
         + "attribute value at certain time steps.",
         date = "2018-09-10",
-        version = "1.0_1")
+        version = "1.0_2")
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", date = "2006-09-18", comment = "Initial version"),
     @VersionComments.Entry(version = "1.0_1", date = "2017-06-21", comment = "Fixed descriptions"),
