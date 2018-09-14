@@ -38,15 +38,15 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     transient private final static String FORMAT_PATTERN = Attribute.Calendar.DEFAULT_FORMAT_PATTERN;
     transient private final static TimeZone TIME_ZONE = Attribute.Calendar.DEFAULT_TIME_ZONE;
     private DateFormat dateFormat;
-    
+
     {
         try {
             BeanInfo info = Introspector.getBeanInfo(JAMSCalendar.class);
-            PropertyDescriptor[] propertyDescriptors =
-                    info.getPropertyDescriptors();
+            PropertyDescriptor[] propertyDescriptors
+                    = info.getPropertyDescriptors();
             for (int i = 0; i < propertyDescriptors.length; ++i) {
                 PropertyDescriptor pd = propertyDescriptors[i];
-                if (!pd.getName().equals("milliSeconds") ) {
+                if (!pd.getName().equals("milliSeconds")) {
                     pd.setValue("transient", Boolean.TRUE);
                 }
             }
@@ -74,7 +74,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     }
 
     @Override
-    public void setTimeZone(TimeZone timezone){
+    public void setTimeZone(TimeZone timezone) {
         super.setTimeZone(timezone);
         dateFormat = new SimpleDateFormat(FORMAT_PATTERN);
         dateFormat.setTimeZone(timezone);
@@ -106,16 +106,17 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
     }
 
     /**
-     * Compares the date represented by this object with the date represented by 
-     * another JAMSCalendar object while considering a given accuracy. Example: 
-     * The JAMSCalendar object repesenting the date "1979-07-04 07:30" equals 
+     * Compares the date represented by this object with the date represented by
+     * another JAMSCalendar object while considering a given accuracy. Example:
+     * The JAMSCalendar object repesenting the date "1979-07-04 07:30" equals
      * another object representing the date "1979-07-12 04:00", if the accuracy
      * is "MONTH", but is earlier if the accuracy is "DAY_OF_MONTH"
+     *
      * @param cal The calendar object to compare with
-     * @param accuracy The accuracy as field of the calendar object (e.g. 
+     * @param accuracy The accuracy as field of the calendar object (e.g.
      * SECOND, MINUTE, HOUR_OF_DAY, DAY_OF_MONTH or MONTH)
-     * @return -1 if this calendar represents an earlier date than cal, 0 if 
-     * this calendar equals cal or 1 if this calendar represents a later date 
+     * @return -1 if this calendar represents an earlier date than cal, 0 if
+     * this calendar equals cal or 1 if this calendar represents a later date
      * than cal, always leaving unsignificant fields unconsidered.
      */
     @Override
@@ -157,74 +158,62 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
 
     @Override
     public void setValue(String value) {
+        
+        int[] englishFormat = {2, 0, 1, 3, 4, 5, 6};
+        int[] jamsFormat = {0, 1, 2, 3, 4, 5, 6};
 
-        String year = "1900";
-        String month = "1";
-        String day = "1";
-        String hour = "0";
-        String minute = "0";
-        String second = "0";
-        String millisecond = "0";
-
-        StringTokenizer st = new StringTokenizer(value, " :-/.");
-        year = st.nextToken();
-        if (st.hasMoreTokens()) {
-            month = st.nextToken().trim();
+        String[] dateStrings = {"1970", "1", "1", "0", "0", "0", "0"};
+        String[] parts = value.split("\\s+|:|-|/|\\.");
+        
+        int[] index;
+        if (value.contains("-")) {
+            index = jamsFormat;
+        } else {
+            index = englishFormat;
         }
-        if (st.hasMoreTokens()) {
-            day = st.nextToken().trim();
+        
+        for (int i = 0; i < parts.length; i++) {
+            dateStrings[i] = parts[index[i]];
         }
-        if (st.hasMoreTokens()) {
-            hour = st.nextToken().trim();
-        }
-        if (st.hasMoreTokens()) {
-            minute = st.nextToken().trim();
-        }
-        if (st.hasMoreTokens()) {
-            second = st.nextToken().trim();
-        }
-        if (st.hasMoreTokens()) {
-            millisecond = st.nextToken().trim();
-        }
-                
-        try {
-            set(Attribute.Calendar.YEAR, Integer.parseInt(year));
-        } catch (NumberFormatException nfe) {
-            jams.tools.JAMSTools.handle(nfe);
-        }
-        try {
-            set(Attribute.Calendar.MONTH, Integer.parseInt(month) - 1);
-        } catch (NumberFormatException nfe) {
-            jams.tools.JAMSTools.handle(nfe);
-        }
-        try {
-            set(Attribute.Calendar.DAY_OF_MONTH, Integer.parseInt(day));
-        } catch (NumberFormatException nfe) {
-            jams.tools.JAMSTools.handle(nfe);
-        }   
         
         try {
-            set(Attribute.Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+            set(Attribute.Calendar.YEAR, Integer.parseInt(dateStrings[0]));
         } catch (NumberFormatException nfe) {
             jams.tools.JAMSTools.handle(nfe);
         }
         try {
-            set(Attribute.Calendar.MINUTE, Integer.parseInt(minute));
+            set(Attribute.Calendar.MONTH, Integer.parseInt(dateStrings[1]) - 1);
         } catch (NumberFormatException nfe) {
             jams.tools.JAMSTools.handle(nfe);
         }
         try {
-            set(Attribute.Calendar.SECOND, Integer.parseInt(second));
+            set(Attribute.Calendar.DAY_OF_MONTH, Integer.parseInt(dateStrings[2]));
         } catch (NumberFormatException nfe) {
             jams.tools.JAMSTools.handle(nfe);
         }
-        try {
-            set(Attribute.Calendar.MILLISECOND, Integer.parseInt(millisecond));
-        } catch (NumberFormatException nfe) {
-            jams.tools.JAMSTools.handle(nfe);
-        }
-    }
 
+        try {
+            set(Attribute.Calendar.HOUR_OF_DAY, Integer.parseInt(dateStrings[3]));
+        } catch (NumberFormatException nfe) {
+            jams.tools.JAMSTools.handle(nfe);
+        }
+        try {
+            set(Attribute.Calendar.MINUTE, Integer.parseInt(dateStrings[4]));
+        } catch (NumberFormatException nfe) {
+            jams.tools.JAMSTools.handle(nfe);
+        }
+        try {
+            set(Attribute.Calendar.SECOND, Integer.parseInt(dateStrings[5]));
+        } catch (NumberFormatException nfe) {
+            jams.tools.JAMSTools.handle(nfe);
+        }
+        try {
+            set(Attribute.Calendar.MILLISECOND, Integer.parseInt(dateStrings[6]));
+        } catch (NumberFormatException nfe) {
+            jams.tools.JAMSTools.handle(nfe);
+        }
+    }    
+    
     @Override
     public void setValue(String value, String format) throws ParseException {
         DateFormat fromFormat = new SimpleDateFormat(format);

@@ -643,7 +643,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         if (cntxt.size() != 1) {
             return false;
         }
-        if (cntxt.get(0).getType().equals("jams.components.core.TemporalContext")) {
+        if (cntxt.get(0).getType().contains("Temporal")) {
             return true;
         }
 
