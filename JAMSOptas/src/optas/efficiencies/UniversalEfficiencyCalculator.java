@@ -10,7 +10,9 @@ import jams.data.Attribute.Calendar;
 import jams.data.Attribute.TimeInterval;
 import jams.data.DefaultDataFactory;
 import jams.model.JAMSComponent;
+import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
+import jams.model.VersionComments;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,6 +24,17 @@ import optas.efficiencies.VolumeError.VolumeErrorType;
  *
  * @author Chris, KGE added by IG.
  */
+@JAMSComponentDescription(
+        title = "UniversalEfficiencyCalculator",
+        author = "Christian Fischer",
+        description = "Calculates various efficiency measures",
+        version = "1.0_1",
+        date = "2018-11-01"
+)
+@VersionComments(entries = {
+    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", date = "2018-11-01", comment = "Increased number of decimal digits in output.")
+})
 public class UniversalEfficiencyCalculator extends JAMSComponent{
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -241,7 +254,7 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
         }
     }
 
-    DecimalFormat format = new DecimalFormat("######0.000");
+    DecimalFormat format = new DecimalFormat("######0.00000");
     private String round(double r){
         if (Double.MAX_VALUE == r){
             return "[-]";
