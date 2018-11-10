@@ -1069,7 +1069,7 @@ public class JUICEFrame extends JFrame {
         if (modelPanel.getAllFrames().length == 0) {
             return null;
         }
-        JInternalFrame frame = modelPanel.getAllFrames()[0];
+        JInternalFrame frame = modelPanel.getSelectedFrame();
         ModelView view = ModelView.viewList.getMViews().get(frame);
         return view;
     }
