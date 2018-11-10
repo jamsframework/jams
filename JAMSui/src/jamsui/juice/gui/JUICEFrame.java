@@ -57,6 +57,7 @@ import jamsui.juice.gui.tree.ModelTree;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import optas.gui.wizard.ObjectiveConfiguration;
 import optas.gui.wizard.OptimizerConfiguration;
@@ -125,7 +126,7 @@ public class JUICEFrame extends JFrame {
 
     private void init() {
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        
+
         GUIState.setMainWindow(this);
 
         this.addWindowListener(new WindowListener() {
@@ -158,7 +159,7 @@ public class JUICEFrame extends JFrame {
             public void windowOpened(WindowEvent e) {
             }
         });
-        
+
         remoteControlAction = new AbstractAction(JAMS.i18n("Start_Remote_Control")) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -335,8 +336,8 @@ public class JUICEFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 final ModelView view = getCurrentView();
                 try {
-                    
-                    ObjectiveConfiguration conf = new ObjectiveConfiguration(view.getModelDescriptor(), view.getSavePath(), 
+
+                    ObjectiveConfiguration conf = new ObjectiveConfiguration(view.getModelDescriptor(), view.getSavePath(),
                             Logger.getLogger(JUICE.class.getName()));
 
                     conf.addActionListener(new ActionListener() {
@@ -580,7 +581,7 @@ public class JUICEFrame extends JFrame {
         prefsButton.setToolTipText(JAMS.i18n("Edit_Preferences..."));
         prefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Preferences.png")));
         toolBar.add(prefsButton);
-        
+
         JButton infoLogButton = new JButton(infoLogAction);
         infoLogButton.setText("");
         infoLogButton.setToolTipText(JAMS.i18n("Show_Info_Log..."));
@@ -591,7 +592,7 @@ public class JUICEFrame extends JFrame {
         errorLogButton.setText("");
         errorLogButton.setToolTipText(JAMS.i18n("Show_Error_Log..."));
         errorLogButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ErrorLog.png")));
-        toolBar.add(errorLogButton);        
+        toolBar.add(errorLogButton);
 
         toolBar.addSeparator();
 
@@ -612,7 +613,6 @@ public class JUICEFrame extends JFrame {
 //        modelRunRemoteButton.setToolTipText(JAMS.i18n("Run_Model_Remote"));
 //        modelRunRemoteButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ModelRunCloud.png")));
 //        toolBar.add(modelRunRemoteButton);
-
         toolBar.addSeparator();
 
         JButton outputDSButton = new JButton(outputDSAction);
@@ -632,7 +632,7 @@ public class JUICEFrame extends JFrame {
         wsPrefsButton.setToolTipText(JAMS.i18n("EDIT_WORKSPACE..."));
         wsPrefsButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_prefs.png")));
         toolBar.add(wsPrefsButton);
-        
+
         JButton jadeButton = new JButton(jadeAction);
         jadeButton.setText("");
         jadeButton.setToolTipText(JAMS.i18n("JADE"));
@@ -644,9 +644,7 @@ public class JUICEFrame extends JFrame {
 //        wsCreateButton.setToolTipText(JAMS.i18n("Create_WS_Dir"));
 //        wsCreateButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/ws_new.png")));
 //        toolBar.add(wsCreateButton);
-
 //        toolBar.addSeparator();
-
 //        JButton copyGUIButton = new JButton(copyModelGUIAction);
 //        copyGUIButton.setText("");
 //        copyGUIButton.setToolTipText(JAMS.i18n("Copy_Model_GUI"));
@@ -658,7 +656,6 @@ public class JUICEFrame extends JFrame {
 //        pasteGUIButton.setToolTipText(JAMS.i18n("Paste_Model_GUI"));
 //        pasteGUIButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/Paste.png")));
 //        toolBar.add(pasteGUIButton);
-
 //        toolBar.addSeparator();
 //
 //        JButton helpButton = new JButton(onlineAction);
@@ -672,12 +669,10 @@ public class JUICEFrame extends JFrame {
 //        exitButton.setToolTipText(JAMS.i18n("Exit"));
 //        exitButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/system-shutdown.png")));
 //        toolBar.add(exitButton);
-
-
         JPanel toolbarPanel = new JPanel();
         toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.X_AXIS));
         jamsServerToolbar = new JAMSCloudToolbar(this, JUICE.getJamsProperties());
-        
+
         toolbarPanel.add(toolBar);
         toolbarPanel.add(jamsServerToolbar);
         getContentPane().add(toolbarPanel, BorderLayout.PAGE_START);
@@ -779,7 +774,6 @@ public class JUICEFrame extends JFrame {
 //        runModelRemoteAction.setEnabled(false);
 //        runModelRemoteItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
 //        modelMenu.add(runModelRemoteItem);
-
         modelMenu.add(new JSeparator());
 
         JMenuItem dsItem = new JMenuItem(outputDSAction);
@@ -1009,11 +1003,23 @@ public class JUICEFrame extends JFrame {
     private void loadModel() {
         loadModelDlg.setTask(new Runnable() {
             public void run() {
+                boolean isCurrentFrameMaximized = true;
+                if (modelPanel.getSelectedFrame() != null) {
+                    isCurrentFrameMaximized = modelPanel.getSelectedFrame().isMaximum();
+                }
                 String path = JUICEFrame.this.modelPath;
                 ModelView mView = new ModelView(path, modelPanel);
                 mView.loadModel(path);
                 mView.getFrame().setVisible(true);
                 mView.getFrame().requestFocus();
+
+                if (isCurrentFrameMaximized) {
+                    try {
+                        mView.getFrame().setMaximum(true);
+                    } catch (PropertyVetoException ex) {
+                        Logger.getLogger(JUICE.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
                 JAMSTools.addToRecentFiles(JUICE.getJamsProperties(), SystemProperties.RECENT_FILES, path);
                 updateRecentMenu();
             }
