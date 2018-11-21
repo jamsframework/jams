@@ -195,13 +195,7 @@ public class TemporalContext extends JAMSContext {
                             dataTracer.trace();
                         }
                         current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
-                        if (printTime.getValue() > 0) {
-                            if ((counter % printTime.getValue()) == 0) {
-                                counter = 0;
-                                getModel().getRuntime().println(getInstanceName() + " " + current, JAMS.SILENT);
-                            }
-                            counter++;
-                        }
+                        printTime();
                         ce.reset();
                     }
                     return ce.next();
@@ -210,6 +204,7 @@ public class TemporalContext extends JAMSContext {
                 @Override
                 public void reset() {
                     current.setValue(timeInterval.getStart().getValue());
+                    printTime();
                     ce.reset();
                 }
 
@@ -222,6 +217,16 @@ public class TemporalContext extends JAMSContext {
                             ce.next();
                         }
                         return ce.previous();
+                    }
+                }
+
+                private void printTime() {
+                    if (printTime.getValue() > 0) {
+                        if ((counter % printTime.getValue()) == 0) {
+                            counter = 0;
+                            getModel().getRuntime().println(getInstanceName() + " " + current, JAMS.SILENT);
+                        }
+                        counter++;
                     }
                 }
             };
@@ -256,11 +261,11 @@ public class TemporalContext extends JAMSContext {
             };
         }
     }
-    
+
     private DataTracer[] getDataTracers() {
-        return dataTracers; 
+        return dataTracers;
     }
-    
+
     private ComponentEnumerator getTCChildrenEnumerator() {
         return getChildrenEnumerator();
     }
