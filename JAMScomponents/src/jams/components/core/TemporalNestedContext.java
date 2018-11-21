@@ -36,15 +36,15 @@ import jams.workspace.stores.Filter;
  */
 @JAMSComponentDescription(title = "Nested temporal context",
         author = "Sven Kralisch",
-        date = "2018-11-14",
+        date = "2018-11-16",
         version = "1.0_0",
         description = "This component represents a JAMS context which can be "
-                + "used to represent iteration over discrete time steps "
-                + "typically used in conceptional environmental models. In "
-                + "addition, this context can be nested within another "
-                + "temporal context to iterate over sub-timesteps.")
+        + "used to represent iteration over discrete time steps "
+        + "typically used in conceptional environmental models. In "
+        + "addition, this context can be nested within another "
+        + "temporal context to iterate over sub-timesteps.")
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", date = "2018-11-14", comment = "Initial Version")
+    @VersionComments.Entry(version = "1.0_0", date = "2018-11-16", comment = "Initial Version")
 })
 public class TemporalNestedContext extends JAMSContext {
 
@@ -54,25 +54,25 @@ public class TemporalNestedContext extends JAMSContext {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Significant component of outer date/time:\n"
-                    + " 1 - YEAR\n"
-                    + " 2 - MONTH\n"
-                    + " 3 - WEEK\n"
-                    + " 5 - DAY\n"
-                    + "11 - HOUR\n"
-                    + "12 - MINUTE\n"
-                    + "13 - SECOND\n")
+            + "0 - YEAR\n"
+            + "1 - MONTH\n"
+            + "2 - WEEK\n"
+            + "3 - DAY\n"
+            + "4 - HOUR\n"
+            + "5 - MINUTE\n"
+            + "6 - SECOND\n")
     public Attribute.Integer significantComponent;
-    
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Step size of inner date/time iteration:\n"
-                    + " 1 - YEAR\n"
-                    + " 2 - MONTH\n"
-                    + " 3 - WEEK\n"
-                    + " 5 - DAY\n"
-                    + "11 - HOUR\n"
-                    + "12 - MINUTE\n"
-                    + "13 - SECOND\n")
-    public Attribute.Integer stepSize;    
+            + "0 - YEAR\n"
+            + "1 - MONTH\n"
+            + "2 - WEEK\n"
+            + "3 - DAY\n"
+            + "4 - HOUR\n"
+            + "5 - MINUTE\n"
+            + "6 - SECOND\n")
+    public Attribute.Integer stepSize;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Step count of inner date/time iteration",
@@ -88,8 +88,10 @@ public class TemporalNestedContext extends JAMSContext {
             defaultValue = "0")
     public Attribute.Integer printTime;
 
-    private Attribute.Calendar lastValue, firstValue;
+    private Attribute.Calendar startTime, endTime, lastTime;
     private int counter = 0;
+    private long timestepCount = -1;
+    private static int[] DATE_FIELDS = {1, 2, 3, 5, 11, 12, 13};
 
     public TemporalNestedContext() {
         super();
@@ -161,15 +163,34 @@ public class TemporalNestedContext extends JAMSContext {
         super.cleanupAll();
     }
 
+    private void calcStartEnd(Attribute.Calendar time) {
+        
+        endTime = time.clone();
+        for (int i = significantComponent.getValue() + 1; i < DATE_FIELDS.length; i++) {
+            if (i == 2) {
+                continue;
+            }
+            endTime.set(DATE_FIELDS[i], endTime.getActualMaximum(DATE_FIELDS[i]));
+        }
+
+        lastTime = endTime.clone();
+        lastTime.add(DATE_FIELDS[stepSize.getValue()], -stepCount.getValue());
+//        lastTime.add(Attribute.Calendar.MILLISECOND, 1);
+
+        startTime = time.clone();
+        for (int i = significantComponent.getValue() + 1; i < DATE_FIELDS.length; i++) {
+            if (i == 2) {
+                continue;
+            }
+            startTime.set(DATE_FIELDS[i], startTime.getActualMinimum(DATE_FIELDS[i]));
+        }
+    }
+
     @Override
     public void run() {
-        
-        firstValue = outerTime.clone();
-        firstValue.removeUnsignificantComponents(significantComponent.getValue());
-        
-//!        lastValue.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());
-        lastValue.add(Attribute.Calendar.MILLISECOND, 1);
-        
+
+        calcStartEnd(outerTime);
+
         super.run();
 
         if (!this.isPaused) {
@@ -204,14 +225,14 @@ public class TemporalNestedContext extends JAMSContext {
 
                 @Override
                 public boolean hasNext() {
-                    boolean nextTime = current.before(lastValue);
+                    boolean nextTime = current.before(lastTime);
                     boolean nextComp = ce.hasNext();
                     return (nextTime || nextComp);
                 }
 
                 @Override
                 public boolean hasPrevious() {
-                    boolean prevTime = true;//!current.after(timeInterval.getStart());
+                    boolean prevTime = current.after(startTime);
                     boolean prevComp = ce.hasPrevious();
                     return (prevTime || prevComp);
                 }
@@ -220,18 +241,12 @@ public class TemporalNestedContext extends JAMSContext {
                 public Component next() {
                     // check end of component elements list, if required switch to the next
                     // timestep start with the new Component list again
-                    if (!ce.hasNext() && current.before(lastValue)) {
+                    if (!ce.hasNext() && current.before(lastTime)) {
                         for (DataTracer dataTracer : getDataTracers()) {
                             dataTracer.trace();
                         }
-//!                        current.add(timeInterval.getTimeUnit(), timeInterval.getTimeUnitCount());
-                        if (printTime.getValue() > 0) {
-                            if ((counter % printTime.getValue()) == 0) {
-                                counter = 0;
-                                getModel().getRuntime().println(getInstanceName() + " " + current, JAMS.SILENT);
-                            }
-                            counter++;
-                        }
+                        current.add(DATE_FIELDS[stepSize.getValue()], stepCount.getValue());
+                        printTime();
                         ce.reset();
                     }
                     return ce.next();
@@ -239,7 +254,8 @@ public class TemporalNestedContext extends JAMSContext {
 
                 @Override
                 public void reset() {
-//!                    current.setValue(timeInterval.getStart().getValue());
+                    current.setValue(startTime.getValue());
+                    printTime();
                     ce.reset();
                 }
 
@@ -247,13 +263,24 @@ public class TemporalNestedContext extends JAMSContext {
                     if (ce.hasPrevious()) {
                         return ce.previous();
                     } else {
-//!                        current.add(timeInterval.getTimeUnit(), -timeInterval.getTimeUnitCount());
+                        current.add(stepSize.getValue(), -stepCount.getValue());
                         while (ce.hasNext()) {
                             ce.next();
                         }
                         return ce.previous();
                     }
                 }
+
+                private void printTime() {
+                    if (printTime.getValue() > 0) {
+                        if ((counter % printTime.getValue()) == 0) {
+                            counter = 0;
+                            getModel().getRuntime().println(getInstanceName() + " " + current, JAMS.SILENT);
+                        }
+                        counter++;
+                    }
+                }
+
             };
         } else {
             // if not, return empty enumerator
@@ -297,8 +324,24 @@ public class TemporalNestedContext extends JAMSContext {
 
     @Override
     public long getNumberOfIterations() {
-//!        return timeInterval.getNumberOfTimesteps();
-return 0;
+        
+        
+        Attribute.Calendar cal = getModel().getRuntime().getDataFactory().createCalendar();
+        cal.set(1970, 3, 1, 0, 0, 0);
+        calcStartEnd(cal);
+
+        Attribute.Calendar start = startTime.clone();
+        Attribute.Calendar end = endTime.clone();
+
+        long count = 1;
+        start.add(DATE_FIELDS[stepSize.getValue()], stepCount.getValue());
+
+        while (!start.after(end)) {
+            count++;
+            start.add(DATE_FIELDS[stepSize.getValue()], stepCount.getValue());
+        }
+
+        return count;
     }
 
     @Override
