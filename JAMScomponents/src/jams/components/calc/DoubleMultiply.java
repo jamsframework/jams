@@ -23,6 +23,7 @@ package jams.components.calc;
 
 import jams.data.*;
 import jams.model.*;
+import java.io.IOException;
 
 /**
  *
@@ -59,13 +60,14 @@ public class DoubleMultiply extends JAMSComponent {
     )
     public Attribute.Double[] result;
 
-    Runnable job;
+    transient Runnable job;
 
     /*
      *  Component run stages
      */
     @Override
     public void init() {
+
         if (d1.length == d2.length) {
 
             job = new Runnable() {
@@ -93,6 +95,16 @@ public class DoubleMultiply extends JAMSComponent {
             getModel().getRuntime().sendHalt("Attribute d2 has wrong length, should be 1 or length of d1");
 
         }
+    }
+
+
+    /*
+     * This method makes sure that the "job" object is reinitialized after 
+     * serialization/deserialization.
+     */
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.init();
     }
 
     @Override
