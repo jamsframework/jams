@@ -87,7 +87,7 @@ public interface Component extends Serializable {
 
     /**
      * in the first run after restoring the model from a saved state this method
-     * excecuted
+     * executed
      */
     void restore();
     /**
