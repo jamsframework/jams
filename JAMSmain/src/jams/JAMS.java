@@ -248,7 +248,12 @@ public class JAMS {
         }
 
         System.setProperty("user.dir", baseDir.getAbsolutePath());
-        libDir = new File(baseDir, "lib");
+        
+        // set libDir only if it does exist
+        File libDirFile = new File(baseDir, "lib");
+        if (libDirFile.exists()) {
+            libDir = libDirFile;
+        }
 
     }
 

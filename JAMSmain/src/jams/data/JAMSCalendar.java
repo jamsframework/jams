@@ -155,7 +155,7 @@ public class JAMSCalendar extends GregorianCalendar implements Attribute.Calenda
         setTimeInMillis(cal.getTimeInMillis());
         set(Calendar.MILLISECOND, 0);
     }
-
+    
     @Override
     public void setValue(String value) {
         
