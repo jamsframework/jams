@@ -65,7 +65,7 @@ public class SimpleXYPlot extends JAMSGUIComponent {
             description = "Title string for plot",
             defaultValue = "Plot Title"
     )
-    public Attribute.String plotTitle;
+    public Attribute.StringArray plotTitle;
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
@@ -130,7 +130,7 @@ public class SimpleXYPlot extends JAMSGUIComponent {
 
         for (int i = 0; i < dataset.length; i++) {
             XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-            dataset[i] = new XYSeries(plotTitle.getValue());
+            dataset[i] = new XYSeries(plotTitle.getValue()[i]);
             plot.setDataset(i, new XYSeriesCollection(dataset[i]));
             renderer.setSeriesLinesVisible(0, true);
             renderer.setSeriesShapesVisible(0, false);
