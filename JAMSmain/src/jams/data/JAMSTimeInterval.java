@@ -158,22 +158,58 @@ public class JAMSTimeInterval implements Attribute.TimeInterval {
     public long getNumberOfTimesteps() {
 
         if (timestepCount < 0) {
-
-            long count = 0;
-
-            JAMSCalendar start = new JAMSCalendar();
-            start.setValue(this.getStart());
-            JAMSCalendar end = new JAMSCalendar();
-            end.setValue(this.getEnd());
-            end.setTimeInMillis(end.getTimeInMillis() + 1);
-
-            while (start.before(end)) {
-                start.add(timeUnit, timeUnitCount);
-                count++;
+            if (timeUnit <= Calendar.MONTH) {
+                timestepCount = getNumberOfTimestepsByIteration();
+            } else {
+                timestepCount = getNumberOfTimestepsByCalculation();
             }
-
-            timestepCount = count;
         }
         return timestepCount;
+    }
+
+    private long getNumberOfTimestepsByIteration() {
+
+        Attribute.Calendar start = this.getStart().clone();
+        Attribute.Calendar end = this.getEnd().clone();
+//            end.setTimeInMillis(end.getTimeInMillis() + 1);
+
+        long count = 1;
+        start.add(timeUnit, timeUnitCount);
+
+        while (!start.after(end)) {
+            count++;
+            start.add(timeUnit, timeUnitCount);
+        }
+
+        return count;
+    }
+
+    private long getNumberOfTimestepsByCalculation() {
+
+        Attribute.Calendar start = this.getStart().clone();
+        Attribute.Calendar end = this.getEnd().clone();
+
+        double milli1 = end.getTimeInMillis() - start.getTimeInMillis();
+        double milli2 = 0;
+
+        start.set(1970, 0, 1, 0, 0, 0);
+        end.set(1970, 0, 1, 0, 0, 0);
+        end.add(timeUnit, timeUnitCount);
+
+        milli2 = end.getTimeInMillis() - start.getTimeInMillis();
+
+        return (long) (milli1 / milli2) + 1;
+    }
+
+    public static void main(String[] args) {
+
+        JAMSTimeInterval ti = new JAMSTimeInterval();
+        ti.setStart(new JAMSCalendar(0, 0, 1, 0, 0, 0));
+        ti.setEnd(new JAMSCalendar(2018, 0, 1, 0, 0, 0));
+        ti.setTimeUnit(Calendar.SECOND);
+        ti.setTimeUnitCount(1);
+
+        System.out.println(ti.getNumberOfTimesteps());
+
     }
 }
