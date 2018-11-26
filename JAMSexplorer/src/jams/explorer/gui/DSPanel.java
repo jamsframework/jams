@@ -54,6 +54,7 @@ public abstract class DSPanel extends JPanel {
         this.explorer = explorer;
         this.parent = explorer.getExplorerFrame();
         workerDlg = new CancelableWorkerDlg(parent, JAMS.i18n("PROCESSING_DATA"));
+        workerDlg.setModal(false);
         workerDlg.setProgress(0);
         workerDlg.setProgressMax(100);
     }

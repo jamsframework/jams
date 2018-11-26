@@ -92,7 +92,7 @@ public class DisplayManager implements Observer {
         }
     }
 
-    public void removeAllDisplays() {
+    public synchronized void removeAllDisplays() {
         for (String name : dataPanels.keySet()) {
             removeDisplay(name);
         }

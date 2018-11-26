@@ -258,6 +258,7 @@ public class DSTree extends JAMSTree {
     private void displayDSData() {
         WorkerDlg dlg = new WorkerDlg(explorer.getExplorerFrame(), JAMS.i18n("Opening_Datastore"));
         dlg.setInderminate(true);
+        dlg.setModal(false);
         dlg.setTask(new Runnable() {
             @Override
             public void run() {
