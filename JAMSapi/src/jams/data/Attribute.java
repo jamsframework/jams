@@ -181,6 +181,8 @@ public interface Attribute extends Serializable {
         public void setTimeInMillis(long millis);
 
         public void set(int year, int month, int day, int hour, int minute, int second);
+        
+        public void set(int field, int value);
 
         public java.lang.String toString();
     }
