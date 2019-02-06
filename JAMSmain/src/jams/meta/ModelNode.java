@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 /**
  *
@@ -78,9 +79,9 @@ public class ModelNode extends DefaultMutableTreeNode {
 //        }
 
         if (deepCopy && (nodeCopy != null)) {
-            for (Enumeration<ModelNode> e = this.children(); e.hasMoreElements();) {
+            for (Enumeration<TreeNode> e = this.children(); e.hasMoreElements();) {
 
-                ModelNode childNode = e.nextElement().clone(target, true, contextMap);
+                ModelNode childNode = ((ModelNode) e.nextElement()).clone(target, true, contextMap);
                 nodeCopy.add(childNode);
 
                 ComponentDescriptor childCd = (ComponentDescriptor) childNode.getUserObject();

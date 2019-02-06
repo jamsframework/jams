@@ -41,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.swing.tree.TreeNode;
 
 /**
  *
@@ -169,9 +170,9 @@ public class ConcurrentContextProcessor implements MetaProcessor {
         // iterate over nodes in the serial context and pick up all selected
         // serial components
         ArrayList<ModelNode> serialNodeList = new ArrayList();
-        Enumeration<ModelNode> nodeEnum = serialContextNode.depthFirstEnumeration();
+        Enumeration<TreeNode> nodeEnum = serialContextNode.depthFirstEnumeration();
         while (nodeEnum.hasMoreElements()) {
-            ModelNode n = nodeEnum.nextElement();
+            ModelNode n = (ModelNode) nodeEnum.nextElement();
             ComponentDescriptor cd = (ComponentDescriptor) n.getUserObject();
 //            for (ComponentField cf : cd.getComponentFields().values()) {
 //                if (cf.getAccessType() != ComponentField.READ_ACCESS && !cf.getContext().getInstanceName().equals(context.getInstanceName())) {
@@ -188,7 +189,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
         nodeEnum = serialContextNode.depthFirstEnumeration();
         ArrayList<ModelNode> removeList = new ArrayList();
         while (nodeEnum.hasMoreElements()) {
-            ModelNode n = nodeEnum.nextElement();
+            ModelNode n = (ModelNode) nodeEnum.nextElement();
 
             boolean removeNode = true;
             if (serialNodeList.contains(n)) {
@@ -217,7 +218,7 @@ public class ConcurrentContextProcessor implements MetaProcessor {
         removeList = new ArrayList();
         nodeEnum = node.depthFirstEnumeration();
         while (nodeEnum.hasMoreElements()) {
-            ModelNode n = nodeEnum.nextElement();
+            ModelNode n = (ModelNode) nodeEnum.nextElement();
             ComponentDescriptor cd = (ComponentDescriptor) n.getUserObject();
             if (excludeComponents.contains(cd.getInstanceName())) {
                 removeList.add(n);

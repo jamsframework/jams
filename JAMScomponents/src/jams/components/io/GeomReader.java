@@ -21,7 +21,6 @@
 package jams.components.io;
 
 import com.vividsolutions.jts.geom.Geometry;
-import jams.JAMS.*;
 import jams.data.Attribute;
 import org.geotools.data.shapefile.ShapefileDataStore;
 
@@ -105,7 +104,7 @@ public class GeomReader extends JAMSComponent {
                 }
                 Long id = null;
                 try{
-                    id = new Long(attribute.toString());
+                    id = Long.parseLong(attribute.toString());
                 }catch(NumberFormatException nfe){
                     id = (long)Double.parseDouble(attribute.toString());
                 }

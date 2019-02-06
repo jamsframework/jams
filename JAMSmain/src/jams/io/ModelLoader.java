@@ -90,7 +90,6 @@ public class ModelLoader {
          * root.getElementsByTagName("workspace").item(0);
          * jamsModel.setWorkspaceDirectory(workspaceElement.getAttribute("value"));
          */
-
         // handle context attributes of the model
         for (ContextAttribute attribute : modelContext.getStaticAttributes().values()) {
             jamsModel.addAttribute(attribute.getName(), attribute.getType().getName(), attribute.getValue());
@@ -136,13 +135,12 @@ public class ModelLoader {
 
             } catch (ModelSpecificationException iae) {
 
-                jamsModel.getRuntime().handle(iae);                
+                jamsModel.getRuntime().handle(iae);
 
             }
         }
         jamsModel.setComponents(childComponentList);
         jamsModel.setNullFields(nullFields);
-
 
         List<Integer> idList = new ArrayList(idMap.values());
         Collections.sort(idList);
@@ -154,8 +152,8 @@ public class ModelLoader {
 
         jamsModel.getRuntime().println(JAMS.i18n("Components:"), JAMS.STANDARD);
         for (Integer id : idList) {
-            jamsModel.getRuntime().println("[id=" + String.format("%03d", id) + ", class=" + classMap.get(id) + 
-                    ", version=" + versionMap.get(id) + "]", JAMS.STANDARD);
+            jamsModel.getRuntime().println("[id=" + String.format("%03d", id) + ", class=" + classMap.get(id)
+                    + ", version=" + versionMap.get(id) + "]", JAMS.STANDARD);
         }
 
         return jamsModel;
@@ -166,7 +164,7 @@ public class ModelLoader {
         int id;
         String className = cd.getClazz().getName();
         String version = cd.getVersion();
-        
+
         if (!idMap.containsKey(className)) {
             id = ++maxID;
             idMap.put(className, id);
@@ -205,18 +203,17 @@ public class ModelLoader {
         }
 
         registerComponent(rootCd);
-        
+
         component = null;
         try {
 
             // create the Component object
             //jamsModel.getRuntime().println(componentClassName, JAMS.VERBOSE);
-
             // try to load the class
             componentClazz = loader.loadClass(componentClassName);
 
             // generate an instance of that class
-            component = (Component) componentClazz.newInstance();
+            component = (Component) componentClazz.getDeclaredConstructor().newInstance();
 
             // do some basic initAll
             component.setModel(jamsModel);
@@ -231,7 +228,6 @@ public class ModelLoader {
             nullFields.put(component, nf);
 
             //createNumericMembers(component);
-
         } catch (ClassNotFoundException cnfe) {
             jamsModel.getRuntime().handle(cnfe, false);
             return null;
@@ -241,6 +237,11 @@ public class ModelLoader {
             jamsModel.getRuntime().handle(iae, false);
         } catch (Throwable t) {
             jamsModel.getRuntime().handle(t, false);
+        } finally {
+            if (component == null) {
+                jamsModel.getRuntime().sendErrorMsg("An error occurred when trying to load component " + componentName);
+                return null;
+            }
         }
 
         // put the Component object into the component repository
@@ -249,7 +250,6 @@ public class ModelLoader {
         for (ComponentField cdField : rootCd.getComponentFields().values()) {
 
             // process components variable declarations
-
             varName = cdField.getName();
             // varClassName = element.getAttribute("class");
 
