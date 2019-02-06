@@ -36,6 +36,7 @@ public @interface VersionComments {
     public @interface Entry {
         String version();
         String date() default "";
+        String author() default "";
         String comment();
     }
 }
