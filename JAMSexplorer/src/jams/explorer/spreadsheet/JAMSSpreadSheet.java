@@ -1367,7 +1367,7 @@ public class JAMSSpreadSheet extends JPanel {
             try {
                 writeToShapeFileAction();
             } catch (Throwable t) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, t, null);
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, t.toString(), t);
             }
         }
     };
