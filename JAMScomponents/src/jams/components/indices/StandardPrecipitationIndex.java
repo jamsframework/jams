@@ -40,6 +40,8 @@ import java.util.List;
  *
  */
 public class StandardPrecipitationIndex {
+    
+    public static final double MISSING_DATA_VALUE = -9999;
 
     public static double[] parse(double[] precipitation) {
 
@@ -97,11 +99,6 @@ public class StandardPrecipitationIndex {
         return b;
     }
 
-//    private static double[] fromMonthlyGrouped(double[][] groups) {
-//        
-//        
-//        
-//    }
     public static double[] calcSPI(double[] monthlyValues) {
         double[] a = monthlyValues;
         double[][] groups = toMonthlyGrouped(a);
@@ -140,7 +137,7 @@ public class StandardPrecipitationIndex {
         m = calcSPI(m);
 
         for (int i = 0; i < n - 1; i++) {
-            a[i] = 0;
+            a[i] = MISSING_DATA_VALUE;
         }
         for (int i = n - 1; i < a.length; i++) {
             a[i] = m[i - n + 1];
@@ -188,9 +185,9 @@ public class StandardPrecipitationIndex {
         }
 
         TSAggregator agg = new TSAggregator(data, dates, 0);
-        double[] a = agg.toWeekly();
+        double[] a = agg.toMonthly().values;
 
-        a = calcSPIn(a, 4);
+        a = calcSPIn(a, 12);
 
         for (double d : a) {
             System.out.println(d);

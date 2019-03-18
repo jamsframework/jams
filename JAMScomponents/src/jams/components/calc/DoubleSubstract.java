@@ -55,7 +55,7 @@ public class DoubleSubstract extends JAMSComponent {
     )
     public Attribute.Double[] d2;
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.WRITE,
+            access = JAMSVarDescription.AccessType.READWRITE,
             description = "Result of d1-d2 (element-wise)"
     )
     public Attribute.Double[] result;

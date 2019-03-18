@@ -43,20 +43,53 @@ public class TSAggregator {
         this.mode = mode;
     }
 
-    public double[] toMonthly() {
+    public Aggregate toMonthly() {
         return toTimeInterval(Attribute.Calendar.MONTH);
     }
 
-    public double[] toWeekly() {
-        return toTimeInterval(Attribute.Calendar.WEEK_OF_YEAR);
+    public double[] toSevenDaily() {
+        List<Double> result = new ArrayList();
+        double sum = 0, count = 1;
+
+        for (int i = 0; i < values.length; i++) {
+
+            sum += values[i];
+
+            if (count % 7 == 0) {
+
+                result.add(sum);
+                sum = 0;
+
+            }
+
+            count++;
+        }
+
+        result.add(sum);
+
+        double[] a = new double[result.size()];
+        for (int i = 0; i < result.size(); i++) {
+            a[i] = result.get(i);
+        }
+
+        if (mode == MODE_AVG) {
+            for (int i = 0; i < result.size() - 1; i++) {
+                a[i] /= 7;
+            }
+        }
+        a[result.size() - 1] /= count / 7;
+
+        return a;
     }
-    
-    public double[] toTimeInterval(int timeField) {
+
+    public Aggregate toTimeInterval(int timeField) {
 
         List<Double> result = new ArrayList();
         List<Double> counts = new ArrayList();
         Attribute.Calendar date = dates.get(0);
         double sum = 0, count = 0;
+        Aggregate aggr = new Aggregate();
+        aggr.dates.add(date);
 
         for (int i = 0; i < values.length; i++) {
 
@@ -74,6 +107,7 @@ public class TSAggregator {
                 count = 1;
 
                 date = dates.get(i);
+                aggr.dates.add(date);
 
             }
         }
@@ -92,7 +126,13 @@ public class TSAggregator {
             }
         }
 
-        return a;
+        aggr.values = a;
+        return aggr;
+    }
+    
+    public class Aggregate {
+        public double[] values;
+        public List<Attribute.Calendar> dates = new ArrayList();
     }
 
 }

@@ -21,6 +21,7 @@
  */
 package jams.components.indices;
 
+import jams.components.aggregate.TSAggregator;
 import jams.data.*;
 import jams.model.*;
 import jams.workspace.DataValue;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -110,20 +112,20 @@ public class TNC_PrecipIndicators extends JAMSComponent {
         Attribute.Calendar storeDate = store.getStartDate().clone();
         int storeUnit = store.getTimeUnit();
         int storeUnitCount = store.getTimeUnitCount();
-
+        
         List<Double>[] values = new List[store.getDataSetDefinition().getColumnCount()];
         for (int i = 0; i < values.length; i++) {
             values[i] = new ArrayList();
         }
 
-        List<String> days = new ArrayList();
+        List<String> dateStrings = new ArrayList();
         List<String> years = new ArrayList();
         List<Attribute.Calendar> dates = new ArrayList();
 
         DefaultDataSet ds;
         while ((ds = store.getNext()) != null) {
             dates.add(storeDate.clone());
-            days.add(storeDate.toString());
+            dateStrings.add(storeDate.toString());
             DataValue[] data = ds.getData();
             for (int i = 1; i < data.length; i++) {
                 values[i - 1].add(data[i].getDouble());
@@ -144,8 +146,9 @@ public class TNC_PrecipIndicators extends JAMSComponent {
 
         // create JSON object and fill it with some data
         JSONObject json = new JSONObject();
-        json.put("days", days);
+        json.put("dates", dateStrings);
         json.put("hYStart", hydroYearStart.getValue());
+        json.put("extremeThreshold", extremePrecip.getValue());
         json.put("nColumns", values.length);
         JSONObject jsonColumn = new JSONObject();
         json.put("columns", jsonColumn);
@@ -171,18 +174,44 @@ public class TNC_PrecipIndicators extends JAMSComponent {
             colStats.put("extremeDays", jsonExtremeDays);
             JSONObject jsonSPI = new JSONObject();
             colStats.put("spi", jsonSPI);
-            JSONObject jsonSPI1 = new JSONObject();
-            jsonSPI.put("m1", jsonSPI1);
-            JSONObject jsonSPI12 = new JSONObject();
-            jsonSPI.put("m12", jsonSPI12);
-            JSONObject jsonSPI24 = new JSONObject();
-            jsonSPI.put("m24", jsonSPI24);
-            JSONObject jsonSPI48 = new JSONObject();
-            jsonSPI.put("m48", jsonSPI48);
+            jsonSPI.put("missingDataValue", StandardPrecipitationIndex.MISSING_DATA_VALUE);
 
             // calculate index values
             // SPI
-            double[] spi = StandardPrecipitationIndex.parse(array);
+            // calculate monthly aggregates
+            TSAggregator aggr = new TSAggregator(array, dates, 0);
+            TSAggregator.Aggregate aggrResult = aggr.toMonthly();
+            double[] a = aggrResult.values;
+            
+            // output time steps of aggregates
+            String[] dateArray = new String[aggrResult.dates.size()];
+            for (int j = 0; j < aggrResult.dates.size(); j++) {
+                dateArray[j] = aggrResult.dates.get(j).toString();
+            }
+            jsonSPI.put("dates", dateArray);
+
+            // calc SPI for different moving means (1, 3, 12, 24, 48 months)
+            double[] spi;
+            
+            spi = StandardPrecipitationIndex.calcSPI(Arrays.copyOf(a, a.length));
+            round(spi);
+            jsonSPI.put("m1", spi);
+            
+            spi = StandardPrecipitationIndex.calcSPIn(Arrays.copyOf(a, a.length), 3);
+            round(spi);
+            jsonSPI.put("m3", spi);
+
+            spi = StandardPrecipitationIndex.calcSPIn(Arrays.copyOf(a, a.length), 12);
+            round(spi);
+            jsonSPI.put("m12", spi);
+
+            spi = StandardPrecipitationIndex.calcSPIn(Arrays.copyOf(a, a.length), 24);
+            round(spi);
+            jsonSPI.put("m24", spi);
+
+            spi = StandardPrecipitationIndex.calcSPIn(Arrays.copyOf(a, a.length), 48);
+            round(spi);
+            jsonSPI.put("m48", spi);
 
             // annual stats
             double sum = 0, count = 0;
@@ -228,7 +257,7 @@ public class TNC_PrecipIndicators extends JAMSComponent {
                 // accumulate 
                 count++;
                 sum += d;
-                sumValues.add(sum);
+                sumValues.add(((double) Math.round(sum * 100)) / 100);
 
                 // check if there is a switch
                 if (isWet && !(d > 0)) {
@@ -284,11 +313,19 @@ public class TNC_PrecipIndicators extends JAMSComponent {
             try {
                 FileWriter writer = new FileWriter(new File(getModel().getWorkspace().getOutputDataDirectory(), jsonFileName.getValue()));
                 writer.write(json.toString());
+                writer.flush();
+                writer.close();
             } catch (IOException ex) {
                 Logger.getLogger(TNC_PrecipIndicators.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             System.out.println(json.toString(4));
+        }
+    }
+
+    private void round(double[] a) {
+        for (int n = 0; n < a.length; n++) {
+            a[n] = ((double) Math.round(a[n] * 100)) / 100;
         }
     }
 
