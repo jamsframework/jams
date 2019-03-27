@@ -21,11 +21,13 @@
  */
 package jams.components.indices;
 
+import jams.JAMS;
 import jams.components.aggregate.TSAggregator;
 import jams.data.*;
 import jams.model.*;
 import jams.workspace.DataValue;
 import jams.workspace.DefaultDataSet;
+import jams.workspace.datatypes.DoubleValue;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
 import java.io.File;
@@ -112,7 +114,7 @@ public class TNC_PrecipIndicators extends JAMSComponent {
         Attribute.Calendar storeDate = store.getStartDate().clone();
         int storeUnit = store.getTimeUnit();
         int storeUnitCount = store.getTimeUnitCount();
-        
+
         List<Double>[] values = new List[store.getDataSetDefinition().getColumnCount()];
         for (int i = 0; i < values.length; i++) {
             values[i] = new ArrayList();
@@ -128,7 +130,14 @@ public class TNC_PrecipIndicators extends JAMSComponent {
             dateStrings.add(storeDate.toString());
             DataValue[] data = ds.getData();
             for (int i = 1; i < data.length; i++) {
-                values[i - 1].add(data[i].getDouble());
+                String s = data[i].getString();
+                double d;
+                if (s.equals("NaN") || s.equals("Infinity") || s.isEmpty()) {
+                    d = JAMS.getMissingDataValue();
+                } else {
+                    d = data[i].getDouble();
+                }
+                values[i - 1].add(d);
             }
             storeDate.add(storeUnit, storeUnitCount);
         }
@@ -160,6 +169,11 @@ public class TNC_PrecipIndicators extends JAMSComponent {
             array = new double[values[i].size()];
             for (int j = 0; j < values[i].size(); j++) {
                 array[j] = values[i].get(j);
+
+//                // if the value is missing, we use the current average value
+//                if (array[j] == JAMS.getMissingDataValue()) {
+//                    array[j] = 0;
+//                }
             }
 
             JSONObject colStats = new JSONObject();
@@ -174,6 +188,8 @@ public class TNC_PrecipIndicators extends JAMSComponent {
             colStats.put("extremeDays", jsonExtremeDays);
             JSONObject jsonSPI = new JSONObject();
             colStats.put("spi", jsonSPI);
+//            JSONObject jsonMissingIntervals = new JSONObject();
+//            colStats.put("missingIntervals", jsonMissingIntervals);
             jsonSPI.put("missingDataValue", StandardPrecipitationIndex.MISSING_DATA_VALUE);
 
             // calculate index values
@@ -182,7 +198,7 @@ public class TNC_PrecipIndicators extends JAMSComponent {
             TSAggregator aggr = new TSAggregator(array, dates, 0);
             TSAggregator.Aggregate aggrResult = aggr.toMonthly();
             double[] a = aggrResult.values;
-            
+
             // output time steps of aggregates
             String[] dateArray = new String[aggrResult.dates.size()];
             for (int j = 0; j < aggrResult.dates.size(); j++) {
@@ -192,11 +208,11 @@ public class TNC_PrecipIndicators extends JAMSComponent {
 
             // calc SPI for different moving means (1, 3, 12, 24, 48 months)
             double[] spi;
-            
+
             spi = StandardPrecipitationIndex.calcSPI(Arrays.copyOf(a, a.length));
             round(spi);
             jsonSPI.put("m1", spi);
-            
+
             spi = StandardPrecipitationIndex.calcSPIn(Arrays.copyOf(a, a.length), 3);
             round(spi);
             jsonSPI.put("m3", spi);
@@ -216,10 +232,11 @@ public class TNC_PrecipIndicators extends JAMSComponent {
             // annual stats
             double sum = 0, count = 0;
             int year = -1, wetCount = 0, dryCount = 0, consWetCount = 0, consDryCount = 0, extremeCount = 0;
-            boolean isWet = false;//(array[0] > 0);
+            boolean isWet = false, inMissingTI = false;//(array[0] > 0);
             List<Double> sumValues = new ArrayList();
             List<Integer> consDryValues = new ArrayList();
             List<Integer> consWetValues = new ArrayList();
+            List<String[]> missingTIs = new ArrayList();
 
             for (int j = 0; j < values[i].size(); j++) {
 
@@ -227,7 +244,7 @@ public class TNC_PrecipIndicators extends JAMSComponent {
                 double d = array[j];
 
                 // reset if new hydrol. year
-                if (dates.get(j).compareTo(hStart, Attribute.Calendar.DAY_OF_MONTH) == 0) {
+                if (dates.get(j).compareTo(hStart, Attribute.Calendar.MONTH) == 0) {
 
                     // set next start of hydrol. year
                     hStart.add(Attribute.Calendar.YEAR, 1);
@@ -254,36 +271,67 @@ public class TNC_PrecipIndicators extends JAMSComponent {
                     year = dates.get(j).get(Attribute.Calendar.YEAR);
                 }
 
-                // accumulate 
-                count++;
-                sum += d;
-                sumValues.add(((double) Math.round(sum * 100)) / 100);
+                if (d == JAMS.getMissingDataValue()) {
 
-                // check if there is a switch
-                if (isWet && !(d > 0)) {
-                    consWetCount = 0;
-                    isWet = false;
-                } else if (!isWet && (d > 0)) {
-                    consDryCount = 0;
-                    isWet = true;
-                }
+                    if (!inMissingTI) {
 
-                // count wet/dry days and periods
-                if (d > 0) {
-                    wetCount++;
-                    consWetCount++;
+                        // new gap
+                        String[] gap = new String[2];
+                        gap[0] = dates.get(j).toString();
+                        missingTIs.add(gap);
+                        inMissingTI = true;
+                    }
+
                 } else {
-                    dryCount++;
-                    consDryCount++;
+
+                    if (inMissingTI) {
+
+                        // gap finished
+                        missingTIs.get(missingTIs.size() - 1)[1] = dates.get(j - 1).toString();
+                        inMissingTI = false;
+                    }
+
                 }
 
+                if (!inMissingTI) {
+
+                    // accumulate 
+                    count++;
+                    sum += d;
+
+                    // check if there is a switch
+                    if (isWet && !(d > 0)) {
+                        consWetCount = 0;
+                        isWet = false;
+                    } else if (!isWet && (d > 0)) {
+                        consDryCount = 0;
+                        isWet = true;
+                    }
+
+                    // count wet/dry days and periods
+                    if (d > 0) {
+                        wetCount++;
+                        consWetCount++;
+                    } else {
+                        dryCount++;
+                        consDryCount++;
+                    }
+
+                    // count extreme precip
+                    if (d >= extremePrecip.getValue()) {
+                        extremeCount++;
+                    }
+                } else {
+                    
+                    consWetCount = 0;
+                    consDryCount = 0;
+                    isWet = false;
+                    
+                }
+
+                sumValues.add(((double) Math.round(sum * 100)) / 100);
                 consDryValues.add(consDryCount);
                 consWetValues.add(consWetCount);
-
-                // count extreme precip
-                if (d >= extremePrecip.getValue()) {
-                    extremeCount++;
-                }
 
             }
 
@@ -304,6 +352,7 @@ public class TNC_PrecipIndicators extends JAMSComponent {
 
             colStats.put("consDryDays", consDryValues);
             colStats.put("consWetDays", consWetValues);
+            colStats.put("missingIntervals", missingTIs);
 
         }
 
@@ -319,7 +368,7 @@ public class TNC_PrecipIndicators extends JAMSComponent {
                 Logger.getLogger(TNC_PrecipIndicators.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            System.out.println(json.toString(4));
+            System.out.println(json.toString());
         }
     }
 

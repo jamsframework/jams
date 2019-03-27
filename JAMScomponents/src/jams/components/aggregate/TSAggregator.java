@@ -21,6 +21,7 @@
  */
 package jams.components.aggregate;
 
+import jams.JAMS;
 import jams.data.Attribute;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,16 +96,23 @@ public class TSAggregator {
 
             if (dates.get(i).get(timeField) == date.get(timeField)) {
 
-                sum += values[i];
-                count++;
+                if (values[i] != JAMS.getMissingDataValue()) {
+                    sum += values[i];
+                    count++;
+                }
 
             } else {
 
                 result.add(sum);
                 counts.add(count);
 
-                sum = values[i];
-                count = 1;
+                if (values[i] != JAMS.getMissingDataValue()) {
+                    sum = values[i];
+                    count = 1;
+                } else {
+                    sum = 0;
+                    count = 0;
+                }
 
                 date = dates.get(i);
                 aggr.dates.add(date);
@@ -122,15 +130,20 @@ public class TSAggregator {
 
         if (mode == MODE_AVG) {
             for (int i = 0; i < counts.size(); i++) {
-                a[i] /= counts.get(i);
+                if (counts.get(i) == null) {
+                    a[i] = JAMS.getMissingDataValue();
+                } else {
+                    a[i] /= counts.get(i);
+                }
             }
         }
 
         aggr.values = a;
         return aggr;
     }
-    
+
     public class Aggregate {
+
         public double[] values;
         public List<Attribute.Calendar> dates = new ArrayList();
     }

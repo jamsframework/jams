@@ -34,11 +34,12 @@ import jams.model.*;
         description = "This component takes a (list of) double array(s) as "
                 + "input and returns the next array element at each invocation"
                 + "of the run methods, this way iterating over the array(s).",
-        date = "2016-07-19",
-        version = "1.0_0"
+        date = "2019-03-26",
+        version = "1.1_0"
 )
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version")
+    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.1_0", comment = "Fixed buggy behaviour in case of repeated use (e.g. calibration)")
 })
 public class ArrayIterator extends JAMSComponent {
 
@@ -55,13 +56,14 @@ public class ArrayIterator extends JAMSComponent {
             description = "Output double scalar")
     public Attribute.Double[] value;
 
-    int arrayIndex = 0;
+    int arrayIndex;
 
     /*
      *  Component run stages
      */
     @Override
     public void init() {
+        arrayIndex = 0;
     }
 
     @Override
