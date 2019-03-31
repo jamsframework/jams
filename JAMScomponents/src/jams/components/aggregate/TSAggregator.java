@@ -86,9 +86,11 @@ public class TSAggregator {
     public Aggregate toTimeInterval(int timeField) {
 
         List<Double> result = new ArrayList();
-        List<Double> counts = new ArrayList();
+        List<Integer> counts = new ArrayList();
+        List<Integer> missings = new ArrayList();
         Attribute.Calendar date = dates.get(0);
-        double sum = 0, count = 0;
+        double sum = 0;
+        int count = 0, missing = 0;
         Aggregate aggr = new Aggregate();
         aggr.dates.add(date);
 
@@ -99,19 +101,24 @@ public class TSAggregator {
                 if (values[i] != JAMS.getMissingDataValue()) {
                     sum += values[i];
                     count++;
+                } else {
+                    missing++;
                 }
 
             } else {
 
                 result.add(sum);
                 counts.add(count);
+                missings.add(missing);
 
                 if (values[i] != JAMS.getMissingDataValue()) {
                     sum = values[i];
                     count = 1;
+                    missing = 0;
                 } else {
                     sum = 0;
                     count = 0;
+                    missing = 1;
                 }
 
                 date = dates.get(i);
@@ -128,6 +135,11 @@ public class TSAggregator {
             a[i] = result.get(i);
         }
 
+        int[] m = new int[missings.size()];
+        for (int i = 0; i < missings.size(); i++) {
+            m[i] = missings.get(i);
+        }
+
         if (mode == MODE_AVG) {
             for (int i = 0; i < counts.size(); i++) {
                 if (counts.get(i) == null) {
@@ -139,12 +151,14 @@ public class TSAggregator {
         }
 
         aggr.values = a;
+        aggr.missing = m;
         return aggr;
     }
 
     public class Aggregate {
 
         public double[] values;
+        public int[] missing;
         public List<Attribute.Calendar> dates = new ArrayList();
     }
 

@@ -188,8 +188,8 @@ public class TNC_PrecipIndicators extends JAMSComponent {
             colStats.put("extremeDays", jsonExtremeDays);
             JSONObject jsonSPI = new JSONObject();
             colStats.put("spi", jsonSPI);
-//            JSONObject jsonMissingIntervals = new JSONObject();
-//            colStats.put("missingIntervals", jsonMissingIntervals);
+            JSONObject jsonMissingDays = new JSONObject();
+            colStats.put("missingTimeSteps", jsonMissingDays);
             jsonSPI.put("missingDataValue", StandardPrecipitationIndex.MISSING_DATA_VALUE);
 
             // calculate index values
@@ -231,7 +231,7 @@ public class TNC_PrecipIndicators extends JAMSComponent {
 
             // annual stats
             double sum = 0, count = 0;
-            int year = -1, wetCount = 0, dryCount = 0, consWetCount = 0, consDryCount = 0, extremeCount = 0;
+            int year = -1, wetCount = 0, dryCount = 0, consWetCount = 0, consDryCount = 0, extremeCount = 0, missingCount = 0;
             boolean isWet = false, inMissingTI = false;//(array[0] > 0);
             List<Double> sumValues = new ArrayList();
             List<Integer> consDryValues = new ArrayList();
@@ -259,6 +259,7 @@ public class TNC_PrecipIndicators extends JAMSComponent {
                         jsonDryDays.put(Integer.toString(year), dryCount);
                         jsonWetDays.put(Integer.toString(year), wetCount);
                         jsonExtremeDays.put(Integer.toString(year), extremeCount);
+                        jsonMissingDays.put(Integer.toString(year), missingCount);
                     }
 
                     // reset stats & start new year
@@ -266,6 +267,7 @@ public class TNC_PrecipIndicators extends JAMSComponent {
                     count = 0;
                     wetCount = 0;
                     dryCount = 0;
+                    missingCount = 0;
                     extremeCount = 0;
                     sumValues.clear();
                     year = dates.get(j).get(Attribute.Calendar.YEAR);
@@ -323,6 +325,7 @@ public class TNC_PrecipIndicators extends JAMSComponent {
                     }
                 } else {
                     
+                    missingCount++;
                     consWetCount = 0;
                     consDryCount = 0;
                     isWet = false;
@@ -347,6 +350,7 @@ public class TNC_PrecipIndicators extends JAMSComponent {
                     jsonDryDays.put(Integer.toString(year), dryCount);
                     jsonWetDays.put(Integer.toString(year), wetCount);
                     jsonExtremeDays.put(Integer.toString(year), extremeCount);
+                    jsonMissingDays.put(Integer.toString(year), missingCount);
                 }
             }
 
