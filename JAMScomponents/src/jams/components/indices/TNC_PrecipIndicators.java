@@ -323,6 +323,9 @@ public class TNC_PrecipIndicators extends JAMSComponent {
                     if (d >= extremePrecip.getValue()) {
                         extremeCount++;
                     }
+
+                    sumValues.add(((double) Math.round(sum * 100)) / 100);
+
                 } else {
                     
                     missingCount++;
@@ -330,9 +333,10 @@ public class TNC_PrecipIndicators extends JAMSComponent {
                     consDryCount = 0;
                     isWet = false;
                     
+                    sumValues.add(null);
+                    
                 }
 
-                sumValues.add(((double) Math.round(sum * 100)) / 100);
                 consDryValues.add(consDryCount);
                 consWetValues.add(consWetCount);
 

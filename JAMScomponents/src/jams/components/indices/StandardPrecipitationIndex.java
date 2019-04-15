@@ -120,10 +120,23 @@ public class StandardPrecipitationIndex {
         }
         return a;
     }
+    
+    private static double[] getEmptyArray(int n) {
+        double[] a = new double[n];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = MISSING_DATA_VALUE;
+        }
+        return a;
+    }
 
     public static double[] calcSPIn(double[] monthlyValues, int n) {
 
         double[] a = monthlyValues;
+        
+        if (a.length - n + 1 < 1) {
+            return getEmptyArray(monthlyValues.length);
+        }
+        
         double[] m = new double[a.length - n + 1];
 
         for (int i = n - 1; i < a.length; i++) {
