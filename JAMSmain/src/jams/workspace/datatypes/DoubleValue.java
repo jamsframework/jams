@@ -34,7 +34,7 @@ public class DoubleValue implements DataValue {
     private Double value;
 
     public DoubleValue(double value) {
-        this.value = new Double(value);
+        this.value = value;
     }
 
     public DoubleValue(String value) {
@@ -46,7 +46,7 @@ public class DoubleValue implements DataValue {
     }
 
     public double getDouble() {
-        return value.doubleValue();
+        return value;
     }
 
     public long getLong() {
@@ -62,7 +62,7 @@ public class DoubleValue implements DataValue {
     }
 
     public void setDouble(double value) {
-        this.value = new Double(value);
+        this.value = value;
     }
 
     public void setLong(long value) {
