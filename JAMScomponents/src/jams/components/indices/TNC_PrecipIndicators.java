@@ -25,11 +25,6 @@ import jams.JAMS;
 import jams.components.aggregate.TSAggregator;
 import jams.data.*;
 import jams.model.*;
-import jams.workspace.DataValue;
-import jams.workspace.DefaultDataSet;
-import jams.workspace.datatypes.DoubleValue;
-import jams.workspace.stores.InputDataStore;
-import jams.workspace.stores.TSDataStore;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -63,14 +58,11 @@ import org.json.JSONObject;
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version")
 })
-public class TNC_PrecipIndicators extends JAMSComponent {
+public class TNC_PrecipIndicators extends TimeSeriesIndicators {
 
     /*
      *  Component attributes
      */
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "Datastore ID")
-    public Attribute.String id;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "DAY/MONTH indicating start of hydrological year",
@@ -89,60 +81,13 @@ public class TNC_PrecipIndicators extends JAMSComponent {
     /*
      *  Component run stages
      */
-    @Override
-    public void init() {
-    }
 
     @Override
     public void run() {
 
-        InputDataStore is = getModel().getWorkspace().getInputDataStore(id.getValue());
-        // check if store exists
-        if (is == null) {
-            getModel().getRuntime().sendHalt("Error accessing datastore \""
-                    + id + "\" from " + getInstanceName() + ": Datastore could not be found!");
-            return;
-        }
-        // check if this is a TSDataStore
-        if (!(is instanceof TSDataStore)) {
-            getModel().getRuntime().sendHalt("Error accessing datastore \""
-                    + id + "\" from " + getInstanceName() + ": Datastore is not a time series datastore!");
-            return;
-        }
+        readTSData();
 
-        TSDataStore store = (TSDataStore) is;
-        Attribute.Calendar storeDate = store.getStartDate().clone();
-        int storeUnit = store.getTimeUnit();
-        int storeUnitCount = store.getTimeUnitCount();
-
-        List<Double>[] values = new List[store.getDataSetDefinition().getColumnCount()];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = new ArrayList();
-        }
-
-        List<String> dateStrings = new ArrayList();
-        List<String> years = new ArrayList();
-        List<Attribute.Calendar> dates = new ArrayList();
-
-        DefaultDataSet ds;
-        while ((ds = store.getNext()) != null) {
-            dates.add(storeDate.clone());
-            dateStrings.add(storeDate.toString());
-            DataValue[] data = ds.getData();
-            for (int i = 1; i < data.length; i++) {
-                String s = data[i].getString();
-                double d;
-                if (s.equals("NaN") || s.equals("Infinity") || s.isEmpty()) {
-                    d = JAMS.getMissingDataValue();
-                } else {
-                    d = data[i].getDouble();
-                }
-                values[i - 1].add(d);
-            }
-            storeDate.add(storeUnit, storeUnitCount);
-        }
-
-        Attribute.Calendar lastPlusOne = storeDate;
+        List<String> years = new ArrayList();        
 
         // calculate date of the first hydrol. year start
         String[] s = hydroYearStart.getValue().split("/");
@@ -385,38 +330,4 @@ public class TNC_PrecipIndicators extends JAMSComponent {
             a[n] = ((double) Math.round(a[n] * 100)) / 100;
         }
     }
-
-    @Override
-    public void cleanup() {
-    }
-
-    public static void main(String[] args) {
-        String jsonString = new JSONObject()
-                .put("JSON1", "Hello World!")
-                .put("JSON2", "Hello my World!")
-                .put("JSON3", new JSONObject()
-                        .put("key1", "value1")).toString();
-
-        JSONObject json = new JSONObject();
-        List<String> dates = new ArrayList();
-        dates.add("1.1.2019");
-        dates.add("2.1.2019");
-        dates.add("3.1.2019");
-        dates.add("4.1.2019");
-        json.put("Dates", dates);
-        double[] d = {1, 2, 3, 4};
-        List<Double>[] values = new List[2];
-        values[0] = new ArrayList();
-        values[1] = new ArrayList();
-        values[0].add(1d);
-        values[0].add(2d);
-        values[0].add(3d);
-        values[1].add(10d);
-        values[1].add(20d);
-        values[1].add(30d);
-        json.put("Values", values);
-
-        System.out.println(json);
-    }
-
 }
