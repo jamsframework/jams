@@ -365,7 +365,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
             while (q.contains(attributeName)) {
                 attributeName += "_";
             }
-            q += "\"" + attributeName + "\"" + " " + dataType + ",";
+            q += "\"" + attributeName + "\" " + dataType + ",";
         }
         q = q.substring(0, q.length() - 1);
 
