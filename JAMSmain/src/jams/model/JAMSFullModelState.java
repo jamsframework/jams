@@ -65,6 +65,7 @@ public class JAMSFullModelState implements FullModelState{
         this.setSmallModelState(state);
         this.setModel(model);
     }
+    
     public JAMSFullModelState(File file) throws ClassNotFoundException, IOException {
         FileInputStream fis = new FileInputStream(file);
         ClassLoaderObjectInputStream objIn = new ClassLoaderObjectInputStream(fis);

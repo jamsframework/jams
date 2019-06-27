@@ -69,6 +69,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -980,15 +981,22 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         try {
             File infoLogFile = new File(this.model.getWorkspace().getOutputDataDirectory(), JAMS.DEFAULT_INFOLOG_FILENAME);
             infoLogFile.getParentFile().mkdirs();
-            PrintStream is = new PrintStream(infoLogFile);
-            is.printf(getInfoLog());
-            is.close();
+            
+            PrintWriter out = new PrintWriter(infoLogFile);
+            out.print(getInfoLog());
+            out.close();
+//            PrintStream is = new PrintStream(infoLogFile);
+//            is.printf(getInfoLog());
+//            is.close();
 
             File errorLogFile = new File(this.model.getWorkspace().getOutputDataDirectory(), JAMS.DEFAULT_ERRORLOG_FILENAME);
             errorLogFile.getParentFile().mkdirs();
-            PrintStream es = new PrintStream(errorLogFile);
-            es.printf(getErrorLog());
-            es.close();
+            out = new PrintWriter(errorLogFile);
+            out.print(getErrorLog());
+            out.close();
+//            PrintStream es = new PrintStream(errorLogFile);
+//            es.printf(getErrorLog());
+//            es.close();
 
         } catch (IOException ioe) {
             getModel().getRuntime().handle(ioe);
