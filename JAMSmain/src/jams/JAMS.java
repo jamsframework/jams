@@ -31,7 +31,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -103,7 +105,11 @@ public class JAMS {
      * Base/Start directory
      */
     private static File baseDir, libDir;
-
+    /**
+     * Map for named objects to be shared by models
+     */
+    private static Map<String, Object> objectRepo = new HashMap();
+    
     /**
      * Return a localized string
      *
@@ -227,7 +233,7 @@ public class JAMS {
     }
 
     public static void initBaseDir(String parameterFileName) {
-
+        
         File f = new File(parameterFileName);
 
         //check parameter file parent dir / user dir
@@ -275,6 +281,13 @@ public class JAMS {
             initBaseDir();
         }
         return baseDir;
+    }
+
+    /**
+     * @return the objectRepo
+     */
+    public static Map<String, Object> getObjectRepo() {
+        return objectRepo;
     }
 
 }
