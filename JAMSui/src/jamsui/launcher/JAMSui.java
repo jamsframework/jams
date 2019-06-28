@@ -102,7 +102,7 @@ public class JAMSui {
         if (cmdLine.isNogui() || GraphicsEnvironment.isHeadless()) {
             jamsProperties.setProperty(JAMSProperties.GUICONFIG_IDENTIFIER, "false");
             jamsProperties.setProperty(JAMSProperties.WINDOWENABLE_IDENTIFIER, "false");
-            jamsProperties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "true");
+//            jamsProperties.setProperty(JAMSProperties.VERBOSITY_IDENTIFIER, "true");
             jamsProperties.setProperty(JAMSProperties.ERRORDLG_IDENTIFIER, "false");
         }
 

@@ -151,7 +151,7 @@ public class JUICE {
             JAMS.setFloatFormat(floatFormat);
 
             createJUICEFrame(null);
-
+            
             if (cmdLine.getModelFileName() != null) {
                 juiceFrame.loadModel(cmdLine.getModelFileName());
             }
@@ -202,6 +202,7 @@ public class JUICE {
             SwingUtilities.invokeAndWait(new Runnable() {
                 public void run() {
 
+
                     juiceFrame = new JUICEFrame();
 
                     //        MsgBoxLogHandler.getInstance().setParent(juiceFrame);
@@ -212,6 +213,7 @@ public class JUICE {
         } catch (InterruptedException | InvocationTargetException ex) {
             JAMSTools.handle(ex);
         }
+                
 
         int maxLibClasses = Integer.parseInt(getJamsProperties().getProperty(SystemProperties.MAX_LIB_CLASSES));
 
