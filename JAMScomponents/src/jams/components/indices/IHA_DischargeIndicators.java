@@ -28,9 +28,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
@@ -43,7 +41,7 @@ import org.rosuda.JRI.Rengine;
  * @author Sven Kralisch <sven.kralisch@uni-jena.de>
  */
 @JAMSComponentDescription(
-        title = "Title",
+        title = "IHA_DischargeIndicators",
         author = "Sven Kralisch",
         description = "Calculates various discharge indicators based on "
         + "the Indicators of Hydrological Alteration (IHA) approach. To "
@@ -67,9 +65,22 @@ public class IHA_DischargeIndicators extends TimeSeriesIndicators {
             description = "Name of JSON output file (leave empty to diable)")
     public Attribute.String jsonFileName;
 
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Use a local package dir? If yes, component will try"
+            + " to load all packages from the temp dir of the workspave"
+            + " and - if required - will try to download packages"
+            + " automatically from the mirror defined by 'cranMirror'.",
+            defaultValue = "false")
+    public Attribute.Boolean localPackageDir;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "CRAN mirror to use for packages",
+            defaultValue = "https://cran.uni-muenster.de")
+    public Attribute.String cranMirror;
+
     private Rengine re;
-//    private String[] efc_strings = {"extreme low flow", "high flow pulse", "large flood", "low flow", "low flow pulse", "small flood"};
-    private String[] efc_strings = {"extreme low flow", "low flow", "low flow pulse", "high flow pulse", "small flood", "large flood"};
+    private final String[] efc_strings = {"extreme low flow", "low flow", "low flow pulse", "high flow pulse", "small flood", "large flood"};
+    private boolean inMissingTI = false;
 
     /*
      *  Component run stages
@@ -77,21 +88,47 @@ public class IHA_DischargeIndicators extends TimeSeriesIndicators {
     @Override
     public void init() {
 
+        // create / get the Rengine object
         re = (Rengine) JAMS.getObjectRepo().get("Rengine");
         if (re == null) {
-            re = new Rengine(null, false, null);
+            String args[] = {"--no-save"};
+            re = new Rengine(args, false, null);
             re.waitForR();
             JAMS.getObjectRepo().put("Rengine", re);
         }
-        re.eval("library(flowregime)");
+
+        // setup package dir
+        if (localPackageDir.getValue()) {
+            String libDir = getModel().getWorkspace().getTempDirectory().getAbsolutePath().replace("\\", "/");
+            re.eval(".libPaths('" + libDir + "')");
+        }
+
+        // check whether the flowregime package is installed
+        REXP x = re.eval("library(flowregime)");
+        // if package is missing, try to install it
+        if (x == null) {
+            if (localPackageDir.getValue()) {
+                re.eval("install.packages('devtools', repos='" + cranMirror.getValue() + "')");
+                re.eval("library(devtools)");
+                re.eval("install_github('mkoohafkan/flowregime')");
+                x = re.eval("library(flowregime)");
+                if (x == null) {
+                    getModel().getRuntime().sendHalt("Could not install required R packages");
+                }
+            } else {
+                getModel().getRuntime().sendHalt("Could not load required package 'flowregime'");
+            }
+        }
     }
 
     @Override
     public void run() {
 
+        // read the timeseries data
         readTSData();
         REXP x;
 
+        // create JSPON doc
         JSONObject json = new JSONObject();
         json.put("nColumns", values.length);
         json.put("efcStateNames", efc_strings);
@@ -99,25 +136,14 @@ public class IHA_DischargeIndicators extends TimeSeriesIndicators {
         JSONObject jsonColumn = new JSONObject();
         json.put("columns", jsonColumn);
 
-//        System.out.println("##############################################");
-//        StringBuilder b = new StringBuilder();
-//        values[0].forEach((d) -> {
-//            b.append(d);
-//        });
-//        
-//        System.out.println(b.toString());
+        // assign array of date strings to R
         String[] sArray = dateStrings.toArray(new String[dateStrings.size()]);
         re.assign("sarray", sArray);
 
-        double[] array;
-        // iterate over timeseries
+        // iterate over all timeseries
         for (int c = 0; c < values.length; c++) {
-            // create new single timeserie
-            array = new double[values[c].size()];
-            for (int i = 0; i < values[c].size(); i++) {
-                array[i] = values[c].get(i);
-            }
 
+            // create JSON element for current timeserie
             JSONObject colStats = new JSONObject();
             jsonColumn.put(Integer.toString(c), colStats);
             JSONObject jsonEFCThresholds = new JSONObject();
@@ -125,89 +151,115 @@ public class IHA_DischargeIndicators extends TimeSeriesIndicators {
             JSONObject jsonEFCStates = new JSONObject();
             colStats.put("efcStates", jsonEFCStates);
 
-            double[] vArray = array;
+            // create lists of data values and dates for non-null values
+            List<Double> valueList = new ArrayList<>();
+            List<String> dateList = new ArrayList<>();
+            List<String[]> missingTIs = new ArrayList();
+            for (int i = 0; i < values[c].size(); i++) {
+                double d = values[c].get(i);
 
-            re.assign("varray", vArray);
-            re.eval("dates <- as.Date(sarray)");
+                // store all missing data time intervals
+                if (d == JAMS.getMissingDataValue()) {
+                    if (!inMissingTI) {
+                        // new gap
+                        String[] gap = new String[2];
+                        gap[0] = sArray[i];
+                        missingTIs.add(gap);
+                        inMissingTI = true;
+                    }
+                } else {
+                    if (inMissingTI) {
+                        // gap finished
+                        missingTIs.get(missingTIs.size() - 1)[1] = sArray[i - 1];
+                        inMissingTI = false;
+                    }
+                }
+
+                if (!inMissingTI) {
+                    valueList.add(d);
+                    dateList.add(sArray[i]);
+                }
+
+            }
+
+            // close the last gap if timeseries ends with a gap
+            String[] lastMissing = missingTIs.get(missingTIs.size() - 1);
+            if (lastMissing[1].isEmpty()) {
+                lastMissing[1] = sArray[sArray.length-1];
+            }
+            
+            // add list of gaps to JSON
+            colStats.put("missingIntervals", missingTIs);
+
+            // convert value/date lists to arrays
+            double[] valueArray = new double[valueList.size()];
+            for (int i = 0; i < valueList.size(); i++) {
+                valueArray[i] = valueList.get(i);
+            }
+            String[] dateArray = new String[dateList.size()];
+            for (int i = 0; i < dateList.size(); i++) {
+                dateArray[i] = dateList.get(i);
+            }
+
+            // assign both arrays to R
+            re.assign("varray", valueArray);
+            re.assign("darray", dateArray);
+
+            // create xts object in R
+            re.eval("dates <- as.Date(darray)");
             re.eval("xts <- xts(x=varray, order.by=dates)");
 
-//        System.out.println(re.eval("xts"));
-//
-//        x = re.eval("index(xts)");
-//        System.out.println(x.getType());
-//        double[] index = x.asDoubleArray();            
-//        
-//        x = re.eval("coredata(xts)");
-//        System.out.println(x.getType());
-//        double[] coredata = x.asDoubleArray();
-//        RVector v = x.asVector();
-//        for (int i = 0; i < v.size(); i++) {
-//            System.out.print(v.getNames().get(i) + ": ");
-//            System.out.println(v.at(i).asDouble());
-//        }
-//        x = re.eval("index(xts)");
-//        String[] da = x.asStringArray();
-//        for (String d : da) {
-//            System.out.println(d);
-//        }
-//        re.eval("dat_zoo <- read.zoo(\"" + jsonFileName.getValue() + "\", index.column = 0, sep = \",\", format = \"%d.%m.%Y\")");
-//        re.eval("dat_xts <- as.xts(dat_zoo)");
-//        re.eval("dat_xts <- as.xts(data)");
-//        re.eval("View(dat_xts)");
-//        System.out.println(re.eval("dat_xts"));
-//        System.out.println(re.eval("dat_zoo"));
+            // calculate EFC thresholds in R and store them in JSON doc
             x = re.eval("build_EFC_thresholds(xts, method = \"advanced\")");
             RVector v = x.asVector();
             for (int i = 0; i < v.size(); i++) {
                 jsonEFCThresholds.put(v.getNames().get(i).toString(), v.at(i).asDouble());
-//                System.out.print(v.getNames().get(i) + ": ");
-//                System.out.println(v.at(i).asDouble());
             }
 
+            // analyse timeseries data
             re.eval("efcs <- EFC(xts, method = \"advanced\")");
-            re.eval("efc_strings<-c(\"extreme low flow\", \"low flow\", \"low flow pulse\", \"high flow pulse\", \"small flood\", \"large flood\")");
-            re.eval("indices=0:(length(efc_strings)-1)");
-            re.eval("names(indices)=efc_strings");
+//            String[] sa = x.asStringArray();
+//            for (String s : sa) {
+//                System.out.println(s);
+//            }
+
+//            re.eval("efc_strings<-c(\"extreme low flow\", \"low flow\", \"low flow pulse\", \"high flow pulse\", \"small flood\", \"large flood\")");
+//            re.eval("indices=0:(length(efc_strings)-1)");
+//            re.eval("names(indices)=efc_strings");
+            // extract timeseries for each flow component
             x = re.eval("sort(unique(efcs))");
             String[] states = x.asStringArray();
             for (String state : states) {
-//                System.out.println(state);
+
                 x = re.eval("efcs==\"" + state + "\"");
                 int[] mask = x.asIntArray();
 
-                List<Double> l = new ArrayList(mask.length);
+                List<Double> l = new ArrayList(values[c].size());
+                int j = 0;
 
-                for (int i = 0; i < mask.length; i++) {
-                    if (mask[i] == 1) {
-                        if (vArray[i] == JAMS.getMissingDataValue()) {
-                            l.add(null);
-                        } else {
-                            l.add(vArray[i]);
-                        }
-                    } else {
+                for (int i = 0; i < values[c].size(); i++) {
+                    if (values[c].get(i) == JAMS.getMissingDataValue()) {
                         l.add(null);
+                    } else {
+                        if (mask[j] == 1) {
+                            l.add(values[c].get(i));
+                        } else {
+                            l.add(null);
+                        }
+                        j++;
                     }
                 }
 
+                // store JSON element of current timeserie in JSON doc
                 jsonEFCStates.put(state, l);
 
             }
-
-//            x = re.eval("indices[efcs]");
-////        System.out.println(x.getType());
-//            int[] efcStates = x.asIntArray();
-//
-//            x = re.eval("EFC(xts, method = \"advanced\")");
-//            String[] sa = x.asStringArray();
-//            for (int i = 0; i < sa.length; i++) {
-////            System.out.println(sa[i] + " - " + efc_strings[efcStates[i]]);
-////            System.out.println(sa[i]);
-//            }
         }
 
+        // finish R processing
         re.end();
-        
-        
+
+        // output JSON doc to file or command line
         if (jsonFileName != null) {
             try {
                 FileWriter writer = new FileWriter(new File(getModel().getWorkspace().getOutputDataDirectory(), jsonFileName.getValue()));
@@ -220,7 +272,6 @@ public class IHA_DischargeIndicators extends TimeSeriesIndicators {
         } else {
             System.out.println(json.toString());
         }
-
     }
 
 }

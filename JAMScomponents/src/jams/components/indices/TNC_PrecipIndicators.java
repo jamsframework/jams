@@ -63,7 +63,6 @@ public class TNC_PrecipIndicators extends TimeSeriesIndicators {
     /*
      *  Component attributes
      */
-
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "DAY/MONTH indicating start of hydrological year",
             defaultValue = "01/11")
@@ -81,13 +80,12 @@ public class TNC_PrecipIndicators extends TimeSeriesIndicators {
     /*
      *  Component run stages
      */
-
     @Override
     public void run() {
 
         readTSData();
 
-        List<String> years = new ArrayList();        
+        List<String> years = new ArrayList();
 
         // calculate date of the first hydrol. year start
         String[] s = hydroYearStart.getValue().split("/");
@@ -272,14 +270,14 @@ public class TNC_PrecipIndicators extends TimeSeriesIndicators {
                     sumValues.add(((double) Math.round(sum * 100)) / 100);
 
                 } else {
-                    
+
                     missingCount++;
                     consWetCount = 0;
                     consDryCount = 0;
                     isWet = false;
-                    
+
                     sumValues.add(null);
-                    
+
                 }
 
                 consDryValues.add(consDryCount);
@@ -300,6 +298,12 @@ public class TNC_PrecipIndicators extends TimeSeriesIndicators {
                     jsonWetDays.put(Integer.toString(year), wetCount);
                     jsonExtremeDays.put(Integer.toString(year), extremeCount);
                     jsonMissingDays.put(Integer.toString(year), missingCount);
+
+                    // close the last gap if timeseries ends with a gap
+                    String[] lastMissing = missingTIs.get(missingTIs.size() - 1);
+                    if (lastMissing[1].isEmpty()) {
+                        lastMissing[1] = dates.get(dates.size() - 1).toString();
+                    }
                 }
             }
 
