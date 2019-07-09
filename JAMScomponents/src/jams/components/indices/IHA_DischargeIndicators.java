@@ -214,7 +214,15 @@ public class IHA_DischargeIndicators extends TimeSeriesIndicators {
             RVector v = x.asVector();
             for (int i = 0; i < v.size(); i++) {
                 jsonEFCThresholds.put(v.getNames().get(i).toString(), v.at(i).asDouble());
+
+                // fetch high flow threshold and compute longest high flow duration
+                if (v.getNames().get(i).toString().equals("high flow")) {
+                    double highFlow = v.at(i).asDouble();
+                    x = re.eval("longest_high_flow_duration(xts, " + highFlow + ")");
+                    colStats.put("efcHighFlowDuration", x.asDouble());
+                }
             }
+
 
             // analyse timeseries data
             re.eval("efcs <- EFC(xts, method = \"advanced\")");
