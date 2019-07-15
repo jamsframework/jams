@@ -99,8 +99,14 @@ public class IHA_DischargeIndicators extends TimeSeriesIndicators {
 
         // setup package dir
         if (localPackageDir.getValue()) {
-            String libDir = getModel().getWorkspace().getTempDirectory().getAbsolutePath().replace("\\", "/");
-            re.eval(".libPaths('" + libDir + "')");
+            File libFolder = new File(getModel().getWorkspace().getTempDirectory(), "R");
+            if (!libFolder.exists()) {
+                if (!libFolder.mkdirs()) {
+                    getModel().getRuntime().sendHalt("Could not create local R package repo in " + libFolder.getAbsolutePath());
+                }
+            }
+            String libPath = libFolder.getAbsolutePath().replace("\\", "/");
+            re.eval(".libPaths( c('" + libPath + "', .libPaths() ) )");            
         }
 
         // check whether the flowregime package is installed
@@ -185,9 +191,9 @@ public class IHA_DischargeIndicators extends TimeSeriesIndicators {
             // close the last gap if timeseries ends with a gap
             String[] lastMissing = missingTIs.get(missingTIs.size() - 1);
             if (lastMissing[1].isEmpty()) {
-                lastMissing[1] = sArray[sArray.length-1];
+                lastMissing[1] = sArray[sArray.length - 1];
             }
-            
+
             // add list of gaps to JSON
             colStats.put("missingIntervals", missingTIs);
 
@@ -222,7 +228,6 @@ public class IHA_DischargeIndicators extends TimeSeriesIndicators {
                     colStats.put("efcHighFlowDuration", x.asDouble());
                 }
             }
-
 
             // analyse timeseries data
             re.eval("efcs <- EFC(xts, method = \"advanced\")");
