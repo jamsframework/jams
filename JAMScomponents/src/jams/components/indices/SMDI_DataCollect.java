@@ -22,7 +22,6 @@
 package jams.components.indices;
 
 import jams.data.*;
-import jams.data.Attribute.Calendar;
 import jams.model.*;
 
 /**

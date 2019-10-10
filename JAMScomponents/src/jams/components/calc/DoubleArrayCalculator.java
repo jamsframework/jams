@@ -4,7 +4,6 @@
  */
 package jams.components.calc;
 
-import de.odysseus.el.ExpressionFactoryImpl;
 import de.odysseus.el.util.SimpleContext;
 import de.odysseus.el.util.SimpleResolver;
 import jams.data.Attribute;

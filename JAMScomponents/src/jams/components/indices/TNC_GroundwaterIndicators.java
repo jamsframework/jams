@@ -84,8 +84,9 @@ public class TNC_GroundwaterIndicators extends TimeSeriesIndicators {
                     c++;
                 }
             }
-                    
-            mean /= (c-1);
+//            System.out.println("sum: " + mean + " c: " +c );
+            mean /= (c);
+//            System.out.println("avg: " + mean);
 
             for (double d : values[i]) {
                 // if the value is not missing...

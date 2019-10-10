@@ -77,7 +77,8 @@ public class TimeSeriesIndicators extends JAMSComponent {
 
         dateStrings = new ArrayList();
         dates = new ArrayList();
-
+        double missing = Double.parseDouble(store.getMissingDataValue());
+        
         DefaultDataSet ds;
         while ((ds = store.getNext()) != null) {
             dates.add(storeDate.clone());
@@ -90,6 +91,9 @@ public class TimeSeriesIndicators extends JAMSComponent {
                     d = JAMS.getMissingDataValue();
                 } else {
                     d = data[i].getDouble();
+                    if (d == missing) {
+                        d = JAMS.getMissingDataValue();
+                    }
                 }
                 values[i - 1].add(d);
             }
