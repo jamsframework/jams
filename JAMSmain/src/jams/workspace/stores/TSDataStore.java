@@ -402,7 +402,7 @@ public class TSDataStore extends TableDataStore {
 
                 if (outOfInterval) {
 
-                    result.setData(i + 1, new DoubleValue(this.getMissingDataValue()));
+                    result.setData(i + 1, new DoubleValue(JAMS.getMissingDataValue()));
 
                 } else {
 
@@ -413,7 +413,6 @@ public class TSDataStore extends TableDataStore {
                     currentPosition[i]++;
 
                 }
-
             }
 
         } else {
