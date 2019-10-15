@@ -51,7 +51,10 @@ public class XMLProcessor {
         "org\\.unijena\\.j2kHimalaya",
         "jams\\.model\\.JAMSContext",
         "jams\\.model\\.JAMSSpatialContext",
-        "jams\\.model\\.JAMSTemporalContext"
+        "jams\\.model\\.JAMSTemporalContext",
+        "j2k_Himalaya\\.inputData",
+        "j2k_Himalaya\\.soilWater",
+        "j2k_Himalaya\\.snow"
     };
     
     static String[] replace = {
@@ -70,7 +73,10 @@ public class XMLProcessor {
         "j2k_Himalaya",
         "jams.components.core.Context",
         "jams.components.core.SpatialContext",
-        "jams.components.core.TemporalContext"
+        "jams.components.core.TemporalContext",
+        "org.unijena.j2k.inputData",
+        "org.unijena.j2k.soilWater",
+        "org.unijena.j2k.snow"
     };
 
     public static String modelDocConverter(String inFileName) {
