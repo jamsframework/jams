@@ -230,11 +230,7 @@ public class TimeintervalInput extends JPanel implements InputComponent {
     public boolean verify() {
 
         try {
-            if (this.getValue() != null) {
-                return true;
-            } else {
-                return false;
-            }
+            return this.getValue() != null;
         } catch (Exception e) {
             return false;
         }

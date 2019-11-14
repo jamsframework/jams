@@ -32,16 +32,19 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.Color;
 import jams.data.Attribute;
-import jams.data.JAMSCalendar;
 import jams.data.DefaultDataFactory;
 import jams.tools.StringTools;
 import java.text.DateFormat;
-import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
-import java.util.TimeZone;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
+import javax.swing.JDialog;
 
 /**
  *
@@ -55,16 +58,19 @@ public class CalendarInput extends JPanel implements InputComponent {
     private JCalendarButton dateButton;
     private JTimeButton timeButton;
     private String oldDateString;
-    private static DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
-    private static DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
-    private static DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+//    private static DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM);
+    private static DateFormat dateFormat = new SimpleDateFormat(Attribute.Calendar.DEFAULT_FORMAT_PATTERN.split(" ")[0]);
+//    private static DateFormat timeFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+    private static DateFormat timeFormat = new SimpleDateFormat(Attribute.Calendar.DEFAULT_FORMAT_PATTERN.split(" ")[1]);
+//    private static DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+    private static DateFormat dateTimeFormat = new SimpleDateFormat(Attribute.Calendar.DEFAULT_FORMAT_PATTERN);
     private Color oldColor;
 
     public CalendarInput() {
         this(true);
         timeFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
         dateFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
-        dateTimeFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);        
+        dateTimeFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
     }
 
     public CalendarInput(boolean doLayout) {
@@ -76,26 +82,10 @@ public class CalendarInput extends JPanel implements InputComponent {
             this.setBorder(BorderFactory.createEtchedBorder());
 
             this.setLayout(gbl);
-
-//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.i18n("Date")), 1, 0, 1, 1, 0, 0);
-//            GUIHelper.addGBComponent(this, gbl, new JLabel(JAMS.i18n("Time")), 11, 0, 1, 1, 0, 0);
-
             GUIHelper.addGBComponent(this, gbl, datePanel, 1, 1, 1, 1, 0, 0);
             GUIHelper.addGBComponent(this, gbl, timePanel, 11, 1, 1, 1, 0, 0);
             dateText.setToolTipText(jams.JAMS.i18n("Date"));
             timeText.setToolTipText(jams.JAMS.i18n("Time"));
-
-//            JButton test = new JButton("Value");
-//            test.addActionListener(new ActionListener() {
-//
-//                @Override
-//                public void actionPerformed(ActionEvent e) {
-//                    System.out.println(getValue());
-//                    System.out.println(verify());
-//                }
-//            });
-//            GUIHelper.addGBComponent(this, gbl, test, 1, 2, 1, 1, 0, 0);
-
         }
     }
 
@@ -104,7 +94,6 @@ public class CalendarInput extends JPanel implements InputComponent {
         dateTimeFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
 
         // create the time panel
-
         datePanel = new JPanel();
         //datePanel.setBorder(BorderFactory.c reateEtchedBorder());
 
@@ -145,7 +134,6 @@ public class CalendarInput extends JPanel implements InputComponent {
         datePanel.add(dateButton);
 
         // create the time panel
-
         timePanel = new JPanel();
         //timePanel.setBorder(BorderFactory.createEtchedBorder());
 
@@ -174,7 +162,14 @@ public class CalendarInput extends JPanel implements InputComponent {
                 Date time = null;
                 try {
                     if (!StringTools.isEmptyString(timeString)) {
+                        String dateString = dateText.getText();
+                        if (StringTools.isEmptyString(dateString)) {
+                            dateString = "1970-01-01";
+                        }
                         time = timeFormat.parse(timeString);
+                        DateTimeFormatter format = DateTimeFormatter.ofPattern(Attribute.Calendar.DEFAULT_FORMAT_PATTERN);
+                        LocalDateTime dt = LocalDateTime.parse(dateString + " " + timeString, format);
+                        time = Date.from(dt.atZone(ZoneId.systemDefault()).toInstant());
                     }
                 } catch (Exception e) {
                     time = null;
@@ -198,38 +193,37 @@ public class CalendarInput extends JPanel implements InputComponent {
     }
 
     public void setTime(Date time) {
-        String timeString = "";
         if (time != null) {
-            timeString = timeFormat.format(time);
+            Instant instant = Instant.ofEpochMilli(time.getTime());
+            LocalTime localTime = LocalTime.ofInstant(instant, ZoneId.systemDefault());
+            Date dateTime = Date.from(instant);
+            timeText.setText(localTime.toString());
+            timeButton.setTargetDate(dateTime);
         }
-        timeText.setText(timeString);
-        timeButton.setTargetDate(time);
     }
 
     public String getValue() {
-        try {
-
-            Date dateTime = dateTimeFormat.parse(dateText.getText() + " " + timeText.getText());
-            Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
-            cal.setTime(dateTime);
-            return cal.toString();
-
-        } catch (ParseException pe) {
-            return "";
-        }
+        return getCalendarValue().toString();
     }
 
     public Attribute.Calendar getCalendarValue() {
-        try {
-
-            Date dateTime = dateTimeFormat.parse(dateText.getText() + " " + timeText.getText());
-            Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
-            cal.setTime(dateTime);
-            return cal;
-
-        } catch (ParseException pe) {
-            return null;
+        String dateString = dateText.getText();
+        String timeString = timeText.getText();
+        if (StringTools.isEmptyString(timeString)) {
+            timeString = "00:00";
         }
+        Date dateTime = new Date(0);
+
+        DateTimeFormatter format = DateTimeFormatter.ofPattern(Attribute.Calendar.DEFAULT_FORMAT_PATTERN);
+
+        try {
+            LocalDateTime dt = LocalDateTime.parse(dateString + " " + timeString, format);
+            dateTime = Date.from(dt.atZone(ZoneId.of(Attribute.Calendar.DEFAULT_TIME_ZONE.getID())).toInstant());
+        } catch (DateTimeParseException ex) {
+        }
+        Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
+        cal.setTime(dateTime);
+        return cal;
     }
 
     public void setValue(String value) {
@@ -246,9 +240,6 @@ public class CalendarInput extends JPanel implements InputComponent {
 
         Date d = calendar.getTime();
 
-        TimeZone oldZone = timeFormat.getTimeZone();
-        timeFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
-
         String dateString = dateFormat.format(d);
         String timeString = timeFormat.format(d);
 
@@ -257,11 +248,13 @@ public class CalendarInput extends JPanel implements InputComponent {
         dateText.setText(dateString);
         timeText.setText(timeString);
 
-        timeFormat.setTimeZone(oldZone);
         try {
-            timeButton.setTargetDate(timeFormat.parse(timeString));
-            dateButton.setTargetDate(dateFormat.parse(dateString));
-        } catch (ParseException ex) {
+            DateTimeFormatter format = DateTimeFormatter.ofPattern(Attribute.Calendar.DEFAULT_FORMAT_PATTERN);
+            LocalDateTime dt = LocalDateTime.parse(dateText.getText() + " " + timeText.getText(), format);
+            Date newDate = Date.from(dt.atZone(ZoneId.systemDefault()).toInstant());
+            timeButton.setTargetDate(newDate);
+            dateButton.setTargetDate(newDate);
+        } catch (Exception ex) {
         }
     }
 
@@ -346,19 +339,29 @@ public class CalendarInput extends JPanel implements InputComponent {
     }
 
     public static void main(String[] args) {
+
+        LocalDateTime dt = LocalDateTime.parse("1996-11-01T23:30");
+//        System.out.println(dt);
+
         InputComponent tii = new CalendarInput();
 
         Attribute.Calendar c = DefaultDataFactory.getDataFactory().createCalendar();
-        c.setValue("1996-11-01 23:30");
+        c.setValue("1996-11-01 00:30");
+        System.out.println(c);
+        Date d = c.getTime();
+
         //tii.setMarked(true);
-
         tii.setValue(c.toString());
+        System.out.println("in : " + tii.getValue());
 
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        JDialog frame = new JDialog();
+//        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.add(tii.getComponent());
         frame.pack();
+        frame.setModal(true);
         frame.setVisible(true);
+        System.out.println("out: " + tii.getValue());
+        frame.dispose();
     }
 
     /**
