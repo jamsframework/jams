@@ -35,12 +35,8 @@ import jams.gui.input.ValueChangeListener;
 import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
 import jams.gui.input.InputComponentFactory;
-import javax.swing.JButton;
 import jams.JAMS;
 import jams.data.Attribute;
-import jamsui.juice.JUICE;
-import java.awt.Image;
-import javax.swing.ImageIcon;
 import javax.swing.text.BadLocationException;
 
 /**
