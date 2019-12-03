@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class StandardPrecipitationIndex {
     
-    public static final double MISSING_DATA_VALUE = -9999;
+    public static double MISSING_DATA_VALUE = -9999;
 
     public static double[] parse(double[] precipitation) {
 
