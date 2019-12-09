@@ -33,11 +33,13 @@ import java.io.IOException;
         title = "DoubleSubstract",
         author = "Sven Kralisch",
         description = "Substracts two double values and return the result",
-        date = "2018-07-11",
-        version = "1.0_0"
+        date = "2019-12-08",
+        version = "1.0_1"
 )
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version")
+    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", comment = "Fixed bug and added "
+            + "option to calc absolute values")
 })
 public class DoubleSubstract extends JAMSComponent {
 
@@ -55,6 +57,12 @@ public class DoubleSubstract extends JAMSComponent {
     )
     public Attribute.Double[] d2;
     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Calculate absolute values?",
+            defaultValue = "false"
+    )
+    public Attribute.Boolean abs;
+    @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
             description = "Result of d1-d2 (element-wise)"
     )
@@ -68,7 +76,7 @@ public class DoubleSubstract extends JAMSComponent {
     @Override
     public void init() {
 
-        if (d1.length == result.length) {
+        if (d1.length != result.length) {
             getModel().getRuntime().sendHalt("Attribute result has wrong length, should be length of d1");
         }
 
@@ -78,7 +86,11 @@ public class DoubleSubstract extends JAMSComponent {
                 @Override
                 public void run() {
                     for (int i = 0; i < d1.length; i++) {
-                        result[i].setValue(d1[i].getValue() - d2[i].getValue());
+                        double d = d1[i].getValue() - d2[i].getValue();
+                        if (abs.getValue()) {
+                            d = Math.abs(d);
+                        }
+                        result[i].setValue(d);
                     }
                 }
             };
@@ -89,7 +101,11 @@ public class DoubleSubstract extends JAMSComponent {
                 @Override
                 public void run() {
                     for (int i = 0; i < d1.length; i++) {
-                        result[i].setValue(d1[i].getValue() - d2[0].getValue());
+                        double d = d1[i].getValue() - d2[0].getValue();
+                        if (abs.getValue()) {
+                            d = Math.abs(d);
+                        }
+                        result[i].setValue(d);
                     }
                 }
             };
