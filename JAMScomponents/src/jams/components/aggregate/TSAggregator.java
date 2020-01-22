@@ -23,6 +23,7 @@ package jams.components.aggregate;
 
 import jams.JAMS;
 import jams.data.Attribute;
+import jams.data.JAMSDataFactory;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,10 @@ public class TSAggregator {
 
     public Aggregate toMonthly() {
         return toTimeInterval(Attribute.Calendar.MONTH);
+    }
+
+    public Aggregate toWeekly() {
+        return toTimeInterval(Attribute.Calendar.WEEK_OF_YEAR);
     }
 
     public double[] toSevenDaily() {

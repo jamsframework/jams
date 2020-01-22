@@ -64,7 +64,6 @@ import java.awt.Desktop;
 import java.awt.HeadlessException;
 import java.io.FileFilter;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -104,7 +103,6 @@ public class ModelView {
     private OutputDSDlg outputDSDlg;
 //    private PanelDlg launcherPanelDlg;
 
-
     public ModelView(JDesktopPane parentPanel) {
         this(getNextViewName(), parentPanel);
     }
@@ -136,13 +134,12 @@ public class ModelView {
                         if (Boolean.parseBoolean(JUICE.getJamsProperties().getProperty(JAMSProperties.USE_DEFAULT_WS_PATH)) && (getSavePath() != null)) {
                             defaultWorkspacePath = getSavePath().getParent();
                         }
-                        
+
                         String modelFilePath = null;
                         if (getSavePath() != null) {
                             modelFilePath = getSavePath().getAbsolutePath();
                         }
 
-                        
                         runtime.loadModel(modelDoc, defaultWorkspacePath, modelFilePath);
 
                     } else {
@@ -159,7 +156,7 @@ public class ModelView {
 
         // create the internal frame
         frame = new JInternalFrame();
-        
+
         frame.addInternalFrameListener(new InternalFrameListener() {
             @Override
             public void internalFrameOpened(InternalFrameEvent e) {
@@ -804,8 +801,8 @@ public class ModelView {
 
         // try to open file browser in workspace dir
         try {
-            URI workspaceURI = workspacePath.toURI();
-            Desktop.getDesktop().browse(workspaceURI);
+//            URI workspaceURI = workspacePath.toURI();
+            Desktop.getDesktop().open(workspacePath);
         } catch (IOException ex) {
             GUIHelper.showErrorDlg(JUICE.getJuiceFrame(), "\"" + workspacePath + "\"" + JAMS.i18n("Invalid_Workspace"), JAMS.i18n("Error"));
         }
