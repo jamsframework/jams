@@ -34,8 +34,8 @@ import java.util.List;
  * @author Sven Kralisch <sven.kralisch@uni-jena.de>
  */
 @JAMSComponentDescription(
-        title = "Title",
-        author = "Author",
+        title = "SPICalc",
+        author = "Sven Kralisch",
         description = "Description",
         date = "YYYY-MM-DD",
         version = "1.0_0"
