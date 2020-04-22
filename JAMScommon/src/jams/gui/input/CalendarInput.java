@@ -195,9 +195,11 @@ public class CalendarInput extends JPanel implements InputComponent {
     public void setTime(Date time) {
         if (time != null) {
             Instant instant = Instant.ofEpochMilli(time.getTime());
-            LocalTime localTime = LocalTime.ofInstant(instant, ZoneId.systemDefault());
+//            LocalTime localTime = LocalTime.ofInstant(instant, ZoneId.systemDefault());
+            LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
             Date dateTime = Date.from(instant);
-            timeText.setText(localTime.toString());
+//            timeText.setText(localTime.toString());
+            timeText.setText(ldt.toLocalTime().toString());
             timeButton.setTargetDate(dateTime);
         }
     }
