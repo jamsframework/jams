@@ -42,7 +42,7 @@ public interface Context extends Component {
      * @param accessType The permission type (DataAccessor.READ_ACCESS,
      * DataAccessor.WRITE_ACCESS or DataAccessor.READWRITE_ACCESS)
      */
-    void addAccess(Component user, String varName, String attributeName, int accessType);
+    void addAccess(Component user, String varName, String attributeName, int accessType, int updateType);
 
     /**
      * Registers a new attribute object for this context

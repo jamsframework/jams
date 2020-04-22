@@ -57,5 +57,5 @@ public @interface JAMSVarDescription {
         INIT, RUN
     };
 
-    UpdateType update() default UpdateType.INIT;// when to update
+    UpdateType update() default UpdateType.RUN;// when to update
 }

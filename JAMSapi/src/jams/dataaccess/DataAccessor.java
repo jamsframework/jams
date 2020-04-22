@@ -36,7 +36,13 @@ public interface DataAccessor extends Serializable {
 
     public static final int READWRITE_ACCESS = 2;
 
+    public static final int UPDATE_INIT = 0;
+
+    public static final int UPDATE_RUN = 1;
+
     public int getAccessType();
+
+    public int getUpdateType();
 
     public void setIndex(int index);
 

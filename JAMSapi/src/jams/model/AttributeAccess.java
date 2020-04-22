@@ -35,11 +35,14 @@ public class AttributeAccess implements Serializable {
 
     private int accessType;
 
-    public AttributeAccess(Component component, String varName, String attributeName, int accessType) {
+    private int updateType;
+
+    public AttributeAccess(Component component, String varName, String attributeName, int accessType, int updateType) {
         this.component = component;
         this.varName = varName;
         this.attributeName = attributeName;
         this.accessType = accessType;
+        this.updateType = updateType;
     }
 
     /**
@@ -68,5 +71,12 @@ public class AttributeAccess implements Serializable {
      */
     public int getAccessType() {
         return accessType;
+    }
+
+    /**
+     * @return the accessType
+     */
+    public int getUpdateType() {
+        return updateType;
     }
 }
