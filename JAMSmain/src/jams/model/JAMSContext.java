@@ -298,8 +298,8 @@ public class JAMSContext extends JAMSComponent implements Context {
      * DataAccessor.WRITE_ACCESS or DataAccessor.READWRITE_ACCESS)
      */
     @Override
-    public void addAccess(Component user, String varName, String attributeName, int accessType) {
-        attributeAccessList.add(new AttributeAccess(user, varName, attributeName, accessType));
+    public void addAccess(Component user, String varName, String attributeName, int accessType, int updateType) {
+        attributeAccessList.add(new AttributeAccess(user, varName, attributeName, accessType, updateType));
     }
 
     /**
@@ -365,7 +365,7 @@ public class JAMSContext extends JAMSComponent implements Context {
             try {
 
                 clazz = Class.forName(attributeSpec.className);
-                JAMSData data = getDataObject(entityArray, clazz, attributeSpec.attributeName, DataAccessor.WRITE_ACCESS, null);
+                JAMSData data = getDataObject(entityArray, clazz, attributeSpec.attributeName, DataAccessor.WRITE_ACCESS, DataAccessor.UPDATE_RUN, null);
                 data.setValue(attributeSpec.value);
 
                 //add attributes to "handle map"
@@ -405,7 +405,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                     JAMSData[] array = (JAMSData[]) Array.newInstance(componentClass, count);
 
                     for (int i = 0; i < count; i++) {
-                        array[i] = getDataObject(entityArray, componentClass, tok.nextToken(), accessSpec.getAccessType(), null);
+                        array[i] = getDataObject(entityArray, componentClass, tok.nextToken(), accessSpec.getAccessType(), accessSpec.getUpdateType(), null);
                     }
 
                     Field field = JAMSTools.getField(accessSpec.getComponent().getClass(), accessSpec.getVarName());
@@ -433,7 +433,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                     JAMSData componentObject = null;//(JAMSData) accessSpec.component.getImplementingClass().getDeclaredField(accessSpec.varName).get(accessSpec.component);
 
                     //get the data object belonging to the attribute
-                    dataObject = getDataObject(entityArray, clazz, accessSpec.getAttributeName(), accessSpec.getAccessType(), componentObject);
+                    dataObject = getDataObject(entityArray, clazz, accessSpec.getAttributeName(), accessSpec.getAccessType(), accessSpec.getUpdateType(), componentObject);
 
                     //assign the dataObject to the component
                     Field field = JAMSTools.getField(accessSpec.getComponent().getClass(), accessSpec.getVarName());
@@ -804,7 +804,7 @@ public class JAMSContext extends JAMSComponent implements Context {
                         continue;
                     }
                     Class clazz = attribute.getClass();
-                    getDataObject(entityArray, clazz, attributeName, DataAccessor.READ_ACCESS, null);
+                    getDataObject(entityArray, clazz, attributeName, DataAccessor.READ_ACCESS, DataAccessor.UPDATE_RUN, null);
                 } catch (JAMSEntity.NoSuchAttributeException nsae) {
                     getModel().getRuntime().sendErrorMsg(JAMS.i18n("Can't_trace_attribute_") + attributeName
                             + JAMS.i18n("_in_context_") + this.getInstanceName() + JAMS.i18n("_(not_found)!"));
@@ -832,7 +832,7 @@ public class JAMSContext extends JAMSComponent implements Context {
         }
     }
 
-    protected JAMSData getDataObject(final Attribute.Entity[] ea, Class clazz, final String attributeName, final int accessType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
+    protected JAMSData getDataObject(final Attribute.Entity[] ea, Class clazz, final String attributeName, final int accessType, final int updateType, JAMSData componentObject) throws InstantiationException, IllegalAccessException, ClassNotFoundException, JAMSEntity.NoSuchAttributeException {
         JAMSData dataObject;
         DataAccessor da = null;
 
@@ -858,49 +858,49 @@ public class JAMSContext extends JAMSComponent implements Context {
             }
 
             if (JAMSDouble.class.isAssignableFrom(clazz)) {
-                da = new DoubleAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new DoubleAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSDoubleArray.class.isAssignableFrom(clazz)) {
-                da = new DoubleArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new DoubleArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSLong.class.isAssignableFrom(clazz)) {
-                da = new CalendarAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new CalendarAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSLongArray.class.isAssignableFrom(clazz)) {
-                da = new LongArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new LongArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSString.class.isAssignableFrom(clazz)) {
-                da = new StringAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new StringAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSStringArray.class.isAssignableFrom(clazz)) {
-                da = new StringArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new StringArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSBoolean.class.isAssignableFrom(clazz)) {
-                da = new BooleanAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new BooleanAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSBooleanArray.class.isAssignableFrom(clazz)) {
-                da = new BooleanArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new BooleanArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSFloat.class.isAssignableFrom(clazz)) {
-                da = new FloatAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new FloatAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSFloatArray.class.isAssignableFrom(clazz)) {
-                da = new FloatArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new FloatArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSInteger.class.isAssignableFrom(clazz)) {
-                da = new IntegerAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new IntegerAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSIntegerArray.class.isAssignableFrom(clazz)) {
-                da = new IntegerArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new IntegerArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSString.class.isAssignableFrom(clazz)) {
-                da = new StringAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new StringAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSDirName.class.isAssignableFrom(clazz)) {
-                da = new StringAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new StringAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSEntity.class.isAssignableFrom(clazz)) {
-                da = new EntityAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new EntityAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSEntityCollection.class.isAssignableFrom(clazz)) {
-                da = new EntityCollectionAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new EntityCollectionAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSCalendar.class.isAssignableFrom(clazz)) {
-                da = new CalendarAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new CalendarAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSTimeInterval.class.isAssignableFrom(clazz)) {
-                da = new TimeIntervalAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new TimeIntervalAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSDocument.class.isAssignableFrom(clazz)) {
-                da = new DocumentAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new DocumentAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSGeometry.class.isAssignableFrom(clazz)) {
-                da = new GeometryAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new GeometryAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSObject.class.isAssignableFrom(clazz)) {
-                da = new ObjectAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new ObjectAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else if (JAMSObjectArray.class.isAssignableFrom(clazz)) {
-                da = new ObjectArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType);
+                da = new ObjectArrayAccessor(dataFactory, ea, dataObject, attributeName, accessType, updateType);
             } else {
                 getModel().getRuntime().sendHalt(JAMS.i18n("Class_") + clazz.getCanonicalName() + JAMS.i18n("_not_supported!") + " (attribute:" + attributeName + ")");
             }
@@ -922,11 +922,12 @@ public class JAMSContext extends JAMSComponent implements Context {
     }
 
     /**
-     * Initialization of this context: 1. Create accessors for all attributes of
-     * this context which are to be accessed by descendent components 2. Create
-     * the data tracer objects which take care of outputting values of
-     * attributes of this context 3. Calling the init() method of all child
-     * components
+     * Initialization of this context: 
+     * 1. Create accessors for all attributes of this context which are to be 
+     * accessed by descendent components 
+     * 2. Create the data tracer objects which take care of outputting values of
+     * attributes of this context 
+     * 3. Calling init() method of all child components
      */
     @Override
     public void init() {
@@ -1202,7 +1203,7 @@ public class JAMSContext extends JAMSComponent implements Context {
             }
         }
     }
-
+    
     /**
      * Update components' input attribute values with the attribute values from
      * the index-th entity of this context

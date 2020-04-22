@@ -35,7 +35,9 @@ public class DoubleAccessor implements DataAccessor {
     int index;
     int accessType;
 
-    public DoubleAccessor(DataFactory dataFactory, Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    int updateType;
+
+    public DoubleAccessor(DataFactory dataFactory, Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType, int updateType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new Attribute.Double[entities.length];
@@ -56,6 +58,8 @@ public class DoubleAccessor implements DataAccessor {
         }
 
         this.accessType = accessType;
+        this.updateType = updateType;
+
         this.componentObject = (Attribute.Double) dataObject;
     }
 
@@ -84,6 +88,11 @@ public class DoubleAccessor implements DataAccessor {
     @Override
     public int getAccessType() {
         return accessType;
+    }
+
+    @Override
+    public int getUpdateType() {
+        return updateType;
     }
 
     @Override

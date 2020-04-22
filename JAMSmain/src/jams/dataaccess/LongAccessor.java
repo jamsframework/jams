@@ -38,7 +38,9 @@ public class LongAccessor implements DataAccessor {
 
     int accessType;
 
-    public LongAccessor(DataFactory dataFactory,Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    int updateType;
+
+    public LongAccessor(DataFactory dataFactory,  Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType, int updateType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new JAMSLong[entities.length];
@@ -59,6 +61,8 @@ public class LongAccessor implements DataAccessor {
         }
 
         this.accessType = accessType;
+        this.updateType = updateType;
+
         this.componentObject = (JAMSLong) dataObject;
     }
 
@@ -87,6 +91,11 @@ public class LongAccessor implements DataAccessor {
     @Override
     public int getAccessType() {
         return accessType;
+    }
+
+    @Override
+    public int getUpdateType() {
+        return updateType;
     }
 
     @Override

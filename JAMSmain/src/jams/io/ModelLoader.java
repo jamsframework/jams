@@ -331,17 +331,25 @@ public class ModelLoader {
                         }
 
                         Context sc = (Context) context;
-                        String attributeName;
-
-                        attributeName = cdField.getAttribute();
+                        String attributeName = cdField.getAttribute();
+                        int accessType = -1;
+                        int updateType;
 
                         if (jvd.access() == JAMSVarDescription.AccessType.READ) {
-                            sc.addAccess(component, varName, attributeName, DataAccessor.READ_ACCESS);
+                            accessType = DataAccessor.READ_ACCESS;
                         } else if (jvd.access() == JAMSVarDescription.AccessType.WRITE) {
-                            sc.addAccess(component, varName, attributeName, DataAccessor.WRITE_ACCESS);
+                            accessType = DataAccessor.WRITE_ACCESS;
                         } else if (jvd.access() == JAMSVarDescription.AccessType.READWRITE) {
-                            sc.addAccess(component, varName, attributeName, DataAccessor.READWRITE_ACCESS);
+                            accessType = DataAccessor.READWRITE_ACCESS;
                         }
+
+                        if (jvd.update() == JAMSVarDescription.UpdateType.INIT) {
+                            updateType = DataAccessor.UPDATE_INIT;
+                        } else {
+                            updateType = DataAccessor.UPDATE_RUN;                            
+                        }
+
+                        sc.addAccess(component, varName, attributeName, accessType, updateType);
 
                         nullFields.get(component).remove(field);
 

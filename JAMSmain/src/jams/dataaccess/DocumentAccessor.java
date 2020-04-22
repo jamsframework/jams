@@ -39,7 +39,9 @@ public class DocumentAccessor implements DataAccessor {
 
     int accessType;
 
-    public DocumentAccessor(DataFactory dataFactory, Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    int updateType;
+
+    public DocumentAccessor(DataFactory dataFactory, Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType, int updateType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new Attribute.Document[entities.length];
@@ -60,6 +62,8 @@ public class DocumentAccessor implements DataAccessor {
         }
 
         this.accessType = accessType;
+        this.updateType = updateType;
+
         this.componentObject = (Attribute.Document) dataObject;
     }
 
@@ -90,6 +94,11 @@ public class DocumentAccessor implements DataAccessor {
     @Override
     public int getAccessType() {
         return accessType;
+    }
+
+    @Override
+    public int getUpdateType() {
+        return updateType;
     }
 
     @Override

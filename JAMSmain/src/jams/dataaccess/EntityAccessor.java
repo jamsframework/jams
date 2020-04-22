@@ -34,9 +34,11 @@ public class EntityAccessor implements DataAccessor {
     Attribute.Entity[] entityObject;
     int index;
     int accessType;
+
+    int updateType;
     String attributeName;
 
-    public EntityAccessor(DataFactory dataFactory,Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) {
+    public EntityAccessor(DataFactory dataFactory,  Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType, int updateType) {
 
         //get the entities' data objects
         entityObject = new Attribute.Entity[entities.length];
@@ -57,6 +59,8 @@ public class EntityAccessor implements DataAccessor {
         }
 
         this.accessType = accessType;
+        this.updateType = updateType;
+
         this.componentObject = (Attribute.Entity) dataObject;
         this.attributeName = attributeName;
     }
@@ -86,6 +90,11 @@ public class EntityAccessor implements DataAccessor {
     @Override
     public int getAccessType() {
         return accessType;
+    }
+
+    @Override
+    public int getUpdateType() {
+        return updateType;
     }
 
     @Override

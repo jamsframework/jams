@@ -39,7 +39,9 @@ public class EntityCollectionAccessor implements DataAccessor {
 
     int accessType;
 
-    public EntityCollectionAccessor(DataFactory dataFactory,Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    int updateType;
+
+    public EntityCollectionAccessor(DataFactory dataFactory,  Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType, int updateType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new JAMSEntityCollection[entities.length];
@@ -60,6 +62,8 @@ public class EntityCollectionAccessor implements DataAccessor {
         }
 
         this.accessType = accessType;
+        this.updateType = updateType;
+
         this.componentObject = (JAMSEntityCollection) dataObject;
     }
 
@@ -90,6 +94,11 @@ public class EntityCollectionAccessor implements DataAccessor {
         return accessType;
     }
 
+    @Override
+    public int getUpdateType() {
+        return updateType;
+    }
+    
     @Override
     public JAMSData getComponentObject() {
         return this.componentObject;

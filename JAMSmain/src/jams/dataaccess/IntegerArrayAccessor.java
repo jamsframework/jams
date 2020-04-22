@@ -38,7 +38,9 @@ public class IntegerArrayAccessor implements DataAccessor {
 
     int accessType;
 
-    public IntegerArrayAccessor(DataFactory dataFactory,Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType) throws JAMSEntity.NoSuchAttributeException {
+    int updateType;
+
+    public IntegerArrayAccessor(DataFactory dataFactory,  Attribute.Entity[] entities, JAMSData dataObject, String attributeName, int accessType, int updateType) throws JAMSEntity.NoSuchAttributeException {
 
         //get the entities' data objects
         entityObject = new JAMSIntegerArray[entities.length];
@@ -59,6 +61,8 @@ public class IntegerArrayAccessor implements DataAccessor {
         }
 
         this.accessType = accessType;
+        this.updateType = updateType;
+
         this.componentObject = (JAMSIntegerArray) dataObject;
     }
 
@@ -89,6 +93,11 @@ public class IntegerArrayAccessor implements DataAccessor {
     @Override
     public int getAccessType() {
         return accessType;
+    }
+
+    @Override
+    public int getUpdateType() {
+        return updateType;
     }
 
     @Override
