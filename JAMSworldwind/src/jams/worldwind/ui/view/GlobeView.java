@@ -1086,7 +1086,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         getPCS().firePropertyChange(Events.LAYER_CHANGED, null, null);
 
         activeLayerComboBox.setSelectedIndex(activeLayerComboBox.getItemCount() - 1);
-        outlineOpacitySlider.setValue(50);
+        outlineOpacitySlider.setValue(20);
 //        theLayerView.setActiveLayerIndex(activeLayerComboBox.getItemCount() - 1);
 //        new DelayZoom(shp.getBoundingRectangle()).execute();
     }
