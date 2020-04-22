@@ -31,7 +31,8 @@ import jams.model.*;
 @JAMSComponentDescription(
         title = "Soil Moisture Deficit Index (SMDI) Data Collector",
         author = "Sven Kralisch",
-        description = "This component collects required data to calculate the Soil Moisture Deficit Index (SMDI)",
+        description = "This component collects required data to calculate the Soil Moisture Deficit Index (SMDI) based on\n"
+                + "Narasimhan, B. & Srinivasan, R. (2005) Development and evaluation of Soil Moisture Deficit Index (SMDI) and Evapotranspiration Deficit Index (ETDI) for agricultural drought monitoring. Agricultural and Forest Meteorology 133(1–4), 69–88. doi:10.1016/j.agrformet.2005.07.012",
         date = "2017-04-17",
         version = "1.0_0"
 )
@@ -88,8 +89,7 @@ public class SMDI_DataCollect extends JAMSComponent {
     )
     public Attribute.DoubleArray swValues;
 
-
-    int arraySize, tres;
+    int arraySize, tres, missing, remain;
 
     /*
      *  Component run stages
@@ -98,6 +98,13 @@ public class SMDI_DataCollect extends JAMSComponent {
     public void init() {
         tres = tempRes.getValue();
         arraySize = (int) simulationTimeInterval.getNumberOfTimesteps() / tres;
+        //missing values in first interval
+        missing = simulationTimeInterval.getStart().get(Attribute.Calendar.DAY_OF_YEAR) % tres - 1;
+        if (missing == -1) {
+            missing = tres - 1;
+        }
+        //remaining values at end of a standard year
+        remain = 365 % tres;
     }
 
     @Override
@@ -111,38 +118,48 @@ public class SMDI_DataCollect extends JAMSComponent {
     public void run() {
 
         int day = date.get(Attribute.Calendar.DAY_OF_YEAR);
-        
+
         //aggregate the last day in leapyears with the last collected value
+//        if (day == 366) {
+//            int oldSlot = counter.getValue() - 1;
+//            double oldValue = swValues.getValue()[oldSlot];
+//            double newValue = (oldValue * tres + soilWater.getValue()) / (tres + 1);
+//            swValues.getValue()[oldSlot] = newValue;
+//            return;
+//        }
+
+        //ignore the last day in leapyears
         if (day == 366) {
-            int oldSlot = counter.getValue() - 1;
-            double oldValue = swValues.getValue()[oldSlot];
-            double newValue = (oldValue * tres + soilWater.getValue()) / (tres + 1);
-            swValues.getValue()[oldSlot] = newValue;
             return;
         }
-        
+
         double s = soilWater_sum.getValue();
         int c = counter.getValue();
 
-        //aggregate the remaining values not yet collected eith the last
+        //aggregate the remaining values not yet collected with the last
         //collected values
-        if (day == 1 && tres > 1 && c > 0) {
-            //get number of remaining values not yet counted
-            int n = 365 % tres;
+        if ((day == 1) && (tres > 1) && (c > 0) && (remain > 0)) {
+          
             //get value from recent slot and add remaining soilWater_sum
             int oldSlot = counter.getValue() - 1;
             double oldValue = swValues.getValue()[oldSlot];
-            double newValue = (oldValue * tres + s) / (tres + n);
+            double newValue = (oldValue * tres + s) / (tres + remain);
             //write back new value
             swValues.getValue()[oldSlot] = newValue;
             s = 0;
         }
-        
+
         s = s + soilWater.getValue();
 
         if (day % tres == 0) {
-            swValues.getValue()[c] = s / tres;
-            counter.setValue(c+1);
+
+            if (c == 0) {
+                swValues.getValue()[c] = s / (tres - missing);
+            } else {
+                swValues.getValue()[c] = s / tres;
+            }
+            
+            counter.setValue(c + 1);
             s = 0;
         }
 

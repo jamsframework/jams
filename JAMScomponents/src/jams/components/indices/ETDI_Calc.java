@@ -32,7 +32,8 @@ import jams.model.*;
 @JAMSComponentDescription(
         title = "Evapotranspiration Deficit Index (ETDI) Calculator",
         author = "Sven Kralisch",
-        description = "This component calculates the Evapotranspiration Deficit Index (ETDI)",
+        description = "This component calculates the Evapotranspiration Deficit Index (ETDI) based on\n"
+        + "Narasimhan, B. & Srinivasan, R. (2005) Development and evaluation of Soil Moisture Deficit Index (SMDI) and Evapotranspiration Deficit Index (ETDI) for agricultural drought monitoring. Agricultural and Forest Meteorology 133(1–4), 69–88. doi:10.1016/j.agrformet.2005.07.012",
         date = "2017-04-17",
         version = "1.0_0"
 )
@@ -55,13 +56,13 @@ public class ETDI_Calc extends AbstractDICalc {
             description = "Statistics for SMDI calculation"
     )
     public Attribute.Object etdiStats;
-    
+
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
             description = "Current soil water average"
     )
     public Attribute.Double currentWS;
-    
+
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
             description = "Water stress anomaly"
@@ -101,10 +102,10 @@ public class ETDI_Calc extends AbstractDICalc {
 
         //calc current index
         int timeIndex = (day / tres) - 1;
-        
+
         int c = counter.getValue();
         double ws = wsValues.getValue()[c];
-        counter.setValue(c + 1);        
+        counter.setValue(c + 1);
 
         double mws = stats.median[timeIndex];
         double min = stats.min[timeIndex];

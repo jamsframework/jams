@@ -32,7 +32,8 @@ import jams.model.*;
 @JAMSComponentDescription(
         title = "Soil Moisture Deficit Index (SMDI) Calculator",
         author = "Sven Kralisch",
-        description = "This component calculates the Soil Moisture Deficit Index (SMDI)",
+        description = "This component calculates the Soil Moisture Deficit Index (SMDI) based on\n"
+                + "Narasimhan, B. & Srinivasan, R. (2005) Development and evaluation of Soil Moisture Deficit Index (SMDI) and Evapotranspiration Deficit Index (ETDI) for agricultural drought monitoring. Agricultural and Forest Meteorology 133(1–4), 69–88. doi:10.1016/j.agrformet.2005.07.012",
         date = "2017-04-17",
         version = "1.0_0"
 )

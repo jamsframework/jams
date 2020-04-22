@@ -28,19 +28,36 @@ import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSContext;
 import jams.model.JAMSVarDescription;
+import jams.model.VersionComments;
 
 /**
  *
  * @author S. Kralisch
  */
-@JAMSComponentDescription(title = "BooleanConditionalContext", author = "Sven Kralisch", date = "7. January 2008", description = "This component represents a JAMS context which can be used to "
-+ "conditionally execute components. This context must contain two components. If \"condition\" is true, the first one will be executed, otherwise the second one.")
+@JAMSComponentDescription(
+        title = "BooleanConditionalContext",
+        author = "Sven Kralisch",
+        description = "This component represents a JAMS context which can be used to "
+        + "conditionally execute components. This context must contain two components. "
+        + "If \"condition\" is true, the first one will be executed, otherwise the second one.",
+        date = "2008-01-07",
+        version = "1.0_0"
+)
+@VersionComments(entries = {
+    @VersionComments.Entry(version = "1.0_1", comment = "added support for InitAll/CleanupAll states")}
+)
 public class BooleanConditionalContext extends JAMSContext {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Boolean attribute defining which component to execute", defaultValue = "1")
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Boolean attribute defining which component to execute",
+            defaultValue = "1")
     public Attribute.Boolean condition;
-    
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, description = "Boolean attribute defining which component to execute", defaultValue = "1")
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Boolean attribute defining which component to execute",
+            defaultValue = "1")
     public Attribute.Boolean initCondition;
 
     public BooleanConditionalContext() {
@@ -48,12 +65,22 @@ public class BooleanConditionalContext extends JAMSContext {
 
     @Override
     public ComponentEnumerator getInitEnumerator() {
-        if (initCondition == null){
+        if (initCondition == null) {
             return super.getInitEnumerator();
         }
         return new InitEnumerator();
     }
-    
+
+    @Override
+    protected ComponentEnumerator getInitAllEnumerator() {
+        return getInitEnumerator();
+    }
+
+    @Override
+    protected ComponentEnumerator getCleanupAllEnumerator() {
+        return getInitEnumerator();
+    }
+
     @Override
     public ComponentEnumerator getRunEnumerator() {
         return new RunEnumerator();
@@ -67,7 +94,17 @@ public class BooleanConditionalContext extends JAMSContext {
     @Override
     public long getRunCount() {
         return -1;
-    }  
+    }
+
+    @Override
+    public void initAll() {
+        super.initAll();
+    }
+
+    @Override
+    public void cleanupAll() {
+        super.cleanupAll();
+    }
 
     class RunEnumerator implements ComponentEnumerator {
 
@@ -120,13 +157,13 @@ public class BooleanConditionalContext extends JAMSContext {
             next = true;
         }
     }
-    
+
     class InitEnumerator extends RunEnumerator {
 
         final DummyComponent dummy = new DummyComponent();
         Component[] compArray = getCompArray();
         boolean next = true;
-        
+
         @Override
         public Component next() {
             // if condition is true return first component, else second component

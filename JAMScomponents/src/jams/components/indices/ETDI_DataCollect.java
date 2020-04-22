@@ -31,7 +31,8 @@ import jams.model.*;
 @JAMSComponentDescription(
         title = "Evapotranspiration Deficit Index (ETDI) Data Collector",
         author = "Sven Kralisch",
-        description = "This component collects required data to calculate the Evapotranspiration Deficit Index (ETDI)",
+        description = "This component collects required data to calculate the Evapotranspiration Deficit Index (ETDI) based on\n"
+                + "Narasimhan, B. & Srinivasan, R. (2005) Development and evaluation of Soil Moisture Deficit Index (SMDI) and Evapotranspiration Deficit Index (ETDI) for agricultural drought monitoring. Agricultural and Forest Meteorology 133(1–4), 69–88. doi:10.1016/j.agrformet.2005.07.012",
         date = "2017-04-17",
         version = "1.0_0"
 )
