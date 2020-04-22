@@ -2,11 +2,11 @@ package jams.worldwind.ui;
 
 import java.awt.GridLayout;
 import java.text.NumberFormat;
-import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 /**
  *
@@ -14,18 +14,18 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  */
 public class SummaryStatisticsPanel extends JPanel {
 
-    private DescriptiveStatistics statistics;
+    private SummaryStatistics statistics;
     private JLabel[] statisticLabels;
 
     public SummaryStatisticsPanel() {
-        statistics = new DescriptiveStatistics();
+        statistics = new SummaryStatistics();
         this.createGUI();
     }
 
     private void createGUI() {
         this.setLayout(new GridLayout(0,2,1,1));
         this.setBorder(new TitledBorder("Classification Statistics"));
-        this.statisticLabels = new JLabel[16];
+        this.statisticLabels = new JLabel[14];
         for (int i = 0; i < this.statisticLabels.length; i++) {
             this.statisticLabels[i] = new JLabel();
             if (i % 2 == 1) {
@@ -37,19 +37,15 @@ public class SummaryStatisticsPanel extends JPanel {
         this.statisticLabels[4].setText("maximum:");
         this.statisticLabels[6].setText("sum:");
         this.statisticLabels[8].setText("mean:");
-        this.statisticLabels[10].setText("median:");
-        this.statisticLabels[12].setText("std. deviation:");
-        this.statisticLabels[14].setText("variance:");
+        this.statisticLabels[10].setText("std. deviation:");
+        this.statisticLabels[12].setText("variance:");
         for (JLabel statisticLabel : this.statisticLabels) {
             this.add(statisticLabel);
         }
     }
 
-    public void calculateStatistics(double[] values) {
-        statistics.clear();
-        for (int i = 0; i < values.length; i++) {
-            statistics.addValue(values[i]);
-        }
+    public void calculateStatistics(double[] values, SummaryStatistics statistics) {
+        this.statistics = statistics;
         this.updateLabels();
     }
 
@@ -71,12 +67,11 @@ public class SummaryStatisticsPanel extends JPanel {
         this.statisticLabels[5].setText(nf.format(statistics.getMax()));
         this.statisticLabels[7].setText(nf.format(statistics.getSum()));
         this.statisticLabels[9].setText(nf.format(statistics.getMean()));
-        this.statisticLabels[11].setText(nf.format(statistics.getPercentile(50)));
-        this.statisticLabels[13].setText(nf.format(statistics.getStandardDeviation()));
-        this.statisticLabels[15].setText(nf.format(statistics.getVariance()));
+        this.statisticLabels[11].setText(nf.format(statistics.getStandardDeviation()));
+        this.statisticLabels[13].setText(nf.format(statistics.getVariance()));
     }
 
-    public DescriptiveStatistics getStatistics() {
+    public StatisticalSummary getStatistics() {
         return this.statistics;
     }
 }

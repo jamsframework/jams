@@ -57,16 +57,16 @@ public class DataTransfer3D implements Serializable {
             }
             this.hruIdToIndex.put(ids[i], i);
         }
-        
+
         for (int j = 0; j < m.length; j++) {
             this.attributeToIndex.put(attribs[j], j);
-        }        
-        
+        }
+
         for (int k = 0; k < timesteps.length; k++) {
             JAMSCalendar date = new JAMSCalendar();
             date.setValue(timesteps[k]);
             this.timeStepToIndex.put(date, k);
-        }        
+        }
 
     }
 
@@ -102,8 +102,8 @@ public class DataTransfer3D implements Serializable {
 
     /*
         geht noch nicht, für direkten Zugriff auf getTemporalData
-    */
-    /*
+     */
+ /*
     public void addDataVales(DataMatrix m, JAMSCalendar calendar) {
 
         //System.out.println("COL: " + m.getColumnDimension());
@@ -163,8 +163,8 @@ public class DataTransfer3D implements Serializable {
          }
 
          }
-         */
-        /*
+     */
+ /*
          //for all ids
          for (int i = 0; i < m.; i++) {
          //for all attributes
@@ -182,8 +182,7 @@ public class DataTransfer3D implements Serializable {
          this.hruIdToIndex.put(ids[i], i);
          }
     }
-    */
-
+     */
     public ShapeFileDataStore getShapeFileDataStore() {
         return this.shapefileDataStore;
     }
@@ -204,6 +203,29 @@ public class DataTransfer3D implements Serializable {
             return this.data[i][j][k];
         } else {
             return Double.NaN;
+        }
+    }
+
+    public double[] getValue(String attrib) {
+
+        int numIds = data.length;
+        int numTimeSteps = data[0][0].length;
+
+        //this.data = new double[numIds][numAttribs][numTimeSteps];
+        int aIndex = this.attributeToIndex.get(attrib);
+        double[] result = new double[numIds * numTimeSteps];
+
+        if (this.attributeToIndex.containsKey(attrib)) {
+
+            for (int i = 0; i < numIds; i++) {
+                for (int j = 0; j < numTimeSteps; j++) {
+                    result[i * numTimeSteps + j] = data[i][aIndex][j];
+                }
+            }
+
+            return result;
+        } else {
+            return null;
         }
     }
 

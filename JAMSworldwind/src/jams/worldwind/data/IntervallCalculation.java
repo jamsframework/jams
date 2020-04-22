@@ -2,12 +2,11 @@ package jams.worldwind.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.TreeMap;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import java.util.stream.DoubleStream;
+import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,27 +18,13 @@ public class IntervallCalculation {
 
     private static final Logger logger = LoggerFactory.getLogger(IntervallCalculation.class);
 
-    //private final ArrayList<Double> values;
     private final double[] values;
-    private final DescriptiveStatistics statistics;
+    private final SummaryStatistics statistics;
 
-    /*
-     public IntervallCalculation(List dvalues) {
-     this.values = new ArrayList<>(dvalues);
-     this.statistics = new DescriptiveStatistics();
-     this.calculateStatistics();
-     }*/
-    
-    public IntervallCalculation(double[] dvalues) {
+    public IntervallCalculation(double[] dvalues, SummaryStatistics statistics) {
         this.values = dvalues;
-        this.statistics = new DescriptiveStatistics();
-        this.calculateStatistics();
-    }
-
-    private void calculateStatistics() {
-        for (int i = 0; i < this.values.length; i++) {
-            this.statistics.addValue(values[i]);
-        }
+        this.statistics = statistics;
+//        this.calculateStatistics();
     }
 
     public double getValue(int index) {
@@ -53,13 +38,6 @@ public class IntervallCalculation {
     public double[] getValues() {
         return this.values;
     }
-    
-    
-    /*
-    public List<Double> getValues() {
-        return this.values;
-    }
-    */
 
     public double getMinimumValue() {
         return this.statistics.getMin();
@@ -75,10 +53,6 @@ public class IntervallCalculation {
 
     public double getMean() {
         return this.statistics.getMean();
-    }
-
-    public double getMedian() {
-        return this.statistics.getPercentile(50);
     }
 
     public double getVariance() {
@@ -140,55 +114,74 @@ public class IntervallCalculation {
         }
     }
 
-    
     public List<Double> getQuantilIntervall(int numberOfClasses) {
-        if (numberOfClasses > 0) {
-            List<Double> breakPoints = new ArrayList<>(numberOfClasses + 1);
-            int numberPerClass = (int) Math.round(this.values.length / numberOfClasses);
-
-            TreeMap<Double, Integer> countOccurences = new TreeMap<>();
-            breakPoints.add(this.getMinimumValue());
-            for (int i = 0; i < this.values.length; i++) {
-                if (!countOccurences.containsKey(this.values[i])) {
-                    countOccurences.put(this.values[i], 1);
-                } else {
-                    Integer count = countOccurences.get(this.values[i]);
-                    count++;
-                    countOccurences.put(this.values[i], count);
-                }
-            }
-            boolean last = false;
-            int remainingObjectsCount = this.values.length;
-            int sum = 0;
-            int newNumberOfClasses = numberOfClasses;
-            Entry<Double, Integer> ent = countOccurences.pollFirstEntry();
-            while (ent != null) {
-                int count = ent.getValue();
-                sum += count;
-                remainingObjectsCount -= count;
-                if (sum >= numberPerClass) {
-                    double d = Math.nextUp(ent.getKey());
-                    if (d < this.getMaximumValue()) {
-                        breakPoints.add(d);
-                    }
-                    //System.out.println("Remain: " + remainingObjectsCount);
-                    newNumberOfClasses--;
-                    //System.out.println("Left Classes: " + newNumberOfClasses);
-                    if (newNumberOfClasses > 0) {
-                        numberPerClass = remainingObjectsCount / newNumberOfClasses;
-                        //System.out.println("PER CLASS: " + numberPerClass);
-                    }
-                    sum = 0;
-                }
-                ent = countOccurences.pollFirstEntry();
-            }
-            breakPoints.add(this.getMaximumValue());
-            return breakPoints;
-        } else {
+        if (numberOfClasses <= 0) {
             logger.warn("Intervall classes must be greater zero! Getting standard intervall!");
             return this.standardMinimumMaximumIntervall();
         }
+                
+        double[] uniques = DoubleStream.of(values).distinct().toArray();
+        double width = 100 / numberOfClasses;
+        List<Double> breakPoints = new ArrayList<>(numberOfClasses + 1);
+        breakPoints.add(this.getMinimumValue());
+
+        double d = width;
+        for (int i = 1; i < numberOfClasses; i++) {
+            breakPoints.add(StatUtils.percentile(uniques, d));
+            d += width;
+        }
+        breakPoints.add(this.getMaximumValue());
+        return breakPoints;
     }
+
+//    public List<Double> getQuantilIntervall(int numberOfClasses) {
+//        if (numberOfClasses > 0) {
+//            List<Double> breakPoints = new ArrayList<>(numberOfClasses + 1);
+//            int numberPerClass = (int) Math.round(this.values.length / numberOfClasses);
+//
+//            TreeMap<Double, Integer> countOccurences = new TreeMap<>();
+//            breakPoints.add(this.getMinimumValue());
+//            for (int i = 0; i < this.values.length; i++) {
+//                if (!countOccurences.containsKey(this.values[i])) {
+//                    countOccurences.put(this.values[i], 1);
+//                } else {
+//                    Integer count = countOccurences.get(this.values[i]);
+//                    count++;
+//                    countOccurences.put(this.values[i], count);
+//                }
+//            }
+//            boolean last = false;
+//            int remainingObjectsCount = this.values.length;
+//            int sum = 0;
+//            int newNumberOfClasses = numberOfClasses;
+//            Entry<Double, Integer> ent = countOccurences.pollFirstEntry();
+//            while (ent != null) {
+//                int count = ent.getValue();
+//                sum += count;
+//                remainingObjectsCount -= count;
+//                if (sum >= numberPerClass) {
+//                    double d = Math.nextUp(ent.getKey());
+//                    if (d < this.getMaximumValue()) {
+//                        breakPoints.add(d);
+//                    }
+//                    //System.out.println("Remain: " + remainingObjectsCount);
+//                    newNumberOfClasses--;
+//                    //System.out.println("Left Classes: " + newNumberOfClasses);
+//                    if (newNumberOfClasses > 0) {
+//                        numberPerClass = remainingObjectsCount / newNumberOfClasses;
+//                        //System.out.println("PER CLASS: " + numberPerClass);
+//                    }
+//                    sum = 0;
+//                }
+//                ent = countOccurences.pollFirstEntry();
+//            }
+//            breakPoints.add(this.getMaximumValue());
+//            return breakPoints;
+//        } else {
+//            logger.warn("Intervall classes must be greater zero! Getting standard intervall!");
+//            return this.standardMinimumMaximumIntervall();
+//        }
+//    }
 
     public void printHistogramm(List<?> intervall) {
         double[] tmp = this.values.clone();
@@ -202,7 +195,7 @@ public class IntervallCalculation {
         for (int h = 0; h < intervall.size() - 1; h++) {
             System.out.print("[" + intervall.get(h) + "," + intervall.get(h + 1) + "] : ");
             for (int i = start; i < tmp.length; i++) {
-                if (tmp[i]  <= (Double)intervall.get(h + 1)) {
+                if (tmp[i] <= (Double) intervall.get(h + 1)) {
                     System.out.print("*");
                     count++;
                     start++;

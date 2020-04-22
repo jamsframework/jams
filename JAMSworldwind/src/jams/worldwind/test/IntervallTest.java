@@ -1,16 +1,11 @@
 package jams.worldwind.test;
 
-import jams.worldwind.data.RandomNumbers;
 import jams.worldwind.data.IntervallCalculation;
 import jams.worldwind.ui.ColorRamp;
-import jams.worldwind.ui.ColorRampPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import javax.swing.JFrame;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
@@ -38,7 +33,13 @@ public class IntervallTest {
         for(double d : testquantil) {
             tlist.add(d);
         };
-        IntervallCalculation ic = new IntervallCalculation(testquantil);
+        
+        SummaryStatistics statistics = new SummaryStatistics();
+        for (int i = 0; i < testquantil.length; i++) {
+            statistics.addValue(testquantil[i]);
+        }        
+        
+        IntervallCalculation ic = new IntervallCalculation(testquantil, statistics);
 
         //RandomNumbers rn = new RandomNumbers(0, 100, numbers);
         //IntervallCalculation ic = new IntervallCalculation(rn.getDoubleValues());
@@ -46,7 +47,7 @@ public class IntervallTest {
         System.out.println("Minimum : " + ic.getMinimumValue());
         System.out.println("Maximum : " + ic.getMaximumValue());
         System.out.println("Mean    : " + ic.getMean());
-        System.out.println("Median  : " + ic.getMedian());
+//        System.out.println("Median  : " + ic.getMedian());
         System.out.println("Variance: " + ic.getVariance());
         System.out.println("Std.Dev.: " + ic.getStandardDeviation());
 
