@@ -14,7 +14,7 @@ import java.util.Collection;
  * @author christian
  */
 public class BasicTemporalAggregator<T> extends TemporalAggregator<T>{    
-    Aggregator<T> aggregator;
+    transient Aggregator<T> aggregator;
     
     protected BasicTemporalAggregator(BasicTemporalAggregator<T> original){
         super(original);

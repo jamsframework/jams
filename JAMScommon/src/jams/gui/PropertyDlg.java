@@ -48,7 +48,7 @@ public class PropertyDlg extends JDialog {
     private JSpinner debugSpinner;
     private JComboBox<String> locale;
     private FileInput infoFile,  errorFile, docbookDir;
-    private TextInput windowHeight,  windowWidth, helpBaseURL, userName, charset, explorerDigits;
+    private TextInput windowHeight,  windowWidth, helpBaseURL, userName, charset, explorerDigits, jamsDecFormat;
     private SystemProperties properties;
     public static final int APPROVE_OPTION = 1;
     public static final int CANCEL_OPTION = 0;
@@ -224,6 +224,12 @@ public class PropertyDlg extends JDialog {
         explorerDigits.getComponent().setPreferredSize(new Dimension(300, JCOMP_HEIGHT));
         GUIHelper.addGBComponent(contentPanel, gbl, explorerDigits, 1, y, 1, 1, 1, 1);
 
+        y++;
+        GUIHelper.addGBComponent(contentPanel, gbl, new JLabel(JAMS.i18n("JAMS_Dec_Format")), 0, y, 1, 1, 0, 0);
+        jamsDecFormat = new TextInput();
+        jamsDecFormat.getComponent().setPreferredSize(new Dimension(300, JCOMP_HEIGHT));
+        GUIHelper.addGBComponent(contentPanel, gbl, jamsDecFormat, 1, y, 1, 1, 1, 1);
+
         JButton okButton = new JButton(JAMS.i18n("OK"));
         okButton.addActionListener(new ActionListener() {
 
@@ -328,6 +334,7 @@ public class PropertyDlg extends JDialog {
 
         docbookDir.setValue(properties.getProperty(SystemProperties.DOCBOOK_HOME_PATH));
         explorerDigits.setValue(properties.getProperty(SystemProperties.EXPLORER_DECIMAL_DIGITS));
+        jamsDecFormat.setValue(properties.getProperty(SystemProperties.FLOAT_FORMAT));
         
         autoSaveLogs.setValue(properties.getProperty(SystemProperties.AUTO_SAVE_LOGS));
         autoSaveParams.setValue(properties.getProperty(SystemProperties.AUTO_SAVE_PARAMS));
@@ -365,6 +372,7 @@ public class PropertyDlg extends JDialog {
         properties.setProperty(SystemProperties.HELPBASEURL_IDENTIFIER, helpBaseURL.getValue());
         properties.setProperty(SystemProperties.DOCBOOK_HOME_PATH, docbookDir.getValue());
         properties.setProperty(SystemProperties.EXPLORER_DECIMAL_DIGITS, explorerDigits.getValue());
+        properties.setProperty(SystemProperties.FLOAT_FORMAT, jamsDecFormat.getValue());     
         properties.setProperty(SystemProperties.AUTO_SAVE_LOGS, autoSaveLogs.getValue());
         properties.setProperty(SystemProperties.AUTO_SAVE_PARAMS, autoSaveParams.getValue());
     }
