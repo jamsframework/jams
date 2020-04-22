@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  *
  * @author Sven Kralisch <sven.kralisch at uni-jena.de>
  */
-public class DataStoreProcessor extends AbstractDataStoreProcessor{
+public class DataStoreProcessor extends AbstractDataStoreProcessor {
 
     public static final HashMap<String, String> TYPE_MAP = getTypeMap();
     public static final String DB_USER = "jamsuser", DB_PASSWORD = "";
@@ -79,10 +79,11 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
 
         // use a lot (100MB) of cache to avoid output of data to file which  
         // causes errorneous handling of timestamps
-        if (dsFile.toString().lastIndexOf(".") == -1){
+        if (dsFile.toString().lastIndexOf(".") == -1) {
             jdbcURL = "jdbc:h2:mem:" + dsFile.toString() + ";LOG=0";
-        }else
+        } else {
             jdbcURL = "jdbc:h2:mem:" + dsFile.toString().substring(0, dsFile.toString().lastIndexOf(".")) + ";LOG=0";
+        }
 
     }
 
@@ -118,6 +119,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
             return true;
         }
     }
+
     public static DataStoreType getDataStoreType(File file) {
         DataStoreProcessor dsdb = new DataStoreProcessor(file);
 
@@ -218,7 +220,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
             //conn = null;
         }
     }
-    
+
     public boolean existsH2DB() throws SQLException {
 
         if ((conn == null) || (conn.isClosed())) {
@@ -288,7 +290,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
                     conn = DriverManager.getConnection(jdbcURL, DB_USER, DB_PASSWORD);
                 } catch (org.h2.jdbc.JdbcSQLException ex2) {
                     return null;
-                }                
+                }
             }
             return conn;
         } else {
@@ -303,10 +305,9 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
 
         // get a statement object
         stmt = conn.createStatement();
-        
+
 //        System.out.println("SET CACHE_SIZE 999000");
 //        stmt.execute("SET CACHE_SIZE 999000");
-
         // set some options
         //stmt.execute("SET LOG 0");
         //stmt.execute("SET WRITE_DELAY 10000");
@@ -358,7 +359,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         for (int i = 0; i < attributes.size(); i++) {
             AttributeData attribute = attributes.get(i);
             String dataType = TYPE_MAP.get(attribute.getType());
-            if (dataType == null){
+            if (dataType == null) {
                 throw new SQLException("unsupported attribute type: " + attribute.getType());
             }
             String attributeName = attribute.getName();
@@ -446,10 +447,10 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         String indexInsert = "INSERT INTO index VALUES (";
         for (int i = contexts.size() - 1; i > 0; i--) {
             indexInsert += "?,";
-        }        
+        }
         indexInsert += "?)";
         pIndexInsertStmt = conn.prepareStatement(indexInsert);
-        
+
         boolean result = parseBlock();
         while (result) {
 
@@ -478,40 +479,41 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         JAMSCalendar cal = new JAMSCalendar();
 //        Calendar localCal = Calendar.getInstance();
         Timestamp ts;
-        
+
         // read the ancestor's data
         row = reader.readLine();
         if (row == null) {
             return false;
         }
-        for (int i = contexts.size() - 1; i > 0; i--) {
+//        for (int i = contexts.size() - 1; i > 0; i--) {
+        for (int i = 1; i < contexts.size(); i++) {
             ContextData cd = contexts.get(i);
 
             StringTokenizer tok = new StringTokenizer(row, "\t");
             tok.nextToken();
             String value = tok.nextToken();
-            if (cd.getType().endsWith("TemporalContext")) {
+            if (cd.getType().endsWith("TemporalContext") || cd.getType().endsWith("TemporalNestedContext")) {
                 value += ":00";
                 cal.setValue(value);
                 ts = new Timestamp(cal.getTimeInMillis());
-                pIndexInsertStmt.setTimestamp(contexts.size()-i, ts, cal);                
-            }else if (cd.getType().contains("optas") || cd.getType().contains("optimizer")) {                
-                pIndexInsertStmt.setLong(contexts.size()-i, Long.parseLong(value));
+                pIndexInsertStmt.setTimestamp(contexts.size() - i, ts, cal);
+            } else if (cd.getType().contains("optas") || cd.getType().contains("optimizer")) {
+                pIndexInsertStmt.setLong(contexts.size() - i, Long.parseLong(value));
             }
             row = reader.readLine();
         }
 
         long position = reader.getPosition();
 //        System.out.println(cal + " - " + ts.getTime() + " - " + position);
-            
+
         pIndexInsertStmt.setLong(contexts.size(), position);
 
         while ((row = reader.readLine()) != null) {
             if (row.startsWith("@end")) {
                 break;
             }
-        }        
-        
+        }
+
 //        try{
 //            while (!(row = reader.readLine()).startsWith("@end")) {
 //            }
@@ -581,26 +583,42 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
 
     /**
      * Check if this is a datastore that contains spatial data that vary in time
+     *
      * @return True or false
      */
     public synchronized boolean isTimeSpaceDatastore() {
         ArrayList<DataStoreProcessor.ContextData> cntxt = getContexts();
-        if (cntxt.size() != 2) {
-            return false;
-        }
-        if (!(cntxt.get(0).getType().equals("jams.model.JAMSSpatialContext") || cntxt.get(0).getType().equals("jams.components.core.SpatialContext") || cntxt.get(0).getType().equals("jams.components.conditional.FilteredSpatialContext"))) {
-            return false;
-        }
-        if (!(cntxt.get(1).getType().equals("jams.model.JAMSTemporalContext") || cntxt.get(1).getType().equals("jams.components.core.TemporalContext"))) {
-            return false;
-        }
+        if (cntxt.size() == 2) {
+            if (!(cntxt.get(0).getType().equals("jams.model.JAMSSpatialContext") || cntxt.get(0).getType().equals("jams.components.core.SpatialContext") || cntxt.get(0).getType().equals("jams.components.conditional.FilteredSpatialContext"))) {
+                return false;
+            }
+            if (!(cntxt.get(1).getType().equals("jams.model.JAMSTemporalContext") || cntxt.get(1).getType().equals("jams.components.core.TemporalContext"))) {
+                return false;
+            }
 
-        this.contexts = cntxt;
-        return true;
+            this.contexts = cntxt;
+            return true;
+        } else if (cntxt.size() == 3) {
+            if (!(cntxt.get(0).getType().equals("jams.model.JAMSSpatialContext") || cntxt.get(0).getType().equals("jams.components.core.SpatialContext") || cntxt.get(0).getType().equals("jams.components.conditional.FilteredSpatialContext"))) {
+                return false;
+            }
+            if (!(cntxt.get(1).getType().equals("jams.components.core.TemporalNestedContext"))) {
+                return false;
+            }
+            if (!(cntxt.get(2).getType().equals("jams.model.JAMSTemporalContext") || cntxt.get(2).getType().equals("jams.components.core.TemporalContext"))) {
+                return false;
+            }
+
+            this.contexts = cntxt;
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Check if this is a datastore that contains several model runs each having timeseries
+     * Check if this is a datastore that contains several model runs each having
+     * timeseries
+     *
      * @return True or false
      */
     public synchronized boolean isEnsembleTimeSeriesDatastore() {
@@ -611,8 +629,8 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         if (!cntxt.get(0).getType().equals("jams.components.core.TemporalContext")) {
             return false;
         }
-        if (!cntxt.get(1).getType().contains("jams.components.optimizer") &&
-                !cntxt.get(1).getType().contains("optas.optimizer")) {
+        if (!cntxt.get(1).getType().contains("jams.components.optimizer")
+                && !cntxt.get(1).getType().contains("optas.optimizer")) {
             return false;
         }
 
@@ -633,9 +651,9 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         this.contexts = cntxt;
         return true;
     }*/
-
     /**
      * Check if this is a datastore that contains no further inner contexts
+     *
      * @return True or false
      */
     public synchronized boolean isSimpleTimeSerieDatastore() {
@@ -664,7 +682,6 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
             cntxt.get(0).getType().contains("jams.components.optimizer")) {
             return false;
         }*/
-
         this.contexts = cntxt;
         return true;
     }
@@ -750,15 +767,15 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
             idList.add(tok.nextToken());
             for (i = 0; i < attributes.size(); i++) {
 //            while (tok.hasMoreTokens()) {
-                try{
+                try {
                     token = tok.nextToken();
-                }catch(NoSuchElementException nsee){
+                } catch (NoSuchElementException nsee) {
                     System.out.println(nsee);
                 }
                 if (selected[i]) {
                     cols[j] = Double.parseDouble(token);
                     //TODO: review this decision .. 
-                    if (cols[j] == JAMS.getMissingDataValue()){
+                    if (cols[j] == JAMS.getMissingDataValue()) {
                         cols[j] = Double.NaN;
                     }
                     j++;
@@ -788,7 +805,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor{
         return new AbstractDataStoreProcessor[0];
     }
 
-    public String toString(){
+    public String toString() {
         return this.dsFile.getName();
     }
 }

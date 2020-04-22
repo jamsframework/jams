@@ -132,6 +132,8 @@ public abstract class AbstractDataStoreProcessor {
             if (idType == null) {
                 if (type.equals("jams.components.core.TemporalContext") || type.equals("jams.model.JAMSTemporalContext")) {
                     this.idType = "JAMSCalendar";
+                } else if (type.equals("jams.components.core.TemporalNestedContext")) {
+                    this.idType = "JAMSCalendar";
                 } else if (type.equals("jams.components.core.SpatialContext") || type.equals("jams.model.JAMSSpatialContext")) {
                     this.idType = "JAMSLong";
                 } else if (type.contains("jams.components.optimizer") || type.contains("optas.optimizer") || type.contains("dump")) {
