@@ -32,13 +32,14 @@ import jams.model.*;
         title = "ArrayToScalar",
         author = "Sven Kralisch",
         description = "Extracts single scalar doubles from an array of double values",
-        date = "2019-12-03",
-        version = "1.0_2"
+        date = "2020-09-03",
+        version = "1.0_3"
 )
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
     @VersionComments.Entry(version = "1.0_1", comment = "Extended to handle multiple values"),
-    @VersionComments.Entry(version = "1.0_2", comment = "Extended to allow iteration over indices/dataArrays")
+    @VersionComments.Entry(version = "1.0_2", comment = "Extended to allow iteration over indices/dataArrays"),
+    @VersionComments.Entry(version = "1.0_3", comment = "Extended to allow iteration be enabled/disabled")
 })
 public class ArrayToScalar extends JAMSComponent {
 
@@ -65,6 +66,13 @@ public class ArrayToScalar extends JAMSComponent {
     public Attribute.Double factor;
 
     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            description = "iterate through array?",
+            defaultValue = "false"
+    )
+    public Attribute.Boolean iterate;
+
+    @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
             description = "extracted value"
     )
@@ -76,7 +84,11 @@ public class ArrayToScalar extends JAMSComponent {
             if (arrayIndex[i].getValue() != -1) {
                 dataValue[i].setValue(dataArray.getValue()[arrayIndex[i].getValue()] * factor.getValue());
             }
-            arrayIndex[i].setValue(arrayIndex[i].getValue() + 1);
+        }
+        if (iterate.getValue()) {
+            for (int i = 0; i < arrayIndex.length; i++) {
+                arrayIndex[i].setValue(arrayIndex[i].getValue() + 1);
+            }
         }
     }
 
