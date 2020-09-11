@@ -58,6 +58,7 @@ public class SpatialContext extends JAMSContext {
      * @param entity the entity to set
      */
     public void setEntity(Attribute.Entity entity) {
+        this.current.setValue(entity.getValue());
         this.current.setId(entity.getId());
     }
 }
