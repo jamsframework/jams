@@ -144,7 +144,7 @@ public class MannKendall extends JAMSComponent {
                 
         boolean considerData = true;        
         if (time != null) {
-            if (time.getTimeInMillis() == JAMS.getMissingDataValue(Long.class)){
+            if (time.getTimeInMillis() == -10000000000L){
                 return;
             }
             if (lastTimeStep == time.getTimeInMillis()) {

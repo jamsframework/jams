@@ -238,6 +238,8 @@ public interface Attribute extends Serializable {
         public java.lang.Object[] getKeys();
 
         public void setValue(THashMap<java.lang.String, java.lang.Object> value);
+        
+        public void setValue(Attribute.Entity value);
 
         public boolean isEmpty();
 

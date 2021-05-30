@@ -118,6 +118,7 @@ public class RuntimeManager extends Observable {
         }
 
         private String getProgressString() {
+            
             long max = runtime.getModel().getProgress()[1];
             long cur = runtime.getModel().getProgress()[0];
 

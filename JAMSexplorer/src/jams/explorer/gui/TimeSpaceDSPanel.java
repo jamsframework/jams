@@ -420,7 +420,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 //            b.setPreferredSize(d);
 //        }
 //    }
-    public static void main(String[] args) throws Exception {
+    public static void main_(String[] args) throws Exception {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception evt) {
@@ -1356,6 +1356,16 @@ public class TimeSpaceDSPanel extends DSPanel {
             }
         });
         workerDlg.execute();
+    }
+    
+    public static void main(String[] args) {
+
+        String s = "2020-08-20";
+        String p = "*-(05|06|07)-*";
+
+        p = p.replaceAll("\\*", ".*");
+        boolean b = s.matches(p);
+        System.out.println(b);
     }
 
     private void showFreeTempMean() {

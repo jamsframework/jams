@@ -183,6 +183,12 @@ public class JAMSEntity implements Attribute.Entity {
     }
 
     @Override
+    public void setValue(Attribute.Entity value) {
+        setValue(value.getValue());
+        setId(value.getId());
+    }
+
+    @Override
     public THashMap<String, Object> getValue() {
         return values;
     }

@@ -126,7 +126,7 @@ public class SpatioTemporalAggregator extends TemporalAggregatorBase {
     @Override
     public void init() {
         super.init();
-        aggregationTime.setTimeInMillis(JAMS.getMissingDataValue(Long.class));
+        aggregationTime.setTimeInMillis(-10000000000L);
         N = entities.getEntities().size();
 
         //create aggreagators

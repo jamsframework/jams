@@ -22,6 +22,7 @@
 package jams.components.conditional;
 
 import jams.data.*;
+import jams.meta.ModelIO;
 import jams.model.Component;
 import jams.model.ComponentEnumerator;
 import jams.model.JAMSComponent;

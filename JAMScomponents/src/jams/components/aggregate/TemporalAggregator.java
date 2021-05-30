@@ -63,7 +63,7 @@ public class TemporalAggregator extends TemporalAggregatorBase {
 
     @Override
     public void initAll() {
-        aggregationTime.setTimeInMillis(JAMS.getMissingDataValue(Long.class));
+        aggregationTime.setTimeInMillis(-10000000000L);
 
         //create aggreagators
         jams.aggregators.TemporalAggregator<Double>[] aggregators;

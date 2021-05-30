@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 
 /**
@@ -59,7 +60,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Defines of attributes are considered or not. "
-                    + "One value per attribute.")
+            + "One value per attribute.")
     public Attribute.Boolean isEnabled[];
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -98,7 +99,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
     ShapeFileOutputDataStore shpStore[] = null;
     HashSet<Double> selectedIds = null;
 
-    boolean isHeaderWritten = false;
+    boolean isHeaderWritten = false, writeShape = false;
 
     Attribute.Calendar lastTimeStep = null;
     int n = 0;
@@ -173,6 +174,8 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
         shpStore = new ShapeFileOutputDataStore[n];
         entityDataProviders = new EntityDataProvider[n];
 
+        writeShape = (srcShapeFile != null);
+
         //copy shapefile to output directory
         for (int i = 0; i < n; i++) {
             if (!isEnabled[i].getValue()) {
@@ -187,19 +190,23 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
             try {
                 f.getParentFile().mkdirs();
                 f2.getParentFile().mkdirs();
-                outData[i] = new SimpleOutputDataStore(f, false);
+                if (writeShape) {
+                    outData[i] = new SimpleOutputDataStore(f, false);
+                }
                 outData2[i] = new SpatialOutputDataStore(f2);
             } catch (IOException ioe) {
                 getModel().getRuntime().sendHalt("Can't write to output file: " + f);
             }
 
-            File originalShpFile = new File(FileTools.createAbsoluteFileName(getModel().getWorkspacePath(), srcShapeFile.getValue()));
-            File newDBFFile = new File(path + "/" + fileName);
-            newDBFFile.mkdirs();
-            try {
-                shpStore[i] = new ShapeFileOutputDataStore(originalShpFile, newDBFFile);
-            } catch (IOException ioe) {
-                getModel().getRuntime().sendErrorMsg(MessageFormat.format(ioe.toString(), getInstanceName()));
+            if (writeShape) {
+                File originalShpFile = new File(FileTools.createAbsoluteFileName(getModel().getWorkspacePath(), srcShapeFile.getValue()));
+                File newDBFFile = new File(path + "/" + fileName);
+                newDBFFile.mkdirs();
+                try {
+                    shpStore[i] = new ShapeFileOutputDataStore(originalShpFile, newDBFFile);
+                } catch (IOException ioe) {
+                    getModel().getRuntime().sendErrorMsg(MessageFormat.format(ioe.toString(), getInstanceName()));
+                }
             }
         }
 
@@ -211,7 +218,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
             lastTimeStep = time.getValue();
             return;
         }*/
-        if (this.time.getTimeInMillis() == JAMS.getMissingDataValue(Long.class)) {
+        if (this.time.getTimeInMillis() == -10000000000L) {
             return;
         }
         if (lastTimeStep != null && this.time.getTimeInMillis() == lastTimeStep.getTimeInMillis()) {
@@ -233,11 +240,15 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
                         }
                         ids.add(iid);
                     }
-                    outData[i].setHeader(ids);
+                    if (writeShape) {
+                        outData[i].setHeader(ids);
+                    }
                     outData2[i].setHeader(ids);
                 }
 
-                outData[i].writeData(time.toString(), entityDataProviders[i]);
+                if (writeShape) {
+                    outData[i].writeData(time.toString(), entityDataProviders[i]);
+                }
                 outData2[i].writeData(time.toString(), entityDataProviders[i]);
             }
             isHeaderWritten = true;
@@ -248,13 +259,16 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
 
     @Override
     public void cleanup() {
-        for (int i = 0; i < n; i++) {
-            if (isEnabled[i].getValue()) {
-                getModel().getRuntime().sendInfoMsg("Transfering data to shapefile from dataset: " + outData[i].getFile().getName());
-                try {
-                    shpStore[i].addDataToShpFiles(outData[i], this.idName.getValue());
-                } catch (IOException ioe) {
-                    getModel().getRuntime().sendHalt("Can't write to output file:" + outData[i].getFile() + "\n" + ioe.toString());
+        if (writeShape) {
+
+            for (int i = 0; i < n; i++) {
+                if (isEnabled[i].getValue()) {
+                    getModel().getRuntime().sendInfoMsg("Transfering data to shapefile from dataset: " + outData[i].getFile().getName());
+                    try {
+                        shpStore[i].addDataToShpFiles(outData[i], this.idName.getValue());
+                    } catch (IOException ioe) {
+                        getModel().getRuntime().sendHalt("Can't write to output file:" + outData[i].getFile() + "\n" + ioe.toString());
+                    }
                 }
             }
         }
@@ -264,7 +278,9 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
                     continue;
                 }
 
-                outData[i].close();
+                if (writeShape) {
+                    outData[i].close();
+                }
                 outData2[i].close();
             }
         } catch (IOException ioe) {
