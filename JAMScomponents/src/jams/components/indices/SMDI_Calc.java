@@ -77,7 +77,7 @@ public class SMDI_Calc extends AbstractDICalc {
 
     @Override
     public void run() {
-
+       
         Stats stats;
 
         if (smdiStats.getValue() == null) {
@@ -126,6 +126,9 @@ public class SMDI_Calc extends AbstractDICalc {
         }
 
         smdi_ = 0.5 * smdi.getValue() + sd_ / 50;
+        
+        smdi_ = Math.max(smdi_, -4);
+        smdi_ = Math.min(smdi_, 4);
 
         smdi.setValue(smdi_);
         sd.setValue(sd_);

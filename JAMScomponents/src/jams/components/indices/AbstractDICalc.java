@@ -130,6 +130,12 @@ public abstract class AbstractDICalc extends JAMSComponent {
             } else {
                 stats.median[i] = sortedList.get(sortedList.size() / 2);
             }
+            
+//            double sum = 0;
+//            for (double v : sortedList) {
+//                sum += v;
+//            }            
+//            stats.median[i] = sum/sortedList.size();
 
             stats.min[i] = sortedList.get(0);
             stats.max[i] = sortedList.get(sortedList.size() - 1);
