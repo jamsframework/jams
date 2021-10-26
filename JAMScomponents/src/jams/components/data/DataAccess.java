@@ -45,32 +45,32 @@ public class DataAccess extends JAMSComponent {
      *  Component attributes
      */
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ
+            access = JAMSVarDescription.AccessType.READWRITE
     )
     public Attribute.Object[] o;
 
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ
+            access = JAMSVarDescription.AccessType.READWRITE
     )
     public Attribute.Double[] d;
 
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ
+            access = JAMSVarDescription.AccessType.READWRITE
     )
     public Attribute.String[] s;
 
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ
+            access = JAMSVarDescription.AccessType.READWRITE
     )
     public Attribute.Integer[] i;
 
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ
+            access = JAMSVarDescription.AccessType.READWRITE
     )
     public Attribute.Long[] l;
 
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ
+            access = JAMSVarDescription.AccessType.READWRITE
     )
     public Attribute.Float[] f;
 
