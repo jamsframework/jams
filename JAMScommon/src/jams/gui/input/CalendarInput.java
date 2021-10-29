@@ -38,7 +38,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -66,11 +65,14 @@ public class CalendarInput extends JPanel implements InputComponent {
     private static DateFormat dateTimeFormat = new SimpleDateFormat(Attribute.Calendar.DEFAULT_FORMAT_PATTERN);
     private Color oldColor;
 
-    public CalendarInput() {
-        this(true);
+    {
         timeFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
         dateFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
         dateTimeFormat.setTimeZone(Attribute.Calendar.DEFAULT_TIME_ZONE);
+    }
+
+    public CalendarInput() {
+        this(true);
     }
 
     public CalendarInput(boolean doLayout) {
