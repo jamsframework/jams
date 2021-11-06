@@ -151,7 +151,7 @@ public class JUICE {
             JAMS.setFloatFormat(floatFormat);
 
             createJUICEFrame(null);
-            
+
             if (cmdLine.getModelFileName() != null) {
                 juiceFrame.loadModel(cmdLine.getModelFileName());
             }
@@ -200,20 +200,20 @@ public class JUICE {
 
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
-                public void run() {
+            public void run() {
+                
 
-
-                    juiceFrame = new JUICEFrame();
-
-                    //        MsgBoxLogHandler.getInstance().setParent(juiceFrame);
-                    //        NotificationLogHandler.getInstance().setParent(juiceFrame);
-                    juiceFrame.setVisible(true);
-                }
-            });
+                juiceFrame = new JUICEFrame();
+                
+                //        MsgBoxLogHandler.getInstance().setParent(juiceFrame);
+                //        NotificationLogHandler.getInstance().setParent(juiceFrame);
+                juiceFrame.setVisible(true);
+            }
+        });
         } catch (InterruptedException | InvocationTargetException ex) {
             JAMSTools.handle(ex);
         }
-                
+
 
         int maxLibClasses = Integer.parseInt(getJamsProperties().getProperty(SystemProperties.MAX_LIB_CLASSES));
 

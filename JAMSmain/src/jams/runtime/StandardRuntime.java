@@ -61,6 +61,7 @@ import jams.model.JAMSSmallModelState;
 import jams.model.Model;
 import jams.tools.JAMSTools;
 import jams.tools.StringTools;
+import jams.tools.XMLTools;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -76,6 +77,8 @@ import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import org.w3c.dom.Document;
@@ -146,6 +149,11 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             boolean doAutoPreprocessing = Boolean.parseBoolean(properties.getProperty(JAMSProperties.AUTO_PREPROCESSING, "false"));
             if (doAutoPreprocessing) {
                 md.metaProcess(this);
+//                try {
+//                    XMLTools.writeXmlFile(modelIO.getModelDocument(md), defaultWorkspacePath + "/model_parallel.jam");
+//                } catch (IOException ex) {
+//                    Logger.getLogger(StandardRuntime.class.getName()).log(Level.SEVERE, null, ex);
+//                }
             }
 
             if (StringTools.isEmptyString(md.getWorkspacePath()) && (defaultWorkspacePath != null)) {

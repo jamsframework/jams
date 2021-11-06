@@ -62,7 +62,7 @@ public class IHA_DischargeIndicators extends TimeSeriesIndicators {
      *  Component attributes
      */
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-            description = "Name of JSON output file (leave empty to diable)")
+            description = "Name of JSON output file (leave empty to disable)")
     public Attribute.String jsonFileName;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,

@@ -27,23 +27,22 @@ import jams.io.*
 import jams.model.*
 
 // helper class needed later on, could also use null instead..
-class ExHandler implements ExceptionHandler {
-    
-    public void handle(JAMSException ex) {
-        println ex
-    }
-
-    public void handle(List<JAMSException> exList) {
-        for (JAMSException jex : exList) {
-            println ex
-            
-        }
-    }
-}
+//class ExHandler implements ExceptionHandler {
+//    
+//    public void handle(JAMSException ex) {
+//        println ex
+//    }
+//
+//    public void handle(List<JAMSException> exList) {
+//        for (JAMSException jex : exList) {
+//            println ex
+//        }
+//    }
+//}
 
 // set some variables first
 propertyFile = "d:/jams/jams-bin/default.jap"
-modelFile = "d:/jamsapplication/JAMS-Gehlberg/j2k_gehlberg.jam"
+modelFile = "c:/jams/data/j2k_gehlberg/j2k_gehlberg_simple.jam"
 defaultWorkspacePath = new File(modelFile).getParent()
 
 // create some property object
@@ -69,27 +68,8 @@ modelDoc = XMLTools.getDocument(modelFile)
 // create a runtime object
 runtime = new StandardRuntime(properties)
 
-// create a ModelDescriptor object, i.e. a representation of the XML for further tweaking etc.
-modelIO = ModelIO.getStandardModelIO();
-modelDescriptor = modelIO.loadModel(modelDoc, runtime.getClassLoader(), false, new ExHandler())
+runtime.loadModel(modelDoc, defaultWorkspacePath, null);
 
-// set the workspace explicitly if needed
-modelDescriptor.setWorkspacePath(defaultWorkspacePath)
-
-controllerClazz = runtime.getClassLoader().loadClass("jams.components.concurrency.ConcurrentContext")
-partitionerClazz = runtime.getClassLoader().loadClass("jams.components.concurrency.EntityPartitioner")
-
-//modelDescriptor.enableConcurrency(2, controllerClazz, new ExHandler());
-//modelDescriptor.metaProcess(runtime);
-
-
-//modelDescriptor.enableSpatialConcurrency(4, controllerClazz, partitionerClazz, new ExHandler());
-
-
-//System.out.println(XMLTools.getStringFromDocument(modelIO.getModelDocument(modelDescriptor)));
-
-// load the model into the runtime and execute it
-runtime.loadModel(modelDescriptor, defaultWorkspacePath)
 runtime.runModel()
 System.exit(0)
 
