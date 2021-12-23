@@ -21,7 +21,6 @@
  */
 package jams.components.io;
 
-import jams.JAMS;
 import jams.io.ShapeFileOutputDataStore;
 import jams.io.SimpleOutputDataStore;
 import jams.components.aggregate.SpatialOutputDataStore;
@@ -36,7 +35,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
 
 /**
@@ -92,6 +90,11 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Entity collection to be used as input")
     public Attribute.EntityCollection entities;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Clean up the tmp dir?",
+            defaultValue = "true")
+    public Attribute.Boolean cleanup;
 
     SimpleOutputDataStore outData[] = null;
     SpatialOutputDataStore outData2[] = null;
@@ -184,8 +187,8 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
             String path = getModel().getWorkspace().getOutputDataDirectory().getAbsolutePath();
             String fileName = this.getInstanceName() + "_" + attributeNames[i];
 
-            File f = new File(FileTools.createAbsoluteFileName(path, fileName + ".dat"));
-            File f2 = new File(FileTools.createAbsoluteFileName(path, fileName + "_SODS.dat"));
+            File f = new File(FileTools.createAbsoluteFileName(path, "_tmp/" + fileName + ".dat"));
+            File f2 = new File(FileTools.createAbsoluteFileName(path, fileName + ".dat"));
             entityDataProviders[i] = new EntityDataProvider(this.attributes[i].getValue(), entities);
             try {
                 f.getParentFile().mkdirs();
@@ -286,5 +289,22 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+
+        // clean up the tmp dir?
+        if (cleanup.getValue()) {
+            File f = new File(FileTools.createAbsoluteFileName(getModel().getWorkspace().getOutputDataDirectory().getAbsolutePath(), "_tmp/"));
+            deleteDirectory(f);
+        }
+
+    }
+
+    boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
     }
 }
