@@ -775,7 +775,7 @@ public class DataStoreProcessor extends AbstractDataStoreProcessor {
                 if (selected[i]) {
                     cols[j] = Double.parseDouble(token);
                     //TODO: review this decision .. 
-                    if (cols[j] == JAMS.getMissingDataValue()) {
+                    if (cols[j] == -9999  || cols[j] == JAMS.getMissingDataValue()) {
                         cols[j] = Double.NaN;
                     }
                     j++;
