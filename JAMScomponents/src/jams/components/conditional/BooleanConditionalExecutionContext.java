@@ -34,52 +34,49 @@ import jams.model.JAMSVarDescription;
  * @author S. Kralisch
  */
 @JAMSComponentDescription(title = "BooleanConditionalContext", author = "Sven Kralisch", date = "7. January 2008", description = "This component represents a JAMS context which can be used to "
-+ "conditionally execute components. This context must contain two components. If \"condition\" is true, the first one will be executed, otherwise the second one.")
+        + "conditionally execute components. This context must contain two components. If \"condition\" is true, the first one will be executed, otherwise the second one.")
 public class BooleanConditionalExecutionContext extends JAMSContext {
 
-    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ, update = JAMSVarDescription.UpdateType.INIT, description = "Boolean attribute defining if the component should be executed")
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            update = JAMSVarDescription.UpdateType.INIT,
+            description = "Boolean attribute defining if the component should be executed")
     public Attribute.Boolean condition;
-    
+
     public BooleanConditionalExecutionContext() {
     }
-    
+
     @Override
     public long getNumberOfIterations() {
-        return 0;
+        return (condition.getValue()?1:0);
     }
 
     @Override
-    public long getRunCount() {
-        return 0;
-    }    
-
-    @Override
-    public ComponentEnumerator getInitEnumerator() {        
-        if (condition.getValue()){
+    public ComponentEnumerator getInitEnumerator() {
+        if (condition.getValue()) {
             return super.getInitEnumerator();
         }
         return new EmptyEnumerator();
     }
-    
+
     @Override
-    public ComponentEnumerator getInitAllEnumerator() {        
-        if (condition.getValue()){
+    public ComponentEnumerator getInitAllEnumerator() {
+        if (condition.getValue()) {
             return super.getInitAllEnumerator();
         }
         return new EmptyEnumerator();
     }
-    
+
     @Override
     public ComponentEnumerator getRunEnumerator() {
-        if (condition.getValue()){
+        if (condition.getValue()) {
             return super.getRunEnumerator();
         }
         return new EmptyEnumerator();
     }
-    
+
     @Override
     public ComponentEnumerator getCleanupEnumerator() {
-        if (condition.getValue()){
+        if (condition.getValue()) {
             return super.getCleanupEnumerator();
         }
         return new EmptyEnumerator();
@@ -87,7 +84,7 @@ public class BooleanConditionalExecutionContext extends JAMSContext {
 
     class EmptyEnumerator implements ComponentEnumerator {
 
-        final DummyComponent dummy = new DummyComponent();        
+        final DummyComponent dummy = new DummyComponent();
         boolean next = true;
 
         public class DummyComponent extends JAMSComponent {

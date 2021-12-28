@@ -81,7 +81,7 @@ public class ArrayToScalar extends JAMSComponent {
     @Override
     public void run() {
         for (int i = 0; i < arrayIndex.length; i++) {
-            if (arrayIndex[i].getValue() != -1) {
+            if (arrayIndex[i].getValue() != -1 && arrayIndex[i].getValue() < dataArray.getValue().length) {
                 dataValue[i].setValue(dataArray.getValue()[arrayIndex[i].getValue()] * factor.getValue());
             }
         }

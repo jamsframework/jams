@@ -74,6 +74,36 @@ public class DataAccess extends JAMSComponent {
     )
     public Attribute.Float[] f;
 
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE
+    )
+    public Attribute.ObjectArray oa;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE
+    )
+    public Attribute.DoubleArray da;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE
+    )
+    public Attribute.StringArray sa;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE
+    )
+    public Attribute.IntegerArray ia;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE
+    )
+    public Attribute.LongArray la;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE
+    )
+    public Attribute.FloatArray fa;
+
     /*
      *  Component run stages
      */
