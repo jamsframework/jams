@@ -39,7 +39,7 @@ public abstract class TemporalAggregatorBase extends JAMSComponent {
     public Attribute.Calendar aggregationTime;
                             
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
-    description = "aggregationMode: sum; avg; min; max; ind;")
+    description = "aggregationMode: sum | avg | min | max | ind | prop | last | var | med | index")
     public Attribute.String[] aggregationMode;
            
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
