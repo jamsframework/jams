@@ -83,6 +83,8 @@ public abstract class DoubleIteratorAggregator extends Aggregator<Iterable<Doubl
                 return new MaximumAggregator(n);
             case VARIANCE:
                 return new VarianceAggregator(n);
+            case PROP:
+                return new ProportionAggregator(n);
             case INDEPENDENT:
                 return null;
         }
@@ -241,7 +243,62 @@ public abstract class DoubleIteratorAggregator extends Aggregator<Iterable<Doubl
             Arrays.fill(counter, 1);
         }
     }
+    
+    //calculates the proportion of non-0 values
+    static class ProportionAggregator extends DoubleIteratorAggregator {
 
+        int counter[];
+
+        public ProportionAggregator(ProportionAggregator copy) {
+            super(copy);
+            counter = new int[copy.v.length];
+        }
+
+        public ProportionAggregator(int n) {
+            super(n);
+            counter = new int[n];
+        }
+
+        @Override
+        public DoubleIteratorAggregator copy() {
+            return new ProportionAggregator(this);            
+        }
+
+        @Override
+        public void init() {
+            super.init();
+            Arrays.fill(v, 0);
+            Arrays.fill(counter, 0);
+        }
+
+        @Override
+        public void consider(Iterable<Double> in) {
+            int i = 0;
+            for (double x : in) {
+                if (!Double.isNaN(x)){
+                    if (x != 0) {
+                        x = 1;
+                    }
+                    v[i] += x;
+                    counter[i]++;
+                }
+                i++;
+            }            
+        }
+
+        @Override
+        public void finish() {
+            super.finish();
+            for (int i = 0; i < v.length; i++) {
+                if (counter[i]!=0)
+                    v[i] /= (double) counter[i];
+                else
+                    v[i] = Double.NaN;
+            }
+            Arrays.fill(counter, 1);
+        }
+    }
+    
     //calculates the variance of the values
     static class VarianceAggregator extends DoubleIteratorAggregator {
 
