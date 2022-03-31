@@ -75,6 +75,14 @@ public class SnowLineElevation extends JAMSComponent {
     public Attribute.String areaName;
 
     @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            description = "elevation sampling step size",
+            defaultValue = "10",
+            unit = "m"
+    )
+    public Attribute.Double stepSize;
+
+    @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
             description = "snow line elevation"
     )
@@ -82,6 +90,7 @@ public class SnowLineElevation extends JAMSComponent {
 
     private List<Attribute.Entity> orderedList;
     private List<double[]> values = new ArrayList();
+    private List<Double> elevations = new ArrayList();
 
     /*
      *  Component run stages
@@ -93,7 +102,7 @@ public class SnowLineElevation extends JAMSComponent {
     @Override
     public void run() {
 
-        double sle, elev, swe, error, area, bestSle = 0, 
+        double elev, swe, error, area, bestSle = 0, 
                 minError = Double.POSITIVE_INFINITY, sweSum;
 
         if (orderedList == null) {
@@ -123,6 +132,12 @@ public class SnowLineElevation extends JAMSComponent {
                 double[] v = {elev, area, 0};
                 values.add(v);
             }
+            
+            double e = values.get(0)[0];
+            while (e > values.get(values.size()-1)[0]) {
+                elevations.add(e);
+                e -= stepSize.getValue();
+            }
         }
 
         // update the swe values
@@ -132,19 +147,17 @@ public class SnowLineElevation extends JAMSComponent {
             i++;
         }
         
-        for (double[] v : values) {
+        for (double sle : elevations) {
 
-            // set the snow line elevation to elevation of current element
-            sle = v[0];
             error = 0;
             sweSum = 0;
 
             // compare all entities against the sle
-            for (double[] w : values) {
+            for (double[] v : values) {
 
-                elev = w[0];
-                area = w[1];
-                swe = w[2];
+                elev = v[0];
+                area = v[1];
+                swe = v[2];
                 sweSum += swe;
 
                 //above but no snow or below but snow
