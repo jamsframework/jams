@@ -139,29 +139,29 @@ public class J2KTSDataStore extends TSDataStore {
     private void readJ2KFile() throws IOException {
 
         // read header information from the J2K time series file
-        String line = j2kTSFileReader.readLine();
+        String line = j2kTSFileReader.readLine().replaceAll("�", "");
         //skip comment lines
         while (line.charAt(0) == '#') {
             this.description += line.substring(1) + NEWLINE;
-            line = j2kTSFileReader.readLine();
+            line = j2kTSFileReader.readLine().replaceAll("�", "");
         }
 
         StringBuffer dataValueAttribs = new StringBuffer();
         while (!line.startsWith(TAGNAME_DATASETATTRIBS)) {
             dataValueAttribs.append(line + NEWLINE);
-            line = j2kTSFileReader.readLine();
+            line = j2kTSFileReader.readLine().replaceAll("�", "");
         }
 
         StringBuffer dataSetAttribs = new StringBuffer();
         while (!line.startsWith(TAGNAME_STATATTRIBVAL)) {
             dataSetAttribs.append(line + NEWLINE);
-            line = j2kTSFileReader.readLine();
+            line = j2kTSFileReader.readLine().replaceAll("�", "");
         }
 
         StringBuffer statAttribVal = new StringBuffer();
         while (!line.startsWith(TAGNAME_DATAVAL)) {
             statAttribVal.append(line + NEWLINE);
-            line = j2kTSFileReader.readLine();
+            line = j2kTSFileReader.readLine().replaceAll("�", "");
         }
 
         // create a DataSetDefinition object
