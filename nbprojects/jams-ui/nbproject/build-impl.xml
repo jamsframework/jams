@@ -948,7 +948,8 @@ is divided into following sections:
     <target depends="init" if="netbeans.automatic.build" name="-clean-after-automatic-build">
         <antcall target="clean"/>
     </target>
-    <target depends="init,deps-jar,-groovy-init-macrodef-javac" name="-pre-pre-compile">
+    <!--<target depends="init,deps-jar,-groovy-init-macrodef-javac" name="-pre-pre-compile">-->
+    <target depends="init,deps-jar" name="-pre-pre-compile">
         <mkdir dir="${build.classes.dir}"/>
     </target>
     <target name="-pre-compile">
