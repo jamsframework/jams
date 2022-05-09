@@ -1,0 +1,25 @@
+Installation instructions for running the IHA_DischargeIndicators JAMS component (you may need elevated permissions)
+
+1. install R for Windows
+
+2. launch R and run
+   R> install.packages("rJava")
+
+3. adapt your PATH variable by adding
+   a) [R installation path]\bin\x64
+   b) [user home]\Documents\R\win-library\4.1\rJava\jri\x64 (see output of step 2 for the exact location)
+
+4. Run JAMS component that includes R-based code using "localPackageDir" option
+   (An installation of RTools is required in this step. If not installed yet, download it from https://cran.r-project.org/bin/windows/Rtools and install it.)
+
+You can install the R libraries by hand by following these alternative steps
+5. launch R command prompt from Java using the windows command prompt
+   a) cd [jamsmodels]\rJava\install
+   b) java -jar RJava.jar
+   (a R command prompt should be opened)
+6. at the R command prompt, run the following commands:
+   a) install.packages("devtools")
+   b) library(devtools)
+   c) install_github("mkoohafkan/flowregime")
+   (An installation of RTools is required in the last step. If not installed yet, install it by following the instructions of the R output and re-run the last command.)
+
