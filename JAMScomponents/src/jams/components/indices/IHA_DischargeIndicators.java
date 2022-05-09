@@ -190,7 +190,7 @@ public class IHA_DischargeIndicators extends TimeSeriesIndicators {
 
             // close the last gap if timeseries ends with a gap
             String[] lastMissing = missingTIs.get(missingTIs.size() - 1);
-            if (lastMissing[1].isEmpty()) {
+            if (lastMissing[1] == null) {
                 lastMissing[1] = sArray[sArray.length - 1];
             }
 
