@@ -19,7 +19,6 @@
  * along with JAMS. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package jams.components.io;
 
 import jams.data.*;
@@ -32,11 +31,11 @@ import jams.workspace.stores.TSDataStore;
  * @author Sven Kralisch <sven at kralisch.com>
  */
 @JAMSComponentDescription(
-    title="TimeIntervalFromDataStore",
-    author="Sven Kralisch",
-    description="Extract a time interval object from a data store",
-    date = "2021-12-22",
-    version = "1.0_0"
+        title = "TimeIntervalFromDataStore",
+        author = "Sven Kralisch",
+        description = "Extract a time interval object from a data store",
+        date = "2021-12-22",
+        version = "1.0_0"
 )
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version")
@@ -46,23 +45,23 @@ public class TimeIntervalFromDataStore extends JAMSComponent {
     /*
      *  Component attributes
      */
-    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Datastore ID")
     public Attribute.String id;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
             description = "The time interval covered by the datastore")
-    public Attribute.TimeInterval timeInterval;    
+    public Attribute.TimeInterval[] timeIntervals;
+
     /*
      *  Component run stages
      */
-    
+
     @Override
     public void init() {
-        
+
         InputDataStore is = null;
-        
+
         if (id != null) {
             is = getModel().getWorkspace().getInputDataStore(id.getValue());
         }
@@ -83,12 +82,13 @@ public class TimeIntervalFromDataStore extends JAMSComponent {
 
         TSDataStore store = (TSDataStore) is;
 
-        
-        timeInterval.setStart(store.getStartDate());
-        timeInterval.setEnd(store.getEndDate());
-        timeInterval.setTimeUnit(store.getTimeUnit());
-        timeInterval.setTimeUnitCount(store.getTimeUnitCount());
-        
+        for (Attribute.TimeInterval timeInterval : timeIntervals) {
+            timeInterval.setStart(store.getStartDate());
+            timeInterval.setEnd(store.getEndDate());
+            timeInterval.setTimeUnit(store.getTimeUnit());
+            timeInterval.setTimeUnitCount(store.getTimeUnitCount());
+        }
+
     }
 
 }

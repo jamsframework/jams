@@ -48,12 +48,13 @@ import java.util.HashSet;
         + "a time loop, this component creates a new Shapefile for each "
         + "given attribute containing the old geometries and a single entity "
         + "attribute value at certain time steps.",
-        date = "2018-09-10",
-        version = "1.0_2")
+        date = "2022-05-11",
+        version = "1.0_3")
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", date = "2006-09-18", comment = "Initial version"),
     @VersionComments.Entry(version = "1.0_1", date = "2017-06-21", comment = "Fixed descriptions"),
-    @VersionComments.Entry(version = "1.0_2", date = "2018-09-10", comment = "Fixed bug with non-existing folder when using persistent output")})
+    @VersionComments.Entry(version = "1.0_2", date = "2018-09-10", comment = "Fixed bug with non-existing folder when using persistent output"),
+    @VersionComments.Entry(version = "1.0_3", date = "2018-09-10", comment = "Output behaviour changed such that subdirectories are created at \"_\"")})
 public class TemporalShapeEntityWriter extends JAMSComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -101,6 +102,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
     File dbfFileOriginal = null;
     ShapeFileOutputDataStore shpStore[] = null;
     HashSet<Double> selectedIds = null;
+    String path;
 
     boolean isHeaderWritten = false, writeShape = false;
 
@@ -179,13 +181,18 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
 
         writeShape = (srcShapeFile != null);
 
+        path = getModel().getWorkspace().getOutputDataDirectory().getAbsolutePath();
+        for (String dir : this.getInstanceName().split("_")) {
+            path += "/" + dir.replace(" ", "_");
+        }
+
         //copy shapefile to output directory
         for (int i = 0; i < n; i++) {
             if (!isEnabled[i].getValue()) {
                 continue;
             }
-            String path = getModel().getWorkspace().getOutputDataDirectory().getAbsolutePath();
-            String fileName = this.getInstanceName() + "_" + attributeNames[i];
+
+            String fileName = attributeNames[i].getValue();
 
             File f = new File(FileTools.createAbsoluteFileName(path, "_tmp/" + fileName + ".dat"));
             File f2 = new File(FileTools.createAbsoluteFileName(path, fileName + ".dat"));
@@ -292,7 +299,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
 
         // clean up the tmp dir?
         if (cleanup.getValue()) {
-            File f = new File(FileTools.createAbsoluteFileName(getModel().getWorkspace().getOutputDataDirectory().getAbsolutePath(), "_tmp/"));
+            File f = new File(FileTools.createAbsoluteFileName(path, "_tmp/"));
             deleteDirectory(f);
         }
 

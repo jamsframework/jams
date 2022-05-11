@@ -1,27 +1,38 @@
-#JAMS-Konfigurationsdatei
-#Wed Apr 13 09:06:41 CEST 2016
-infolog=
-libs=components;../../jamsmodels/nbprojects/components
-guiconfig=true
-docbook-home=docbook
-debugmode=false
-model=
-charset=
-username=
+#JAMS configuration file
+#Wed May 11 23:50:39 CEST 2022
+verbose=false
 profiling=false
-defaultworkspace=true
-windowenable=true
-errordlg=true
+explorerdigits=8
+guiconfig=true
+model=
 maxlibclasses=10000
 windowontop=false
-windowheight=600
-verbose=false
-maxrecentfiles=5
-debug=1
-guiconfigheight=600
+jams_server_user=sven
+debugmode=false
 windowwidth=900
 guiconfigwidth=600
+defaultworkspace=true
+jams_server_pw=skralisch
+windowheight=600
+debug=1
+autosaveparams=true
+recentfiles=D\:\\java\\CCIndex\\data\\testing\\icimod\\ccindex_SPI_clean.jam|D\:\\java\\CCIndex\\data\\testing\\icimod\\ccindex_SPI_clean_.jam|D\:\\java\\CCIndex\\data\\testing\\icimod\\ccindex_SPI.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK3_opt.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK2.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK3.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK2_opt.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\UIB\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK3_tuned_SN - Copy_actET_fixed.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\UIB\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK3_tuned_SN - Copy.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\UIB\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK3_tuned.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant.jam|D\:\\java\\CCIndex\\data\\testing\\icimod\\ccindex_SPI_.jam|D\:\\jamsmodeldata\\Asien\\Santosh\\UIB_HKPL\\hunza_final\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK2.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\hunza_final\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\hunza_final\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK2.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\UIB\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK3 - Copy.jam|D\:\\jamsmodeldata\\Afrika\\Okavango\\J2000g_Cubango_hist\\j2kg_Cubango_monthly_sunh_SK.jam|D\:\\jamsmodeldata\\Afrika\\Okavango\\Deserve J2000g\\Deserve_preferential_Sept_2016_SK.jam|D\:\\jamsmodeldata\\Afrika\\Okavango\\Deserve J2000g\\Deserve_preferential_Sept_2016_SK.xml
 preprocessing=true
-errorlog=
+errordlg=true
+progressfilename=
+guiconfigheight=600
 helpbaseurl=
+windowenable=true
+errorlog=
+forcelocale=en
+maxrecentfiles=20
+username=
+charset=
 floatformat=%f
+docbook-home=docbook
+infolog=
+autosavelogs=true
+jams_server_save_account=true
+progressperiod=-1
+jams_server_recent_urls=http\://picard.geogr.uni-jena.de\:8080/jamscloud/webresources;http\://localhost\:8080/jamscloud/webresources;
+libs=components;../../jamsmodels/nbprojects/components;D\:\\java\\CCIndex\\ccindex-components\\dist\\ccindex_components.jar;D\:\\jamsmodels\\nbprojects\\J2K_Irstea\\dist\\J2K_Irstea.jar
