@@ -274,7 +274,11 @@ public class JAMSWorkspace implements Workspace {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
             this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + sdf.format(cal.getTime()));
         } else {
-            this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
+            if (properties.containsKey("outputDataDirectory")) {
+                this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + properties.getProperty("outputDataDirectory"));
+            } else {
+                this.outputDataDirectory = new File(this.outputDirectory.getPath() + File.separator + "current");
+            }
         }
     }
 
