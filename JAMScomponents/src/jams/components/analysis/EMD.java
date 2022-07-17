@@ -33,11 +33,13 @@ import java.util.List;
 @JAMSComponentDescription(
         author = "Sven Kralisch, based on sources by \"Krusty\" (https://code.google.com/archive/p/realtime-emd)",
         description = "Emprirical Mode Decomposition component",
-        date = "2016-07-14",
-        version = "1.0_0"
+        date = "2022-07-18",
+        version = "1.0_1"
 )
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", comment = "Initial version")
+    @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", comment = "Updated version which takes a list of double values as input. "
+            + "Use jams.components.data.DataColllector to create one.")
 })
 public class EMD extends JAMSComponent {
 
@@ -46,21 +48,15 @@ public class EMD extends JAMSComponent {
      */
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
-            description = "Value"
+            description = "The list of input values"
     )
-    public Attribute.Double input;
+    public Attribute.Object input;
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
             description = "Decomposition array"
     )
     public Attribute.DoubleArray[] output;
-
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,
-            description = "Time interval"
-    )
-    public Attribute.TimeInterval timeInterval;
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
@@ -113,38 +109,27 @@ public class EMD extends JAMSComponent {
         }
     }
 
-    private List<Double> inputList = new ArrayList();
-    private long maxSteps, currentStep = 0;
-
-    @Override
-    public void init() {
-        maxSteps = timeInterval.getNumberOfTimesteps();
-    }
-
     @Override
     public void run() {
-        currentStep++;
-        inputList.add(input.getValue());
-        if (currentStep == maxSteps) {
-            double[] data = new double[inputList.size()];
-            for (int i = 0; i < data.length; i++) {
-                data[i] = inputList.get(i);
-            }
-            EMD emd = new EMD();
-            EmdData emdData = new EmdData();
-            emd.emdCreate(emdData, data.length, order.getValue(), iterations.getValue(), locality.getValue());
-            emd.emdDecompose(emdData, data);
+        List<Double> inputList = (ArrayList<Double>) input.getValue();
+        double[] data = new double[inputList.size()];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = inputList.get(i);
+        }
+        EMD emd = new EMD();
+        EmdData emdData = new EmdData();
+        emd.emdCreate(emdData, data.length, order.getValue(), iterations.getValue(), locality.getValue());
+        emd.emdDecompose(emdData, data);
 
-            for (int i = 0; i < output.length; i++) {
-                if (i >= order.getValue()) {
-                    break;
-                }
-                double[] imf = new double[data.length];
-                for (int j = 0; j < data.length; j++) {
-                    imf[j] = emdData.imfs[i][j];
-                }
-                output[i].setValue(imf);
+        for (int i = 0; i < output.length; i++) {
+            if (i >= order.getValue()) {
+                break;
             }
+            double[] imf = new double[data.length];
+            for (int j = 0; j < data.length; j++) {
+                imf[j] = emdData.imfs[i][j];
+            }
+            output[i].setValue(imf);
         }
     }
 

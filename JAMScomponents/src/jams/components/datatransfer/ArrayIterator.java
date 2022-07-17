@@ -32,8 +32,8 @@ import jams.model.*;
         title = "ArrayIterator",
         author = "Sven Kralisch",
         description = "This component takes a (list of) double array(s) as "
-                + "input and returns the next array element at each invocation"
-                + "of the run methods, this way iterating over the array(s).",
+        + "input and returns the next array element at each invocation"
+        + "of the run methods, this way iterating over the array(s).",
         date = "2019-03-26",
         version = "1.1_0"
 )
@@ -53,17 +53,20 @@ public class ArrayIterator extends JAMSComponent {
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
+            description = "Current index value")
+    public Attribute.Integer arrayIndex;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.WRITE,
             description = "Output double scalar")
     public Attribute.Double[] value;
-
-    int arrayIndex;
 
     /*
      *  Component run stages
      */
     @Override
-    public void init() {
-        arrayIndex = 0;
+    public void initAll() {
+        arrayIndex.setValue(0);
     }
 
     @Override
@@ -71,10 +74,10 @@ public class ArrayIterator extends JAMSComponent {
 
         for (int i = 0; i < array.length; i++) {
 
-            value[i].setValue(array[i].getValue()[arrayIndex]);
+            value[i].setValue(array[i].getValue()[arrayIndex.getValue()]);
 
         }
-        arrayIndex++;
+        arrayIndex.setValue(arrayIndex.getValue()+1);
 
     }
 
