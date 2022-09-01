@@ -20,7 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  *
  */
-
 package jams.components.datatransfer;
 
 import jams.data.*;
@@ -33,68 +32,70 @@ import jams.model.JAMSVarDescription;
  * @author Sven Kralisch
  */
 @JAMSComponentDescription(
-        title="DoubleTransferFraction",
-        author="Sven Kralisch",
-        description="Component for simply transferring multiple double "
+        title = "DoubleTransferFraction",
+        author = "Sven Kralisch",
+        description = "Component for simply transferring multiple double "
         + "attributes) to a target entity. In addition, options to transfer "
         + "only fractions of source data and optional modification of source "
         + "data are possible. Can be used to implement a simple routing "
         + "mechanism (e.g. HRU to HRU or HRU to reach) by taking a source "
-        + "entity's double data and moving it to specified.",
-        version="1.0_0",
-        date="2012-09-27"
-        )
-        public class DoubleTransferFraction extends JAMSComponent {
-    
+        + "entity's double data and moving it to the specified target "
+        + "attributes.",
+        version = "1.0_0",
+        date = "2012-09-27"
+)
+public class DoubleTransferFraction extends JAMSComponent {
+
     /*
      *  Component variables
      */
-    
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             description = "Target entity"
-            )
-            public Attribute.Entity target;
-    
+    )
+    public Attribute.Entity target;
+
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
             description = "Data to be transferred"
-            )
-            public Attribute.Double[] values;
-    
-    @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,    
-            description = "Target entity's receiving attributes"
-            )
-            public Attribute.String[] inNames;
+    )
+    public Attribute.Double[] values;
 
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,    
-            description = "Fractions of data to be transferred"
-            )
-            public Attribute.Double[] fraction;
-    
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Target entity's receiving attributes"
+    )
+    public Attribute.String[] inNames;
+
     @JAMSVarDescription(
-            access = JAMSVarDescription.AccessType.READ,    
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Fractions of data to be transferred. One fraction"
+                    + "value per transferred value is required."
+    )
+    public Attribute.Double[] fraction;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
             description = "Remove transferred data from source values?",
-            defaultValue= "false"
-            )
-            public Attribute.Boolean removeFromSource;    
+            defaultValue = "false"
+    )
+    public Attribute.Boolean removeFromSource;
+
     /*
      *  Component run stages
      */
-    
+
     public void run() {
 
-        if(!target.isEmpty()){
-            for (int i = 0; i < values.length; i++) {            
+        if (!target.isEmpty()) {
+            for (int i = 0; i < values.length; i++) {
                 double x = values[i].getValue() * fraction[i].getValue();
-                target.setDouble(inNames[i].getValue(),target.getDouble(inNames[i].getValue()) + x);
+                target.setDouble(inNames[i].getValue(), target.getDouble(inNames[i].getValue()) + x);
                 if (removeFromSource.getValue()) {
                     values[i].setValue(values[i].getValue() - x);
                 }
-            }   
+            }
         }
-        
+
     }
 }
