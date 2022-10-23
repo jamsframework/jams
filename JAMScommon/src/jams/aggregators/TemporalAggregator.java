@@ -205,10 +205,11 @@ public abstract class TemporalAggregator<T>{
                     break;
             case HALFYEAR: {out.removeUnsignificantComponents(Attribute.Calendar.MONTH); 
                     int month = out.get(Attribute.Calendar.MONTH);
-                    if (month < 6){
+                    if (month < 6) {
                         month = 0;
-                    }else
+                    } else {
                         month = 6;
+                    }
                     out.set(out.get(Attribute.Calendar.YEAR), month, 1, 12, 0, 0);}
                 break;
             case HYDHALFYEAR:
