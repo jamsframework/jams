@@ -54,7 +54,7 @@ import java.util.HashSet;
     @VersionComments.Entry(version = "1.0_0", date = "2006-09-18", comment = "Initial version"),
     @VersionComments.Entry(version = "1.0_1", date = "2017-06-21", comment = "Fixed descriptions"),
     @VersionComments.Entry(version = "1.0_2", date = "2018-09-10", comment = "Fixed bug with non-existing folder when using persistent output"),
-    @VersionComments.Entry(version = "1.0_3", date = "2018-09-10", comment = "Output behaviour changed such that subdirectories are created at \"_\"")})
+    @VersionComments.Entry(version = "1.0_3", date = "2022-05-11", comment = "Output behaviour changed such that subdirectories are created at \"_\"")})
 public class TemporalShapeEntityWriter extends JAMSComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,

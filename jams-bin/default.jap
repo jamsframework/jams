@@ -1,9 +1,10 @@
 #JAMS configuration file
-#Wed May 11 23:50:39 CEST 2022
+#Sat Oct 22 19:55:26 CEST 2022
 verbose=false
 profiling=false
 explorerdigits=8
 guiconfig=true
+Parameter=runoff01_L;
 model=
 maxlibclasses=10000
 windowontop=false
@@ -11,13 +12,15 @@ jams_server_user=sven
 debugmode=false
 windowwidth=900
 guiconfigwidth=600
+Measurement=actDPS;actET;actLPS;actMPS;
 defaultworkspace=true
 jams_server_pw=skralisch
 windowheight=600
-debug=1
+debug=3
 autosaveparams=true
-recentfiles=D\:\\java\\CCIndex\\data\\testing\\icimod\\ccindex_SPI_clean.jam|D\:\\java\\CCIndex\\data\\testing\\icimod\\ccindex_SPI_clean_.jam|D\:\\java\\CCIndex\\data\\testing\\icimod\\ccindex_SPI.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK3_opt.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK2.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK3.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK2_opt.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\UIB\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK3_tuned_SN - Copy_actET_fixed.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\UIB\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK3_tuned_SN - Copy.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\UIB\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK3_tuned.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant.jam|D\:\\java\\CCIndex\\data\\testing\\icimod\\ccindex_SPI_.jam|D\:\\jamsmodeldata\\Asien\\Santosh\\UIB_HKPL\\hunza_final\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK2.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\hunza_final\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\hunza_final\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK2.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\UIB\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK3 - Copy.jam|D\:\\jamsmodeldata\\Afrika\\Okavango\\J2000g_Cubango_hist\\j2kg_Cubango_monthly_sunh_SK.jam|D\:\\jamsmodeldata\\Afrika\\Okavango\\Deserve J2000g\\Deserve_preferential_Sept_2016_SK.jam|D\:\\jamsmodeldata\\Afrika\\Okavango\\Deserve J2000g\\Deserve_preferential_Sept_2016_SK.xml
-preprocessing=true
+recentfiles=D\:\\jamsmodeldata\\Europa\\DRYvER\\dryver_indices_tmpl\\dryver_indices.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\dryver_indices\\dryver_indices.jam|D\:\\java\\CCIndex\\data\\testing\\icimod\\ccindex_SPI_clean_grouped.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\dryver_indices\\dryver_indices3.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\dryver_indices\\dryver_indices2.jam|C\:\\jams\\data\\j2k_gehlberg\\j2k_gehlberg.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_FC_sk.jam|D\:\\jamsmodeldata\\Afrika\\Verlorenvlei\\j2k_Verlorenvlei_GEO_Irrigation_Dam\\j2k_Verlorenvlei_basemodel_damFina4l.jam|D\:\\jamsmodeldata\\Afrika\\Andrew\\J2K_Eerste_res\\J2K_Eerste\\j2k_Eerste_multigauge_DAAD_sub_basin_ak_Irrigation_Res3.jam|D\:\\jamsmodeldata\\Afrika\\Andrew\\J2K_Eerste_res\\J2K_Eerste\\j2k_Eerste_multigauge_DAAD_sub_basin_ak_Irrigation.jam|D\:\\jamsmodeldata\\Th\u00FCringen\\MOHC-HadGEM2-ES-SMHI-RCA4\\$_j2000Klima_fast_EUROCORDEX_SPECHUM_CLT_th.jam|D\:\\jamsmodeldata\\Afrika\\Eerste\\J2K_Eerste\\j2k_Eerste_multigauge_DAAD_sub_basin_ak_Irrigation.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\czechRep\\j2k_morava\\j2k_morava.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\dryver_indices.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_FC.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK.jam|D\:\\jamsmodeldata\\Asien\\HKPL\\hunza_final\\j2k_UIb_HKPL_v4_slim_V3_panshir_snow_parameter_solrad_snowline_UIB_SK.jam|D\:\\jamsmodeldata\\Europa\\DRYvER\\j2k_guadiaro\\j2k_guadiaro_quant_SK3_opt.jam|D\:\\java\\CCIndex\\data\\testing\\icimod\\ccindex_SPI_clean.jam|D\:\\java\\CCIndex\\data\\testing\\icimod\\ccindex_SPI_clean_.jam
+preprocessing=false
+Ignore=actRG1;actRG2;catchmentObsRunoff;catchmentRD1;catchmentRD1_w;catchmentRD2;catchmentRD2_w;catchmentRG1;catchmentRG1_w;catchmentRG2;catchmentRG2_w;catchmentSimRunoff_qm;channelStorage;channelStorage_w;glacStorage;glacierRunoff;iceRunoff;intercStorage;interception;modisSnow;netRad;netRain;netSnow;percolation;potET;precip;ra;rainRunoff;refET;rhum;rs;satLPS;satMPS;snowCoverAreaT;snowDepth;snowET_G;snowET_N;snowMelt;snowMelt_G;snowStorage_G;snowTotSWE;solRad;svRain;svSnow;throughfall;throughfallRain;throughfallSnow;tmax;tmean;tmin;wind;
 errordlg=true
 progressfilename=
 guiconfigheight=600
@@ -25,8 +28,8 @@ helpbaseurl=
 windowenable=true
 errorlog=
 forcelocale=en
-maxrecentfiles=20
 username=
+maxrecentfiles=20
 charset=
 floatformat=%f
 docbook-home=docbook
@@ -35,4 +38,4 @@ autosavelogs=true
 jams_server_save_account=true
 progressperiod=-1
 jams_server_recent_urls=http\://picard.geogr.uni-jena.de\:8080/jamscloud/webresources;http\://localhost\:8080/jamscloud/webresources;
-libs=components;../../jamsmodels/nbprojects/components;D\:\\java\\CCIndex\\ccindex-components\\dist\\ccindex_components.jar;D\:\\jamsmodels\\nbprojects\\J2K_Irstea\\dist\\J2K_Irstea.jar
+libs=components;../../jamsmodels/nbprojects/components;D\:\\java\\CCIndex\\ccindex-components\\dist\\ccindex_components.jar;D\:\\jamsmodels\\nbprojects\\J2K_Irstea\\dist\\J2K_Irstea.jar;D\:\\jamsmodeldata\\Afrika\\Andrew\\components;D\:\\jamsmodeldata\\Afrika\\components-verlorenvlei\\dist\\components-verlorenvlei.jar
