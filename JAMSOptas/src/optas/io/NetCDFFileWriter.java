@@ -9,7 +9,6 @@ import optas.data.TimeSerieEnsemble;
 import jams.data.Attribute.TimeInterval;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
@@ -21,16 +20,16 @@ import optas.data.DataSet.MismatchException;
 import ucar.ma2.*;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
-import ucar.nc2.NetcdfFileWriteable;
+import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.Variable;
 
 public class NetCDFFileWriter {
     
-    private NetcdfFileWriteable file = null;
+    private NetcdfFileWriter file = null;
     
     public NetCDFFileWriter(String file) throws IOException {
             
-        this.file = NetcdfFileWriteable.createNew(file);
+        this.file = NetcdfFileWriter.createNew(file, true);
     }
     
     private boolean hasSuitableTimeInterval(TimeInterval collectionInterval, TimeInterval dataSetInterval) {
@@ -86,11 +85,11 @@ public class NetCDFFileWriter {
     public void write(DataCollection collection) throws IOException, UnsupportedOperationException, MismatchException {
         
         // store meta information
-        file.addAttribute(null, new Attribute("samplerClass", collection.getSamplerClass()));
+        file.addVariableAttribute((String) null, new Attribute("samplerClass", collection.getSamplerClass()));
         
         // create model run dimension
         Integer[] collectionModelRuns = collection.getModelrunIds();
-        Dimension modelRunID = file.addDimension("modelRuns", collectionModelRuns.length, true, false, false);
+        Dimension modelRunID = file.addDimension("modelRuns", collectionModelRuns.length, true, false);
         
         // create model run id variable
         List<Dimension> dimensions = new ArrayList<Dimension>();
@@ -104,16 +103,16 @@ public class NetCDFFileWriter {
             
             collectionInterval = collection.getTimeDomain();
             int numberOfTimeSteps = (int) collectionInterval.getNumberOfTimesteps();
-            time = file.addDimension("time", numberOfTimeSteps, true, false, false);
+            time = file.addDimension("time", numberOfTimeSteps, true, false);
             
             String timeUnit = String.valueOf(collectionInterval.getTimeUnit());
             String timeUnitCount = String.valueOf(collectionInterval.getTimeUnitCount());
             String start = String.valueOf(collectionInterval.getStart().getTimeInMillis());
             String end = String.valueOf(collectionInterval.getEnd().getTimeInMillis());
-            file.addAttribute(null, new Attribute("timeUnit", timeUnit));
-            file.addAttribute(null, new Attribute("timeUnitCount", timeUnitCount));
-            file.addAttribute(null, new Attribute("timeDomainStart", start));
-            file.addAttribute(null, new Attribute("timeDomainEnd", end));
+            file.addVariableAttribute((String) null, new Attribute("timeUnit", timeUnit));
+            file.addVariableAttribute((String) null, new Attribute("timeUnitCount", timeUnitCount));
+            file.addVariableAttribute((String) null, new Attribute("timeDomainStart", start));
+            file.addVariableAttribute((String) null, new Attribute("timeDomainEnd", end));
         }
 
         // create dataset variables
@@ -147,7 +146,7 @@ public class NetCDFFileWriter {
                 }
                 var.addAttribute(new Attribute("timeunit", interval.getTimeUnit()));
                 var.addAttribute(new Attribute("timeunitcount", interval.getTimeUnitCount()));
-                var.addAttribute(new Attribute("start", String.valueOf(interval.getStart().getTimeInMillis())));
+                var.addAttribute(new Attribute("start", (String) String.valueOf(interval.getStart().getTimeInMillis())));
                 var.addAttribute(new Attribute("end", String.valueOf(interval.getEnd().getTimeInMillis())));
             }
             
@@ -161,10 +160,11 @@ public class NetCDFFileWriter {
         file.create();
         
         // write model run ids
-        ArrayInt.D1 modelRunArray = new ArrayInt.D1(collectionModelRuns.length);
+//        ArrayInt.D1 modelRunArray = new ArrayInt.D1(collectionModelRuns.length);
+        Array modelRunArray = Array.factory(DataType.INT, new int[] {collectionModelRuns.length});
         int i;
         for (i = 0; i < collectionModelRuns.length; i++) {
-            modelRunArray.set(i, collectionModelRuns[i]);
+            modelRunArray.setObject(i, collectionModelRuns[i]);
         }
         try {
             file.write("modelRunID", modelRunArray);
