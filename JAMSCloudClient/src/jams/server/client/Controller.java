@@ -203,14 +203,27 @@ public class Controller {
     }
 
     public static void main(String[] args) throws IOException {
-        Controller client = new Controller("http://data.geogr.uni-jena.de:8080/jamscloud/webresources", "adminuser", "adminpassword");
+        Controller client = new Controller("http://data.geogr.uni-jena.de:8080/jamscloud/webresources", "secret", "secret");
 
         User user;
-        user = new User(22, "louise", "lmimeau");
-        user.setEmail("louise.mimeau@inrae.fr");
-        user.setName("Louise Mimeau");
+        
+//        user = client.users().find(7);
+//        System.out.println(user.getEmail());
+//        client.users().delete(user.getId());
+        
+        
+        user = new User(23, "santosh2", "snepal");
+        user.setEmail("santosh3nepal@gmail.com");
+        user.setName("Santosh Nepal");
         user.setAdmin(0);
         client.users().createUser(user);
+
+        user = new User(24, "subodh", "skamal");
+        user.setEmail("asu.patience@gmail.com");
+        user.setName("Subodh Kamal");
+        user.setAdmin(0);
+        client.users().createUser(user);
+        
     }
 
     /**
@@ -219,7 +232,7 @@ public class Controller {
      * @throws IOException
      */
     public static void main2(String[] args) throws IOException {
-        Controller client = new Controller("http://kirk.geogr.uni-jena.de:8080/jams-cloud-server/webresources", "Christian", "jamscloud");
+        Controller client = new Controller("http://kirk.geogr.uni-jena.de:8080/jams-cloud-server/webresources", "secret", "secret");
 
         User user = new User(5);
         user.setAdmin(1);

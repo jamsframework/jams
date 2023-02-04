@@ -1,5 +1,5 @@
 This software is developed and distributed under the GNU LESSER GENERAL PUBLIC LICENSE
-Copyright (C) 2006-2021 FSU Jena
+Copyright (C) 2006-2023 FSU Jena
 
 ------------------------------------------------------------
 
