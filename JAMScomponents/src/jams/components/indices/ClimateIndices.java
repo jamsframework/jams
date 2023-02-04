@@ -289,7 +289,7 @@ public class ClimateIndices extends JAMSComponent {
             KWBinForestVegetationPeriod.setValue(0);
             inTmp[INDEX_KWB_in_thermal_vegetation_period2] = 0;
             inTmp[INDEX_KWB_in_forest_vegetation_period] = 0;
-            inTmp[INDEX_KWB_in_forest_vegetation_period] = 0;
+            inTmp[INDEX_KWB_in_thermal_vegetation_period] = 0;
             inTmp[INDEX_SUMMERINDEX] = -1;
         }                
         if (time.get(Attribute.Calendar.DAY_OF_YEAR)==180){
