@@ -10,7 +10,7 @@
         </classpath>
     </taskdef>
 
-    <target name="doall" depends="buildproj, dostarters, doJ2K, doThornthwaite"/>
+    <target name="doall" depends="buildproj, dostarters, doJ2K, doThornthwaite, doIndices"/>
 
     <target name="dojams" depends="buildproj, dostarters"/>
 
@@ -95,6 +95,11 @@
     <target name="doThornthwaite">
         <ant antfile="../../jamsmodels/nbprojects/Thornthwaite/build.xml" inheritall="false" target="jar"/>
         <echo>Created Thornthwaite</echo>
+    </target>
+	
+    <target name="doIndices">
+        <ant antfile="../../jamsmodels/nbprojects/DRYvER/build.xml" inheritall="false" target="jar"/>
+        <echo>Created Indices</echo>
     </target>
 
     <target name="dostarters" depends="juicestarter, jamsstarter" />
