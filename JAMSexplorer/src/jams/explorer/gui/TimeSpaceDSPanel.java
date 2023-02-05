@@ -79,6 +79,8 @@ import java.net.URI;
 import javax.swing.SwingWorker;
 import jams.explorer.spreadsheet.JAMSSpreadSheet;
 import java.awt.GridBagConstraints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.JSeparator;
 import javax.swing.ListModel;
@@ -236,6 +238,20 @@ public class TimeSpaceDSPanel extends DSPanel {
                 }
             }
         });
+        
+        timeList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                JList list = (JList) evt.getSource();
+                if (evt.getClickCount() >= 2) {
+
+                    int begn = 0;
+                    int end = list.getModel().getSize() - 1;
+                    if (end >= 0) {
+                        list.setSelectionInterval(begn, end);
+                    }
+                }
+            }
+        });
 
         entityList = new JList();
         JScrollPane entityListScroll = new JScrollPane(entityList);
@@ -267,6 +283,20 @@ public class TimeSpaceDSPanel extends DSPanel {
                 }
             }
         });
+        
+        entityList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                JList list = (JList) evt.getSource();
+                if (evt.getClickCount() >= 2) {
+
+                    int begn = 0;
+                    int end = list.getModel().getSize() - 1;
+                    if (end >= 0) {
+                        list.setSelectionInterval(begn, end);
+                    }
+                }
+            }
+        });        
 
         monthList = new JList();
         monthList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -631,7 +661,7 @@ public class TimeSpaceDSPanel extends DSPanel {
 
             AttribCheckBox attribCheck = new AttribCheckBox(attrib, attrib.getName());
             attribCheck.setSelected(attrib.isSelected());
-            
+
             attribCheck.addItemListener(new ItemListener() {
 
                 public void itemStateChanged(ItemEvent e) {
@@ -1357,7 +1387,7 @@ public class TimeSpaceDSPanel extends DSPanel {
         });
         workerDlg.execute();
     }
-    
+
     public static void main(String[] args) {
 
         String s = "2020-08-20";

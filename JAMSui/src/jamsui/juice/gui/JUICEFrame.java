@@ -72,7 +72,7 @@ import org.w3c.dom.Node;
 public class JUICEFrame extends JFrame {
 
     static final Logger log = Logger.getLogger(JUICEFrame.class.getName());
-    private static final int TREE_PANE_WIDTH = 250, RT_MANAGER_HEIGHT = 600;
+    private static final int TREE_PANE_WIDTH = 300, RT_MANAGER_HEIGHT = 600;
     private static final int DIVIDER_WIDTH = 8;
     private PropertyDlg propertyDlg;
     private BrowseJAMSCloudDlg jamsCloudBrowser = null;
@@ -944,7 +944,7 @@ public class JUICEFrame extends JFrame {
         int width = Math.min((int) (d.width * 0.95), JUICE.SCREEN_WIDTH);
 
         setSize(width, height);
-        leftSplitPane.setDividerLocation((int) (height * 0.6));
+        leftSplitPane.setDividerLocation((int) (height * 0.7));
 
         this.libTreePanel.requestFocus();
     }

@@ -1617,7 +1617,6 @@ public class JAMSSpreadSheet extends JPanel {
 
         //GUIHelper.addGBComponent(controlpanel, gbl, openbutton, 0, 2, 1, 1, 0, 0);
         //GUIHelper.addGBComponent(controlpanel, gbl, savebutton, 0, 3, 1, 2, 0, 0);
-        GUIHelper.addGBComponent(controlpanel, gbl, closeButton, 0, 5, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, plotButton, 0, 6, 1, 1, 0, 0);
         GUIHelper.addGBComponent(controlpanel, gbl, dataplotButton, 0, 7, 1, 1, 0, 0);
 
@@ -1634,6 +1633,7 @@ public class JAMSSpreadSheet extends JPanel {
             GUIHelper.addGBComponent(controlpanel, gbl, joinMapButton, 0, 16, 1, 1, 0, 0);
             GUIHelper.addGBComponent(controlpanel, gbl, shapeSelector, 0, 17, 1, 1, 0, 0);
         }
+        GUIHelper.addGBComponent(controlpanel, gbl, closeButton, 0, 18, 1, 1, 0, 0);
 
 //              controlpanel.add(openbutton);
 //              controlpanel.add(savebutton);

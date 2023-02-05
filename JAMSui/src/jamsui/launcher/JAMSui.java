@@ -239,7 +239,6 @@ public class JAMSui {
 
                         runtime.runModel();
 
-//                        System.exit(0);
                     }
 
                 } catch (IOException ioe) {

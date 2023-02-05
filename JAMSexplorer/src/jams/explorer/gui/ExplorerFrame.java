@@ -29,7 +29,6 @@ import jams.explorer.JAMSExplorer;
 import jams.explorer.spreadsheet.STPConfigurator;
 import jams.gui.PropertyDlg;
 import jams.gui.WorkerDlg;
-import jams.gui.WorkspaceDlg;
 import jams.gui.tools.GUIHelper;
 import jams.io.XMLProcessor;
 import jams.server.client.gui.BrowseJAMSCloudDlg;
@@ -42,6 +41,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.ScrollPane;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -85,7 +85,7 @@ import org.w3c.dom.Document;
  */
 public class ExplorerFrame extends JFrame {
 
-    protected static final int INOUT_PANE_WIDTH = 250, INOUT_PANE_HEIGHT = 450;
+    protected static final int INOUT_PANE_WIDTH = 350, INOUT_PANE_HEIGHT = 1000;
     protected static final int DIVIDER_WIDTH = 6;
     protected JFileChooser jfc = GUIHelper.getJFileChooser();
     protected WorkerDlg openWSDlg;
@@ -206,7 +206,10 @@ public class ExplorerFrame extends JFrame {
         inoutSplitPane.setAutoscrolls(true);
         inoutSplitPane.setContinuousLayout(true);
         inoutSplitPane.setLeftComponent(explorer.getDisplayManager().getTreePanel());
-        inoutSplitPane.setRightComponent(explorer.getDisplayManager().getInputDSInfoPanel());
+        ScrollPane infoScroll = new ScrollPane();
+        infoScroll.setMinimumSize(new Dimension(0, 0));
+        infoScroll.add(explorer.getDisplayManager().getInputDSInfoPanel());
+        inoutSplitPane.setRightComponent(infoScroll);
         inoutSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         inoutSplitPane.setDividerLocation(INOUT_PANE_HEIGHT);
         inoutSplitPane.setDividerSize(DIVIDER_WIDTH);
@@ -477,6 +480,7 @@ public class ExplorerFrame extends JFrame {
         setJMenuBar(mainMenu);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(Math.min(d.width, JAMSExplorer.SCREEN_WIDTH), Math.min(d.height, JAMSExplorer.SCREEN_HEIGHT));
+//        setMinimumSize(new Dimension(JAMSExplorer.SCREEN_WIDTH, JAMSExplorer.SCREEN_HEIGHT));
 
     }
 

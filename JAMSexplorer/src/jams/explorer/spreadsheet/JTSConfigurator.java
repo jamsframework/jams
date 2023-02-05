@@ -203,6 +203,10 @@ public class JTSConfigurator extends JFrame {
         this.sheet = sheet;
         this.table = sheet.table;
         
+        if (table.getSelectedColumn() == -1) {
+            this.table.selectAll();
+        }        
+        
         this.columnCount = table.getColumnCount();
         this.rows = table.getSelectedRows();
         this.columns = table.getSelectedColumns();

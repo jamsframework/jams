@@ -98,7 +98,7 @@ public class ComponentAttributePanel extends JPanel {
 
         listPanel = new JPanel();
         listPanel.setLayout(new BorderLayout());
-        listPanel.setPreferredSize(new Dimension(160, 200));
+        listPanel.setPreferredSize(new Dimension(200, 300));
 
         infoPanel = new JPanel();
         infoLayout = new GridBagLayout();

@@ -210,8 +210,8 @@ public class JAMSProperties extends Observable implements SystemProperties, Seri
             p.setProperty(ERRORLOG_IDENTIFIER, "");
             p.setProperty(ERRORDLG_IDENTIFIER, "true");
             p.setProperty(WINDOWENABLE_IDENTIFIER, "true");
-            p.setProperty(WINDOWWIDTH_IDENTIFIER, "900");
-            p.setProperty(WINDOWHEIGHT_IDENTIFIER, "600");
+            p.setProperty(WINDOWWIDTH_IDENTIFIER, "1000");
+            p.setProperty(WINDOWHEIGHT_IDENTIFIER, "800");
             p.setProperty(GUICONFIG_IDENTIFIER, "true");
             p.setProperty(GUICONFIGWIDTH_IDENTIFIER, "600");
             p.setProperty(GUICONFIGHEIGHT_IDENTIFIER, "600");
