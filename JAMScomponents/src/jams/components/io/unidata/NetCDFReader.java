@@ -92,7 +92,7 @@ public class NetCDFReader extends JAMSComponent {
             access = JAMSVarDescription.AccessType.READ,
             description = "Date from which time units are counted. If not set, the value will be extracted from the NetCDF."
     )
-    public Attribute.Calendar baseDate;   
+    public Attribute.Calendar baseDate;
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
@@ -145,7 +145,7 @@ public class NetCDFReader extends JAMSComponent {
         timeIndices = new int[values.length];
 
         try {
-            
+
             //read hru parameter
             String fileName_ = fileName.getValue();
             if (!new File(fileName_).exists() && getModel().getWorkspaceDirectory() != null) {
@@ -155,8 +155,8 @@ public class NetCDFReader extends JAMSComponent {
             if (!new File(fileName_).exists()) {
                 getModel().getRuntime().sendErrorMsg("Couldn't load NetCDF file " + fileName + "!\nIf you are not using an absolute path, "
                         + "please ensure you have defined a workspace directory!");
-            }            
-            
+            }
+
             ncfile = NetcdfFiles.open(fileName_);
 
             if (timeDimName != null && spaceDimName != null) {
@@ -179,14 +179,14 @@ public class NetCDFReader extends JAMSComponent {
             Array timeValues = timeVar.read();
             Variable spaceVar = ncfile.findVariable(spaceDim.getShortName());
             Array spaceValues = spaceVar.read();
-            
-            if (baseDate == null) {           
+
+            if (baseDate == null) {
                 String units = timeVar.getUnitsString();
                 String[] splitUnits = units.split("since ");
                 String baseDateString = splitUnits[1];
                 baseDate = getModel().getRuntime().getDataFactory().createCalendar();
-                baseDate.setValue(baseDateString);            
-            }            
+                baseDate.setValue(baseDateString);
+            }
 
             long baseMillis = baseDate.getTimeInMillis();
             for (int i = 0; i < timeValues.getSize(); i++) {
@@ -224,7 +224,7 @@ public class NetCDFReader extends JAMSComponent {
                 }
 
                 vars.add(var);
-                
+
                 List<Dimension> dimensions = var.getDimensions();
                 int j = 0;
                 for (Dimension dimension : dimensions) {
@@ -278,7 +278,7 @@ public class NetCDFReader extends JAMSComponent {
 
             tIndex = timeMap.get(currentTime.getTimeInMillis());
             sIndex = spaceMap.get(currentEntity.getId());
-           
+
             for (int i = 0; i < vars.size(); i++) {
                 double value = 0;
 
@@ -307,7 +307,7 @@ public class NetCDFReader extends JAMSComponent {
             if (millis != oldMillis) {
                 oldMillis = millis;
                 tIndex = timeMap.get(currentTime.getTimeInMillis());
-                
+
                 for (int i = 0; i < vars.size(); i++) {
 
                     origin[timeIndices[i]] = tIndex;
@@ -322,7 +322,15 @@ public class NetCDFReader extends JAMSComponent {
                 }
             }
 
-            sIndex = spaceMap.get(currentEntity.getId());
+            try {
+                sIndex = spaceMap.get(currentEntity.getId());
+            } catch (Exception ex) {
+                if (!spaceMap.containsKey(currentEntity.getId())) {
+                    getModel().getRuntime().sendErrorMsg("Missing ID in NetCDF file; " + currentEntity.getId());
+                } else {
+                    getModel().getRuntime().sendHalt("Error reading NetCDF file " + fileName.getValue() + "\n" + ex);
+                }
+            }
 
             for (int i = 0; i < vars.size(); i++) {
                 double value = dataArray[i].getDouble(sIndex);
