@@ -1,10 +1,27 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * ClimateIndicesForest.java
+ * Created on 06.02.2023, 23:21:39
+ *
+ * This file is part of JAMS
+ * Copyright (C) FSU Jena
+ *
+ * JAMS is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 3
+ * of the License, or (at your option) any later version.
+ *
+ * JAMS is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with JAMS. If not, see <http://www.gnu.org/licenses/>.
+ *
  */
+
 package jams.components.indices;
 
-import jams.JAMS;
 import jams.data.Attribute;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
@@ -12,12 +29,12 @@ import jams.model.JAMSVarDescription;
 
 /**
  *
- * @author christian
+ * @author Sven Kralisch <sven.kralisch@tlubn.thueringen.de>
  */
 @JAMSComponentDescription(
-        title = "KlimaKennwerte",
-        author = "Christian Fischer",
-        description = "Calculated standard Klimakennwerte for J2000Klima")
+        title = "ClimateIndicesForest",
+        author = "Sven Kralisch",
+        description = "Berechnet die klimatische Wasserbilanz innerhalb der forstlichen Vegetationsperiode")
 public class ClimateIndicesForest extends JAMSComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -82,10 +99,6 @@ public class ClimateIndicesForest extends JAMSComponent {
 
         int day = time.get(Attribute.Calendar.DAY_OF_YEAR);
 
-        if (day == 109) {
-            System.out.println("");
-        }
-
         if (tmp.getValue() == null) {
             tmp.setValue(new double[INDEX_SIZE]);
         }
@@ -102,7 +115,6 @@ public class ClimateIndicesForest extends JAMSComponent {
         //Vegetationsperioden
         if (tmean.getValue() >= 10.0) {
             inTmp[INDEX_successiveDaysWithTmeanAboveTenDegree] += 1;
-//            inTmp[INDEX_successiveDaysWithTmeanBelowTenDegree] = 0;
         } else {
             //tmean<10° and 5+-day-period above 10° before
             if (inTmp[INDEX_successiveDaysWithTmeanAboveTenDegree] >= 5) {
@@ -110,7 +122,6 @@ public class ClimateIndicesForest extends JAMSComponent {
                 inTmp[INDEX_FVB_end_day] = day - 1;
             }
             inTmp[INDEX_successiveDaysWithTmeanAboveTenDegree] = 0;
-//            inTmp[INDEX_successiveDaysWithTmeanBelowTenDegree] += 1;
 
             //vor Start der FVP?
             if (forestVegetationPeriodStart.getValue() == 0) {
@@ -125,7 +136,6 @@ public class ClimateIndicesForest extends JAMSComponent {
 
         //wenn außerhalb FVP, alten Wert speichern
         if (inTmp[INDEX_successiveDaysWithTmeanBelowTenDegree] == 1) {
-//            storeValues(inTmp, day);
             inTmp[INDEX_KWB_in_forest_vegetation_period_old] = inTmp[INDEX_KWB_in_forest_vegetation_period];
             inTmp[INDEX_FVB_end_day] = day - 1;
         }
@@ -135,14 +145,17 @@ public class ClimateIndicesForest extends JAMSComponent {
         KWB.setValue(KWB_mm);
 
         //nach Start der FVP?
-//        if (forestVegetationPeriodStart.getValue() != 0) {
+        if (forestVegetationPeriodStart.getValue() == 0) {
+            if (tmean.getValue() >= 10.0) {
+                inTmp[INDEX_KWB_in_forest_vegetation_period] += KWB_mm;
+            }
+        } else {
             inTmp[INDEX_KWB_in_forest_vegetation_period] += KWB_mm;
-//        }
+        }
 
-        //reset counters .. 
+        //reset counters.. 
         if (day >= 365) {
             if (inTmp[INDEX_successiveDaysWithTmeanAboveTenDegree] >= 5) {
-//                storeValues(inTmp, day);
                 inTmp[INDEX_KWB_in_forest_vegetation_period_old] = inTmp[INDEX_KWB_in_forest_vegetation_period];
                 inTmp[INDEX_FVB_end_day] = day - 1;
             }
@@ -154,8 +167,4 @@ public class ClimateIndicesForest extends JAMSComponent {
 
     }
 
-//    private void storeValues(double[] inTmp, int day) {
-//        inTmp[INDEX_KWB_in_forest_vegetation_period_old] = inTmp[INDEX_KWB_in_forest_vegetation_period];
-//        inTmp[INDEX_FVB_end_day] = day - 1;
-//    }
 }
