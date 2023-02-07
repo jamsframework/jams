@@ -35,7 +35,7 @@ import jams.model.JAMSVarDescription;
 @JAMSComponentDescription(
         title = "ClimateIndicesForest",
         author = "Sven Kralisch",
-        description = "Berechnet die klimatische Wasserbilanz innerhalb der forstlichen Vegetationsperiode")
+        description = "Calculates the climatic water balance within the forest growing season")
 public class ClimateIndicesForest extends JAMSComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
