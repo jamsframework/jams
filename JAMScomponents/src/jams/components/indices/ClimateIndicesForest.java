@@ -22,6 +22,7 @@
 
 package jams.components.indices;
 
+import jams.JAMS;
 import jams.data.Attribute;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
@@ -60,6 +61,11 @@ public class ClimateIndicesForest extends JAMSComponent {
             description = "area of unit",
             unit = "m²")
     public Attribute.Double area;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "weight for calculating normalized climatic water balance, e.g. 30.5 for monthly values",
+            defaultValue = "1")
+    public Attribute.Double normalization_weight;    
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
             description = "current length of the forest vegetation period")
@@ -79,9 +85,14 @@ public class ClimateIndicesForest extends JAMSComponent {
     public Attribute.Double KWB;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
-            description = "calculates the klimatische wasserbilanz (P-potET) during forest vegetation period",
+            description = "calculates the climatic water balance (P-potET) during forest vegetation period",
             unit = "mm")
     public Attribute.Double KWBinForestVegetationPeriod;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during forest vegetation period",
+            unit = "mm")
+    public Attribute.Double KWBinForestVegetationPeriodNorm;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
             description = "tmp variables")
@@ -98,6 +109,7 @@ public class ClimateIndicesForest extends JAMSComponent {
     public void run() {
 
         int day = time.get(Attribute.Calendar.DAY_OF_YEAR);
+        int maxDay = time.getActualMaximum(Attribute.Calendar.DAY_OF_YEAR);
 
         if (tmp.getValue() == null) {
             tmp.setValue(new double[INDEX_SIZE]);
@@ -108,7 +120,8 @@ public class ClimateIndicesForest extends JAMSComponent {
             forestVegetationPeriodStart.setValue(0);
             forestVegetationPeriodEnd.setValue(0);
             forestVegetationPeriodLength.setValue(0);
-            KWBinForestVegetationPeriod.setValue(0);
+            KWBinForestVegetationPeriod.setValue(JAMS.getMissingDataValue());
+            KWBinForestVegetationPeriodNorm.setValue(JAMS.getMissingDataValue());
             inTmp[INDEX_KWB_in_forest_vegetation_period] = 0;
         }
 
@@ -154,7 +167,7 @@ public class ClimateIndicesForest extends JAMSComponent {
         }
 
         //reset counters.. 
-        if (day >= 365) {
+        if (day == maxDay) {
             if (inTmp[INDEX_successiveDaysWithTmeanAboveTenDegree] >= 5) {
                 inTmp[INDEX_KWB_in_forest_vegetation_period_old] = inTmp[INDEX_KWB_in_forest_vegetation_period];
                 inTmp[INDEX_FVB_end_day] = day - 1;
@@ -162,6 +175,9 @@ public class ClimateIndicesForest extends JAMSComponent {
             KWBinForestVegetationPeriod.setValue(inTmp[INDEX_KWB_in_forest_vegetation_period_old]);
             forestVegetationPeriodEnd.setValue(inTmp[INDEX_FVB_end_day]);
             forestVegetationPeriodLength.setValue(forestVegetationPeriodEnd.getValue() - forestVegetationPeriodStart.getValue() + 1);
+            KWBinForestVegetationPeriodNorm.setValue(KWBinForestVegetationPeriod.getValue() * 
+                    normalization_weight.getValue() / forestVegetationPeriodLength.getValue());
+
             inTmp[INDEX_KWB_in_forest_vegetation_period] = 0;
         }
 
