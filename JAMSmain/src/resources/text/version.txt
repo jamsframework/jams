@@ -3,5 +3,5 @@ main.minorversion=15
 main.revision=01
 api.majorversion=1
 api.minorversion=4
-date=20230502
+date=20230205
 contact=nsk@uni-jena.de

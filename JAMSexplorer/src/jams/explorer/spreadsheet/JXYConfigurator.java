@@ -187,6 +187,11 @@ public class JXYConfigurator extends JFrame {
         
         this.sheet = sheet;
         this.table = sheet.table;
+        
+        if (table.getSelectedColumn() == -1) {
+            this.table.selectAll();
+        }            
+        
         this.templateFile = templateFile;
 
         this.rows = table.getSelectedRows();
