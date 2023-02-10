@@ -99,10 +99,9 @@ public class ClimateIndicesForest extends JAMSComponent {
     public Attribute.DoubleArray tmp;
 
     private final int INDEX_successiveDaysWithTmeanAboveTenDegree = 0;
-    private final int INDEX_successiveDaysWithTmeanBelowTenDegree = 1;
-    private final int INDEX_KWB_in_forest_vegetation_period = 2;
-    private final int INDEX_KWB_in_forest_vegetation_period_old = 3;
-    private final int INDEX_FVB_end_day = 4;
+    private final int INDEX_KWB_in_forest_vegetation_period = 1;
+    private final int INDEX_KWB_in_forest_vegetation_period_old = 2;
+    private final int INDEX_FVB_end_day = 3;
     private final int INDEX_SIZE = INDEX_FVB_end_day + 1;
 
     @Override
@@ -145,12 +144,6 @@ public class ClimateIndicesForest extends JAMSComponent {
         if (inTmp[INDEX_successiveDaysWithTmeanAboveTenDegree] == 5
                 && forestVegetationPeriodStart.getValue() == 0) {
             forestVegetationPeriodStart.setValue(day - 4);
-        }
-
-        //wenn außerhalb FVP, alten Wert speichern
-        if (inTmp[INDEX_successiveDaysWithTmeanBelowTenDegree] == 1) {
-            inTmp[INDEX_KWB_in_forest_vegetation_period_old] = inTmp[INDEX_KWB_in_forest_vegetation_period];
-            inTmp[INDEX_FVB_end_day] = day - 1;
         }
 
         //Klimatische Wasserbilanz

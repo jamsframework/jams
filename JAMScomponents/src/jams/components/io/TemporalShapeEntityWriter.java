@@ -31,8 +31,13 @@ import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
 import jams.model.VersionComments;
 import jams.tools.FileTools;
+import jams.tools.StringTools;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,13 +53,14 @@ import java.util.HashSet;
         + "a time loop, this component creates a new Shapefile for each "
         + "given attribute containing the old geometries and a single entity "
         + "attribute value at certain time steps.",
-        date = "2022-05-11",
-        version = "1.0_3")
+        date = "2023-02-10",
+        version = "1.0_4")
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", date = "2006-09-18", comment = "Initial version"),
     @VersionComments.Entry(version = "1.0_1", date = "2017-06-21", comment = "Fixed descriptions"),
     @VersionComments.Entry(version = "1.0_2", date = "2018-09-10", comment = "Fixed bug with non-existing folder when using persistent output"),
-    @VersionComments.Entry(version = "1.0_3", date = "2022-05-11", comment = "Output behaviour changed such that subdirectories are created at \"_\"")})
+    @VersionComments.Entry(version = "1.0_3", date = "2022-05-11", comment = "Output behaviour changed such that subdirectories are created at \"_\""),
+    @VersionComments.Entry(version = "1.0_4", date = "2023-02-10", comment = "Output shapefile can now be renamed to a defined base name plus output attribute")})
 public class TemporalShapeEntityWriter extends JAMSComponent {
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
@@ -65,6 +71,16 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Name of the source Shapefile, relative to workspace")
     public Attribute.String srcShapeFile;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Rename the target Shapefile?",
+            defaultValue = "true")
+    public Attribute.Boolean renameShapeFile;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Base name of the target Shapefile",
+            defaultValue = "")
+    public Attribute.String destShapeFileBase;
 
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
             description = "Name of ID attribute in the Shapefile")
@@ -186,6 +202,10 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
             path += "/" + dir.replace(" ", "_");
         }
 
+        if (renameShapeFile.getValue()) {
+            deleteDirectory(new File(path));
+        }
+
         //copy shapefile to output directory
         for (int i = 0; i < n; i++) {
             if (!isEnabled[i].getValue()) {
@@ -290,6 +310,9 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
 
                 if (writeShape) {
                     outData[i].close();
+                    if (renameShapeFile.getValue()) {
+                        renameShape(shpStore[i].getTargetDirectory(), attributeNames[i].getValue());
+                    }
                 }
                 outData2[i].close();
             }
@@ -302,10 +325,50 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
             File f = new File(FileTools.createAbsoluteFileName(path, "_tmp/"));
             deleteDirectory(f);
         }
-
     }
 
-    boolean deleteDirectory(File directoryToBeDeleted) {
+    void renameShape(File directory, String name) {
+        // rename files       
+        for (File srcFile : directory.listFiles()) {
+            try {
+
+                String fileName = srcFile.getName();
+                int index = fileName.lastIndexOf(".");
+                String baseName = destShapeFileBase.getValue();
+                if (StringTools.isEmptyString(baseName)) {
+                    baseName = fileName.substring(0, index);
+                }
+                fileName = name.concat(fileName.substring(index));
+                fileName = baseName.concat("_" + fileName);
+                Path dest = Paths.get(srcFile.getParent() + "/" + fileName);
+                Path src = Paths.get(srcFile.getAbsolutePath());
+
+                Files.move(src, dest, StandardCopyOption.REPLACE_EXISTING);
+
+            } catch (IOException ioe) {
+                getModel().getRuntime().sendErrorMsg(ioe.toString());
+            }
+
+        }
+    }
+
+    public static void deleteDirectory(File directory) {
+        if (directory.exists()) {
+            File[] files = directory.listFiles();
+            if (null != files) {
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].isDirectory()) {
+                        deleteDirectory(files[i]);
+                    } else {
+                        files[i].delete();
+                    }
+                }
+            }
+        }
+        directory.delete();
+    }
+
+    boolean deleteDirectory_(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {
             for (File file : allContents) {
