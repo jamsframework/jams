@@ -27,6 +27,7 @@ import jams.data.*;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
 import jams.model.JAMSVarDescription;
+import jams.model.VersionComments;
 
 /**
  *
@@ -39,10 +40,14 @@ import jams.model.JAMSVarDescription;
         + "attributes) to a target entity. Can be used to implement a "
         + "simple routing mechanism (e.g. HRU to HRU or HRU to reach) by "
         + "taking a source entity's double data and moving it to specified.",
-        version="1.0_0",
+        version="1.0_1",
         date="2012-09-27"
         )
-        public class DoubleTransfer extends JAMSComponent {
+@VersionComments(entries = {
+    @VersionComments.Entry(version = "1.0_0", date="2012-09-27", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.0_1", date = "2023-06-25", comment = "Added option to copy/overwrite value")
+})
+public class DoubleTransfer extends JAMSComponent {
     
     /*
      *  Component variables
@@ -66,6 +71,12 @@ import jams.model.JAMSVarDescription;
             )
             public Attribute.String[] inNames;
 
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,    
+            description = "Add to existing values if true, overwrite otherwise",
+            defaultValue = "true"
+            )
+            public Attribute.Boolean addValues;
     
     /*
      *  Component run stages
@@ -75,8 +86,12 @@ import jams.model.JAMSVarDescription;
 
         if(!target.isEmpty()){
             int i = 0;
-            for (Attribute.Double value : values) {                
-                target.setDouble(inNames[i].getValue(), value.getValue() + target.getDouble(inNames[i].getValue()));
+            for (Attribute.Double value : values) {       
+                if (addValues.getValue()) {
+                    target.setDouble(inNames[i].getValue(), value.getValue() + target.getDouble(inNames[i].getValue()));
+                } else {
+                    target.setDouble(inNames[i].getValue(), value.getValue());
+                }
                 i++;
             }   
         }
