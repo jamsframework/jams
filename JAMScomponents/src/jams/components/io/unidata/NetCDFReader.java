@@ -326,7 +326,7 @@ public class NetCDFReader extends JAMSComponent {
                 sIndex = spaceMap.get(currentEntity.getId());
             } catch (Exception ex) {
                 if (!spaceMap.containsKey(currentEntity.getId())) {
-                    getModel().getRuntime().sendErrorMsg("Missing ID in NetCDF file; " + currentEntity.getId());
+                    getModel().getRuntime().println("Missing ID in NetCDF file; " + currentEntity.getId(), JAMS.VERBOSE);
                 } else {
                     getModel().getRuntime().sendHalt("Error reading NetCDF file " + fileName.getValue() + "\n" + ex);
                 }
