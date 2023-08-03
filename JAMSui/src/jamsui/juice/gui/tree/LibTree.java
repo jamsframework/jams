@@ -147,7 +147,6 @@ public class LibTree extends JAMSTree {
         //this.collapseAll();
         this.setVisible(true);
         JUICE.setStatusText(JAMS.i18n("Contexts:") + contextCount + " " + JAMS.i18n("Components:") + componentCount);
-
     }
 
     private JAMSNode createLibTree(String[] libsArray) {
@@ -258,7 +257,7 @@ public class LibTree extends JAMSTree {
             JAMSNode packageNode = null;
             for (Class clazz : components) {
 
-                if (clazz.getPackage() != null) {
+                if (clazz.getPackage() != null && !clazz.getPackage().getName().isEmpty()) {
                     newPackage = clazz.getPackage().getName();
                 } else {
                     newPackage = "default package";

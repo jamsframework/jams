@@ -44,6 +44,7 @@ public class JAMSTree extends JTree {
         setCellRenderer(new JAMSTreeRenderer());
         this.componentCollection = componentCollection;
 //        setDragEnabled(true);
+        setRowHeight(getFont().getSize()+4);
     }
 
     public void autoscroll(Point cursorLocation) {
@@ -113,7 +114,7 @@ public class JAMSTree extends JTree {
     }
 
     class JAMSTreeRenderer extends DefaultTreeCellRenderer {
-
+        
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             TreeNode node = (TreeNode) value;
@@ -158,5 +159,5 @@ public class JAMSTree extends JTree {
                 expandPath(new TreePath(((DefaultMutableTreeNode) tmpPath.getLastPathComponent()).getPath()));
             }
         }
-    }
+    } 
 }
