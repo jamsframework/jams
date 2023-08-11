@@ -77,6 +77,11 @@ public class CalendarConditionalContext extends JAMSContext {
     public long getRunCount() {
         return -1;
     }
+    
+    @Override
+    public void initAll() {
+        super.initAll();
+    }    
 
     public class RunEnumerator implements ComponentEnumerator {
 
@@ -136,8 +141,15 @@ public class CalendarConditionalContext extends JAMSContext {
     }
 
     public static void main(String[] args) {
-        String time = "2000-10-10 07:30";
-        String pattern = "^.*-1[0-2]-.*";
-        System.out.println(time.matches(pattern));
+        String time = "1999-12-31 00:00";
+//        String pattern = "^.*-1[0-2]-.*";
+        String pattern = "^(196[1-9]|19[7-8][0-9]|1990)-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]) (?:[0-1][0-9]|2[0-3]):[0-5][0-9]$";
+        
+        for (int year = 1961; year <= 2100; year++) {
+            time = year + "-12-31 00:00";
+            System.out.println(time + " - " + time.matches(pattern));
+        }
+//        System.out.println(time.matches(pattern));
     }
 }
+    

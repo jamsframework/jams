@@ -50,7 +50,7 @@ public class ArrayToScalar extends JAMSComponent {
             access = JAMSVarDescription.AccessType.READ,
             description = "array of values to extract from"
     )
-    public Attribute.DoubleArray dataArray;
+    public Attribute.DoubleArray[] dataArray;
 
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READWRITE,
@@ -81,8 +81,8 @@ public class ArrayToScalar extends JAMSComponent {
     @Override
     public void run() {
         for (int i = 0; i < arrayIndex.length; i++) {
-            if (arrayIndex[i].getValue() != -1 && arrayIndex[i].getValue() < dataArray.getValue().length) {
-                dataValue[i].setValue(dataArray.getValue()[arrayIndex[i].getValue()] * factor.getValue());
+            if (arrayIndex[i].getValue() != -1 && arrayIndex[i].getValue() < dataArray[i].getValue().length) {
+                dataValue[i].setValue(dataArray[i].getValue()[arrayIndex[i].getValue()] * factor.getValue());
             }
         }
         if (iterate.getValue()) {

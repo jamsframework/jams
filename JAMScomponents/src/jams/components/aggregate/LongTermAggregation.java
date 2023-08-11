@@ -88,14 +88,19 @@ public class LongTermAggregation extends JAMSComponent {
     )
     public Attribute.IntegerArray[] nValues;
 
-    int count[][], field;
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READWRITE,
+            description = "internal object"
+    )
+    public Attribute.Object counter;
+
+    int field, maxn;
 
     /*
      *  Component run stages
      */
     @Override
     public void init() {
-        int maxn;
         if (targetUnit.getValue().equals("day")) {
             field = Attribute.Calendar.DAY_OF_YEAR;
             maxn = 366;
@@ -133,11 +138,26 @@ public class LongTermAggregation extends JAMSComponent {
                 da.setValue(new double[maxn]);
             }
         }
-        count = new int[inputAttribute.length][maxn];
     }
 
     @Override
+    public void initAll() {
+        if (counter == null) {
+            counter = getModel().getRuntime().getDataFactory().createObject();
+        }
+        int[][] count = new int[inputAttribute.length][maxn];
+        counter.setValue(count);
+    }
+    
+    
+    @Override
     public void run() {
+        
+        if (counter.getValue() == null) {
+            initAll();
+        }
+
+        int[][] count = (int[][]) counter.getValue();
         if (field < 0) {
             for (int i = 0; i < inputAttribute.length; i++) {
                 count[i][0]++;
@@ -172,6 +192,7 @@ public class LongTermAggregation extends JAMSComponent {
         for (int i = 0; i < nValues.length; i++) {
             nValues[i].setValue(count[i]);
         }
+        counter.setValue(count);
     }
 
     @Override
