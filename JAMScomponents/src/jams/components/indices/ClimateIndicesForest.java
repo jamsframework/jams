@@ -94,6 +94,78 @@ public class ClimateIndicesForest extends JAMSComponent {
             unit = "mm")
     public Attribute.Double KWBinForestVegetationPeriodNorm;
 
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during Apr-Jun",
+            unit = "mm")
+    public Attribute.Double KWBinVP1;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during Jul-Sep",
+            unit = "mm")
+    public Attribute.Double KWBinVP2;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during Apr-Sep",
+            unit = "mm")
+    public Attribute.Double KWBinVP12;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during season 1 (3-5)",
+            unit = "mm")
+    public Attribute.Double KWBinS1;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during season 2 (6-8)",
+            unit = "mm")
+    public Attribute.Double KWBinS2;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during season 3 (9-11)",
+            unit = "mm")
+    public Attribute.Double KWBinS3;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during season 4 (12-2)",
+            unit = "mm")
+    public Attribute.Double KWBinS4;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during Apr-Jun",
+            unit = "mm")
+    public Attribute.Double potETinVP1;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during Jul-Sep",
+            unit = "mm")
+    public Attribute.Double potETinVP2;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during Apr-Sep",
+            unit = "mm")
+    public Attribute.Double potETinVP12;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during season 1 (3-5)",
+            unit = "mm")
+    public Attribute.Double potETinS1;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during season 2 (6-8)",
+            unit = "mm")
+    public Attribute.Double potETinS2;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during season 3 (9-11)",
+            unit = "mm")
+    public Attribute.Double potETinS3;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+            description = "calculates the normalized climatic water balance (P-potET) during season 4 (12-2)",
+            unit = "mm")
+    public Attribute.Double potETinS4;
+
+    
+    
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READWRITE,
             description = "tmp variables")
     public Attribute.DoubleArray tmp;
@@ -173,6 +245,59 @@ public class ClimateIndicesForest extends JAMSComponent {
 
             inTmp[INDEX_KWB_in_forest_vegetation_period] = 0;
         }
+        
+        double potET_mm = potET.getValue() / area.getValue();
+        
+        int month = time.get(Attribute.Calendar.MONTH);
+        if (month >= 3 && month <= 5) {
+            KWBinVP1.setValue(KWB_mm);
+            potETinVP1.setValue(potET_mm);
+        } else {
+            KWBinVP1.setValue(0);
+            potETinVP1.setValue(0);
+        }   
+        if (month >= 6 && month <= 8) {
+            KWBinVP2.setValue(KWB_mm);
+            potETinVP2.setValue(potET_mm);
+        } else {
+            KWBinVP2.setValue(0);
+            potETinVP2.setValue(0);
+        }
+        if (month >= 3 && month <= 8) {
+            KWBinVP12.setValue(KWB_mm);
+            potETinVP12.setValue(potET_mm);
+        } else {
+            KWBinVP12.setValue(0);
+            potETinVP12.setValue(0);
+        }                          
+        if (month >= 2 && month <= 4) {
+            KWBinS1.setValue(KWB_mm);
+            potETinS1.setValue(potET_mm);
+        } else {
+            KWBinS1.setValue(0);   
+            potETinS1.setValue(0);
+        }                          
+        if (month >= 5 && month <= 7) {
+            KWBinS2.setValue(KWB_mm);
+            potETinS2.setValue(potET_mm);
+        } else {
+            KWBinS2.setValue(0);    
+            potETinS2.setValue(0);
+        }                          
+        if (month >= 8 && month <= 10) {
+            KWBinS3.setValue(KWB_mm);
+            potETinS3.setValue(potET_mm);
+        } else {
+            KWBinS3.setValue(0);    
+            potETinS3.setValue(0);
+        }                          
+        if (month >= 11 || month <= 1) {
+            KWBinS4.setValue(KWB_mm);
+            potETinS4.setValue(potET_mm);
+        } else {
+            KWBinS4.setValue(0);    
+            potETinS4.setValue(0);
+        }                          
 
     }
 

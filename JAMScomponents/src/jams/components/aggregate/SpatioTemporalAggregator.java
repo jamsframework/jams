@@ -193,4 +193,9 @@ public class SpatioTemporalAggregator extends TemporalAggregatorBase {
         }
         time.add(interval.getTimeUnit(), -interval.getTimeUnitCount());
     }
+    
+    @Override
+    public void cleanup() {
+        finish();
+    }
 }
