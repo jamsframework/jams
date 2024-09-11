@@ -58,7 +58,7 @@ public class ParallelExecution<X,Y> {
 
         for (int i = 0; i < fileArray.length; i++)  {
             fileName = fileArray[i].getAbsolutePath().replace(rootDir.getAbsolutePath(), "");
-            System.out.print("old filename:" + fileArray[i].getAbsolutePath() + " new filename:" + fileName + " dirZip: " + dirZip.getAbsolutePath());
+            System.out.print("old filename:" + fileArray[i].getAbsolutePath() + " new filename:" + fileName + " dirZip: " + dirZip.getAbsolutePath() + "\n");
             if (fileName.matches(exclude))
                 continue;
             if (fileArray[i].isDirectory()){

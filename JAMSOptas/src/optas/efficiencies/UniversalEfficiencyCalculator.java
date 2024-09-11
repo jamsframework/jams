@@ -26,14 +26,15 @@ import optas.efficiencies.VolumeError.VolumeErrorType;
  */
 @JAMSComponentDescription(
         title = "UniversalEfficiencyCalculator",
-        author = "Christian Fischer",
+        author = "Christian Fischer, Nico Hachgenei",
         description = "Calculates various efficiency measures",
-        version = "1.0_1",
-        date = "2018-11-01"
+        version = "1.0_2",
+        date = "2024-06-24"
 )
 @VersionComments(entries = {
     @VersionComments.Entry(version = "1.0_0", comment = "Initial version"),
-    @VersionComments.Entry(version = "1.0_1", date = "2018-11-01", comment = "Increased number of decimal digits in output.")
+    @VersionComments.Entry(version = "1.0_1", date = "2018-11-01", comment = "Increased number of decimal digits in output."),
+    @VersionComments.Entry(version = "1.0_2", date = "2024-06-24", comment = "added additional efficiency criteria (KGE', weighted KGE', 3 parts of KGE'), added weights for the 3 parts")
 })
 public class UniversalEfficiencyCalculator extends JAMSComponent{
 
@@ -167,25 +168,94 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
     defaultValue = "0")
     public Attribute.Double[] kge_normalized;
 
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "efficiency value: Kling-Gupta-Efficiency prime: corrected for cross-correlation of alpha (variability term) with beta (bias term)",
+    defaultValue = "0")
+    public Attribute.Double[] kge_prime;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "efficiency value: Normalized kge prime",
+    defaultValue = "0")
+    public Attribute.Double[] kge_prime_normalized;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "efficiency value: weighted Kling-Gupta-Efficiency prime: corrected for cross-correlation of alpha (variability term) with beta (bias term) and weighted",
+    defaultValue = "0")
+    public Attribute.Double[] kge_prime_w;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "efficiency value: Normalized weighted kge prime",
+    defaultValue = "0")
+    public Attribute.Double[] kge_prime_w_normalized;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "efficiency value: r par of Kling-Gupta-Efficiency prime: corrected for cross-correlation of alpha (variability term) with beta (bias term)",
+    defaultValue = "0")
+    public Attribute.Double[] kge_prime_r;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "efficiency value: gamma par of Kling-Gupta-Efficiency prime: corrected for cross-correlation of alpha (variability term) with beta (bias term)",
+    defaultValue = "0")
+    public Attribute.Double[] kge_prime_gam;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.WRITE,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "efficiency value: beta par of Kling-Gupta-Efficiency prime: corrected for cross-correlation of alpha (variability term) with beta (bias term)",
+    defaultValue = "0")
+    public Attribute.Double[] kge_prime_bet;
+
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
     description = "time interval(s) to take into account",
     defaultValue="")
     public Attribute.String timeInterval;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    //update = JAMSVarDescription.UpdateType.INIT,
+    description = "weigth (scale-factor for r parameter in weighted KGE'",
+    defaultValue="1")
+    public Attribute.Double r_weight;
 
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "weigth (scale-factor for gamma parameter in weighted KGE'",
+    defaultValue="1")
+    public Attribute.Double gamma_weight;
+
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "weigth (scale-factor for beta parameter in weighted KGE'",
+    defaultValue="1")
+    public Attribute.Double beta_weight;
+    /**
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+    update = JAMSVarDescription.UpdateType.INIT,
+    description = "weights for r, gamma, beta parameters of KGE'",
+    defaultValue="1;1;1")
+    public Attribute.Double[] parweights;
+    **/
     @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
     update = JAMSVarDescription.UpdateType.RUN,
     description = "current model time")
     public Attribute.Calendar time;
 
-    static final public int RMSE=0,NSE1=1,NSE2=2,LNSE1=3,LNSE2=4,AVE=5,R2=6,RBIAS=7,KGE=8;
+    static final public int RMSE=0,NSE1=1,NSE2=2,LNSE1=3,LNSE2=4,AVE=5,R2=6,RBIAS=7,KGE=8,KGEP=9;
 
     static public String[] availableEfficiencies = {
         "Root Mean Square Error", "Nash Sutcliffe (e1)", "Nash Sutcliffe (e2)",
-        "log Nash Sutcliffe (le1)", "log Nash Sutcliffe (le2)", "Average Volume Error", "r2", "relative bias", "KGE", "normalized KGE"};
+        "log Nash Sutcliffe (le1)", "log Nash Sutcliffe (le2)", "Average Volume Error", "r2", "relative bias",
+        "KGE", "normalized KGE", "KGE prime", "normalized KGE prime", "weighted KGE prime", "normalized weighted KGE prime",
+        "parameters of KGE prime and weighted KGE prime"};
 
     ArrayList<Double> measurementList[], simulationList[];
     ArrayList<TimeInterval> timeIntervalList;
+    
     EfficiencyCalculator calcE1 = new NashSutcliffe(1.0),
                          calcE2 = new NashSutcliffe(2.0),
                          calcLe1= new LogarithmicNashSutcliffe(1.0),
@@ -194,7 +264,10 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
                          calcR2 = new CorrelationError(),
                          calcPBias = new VolumeError(VolumeErrorType.Relative),
                          calcLogLikelihood = new LogLikelihood(),
-                         calcKGE = new KGE(); 
+                         calcKGE = new KGE(),
+                         calcKGEprime = new KGEprime();
+    WeightedEfficiencyCalculator calcKGEprime_w = new KGEprime_weighted(); 
+    EfficienciesCalculator calcKGEprimeAllPar = new KGEprimeAllPar();
 
 
     int m = 0;
@@ -291,9 +364,66 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             }
         }
     }
+    // overload setObjective method in order to calculate weighted efficiencies
+    private void setObjective(double m[], double s[], int k, Attribute.Double[] field, Attribute.Double[] normalized_field, WeightedEfficiencyCalculator calc, double[] weights) {
+        
+        if (field != null && field.length > k && field[k] != null) {
+            if ((m.length == 0 || s.length == 0)){
+                field[k].setValue(Double.NaN);
+            }else{
+                field[k].setValue(calc.calc(m, s, weights));
+            }
+        }
+        if (normalized_field != null && normalized_field.length > k && normalized_field[k] != null) {
+            if ((m.length == 0 || s.length == 0)){
+                normalized_field[k].setValue(Double.MAX_VALUE);
+            } else {
+                double value = calc.calcNormative(m, s, weights);
+                if (Double.isNaN(value)) {
+                    normalized_field[k].setValue(Double.MAX_VALUE);
+                } else {
+                    normalized_field[k].setValue(value);
+                }
+            }
+        }
+    }
+
+    private void set4Objectives(double m[], double s[], int k, Attribute.Double[] field1, Attribute.Double[] field2, Attribute.Double[] field3, Attribute.Double[] field4, Attribute.Double[] normalized_field, EfficienciesCalculator calc) {
+        
+        if (field1 != null && field1.length > k && field1[k] != null) {
+            if ((m.length == 0 || s.length == 0)){
+                field1[k].setValue(Double.NaN);
+                field2[k].setValue(Double.NaN);
+                field3[k].setValue(Double.NaN);
+                field4[k].setValue(Double.NaN);
+            }else{
+                double[] fields;
+                fields = calc.calc(m, s);
+                field1[k].setValue(fields[0]);
+                field2[k].setValue(fields[1]);
+                field3[k].setValue(fields[2]);
+                field4[k].setValue(fields[3]);
+            }
+        }
+        if (normalized_field != null && normalized_field.length > k && normalized_field[k] != null) {
+            if ((m.length == 0 || s.length == 0)){
+                normalized_field[k].setValue(Double.MAX_VALUE);
+            } else {
+                double value = calc.calcNormative(m, s);
+                if (Double.isNaN(value)) {
+                    normalized_field[k].setValue(Double.MAX_VALUE);
+                } else {
+                    normalized_field[k].setValue(value);
+                }
+            }
+        }
+    }
     
     @Override
     public void cleanup(){
+        double[] weights = {r_weight.getValue(), gamma_weight.getValue(), beta_weight.getValue()};
+        //double[] weights = {1,1,1};
+        
         firstIteration = false;
 
         this.getModel().getRuntime().println("");
@@ -324,6 +454,13 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
         if (bias_normalized==null || bias_normalized.length < m) bias_normalized = new Attribute.Double[m];
         if (kge==null || kge.length < m) kge = new Attribute.Double[m]; 
         if (kge_normalized==null || kge_normalized.length < m) kge_normalized = new Attribute.Double[m];
+        if (kge_prime==null || kge_prime.length < m) kge_prime = new Attribute.Double[m]; 
+        if (kge_prime_normalized==null || kge_prime_normalized.length < m) kge_prime_normalized = new Attribute.Double[m];
+        if (kge_prime_w==null || kge_prime_w.length < m) kge_prime_w = new Attribute.Double[m]; 
+        if (kge_prime_w_normalized==null || kge_prime_w_normalized.length < m) kge_prime_w_normalized = new Attribute.Double[m];
+        if (kge_prime_r==null || kge_prime_r.length < m) kge_prime_r = new Attribute.Double[m]; 
+        if (kge_prime_gam==null || kge_prime_gam.length < m) kge_prime_gam = new Attribute.Double[m]; 
+        if (kge_prime_bet==null || kge_prime_bet.length < m) kge_prime_bet = new Attribute.Double[m]; 
 
         
         for (int k=0;k<m;k++){
@@ -342,6 +479,11 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             if (ave[k] == null) ave[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (bias[k] == null) bias[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (kge[k] == null) kge[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (kge_prime[k] == null) kge_prime[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (kge_prime_r[k] == null) kge_prime_r[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (kge_prime_gam[k] == null) kge_prime_gam[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (kge_prime_bet[k] == null) kge_prime_bet[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (kge_prime_w[k] == null) kge_prime_w[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (e1_normalized[k] == null) e1_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (e2_normalized[k] == null) e2_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (le1_normalized[k] == null) le1_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
@@ -350,6 +492,8 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             if (ave_normalized[k] == null) ave_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (bias_normalized[k] == null) bias_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
             if (kge_normalized[k] == null) kge_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (kge_prime_normalized[k] == null) kge_prime_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
+            if (kge_prime_w_normalized[k] == null) kge_prime_w_normalized[k] = DefaultDataFactory.getDataFactory().createDouble();
             
             setObjective(m,s,k,e1,e1_normalized,calcE1);
             setObjective(m,s,k,e2,e2_normalized,calcE2);
@@ -360,6 +504,9 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             setObjective(m,s,k,bias,bias_normalized,calcPBias);
             setObjective(m,s,k,log_likelihood, log_likelihood_normalized, calcLogLikelihood);
 	    setObjective(m,s,k,kge, kge_normalized, calcKGE); 
+	    //setObjective(m,s,k,kge_prime, kge_prime_normalized, calcKGEprime); 
+	    set4Objectives(m,s,k,kge_prime,kge_prime_r,kge_prime_gam,kge_prime_bet, kge_prime_normalized, calcKGEprimeAllPar); 
+	    setObjective(m,s,k,kge_prime_w, kge_prime_w_normalized, calcKGEprime_w, weights); 
 
                         
             this.getModel().getRuntime().println("************************************************************");
@@ -373,6 +520,11 @@ public class UniversalEfficiencyCalculator extends JAMSComponent{
             this.getModel().getRuntime().println("*******R2:    " + round(this.r2[k].getValue()) + "  (" + round(this.r2_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******Bias:  " + round(this.bias[k].getValue()) + "  (" + round(this.bias_normalized[k].getValue()) + ")");
             this.getModel().getRuntime().println("*******KGE:   " + round(this.kge[k].getValue()) + "  (" + round(this.kge_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******KGE prime:   " + round(this.kge_prime[k].getValue()) + "  (" + round(this.kge_prime_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******KGE prime weighted:   " + round(this.kge_prime_w[k].getValue()) + "  (" + round(this.kge_prime_w_normalized[k].getValue()) + ")");
+            this.getModel().getRuntime().println("*******KGE prime r:   " + round(this.kge_prime_r[k].getValue()));
+            this.getModel().getRuntime().println("*******KGE prime gamma:   " + round(this.kge_prime_gam[k].getValue()));
+            this.getModel().getRuntime().println("*******KGE prime beta:   " + round(this.kge_prime_bet[k].getValue()));
         }
             this.getModel().getRuntime().println("************************************************************");
     }
