@@ -34,6 +34,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -46,17 +49,22 @@ import java.io.IOException;
         + "text file and offers the current time step stored in the "
         + "first column (attribute \"time\") and the data in other "
         + "columns (attribute \"values\").",
-        date = "2018-09-12",
-        version = "1.0_0"
+        date = "2024-11-24",
+        version = "1.1"
 )
 @VersionComments(entries = {
-    @VersionComments.Entry(version = "1.0_0", date = "2018-09-12", comment = "Initial version")
+    @VersionComments.Entry(version = "1.0_0", date = "2018-09-12", comment = "Initial version"),
+    @VersionComments.Entry(version = "1.1", date = "2024-11-24", comment = "Complete rework of the component")
 })
-public class TemporalFileInputContext extends TemporalContext {
+public class TemporalFileInputContext extends JAMSContext {
 
     /*
      *  Component attributes
      */
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Time interval of temporal context")
+    public Attribute.TimeInterval timeInterval;
+    
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             description = "The name of the file to read from"
@@ -66,13 +74,38 @@ public class TemporalFileInputContext extends TemporalContext {
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             description = "The key word that indicates the start of the data section",
-            defaultValue = "@start"
+            defaultValue = "@dataVal"
     )
     public Attribute.String startIndicator;
 
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "The format string for the date format given",
+            defaultValue = "yyyy-MM-dd HH:mm")
+    public Attribute.String dateFormatString;   
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Read the values in each line of the input file?",
+            defaultValue = "False"
+    )
+    public Attribute.Boolean readValues;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Column index at which to start in case readValues is true ("
+                    + "first column index is 0)",
+            defaultValue = "1"
+    )
+    public Attribute.Integer firstColumn;
+    
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Print the current time every \"printTime\" time steps",
+            defaultValue = "0")
+    public Attribute.Integer printTime;    
+
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.WRITE,
-            description = "Description"
+            description = "The values in each line of the input file"
     )
     public Attribute.Double[] values;
 
@@ -81,11 +114,19 @@ public class TemporalFileInputContext extends TemporalContext {
             description = "The current time, if \"parseDateTime\" was set to "
             + "\"true\""
     )
-    public Attribute.Calendar time;
+    public Attribute.Calendar current;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.WRITE,
+            description = "Lines skipped to reach timeInterval start"
+    )
+    public Attribute.Integer skipLines;
 
     transient private BufferedFileReader fileReader;
     private String line;
     private int counter;
+    private List<Attribute.Calendar> dates = new ArrayList();
+    private int calIndex;
 
     @Override
     protected DataTracer createDataTracer(OutputDataStore store) {
@@ -137,8 +178,8 @@ public class TemporalFileInputContext extends TemporalContext {
      */
     @Override
     public void init() {
-        this.timeInterval = getModel().getRuntime().getDataFactory().createTimeInterval();
-        this.timeInterval.setValue("1970-01-01 00:00 1970-01-01 00:00 1 1");
+//        this.timeInterval = getModel().getRuntime().getDataFactory().createTimeInterval();
+//        this.timeInterval.setValue("1970-01-01 00:00 1970-01-01 00:00 1 1");
         super.init();
         initFile();
     }
@@ -154,34 +195,66 @@ public class TemporalFileInputContext extends TemporalContext {
     }
 
     private void initFile() {
+        
+        DataFactory f = getModel().getRuntime().getDataFactory();
+        Attribute.Calendar date = f.createCalendar();
+        
         try {
             fileReader = new BufferedFileReader(new FileInputStream(new File(this.getModel().getWorkspacePath(), fileName.getValue())), JAMS.getCharset());
             while ((line = fileReader.readLine()) != null) {
-                if (line.startsWith(startIndicator.getValue())) {
+                if (line.trim().equals(startIndicator.getValue())) {
                     break;
                 }
             }
             line = fileReader.readLine();
-            int i = 0;
-            boolean first = true;
-            for (String value : line.split("\\s+")) {
+            String[] cols = line.split("\t");
+            date.setValue(cols[0], dateFormatString.getValue());
 
-                if (first) {
-                    time.setValue(value);
-                    first = false;
-                    continue;
-                }
-
-                values[i].setValue(value);
-                i++;
+            if (date.compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) > 0) {
+                getModel().getRuntime().sendHalt("Error: First date in data file is after start of timeInterval.");
             }
 
+            int skipLines = 0;
+            while (date.compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) < 0) {
+                line = fileReader.readLine();
+                cols = line.split("\t");               
+                date.setValue(cols[0], dateFormatString.getValue());
+                skipLines++;
+            }
+            
+            while (!line.startsWith("#") && date.compareTo(timeInterval.getEnd(), timeInterval.getTimeUnit()) <= 0) {
+                Attribute.Calendar newDate = f.createCalendar();
+                newDate.setValue(date);
+                dates.add(newDate);
+                line = fileReader.readLine();
+                if (!line.startsWith("#")) {
+                    cols = line.split("\t");
+                    date.setValue(cols[0], dateFormatString.getValue());                    
+                }
+            }
+            
+            getModel().getRuntime().println(dates.get(0) + " <-> " + dates.get(dates.size()-1), JAMS.VERBOSE);
+                       
+            calIndex = 0;
+            current.setValue(dates.get(calIndex));
+
+//            if (readValues.getValue()) {
+//                int i = 0;
+//                for (String value : line.split("\\s+")) {
+//                    values[i].setValue(value);
+//                    i++;
+//                }
+//            }
+
             counter = 0;
+            this.skipLines.setValue(skipLines);
+            
         } catch (FileNotFoundException ex) {
             getModel().getRuntime().handle(ex);
-        } catch (IOException ex) {
+        } catch (IOException | ParseException ex) {
             getModel().getRuntime().handle(ex);
         }
+
     }
 
     @Override
@@ -231,48 +304,53 @@ public class TemporalFileInputContext extends TemporalContext {
                 public boolean hasNext() {
 
                     boolean nextComp = ce.hasNext();
-                    if (!nextComp) {
-                        try {
-                            line = fileReader.readLine();
-                        } catch (IOException ex) {
-                            getModel().getRuntime().handle(ex);
-                        }
-                    }
-                    boolean nextLine = (line != null);
-                    return (nextLine || nextComp);
+                    boolean nextTime = calIndex < dates.size() - 1;
+                    return (nextTime || nextComp);
+                    
+//                    if (!nextComp) {
+//                        try {
+//                            
+//                            line = fileReader.readLine();
+//                            
+//                            if (line != null) {
+//                                String[] cols = line.split("\t");
+//                                date.setValue(cols[0], dateFormatString.getValue());
+//                                nextLine = date.compareTo(timeInterval.getEnd(), timeInterval.getTimeUnit()) <= 0;
+//                            } else {
+//                                nextLine = false;
+//                            }                           
+//                            
+//                        } catch (IOException | ParseException ex) {
+//                            getModel().getRuntime().handle(ex);
+//                        }
+//                    }
+//                    return (nextLine || nextComp);
                 }
 
                 @Override
                 public boolean hasPrevious() {
-                    boolean prevLine = false;
+                    boolean prevTime = calIndex > 0;
                     boolean prevComp = ce.hasPrevious();
-                    return (prevLine || prevComp);
+                    return (prevTime || prevComp);
                 }
 
                 @Override
                 public Component next() {
                     // check end of component elements list, if required switch to the next
                     // timestep start with the new Component list again
-                    if (!ce.hasNext() && (line != null)) {
+                    if (!ce.hasNext() && (calIndex < dates.size() - 1)) {
                         for (DataTracer dataTracer : getDataTracers()) {
                             dataTracer.trace();
                         }
+                        calIndex++;
+                        current.setValue(dates.get(calIndex));
 
-                        int i = 0;
-                        boolean first = true;
-                        for (String value : line.split("\\s+")) {
+//                        if (readValues.getValue()) {
+//                            values[i].setValue(value);
+//                            i++;
+//                        }
 
-                            if (first) {
-                                time.setValue(value);
-                                first = false;
-                                continue;
-                            }
-
-                            values[i].setValue(value);
-                            i++;
-                        }
-                        counter++;
-
+                        printTime();
                         ce.reset();
                     }
                     return ce.next();
@@ -280,7 +358,9 @@ public class TemporalFileInputContext extends TemporalContext {
 
                 @Override
                 public void reset() {
-                    initFile();
+//                    initFile();
+                    calIndex = 0;
+                    printTime();
                     ce.reset();
                 }
 
@@ -288,7 +368,22 @@ public class TemporalFileInputContext extends TemporalContext {
                     if (ce.hasPrevious()) {
                         return ce.previous();
                     } else {
-                        return null;
+                        calIndex--;
+                        current.setValue(dates.get(calIndex));
+                        while (ce.hasNext()) {
+                            ce.next();
+                        }
+                        return ce.previous();
+                    }
+                }
+
+                private void printTime() {
+                    if (printTime.getValue() > 0) {
+                        if ((counter % printTime.getValue()) == 0) {
+                            counter = 0;
+                            getModel().getRuntime().println(getInstanceName() + " " + current, JAMS.SILENT);
+                        }
+                        counter++;
                     }
                 }
             };
@@ -334,11 +429,11 @@ public class TemporalFileInputContext extends TemporalContext {
 
     @Override
     public long getNumberOfIterations() {
-        return 1;
+        return dates.size();
     }
 
     @Override
     public String getTraceMark() {
-        return time.toString();
+        return current.toString();
     }
 }
