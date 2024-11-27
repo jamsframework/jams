@@ -112,6 +112,12 @@ public class TSDataStoreReader extends JAMSComponent {
             + "irregular time steps (e.g. months). Aggregation is disabled if "
             + "this value is not set.")
     public Attribute.Calendar time;
+    
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Lines skipped to reach timeInterval start"
+    )
+    public Attribute.Integer skipLines;    
 
     private TSDataStore store;
     private double[] doubles;
@@ -144,7 +150,7 @@ public class TSDataStoreReader extends JAMSComponent {
         }
 
         store = (TSDataStore) is;
-
+        
         // check if the store's time interval matches the provided time interval
         if (store.getStartDate().after(timeInterval.getStart()) && (store.getStartDate().compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) != 0)) {
             getModel().getRuntime().sendHalt("Error accessing datastore \""
@@ -225,52 +231,58 @@ public class TSDataStoreReader extends JAMSComponent {
         storeUnit = store.getTimeUnit();
         storeUnitCount = store.getTimeUnitCount();
 
-        storeDate.removeUnsignificantComponents(storeUnit);
-        targetDate.removeUnsignificantComponents(targetUnit);
+        if (skipLines == null) {
+        
+            storeDate.removeUnsignificantComponents(storeUnit);
+            targetDate.removeUnsignificantComponents(targetUnit);
 
-        int offset = storeDate.compareTo(targetDate, targetUnit);
+            int offset = storeDate.compareTo(targetDate, targetUnit);
 
-        if (offset > 0) {
+            if (offset > 0) {
 
-            getModel().getRuntime().sendHalt("Time series data read by " + this.getInstanceName() + " start after model start time!"
-                    + "\n(" + store.getStartDate() + " vs " + timeInterval.getStart() + ")");
+                getModel().getRuntime().sendHalt("Time series data read by " + this.getInstanceName() + " start after model start time!"
+                        + "\n(" + store.getStartDate() + " vs " + timeInterval.getStart() + ")");
 
-        } else if (offset < 0) {
+            } else if (offset < 0) {
 
-            // check if we can calculate offset directly
-            // this can be done if the step size can be calculated directly from
-            // milliseconds representation, i.e. for weekly time steps and below
-            // else we calculate offset by iterating in time (less efficient)
-            long diff = (targetDate.getTimeInMillis() - storeDate.getTimeInMillis()) / 1000;
-            int steps;
-            switch (storeUnit) {
-                case Attribute.Calendar.DAY_OF_YEAR:
-                    steps = (int) (diff / 3600 / 24 / storeUnitCount);
-                    storeDate.add(storeUnit, storeUnitCount * steps);
-                    break;
-                case Attribute.Calendar.HOUR_OF_DAY:
-                    steps = (int) (diff / 3600 / storeUnitCount);
-                    storeDate.add(storeUnit, storeUnitCount * steps);
-                    break;
-                case Attribute.Calendar.WEEK_OF_YEAR:
-                    steps = (int) (diff / 3600 / 24 / 7 / storeUnitCount);
-                    storeDate.add(storeUnit, storeUnitCount * steps);
-                    break;
-                case Attribute.Calendar.MINUTE:
-                    steps = (int) (diff / 60 / storeUnitCount);
-                    storeDate.add(storeUnit, storeUnitCount * steps);
-                    break;
-                case Attribute.Calendar.SECOND:
-                    steps = (int) (diff / storeUnitCount);
-                    storeDate.add(storeUnit, storeUnitCount * steps);
-                    break;
-                default:
-                    steps = iterateStoreDate(targetDate);
+                // check if we can calculate offset directly
+                // this can be done if the step size can be calculated directly from
+                // milliseconds representation, i.e. for weekly time steps and below
+                // else we calculate offset by iterating in time (less efficient)
+                long diff = (targetDate.getTimeInMillis() - storeDate.getTimeInMillis()) / 1000;
+                int steps;
+                switch (storeUnit) {
+                    case Attribute.Calendar.DAY_OF_YEAR:
+                        steps = (int) (diff / 3600 / 24 / storeUnitCount);
+                        storeDate.add(storeUnit, storeUnitCount * steps);
+                        break;
+                    case Attribute.Calendar.HOUR_OF_DAY:
+                        steps = (int) (diff / 3600 / storeUnitCount);
+                        storeDate.add(storeUnit, storeUnitCount * steps);
+                        break;
+                    case Attribute.Calendar.WEEK_OF_YEAR:
+                        steps = (int) (diff / 3600 / 24 / 7 / storeUnitCount);
+                        storeDate.add(storeUnit, storeUnitCount * steps);
+                        break;
+                    case Attribute.Calendar.MINUTE:
+                        steps = (int) (diff / 60 / storeUnitCount);
+                        storeDate.add(storeUnit, storeUnitCount * steps);
+                        break;
+                    case Attribute.Calendar.SECOND:
+                        steps = (int) (diff / storeUnitCount);
+                        storeDate.add(storeUnit, storeUnitCount * steps);
+                        break;
+                    default:
+                        steps = iterateStoreDate(targetDate);
+                }
+
+                // skip forward datastore to required start time
+                store.skip(steps);
+
             }
-
-            // skip forward datastore to required start time
-            store.skip(steps);
-
+            
+        } else {
+            store.skip(skipLines.getValue());
         }
 
         // check if we have different step size in store and model
