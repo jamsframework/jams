@@ -240,7 +240,7 @@ public class DBFReader extends DBFBase {
 							t_float = Utils.trimLeftSpaces( t_float);
 							if( t_float.length > 0 && !Utils.contains( t_float, (byte)'?')) {
 
-								recordObjects[i] = new Double( new String( t_float));
+								recordObjects[i] = Double.valueOf(new String( t_float));
 							}
 							else {
 
@@ -264,7 +264,7 @@ public class DBFReader extends DBFBase {
 
 							if( t_numeric.length > 0 && !Utils.contains( t_numeric, (byte)'?')) {
 
-								recordObjects[i] = new Double( new String( t_numeric));
+								recordObjects[i] = Double.valueOf(new String( t_numeric));
 							}
 							else {
 
@@ -272,7 +272,7 @@ public class DBFReader extends DBFBase {
 							}
 						}
 						catch( NumberFormatException e) {
-                                                    recordObjects[i] = new Double(0.0);
+                                                    recordObjects[i] = Double.valueOf(0.0);
 							//throw new DBFException( "Failed to parse Number: " + e.getMessage());
 						}
 

@@ -254,7 +254,7 @@ public class ShapeFileOutputDataStore {
                     if (position==-1){
                         objOut[i+k] = null;
                     }else{
-                        objOut[i+k] = new Double(store.getData(fields[i], position));
+                        objOut[i+k] = Double.valueOf(store.getData(fields[i], position));
                     }
                     
                 }
