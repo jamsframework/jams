@@ -10,7 +10,7 @@
         </classpath>
     </taskdef>
 
-    <target name="doall" depends="buildproj, dostarters, doJ2K, doThornthwaite, doIndices"/>
+    <target name="doall" depends="buildproj, dostarters, doJ2K, doThornthwaite, doIndices, doJ2KAfrica"/>
 
     <target name="dojams" depends="buildproj, dostarters"/>
 
@@ -89,6 +89,7 @@
     <target name="doJ2K">
         <ant antfile="../../jamsmodels/nbprojects/J2K_base/nbbuild.xml" inheritall="false" target="jar"/>
         <ant antfile="../../jamsmodels/nbprojects/J2K_ext/nbbuild.xml" inheritall="false" target="jar"/>
+        <ant antfile="../../jamsmodels/nbprojects/J2Kg/build.xml" inheritall="false" target="jar"/>
         <echo>Created J2K</echo>
     </target>
 
@@ -99,7 +100,12 @@
 	
     <target name="doIndices">
         <ant antfile="../../jamsmodels/nbprojects/DRYvER/build.xml" inheritall="false" target="jar"/>
-        <echo>Created Indices</echo>
+        <echo>Created DRYvER</echo>
+    </target>
+
+    <target name="doJ2KAfrica">
+        <ant antfile="../../jamsmodels/nbprojects/J2K_Africa/build.xml" inheritall="false" target="jar"/>
+        <echo>Created J2K_Africa</echo>
     </target>
 
     <target name="dostarters" depends="juicestarter, jamsstarter" />
