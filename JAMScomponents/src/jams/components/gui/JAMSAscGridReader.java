@@ -45,23 +45,23 @@ public class JAMSAscGridReader {
 		while (st.hasMoreTokens()) {
 		    String tok = st.nextToken();
 		    if (tok.contains("ncols")) {
-			ncols = new Integer(st.nextToken()).intValue();
+			ncols = Integer.parseInt(st.nextToken());
 			datafound++;
 		    }
 		    if (tok.contains("nrows")) {
-			nrows = new Integer(st.nextToken()).intValue();
+			nrows = Integer.parseInt(st.nextToken());
 			datafound++;
 		    }
 		    if (tok.contains("xllcorner")) {
-			x11corner = new Double(st.nextToken()).doubleValue();
+			x11corner = Double.parseDouble(st.nextToken());
 			datafound++;
 		    }
 		    if (tok.contains("yllcorner")) {
-			y11corner = new Double(st.nextToken()).doubleValue();
+			y11corner = Double.parseDouble(st.nextToken());
 			datafound++;
 		    }
 		    if (tok.contains("cellsize")) {
-			cellsize = new Double(st.nextToken()).doubleValue();
+			cellsize = Double.parseDouble(st.nextToken());
 			datafound++;
 		    }		    
 		}	    
@@ -85,7 +85,7 @@ public class JAMSAscGridReader {
 			firsttoken = false;
 			//optional
 			if (tok.contains("NODATA_value")) {		    
-			    nodatavalue = new Double(st.nextToken()).doubleValue();
+			    nodatavalue = Double.parseDouble(st.nextToken());
 			}
 			if (st.hasMoreTokens()) {
 			    tok = st.nextToken();
@@ -93,7 +93,7 @@ public class JAMSAscGridReader {
 			else
 			    continue;
 		    }
-		    grid[x][y] = new Double(tok).doubleValue();
+		    grid[x][y] = Double.valueOf(tok);
 		    
 		    if (Math.abs(grid[x][y]-this.nodatavalue) < 0.0001) {
 			grid[x][y] = -1.0;

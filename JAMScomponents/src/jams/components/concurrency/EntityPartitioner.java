@@ -227,7 +227,7 @@ public class EntityPartitioner extends JAMSComponent {
         boolean mapChanged = true;
 
         for (Attribute.Entity e : col.getEntities()) {
-            depthMap.put(e, new Integer(0));
+            depthMap.put(e, Integer.valueOf(0));
         }
 
         //put all collection elements (keys) and their depth (values) into a HashMap

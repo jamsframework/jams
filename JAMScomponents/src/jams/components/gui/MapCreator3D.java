@@ -385,7 +385,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
             SimpleFeatureType mapFType = sftb.buildFeatureType();
 
             Iterator<Attribute.Entity> hrusIterate = hrus.getEntities().iterator();
-            Set<Double> s = new TreeSet<Double>();
+            Set<Double> s = new TreeSet<>();
             Attribute.Entity e = null;
 
             while (hrusIterate.hasNext()) {
@@ -396,8 +396,7 @@ public class MapCreator3D extends JAMSGUIComponent implements MouseListener {
                     continue;
                 }                
                 
-                SimpleFeature f = SimpleFeatureBuilder.template(mapFType, new Integer(
-                        new Double(e.getDouble("ID")).intValue()).toString());
+                SimpleFeature f = SimpleFeatureBuilder.template(mapFType, Integer.toString(Double.valueOf(e.getDouble("ID")).intValue()));
                 f.setAttribute("geo", e.getGeometry("geom"));
                 f.setAttribute("newAt", e.getDouble(showAttr.getValue()[i]));
                 fc.add(f);

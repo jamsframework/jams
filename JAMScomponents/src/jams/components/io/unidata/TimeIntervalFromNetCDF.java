@@ -22,12 +22,9 @@
 package jams.components.io.unidata;
 
 import jams.JAMS;
-import jams.components.io.*;
 import jams.data.*;
 import jams.model.*;
 import jams.tools.FileTools;
-import jams.workspace.stores.InputDataStore;
-import jams.workspace.stores.TSDataStore;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -116,7 +113,7 @@ public class TimeIntervalFromNetCDF extends JAMSComponent {
             
             NetcdfFile ncfile = NetcdfFiles.open(fileName_);
             Dimension timeDim = null;
-
+ 
             if (timeDimName != null) {
                 timeDim = ncfile.findDimension(timeDimName.getValue());
             }
@@ -125,19 +122,26 @@ public class TimeIntervalFromNetCDF extends JAMSComponent {
                 List<Dimension> dimensions = ncfile.getDimensions();
                 String error = "Please choose one of the following dimensions:";
                 for (Dimension dimension : dimensions) {
-                    String unit = ncfile.findVariable(dimension.getName()).getUnitsString();
+                    String unit = "";
+                    Variable var = ncfile.findVariable(dimension.getName());
+                    if (var != null) {
+                        unit = var.getUnitsString();
+                    }
                     error += "\nDimension: " + dimension + " [" + unit + "]";
                 }
                 getModel().getRuntime().sendHalt("Wrong dimension name. " + error);
                 return;
             }
 
-
             Variable timeVar = ncfile.findVariable(timeDim.getShortName());
-            
+                        
+            int baseUnit = 24;
             if (baseDate == null) {           
                 String units = timeVar.getUnitsString();
                 String[] splitUnits = units.split("since ");
+                if (splitUnits[0].startsWith("hours")) {
+                    baseUnit = 1;
+                } 
                 String baseDateString = splitUnits[1];
                 baseDate = getModel().getRuntime().getDataFactory().createCalendar();
                 baseDate.setValue(baseDateString);            
@@ -145,8 +149,8 @@ public class TimeIntervalFromNetCDF extends JAMSComponent {
 
             Array timeValues = timeVar.read();
             long baseMillis = baseDate.getTimeInMillis();
-            long startMillis = Math.round(timeValues.getDouble(0) * 24 * 60 * 60 * 1000);
-            long endMillis = Math.round(timeValues.getDouble((int) timeValues.getSize()-1) * 24 * 60 * 60 * 1000);
+            long startMillis = Math.round(timeValues.getDouble(0) * baseUnit * 60 * 60 * 1000);
+            long endMillis = Math.round(timeValues.getDouble((int) timeValues.getSize()-1) * baseUnit * 60 * 60 * 1000);
             
             Attribute.Calendar startDate = getModel().getRuntime().getDataFactory().createCalendar();
             Attribute.Calendar endDate = getModel().getRuntime().getDataFactory().createCalendar();
