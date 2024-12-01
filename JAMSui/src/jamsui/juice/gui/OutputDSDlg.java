@@ -481,7 +481,7 @@ public class OutputDSDlg extends JDialog {
             ArrayList<Object[]> storesVector = new ArrayList<Object[]>();
             for (OutputDSDescriptor ods : storesList) {
                 Object row[] = new Object[2];
-                row[0] = new Boolean(ods.isEnabled());
+                row[0] = ods.isEnabled();
                 row[1] = ods;
                 storesVector.add(row);
             }

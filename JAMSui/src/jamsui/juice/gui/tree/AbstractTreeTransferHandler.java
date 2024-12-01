@@ -113,7 +113,7 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
             for (Enumeration enumeration = draggedNode.depthFirstEnumeration(); enumeration.hasMoreElements();) {
                 JAMSNode element = (JAMSNode) enumeration.nextElement();
                 TreePath treePath = new TreePath(element.getPath());
-                expandedStates.add(new Boolean(tree.isExpanded(treePath)));
+                expandedStates.add(tree.isExpanded(treePath));
             }
             draggedNodeParent = (JAMSNode) draggedNode.getParent();
             BufferedImage image = null;
