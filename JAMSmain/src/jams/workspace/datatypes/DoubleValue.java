@@ -41,7 +41,7 @@ public class DoubleValue implements DataValue {
         if (value.isEmpty()) {
             this.value = Double.NaN;
         } else {
-            this.value = new Double(value);
+            this.value = Double.valueOf(value);
         }
     }
 
@@ -66,11 +66,11 @@ public class DoubleValue implements DataValue {
     }
 
     public void setLong(long value) {
-        this.value = new Double(value);
+        this.value = Double.valueOf(value);
     }
 
     public void setString(String value) throws NumberFormatException {
-        this.value = new Double(value);
+        this.value = Double.valueOf(value);
     }
 
     public void setObject(Object value) {

@@ -159,7 +159,7 @@ public class EnsembleTimeSeriesProcessor extends Processor {
      */
     public synchronized DataMatrix getTimeSeriesData(long modelRun) throws SQLException, IOException {
 
-        setEnsembleFilter(new Long(modelRun).toString());
+        setEnsembleFilter(Long.valueOf(modelRun).toString());
         ResultSet rs = getData();
         DataMatrix result = null;
         if (rs.next()) {

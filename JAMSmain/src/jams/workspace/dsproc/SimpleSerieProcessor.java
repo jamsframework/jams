@@ -142,7 +142,7 @@ public class SimpleSerieProcessor extends Processor {
             }
         }
         Long id[] = new Long[1];
-        id[0] = new Long(1);
+        id[0] = Long.valueOf(1);
         result = new DataMatrix(aggregate,id,rs.getAttributeIDs());
                 
         return result.times(1.0 / (double)ids.length);
@@ -247,7 +247,7 @@ public class SimpleSerieProcessor extends Processor {
         }
         
         Long id[] = new Long[1];
-        id[0] = new Long(1);
+        id[0] = Long.valueOf(1);
         DataMatrix result = new DataMatrix(aggregate,id,rs.getAttributeIDs());
                 
         return result.times(1.0 / (double)count);                

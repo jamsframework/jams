@@ -38,11 +38,11 @@ public class StringValue implements DataValue {
     }
 
     public double getDouble() throws NumberFormatException {
-        return new Double(value);
+        return Double.parseDouble(value);
     }
 
     public long getLong() throws NumberFormatException {
-        return new Long(value);
+        return Long.parseLong(value);
     }
 
     public String getString() {

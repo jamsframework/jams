@@ -193,7 +193,7 @@ public class DefaultDataSetDefinition implements DataSetDefinition, Serializable
 
     public static void main(String[] args) {
 
-        ArrayList<Class> dataTypes = new ArrayList<Class>();
+        ArrayList<Class> dataTypes = new ArrayList<>();
         dataTypes.add(Double.class);
         dataTypes.add(Long.class);
         dataTypes.add(String.class);
@@ -207,14 +207,14 @@ public class DefaultDataSetDefinition implements DataSetDefinition, Serializable
         def.addAttribute("LONG", Double.class);
         def.addAttribute("HEIGHT", Double.class);
 
-        ArrayList<Object> values = new ArrayList<Object>();
-        values.add(new Long(0));
-        values.add(new Long(1));
-        values.add(new Long(2));
-        values.add(new Long(12));
+        ArrayList<Object> values = new ArrayList<>();
+        values.add(Long.valueOf(0));
+        values.add(Long.valueOf(1));
+        values.add(Long.valueOf(2));
+        values.add(Long.valueOf(12));
         def.setAttributeValues("ID", values);
 
-        values = new ArrayList<Object>();
+        values = new ArrayList<>();
         values.add("Tmean");
         values.add("Tmin");
         values.add("Tmax");
@@ -222,28 +222,28 @@ public class DefaultDataSetDefinition implements DataSetDefinition, Serializable
         def.setAttributeValues("NAME", values);
 
         Random r = new Random(42);
-        values = new ArrayList<Object>();
+        values = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            values.add(100000 * new Double(r.nextDouble()));
+            values.add(100000 * r.nextDouble());
         }
         def.setAttributeValues("LAT", values);
-        values = new ArrayList<Object>();
+        values = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            values.add(100000 * new Double(r.nextDouble()));
+            values.add(100000 * r.nextDouble());
         }
         def.setAttributeValues("LONG", values);
-        values = new ArrayList<Object>();
+        values = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            values.add(100 * new Double(r.nextDouble()));
+            values.add(100 * r.nextDouble());
         }
         def.setAttributeValues("HEIGHT", values);
 
-        values = new ArrayList<Object>();
-        values.add(new Long(42));
+        values = new ArrayList<>();
+        values.add(Long.valueOf(42));
         values.add("Vmax");
-        values.add(new Double(42000));
-        values.add(new Double(84000));
-        values.add(new Double(-1));
+        values.add(Double.valueOf(42000));
+        values.add(Double.valueOf(84000));
+        values.add(Double.valueOf(-1));
         def.setAttributeValues(0, values);
 
         System.out.println(def.toASCIIString());

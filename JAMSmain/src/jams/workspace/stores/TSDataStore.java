@@ -278,19 +278,19 @@ public class TSDataStore extends TableDataStore {
         Object o = null;
 
         if (clazz.equals(Double.class)) {
-            o = new Double(valueString);
+            o = Double.valueOf(valueString);
         } else if (clazz.equals(Long.class)) {
-            o = new Long(valueString);
+            o = Long.valueOf(valueString);
         } else if (clazz.equals(Attribute.Calendar.class)) {
             Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
             cal.setValue(valueString);
             o = cal;
         } else if (clazz.equals(Timestamp.class)) {
             Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
-            cal.setTimeInMillis(new Long(valueString) * 1000);
+            cal.setTimeInMillis(Long.parseLong(valueString) * 1000);
             o = cal;
         } else if (clazz.equals(String.class)) {
-            o = new String(valueString);
+            o = valueString;
         } else {
             o = new Object();
         }
@@ -443,7 +443,7 @@ public class TSDataStore extends TableDataStore {
                         case DOUBLE:
                             value = new DoubleValue(valueString);
                             if (value.getDouble() == missingDateValueAsDouble) {
-                                value.setDouble((Double) JAMS.getMissingDataValue(Double.class));
+                                value.setDouble(JAMS.getMissingDataValue(Double.class));
                             }
 //                            if (valueString.equals(this.getMissingDataValue())) {
 //                                value.setDouble((Double) JAMS.getMissingDataValue(Double.class));
@@ -455,7 +455,7 @@ public class TSDataStore extends TableDataStore {
                         case LONG:
                             value = new LongValue(valueString);
                             if (value.getLong() == missingDateValueAsDouble) {
-                                value.setLong((Long) JAMS.getMissingDataValue(Long.class));
+                                value.setLong(JAMS.getMissingDataValue(Long.class));
                             }
 //                            value = new LongValue(0);
 //                            if (valueString.equals(this.getMissingDataValue())) {
@@ -472,7 +472,7 @@ public class TSDataStore extends TableDataStore {
                             break;
                         case TIMESTAMP:
                             Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
-                            cal.setTimeInMillis(new Long(valueString));
+                            cal.setTimeInMillis(Long.parseLong(valueString));
                             value = new CalendarValue(cal);
                         default:
                             value = new ObjectValue(valueString);

@@ -21,6 +21,8 @@
  */
 package jams.workspace.dsproc;
 
+import jams.JAMSException;
+import java.lang.ref.Cleaner;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -43,7 +45,36 @@ public abstract class Processor {
     protected ArrayList<DataStoreProcessor.ContextData> contexts;
     protected ProcessingProgressObservable processingProgressObservable = new ProcessingProgressObservable();
     protected boolean abortOperation = false;
+    
+    // Define a static Cleaner instance
+    private static final Cleaner cleaner = Cleaner.create();
 
+    // A cleanup task to be executed by the Cleaner
+    private static class CleanupTask implements Runnable {
+        private Processor processor;
+
+        public CleanupTask(Processor processor) {
+            this.processor = processor;
+        }
+
+        @Override
+        public void run() {
+            try {
+                processor.close();
+            } catch (SQLException e) {
+                throw new JAMSException(e.getMessage(), e);
+            }
+        }
+    }
+    
+    // A Cleanable instance for this Processor
+    private final Cleaner.Cleanable cleanable;
+    
+    // Constructor to register the cleanup task
+    public Processor() {
+        this.cleanable = cleaner.register(this, new CleanupTask(this));
+    }    
+    
     /**
      * @return the h2ds
      */
@@ -61,12 +92,12 @@ public abstract class Processor {
         }
     }
 
-    //try to close resource if that has not be done yet
-    @Override
-    public void finalize() throws Throwable {
-        super.finalize();
-        close();
-    }
+//    //try to close resource if that has not be done yet
+//    @Override
+//    public void finalize() throws Throwable {
+//        super.finalize();
+//        close();
+//    }
 
     public void addProcessingProgressObserver(Observer o) {
         processingProgressObservable.addObserver(o);

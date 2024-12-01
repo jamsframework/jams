@@ -34,15 +34,15 @@ public class LongValue implements DataValue {
     private Long value;
 
     public LongValue(long value) {
-        this.value = new Long(value);
+        this.value = value;
     }
 
     public LongValue(String value) {
-        this.value = new Long(value);
+        this.value = Long.valueOf(value);
     }
 
     public double getDouble() {
-        return new Double(value);
+        return Double.valueOf(value);
     }
 
     public long getLong() {
@@ -58,15 +58,15 @@ public class LongValue implements DataValue {
     }
 
     public void setDouble(double value) {
-        this.value = new Long((long) value);
+        this.value = (long) value;
     }
 
     public void setLong(long value) {
-        this.value = new Long(value);
+        this.value = value;
     }
 
     public void setString(String value) throws NumberFormatException {
-        this.value = new Long(value);
+        this.value = Long.valueOf(value);
     }
 
     public void setObject(Object value) {

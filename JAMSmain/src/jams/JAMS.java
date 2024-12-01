@@ -21,6 +21,7 @@
  */
 package jams;
 
+import jams.data.Attribute;
 import jams.meta.HelpComponent;
 import java.awt.Font;
 import java.awt.Image;
@@ -208,10 +209,10 @@ public class JAMS {
     }
 
     /**
-     * @param aFloatFormat the floatFormatString to set
+     * @param floatFormat the floatFormatString to set
      */
-    public static void setFloatFormat(String aFloatFormat) {
-        floatFormat = aFloatFormat;
+    public static void setFloatFormat(String floatFormat) {
+        JAMS.floatFormat = floatFormat;
     }
 
     public static double getMissingDataValue() {
@@ -220,11 +221,11 @@ public class JAMS {
 
     public static <T> T getMissingDataValue(Class<T> c) {
         if (c == Double.class) {
-            return (T) new Double(getMissingDataValue());
+            return (T) Double.valueOf(getMissingDataValue());
         } else if (c == Integer.class) {
-            return (T) new Integer(Integer.MAX_VALUE);
+            return (T) Integer.valueOf(Integer.MAX_VALUE);
         } else if (c == Long.class) {
-            return (T) new Long(Long.MAX_VALUE);
+            return (T) Long.valueOf(Long.MAX_VALUE);
         } else if (c == String.class) {
             return null;
         } else {

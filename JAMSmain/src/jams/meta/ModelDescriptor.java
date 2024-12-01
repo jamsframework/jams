@@ -53,7 +53,7 @@ public class ModelDescriptor extends ComponentCollection {
     private ArrayList<MetaProcessorDescriptor> preprocessors = new ArrayList();
     private HashMap<String, AttributeList> attributeLists = new HashMap();
     private ModelProperties modelProperties;
-    private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "", modelFilePath = "", modelName = "";
+    private String author = "", date = "", description = "", helpBaseUrl = "", workspacePath = "", modelFilePath = "", modelName = "", outputDir = "";
     private ModelNode rootNode;
 
     public ModelDescriptor() {

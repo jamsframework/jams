@@ -196,7 +196,7 @@ public class ModelIO {
     private ModelNode getSubTree(Element rootElement, ModelDescriptor md) {
 
         Class<?> clazz = null;
-        String componentName = "", className = "", version = "";
+        String componentName, className, version;
         ModelNode rootNode = null;
         boolean enabled = true;
 

@@ -300,7 +300,7 @@ public class JAMSModel extends JAMSContext implements Model {
         long time = System.currentTimeMillis() - startTime;
         Long current = execTime.get(c);
         if (current == null) {
-            current = new Long(0);
+            current = Long.valueOf(0);
         }
         current += time;
         execTime.put(c, current);
