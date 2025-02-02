@@ -59,8 +59,8 @@ import java.util.GregorianCalendar;
             + "if time offset was very long (> 68 years of daily data)"),
     @VersionComments.Entry(version = "1.2", date = "2014-06-20", comment = "Added attributes to output"
             + " column names and columns IDs for further use"),
-    @VersionComments.Entry(version = "1.3", date = "2025-02-01", comment = "Added option to switch between three calendar types (Gregorian, Gregorian w/o leap days, 360-days). Works only for daily time steps."
-            + " column names and columns IDs for further use")
+    @VersionComments.Entry(version = "1.3", date = "2025-02-01", comment = "Added option to switch between three calendar types "
+            + "(Gregorian, Gregorian w/o leap days, 360-days). Works only for daily time steps.")
 })
 public class TSDataStoreReader extends JAMSComponent {
 
