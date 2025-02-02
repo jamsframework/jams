@@ -30,7 +30,12 @@ import jams.workspace.DataValue;
 import jams.workspace.DefaultDataSet;
 import jams.workspace.stores.InputDataStore;
 import jams.workspace.stores.TSDataStore;
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -38,8 +43,8 @@ import java.util.ArrayList;
  */
 @JAMSComponentDescription(title = "TSDataStoreReader",
         author = "Sven Kralisch",
-        date = "2014-02-16",
-        version = "1.2",
+        date = "2025-02-01",
+        version = "1.3",
         description = "This component can be used to obtain data from a time series "
         + "data store which contains only double values and a number of "
         + "station-specific metadata. Additional functions:\n"
@@ -53,6 +58,8 @@ import java.util.ArrayList;
     @VersionComments.Entry(version = "1.1_1", date = "2014-05-14", comment = "Fixed bug that caused wrong forward skipping "
             + "if time offset was very long (> 68 years of daily data)"),
     @VersionComments.Entry(version = "1.2", date = "2014-06-20", comment = "Added attributes to output"
+            + " column names and columns IDs for further use"),
+    @VersionComments.Entry(version = "1.3", date = "2025-02-01", comment = "Added option to switch between three calendar types (Gregorian, Gregorian w/o leap days, 360-days). Works only for daily time steps."
             + " column names and columns IDs for further use")
 })
 public class TSDataStoreReader extends JAMSComponent {
@@ -112,12 +119,22 @@ public class TSDataStoreReader extends JAMSComponent {
             + "irregular time steps (e.g. months). Aggregation is disabled if "
             + "this value is not set.")
     public Attribute.Calendar time;
-    
+
     @JAMSVarDescription(
             access = JAMSVarDescription.AccessType.READ,
             description = "Lines skipped to reach timeInterval start"
     )
-    public Attribute.Integer skipLines;    
+    public Attribute.Integer skipLines;
+
+    @JAMSVarDescription(
+            access = JAMSVarDescription.AccessType.READ,
+            description = "Type of calendar:\n"
+            + "0 - standard calendar\n"
+            + "1 - 360-day calendar\n"
+            + "2 - standard calendar w/o leap years",
+            defaultValue = "0"
+    )
+    public Attribute.Integer calendarType;
 
     private TSDataStore store;
     private double[] doubles;
@@ -150,7 +167,7 @@ public class TSDataStoreReader extends JAMSComponent {
         }
 
         store = (TSDataStore) is;
-        
+
         // check if the store's time interval matches the provided time interval
         if (store.getStartDate().after(timeInterval.getStart()) && (store.getStartDate().compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) != 0)) {
             getModel().getRuntime().sendHalt("Error accessing datastore \""
@@ -160,7 +177,11 @@ public class TSDataStoreReader extends JAMSComponent {
             return;
         }
 
-        if (store.getEndDate().before(timeInterval.getEnd()) && (store.getEndDate().compareTo(timeInterval.getEnd(), timeInterval.getTimeUnit()) != 0)) {
+        Attribute.Calendar storeEnd = store.getEndDate();
+        if ((calendarType.getValue() == 1) && (storeEnd.get(Attribute.Calendar.DAY_OF_MONTH) == 30)) {
+            storeEnd.add(Attribute.Calendar.DAY_OF_YEAR, 1);
+        }
+        if (storeEnd.before(timeInterval.getEnd()) && (store.getEndDate().compareTo(timeInterval.getEnd(), timeInterval.getTimeUnit()) != 0)) {
             getModel().getRuntime().sendHalt("Error accessing datastore \""
                     + id + "\" from " + getInstanceName() + ": End date of datastore ("
                     + store.getEndDate() + ") does not match given time interval ("
@@ -230,9 +251,14 @@ public class TSDataStoreReader extends JAMSComponent {
         storeDate = store.getStartDate().clone();
         storeUnit = store.getTimeUnit();
         storeUnitCount = store.getTimeUnitCount();
+        int leapOffset = 0;
+        
+        if (calendarType.getValue() == 2) {
+            leapOffset = countLeapDays(storeDate, targetDate);
+        }
 
         if (skipLines == null) {
-        
+
             storeDate.removeUnsignificantComponents(storeUnit);
             targetDate.removeUnsignificantComponents(targetUnit);
 
@@ -245,49 +271,67 @@ public class TSDataStoreReader extends JAMSComponent {
 
             } else if (offset < 0) {
 
-                // check if we can calculate offset directly
-                // this can be done if the step size can be calculated directly from
-                // milliseconds representation, i.e. for weekly time steps and below
-                // else we calculate offset by iterating in time (less efficient)
-                long diff = (targetDate.getTimeInMillis() - storeDate.getTimeInMillis()) / 1000;
                 int steps;
-                switch (storeUnit) {
-                    case Attribute.Calendar.DAY_OF_YEAR:
-                        steps = (int) (diff / 3600 / 24 / storeUnitCount);
-                        storeDate.add(storeUnit, storeUnitCount * steps);
-                        break;
-                    case Attribute.Calendar.HOUR_OF_DAY:
-                        steps = (int) (diff / 3600 / storeUnitCount);
-                        storeDate.add(storeUnit, storeUnitCount * steps);
-                        break;
-                    case Attribute.Calendar.WEEK_OF_YEAR:
-                        steps = (int) (diff / 3600 / 24 / 7 / storeUnitCount);
-                        storeDate.add(storeUnit, storeUnitCount * steps);
-                        break;
-                    case Attribute.Calendar.MINUTE:
-                        steps = (int) (diff / 60 / storeUnitCount);
-                        storeDate.add(storeUnit, storeUnitCount * steps);
-                        break;
-                    case Attribute.Calendar.SECOND:
-                        steps = (int) (diff / storeUnitCount);
-                        storeDate.add(storeUnit, storeUnitCount * steps);
-                        break;
-                    default:
-                        steps = iterateStoreDate(targetDate);
+                
+                if ((calendarType.getValue() == 0) || (calendarType.getValue() == 2)) {
+
+                    // check if we can calculate offset directly
+                    // this can be done if the step size can be calculated directly from
+                    // milliseconds representation, i.e. for weekly time steps and below
+                    // else we calculate offset by iterating in time (less efficient)
+                    long diff = (targetDate.getTimeInMillis() - storeDate.getTimeInMillis()) / 1000;
+
+                    switch (storeUnit) {
+                        case Attribute.Calendar.DAY_OF_YEAR:
+                            steps = (int) (diff / 3600 / 24 / storeUnitCount);
+                            storeDate.add(storeUnit, storeUnitCount * steps);
+                            break;
+                        case Attribute.Calendar.HOUR_OF_DAY:
+                            steps = (int) (diff / 3600 / storeUnitCount);
+                            storeDate.add(storeUnit, storeUnitCount * steps);
+                            break;
+                        case Attribute.Calendar.WEEK_OF_YEAR:
+                            steps = (int) (diff / 3600 / 24 / 7 / storeUnitCount);
+                            storeDate.add(storeUnit, storeUnitCount * steps);
+                            break;
+                        case Attribute.Calendar.MINUTE:
+                            steps = (int) (diff / 60 / storeUnitCount);
+                            storeDate.add(storeUnit, storeUnitCount * steps);
+                            break;
+                        case Attribute.Calendar.SECOND:
+                            steps = (int) (diff / storeUnitCount);
+                            storeDate.add(storeUnit, storeUnitCount * steps);
+                            break;
+                        default:
+                            steps = iterateStoreDate(targetDate);
+                    }
+                    
+                    steps -= leapOffset;
+
+                } else {
+
+                    // create two 360 days calendars for store date and time interval start and calculate the offset in days
+                    CustomCalendar360 targetDate360 = new CustomCalendar360(targetDate.get(Attribute.Calendar.YEAR), targetDate.get(Attribute.Calendar.MONTH) + 1, targetDate.get(Attribute.Calendar.DAY_OF_MONTH));
+                    CustomCalendar360 storeDate360 = new CustomCalendar360(storeDate.get(Attribute.Calendar.YEAR), storeDate.get(Attribute.Calendar.MONTH) + 1, storeDate.get(Attribute.Calendar.DAY_OF_MONTH));
+                    steps = (int) targetDate360.calculateOffset(storeDate360);
+                    if (steps < 0) {
+                        getModel().getRuntime().sendHalt("Time series data read by " + this.getInstanceName() + " start after model start time!"
+                                + "\n(" + store.getStartDate() + " vs " + timeInterval.getStart() + ")");
+                    }
                 }
 
                 // skip forward datastore to required start time
                 store.skip(steps);
 
             }
-            
+
         } else {
             store.skip(skipLines.getValue());
         }
 
         // check if we have different step size in store and model
         if (storeUnit != targetUnit || storeUnitCount != targetUnitCount) {
-            
+
             if (time == null) {
                 getModel().getRuntime().sendHalt("Time steps in datastore " + store.getID() + " and model are different while time is not set!"
                         + " Please set the time atrtibute or adapt your datastore");
@@ -358,15 +402,60 @@ public class TSDataStoreReader extends JAMSComponent {
 
         if (tsRatio == 1) {
 
-            DefaultDataSet ds = store.getNext();
-            if (ds == null) {
-                getModel().getRuntime().sendHalt("Empty dataset found in "
-                        + "component " + this.getInstanceName() + " (" + time + ")");
-            }
-            
-            DataValue[] data = ds.getData();
-            for (int i = 1; i < data.length; i++) {
-                doubles[i - 1] = data[i].getDouble();
+            if (calendarType.getValue() == 0) {
+                DefaultDataSet ds = store.getNext();
+                if (ds == null) {
+                    getModel().getRuntime().sendHalt("Empty dataset found in "
+                            + "component " + this.getInstanceName() + " (" + time + ")");
+                }
+
+                DataValue[] data = ds.getData();
+                for (int i = 1; i < data.length; i++) {
+                    doubles[i - 1] = data[i].getDouble();
+                }
+
+            } else if (calendarType.getValue() == 1) {
+
+                int year = time.get(Attribute.Calendar.YEAR);
+                boolean isLeap = Year.of(year).isLeap();
+                int day = time.get(Attribute.Calendar.DAY_OF_YEAR);
+
+                if (isLeap) {
+                    day--;
+                }
+
+                // if this is one of the following days, just reuse the values from last time step
+                if (!((isLeap && day == 59) || day == 151 || day == 212 || day == 243 || day == 304 || day == 365)) {
+                    DefaultDataSet ds = store.getNext();
+                    if (ds == null) {
+                        getModel().getRuntime().sendHalt("Empty dataset found in "
+                                + "component " + this.getInstanceName() + " (" + time + ")");
+                    }
+
+                    DataValue[] data = ds.getData();
+                    for (int i = 1; i < data.length; i++) {
+                        doubles[i - 1] = data[i].getDouble();
+                    }
+                }
+//                System.out.println(time.toString() + " " + day + " - " + doubles[0]); 
+            } else {
+
+                int year = time.get(Attribute.Calendar.YEAR);
+                boolean isLeap = Year.of(year).isLeap();
+                int day = time.get(Attribute.Calendar.DAY_OF_YEAR);
+                
+                if (!(isLeap && day == 60)) {
+                    DefaultDataSet ds = store.getNext();
+                    if (ds == null) {
+                        getModel().getRuntime().sendHalt("Empty dataset found in "
+                                + "component " + this.getInstanceName() + " (" + time + ")");
+                    }
+
+                    DataValue[] data = ds.getData();
+                    for (int i = 1; i < data.length; i++) {
+                        doubles[i - 1] = data[i].getDouble();
+                    }
+                }
             }
 
             dataArray.setValue(doubles);
@@ -424,4 +513,103 @@ public class TSDataStoreReader extends JAMSComponent {
     public void cleanup() {
         store.close();
     }
+    
+    public static int countLeapDays(Attribute.Calendar start, Attribute.Calendar end) {
+        int count = 0;
+
+        // Normalize the start and end dates to the same day of the year
+        int startYear = start.get(Calendar.YEAR);
+        int endYear = end.get(Calendar.YEAR);
+
+        for (int year = startYear; year <= endYear; year++) {
+            if (Year.of(year).isLeap()) {
+                // Check if February 29 is within the range
+                GregorianCalendar leapDay = new GregorianCalendar(year, Calendar.FEBRUARY, 29);
+                if (!leapDay.before(start) && !leapDay.after(end)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }    
+
+    public class CustomCalendar360 {
+
+        private static final int DAYS_PER_MONTH = 30;
+        private static final int MONTHS_PER_YEAR = 12;
+        private static final int DAYS_PER_YEAR = DAYS_PER_MONTH * MONTHS_PER_YEAR;
+        private static final int BASE_YEAR = 1970;
+        private final LocalDate CUSTOM_EPOCH = LocalDate.of(BASE_YEAR, 1, 1); // Reference date
+
+        private int year;
+        private int month;
+        private int day;
+
+        public CustomCalendar360(int year, int month, int day) {
+            if (month < 1 || month > MONTHS_PER_YEAR || day < 1 || day > DAYS_PER_MONTH) {
+                throw new IllegalArgumentException("Invalid date in custom calendar");
+            }
+            this.year = year;
+            this.month = month;
+            this.day = day;
+        }
+
+        public CustomCalendar360 fromGregorian(LocalDate date) {
+            long daysSinceEpoch = date.toEpochDay() - CUSTOM_EPOCH.toEpochDay(); // Days since the custom epoch
+            int customYear = (int) (daysSinceEpoch / DAYS_PER_YEAR) + BASE_YEAR;
+            int remainingDays = (int) (daysSinceEpoch % DAYS_PER_YEAR);
+            if (remainingDays < 0) {
+                customYear--;
+                remainingDays += DAYS_PER_YEAR;
+            }
+            int customMonth = remainingDays / DAYS_PER_MONTH + 1;
+            int customDay = remainingDays % DAYS_PER_MONTH + 1;
+
+            return new CustomCalendar360(customYear, customMonth, customDay);
+        }
+
+        public LocalDate toGregorian() {
+            long totalDays = (long) (year - BASE_YEAR) * DAYS_PER_YEAR + (month - 1) * DAYS_PER_MONTH + (day - 1);
+            return CUSTOM_EPOCH.plusDays(totalDays);
+        }
+
+        public void addDays(int days) {
+            long totalDays = (long) (year - BASE_YEAR) * DAYS_PER_YEAR + (month - 1) * DAYS_PER_MONTH + (day - 1) + days;
+            year = (int) (totalDays / DAYS_PER_YEAR) + BASE_YEAR;
+            int remainingDays = (int) (totalDays % DAYS_PER_YEAR);
+            if (remainingDays < 0) {
+                year--;
+                remainingDays += DAYS_PER_YEAR;
+            }
+            month = remainingDays / DAYS_PER_MONTH + 1;
+            day = remainingDays % DAYS_PER_MONTH + 1;
+        }
+
+        public long getTimeInMillis() {
+            // Convert the custom calendar date to a Gregorian date
+            LocalDate gregorianDate = toGregorian();
+
+            // Convert the Gregorian date to milliseconds since epoch
+            return gregorianDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
+        }
+
+        public long calculateOffset(CustomCalendar360 other) {
+            // Calculate the total days for both instances
+            long totalDaysThis = (long) (this.year - BASE_YEAR) * DAYS_PER_YEAR
+                    + (this.month - 1) * DAYS_PER_MONTH
+                    + (this.day - 1);
+
+            long totalDaysOther = (long) (other.year - BASE_YEAR) * DAYS_PER_YEAR
+                    + (other.month - 1) * DAYS_PER_MONTH
+                    + (other.day - 1);
+
+            // Return the difference
+            return totalDaysThis - totalDaysOther;
+        }
+
+        public String toCustomDateString() {
+            return String.format("%04d-%02d-%02d", year, month, day);
+        }
+    }
+
 }
