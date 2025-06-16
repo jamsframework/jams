@@ -99,6 +99,8 @@ public class FlexibleAggregator extends JAMSComponent {
             aggregate.setValue(sum);
             sum = 0;
             counter = 0;
+        } else {
+            aggregate.setValue(JAMS.getMissingDataValue());
         }
         
     }
