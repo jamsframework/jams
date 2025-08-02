@@ -2,7 +2,7 @@
  * FlexibleAggregator.java
  * Created on 15.06.2025, 21:54:40
  *
- * This file is part of JAMS
+ * file is part of JAMS
  * Copyright (C) FSU Jena
  *
  * JAMS is free software; you can redistribute it and/or
