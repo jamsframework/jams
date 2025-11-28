@@ -155,7 +155,7 @@ public class AboutDlg extends JDialog {
 
         JTabbedPane tabPane = new JTabbedPane();
         tabPane.add(JAMS.i18n("Legal_notice"), gplScroll);
-        tabPane.add(JAMS.i18n("Credits"), contribScroll);
+//        tabPane.add(JAMS.i18n("Credits"), contribScroll);
         tabPane.add(JAMS.i18n("VM_INFO"), vmScroll);
         tabPane.setPreferredSize(new Dimension(x + 1, 200));
 

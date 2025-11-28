@@ -1,21 +1,5 @@
-JAMS & Components:
+JAMS & core components:
 Sven Kralisch, Peter Krause, Christian Fischer, 
-Manfred Fink, Robert Riedel, Christin Michel, 
-Ronny Berndt and many others
+Manfred Fink, Robert Riedel, Ronny Berndt and many others
 
-Libraries:
-Apache Commons (http://commons.apache.org)
-GeoTools (http://www.geotools.org)
-GeoAPI (http://www.geoapi.org)
-JTS Topology Suite (http://www.vividsolutions.com/jts)
-Gluegen (http://jogamp.org/gluegen/www)
-JOGL (http://jogamp.org/jogl/www)
-JScience (http://jscience.org)
-JFreeChart (http://www.jfree.org/jfreechart)
-H2 Database (http://www.h2database.com)   
-JAMA (http://math.nist.gov/javanumerics/jama)  
-TROVE (http://trove.starlight-systems.com)
-JUEL (http://juel.sourceforge.net)
-WorldWind (http://worldwind.arc.nasa.gov)
-... and many others
                                                        
