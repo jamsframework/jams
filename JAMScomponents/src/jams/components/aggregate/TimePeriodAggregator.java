@@ -330,7 +330,7 @@ public class TimePeriodAggregator extends JAMSComponent {
     boolean isEnabled[] = null;
     HashSet<Double> selectedIds = null;
     
-    enum AggregationTimePeriod{HOURLY, DAILY, YEARLY, SEASONAL, MONTHLY, DECADLY, HALFYEAR, HYDHALFYEAR, CUSTOM};
+    enum AggregationTimePeriod{HOURLY, DAILY, WEEKLY, YEARLY, SEASONAL, MONTHLY, DECADLY, HALFYEAR, HYDHALFYEAR, CUSTOM};
     enum AggregationMode{MINIMUM, MAXIMUM, AVERAGE, SUM, INDEPENDENT, LAST};
     
     ArrayList<Attribute.TimeInterval> customTimePeriods = new ArrayList<Attribute.TimeInterval>();
@@ -461,6 +461,8 @@ public class TimePeriodAggregator extends JAMSComponent {
             return AggregationTimePeriod.HOURLY;
         }else if (mode.compareToIgnoreCase("daily")==0){
             return AggregationTimePeriod.DAILY;
+        }else if (mode.compareToIgnoreCase("weekly")==0){
+            return AggregationTimePeriod.WEEKLY;
         }else if (mode.compareToIgnoreCase("monthly")==0){
             return AggregationTimePeriod.MONTHLY;
         }else if (mode.compareToIgnoreCase("yearly")==0){
