@@ -1,0 +1,26 @@
+#JAMS-Konfigurationsdatei
+#Wed Jul 15 00:19:46 CEST 2026
+autosavelogs=true
+autosaveparams=true
+charset=
+debug=1
+defaultworkspace=true
+docbook-home=docbook
+errordlg=true
+errorlog=
+explorerdigits=8
+floatformat=%f
+guiconfig=true
+guiconfigheight=600
+guiconfigwidth=600
+infolog=
+libs=components
+maxlibclasses=10000
+maxrecentfiles=5
+model=
+preprocessing=true
+profiling=false
+verbose=false
+windowenable=true
+windowheight=800
+windowwidth=1000

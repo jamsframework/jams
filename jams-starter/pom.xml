@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jams</groupId>
+        <artifactId>jams-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>jams-starter</artifactId>
+    <packaging>pom</packaging>
+
+    <!-- Distributions-Modul: baut selbst keinen Code, sondern setzt unter
+         <repo-wurzel>/jams-bin ein lauffaehiges App-Bundle zusammen (Nachbau
+         der alten jams-bin/-Struktur):
+           lib/                 - kompletter statischer Laufzeit-Classpath
+           components/          - jams-components.jar, wird von JAMS erst zur
+                                   Laufzeit ueber die "libs"-Property dynamisch
+                                   nachgeladen (JAMSClassLoader), ist daher
+                                   NICHT Teil des statischen Classpath/lib
+           jams-starter.jar      - duenner Manifest-Jar, Main-Class jamsui.launcher.JAMSui
+           juice-starter.jar     - duenner Manifest-Jar, Main-Class jamsui.juice.JUICE
+           jams.sh / juice.sh   - Start-Skripte
+         "mvn clean" in diesem Modul loescht jams-bin wieder (clean-plugin
+         unten), da es ausserhalb von target/ liegt. -->
+
+    <properties>
+        <!-- bewusst ueber basedir statt maven.multiModuleProjectDirectory
+             aufgeloest, damit der Pfad auch beim Bauen direkt im
+             Modulverzeichnis auf die Repo-Wurzel zeigt -->
+        <jams.bin.dir>${project.basedir}/../jams-bin</jams.bin.dir>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jams</groupId>
+            <artifactId>jams-ui</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- provided: nimmt nicht am Compile-/Runtime-Classpath teil, landet
+             also weder in lib/ noch in der auto-generierten Class-Path-
+             Manifestzeile der Starter-Jars. Wird unten separat nach
+             components/ kopiert. -->
+        <dependency>
+            <groupId>org.jams</groupId>
+            <artifactId>jams-components</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${jams.bin.dir}</directory>
+                            <excludes>
+                                <!-- Nutzer-Konfiguration: wird von JAMS/JUICE beim
+                                     Beenden dort gespeichert (u.a. libs-Pfade) und
+                                     soll clean ueberleben -->
+                                <exclude>default.jap</exclude>
+                            </excludes>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>collect-runtime-libs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${jams.bin.dir}/lib</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>collect-components</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jams</groupId>
+                                    <artifactId>jams-components</artifactId>
+                                    <version>${project.version}</version>
+                                    <destFileName>jams-components.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${jams.bin.dir}/components</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-jams-starter-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>jams-starter-tmp</classifier>
+                            <outputDirectory>${jams.bin.dir}</outputDirectory>
+                            <archive>
+                                <manifest>
+                                    <mainClass>jamsui.launcher.JAMSui</mainClass>
+                                    <addClasspath>true</addClasspath>
+                                    <classpathPrefix>lib/</classpathPrefix>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build-juice-starter-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>juice-starter-tmp</classifier>
+                            <outputDirectory>${jams.bin.dir}</outputDirectory>
+                            <archive>
+                                <manifest>
+                                    <mainClass>jamsui.juice.JUICE</mainClass>
+                                    <addClasspath>true</addClasspath>
+                                    <classpathPrefix>lib/</classpathPrefix>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-launch-files</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${jams.bin.dir}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/dist</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- Abhaengigkeiten von jams-components neben das Jar
+                             nach components/lib legen; dort findet sie der
+                             JAMSClassLoader ueber die Class-Path-Manifestzeile
+                             von jams-components.jar. Quelle ist das target/lib
+                             des Moduls (dort per copy-dependencies erzeugt) -
+                             deshalb jams-starter immer mit -am bzw. im
+                             Gesamt-Build bauen. -->
+                        <id>copy-components-libs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${jams.bin.dir}/components/lib</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../jams-components/target/lib</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Laeuft zuletzt: benennt die klassifizierten Jars aus dem
+                     jar-plugin-Schritt in die finalen Namen um (Maven haengt
+                     bei "jar"-Goal-Executions mit Classifier immer
+                     finalName-classifier.jar an; ein direkter, versionsloser
+                     Dateiname ist ueber die Plugin-Parameter nicht erreichbar)
+                     und macht die Start-Skripte ausfuehrbar. -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>finalize-dist</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <move file="${jams.bin.dir}/${project.build.finalName}-jams-starter-tmp.jar"
+                                      tofile="${jams.bin.dir}/jams-starter.jar"/>
+                                <move file="${jams.bin.dir}/${project.build.finalName}-juice-starter-tmp.jar"
+                                      tofile="${jams.bin.dir}/juice-starter.jar"/>
+                                <chmod dir="${jams.bin.dir}" perm="755"
+                                       includes="*.sh,*.command"/>
+                                <!-- macOS legt auf exFAT-Volumes beim Schreiben
+                                     AppleDouble-Sidecars (._*) an; die haben im
+                                     ausgelieferten Bundle nichts zu suchen -->
+                                <delete>
+                                    <fileset dir="${jams.bin.dir}" includes="**/._*"
+                                             defaultexcludes="false"/>
+                                </delete>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>jams.ext</groupId>
+  <artifactId>javax.xml.rpc-api</artifactId>
+  <versioning>
+    <release>local</release>
+    <versions>
+      <version>local</version>
+    </versions>
+    <lastUpdated>20260714124943</lastUpdated>
+  </versioning>
+</metadata>

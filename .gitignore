@@ -1,0 +1,25 @@
+# Build output
+target/
+/jams-bin/
+
+# IDE
+.idea/
+*.iml
+nbactions.xml
+
+# macOS AppleDouble sidecar files (entstehen beim Kopieren auf exFAT/Netzwerk-Volumes)
+._*
+.DS_Store
+
+# JVM-Crashreports
+hs_err_pid*.log
+replay_pid*.log
+
+# Claude Code (lokale Einstellungen)
+.claude/settings.local.json
+
+# Lokale Migrations-Helfer (nicht Teil des Projekts)
+/migrate-sources.sh
+/setup-libs-repo.sh
+/authors.txt
+/README-MIGRATION.md

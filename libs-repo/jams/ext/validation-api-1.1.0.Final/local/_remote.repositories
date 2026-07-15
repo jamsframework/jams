@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Jul 14 14:50:15 CEST 2026
+validation-api-1.1.0.Final-local.jar>=
+validation-api-1.1.0.Final-local.pom>=

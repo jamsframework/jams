@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Jul 14 14:50:37 CEST 2026
+jogl-all-natives-macosx-universal-local.jar>=
+jogl-all-natives-macosx-universal-local.pom>=

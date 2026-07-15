@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Jul 14 14:49:13 CEST 2026
+hibernate-jpa-2.0-api-1.0.1.Final-local.jar>=
+hibernate-jpa-2.0-api-1.0.1.Final-local.pom>=

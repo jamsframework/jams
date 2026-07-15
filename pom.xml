@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.jams</groupId>
+    <artifactId>jams-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>JAMS - Jena Adaptable Modelling System</name>
+
+    <modules>
+        <module>jams-api</module>
+        <module>jams-main</module>
+        <module>jams-common</module>
+        <module>jams-components</module>
+        <module>jams-democomponents</module>
+        <module>jams-optas</module>
+        <module>jams-cloud-core</module>
+        <module>jams-cloud-client</module>
+        <module>jams-worldwind</module>
+        <module>jams-explorer</module>
+        <module>jams-ui</module>
+        <module>jams-test</module>
+        <module>jams-starter</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+    <!-- Projekt-lokales Repository mit den eingecheckten JARs.
+         ${maven.multiModuleProjectDirectory} zeigt immer auf die Repo-Wurzel,
+         damit der Pfad auch aus den Modulen heraus stimmt. -->
+    <repositories>
+        <repository>
+            <id>jams-libs-repo</id>
+            <url>file://${maven.multiModuleProjectDirectory}/libs-repo</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+    </repositories>
+
+    <build>
+        <!-- NetBeans-Layout beibehalten: Ressourcen (Bilder, .properties,
+             ResourceBundles) liegen neben den Java-Quellen in src/main/java.
+             Alles ausser *.java wird als Ressource ins JAR uebernommen. -->
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.4.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.8.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.4.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

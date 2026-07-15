@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Jul 14 14:50:07 CEST 2026
+persistence-api-1.0-local.jar>=
+persistence-api-1.0-local.pom>=

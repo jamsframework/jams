@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Jul 14 14:48:55 CEST 2026
+encog-core-2.5.3-local.jar>=
+encog-core-2.5.3-local.pom>=

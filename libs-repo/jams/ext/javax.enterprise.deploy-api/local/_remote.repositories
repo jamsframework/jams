@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Tue Jul 14 14:49:28 CEST 2026
+javax.enterprise.deploy-api-local.jar>=
+javax.enterprise.deploy-api-local.pom>=

@@ -1,0 +1,7 @@
+main.majorversion=3
+main.minorversion=17
+main.revision=01
+api.majorversion=1
+api.minorversion=4
+date=20251129
+contact=contact@jamsframework.org
