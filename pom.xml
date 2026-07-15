@@ -28,8 +28,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <!-- Java 11: reale Laufzeit-Mindestanforderung (WorldWind); "release"
+             statt source/target, damit auch gegen die Java-11-API geprueft
+             wird und kuenftige JDKs das Target noch unterstuetzen -->
+        <maven.compiler.release>11</maven.compiler.release>
     </properties>
 
     <!-- Projekt-lokales Repository mit den eingecheckten JARs.
