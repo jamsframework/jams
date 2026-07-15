@@ -1,7 +1,7 @@
 @echo off
-rem Startet JUICE (den Modell-Editor) direkt, ohne den JAMS-Launcher-Dialog.
-rem Fuer R/JRI-Kopplung: set JAVA_OPTS=-Djava.library.path=C:\pfad\zu\rJava\jri
-rem Heap/JVM-Optionen ueberschreiben: set JAVA_OPTS=-Xmx8g
+rem Starts JUICE (the model editor) directly, skipping the JAMS launcher dialog.
+rem For R/JRI coupling: set JAVA_OPTS=-Djava.library.path=C:\path\to\rJava\jri
+rem Override heap/JVM options: set JAVA_OPTS=-Xmx8g
 
 cd /d "%~dp0"
 set VM_OPTS=-Xms128M -Xmx1024M -splash:JAMSsplash.png %JAVA_OPTS%

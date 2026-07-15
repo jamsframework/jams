@@ -1,13 +1,13 @@
 #!/bin/sh
 #
-# Startet JAMS mit grafischer Oberflaeche (Standard-Launcher, entspricht der
-# alten NetBeans-Run-Konfiguration "JAMS Launcher").
+# Starts JAMS with its graphical launcher (corresponds to the old
+# NetBeans run configuration "JAMS Launcher").
 #
-# Kommandozeilen-Betrieb ohne GUI, z.B.:
+# Command-line use without GUI, e.g.:
 #   ./jams.sh -n -h model.jam
-# (-n = keine GUI, -h = Hilfe anzeigen; siehe jamsui.cmdline.JAMSCmdLine)
+# (-n = no GUI, -h = show help; see jamsui.cmdline.JAMSCmdLine)
 #
-# Heap/JVM-Optionen ueberschreiben:
+# Override heap/JVM options:
 #   JAVA_OPTS="-Xmx4g" ./jams.sh
 #
 cd "$(dirname "$0")"

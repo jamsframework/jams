@@ -1,7 +1,7 @@
 @echo off
-rem Startet JAMS mit grafischer Oberflaeche (Standard-Launcher).
-rem Kommandozeilen-Betrieb ohne GUI, z.B.: jams.bat -n -h model.jam
-rem Heap/JVM-Optionen ueberschreiben: set JAVA_OPTS=-Xmx4g
+rem Starts JAMS with its graphical launcher.
+rem Command-line use without GUI, e.g.: jams.bat -n -h model.jam
+rem Override heap/JVM options: set JAVA_OPTS=-Xmx4g
 
 cd /d "%~dp0"
 set VM_OPTS=-Xms128M -Xmx1024M -splash:JAMSsplash.png %JAVA_OPTS%

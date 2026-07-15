@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Wie juice.sh, aber per Doppelklick im Finder startbar.
+# Same as juice.sh, but double-clickable in the macOS Finder.
 #
 cd "$(dirname "$0")"
 VM_OPTS="-Xms128M -Xmx1024M -splash:JAMSsplash.png $JAVA_OPTS"
