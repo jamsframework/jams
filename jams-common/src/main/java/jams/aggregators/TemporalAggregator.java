@@ -25,7 +25,8 @@ public abstract class TemporalAggregator<T>{
     Collection<TimeInterval> customTimePeriods;
     public enum AggregationTimePeriod{
         HOURLY, 
-        DAILY, 
+        DAILY,
+        WEEKLY,
         YEARLY, 
         SEASONAL, 
         MONTHLY, 
@@ -176,6 +177,15 @@ public abstract class TemporalAggregator<T>{
         switch (timeUnitID){
             case HOURLY: out.removeUnsignificantComponents(Attribute.Calendar.HOUR_OF_DAY); break;
             case DAILY: out.removeUnsignificantComponents(Attribute.Calendar.DAY_OF_MONTH); break;
+            case WEEKLY: out.removeUnsignificantComponents(Attribute.Calendar.DAY_OF_MONTH); 
+//                int week = out.get(Attribute.Calendar.WEEK_OF_YEAR);
+                int week = out.get(Attribute.Calendar.DAY_OF_YEAR) / 7;
+                int julDay = week * 7 + 1;
+//                System.out.println(julDay + " - " + out);
+                out.set(Attribute.Calendar.DAY_OF_YEAR, julDay);
+//                out.set(out.get(Attribute.Calendar.YEAR), out.get(Attribute.Calendar.MONTH), week * 7, 12, 0, 0);
+//                System.out.println(out);
+                break;
             case MONTHLY: out.removeUnsignificantComponents(Attribute.Calendar.MONTH); break;
             case YEARLY: out.removeUnsignificantComponents(Attribute.Calendar.YEAR); break;
             case DECADLY: out.removeUnsignificantComponents(Attribute.Calendar.YEAR); 
