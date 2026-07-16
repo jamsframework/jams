@@ -42,10 +42,10 @@ family) are maintained separately and will be published in the
 
 **Running JAMS** only requires a Java runtime (JRE), version 11 or newer.
 
-**Building from source** requires:
-
-- JDK 11 or newer (developed and tested with JDK 21)
-- Apache Maven 3.x
+**Building from source** only requires a JDK, version 11 or newer
+(developed and tested with JDK 21). Maven does not need to be installed —
+the repository ships the Maven Wrapper (`./mvnw`, `mvnw.cmd` on Windows),
+which downloads a suitable Maven version on first use.
 
 All third-party dependencies are included in the `libs-repo/` directory,
 a project-local Maven repository — the build works offline out of the box.
@@ -54,7 +54,7 @@ See [libs-repo/VERSIONS.md](libs-repo/VERSIONS.md) for what is in there.
 ## Building
 
 ```
-mvn package -pl jams-starter -am
+./mvnw package -pl jams-starter -am
 ```
 
 This builds all required modules and assembles a runnable application
@@ -69,7 +69,7 @@ jams-bin/
 └── jams.sh / juice.sh   start scripts (macOS/Linux; .bat for Windows)
 ```
 
-`mvn clean -pl jams-starter` removes the bundle again (your `default.jap`
+`./mvnw clean -pl jams-starter` removes the bundle again (your `default.jap`
 configuration file survives).
 
 ## Running
