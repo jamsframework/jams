@@ -54,11 +54,14 @@ See [libs-repo/VERSIONS.md](libs-repo/VERSIONS.md) for what is in there.
 ## Building
 
 ```
-./mvnw package -pl jams-starter -am
+./mvnw install -pl jams-starter -am
 ```
 
-This builds all required modules and assembles a runnable application
-bundle in `jams-bin/` at the repository root:
+This builds all required modules, installs the JAMS artifacts into your
+local Maven repository (where e.g. the
+[jamsmodels](https://github.com/jamsframework/jamsmodels) build picks
+them up) and assembles a runnable application bundle in `jams-bin/` at
+the repository root:
 
 ```
 jams-bin/
