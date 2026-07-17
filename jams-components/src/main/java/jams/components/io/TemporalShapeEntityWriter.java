@@ -328,11 +328,18 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
     }
 
     void renameShape(File directory, String name) {
-        // rename files       
+        // rename files
         for (File srcFile : directory.listFiles()) {
             try {
 
                 String fileName = srcFile.getName();
+
+                // skip macOS metadata files (AppleDouble "._*" sidecars vanish
+                // automatically when their main file is moved, .DS_Store is
+                // Finder metadata)
+                if (fileName.startsWith("._") || fileName.equals(".DS_Store")) {
+                    continue;
+                }
                 int index = fileName.lastIndexOf(".");
                 String baseName = destShapeFileBase.getValue();
                 if (StringTools.isEmptyString(baseName)) {
