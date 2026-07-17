@@ -69,6 +69,7 @@ jams-bin/
 ├── juice-starter.jar    JUICE model editor (main class jamsui.juice.JUICE)
 ├── lib/                 runtime classpath
 ├── components/          standard component library (loaded at runtime)
+├── data/                example workspaces (J2000, Thornthwaite)
 └── jams.sh / juice.sh   start scripts (macOS/Linux; .bat for Windows)
 ```
 
