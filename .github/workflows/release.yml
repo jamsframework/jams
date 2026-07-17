@@ -62,10 +62,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
+          {
+            echo "JAMS $VERSION — ready-to-run application bundle."
+            echo
+            echo "Download and unpack \`jams-$VERSION.zip\`, then start JAMS with \`jams.sh\`/\`jams.bat\` or the JUICE model editor with \`juice.sh\`/\`juice.bat\`. Requires a Java runtime (JRE) 11 or newer."
+            echo
+            echo "Included model component libraries: ${MODEL_MODULES//,/, } (from the [jamsmodels](https://github.com/jamsframework/jamsmodels) repository)."
+          } > release-notes.md
           gh release create "$GITHUB_REF_NAME" "jams-$VERSION.zip" \
             --title "JAMS $VERSION" \
-            --notes "JAMS $VERSION — ready-to-run application bundle.
-
-Download and unpack \`jams-$VERSION.zip\`, then start JAMS with \`jams.sh\`/\`jams.bat\` or the JUICE model editor with \`juice.sh\`/\`juice.bat\`. Requires a Java runtime (JRE) 11 or newer.
-
-Included model component libraries: ${MODEL_MODULES//,/, } (from the [jamsmodels](https://github.com/jamsframework/jamsmodels) repository)."
+            --notes-file release-notes.md
