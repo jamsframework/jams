@@ -1,0 +1,31 @@
+#	Parameter	File	created:	04.12.2002																															
+LID	albedo	RSC0_1	RSC0_2	RSC0_3	RSC0_4	RSC0_5	RSC0_6	RSC0_7	RSC0_8	RSC0_9	RSC0_10	RSC0_11	RSC0_12	hf1	hf2	hf3	hf4	hf5	hf6	hf7	hf8	hf9	hf10	hf11	hf12	LAI_d1	LAI_d2	LAI_d3	LAI_d4	effHeight_d1	effHeight_d2	effHeight_d3	effHeight_d4	rootDepth	sealedGrade
+1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+-9999	100	1000	1000	1000	1000	1000	1000	1000	1000	1000	1000	1000	1000	1	1	1	1	1	1	1	1	1	1	1	1	100	100	100	100	50	50	50	50	50	1
+n/a	%	s/m	s/m	s/m	s/m	s/m	s/m	s/m	s/m	s/m	s/m	s/m	s/m													n/a	n/a	n/a	n/a	m	m	m	m	dm	n/a
+1	0.1	100	100	100	100	100	100	100	100	100	100	100	100	0.29	0.29	0.29	0.4	0.44	0.44	0.44	0.4	0.4	0.29	0.29	0.29	1	1	1	1	10	10	10	10	2	1
+2	0.1	90	90	80	70	50	55	55	55	60	70	90	90	0.27	0.27	0.27	0.4	0.44	0.44	0.44	0.39	0.37	0.27	0.27	0.27	1	1	1	1	3	5	5	3	3	0.8
+3	0.25	80	80	70	60	40	45	45	45	50	60	80	80	0.24	0.24	0.24	0.39	0.44	0.44	0.43	0.37	0.33	0.24	0.24	0.24	2	5	5	2	0.3	0.5	0.5	0.3	6	0
+4	0.12	70	70	60	55	45	45	45	45	50	65	70	70	0.01	0.01	0.05	0.23	0.28	0.35	0.38	0.33	0.25	0.1	0.01	0.01	9	13	13	9	10	10	10	10	5	0
+5	0.17	80	80	70	65	55	55	55	55	60	75	80	80	0.01	0.01	0.01	0.1	0.3	0.33	0.35	0.33	0.3	0.2	0.01	0.01	1	8	8	1	3	10	10	3	20	0
+6	0.15	75	75	65	60	50	50	50	50	55	70	75	75	0.01	0.01	0.03	0.17	0.29	0.34	0.36	0.33	0.28	0.15	0.01	0.01	2	10	10	2	3	10	10	3	20	0
+7	0.25	80	80	75	65	45	50	50	50	50	65	80	80	0.15	0.15	0.23	0.31	0.43	0.63	0.55	0.4	0.2	0.15	0.15	0.15	1	5	3	1	0.05	0.5	0.3	0.05	1.5	0
+8	0.2	80	80	70	60	50	50	50	55	55	70	80	80	0.22	0.22	0.22	0.29	0.29	0.28	0.26	0.25	0.23	0.22	0.22	0.22	3	5	5	3	1.5	2.5	2.5	1.5	15	0
+9	0.2	80	80	70	60	50	50	50	55	55	70	80	80	0.22	0.22	0.22	0.29	0.29	0.28	0.26	0.25	0.23	0.22	0.22	0.22	2	5	5	2	3	5	5	3	10	0
+10	0.1	150	150	150	150	150	150	150	150	150	150	150	150	0.29	0.29	0.29	0.35	0.35	0.35	0.35	0.35	0.35	0.29	0.29	0.29	1	1	1	1	0.05	0.05	0.05	0.05	1	0
+11	0.05	20	20	20	20	20	20	20	20	20	20	20	20	0.01	0.01	0.01	0.01	0.01	0.01	0.01	0.01	0.01	0.01	0.01	0.01	1	1	1	1	0.1	0.1	0.1	0.1	0	0
+# end of landuse.par																																			
+																																			
+			#8,9,11 generalisierte Haudefaktoren aus DYCK & PESCHKE (1995)																																
+																																			
+1 = Siedlung, dicht			Haude-Faktoren: 		Löpmeier (1994):																														
+2 = Siedlung, locker			 		Häckel, H. (1999): Meteorologie.																														
+3 = Wiesen & Weiden					Ernstberger (1987): Einfluss der Landnutzung auf Verdunstung und Wasserbilanz: Bestimmung der aktuellen Evapotranspiration von unterschiedlich 																														
+4 = Nadelwald					genutzten Standorten zur Ermittlung der Wasserbilanz von Einzugsgebieten in unteren Mittelgebirgslagen Hessens. Dissertation.																														
+5 = Laubwald					Schrödter (1985): Verdunstung. Anwendungsorientierte Meßverfahren und Bestimmungsmethoden.																														
+6 = Mischwald																																			
+7 = Ackerland																																			
+8 = Strauchvegetation																																			
+9 = Moore und Feuchtflächen																																			
+10 = Wasserflächen																																			
+11 = Freiflächen																																			

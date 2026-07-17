@@ -1,0 +1,5 @@
+#JAMS workspace configuration
+#Fri Jun 19 08:32:57 CEST 2009
+persistent=false
+description=Test dataset for Gehlberg catchment in Thuringia/Germany.
+title=Gehlberg
