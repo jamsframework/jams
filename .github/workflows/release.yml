@@ -1,0 +1,42 @@
+# Builds the jams-bin bundle and publishes it as a GitHub release.
+# Triggered by pushing a version tag, e.g.:  git tag v4.0 && git push origin v4.0
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build application bundle
+        run: ./mvnw --batch-mode --no-transfer-progress install -pl jams-starter -am
+
+      - name: Package bundle
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mv jams-bin "jams-$VERSION"
+          zip -r -q "jams-$VERSION.zip" "jams-$VERSION"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" "jams-$VERSION.zip" \
+            --title "JAMS $VERSION" \
+            --notes "JAMS $VERSION — ready-to-run application bundle.
+
+Download and unpack \`jams-$VERSION.zip\`, then start JAMS with \`jams.sh\`/\`jams.bat\` or the JUICE model editor with \`juice.sh\`/\`juice.bat\`. Requires a Java runtime (JRE) 11 or newer."
