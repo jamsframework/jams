@@ -14,7 +14,7 @@ permissions:
 
 env:
   # model component libraries bundled with the release
-  MODEL_MODULES: J2K_base,J2K_ext,J2K_iso,J2000g,Thornthwaite
+  MODEL_MODULES: J2K_base,J2K_ext,J2K_iso,J2Kg,Thornthwaite
 
 jobs:
   release:
