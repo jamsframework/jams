@@ -35,8 +35,8 @@ documentation, component wiki, release archive)
 | `jams-starter` | Distribution module — assembles the runnable `jams-bin/` bundle |
 
 Domain-specific component libraries (e.g. the J2000 hydrological model
-family) are maintained separately and will be published in the
-[jamsmodels](https://github.com/jamsframework) repository.
+family) are maintained separately and are maintained in the
+[jamsmodels](https://github.com/jamsframework/jamsmodels) repository.
 
 ## Requirements
 
