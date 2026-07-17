@@ -55,10 +55,15 @@
                 <directory>src/main/java</directory>
                 <excludes>
                     <exclude>**/*.java</exclude>
+                    <!-- macOS-AppleDouble-Sidecars (exFAT) nicht ins JAR kopieren -->
+                    <exclude>**/._*</exclude>
                 </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/._*</exclude>
+                </excludes>
             </resource>
         </resources>
 
@@ -68,6 +73,14 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.13.0</version>
+                    <configuration>
+                        <!-- macOS-AppleDouble-Sidecars (._Foo.java auf exFAT-
+                             Volumes) matchen **/*.java und wuerden javac
+                             zum Absturz bringen -->
+                        <excludes>
+                            <exclude>**/._*.java</exclude>
+                        </excludes>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
