@@ -30,6 +30,12 @@
              aufgeloest, damit der Pfad auch beim Bauen direkt im
              Modulverzeichnis auf die Repo-Wurzel zeigt -->
         <jams.bin.dir>${project.basedir}/../jams-bin</jams.bin.dir>
+        <!-- reines Distributions-Modul: nicht in ~/.m2 installieren. Die vom
+             jar-Plugin registrierten Starter-Jars werden vom antrun-Schritt
+             umbenannt - "mvn install" wuerde sonst an den nicht mehr
+             existierenden Originaldateien scheitern -->
+        <maven.install.skip>true</maven.install.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>
