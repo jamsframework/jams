@@ -1,5 +1,6 @@
  This software is part of JAMS
- Copyright (C) 2006-2026 FSU Jena
+ Copyright (C) 2005-2026 FSU Jena and the JAMS contributors
+https://jamsframework.org
  
  This library is free software: you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public

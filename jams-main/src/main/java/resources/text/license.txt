@@ -1,5 +1,6 @@
 This software is developed and distributed under the GNU LESSER GENERAL PUBLIC LICENSE
-Copyright (C) 2006-2026 FSU Jena
+Copyright (C) 2005-2026 FSU Jena and the JAMS contributors
+https://jamsframework.org
 
 ------------------------------------------------------------
 
