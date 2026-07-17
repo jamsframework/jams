@@ -1,5 +1,7 @@
-# Builds the jams-bin bundle and publishes it as a GitHub release.
-# Triggered by pushing a version tag, e.g.:  git tag v4.0 && git push origin v4.0
+# Builds the jams-bin bundle (including the standard model component
+# libraries from the jamsmodels repository) and publishes it as a GitHub
+# release. Triggered by pushing a version tag, e.g.:
+#   git tag v4.0 && git push origin v4.0
 name: Release
 
 on:
@@ -10,11 +12,20 @@ on:
 permissions:
   contents: write
 
+env:
+  # model component libraries bundled with the release
+  MODEL_MODULES: J2K_base,J2K_ext,J2K_iso,J2000g,Thornthwaite
+
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: jamsframework/jamsmodels
+          path: jamsmodels
 
       - uses: actions/setup-java@v4
         with:
@@ -23,6 +34,22 @@ jobs:
 
       - name: Build application bundle
         run: ./mvnw --batch-mode --no-transfer-progress install -pl jams-starter -am
+
+      - name: Build model components
+        working-directory: jamsmodels
+        run: ./mvnw --batch-mode --no-transfer-progress package -pl "$MODEL_MODULES" -am
+
+      - name: Add model components to bundle
+        run: |
+          for jar in jamsmodels/components/*.jar; do
+            base="$(basename "$jar")"
+            cp "$jar" "jams-bin/components/${base%-[0-9]*-SNAPSHOT.jar}.jar"
+          done
+          if [ -d jamsmodels/components/lib ]; then
+            mkdir -p jams-bin/components/lib
+            cp jamsmodels/components/lib/*.jar jams-bin/components/lib/
+          fi
+          ls jams-bin/components/
 
       - name: Package bundle
         run: |
@@ -39,4 +66,6 @@ jobs:
             --title "JAMS $VERSION" \
             --notes "JAMS $VERSION — ready-to-run application bundle.
 
-Download and unpack \`jams-$VERSION.zip\`, then start JAMS with \`jams.sh\`/\`jams.bat\` or the JUICE model editor with \`juice.sh\`/\`juice.bat\`. Requires a Java runtime (JRE) 11 or newer."
+Download and unpack \`jams-$VERSION.zip\`, then start JAMS with \`jams.sh\`/\`jams.bat\` or the JUICE model editor with \`juice.sh\`/\`juice.bat\`. Requires a Java runtime (JRE) 11 or newer.
+
+Included model component libraries: ${MODEL_MODULES//,/, } (from the [jamsmodels](https://github.com/jamsframework/jamsmodels) repository)."
