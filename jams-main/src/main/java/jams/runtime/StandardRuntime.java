@@ -399,7 +399,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         this.state = state;
 
         if (guiEnabled && (guiComponents.size() > 0)) {
-            frame.setVisible(true);
+            showFrameToFront();
         }
         //is there a better method without unsafe casting?
         recoverIteratorStates((JAMSModel) model, state);
@@ -455,7 +455,7 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         RuntimeManager.getInstance().addRuntime(this);
 
         if (guiEnabled && (guiComponents.size() > 0)) {
-            frame.setVisible(true);
+            showFrameToFront();
         }
 
         long start = System.currentTimeMillis();
@@ -754,6 +754,28 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         frame.pack();
         frame.setLocation((int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() - width) / 2, (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() - height) / 2);
 
+    }
+
+    // shows the model GUI frame and brings it to the front (on macOS a newly
+    // shown window may otherwise appear behind the editor). Runs on the EDT
+    // because the model is started from a background thread.
+    private void showFrameToFront() {
+        // On macOS toFront() alone is often ignored; briefly forcing
+        // always-on-top makes the window server actually raise the window.
+        // Done twice: immediately, and again after the modal load dialog
+        // closes and hands focus back to the editor (which would otherwise
+        // bury this window again).
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            frame.setVisible(true);
+            frame.setAlwaysOnTop(true);
+            frame.toFront();
+        });
+        javax.swing.Timer t = new javax.swing.Timer(400, e -> {
+            frame.toFront();
+            frame.setAlwaysOnTop(false);
+        });
+        t.setRepeats(false);
+        t.start();
     }
 
     @Override
