@@ -65,7 +65,7 @@ jobs:
           {
             echo "JAMS $VERSION — ready-to-run application bundle."
             echo
-            echo "Download and unpack \`jams-$VERSION.zip\`, then start the JAMS launcher with \`jams.sh\`/\`jams.bat\` or the JAMS model editor with \`juice.sh\`/\`juice.bat\`. Requires a Java runtime (JRE) 11 or newer."
+            echo "Download and unpack \`jams-$VERSION.zip\`, then start the JAMS launcher with \`jams.sh\`/\`jams.bat\` or the JAMS model editor with \`juice.sh\`/\`juice.bat\`. Requires a Java runtime (JRE) 17 or newer."
             echo
             echo "Included model component libraries: ${MODEL_MODULES//,/, } (from the [jamsmodels](https://github.com/jamsframework/jamsmodels) repository)."
           } > release-notes.md

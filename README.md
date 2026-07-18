@@ -40,9 +40,9 @@ family) are maintained in the separate
 
 ## Requirements
 
-**Running JAMS** only requires a Java runtime (JRE), version 11 or newer.
+**Running JAMS** only requires a Java runtime (JRE), version 17 or newer.
 
-**Building from source** only requires a JDK, version 11 or newer
+**Building from source** only requires a JDK, version 17 or newer
 (developed and tested with JDK 21). Maven does not need to be installed —
 the repository ships the Maven Wrapper (`./mvnw`, `mvnw.cmd` on Windows),
 which downloads a suitable Maven version on first use.
@@ -97,9 +97,8 @@ including 20 years of Subversion commits — is preserved in this repository.
 Releases up to 3.17 were published via https://jams.uni-jena.de, where an
 archive of historical releases remains available. Starting with this
 repository, JAMS uses a Maven-based build. Previous releases were built
-with Ant and ran on Java 8. This repository targets Java 11 — the
-minimum runtime version required by the upgraded NASA WorldWind 3D
-components.
+with Ant and ran on Java 8. This repository targets Java 17 — the version required by the
+upgraded GeoTools components.
 
 ## License
 
