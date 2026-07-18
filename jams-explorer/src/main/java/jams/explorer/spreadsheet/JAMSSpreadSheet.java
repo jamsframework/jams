@@ -1168,8 +1168,10 @@ public class JAMSSpreadSheet extends JPanel {
         File outFile = new File(explorer.getWorkspace().getOutputDataDirectory(), new File(inUri).toPath().getFileName().toString());
         JFileChooser jfc = GUIHelper.getJFileChooser(JAMSFileFilter.getShapeFilter());
         jfc.setSelectedFile(outFile);
-        int result = jfc.showOpenDialog(panel);
-        if (result == JFileChooser.CANCEL_OPTION) {
+        // Save dialog (not Open): only that provides an editable filename field
+        // for entering a new output name (an Open dialog on macOS does not)
+        int result = jfc.showSaveDialog(panel);
+        if (result != JFileChooser.APPROVE_OPTION) {
             return;
         } else {
             outFile = jfc.getSelectedFile();
