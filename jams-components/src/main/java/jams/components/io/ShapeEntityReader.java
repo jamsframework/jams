@@ -21,9 +21,8 @@
  */
 package jams.components.io;
 
-import com.vividsolutions.jts.algorithm.CentroidArea;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 import jams.data.Attribute;
 import jams.model.JAMSComponent;
 import jams.model.JAMSComponentDescription;
@@ -35,9 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.filter.AreaFunction;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.type.AttributeDescriptor;
+import org.geotools.api.feature.simple.SimpleFeature;
+import org.geotools.api.feature.type.AttributeDescriptor;
 
 /**
  *
@@ -121,12 +119,9 @@ public class ShapeEntityReader extends JAMSComponent {
                     e.setObject(atts.get(i).getName().toString(), getModel().getRuntime().getDataFactory().createInstance(f.getAttribute(i)));
                 }
                 Geometry geom = (Geometry) f.getDefaultGeometry();
-                AreaFunction af = new AreaFunction();
-                e.setDouble(areaAttribute.getValue(), af.getArea(geom));
-                
-                CentroidArea c2d = new CentroidArea();
-                c2d.add(geom);
-                Coordinate coord = c2d.getCentroid();
+                e.setDouble(areaAttribute.getValue(), geom.getArea());
+
+                Coordinate coord = geom.getCentroid().getCoordinate();
                 e.setDouble(xAttribute.getValue(), coord.x);
                 e.setDouble(yAttribute.getValue(), coord.y);
                 //System.out.println("ShapeEntityReader.x/y: " + coord.x + "/" + coord.y);

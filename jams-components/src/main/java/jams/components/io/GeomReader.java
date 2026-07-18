@@ -20,7 +20,7 @@
  */
 package jams.components.io;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import jams.data.Attribute;
 import org.geotools.data.shapefile.ShapefileDataStore;
 
@@ -31,11 +31,11 @@ import java.io.IOException;
 
 import java.util.HashMap;
 import java.util.List;
-import org.geotools.data.FeatureSource;
+import org.geotools.api.data.FeatureSource;
 import org.geotools.feature.FeatureIterator;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.Name;
+import org.geotools.api.feature.simple.SimpleFeature;
+import org.geotools.api.feature.simple.SimpleFeatureType;
+import org.geotools.api.feature.type.Name;
 
 /**
  * Reads geometries from HRU shapefile and adds them to JAMS entities as spatial attribute.

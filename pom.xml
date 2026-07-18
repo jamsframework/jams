@@ -28,19 +28,43 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Java 11: reale Laufzeit-Mindestanforderung (WorldWind); "release"
-             statt source/target, damit auch gegen die Java-11-API geprueft
-             wird und kuenftige JDKs das Target noch unterstuetzen -->
-        <maven.compiler.release>11</maven.compiler.release>
+        <!-- Java 17: von GeoTools 33 vorausgesetzt (WorldWind braucht min. 11) -->
+        <maven.compiler.release>17</maven.compiler.release>
+        <geotools.version>33.5</geotools.version>
+        <jts.version>1.20.0</jts.version>
     </properties>
 
-    <!-- Projekt-lokales Repository mit den eingecheckten JARs.
-         ${maven.multiModuleProjectDirectory} zeigt immer auf die Repo-Wurzel,
-         damit der Pfad auch aus den Modulen heraus stimmt. -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.locationtech.jts</groupId>
+                <artifactId>jts-core</artifactId>
+                <version>${jts.version}</version>
+            </dependency>
+            <!-- von GeoTools 33 benoetigt (JavaVersion.JAVA_9 ff.); loest den
+                 Konflikt mit dem alten lokalen commons-lang3-3.1 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.17.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <repositories>
+        <!-- Projekt-lokales Repository mit den eingecheckten JARs.
+             ${maven.multiModuleProjectDirectory} zeigt immer auf die Repo-Wurzel,
+             damit der Pfad auch aus den Modulen heraus stimmt. -->
         <repository>
             <id>jams-libs-repo</id>
             <url>file://${maven.multiModuleProjectDirectory}/libs-repo</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <!-- modernes GeoTools 33 (nicht auf Maven Central) -->
+        <repository>
+            <id>osgeo</id>
+            <url>https://repo.osgeo.org/repository/release/</url>
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>

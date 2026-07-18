@@ -26,12 +26,9 @@ import jams.data.*;
 import jams.model.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.text.ParseException;
-import java.text.ParsePosition;
-import java.util.Locale;
-import javax.measure.converter.UnitConverter;
-import javax.measure.unit.Unit;
-import javax.measure.unit.UnitFormat;
+import javax.measure.Unit;
+import javax.measure.UnitConverter;
+import tech.units.indriya.format.SimpleUnitFormat;
 
 
 
@@ -71,36 +68,51 @@ public class JAMSUnitConverter extends JAMSComponent {
             )
             public Attribute.Double[] outValue;
      
-     transient Unit in, out;
+     transient Unit<?> in, out;
      transient UnitConverter conv;
-     
+
+     private static SimpleUnitFormat unitFormat() {
+         SimpleUnitFormat f = SimpleUnitFormat.getInstance();
+         // JScience accepted "L" for litre; indriya only knows "l" by default
+         try {
+             f.alias(f.parse("l"), "L");
+         } catch (Exception ignore) {
+         }
+         return f;
+     }
+
+     private void initConverter() throws Exception {
+         SimpleUnitFormat f = unitFormat();
+         in = f.parse(this.inUnit.getValue());
+         out = f.parse(this.outUnit.getValue());
+         if (!in.isCompatible(out)) {
+             getModel().getRuntime().sendHalt("Incompatible units: " + inUnit + " <-> " + outUnit);
+         }
+         conv = in.getConverterToAny(out);
+     }
+
      public void init() {
-         Locale l = new Locale.Builder().setLanguage("en").setRegion("US").build();
-         
-         try{
-            in = UnitFormat.getInstance(l).parseProductUnit(this.inUnit.getValue(), new ParsePosition(0));
-            out = UnitFormat.getInstance(l).parseProductUnit(this.outUnit.getValue(), new ParsePosition(0));
-         //out = Unit.valueOf(this.outUnit.getValue());
-            if (!in.isCompatible(out)) {
-                 getModel().getRuntime().sendHalt("Incompatible units: " + inUnit + " <-> " + outUnit);
-            }
-            conv = in.getConverterTo(out);
-         }catch(ParseException pe){
-             pe.printStackTrace();
+         try {
+             initConverter();
+         } catch (Exception e) {
+             getModel().getRuntime().sendErrorMsg("JAMSUnitConverter: could not parse units '"
+                     + inUnit.getValue() + "' / '" + outUnit.getValue() + "' (" + e.getMessage() + ")");
          }
      }
-     
+
      public void run() {
          for (int i = 0; i < inValue.length; i++) {
             outValue[i].setValue(conv.convert(inValue[i].getValue()));
          }
      }
-         
-     //unit, converter are not serializable so reinit, after deserialization .. 
+
+     //unit, converter are not serializable so reinit, after deserialization ..
      private void readObject(ObjectInputStream objStream) throws IOException, ClassNotFoundException{
          objStream.defaultReadObject();
-         in = Unit.valueOf(this.inUnit.getValue());
-         out = Unit.valueOf(this.outUnit.getValue());
-         conv = in.getConverterTo(out);
+         try {
+             initConverter();
+         } catch (Exception e) {
+             // units reinitialised lazily; leave converter null on failure
+         }
      }
 }

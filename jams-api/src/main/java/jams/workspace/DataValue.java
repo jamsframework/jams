@@ -21,7 +21,7 @@
  */
 package jams.workspace;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import jams.data.Attribute;
 import java.io.Serializable;
 

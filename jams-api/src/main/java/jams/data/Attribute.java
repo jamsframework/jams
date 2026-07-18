@@ -202,9 +202,9 @@ public interface Attribute extends Serializable {
 
     public interface Geometry extends JAMSData {
 
-        public void setValue(com.vividsolutions.jts.geom.Geometry geo);
+        public void setValue(org.locationtech.jts.geom.Geometry geo);
 
-        public com.vividsolutions.jts.geom.Geometry getValue();
+        public org.locationtech.jts.geom.Geometry getValue();
     }
 
     public interface Entity extends JAMSData {
@@ -219,7 +219,7 @@ public interface Attribute extends Serializable {
 
         public void setObject(java.lang.String name, java.lang.Object attribute);
 
-        public void setGeometry(java.lang.String name, com.vividsolutions.jts.geom.Geometry attribute);
+        public void setGeometry(java.lang.String name, org.locationtech.jts.geom.Geometry attribute);
 
         public float getFloat(java.lang.String name) throws NoSuchAttributeException;
 
@@ -231,7 +231,7 @@ public interface Attribute extends Serializable {
 
         public java.lang.Object getObject(java.lang.String name) throws NoSuchAttributeException;
 
-        public com.vividsolutions.jts.geom.Geometry getGeometry(java.lang.String name) throws NoSuchAttributeException;
+        public org.locationtech.jts.geom.Geometry getGeometry(java.lang.String name) throws NoSuchAttributeException;
 
         public boolean existsAttribute(java.lang.String name);
 

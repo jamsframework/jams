@@ -31,20 +31,21 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotools.data.DataUtilities;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.Transaction;
+import org.geotools.data.DefaultTransaction;
+import org.geotools.api.data.FeatureSource;
+import org.geotools.api.data.FeatureStore;
+import org.geotools.api.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.geotools.api.feature.simple.SimpleFeature;
+import org.geotools.api.feature.simple.SimpleFeatureType;
+import org.geotools.api.feature.type.AttributeDescriptor;
+import org.geotools.api.feature.type.FeatureType;
+import org.geotools.api.feature.type.PropertyDescriptor;
 
 /**
  *
@@ -165,7 +166,7 @@ public class ShapeFileWriter {
         Logger.getLogger(ShapeFileWriter.class.getName()).log(Level.INFO, "The following attributes are written:\n" + attribs);
 
         // build the new feature collection
-        FeatureCollection<SimpleFeatureType, SimpleFeature> targetFeatureCollection = FeatureCollections.newCollection();
+        DefaultFeatureCollection targetFeatureCollection = new DefaultFeatureCollection();
         int i = 0;
         FeatureIterator fi = featureCollection.features();
         while (fi.hasNext()) {
@@ -202,14 +203,22 @@ public class ShapeFileWriter {
         // downcast FeatureSource to specific implementation of FeatureStore
         FeatureStore newFeatureStore = (FeatureStore) newFeatureSource;
 
-        // accquire a transaction to create the shapefile from FeatureStore
-        Transaction t = newFeatureStore.getTransaction();
-
-        // add newly generated features (old file + new attributes)
-        newFeatureStore.addFeatures(targetFeatureCollection);
-
-        t.commit();
-        t.close();
+        // create a transaction and write the features within it (modern
+        // GeoTools no longer hands out a transaction via getTransaction())
+        Transaction t = new DefaultTransaction("create");
+        newFeatureStore.setTransaction(t);
+        try {
+            newFeatureStore.addFeatures(targetFeatureCollection);
+            t.commit();
+        } catch (IOException ioe) {
+            t.rollback();
+            throw ioe;
+        } finally {
+            t.close();
+        }
+        fi.close();
+        store.dispose();
+        newShapefileDataStore.dispose();
 
         Logger.getLogger(ShapeFileWriter.class.getName()).log(Level.INFO, "Succesfully wrote "
                 + i + " shapes to " + targetFile.getPath() + "!");

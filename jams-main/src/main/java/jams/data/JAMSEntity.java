@@ -22,7 +22,7 @@
 package jams.data;
 
 import java.util.*;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 import gnu.trove.map.hash.THashMap;
 import jams.JAMS;
 

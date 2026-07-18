@@ -68,84 +68,14 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>geoapi-2.2-M1</artifactId>
-            <version>local</version>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-main</artifactId>
+            <version>${geotools.version}</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-api-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-coverage-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-cql-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-data-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-epsg-extension-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-epsg-wkt-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-legacy-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-main-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-mappane-2.5.5</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-metadata-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-referencing-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-referencing3D-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-render-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-shapefile-2.5.2</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>gt-shapefile-renderer-2.5.2</artifactId>
-            <version>local</version>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-shapefile</artifactId>
+            <version>${geotools.version}</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -165,11 +95,6 @@
         <dependency>
             <groupId>jams.ext</groupId>
             <artifactId>httpmime-4.3.3</artifactId>
-            <version>local</version>
-        </dependency>
-        <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>jai_core</artifactId>
             <version>local</version>
         </dependency>
         <dependency>
