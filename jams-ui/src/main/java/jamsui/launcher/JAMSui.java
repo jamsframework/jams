@@ -232,7 +232,6 @@ public class JAMSui {
                                 JAMSTools.handle(e);
                             }
                             // collect some garbage ;)
-                            java.lang.Runtime.getRuntime().gc();
                             System.exit(0);
                         }
                     } else {

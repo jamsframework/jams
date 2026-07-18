@@ -499,7 +499,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
         if (this.getState() != JAMSRuntime.STATE_PAUSE) {
             model = null;
             classLoader = null;
-            java.lang.Runtime.getRuntime().gc();
         }
     }
 
@@ -726,7 +725,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             public void actionPerformed(ActionEvent evt) {
                 StandardRuntime.this.sendHalt();
                 frame.dispose();
-                java.lang.Runtime.getRuntime().gc();
             }
         });
         toolBar.add(closeButton);
@@ -737,7 +735,6 @@ public class StandardRuntime extends Observable implements JAMSRuntime, Serializ
             public void windowClosing(WindowEvent e) {
                 StandardRuntime.this.sendHalt();
                 frame.dispose();
-                java.lang.Runtime.getRuntime().gc();
             }
         });
 

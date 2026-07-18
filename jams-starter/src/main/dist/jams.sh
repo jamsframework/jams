@@ -11,5 +11,5 @@
 #   JAVA_OPTS="-Xmx4g" ./jams.sh
 #
 cd "$(dirname "$0")"
-VM_OPTS="-Xms128M -Xmx1024M -splash:JAMSsplash.png $JAVA_OPTS"
+VM_OPTS="-Xms128M -Xmx1024M -splash:JAMSsplash.png -Djavax.accessibility.assistive_technologies= $JAVA_OPTS"
 exec java $VM_OPTS -jar jams-starter.jar "$@"

@@ -191,7 +191,6 @@ public class JAMSLauncher extends JFrame {
                         runModel();
 
                         // collect some garbage ;)
-                        java.lang.Runtime.getRuntime().gc();
                     }
                 };
                 t.start();
@@ -566,7 +565,6 @@ public class JAMSLauncher extends JFrame {
 
                 //dump the runtime and clean up
                 runtime = null;
-                java.lang.Runtime.getRuntime().gc();
             }
         };
         t.start();

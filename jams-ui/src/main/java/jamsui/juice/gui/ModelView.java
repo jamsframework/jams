@@ -367,7 +367,6 @@ public class ModelView {
 
                 //dump the runtime and clean up
                 runtime = null;
-                java.lang.Runtime.getRuntime().gc();
             }
         };
         try {
