@@ -144,9 +144,6 @@ public abstract class AbstractTreeTransferHandler implements DragGestureListener
                     } else if (container instanceof JFrame) {
                         dragPane = ((JFrame) tree.getTopLevelAncestor()).getLayeredPane();
                         dragPane.add(draggedLabel, JLayeredPane.DRAG_LAYER);
-                    } else if (container instanceof JApplet) {
-                        dragPane = ((JApplet) tree.getTopLevelAncestor()).getLayeredPane();
-                        dragPane.add(draggedLabel, JLayeredPane.DRAG_LAYER);
                     } else {
                         drawImage = false;
                     }

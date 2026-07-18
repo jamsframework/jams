@@ -42,6 +42,11 @@ family) are maintained in the separate
 
 **Running JAMS** only requires a Java runtime (JRE), version 17 or newer.
 
+> **macOS note:** a bug in the Java runtime's native accessibility support
+> (present in current Java 17–23 builds, fixed in Java 24) can crash the
+> application when a screen reader or another macOS accessibility tool is
+> active. If you run into this, use a Java 24 or newer runtime.
+
 **Building from source** only requires a JDK, version 17 or newer
 (developed and tested with JDK 21). Maven does not need to be installed —
 the repository ships the Maven Wrapper (`./mvnw`, `mvnw.cmd` on Windows),
