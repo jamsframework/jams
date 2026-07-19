@@ -50,7 +50,12 @@ public class GenericDataWriter implements Serializable{
 
     private void openFile() {
         try {
-            writer = new SerializableBufferedWriter(new FileWriter(fileName));
+            File file = new File(fileName);
+            File parent = file.getParentFile();
+            if (parent != null) {
+                parent.mkdirs();
+            }
+            writer = new SerializableBufferedWriter(new FileWriter(file));
         } catch (IOException ioe) {
             JAMSTools.handle(ioe);
         }
