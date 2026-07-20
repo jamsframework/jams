@@ -53,19 +53,19 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>apache-mime4j-0.6</artifactId>
-            <version>local</version>
+            <groupId>org.apache.james</groupId>
+            <artifactId>apache-mime4j</artifactId>
+            <version>0.6</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>commons-io-1.3.1</artifactId>
-            <version>local</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.1</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>commons-math-1.2</artifactId>
-            <version>local</version>
+            <groupId>commons-math</groupId>
+            <artifactId>commons-math</artifactId>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
@@ -78,29 +78,29 @@
             <version>${geotools.version}</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>h2-1.3.169</artifactId>
-            <version>local</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.3.169</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>httpclient-4.3.3</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.3</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>httpcore-4.3.2</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.3.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>httpmime-4.3.3</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.3.3</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>jaxb-api-2.2.7</artifactId>
-            <version>local</version>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.2.7</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -108,9 +108,9 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>jfreechart-1.0.17</artifactId>
-            <version>local</version>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.17</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -118,14 +118,14 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>trove-3.0.3</artifactId>
-            <version>local</version>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>trove4j</artifactId>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.vecmath</groupId>
             <artifactId>vecmath</artifactId>
-            <version>local</version>
+            <version>1.5.2</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -133,9 +133,9 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>xmlgraphics-commons-1.3.1</artifactId>
-            <version>local</version>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>xmlgraphics-commons</artifactId>
+            <version>1.3.1</version>
         </dependency>
     </dependencies>
     <build>

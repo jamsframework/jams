@@ -28,169 +28,169 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>bean-validator</artifactId>
-            <version>local</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.0.0.Final</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>hibernate-jpa-2.0-api-1.0.1.Final</artifactId>
-            <version>local</version>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>1.0.1.Final</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>javax.activation-1.2.0</artifactId>
-            <version>local</version>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
-            <version>local</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.batch</groupId>
             <artifactId>javax.batch-api</artifactId>
-            <version>local</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.ejb</groupId>
             <artifactId>javax.ejb-api</artifactId>
-            <version>local</version>
+            <version>3.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
-            <version>local</version>
+            <version>3.0.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.glassfish</groupId>
             <artifactId>javax.enterprise.concurrent</artifactId>
-            <version>local</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.enterprise.concurrent</groupId>
             <artifactId>javax.enterprise.concurrent-api</artifactId>
-            <version>local</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.enterprise.deploy</groupId>
             <artifactId>javax.enterprise.deploy-api</artifactId>
-            <version>local</version>
+            <version>1.6</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.glassfish</groupId>
             <artifactId>javax.faces</artifactId>
-            <version>local</version>
+            <version>2.2.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
-            <version>local</version>
+            <version>1</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.interceptor</groupId>
             <artifactId>javax.interceptor-api</artifactId>
-            <version>local</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.jms</groupId>
             <artifactId>javax.jms-api</artifactId>
-            <version>local</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
-            <version>local</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
-            <version>local</version>
+            <version>1.5.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.management.j2ee</groupId>
             <artifactId>javax.management.j2ee-api</artifactId>
-            <version>local</version>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.eclipse.persistence</groupId>
             <artifactId>javax.persistence</artifactId>
-            <version>local</version>
+            <version>2.1.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.resource</groupId>
             <artifactId>javax.resource-api</artifactId>
-            <version>local</version>
+            <version>1.7</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.security.auth.message</groupId>
             <artifactId>javax.security.auth.message-api</artifactId>
-            <version>local</version>
+            <version>1.1</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.security.jacc</groupId>
             <artifactId>javax.security.jacc-api</artifactId>
-            <version>local</version>
+            <version>1.5</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>local</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.glassfish.web</groupId>
             <artifactId>javax.servlet.jsp</artifactId>
-            <version>local</version>
+            <version>2.3.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.servlet.jsp</groupId>
             <artifactId>javax.servlet.jsp-api</artifactId>
-            <version>local</version>
+            <version>2.3.1</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.glassfish.web</groupId>
             <artifactId>javax.servlet.jsp.jstl</artifactId>
-            <version>local</version>
+            <version>1.2.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.servlet.jsp.jstl</groupId>
             <artifactId>javax.servlet.jsp.jstl-api</artifactId>
-            <version>local</version>
+            <version>1.2.1</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.transaction</groupId>
             <artifactId>javax.transaction-api</artifactId>
-            <version>local</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.websocket</groupId>
             <artifactId>javax.websocket-api</artifactId>
-            <version>local</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
-            <version>local</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.xml.registry</groupId>
             <artifactId>javax.xml.registry-api</artifactId>
-            <version>local</version>
+            <version>1.0.5</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.xml.rpc</groupId>
             <artifactId>javax.xml.rpc-api</artifactId>
-            <version>local</version>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api-osgi</artifactId>
-            <version>local</version>
+            <version>2.2.7</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-osgi</artifactId>
-            <version>local</version>
+            <version>2.2.7</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>

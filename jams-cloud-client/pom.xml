@@ -33,9 +33,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>aopalliance-repackaged-2.3.0-b05</artifactId>
-            <version>local</version>
+            <groupId>org.glassfish.hk2.external</groupId>
+            <artifactId>aopalliance-repackaged</artifactId>
+            <version>2.3.0-b05</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -43,154 +43,154 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>asm-debug-all-5.0.2</artifactId>
-            <version>local</version>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-debug-all</artifactId>
+            <version>5.0.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>commons-codec-1.9</artifactId>
-            <version>local</version>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.9</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>commons-io-1.3.1</artifactId>
-            <version>local</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.1</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>commons-logging-1.1.3</artifactId>
-            <version>local</version>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.3</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>fluent-hc-4.3.3</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>fluent-hc</artifactId>
+            <version>4.3.3</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>hk2-api-2.3.0-b05</artifactId>
-            <version>local</version>
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>hk2-api</artifactId>
+            <version>2.3.0-b05</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>hk2-locator-2.3.0-b05</artifactId>
-            <version>local</version>
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>hk2-locator</artifactId>
+            <version>2.3.0-b05</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>hk2-utils-2.3.0-b05</artifactId>
-            <version>local</version>
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>hk2-utils</artifactId>
+            <version>2.3.0-b05</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>httpclient-4.3.3</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.3</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>httpclient-cache-4.3.3</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-cache</artifactId>
+            <version>4.3.3</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>httpcore-4.3.2</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.3.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>httpmime-4.3.3</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.3.3</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>javassist-3.18.1-GA</artifactId>
-            <version>local</version>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.18.1-GA</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
-            <version>local</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
-            <version>local</version>
+            <version>1</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>local</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
-            <version>local</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>jaxb-api-2.2.7</artifactId>
-            <version>local</version>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.2.7</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>local</version>
+            <version>2.9</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>
-            <version>local</version>
+            <version>2.9</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
-            <version>local</version>
+            <version>2.9</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet-core</artifactId>
-            <version>local</version>
+            <version>2.9</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>jersey-guava-2.9</artifactId>
-            <version>local</version>
+            <groupId>org.glassfish.jersey.bundles.repackaged</groupId>
+            <artifactId>jersey-guava</artifactId>
+            <version>2.9</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>jersey-media-multipart-2.9</artifactId>
-            <version>local</version>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>2.9</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>local</version>
+            <version>2.9</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
-            <version>local</version>
+            <version>3.3.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>mimepull-1.9.4</artifactId>
-            <version>local</version>
+            <groupId>org.jvnet.mimepull</groupId>
+            <artifactId>mimepull</artifactId>
+            <version>1.9.4</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>org.osgi.core-4.2.0</artifactId>
-            <version>local</version>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>osgi-resource-locator-1.0.1</artifactId>
-            <version>local</version>
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>osgi-resource-locator</artifactId>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>persistence-api-1.0</artifactId>
-            <version>local</version>
+            <groupId>javax.persistence</groupId>
+            <artifactId>persistence-api</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -198,9 +198,9 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>validation-api-1.1.0.Final</artifactId>
-            <version>local</version>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
         </dependency>
     </dependencies>
     <build>

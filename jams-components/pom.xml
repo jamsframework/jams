@@ -38,34 +38,34 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>apache-mime4j-0.6</artifactId>
-            <version>local</version>
+            <groupId>org.apache.james</groupId>
+            <artifactId>apache-mime4j</artifactId>
+            <version>0.6</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>commons-beanutils-1.7.0</artifactId>
-            <version>local</version>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.7.0</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>commons-codec-1.9</artifactId>
-            <version>local</version>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.9</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>commons-logging-1.1.3</artifactId>
-            <version>local</version>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.3</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>exp4j-0.4.8</artifactId>
-            <version>local</version>
+            <groupId>net.objecthunter</groupId>
+            <artifactId>exp4j</artifactId>
+            <version>0.4.8</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>fastutil-6.5.9</artifactId>
-            <version>local</version>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>fastutil</artifactId>
+            <version>6.5.9</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -111,24 +111,24 @@
             <version>${geotools.version}</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>httpclient-4.3.3</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.3</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>httpclient-cache-4.3.3</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-cache</artifactId>
+            <version>4.3.3</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>httpcore-4.3.2</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.3.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>httpmime-4.3.3</artifactId>
-            <version>local</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.3.3</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -146,9 +146,9 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>jfreechart-1.0.17</artifactId>
-            <version>local</version>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.17</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -186,9 +186,9 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>json-20180813</artifactId>
-            <version>local</version>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180813</version>
         </dependency>
         <dependency>
             <groupId>org.locationtech.jts</groupId>
@@ -203,14 +203,14 @@
             <version>2.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>juel-api-2.2.6</artifactId>
-            <version>local</version>
+            <groupId>de.odysseus.juel</groupId>
+            <artifactId>juel-api</artifactId>
+            <version>2.2.6</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>juel-impl-2.2.6</artifactId>
-            <version>local</version>
+            <groupId>de.odysseus.juel</groupId>
+            <artifactId>juel-impl</artifactId>
+            <version>2.2.6</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -218,9 +218,9 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>mysql-connector-java-5.1.13-bin</artifactId>
-            <version>local</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.13</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -238,9 +238,9 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>trove-3.0.3</artifactId>
-            <version>local</version>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>trove4j</artifactId>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>jams.ext</groupId>
@@ -248,14 +248,14 @@
             <version>local</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
+            <groupId>javax.vecmath</groupId>
             <artifactId>vecmath</artifactId>
-            <version>local</version>
+            <version>1.5.2</version>
         </dependency>
         <dependency>
-            <groupId>jams.ext</groupId>
-            <artifactId>xmlgraphics-commons-1.3.1</artifactId>
-            <version>local</version>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>xmlgraphics-commons</artifactId>
+            <version>1.3.1</version>
         </dependency>
     </dependencies>
     <build>
