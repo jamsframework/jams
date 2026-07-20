@@ -63,6 +63,87 @@
             <releases><enabled>true</enabled><checksumPolicy>ignore</checksumPolicy></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
+        <!-- Mehrere migrierte GlassFish/JavaEE-Libs aus der java.net-Aera (javax.el,
+             javax.faces, javax.servlet.jsp(.jstl), jaxb-impl/-osgi, hk2, jersey) erben
+             ueber wechselnde Ahnen-POMs (u.a. net.java:jvnet-parent) Repository-
+             Eintraege auf das seit Jahren abgeschaltete maven.java.net - jede mit
+             ihrer eigenen ID. Gleiche IDs hier erneut deklarieren und deaktivieren,
+             damit Maven bei jedem Build nicht vergeblich (Zertifikatsfehler) dorthin
+             fragt - bei gleicher ID gewinnt die naeher am Root-POM deklarierte
+             Definition. -->
+        <repository>
+            <id>java.net.Releases</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>jvnet-nexus-release</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>jvnet-nexus-releases</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>jvnet-nexus-snapshots</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>jvnet-nexus-staging</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>jvnet-nexus-promoted</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>jvnet-release</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>releases.java.net</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>staging.java.net</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <!-- Tippfehler "shapshots" steht wirklich so im Original-POM -->
+            <id>shapshots.java.net</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>website.java.net</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>release.maven.java.net</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
         <!-- modernes GeoTools 33 (nicht auf Maven Central) -->
         <repository>
             <id>osgeo</id>
