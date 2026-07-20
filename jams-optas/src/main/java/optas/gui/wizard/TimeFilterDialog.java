@@ -133,7 +133,7 @@ public class TimeFilterDialog extends JDialog{
 
         DefaultListModel model = new DefaultListModel();
         for (int i = 0; i <= endYear - startYear; i++) {
-            model.add(i, new Integer(i + startYear));
+            model.add(i, Integer.valueOf(i + startYear));
         }
 
         yearList.setModel(model);

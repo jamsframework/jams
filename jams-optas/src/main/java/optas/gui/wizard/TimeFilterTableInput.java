@@ -159,7 +159,7 @@ class TimeFilterTableInput extends TableInput {
                 
                 if (tfd.getApproval()){
                     TimeFilter filter = tfd.getFilter();
-                    tableData.setElementAt(selection, new Object[]{new Boolean(filter.isEnabled()), new Boolean(filter.isInverted()), new Boolean(filter.isAdditive()), filter});
+                    tableData.setElementAt(selection, new Object[]{Boolean.valueOf(filter.isEnabled()), Boolean.valueOf(filter.isInverted()), Boolean.valueOf(filter.isAdditive()), filter});
                     for (TimeFilterTableInputListener tftiListener : listeners) {
                         tftiListener.tableChanged(this);
                     }
@@ -178,7 +178,7 @@ class TimeFilterTableInput extends TableInput {
         // add this item to the list and refresh
         private void addItem(TimeFilter filter) {
         if (filter != null) {
-            this.tableData.addElement(new Object[]{new Boolean(filter.isEnabled()), new Boolean(filter.isInverted()), new Boolean(filter.isAdditive()), filter});
+            this.tableData.addElement(new Object[]{Boolean.valueOf(filter.isEnabled()), Boolean.valueOf(filter.isInverted()), Boolean.valueOf(filter.isAdditive()), filter});
             this.setTableData(tableData.getValue());
             scrollPane.revalidate();
             scrollPane.repaint();
@@ -224,7 +224,7 @@ class TimeFilterTableInput extends TableInput {
             this.clear();
             
             for (TimeFilter filter : timeFilters.get()){
-                this.tableData.addElement(new Object[]{new Boolean(filter.isEnabled()), new Boolean(filter.isInverted()), new Boolean(filter.isAdditive()), filter});                
+                this.tableData.addElement(new Object[]{Boolean.valueOf(filter.isEnabled()), Boolean.valueOf(filter.isInverted()), Boolean.valueOf(filter.isAdditive()), filter});                
             }
             this.setTableData(tableData.getValue());    
             scrollPane.revalidate();

@@ -20,7 +20,7 @@ public class HydrographSection {
     public HydrographSection(int startIndex, double value) {
         this.startIndex = startIndex;
         this.value = new ArrayList<Double>();
-        this.value.add(new Double(value));
+        this.value.add(Double.valueOf(value));
         this.endIndex = startIndex + 1;
     }
 
@@ -29,12 +29,12 @@ public class HydrographSection {
         this.endIndex = endIndex;
         this.value = new ArrayList<Double>();
         for (int i=startIndex;i<endIndex;i++){
-            this.value.add(new Double(t.getValue(i)));
+            this.value.add(Double.valueOf(t.getValue(i)));
         }
     }
 
     public void add(double value) {
-        this.value.add(new Double(value));
+        this.value.add(Double.valueOf(value));
         endIndex++;
     }
 

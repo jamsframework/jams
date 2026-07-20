@@ -341,7 +341,7 @@ public class PollingSQL implements DataReader {
             if (currentDateDS == null) {
                 dataSet = getNextDBRow(r);
                 data.add(dataSet);
-                currentDateDS = new Long(currentDateDB);
+                currentDateDS = Long.valueOf(currentDateDB);
                 currentDateDS += timestep;
             } else {
                 if (nextDataSet != null) {

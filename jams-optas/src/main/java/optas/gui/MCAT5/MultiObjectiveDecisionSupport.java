@@ -453,7 +453,7 @@ public class MultiObjectiveDecisionSupport extends MCAT5Plot {
 				Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
 				for(int j = 0; j < 101; j += 25) {
 					double value = ((double) j / 100.);
-					labelTable.put(new Integer(j), new JLabel(format.format(value)));
+					labelTable.put(Integer.valueOf(j), new JLabel(format.format(value)));
 				}
 				objSliders[i].setLabelTable(labelTable);
 				objSliders[i].setPaintLabels(true);

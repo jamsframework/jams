@@ -153,9 +153,9 @@ public class PredictionControl extends JAMSComponent {
 	    
 	    try {
 	    for (int j = 0; j < ExamplLength; j++) {		
-		Example[j] = (new Double(st.nextToken())).doubleValue();
+		Example[j] = (Double.valueOf(st.nextToken())).doubleValue();
 	    }
-	    Predict[0] = (new Double(st.nextToken())).doubleValue();
+	    Predict[0] = (Double.valueOf(st.nextToken())).doubleValue();
 	    } catch(Exception e) {
 		System.out.println("Error in Dataset: " + i + " stop reading! (not enough tokens)");
 		break;
@@ -165,8 +165,8 @@ public class PredictionControl extends JAMSComponent {
 		break;
 	    }
 	    
-	    rawData.put(new Integer(i),Example);
-	    rawPredict.put(new Integer(i),Predict);
+	    rawData.put(Integer.valueOf(i),Example);
+	    rawPredict.put(Integer.valueOf(i),Predict);
 	    
 	    i++;
 	}
@@ -180,7 +180,7 @@ public class PredictionControl extends JAMSComponent {
 	
 	for (int i=0;i<numOfExampl;i++) {
 	    for (int j=0;j<RelevantTime;j++) {
-		double entry[] = rawData.get(new Integer(i+j));
+		double entry[] = rawData.get(Integer.valueOf(i+j));
 		for (int k=0;k<ExamplLength;k++) {
 		    data[i][j*ExamplLength+k] = entry[k];
 		}
@@ -189,7 +189,7 @@ public class PredictionControl extends JAMSComponent {
 		System.out.println("Warning: Dataset: " + i + "contains no prediction!!");
 		continue;
 	    }
-	    predict[i] = rawPredict.get(new Integer(i+RelevantTime-1+dataShift.getValue()))[0];
+	    predict[i] = rawPredict.get(Integer.valueOf(i+RelevantTime-1+dataShift.getValue()))[0];
 	}
 	
 	traindata = new double[trainEnd.getValue() - trainStart.getValue()][RelevantTime*ExamplLength];

@@ -360,7 +360,7 @@ public class SyncTable extends JTable {
                 ((JLabel) tableSyncModeCells[i]).setOpaque(true);
             } else {
                 JComboBox box = new JComboBox(fs.getSyncOptions());
-                box.putClientProperty("row", new Integer(i));
+                box.putClientProperty("row", Integer.valueOf(i));
                 box.setSelectedItem(fs.getSyncMode());
                 box.addActionListener(new ActionListener() {
                     @Override

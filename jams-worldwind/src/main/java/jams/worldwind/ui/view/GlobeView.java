@@ -695,11 +695,11 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
         //opacitySlider.setMinorTickSpacing(5);
 //        opacitySlider.setMajorTickSpacing(25);
 //        Hashtable opacLabelTable = new Hashtable(5);
-//        opacLabelTable.put(new Integer(0), new JLabel("0%"));
-//        opacLabelTable.put(new Integer(25), new JLabel("25%"));
-//        opacLabelTable.put(new Integer(50), new JLabel("50%"));
-//        opacLabelTable.put(new Integer(75), new JLabel("75%"));
-//        opacLabelTable.put(new Integer(100), new JLabel("100%"));
+//        opacLabelTable.put(Integer.valueOf(0), new JLabel("0%"));
+//        opacLabelTable.put(Integer.valueOf(25), new JLabel("25%"));
+//        opacLabelTable.put(Integer.valueOf(50), new JLabel("50%"));
+//        opacLabelTable.put(Integer.valueOf(75), new JLabel("75%"));
+//        opacLabelTable.put(Integer.valueOf(100), new JLabel("100%"));
 //        opacitySlider.setLabelTable(opacLabelTable);
         internalOpacitySlider.setPaintLabels(false);
         outlineOpacitySlider.setPaintLabels(false);
@@ -1398,7 +1398,7 @@ public class GlobeView implements PropertyChangeListener, MessageListener {
                 Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>(cal.length);
 
                 for (int i = 0; i < cal.length; i++) {
-                    labelTable.put(new Integer(i), new JLabel(cal[i].toString()));
+                    labelTable.put(Integer.valueOf(i), new JLabel(cal[i].toString()));
                     //System.out.println("TIME:"+cal[i].toString());
                 }
 

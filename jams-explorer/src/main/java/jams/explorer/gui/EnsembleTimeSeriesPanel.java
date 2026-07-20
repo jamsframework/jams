@@ -456,7 +456,7 @@ public class EnsembleTimeSeriesPanel extends DSPanel {
 
             {
                 for (int i = 0; i < ids_int.length; i++) {
-                    ids[i] = new Long(ids_int[i]);
+                    ids[i] = Long.valueOf(ids_int[i]);
                 }
             }
 

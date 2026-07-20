@@ -40,7 +40,7 @@ public class BaseFlow {
                 }
             }
             if (winArgMin != oldMin) {
-                minList.add(new Integer(winArgMin));
+                minList.add(Integer.valueOf(winArgMin));
                 oldMin = winArgMin;
             }
         }

@@ -37,7 +37,7 @@ public class OptimalOptimizationScheme extends OptimizationScheme{
     static public class IntWrapper{
         Integer c;
         IntWrapper(int v){
-            c = new Integer(v);
+            c = Integer.valueOf(v);
         }
     }
         

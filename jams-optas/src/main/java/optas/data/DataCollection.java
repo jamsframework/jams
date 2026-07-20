@@ -314,7 +314,7 @@ public class DataCollection extends DataSet implements Serializable{
         Arrays.sort(ids);
         for (int i=0;i<ids.length;i++){
             Modelrun r = dc.set.get(ids[i]);
-            Integer newID = new Integer(i+lastID+offset);
+            Integer newID = Integer.valueOf(i+lastID+offset);
             while(this.set.containsKey(newID)){                
                 offset++;
                 newID++;

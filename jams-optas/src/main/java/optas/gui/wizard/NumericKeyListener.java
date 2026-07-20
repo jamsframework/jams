@@ -15,15 +15,15 @@ class NumericKeyListener implements KeyListener {
     }
 
     public Integer getModeLowerBound() {
-        return new Integer(MODE_LOWERBOUND);
+        return Integer.valueOf(MODE_LOWERBOUND);
     }
 
     public Integer getModeUpperBound() {
-        return new Integer(MODE_UPPERBOUND);
+        return Integer.valueOf(MODE_UPPERBOUND);
     }
 
     public Integer getModeStartValue() {
-        return new Integer(MODE_STARTVALUE);
+        return Integer.valueOf(MODE_STARTVALUE);
     }
 
     public void keyPressed(KeyEvent e) {

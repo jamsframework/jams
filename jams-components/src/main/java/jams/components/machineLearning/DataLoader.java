@@ -63,7 +63,7 @@ public class DataLoader extends JAMSComponent {
         if (Gaps != null) {
             StringTokenizer GapTokenizer = new StringTokenizer(Gaps.getValue(), ";");
             while (GapTokenizer.hasMoreElements()) {
-                excluded.add(new Integer(GapTokenizer.nextToken()));
+                excluded.add(Integer.valueOf(GapTokenizer.nextToken()));
             }
         }
         int ExamplLength = ExampleLength.getValue();
@@ -98,13 +98,13 @@ public class DataLoader extends JAMSComponent {
 
                 try {
                     for (int j = 0; j < ExamplLength; j++) {
-                        Example[j] = (new Double(st.nextToken())).doubleValue();
+                        Example[j] = (Double.valueOf(st.nextToken())).doubleValue();
                         if (Example[j] == missingDataValue.getValue()) {
                             excluded.add(i);
                             isExcluded = true;
                         }
                     }
-                    Predict[0] = (new Double(st.nextToken())).doubleValue();
+                    Predict[0] = (Double.valueOf(st.nextToken())).doubleValue();
                     if (!isExcluded && Predict[0] == missingDataValue.getValue()) {
                         excluded.add(i);
                     }
@@ -123,8 +123,8 @@ public class DataLoader extends JAMSComponent {
 //		    break;
 //		}
 
-                rawData.put(new Integer(i), Example);
-                rawPredict.put(new Integer(i), Predict);
+                rawData.put(Integer.valueOf(i), Example);
+                rawPredict.put(Integer.valueOf(i), Predict);
 
                 i++;
             }
@@ -141,11 +141,11 @@ public class DataLoader extends JAMSComponent {
             isExcluded = false;
             double Sample[] = new double[RelevantTime * ExamplLength];
             for (int j = 0; j < RelevantTime; j++) {
-                if (excluded.contains(new Integer(i + j))) {
+                if (excluded.contains(Integer.valueOf(i + j))) {
                     isExcluded = true;
                     break;
                 }
-                double entry[] = rawData.get(new Integer(i + j));
+                double entry[] = rawData.get(Integer.valueOf(i + j));
 
                 for (int k = 0; k < ExamplLength; k++) {
                     Sample[j * ExamplLength + k] = entry[k];
@@ -159,12 +159,12 @@ public class DataLoader extends JAMSComponent {
             if (i + RelevantTime - 1 + dataShift.getValue() < 0) {
                 continue;
             }
-            if (excluded.contains(new Integer(i + RelevantTime - 1 + dataShift.getValue()))) {
+            if (excluded.contains(Integer.valueOf(i + RelevantTime - 1 + dataShift.getValue()))) {
                 isExcluded = true;
                 continue;
             }
             data.add(Sample);
-            predict.add(rawPredict.get(new Integer(i + RelevantTime - 1 + dataShift.getValue()))[0]);
+            predict.add(rawPredict.get(Integer.valueOf(i + RelevantTime - 1 + dataShift.getValue()))[0]);
         }
         double dataAsArray[][] = new double[data.size()][RelevantTime * ExamplLength];
         double predictAsArray[] = new double[data.size()];

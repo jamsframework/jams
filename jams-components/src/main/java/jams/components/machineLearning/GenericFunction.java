@@ -72,9 +72,9 @@ public class GenericFunction {
     
     private static Long getNewID() {
         
-        Long id = new Long(nextID++);
+        Long id = Long.valueOf(nextID++);
         while (idList.contains(id)) {
-            id = new Long(nextID++);
+            id = Long.valueOf(nextID++);
         }
         return id;
     }

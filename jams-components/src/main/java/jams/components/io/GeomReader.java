@@ -114,7 +114,7 @@ public class GeomReader extends JAMSComponent {
             iterator.close();
             
             for (Attribute.Entity e : hrus.getEntities()) {
-                long id = new Double(e.getDouble("ID")).longValue();
+                long id = Double.valueOf(e.getDouble("ID")).longValue();
                 e.setGeometry("geom", geomMap.get(id));
             }
         } catch (IOException ex) {
@@ -122,4 +122,4 @@ public class GeomReader extends JAMSComponent {
                     "/" + shapeFileName.getValue()).getAbsolutePath() + " (" + ex.getMessage() + ")");
         }
     }
-}
+}

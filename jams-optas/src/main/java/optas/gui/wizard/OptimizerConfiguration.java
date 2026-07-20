@@ -577,7 +577,7 @@ public class OptimizerConfiguration extends JPanel {
     private JComponent getNumericField(NumericOptimizerParameter p) {
         JTextField field = new JTextField(Double.toString(((NumericOptimizerParameter) p).getValue()), 5);
         field.putClientProperty("property", p);
-        field.putClientProperty("mode", new Integer(NumericKeyListener.MODE_PARAMETERVALUE));
+        field.putClientProperty("mode", Integer.valueOf(NumericKeyListener.MODE_PARAMETERVALUE));
         field.addKeyListener(stdNumericKeyListener);
         field.addFocusListener(stdFocusListener);
 
@@ -598,7 +598,7 @@ public class OptimizerConfiguration extends JPanel {
             }
         });
         checkBox.putClientProperty("property", p);
-        checkBox.putClientProperty("mode", new Integer(NumericKeyListener.MODE_PARAMETERVALUE));
+        checkBox.putClientProperty("mode", Integer.valueOf(NumericKeyListener.MODE_PARAMETERVALUE));
         return checkBox;
     }
 
@@ -612,7 +612,7 @@ public class OptimizerConfiguration extends JPanel {
             }
         });
         field.putClientProperty("property", p);
-        field.putClientProperty("mode", new Integer(NumericKeyListener.MODE_PARAMETERVALUE));
+        field.putClientProperty("mode", Integer.valueOf(NumericKeyListener.MODE_PARAMETERVALUE));
 
         return field;
     }

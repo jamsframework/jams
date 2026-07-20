@@ -611,7 +611,7 @@ public class PatchedSpiderWebPlot extends Plot implements Cloneable, Serializabl
 	 */
 	public Double getMaxValue(int cat) {
 		return maxValue == null
-				? (Double) maxValues.get(new Integer(cat)) : maxValue;
+				? (Double) maxValues.get(Integer.valueOf(cat)) : maxValue;
 	}
 
 	/**
@@ -633,12 +633,12 @@ public class PatchedSpiderWebPlot extends Plot implements Cloneable, Serializabl
 	 * @param maxValue the maximum value for the category
 	 */
 	public void setMaxValue(int cat, Double maxValue) {
-		maxValues.put(new Integer(cat), maxValue);
+		maxValues.put(Integer.valueOf(cat), maxValue);
 		fireChangeEvent();
 	}
 
 	public Double getOrigin(int cat) {
-		return origin == null ? (Double) origins.get(new Integer(cat)) : origin;
+		return origin == null ? (Double) origins.get(Integer.valueOf(cat)) : origin;
 	}
 
 	/**
@@ -648,7 +648,7 @@ public class PatchedSpiderWebPlot extends Plot implements Cloneable, Serializabl
 	 * @param origin the origin for the category
 	 */
 	public void setOrigin(int cat, Double origin) {
-		origins.put(new Integer(cat), origin);
+		origins.put(Integer.valueOf(cat), origin);
 		fireChangeEvent();
 	}
 
@@ -1548,13 +1548,13 @@ public class PatchedSpiderWebPlot extends Plot implements Cloneable, Serializabl
 				}
 			}
 			if(!hasValues) {
-				setMaxValue(catIndex, new Double(0));
-				setOrigin(catIndex, new Double(0));
+				setMaxValue(catIndex, Double.valueOf(0));
+				setOrigin(catIndex, Double.valueOf(0));
 				continue;
 			}
 
 			if(preferredCatMax == null) {
-				preferredCatMax = new Double(catDataMaxVal);
+				preferredCatMax = Double.valueOf(catDataMaxVal);
 				setMaxValue(catIndex, preferredCatMax);
 			}
 
@@ -1575,7 +1575,7 @@ public class PatchedSpiderWebPlot extends Plot implements Cloneable, Serializabl
 					// Shift origin about 10% of the data range from minimum.
 					catOriginShift = Math.abs((catDataMaxVal - catDataMinVal) / 10);
 				}
-				preferredCatOrigin = new Double(catDataMinVal - catOriginShift);
+				preferredCatOrigin = Double.valueOf(catDataMinVal - catOriginShift);
 				setOrigin(catIndex, preferredCatOrigin);
 			}
 
@@ -1584,10 +1584,10 @@ public class PatchedSpiderWebPlot extends Plot implements Cloneable, Serializabl
 			// special case. Min, max and all values are zero.
 			if(prefOrigin == 0 && prefMax == 0) {
 				prefMax = 0.1;
-				setMaxValue(catIndex, new Double(prefMax));
+				setMaxValue(catIndex, Double.valueOf(prefMax));
 			}
 			if(prefOrigin >= prefMax) {
-				setMaxValue(catIndex, new Double(prefOrigin + Math.abs(prefOrigin / 2)));
+				setMaxValue(catIndex, Double.valueOf(prefOrigin + Math.abs(prefOrigin / 2)));
 			}
 		}
 	}

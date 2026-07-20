@@ -114,7 +114,7 @@ public class SubsetSelect extends JAMSContext {
                 this.getModel().getRuntime().sendHalt("subset size large than number of available datasets");
 	    }
 	    inSet[bestIndex] = true;
-	    HashFilter.add(new Double(hash_value[bestIndex]));
+	    HashFilter.add(Double.valueOf(hash_value[bestIndex]));
 	    set[i] = bestIndex;	 	    
 	    
 	    for (int k=1;k<N0;k++) {

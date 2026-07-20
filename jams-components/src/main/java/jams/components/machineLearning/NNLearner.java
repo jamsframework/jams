@@ -102,22 +102,22 @@ public class NNLearner extends Learner {
 	if (option == 1) {
 	    this.LayerCount = 3;
 	    
-	    this.LayerSize.add(0,new Integer(DataLength)+1);
-	    this.LayerSize.add(1,new Integer((DataLength+1)/2));
+	    this.LayerSize.add(0,Integer.valueOf(DataLength)+1);
+	    this.LayerSize.add(1,Integer.valueOf((DataLength+1)/2));
 	    this.LayerSize.add(2,1);
 	}
 	if (option == 2) {
 	    this.LayerCount = 4;
-	    this.LayerSize.add(0,new Integer(DataLength)+1);
-	    this.LayerSize.add(1,new Integer((DataLength+1))/2);
-	    this.LayerSize.add(2,new Integer((DataLength+1))/2);
+	    this.LayerSize.add(0,Integer.valueOf(DataLength)+1);
+	    this.LayerSize.add(1,Integer.valueOf((DataLength+1))/2);
+	    this.LayerSize.add(2,Integer.valueOf((DataLength+1))/2);
 	    this.LayerSize.add(3,1);
 	}
 	if (option == 3) {
 	    this.LayerCount = 3;
 	    
-	    this.LayerSize.add(0,new Integer(DataLength)+1);
-	    this.LayerSize.add(1,new Integer(2));
+	    this.LayerSize.add(0,Integer.valueOf(DataLength)+1);
+	    this.LayerSize.add(1,Integer.valueOf(2));
 	    this.LayerSize.add(2,1);
 	}
     }

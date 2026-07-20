@@ -362,9 +362,9 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
                                         } //rowArray
                                         else {
                                             if (col > timeIndex) {
-                                                rowBuffer[col - 1] = new Double(datarow.nextToken());
+                                                rowBuffer[col - 1] = Double.valueOf(datarow.nextToken());
                                             } else {
-                                                rowBuffer[col] = new Double(datarow.nextToken());
+                                                rowBuffer[col] = Double.valueOf(datarow.nextToken());
                                             }
                                         }
                                     }
@@ -463,7 +463,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
                                 if (theValues != null) {
                                     rowBuffer = new double[theValues.length];
                                     for (int j = 0; j < theValues.length; j++) {
-                                        rowBuffer[j] = new Double(theValues[j]);
+                                        rowBuffer[j] = Double.valueOf(theValues[j]);
                                     }
                                 }
 
@@ -591,7 +591,7 @@ public class JAMSSpreadSheet extends JAMSGUIComponent {
                                 timeVector.add(timeval);
 
                             } else {
-                                rowBuffer[k - 1] = new Double(itemtext);
+                                rowBuffer[k - 1] = Double.valueOf(itemtext);
 
                             }
                         }

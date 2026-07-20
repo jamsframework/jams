@@ -587,7 +587,7 @@ public class JAMSSpreadSheet extends JPanel {
                             } else {
                                 try {
 //                                    System.out.println("value: "+actual_string+"\t");
-                                    val = new Double(actual_string);
+                                    val = Double.valueOf(actual_string);
                                     rowBuffer[i++] = val.doubleValue();
                                 } catch (Exception pe2) {
                                     Logger.getLogger(JAMSSpreadSheet.class.getName()).log(Level.SEVERE, null, pe2);

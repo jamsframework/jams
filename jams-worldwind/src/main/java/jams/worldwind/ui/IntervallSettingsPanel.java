@@ -240,7 +240,7 @@ public class IntervallSettingsPanel extends JPanel implements PropertyChangeList
             }
         }
 
-        this.numClassesSpinner.setValue(new Integer(intervall.size() - 1));
+        this.numClassesSpinner.setValue(Integer.valueOf(intervall.size() - 1));
 
         this.summaryStatisticsPanel.calculateStatistics(values, statistics);
         this.printHistogramm(values);

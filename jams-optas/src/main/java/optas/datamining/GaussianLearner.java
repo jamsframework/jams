@@ -308,10 +308,10 @@ public class GaussianLearner extends Learner  {
 		reader = new BufferedReader(new FileReader(FileTools.createAbsoluteFileName(this.getModel().getWorkspaceDirectory().getAbsolutePath(),
                         this.parameterFile.getValue())));
 		for (int i=0;i<theta.length;i++) {
-		    logtheta[i] = (new Double(reader.readLine()).doubleValue());	
+		    logtheta[i] = (Double.valueOf(reader.readLine()).doubleValue());	
 		}
                 for (int i=0;i<meantheta.length;i++) {
-		    meantheta[i] = (new Double(reader.readLine()).doubleValue());	
+		    meantheta[i] = (Double.valueOf(reader.readLine()).doubleValue());	
 		}
 		reader.close();
 	    }

@@ -452,7 +452,7 @@ public class OpenSQL implements DataReader {
             int i = 0;            
             
             while ((i < count) ) {
-                indexMap.add(new Integer(counter));
+                indexMap.add(Integer.valueOf(counter));
 
                 if (dataValid){
                     if (!dataResult.rs.next()){

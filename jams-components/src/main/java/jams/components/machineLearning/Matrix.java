@@ -174,7 +174,7 @@ public class Matrix {
       // check for a delimiter...
       if ( (sChar==' ')|| (sChar==',')|| ( (int) sChar==9)||
 	   (sChar == ';')||( (int) sChar == 13)||( (int) sChar == 10) ) {
-	fl = new Double(0);
+	fl = Double.valueOf(0);
 	// See if the string in sData represents a number...
 	try {
 	  boolean testSpace = true;
@@ -182,7 +182,7 @@ public class Matrix {
 	  for(ii=0;ii<sData.length();ii++){
 	    testSpace=testSpace&&(sData.charAt(ii)==' '); }
 	  if(testSpace==false){
-	    fl = new Double(sData);
+	    fl = Double.valueOf(sData);
 	    col.addElement(sData); }	// append column element as string
 	  sData = new String();	// wipe out contents of string
 	} 
@@ -217,11 +217,11 @@ public class Matrix {
     columns = colCounter;
     element = new double[rows][columns];
     col = new Vector();
-    Double d = new Double(0);
+    Double d = Double.valueOf(0);
     for (j = 0; j<rows; j++) {
       col = (Vector) row.elementAt(j);
       for (i = 0; i<col.size(); i++) {
-	d = new Double((String)col.elementAt(i));
+	d = Double.valueOf((String)col.elementAt(i));
 	element[j][i] = d.doubleValue();
       }
     }

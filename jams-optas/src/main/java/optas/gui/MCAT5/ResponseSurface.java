@@ -99,7 +99,7 @@ public class ResponseSurface extends MCAT5Plot {
             slider.setPaintTicks(true);
             slider.setPaintLabels(true);
             slider.putClientProperty("parameter", p[i]);
-            slider.putClientProperty("index", new Integer(i));
+            slider.putClientProperty("index", Integer.valueOf(i));
             slider.addChangeListener(new ChangeListener() {
 
                 public void stateChanged(ChangeEvent evt) {
@@ -354,7 +354,7 @@ public class ResponseSurface extends MCAT5Plot {
                         cur_sim[counter++] = ts.get(j, ts.getId(k));
                     }
                 }
-                eff.add(new Integer(ts.getId(k)), Efficiencies.CalculateE(cur_obs, cur_sim, 2));
+                eff.add(Integer.valueOf(ts.getId(k)), Efficiencies.CalculateE(cur_obs, cur_sim, 2));
             }
             //transform to likelihood
             EfficiencyEnsemble likelihood = eff.CalculateLikelihood();

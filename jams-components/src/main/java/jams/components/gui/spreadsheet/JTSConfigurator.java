@@ -1398,7 +1398,7 @@ public class JTSConfigurator extends JFrame{
         this.propVector = new Vector<GraphProperties>();
         
         names = properties.getProperty("names");
-        no_of_props = new Integer(properties.getProperty("number"));
+        no_of_props = Integer.valueOf(properties.getProperty("number"));
         
         this.graphCount = no_of_props;
         
@@ -1437,7 +1437,7 @@ public class JTSConfigurator extends JFrame{
                     
 
                 //STROKE
-                    gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke","2")));
+                    gprop.setStroke(Integer.valueOf(properties.getProperty(name + ".linestroke","2")));
                     gprop.setStrokeSlider(gprop.getStrokeType());
 
                 //STROKE COLOR
@@ -1445,22 +1445,22 @@ public class JTSConfigurator extends JFrame{
 
                     StringTokenizer colorTokenizer = new StringTokenizer(stroke_color, ",");
 
-                    gprop.setSeriesPaint(new Color(new Integer(colorTokenizer.nextToken()),
-                            new Integer(colorTokenizer.nextToken()),
-                            new Integer(colorTokenizer.nextToken())));
+                    gprop.setSeriesPaint(new Color(Integer.valueOf(colorTokenizer.nextToken()),
+                            Integer.valueOf(colorTokenizer.nextToken()),
+                            Integer.valueOf(colorTokenizer.nextToken())));
 
                 //LINES VISIBLE
-                    boolean lv = new Boolean(properties.getProperty(name + ".linesvisible"));
+                    boolean lv = Boolean.valueOf(properties.getProperty(name + ".linesvisible"));
                     gprop.setLinesVisible(lv);
                     gprop.setLinesVisBox(lv);
                 //SHAPES VISIBLE
-                    boolean sv = new Boolean(properties.getProperty(name + ".shapesvisible"));
+                    boolean sv = Boolean.valueOf(properties.getProperty(name + ".shapesvisible"));
                     gprop.setShapesVisible(sv);
                     gprop.setShapesVisBox(sv);
                 
                 //SHAPE TYPE AND SIZE
-                    int stype = new Integer(properties.getProperty(name + ".shapetype","0"));
-                    int ssize = new Integer(properties.getProperty(name + ".shapesize"));
+                    int stype = Integer.valueOf(properties.getProperty(name + ".shapetype","0"));
+                    int ssize = Integer.valueOf(properties.getProperty(name + ".shapesize"));
                     gprop.setShape(stype,ssize);
                     gprop.setShapeBox(stype);
                     gprop.setShapeSlider(ssize);
@@ -1470,12 +1470,12 @@ public class JTSConfigurator extends JFrame{
 
                     StringTokenizer shapeTokenizer = new StringTokenizer(shape_color, ",");
 
-                    gprop.setSeriesFillPaint(new Color(new Integer(shapeTokenizer.nextToken()),
-                            new Integer(shapeTokenizer.nextToken()),
-                            new Integer(shapeTokenizer.nextToken())));
+                    gprop.setSeriesFillPaint(new Color(Integer.valueOf(shapeTokenizer.nextToken()),
+                            Integer.valueOf(shapeTokenizer.nextToken()),
+                            Integer.valueOf(shapeTokenizer.nextToken())));
 
                 //OUTLINE STROKE
-                    int os = new Integer(properties.getProperty(name + ".outlinestroke"));
+                    int os = Integer.valueOf(properties.getProperty(name + ".outlinestroke"));
                     gprop.setOutlineStroke(os);
                     gprop.setOutlineSlider(os);
 
@@ -1484,9 +1484,9 @@ public class JTSConfigurator extends JFrame{
 
                     StringTokenizer outTokenizer = new StringTokenizer(outline_color, ",");
 
-                    gprop.setSeriesOutlinePaint(new Color(new Integer(outTokenizer.nextToken()),
-                            new Integer(outTokenizer.nextToken()),
-                            new Integer(outTokenizer.nextToken())));
+                    gprop.setSeriesOutlinePaint(new Color(Integer.valueOf(outTokenizer.nextToken()),
+                            Integer.valueOf(outTokenizer.nextToken()),
+                            Integer.valueOf(outTokenizer.nextToken())));
 
                 gprop.applyTSProperties();
                 
@@ -1506,16 +1506,16 @@ public class JTSConfigurator extends JFrame{
             edRightField.setText(properties.getProperty("axisRTitle"));
             edXAxisField.setText(properties.getProperty("xAxisTitle"));
             //RENDERER
-            rLeftBox.setSelectedIndex(new Integer(properties.getProperty("renderer_left")));
-            rRightBox.setSelectedIndex(new Integer(properties.getProperty("renderer_right")));
-            invLeftBox.setSelected(new Boolean(properties.getProperty("inv_left")));
-            invRightBox.setSelected(new Boolean(properties.getProperty("inv_right")));
+            rLeftBox.setSelectedIndex(Integer.valueOf(properties.getProperty("renderer_left")));
+            rRightBox.setSelectedIndex(Integer.valueOf(properties.getProperty("renderer_right")));
+            invLeftBox.setSelected(Boolean.valueOf(properties.getProperty("inv_left")));
+            invRightBox.setSelected(Boolean.valueOf(properties.getProperty("inv_right")));
             
             //TimeFormat
-            timeFormat_yy.setSelected(new Boolean(properties.getProperty("timeFormat_yy")));
-            timeFormat_mm.setSelected(new Boolean(properties.getProperty("timeFormat_mmy")));
-            timeFormat_dd.setSelected(new Boolean(properties.getProperty("timeFormat_dd")));
-            timeFormat_hm.setSelected(new Boolean(properties.getProperty("timeFormat_hm")));
+            timeFormat_yy.setSelected(Boolean.valueOf(properties.getProperty("timeFormat_yy")));
+            timeFormat_mm.setSelected(Boolean.valueOf(properties.getProperty("timeFormat_mmy")));
+            timeFormat_dd.setSelected(Boolean.valueOf(properties.getProperty("timeFormat_dd")));
+            timeFormat_hm.setSelected(Boolean.valueOf(properties.getProperty("timeFormat_hm")));
             
             } 
         }        

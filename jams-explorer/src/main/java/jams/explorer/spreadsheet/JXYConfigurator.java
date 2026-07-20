@@ -1810,7 +1810,7 @@ public class JXYConfigurator extends JFrame {
         this.propVector = new Vector<GraphProperties>();
 
         names = properties.getProperty("names");
-        no_of_props = new Integer(properties.getProperty("number"));
+        no_of_props = Integer.valueOf(properties.getProperty("number"));
 
         this.graphCount = no_of_props;
 
@@ -1820,7 +1820,7 @@ public class JXYConfigurator extends JFrame {
         
         String x_series_index_string = (String) properties.getProperty("x_series_index");
         if(x_series_index_string.compareTo("DEFAULT") != 0){
-            x_series_index = new Integer(x_series_index_string);
+            x_series_index = Integer.valueOf(x_series_index_string);
         }else{
 
             if(sheet.timeRuns()) x_series_index = 1;
@@ -1845,10 +1845,10 @@ public class JXYConfigurator extends JFrame {
                 //DATA INTERVAL
                 if(data_start_string.compareTo("DEFAULT") != 0){
                       //start
-                      data_start = new Double(properties.getProperty("dataSTART"));
+                      data_start = Double.valueOf(properties.getProperty("dataSTART"));
                       this.dStartChanged(true);
                       //end
-                      data_end = new Double(properties.getProperty("dataEND"));
+                      data_end = Double.valueOf(properties.getProperty("dataEND"));
                       this.dEndChanged(true);
                 }
                 else{
@@ -1880,7 +1880,7 @@ public class JXYConfigurator extends JFrame {
 //                    gprop.setLegendField(properties.getProperty(name + ".legendname", "legend name"));
 
                     //POSITION left/right
-                    int pos = new Integer(properties.getProperty(name + ".position"));
+                    int pos = Integer.valueOf(properties.getProperty(name + ".position"));
                     gprop.setPosition(pos);
                     
                     
@@ -1888,7 +1888,7 @@ public class JXYConfigurator extends JFrame {
                     gprop.setName(name);
                     
                     //STROKE
-                    gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke", "2")));
+                    gprop.setStroke(Integer.valueOf(properties.getProperty(name + ".linestroke", "2")));
 //                    gprop.setStrokeSlider(gprop.getStrokeType());
 
                     //STROKE COLOR
@@ -1896,22 +1896,22 @@ public class JXYConfigurator extends JFrame {
 
                     StringTokenizer colorTokenizer = new StringTokenizer(stroke_color, ",");
 
-                    gprop.setSeriesPaint(new Color(new Integer(colorTokenizer.nextToken()),
-                            new Integer(colorTokenizer.nextToken()),
-                            new Integer(colorTokenizer.nextToken())));
+                    gprop.setSeriesPaint(new Color(Integer.valueOf(colorTokenizer.nextToken()),
+                            Integer.valueOf(colorTokenizer.nextToken()),
+                            Integer.valueOf(colorTokenizer.nextToken())));
 
                     //LINES VISIBLE
-                    boolean lv = new Boolean(properties.getProperty(name + ".linesvisible"));
+                    boolean lv = Boolean.valueOf(properties.getProperty(name + ".linesvisible"));
                     gprop.setLinesVisible(lv);
 //                    gprop.setLinesVisBox(lv);
                     //SHAPES VISIBLE
-                    boolean sv = new Boolean(properties.getProperty(name + ".shapesvisible"));
+                    boolean sv = Boolean.valueOf(properties.getProperty(name + ".shapesvisible"));
                     gprop.setShapesVisible(sv);
 //                    gprop.setShapesVisBox(sv);
 
                     //SHAPE TYPE AND SIZE
-                    int stype = new Integer(properties.getProperty(name + ".shapetype", "0"));
-                    int ssize = new Integer(properties.getProperty(name + ".shapesize"));
+                    int stype = Integer.valueOf(properties.getProperty(name + ".shapetype", "0"));
+                    int ssize = Integer.valueOf(properties.getProperty(name + ".shapesize"));
                     gprop.setShape(stype, ssize);
 //                    gprop.setShapeBox(stype);
 //                    gprop.setShapeSlider(ssize);
@@ -1921,12 +1921,12 @@ public class JXYConfigurator extends JFrame {
 
                     StringTokenizer shapeTokenizer = new StringTokenizer(shape_color, ",");
 
-                    gprop.setSeriesFillPaint(new Color(new Integer(shapeTokenizer.nextToken()),
-                            new Integer(shapeTokenizer.nextToken()),
-                            new Integer(shapeTokenizer.nextToken())));
+                    gprop.setSeriesFillPaint(new Color(Integer.valueOf(shapeTokenizer.nextToken()),
+                            Integer.valueOf(shapeTokenizer.nextToken()),
+                            Integer.valueOf(shapeTokenizer.nextToken())));
 
                     //OUTLINE STROKE
-                    int os = new Integer(properties.getProperty(name + ".outlinestroke"));
+                    int os = Integer.valueOf(properties.getProperty(name + ".outlinestroke"));
                     gprop.setOutlineStroke(os);
 //                    gprop.setOutlineSlider(os);
 
@@ -1935,9 +1935,9 @@ public class JXYConfigurator extends JFrame {
 
                     StringTokenizer outTokenizer = new StringTokenizer(outline_color, ",");
 
-                    gprop.setSeriesOutlinePaint(new Color(new Integer(outTokenizer.nextToken()),
-                            new Integer(outTokenizer.nextToken()),
-                            new Integer(outTokenizer.nextToken())));
+                    gprop.setSeriesOutlinePaint(new Color(Integer.valueOf(outTokenizer.nextToken()),
+                            Integer.valueOf(outTokenizer.nextToken()),
+                            Integer.valueOf(outTokenizer.nextToken())));
 
 //                  gprop.applyXYProperties();
 
@@ -1961,10 +1961,10 @@ public class JXYConfigurator extends JFrame {
                 edRightField.setText(properties.getProperty("axisRTitle"));
                 edXAxisField.setText(properties.getProperty("xAxisTitle"));
                 //RENDERER
-                rLeftBox.setSelectedIndex(new Integer(properties.getProperty("renderer_left")));
-                rRightBox.setSelectedIndex(new Integer(properties.getProperty("renderer_right")));
-                invLeftBox.setSelected(new Boolean(properties.getProperty("inv_left")));
-                invRightBox.setSelected(new Boolean(properties.getProperty("inv_right")));
+                rLeftBox.setSelectedIndex(Integer.valueOf(properties.getProperty("renderer_left")));
+                rRightBox.setSelectedIndex(Integer.valueOf(properties.getProperty("renderer_right")));
+                invLeftBox.setSelected(Boolean.valueOf(properties.getProperty("inv_left")));
+                invRightBox.setSelected(Boolean.valueOf(properties.getProperty("inv_right")));
 
             }
         }

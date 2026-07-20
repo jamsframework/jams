@@ -539,12 +539,12 @@ public class PropertyPanel {
     private double readDataSTART() {
         String text = datachoice_START.getText();
         double d_start;
-        d_start = new Double(text);
+        d_start = Double.valueOf(text);
         return d_start;
     }
 
     private double readDataEND() {
-        double d_end = new Double(datachoice_END.getText());
+        double d_end = Double.valueOf(datachoice_END.getText());
         return d_end;
     }
 
@@ -896,7 +896,7 @@ public class PropertyPanel {
 
         private void changeValue() {
             try {
-                d_start = new Double(datachoice_START.getText());
+                d_start = Double.valueOf(datachoice_START.getText());
             } catch (NumberFormatException nfe) {
                 d_start = 0;
             }
@@ -940,7 +940,7 @@ public class PropertyPanel {
 
         private void changeValue() {
             try {
-                d_end = new Double(datachoice_END.getText());
+                d_end = Double.valueOf(datachoice_END.getText());
             } catch (NumberFormatException nfe) {
                 d_end = 0;
             }

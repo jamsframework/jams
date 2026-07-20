@@ -215,8 +215,8 @@ public class LinkedEntityReader extends JAMSComponent {
 
         //create empty entities, i.e. those that are linked to in case there is no linkage ;-)
         Attribute.Entity nullEntity = getModel().getRuntime().getDataFactory().createEntity();
-        hruMap.put(new Double(0), nullEntity);
-        reachMap.put(new Double(0), nullEntity);
+        hruMap.put(Double.valueOf(0), nullEntity);
+        reachMap.put(Double.valueOf(0), nullEntity);
 
         //associate the hru entities with their downstream entity
         hruIterator = hrus.getEntities().iterator();
@@ -277,7 +277,7 @@ public class LinkedEntityReader extends JAMSComponent {
 
         hruIterator = col.getEntities().iterator();
         while (hruIterator.hasNext()) {
-            depthMap.put(hruIterator.next(), new Integer(0));
+            depthMap.put(hruIterator.next(), Integer.valueOf(0));
         }
 
         //put all collection elements (keys) and their depth (values) into a HashMap
@@ -297,7 +297,7 @@ public class LinkedEntityReader extends JAMSComponent {
                     eDepth = depthMap.get(e);
                     fDepth = depthMap.get(f);
                     if (fDepth.intValue() <= eDepth.intValue()) {
-                        depthMap.put(f, new Integer(eDepth.intValue() + 1));
+                        depthMap.put(f, Integer.valueOf(eDepth.intValue() + 1));
                         mapChanged = true;
 
                     }

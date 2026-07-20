@@ -187,7 +187,7 @@ public class DYNIA extends MCAT5Plot {
                         cur_sim[counter++] = ts.get(j, ts.getId(k));
                     }
                 }
-                eff.add(new Integer(ts.getId(k)), Efficiencies.CalculateE(cur_obs, cur_sim, 2));
+                eff.add(Integer.valueOf(ts.getId(k)), Efficiencies.CalculateE(cur_obs, cur_sim, 2));
             }
             //transform to likelihood
             EfficiencyEnsemble likelihood = eff.CalculateLikelihood();

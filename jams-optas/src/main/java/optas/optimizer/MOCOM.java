@@ -197,7 +197,7 @@ public class MOCOM extends Optimizer {
                     }
                 }
                 if (sumA1 == nmbOfObjs && sumA2 > 0) {
-                    Dominated[p].addElement(new Integer(q));
+                    Dominated[p].addElement(Integer.valueOf(q));
                 } else if (sumB1 == nmbOfObjs && sumB2 > 0) {
                     NmbOfDominating[p]++;
                 }
@@ -207,7 +207,7 @@ public class MOCOM extends Optimizer {
                 if (Front.size() == 0) {
                     Front.add(new Vector<Integer>());
                 }
-                Front.get(0).add(new Integer(p));
+                Front.get(0).add(Integer.valueOf(p));
             }
         }
 
@@ -221,7 +221,7 @@ public class MOCOM extends Optimizer {
                     NmbOfDominating[q]--;
                     if (NmbOfDominating[q] == 0) {
                         NmbOfFront[q] = i + 2;
-                        NextFront.add(new Integer(q));
+                        NextFront.add(Integer.valueOf(q));
                     }
                 }
             }
@@ -252,7 +252,7 @@ public class MOCOM extends Optimizer {
 
         for (int i = 0; i < R.length; i++) {
             if (R[i] == Rmax) {
-                Ltmp.add(new Integer(i));
+                Ltmp.add(Integer.valueOf(i));
             }
         }
         int L[] = new int[Ltmp.size()];
@@ -267,7 +267,7 @@ public class MOCOM extends Optimizer {
                 A[i][j] = D[L[i]][j];
             }
         }
-        return new Object[]{A, L, new Integer(nA)};
+        return new Object[]{A, L, Integer.valueOf(nA)};
     }
 
     public Object[] choose(double P[], double D[][], double F[][], int Rank[], int n) {
@@ -669,7 +669,7 @@ public class MOCOM extends Optimizer {
             }}
         }
 
-        return new Object[]{D, F, R, new Integer(Rmax)};
+        return new Object[]{D, F, R, Integer.valueOf(Rmax)};
     }
 
     @Override

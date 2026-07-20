@@ -638,7 +638,7 @@ public class GraphProperties {
     public double readDataSTART(){
         String text = datachoice_START.getText();
         double d_start;
-        d_start = new Double(text);
+        d_start = Double.valueOf(text);
         return d_start;
     }
     
@@ -655,7 +655,7 @@ public class GraphProperties {
     
     
     public double readDataEND(){
-        double d_end = new Double(datachoice_END.getText());
+        double d_end = Double.valueOf(datachoice_END.getText());
         return d_end;
     }
 

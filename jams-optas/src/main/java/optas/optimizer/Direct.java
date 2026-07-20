@@ -233,9 +233,9 @@ public class Direct extends optas.optimizer.Optimizer {
             if (li[i] < biggy) {
                 biggy = li[i];
                 ls.clear();
-                ls.add(new Integer(i));
+                ls.add(Integer.valueOf(i));
             } else if (li[i] == biggy) {
-                ls.add(new Integer(i));
+                ls.add(Integer.valueOf(i));
             }
         }
 

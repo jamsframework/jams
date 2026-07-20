@@ -33,7 +33,7 @@ public abstract class Ensemble extends DataSet{
     }
     protected void update(){
         for (int i=0;i<id.length;i++)
-            map.put(id[i], new Integer(i));
+            map.put(id[i], Integer.valueOf(i));
     }
     protected int getIndex(Integer id){
         return map.get(id);

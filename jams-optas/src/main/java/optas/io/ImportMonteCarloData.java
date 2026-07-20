@@ -213,7 +213,7 @@ public class ImportMonteCarloData implements Serializable {
                                 } catch (NumberFormatException nfe) {
                                     nfe.printStackTrace();
                                     //fallback (there should be a list of all used ids)
-                                    intID = new Integer(badIDCounter++);
+                                    intID = Integer.valueOf(badIDCounter++);
                                 }
                                 Modelrun r = new Modelrun(intID, null);
                                 Class datasetClass = simpleDatasetClasses.get(dataSetClassName);

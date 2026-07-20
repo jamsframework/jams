@@ -264,7 +264,7 @@ public class STPConfigurator extends JFrame {
                 jts[i].createPlot();
                 jts[i].setTitle(title);
                 try {
-                    weights[i] = new Double(weightField[i].getText());
+                    weights[i] = Double.valueOf(weightField[i].getText());
                 } catch (NumberFormatException nfe) {
                     weights[i] = 1;
                     weightField[i].setText("1");
@@ -291,7 +291,7 @@ public class STPConfigurator extends JFrame {
                 jts[i].createPlot();
                 jts[i].setTitle(title);
                 try {
-                    weights[i] = new Double(weightField[i].getText());
+                    weights[i] = Double.valueOf(weightField[i].getText());
                 } catch (NumberFormatException nfe) {
                     weights[i] = 1;
                     weightField[i].setText("1");
@@ -555,7 +555,7 @@ public class STPConfigurator extends JFrame {
                 jts[i].createPlot();
                 jts[i].setTitle(title);
                 try {
-                    weights[i] = new Double(weightField[i].getText());
+                    weights[i] = Double.valueOf(weightField[i].getText());
                 } catch (NumberFormatException nfe) {
                     weights[i] = 1;
                     weightField[i].setText("1");
@@ -582,7 +582,7 @@ public class STPConfigurator extends JFrame {
                 jts[i].createPlot();
                 jts[i].setTitle(title);
                 try {
-                    weights[i] = new Double(weightField[i].getText());
+                    weights[i] = Double.valueOf(weightField[i].getText());
                 } catch (NumberFormatException nfe) {
                     weights[i] = 1;
                     weightField[i].setText("1");
@@ -620,7 +620,7 @@ public class STPConfigurator extends JFrame {
         int[] internal_weights = new int[size];
 
         for (int i = 0; i < size; i++) {
-            internal_weights[i] = new Integer("" + Math.round(array[i] * DEC));
+            internal_weights[i] = Integer.valueOf("" + Math.round(array[i] * DEC));
             //(array[i]*DEC);
         }
         return internal_weights;
@@ -852,7 +852,7 @@ public class STPConfigurator extends JFrame {
                             } else {
                                 try {
 //                                    System.out.println("value: "+actual_string+"\t");
-                                    val = new Double(actual_string);
+                                    val = Double.valueOf(actual_string);
                                     rowBuffer[i++] = val.doubleValue();
                                 } catch (Exception pe2) {
                                     Logger.getLogger(STPConfigurator.class.getName()).log(Level.SEVERE, null, pe2);
@@ -971,7 +971,7 @@ public class STPConfigurator extends JFrame {
             }
 
             names = properties.getProperty("names");
-            no_of_props = new Integer(properties.getProperty("number"));
+            no_of_props = Integer.valueOf(properties.getProperty("number"));
             StringTokenizer nameTokenizer = new StringTokenizer(names, ",");
 
             for (int c = 0; c < no_of_props; c++) {
@@ -1032,7 +1032,7 @@ public class STPConfigurator extends JFrame {
         datasetID = (String) properties.getProperty("store");
         names = (String) properties.getProperty("names");
 
-        no_of_props = new Integer(properties.getProperty("number"));
+        no_of_props = Integer.valueOf(properties.getProperty("number"));
 
         this.graphCount = no_of_props;
 
@@ -1069,7 +1069,7 @@ public class STPConfigurator extends JFrame {
                     //Legend Name
                     gprop.setLegendName(properties.getProperty(name + ".legendname", "legend name"));
                     //POSITION left/right
-                    int pos = new Integer(properties.getProperty(name + ".position"));
+                    int pos = Integer.valueOf(properties.getProperty(name + ".position"));
                     gprop.setPosition(pos);
                     //INTERVAL
                     String timeSTART = properties.getProperty(name + ".timeSTART");
@@ -1107,7 +1107,7 @@ public class STPConfigurator extends JFrame {
                     gprop.setName(name);
 
                     //STROKE
-                    gprop.setStroke(new Integer(properties.getProperty(name + ".linestroke", "2")));
+                    gprop.setStroke(Integer.valueOf(properties.getProperty(name + ".linestroke", "2")));
 //                    gprop.setStrokeSlider(gprop.getStrokeType());
 
                     //STROKE COLOR
@@ -1115,22 +1115,22 @@ public class STPConfigurator extends JFrame {
 
                     StringTokenizer colorTokenizer = new StringTokenizer(stroke_color, ",");
 
-                    gprop.setSeriesPaint(new Color(new Integer(colorTokenizer.nextToken()),
-                            new Integer(colorTokenizer.nextToken()),
-                            new Integer(colorTokenizer.nextToken())));
+                    gprop.setSeriesPaint(new Color(Integer.valueOf(colorTokenizer.nextToken()),
+                            Integer.valueOf(colorTokenizer.nextToken()),
+                            Integer.valueOf(colorTokenizer.nextToken())));
 
                     //LINES VISIBLE
-                    boolean lv = new Boolean(properties.getProperty(name + ".linesvisible"));
+                    boolean lv = Boolean.valueOf(properties.getProperty(name + ".linesvisible"));
                     gprop.setLinesVisible(lv);
 //                    gprop.setLinesVisBox(lv);
                     //SHAPES VISIBLE
-                    boolean sv = new Boolean(properties.getProperty(name + ".shapesvisible"));
+                    boolean sv = Boolean.valueOf(properties.getProperty(name + ".shapesvisible"));
                     gprop.setShapesVisible(sv);
 //                    gprop.setShapesVisBox(sv);
 
                     //SHAPE TYPE AND SIZE
-                    int stype = new Integer(properties.getProperty(name + ".shapetype", "0"));
-                    int ssize = new Integer(properties.getProperty(name + ".shapesize"));
+                    int stype = Integer.valueOf(properties.getProperty(name + ".shapetype", "0"));
+                    int ssize = Integer.valueOf(properties.getProperty(name + ".shapesize"));
                     gprop.setShape(stype, ssize);
 //                    gprop.setShapeBox(stype);
 //                    gprop.setShapeSlider(ssize);
@@ -1140,12 +1140,12 @@ public class STPConfigurator extends JFrame {
 
                     StringTokenizer shapeTokenizer = new StringTokenizer(shape_color, ",");
 
-                    gprop.setSeriesFillPaint(new Color(new Integer(shapeTokenizer.nextToken()),
-                            new Integer(shapeTokenizer.nextToken()),
-                            new Integer(shapeTokenizer.nextToken())));
+                    gprop.setSeriesFillPaint(new Color(Integer.valueOf(shapeTokenizer.nextToken()),
+                            Integer.valueOf(shapeTokenizer.nextToken()),
+                            Integer.valueOf(shapeTokenizer.nextToken())));
 
                     //OUTLINE STROKE
-                    int os = new Integer(properties.getProperty(name + ".outlinestroke"));
+                    int os = Integer.valueOf(properties.getProperty(name + ".outlinestroke"));
                     gprop.setOutlineStroke(os);
 //                    gprop.setOutlineSlider(os);
 
@@ -1154,9 +1154,9 @@ public class STPConfigurator extends JFrame {
 
                     StringTokenizer outTokenizer = new StringTokenizer(outline_color, ",");
 
-                    gprop.setSeriesOutlinePaint(new Color(new Integer(outTokenizer.nextToken()),
-                            new Integer(outTokenizer.nextToken()),
-                            new Integer(outTokenizer.nextToken())));
+                    gprop.setSeriesOutlinePaint(new Color(Integer.valueOf(outTokenizer.nextToken()),
+                            Integer.valueOf(outTokenizer.nextToken()),
+                            Integer.valueOf(outTokenizer.nextToken())));
 
 //                    gprop.setColorLabelColor();
                     propVector.add(gprop);
@@ -1173,16 +1173,16 @@ public class STPConfigurator extends JFrame {
         tRight = (String) properties.getProperty("axisRTitle");
         xAxisTitle = (String) properties.getProperty("xAxisTitle");
         //RENDERER
-        rLeft = new Integer(properties.getProperty("renderer_left"));
-        rRight = new Integer(properties.getProperty("renderer_right"));
-        invLeft = new Boolean(properties.getProperty("inv_left"));
-        invRight = new Boolean(properties.getProperty("inv_right"));
+        rLeft = Integer.valueOf(properties.getProperty("renderer_left"));
+        rRight = Integer.valueOf(properties.getProperty("renderer_right"));
+        invLeft = Boolean.valueOf(properties.getProperty("inv_left"));
+        invRight = Boolean.valueOf(properties.getProperty("inv_right"));
 
         //TimeFormat
-        timeFormat_yy = new Boolean(properties.getProperty("timeFormat_yy"));
-        timeFormat_mm = new Boolean(properties.getProperty("timeFormat_mmy"));
-        timeFormat_dd = new Boolean(properties.getProperty("timeFormat_dd"));
-        timeFormat_hm = new Boolean(properties.getProperty("timeFormat_hm"));
+        timeFormat_yy = Boolean.valueOf(properties.getProperty("timeFormat_yy"));
+        timeFormat_mm = Boolean.valueOf(properties.getProperty("timeFormat_mmy"));
+        timeFormat_dd = Boolean.valueOf(properties.getProperty("timeFormat_dd"));
+        timeFormat_hm = Boolean.valueOf(properties.getProperty("timeFormat_hm"));
 
 //        jts.setPropVector(propVector);
 
