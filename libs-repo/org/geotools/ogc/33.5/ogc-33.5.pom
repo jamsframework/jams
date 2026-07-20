@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotools</groupId>
+    <artifactId>modules</artifactId>
+    <version>33.5</version>
+  </parent>
+
+  <groupId>org.geotools</groupId>
+  <artifactId>ogc</artifactId>
+  <packaging>pom</packaging>
+
+  <name>OGC Web Service Models</name>
+
+  <description>Collection of EMF models for OGC Web Service schemas.</description>
+
+  <developers>
+    <developer>
+      <name>Justin Deoliveira</name>
+      <roles>
+        <role>Java Developer</role>
+        <role>Module Maintainer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <modules>
+    <module>org.w3.xlink</module>
+    <module>net.opengis.ows</module>
+    <module>net.opengis.fes</module>
+    <module>net.opengis.wfs</module>
+    <module>net.opengis.wps</module>
+    <module>net.opengis.wcs</module>
+    <module>net.opengis.csw</module>
+    <module>net.opengis.wmts</module>
+  </modules>
+
+  <!-- disable pmd and errorprone in these modules, their code is generated -->
+  <properties>
+    <errorProneFlags>-XepDisableAllChecks</errorProneFlags>
+    <pmd.skip>true</pmd.skip>
+    <spotbugs.skip>true</spotbugs.skip>
+    <checkstyle.skip>true</checkstyle.skip>
+    <spotless.apply.skip>true</spotless.apply.skip>
+    <spotless.check.skip>true</spotless.check.skip>
+    <lint>none</lint>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <testSourceDirectory>test</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <additionalBuildcommands>
+            <buildcommand>org.eclipse.pde.ManifestBuilder</buildcommand>
+            <buildcommand>org.eclipse.pde.SchemaBuilder</buildcommand>
+          </additionalBuildcommands>
+          <additionalProjectnatures>
+            <projectnature>org.eclipse.pde.PluginNature</projectnature>
+          </additionalProjectnatures>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

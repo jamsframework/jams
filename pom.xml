@@ -58,7 +58,9 @@
         <repository>
             <id>jams-libs-repo</id>
             <url>file://${maven.multiModuleProjectDirectory}/libs-repo</url>
-            <releases><enabled>true</enabled></releases>
+            <!-- keine .sha1-Dateien im Repo; Checksumpruefung ist fuer ein
+                 eingechecktes, versioniertes lokales Repo ohnehin ohne Mehrwert -->
+            <releases><enabled>true</enabled><checksumPolicy>ignore</checksumPolicy></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
         <!-- modernes GeoTools 33 (nicht auf Maven Central) -->

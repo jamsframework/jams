@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Maven Project Configuration File
+
+        The Geotools Project
+            http://www.geotools.org/
+
+        Version: $Id$
+     ======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                                https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotools</groupId>
+    <artifactId>library</artifactId>
+    <version>33.5</version>
+  </parent>
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotools</groupId>
+  <artifactId>gt-main</artifactId>
+  <packaging>jar</packaging>
+  <name>Main module</name>
+
+  <description>The main module contains the GeoTools public interfaces that are used by
+    other GeoTools modules (and GeoTools applications). Where possible we make
+    use industry standard terms as provided by OGC and ISO standards.
+    
+    The formal GeoTools public api consists of gt-metadata, jts and the gt-main module.
+    
+    The main module contains the default implementations that are available provided
+    to other GeoTools modules using our factory system. Factories are obtained from
+    an appropriate FactoryFinder, giving applications a chance configure the factory
+    used using the Factory Hints facilities.
+       
+       FilterFactory ff = CommonFactoryFinder.getFilterFactory();
+       Expression expr = ff.add( expression1, expression2 );
+    
+    If you find yourself using implementation specific classes chances are you doing it wrong:
+      
+       Expression expr = new AddImpl( expression1, expressiom2 );</description>
+
+  <licenses>
+    <license>
+      <name>Lesser General Public License (LGPL)</name>
+      <url>http://www.gnu.org/copyleft/lesser.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <id>jive</id>
+      <name>Jody Garnett</name>
+      <email>jody.garnett@gmail.com</email>
+      <organization>BoundlessSpatial.xa Solutions, Inc.</organization>
+      <roles>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
+        <role>Documentation</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>jmacgill</id>
+      <name>James Macgill</name>
+      <email>jmacgill@users.sourceforge.net</email>
+      <organization>CCG</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>ianturton</id>
+      <name>Ian Turton</name>
+      <email>ianturton@users.sourceforge.net</email>
+      <organization>CCG</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>loxnard</id>
+      <name>Linda Oxnard</name>
+      <email>loxnard@users.sourceforge.net</email>
+      <organization>None</organization>
+      <roles>
+        <role>Doc Editor</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>camerons</id>
+      <name>Cameron Shorter</name>
+      <email>camerons@users.sourceforge.net</email>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>cholmesny</id>
+      <name>Chris Holmes</name>
+      <email>cholmesny@users.sourceforge.net</email>
+      <organization>TOPP</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>desruisseaux</id>
+      <name>Martin Desruisseaux</name>
+      <email>desruisseaux@users.sourceforge.net</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>ianschneider</id>
+      <name>Ian Schneider</name>
+      <email>ianschneider@users.sourceforge.net</email>
+      <organization>USDA ARS</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>seangeo</id>
+      <name>Sean Geoghegan</name>
+      <email>sean.geoghegan@dsto.defence.gov.au</email>
+      <organization>Defence Science and Technology Organisation</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>dzwiers</id>
+      <name>David Zwiers</name>
+      <email>dzwiers@refractions.net</email>
+      <organization>Refractions Research</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>jeichar</id>
+      <name>Jesse Eichar</name>
+      <email>jeichar@refractions.net</email>
+      <organization>Refractions Research</organization>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Rueben Schulz</name>
+      <organization>University of British Columbia</organization>
+      <roles>
+        <role>Java developper / Tester</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>simboss</id>
+      <name>Simone Giannecchini</name>
+      <email>simboss1@gmail.com</email>
+      <organization></organization>
+      <roles>
+        <role>Java Developer</role>
+        <role>Documentation</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>chorner</id>
+      <name>Cory Horner</name>
+      <email>cory.horner@gmail.com</email>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <properties>
+    <moduleIdentifier>org.geotools.main</moduleIdentifier>
+  </properties>
+
+  <!--
+  <contributors>
+    <contributor>
+      <name></name>
+      <organization></organization>
+      <roles>
+        <role></role>
+      </roles>
+    </contributor>
+  </contributors>
+  -->
+
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-referencing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-http</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-sample-data</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.measure</groupId>
+      <artifactId>unit-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.locationtech.jts</groupId>
+      <artifactId>jts-core</artifactId>
+      <!-- The version number is specified in the parent POM. -->
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.re2j</groupId>
+      <artifactId>re2j</artifactId>
+      <version>1.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ejml</groupId>
+      <artifactId>ejml-ddense</artifactId>
+      <!-- The version number is specified in the parent POM. -->
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <!-- The version number is specified in the parent POM. -->
+      <scope>provided</scope>
+      <!-- Really provided, not test -->
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-epsg-hsql</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- =========================================================== -->
+  <!--     Build Configuration                                     -->
+  <!-- =========================================================== -->
+  <build>
+    <plugins>
+      <!-- build test jar so that tests can be shared with legacy feature model module -->
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
