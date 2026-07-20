@@ -133,13 +133,11 @@ public class File implements Serializable {
     }
     
     public void setLocation(String location){
+        // No filesystem access here: this setter is invoked by JAXB while unmarshalling
+        // server responses, so probing the local disk for a server-side path is both wrong
+        // and slow (one syscall per file, blocking the browse dialog). fileSize is its own
+        // transmitted field, set via setFileSize.
         this.location = location;
-        
-        if (getLocation()==null)
-            return;        
-        java.io.File f = new java.io.File(this.getLocation());
-        if (f.exists())           
-            fileSize = f.length();
     }
     
     public long getFileSize(){        
