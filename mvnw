@@ -147,6 +147,29 @@ MAVEN_HOME="${MAVEN_USER_HOME}/wrapper/dists/${distributionUrlNameMain-}/$(hash_
 
 exec_maven() {
   unset MVNW_VERBOSE MVNW_USERNAME MVNW_PASSWORD MVNW_REPOURL || :
+
+  # On JDK 23+ Maven's internal use of sun.misc.Unsafe triggers terminal-deprecation
+  # warnings at startup. Silence them by allowing that access, but only where the option
+  # exists (introduced in JDK 23) — passing it to an older JDK aborts JVM startup, so it
+  # must not go into .mvn/jvm.config, which is applied unconditionally.
+  case " ${MAVEN_OPTS-} " in
+    *" --sun-misc-unsafe-memory-access="*) : ;;
+    *)
+      # JAVACMD is only set on the distribution-download path, so resolve java defensively.
+      _mvnwJava="${JAVACMD-}"
+      if [ -z "$_mvnwJava" ]; then
+        if [ -n "${JAVA_HOME-}" ]; then _mvnwJava="$JAVA_HOME/bin/java"; else _mvnwJava="java"; fi
+      fi
+      _mvnwJavaMajor=$("$_mvnwJava" -version 2>&1 | awk -F '"' '/version/ { print $2; exit }')
+      _mvnwJavaMajor=${_mvnwJavaMajor%%.*}
+      case "$_mvnwJavaMajor" in
+        '' | *[!0-9]*) : ;;
+        *) [ "$_mvnwJavaMajor" -ge 23 ] && export MAVEN_OPTS="${MAVEN_OPTS-} --sun-misc-unsafe-memory-access=allow" ;;
+      esac
+      unset _mvnwJava _mvnwJavaMajor
+      ;;
+  esac
+
   exec "$MAVEN_HOME/bin/$MVN_CMD" "$@" || die "cannot exec $MAVEN_HOME/bin/$MVN_CMD"
 }
 
