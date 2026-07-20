@@ -144,6 +144,19 @@
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
+        <!-- osgeo's Nexus spiegelt intern ganz Maven Central mit (nicht nur
+             GeoTools-Artefakte) - ohne diese explizite, vorgezogene central-
+             Deklaration wuerde praktisch der komplette Build ueber osgeo statt
+             ueber das deutlich robustere Central laufen, weil osgeo sonst vor
+             dem impliziten central-Eintrag der Super-POM gecheckt wird. So
+             bleibt osgeo wirklich nur noch fuer die GeoTools-Artefakte im
+             Einsatz, die es tatsaechlich nicht auf Central gibt. -->
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
         <!-- modernes GeoTools 33 (nicht auf Maven Central) -->
         <repository>
             <id>osgeo</id>
