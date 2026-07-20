@@ -60,6 +60,13 @@ public class HTTPClient {
 
     private String sessionID = null;
 
+    static {
+        // JAXB RI's optimized accessor injection reflectively calls ClassLoader.defineClass,
+        // which JDK 17+ blocks (java.base does not open java.lang). Disable it so JAXB falls
+        // back to plain reflection instead of failing the JAMS Cloud connection.
+        System.setProperty("com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize", "true");
+    }
+
     /**
      * The Standard-Constructor
      *
