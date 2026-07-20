@@ -1,8 +1,9 @@
-# JAMS – Jena Adaptable Modelling System
+# JAMS Modelling Framework
 
-JAMS is a pure-Java, open-source software framework for building and
-applying modular environmental simulation models. Originally developed
-for eco-hydrological modelling at Friedrich Schiller University Jena
+JAMS (originally an acronym for "Jena Adaptable Modelling System") is a
+pure-Java, open-source software framework for building and applying
+modular environmental simulation models. Originally developed for
+eco-hydrological modelling at Friedrich Schiller University Jena
 (Department of Geoinformatics), it provides the process-based simulation
 components that form the basis of the J2000 model family and has been
 applied worldwide for simulating hydrological, nutrient transport and

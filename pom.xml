@@ -8,7 +8,7 @@
     <artifactId>jams-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>JAMS - Jena Adaptable Modelling System</name>
+    <name>JAMS Modelling Framework</name>
 
     <modules>
         <module>jams-api</module>
