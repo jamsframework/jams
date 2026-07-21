@@ -42,16 +42,12 @@
 @SET MVNW_PASSWORD=
 @REM On JDK 23+, allow sun.misc.Unsafe access to silence Maven's startup deprecation
 @REM warnings. The option exists only on JDK 23+; on older JDKs it aborts JVM startup, so
-@REM it must not live in .mvn/jvm.config. Any detection failure simply adds nothing.
-@SET "__MVNW_JAVA_EXE__=java"
-@IF NOT "%JAVA_HOME%"=="" @SET "__MVNW_JAVA_EXE__=%JAVA_HOME%\bin\java"
-@SET "__MVNW_JAVAVER__="
-@FOR /F "tokens=3" %%J IN ('""%__MVNW_JAVA_EXE__%" -version" 2^>^&1 ^| findstr /i "version"') DO @IF NOT DEFINED __MVNW_JAVAVER__ SET "__MVNW_JAVAVER__=%%~J"
+@REM it must not live in .mvn/jvm.config. Read the major version from JAVA_HOME's own
+@REM "release" file instead of parsing "java -version" output - avoids cmd.exe's FOR /F
+@REM command-quoting pitfalls when JAVA_HOME contains spaces (e.g. "Program Files").
 @SET "__MVNW_JAVAMAJOR__="
-@IF DEFINED __MVNW_JAVAVER__ (FOR /F "delims=.-_+ tokens=1" %%J IN ("%__MVNW_JAVAVER__%") DO @SET /A "__MVNW_JAVAMAJOR__=%%J + 0" >NUL 2>&1)
+@IF NOT "%JAVA_HOME%"=="" @IF EXIST "%JAVA_HOME%\release" @FOR /F "usebackq tokens=1,2 delims==" %%A IN ("%JAVA_HOME%\release") DO @IF "%%A"=="JAVA_VERSION" @FOR /F "delims=.-_+" %%V IN ("%%~B") DO @SET /A "__MVNW_JAVAMAJOR__=%%V + 0" >NUL 2>&1
 @IF DEFINED __MVNW_JAVAMAJOR__ @IF %__MVNW_JAVAMAJOR__% GEQ 23 @SET "MAVEN_OPTS=%MAVEN_OPTS% --sun-misc-unsafe-memory-access=allow"
-@SET "__MVNW_JAVA_EXE__="
-@SET "__MVNW_JAVAVER__="
 @SET "__MVNW_JAVAMAJOR__="
 @IF NOT "%__MVNW_CMD__%"=="" ("%__MVNW_CMD__%" %*)
 @echo Cannot start maven from wrapper >&2 && exit /b 1
