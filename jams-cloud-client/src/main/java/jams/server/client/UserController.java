@@ -26,7 +26,11 @@ import jams.JAMS;
 import jams.server.entities.User;
 import jams.server.entities.Users;
 import static jams.tools.LogTools.log;
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
+import javax.xml.bind.JAXBContext;
 
 /**
  *
@@ -107,5 +111,45 @@ public class UserController {
     public User update(User user) {
         log(getClass(), Level.FINE, JAMS.i18n("Updating_user_with_id_{0}"), user.getId());
         return client.httpPost(urlStr + "/user/" + user.getId(), "PUT", user, User.class);
+    }
+
+    /**
+     * Reads a {@code <users>} XML file and creates every user in it, in a
+     * repeatable way: logins that already exist on the server are skipped, so the
+     * same file can be applied again without error. The {@code <id>} values in the
+     * file are ignored (the server assigns ids); passwords are hashed server-side.
+     * @param xmlFile a file containing a {@code <users>} element
+     * @return the number of users actually created
+     * @throws Exception if the file cannot be read or parsed
+     */
+    public int createUsers(File xmlFile) throws Exception {
+        Users users = (Users) JAXBContext.newInstance(Users.class)
+                .createUnmarshaller().unmarshal(xmlFile);
+        return createUsers(users);
+    }
+
+    /**
+     * Creates every user in the given list, skipping logins that already exist
+     * (repeatable). Passwords are hashed server-side.
+     * @param users the users to create
+     * @return the number of users actually created
+     */
+    public int createUsers(Users users) {
+        Set<String> existing = new HashSet<>();
+        for (User u : findAll().getUsers()) {
+            existing.add(u.getLogin());
+        }
+        int created = 0;
+        for (User u : users.getUsers()) {
+            if (existing.contains(u.getLogin())) {
+                log(getClass(), Level.INFO, JAMS.i18n("User_{0}_already_exists,_skipping"), u.getLogin());
+                continue;
+            }
+            createUser(u);
+            existing.add(u.getLogin());
+            created++;
+            log(getClass(), Level.INFO, JAMS.i18n("Created_user_{0}"), u.getLogin());
+        }
+        return created;
     }
 }

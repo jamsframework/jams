@@ -24,3 +24,7 @@ replay_pid*.log
 /authors.txt
 /README-MIGRATION.md
 /authors-models.txt
+
+# Local user list with plaintext passwords for Controller mass-create — never commit
+jams-cloud-client/users.xml
+users.xml

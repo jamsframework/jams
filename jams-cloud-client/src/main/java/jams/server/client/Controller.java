@@ -24,6 +24,7 @@ package jams.server.client;
 import jams.JAMS;
 import jams.server.entities.User;
 import static jams.tools.LogTools.log;
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -190,15 +191,38 @@ public class Controller {
     }
 
     /**
-     * Small admin utility that walks the user lifecycle against the server:
-     * create, search, edit and delete. Adjust the server URL, the admin
-     * credentials and the user details below; the password is hashed
-     * server-side on creation.
+     * Small admin utility against the server. With a {@code <users>} XML file
+     * (first argument, or a "users.xml" in the working directory) it mass-creates
+     * the users in it, skipping logins that already exist so it can be re-run
+     * safely. Without such a file it runs a single-user lifecycle demo
+     * (create/search/edit/delete). Passwords are hashed server-side.
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         Controller client = new Controller(
                 "http://localhost:8080/jamscloud/webresources", "admin", "jams-admin-local");
 
+        // Mass-create from a <users> file, if one is given / present (repeatable).
+        // Without an argument, look in the working directory and the client module,
+        // so it works both from IntelliJ and from the reactor root.
+        File usersFile = null;
+        if (args.length > 0) {
+            usersFile = new File(args[0]);
+        } else {
+            for (String candidate : new String[]{"users.xml", "jams-cloud-client/users.xml"}) {
+                File f = new File(candidate);
+                if (f.exists()) {
+                    usersFile = f;
+                    break;
+                }
+            }
+        }
+        if (usersFile != null && usersFile.exists()) {
+            int n = client.users().createUsers(usersFile);
+            System.out.println("Mass-create from " + usersFile + ": " + n + " user(s) created.");
+            return;
+        }
+
+        // --- otherwise: single-user lifecycle example ---
         // 1. create a user (the password is hashed server-side)
         User user = new User(0, "sven", "skralisch");
         user.setName("Sven Kralisch");
