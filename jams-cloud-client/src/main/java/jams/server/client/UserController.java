@@ -94,6 +94,18 @@ public class UserController {
      */
     public User createUser(User user) {
         log(getClass(), Level.FINE, JAMS.i18n("Creating_new_user"));
-        return client.httpPost(urlStr + "/user/create", "PUT", user, User.class);        
+        return client.httpPost(urlStr + "/user/create", "PUT", user, User.class);
+    }
+
+    /**
+     * updates an existing user (server endpoint PUT /user/{id}). Fields are taken
+     * from the given object, whose id must be set; an empty/null password keeps
+     * the current one.
+     * @param user the user with modified fields and a valid id
+     * @return the updated user
+     */
+    public User update(User user) {
+        log(getClass(), Level.FINE, JAMS.i18n("Updating_user_with_id_{0}"), user.getId());
+        return client.httpPost(urlStr + "/user/" + user.getId(), "PUT", user, User.class);
     }
 }

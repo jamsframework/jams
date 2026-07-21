@@ -22,22 +22,9 @@
 package jams.server.client;
 
 import jams.JAMS;
-import jams.JAMSProperties;
-import jams.data.ArrayDataSupplier;
-import jams.runtime.StandardRuntime;
-import jams.server.client.error.ErrorHandler;
-import jams.server.entities.Job;
 import jams.server.entities.User;
-import jams.server.entities.Users;
-import jams.server.entities.Workspace;
-import jams.server.entities.WorkspaceFileAssociation;
 import static jams.tools.LogTools.log;
-import jams.workspace.JAMSWorkspace;
-import java.io.File;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.ProcessingException;
@@ -202,213 +189,42 @@ public class Controller {
         return new JobController(this);
     }
 
-    public static void main(String[] args) throws IOException {
-//        Controller client = new Controller("http://picard.geogr.uni-jena.de:8080/jamscloud/webresources", "sven", "skralisch");
-        
-        Controller client = new Controller("http://localhost:8080/jamscloud/webresources", "admin", "jamscloud");
-
-        User user;
-        
-//        user = client.users().find(7);
-//        System.out.println(user.getEmail());
-//        client.users().delete(user.getId());
-        
-        user = new User(2, "sven", "skralisch");
-        user.setEmail("kralisch@gmail.com");
-        user.setName("Sven Kralisch");
-        user.setAdmin(1);
-        client.users().createUser(user);
-
-//        user = new User(29, "flora", "fbranger");
-//        user.setEmail("flora.branger@inrae.fr");
-//        user.setName("Flora Branger");
-//        user.setAdmin(0);
-//        client.users().createUser(user);
-
-//        user = new User(30, "nathan", "npellerin");
-//        user.setEmail("nathan.pellerin@inrae.fr");
-//        user.setName("Nathan PELLERIN");
-//        user.setAdmin(0);
-//        client.users().createUser(user);
-
-//        user = new User(24, "subodh", "skamal");
-//        user.setEmail("asu.patience@gmail.com");
-//        user.setName("Subodh Kamal");
-//        user.setAdmin(0);
-//        client.users().createUser(user);
-        
-    }
-
     /**
-     *
-     * @param args
-     * @throws IOException
+     * Small admin utility that walks the user lifecycle against the server:
+     * create, search, edit and delete. Adjust the server URL, the admin
+     * credentials and the user details below; the password is hashed
+     * server-side on creation.
      */
-    public static void main2(String[] args) throws IOException {
-        Controller client = new Controller("http://kirk.geogr.uni-jena.de:8080/jams-cloud-server/webresources", "secret", "secret");
+    public static void main(String[] args) throws IOException {
+        Controller client = new Controller(
+                "http://localhost:8080/jamscloud/webresources", "admin", "jams-admin-local");
 
-        User user = new User(5);
+        // 1. create a user (the password is hashed server-side)
+        User user = new User(0, "sven", "skralisch");
+        user.setName("Sven Kralisch");
+        user.setEmail("kralisch@gmail.com");
         user.setAdmin(1);
-        user.setEmail("blubb@gmx.de");
-        user.setId(5);
-        user.setLogin(Integer.toString((new Random()).nextInt()));
-        user.setName("Der Marshmellow Mann");
-        user.setPassword("test");
+        User created = client.users().createUser(user);
+        System.out.println("Created user '" + created.getLogin() + "' with id " + created.getId());
 
-        User newUser = client.users().createUser(user);
-        if (newUser != null) {
-            System.out.println("User was created successfully with id " + newUser.getId());
-            newUser = client.users().delete(newUser.getId());
-            if (newUser != null) {
-                System.out.println("User was successfully deleted");
-            }
-
-        }
-        Users users = client.users().findAll();
-        if (users != null) {
-            System.out.println("List of all users is now:" + users.toString());
-        }
-        Users result = client.users().findInRange(0, 1);
-        if (result != null) {
-            System.out.println("Users with id 0 and 1 are" + result.toString());
-        }
-
-        //Files
-        jams.server.entities.File f1 = client.files().uploadFile(new File("E:/tmp/style.css"));
-        if (f1 != null) {
-            System.out.println("File with id " + f1.getId() + " was uploaded successfully!");
-        }
-        File f2 = new File("E:/tmp/show_log.php");
-        File f3 = new File("E:/tmp/successful.php");
-        Map<File, jams.server.entities.File> map = null;
-        try {
-            map = client.files().uploadFile(new ArrayDataSupplier(new File[]{f2, f3}),
-                    new ErrorHandler<File>() {
-                @Override
-                public boolean handleError(File o, Throwable ex) {
-                    System.out.println("Unable to upload " + o);
-                    return true;
-                }
-            }
-            );
-        } catch (IOException ioe) {
-            System.out.println("File with ids " + map.get(f2).getId() + "/" + map.get(f3).getId() + " were uploaded successfully!");
-        }
-        //Workspace
-        Workspace ws = new Workspace();
-        ws.setId(0);
-        ws.setName("TestWs");
-        ws.setCreationDate(new Date());
-        ws = client.workspaces().create(ws);
-        if (ws != null) {
-            System.out.println("Workspace with id " + ws.getId() + " was created successfully!");
-
-            client.workspaces().attachFile(ws, new WorkspaceFileAssociation(ws, f1, 4, "/test/test1.dat"));
-            client.workspaces().attachFile(ws, new WorkspaceFileAssociation(ws, map.get(f2), 4, "/test/test2.dat"));
-            client.workspaces().attachFile(ws, new WorkspaceFileAssociation(ws, map.get(f3), 4, "/test/test3.dat"));
-
-            //client.getWorkspaceController().downloadFile(new File("E:/tmp/"),ws, f1);
-            ws = client.workspaces().delete(ws);
-            if (ws != null) {
-                System.out.println("Workspace with id " + ws.getId() + " was removed successfully!");
+        // 2. search for the user by login among all users
+        User sven = null;
+        for (User u : client.users().findAll().getUsers()) {
+            if ("sven".equals(u.getLogin())) {
+                sven = u;
+                break;
             }
         }
+        System.out.println("Found user '" + sven.getLogin() + "' with id " + sven.getId());
 
-        JAMSWorkspaceUploader uploader = new JAMSWorkspaceUploader(client);
-        jams.workspace.Workspace workspace = new JAMSWorkspace(new File("E:\\ModelData\\JAMS-Gehlberg"), new StandardRuntime(null));
-        Workspace ws2 = uploader.uploadWorkspace(workspace, new File[]{new File("E:\\JAMS_rep\\JAMS\\lib")}, new File("E:\\JAMS_rep\\JAMS\\nbprojects\\jams-ui\\dist\\jams-ui.jar"), "",
-                new ErrorHandler<File>() {
-            @Override
-            public boolean handleError(File o, Throwable ex) {
-                System.out.println("Unable to upload " + o);
-                return true;
-            }
-        });
-        if (ws2 != null) {
-            System.out.println("Number of files: " + ws2.getFiles().size());
-            System.out.println("Workspace of Wilde Gera Model was uploaded successfully with id " + ws2.getId());
-            client.workspaces().downloadWorkspace(new File("E:/test_client/" + ws2.getId() + "/"), ws2);
-            System.out.println("Workspace of Wilde Gera Model was downloaded to E:/test_client/" + ws2.getId());
-            WorkspaceFileAssociation wfaModel = null;
-            for (WorkspaceFileAssociation f : ws2.getFiles()) {
-                if (f.getPath().endsWith("j2k_gehlberg.jam")) {
-                    wfaModel = f;
-                    break;
-                }
-            }
-            Job job = client.jobs().create(ws2, wfaModel);
-            if (job != null) {
-                System.out.println("Wilde Gera Model started successfully! " + "Job Id is: " + job.getId());
-            }
-            while (client.jobs().getState(job).isActive()) {
-                System.out.println("Job with id " + job.getId() + " still running!");
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            System.out.println("Job with id " + job.getId() + " finished after " + client.jobs().getState(job).getDuration() + " ms.");
-            Workspace ws3 = job.getWorkspace();
-            System.out.println("Workspace of " + ws3.getName() + " Model is downloading!");
-            client.jobs().download(new File("E:/test_client/" + ws3.getName()), job);
-            client.jobs().delete(job);
-            System.out.println("Job with id " + job.getId() + " deleted");
-            client.workspaces().delete(ws2);
-            System.out.println("Workspace of Wilde Gera Model was deleted!");
-        }
+        // 3. edit the user (an empty/null password keeps the current one)
+        sven.setName("Sven K.");
+        sven.setEmail("sven@example.org");
+        User updated = client.users().update(sven);
+        System.out.println("Updated user, name is now '" + updated.getName() + "'");
 
-        client.close();
+        // 4. delete the user
+        client.users().delete(sven.getId());
+        System.out.println("Deleted user with id " + sven.getId());
     }
-
-    public static void main3(String[] args) throws IOException {
-        Controller client = new Controller("http://localhost:8080/jams-cloud-server/webresources", "admin", "jamscloud");
-
-        JAMSWorkspaceUploader uploader = new JAMSWorkspaceUploader(client);
-        jams.workspace.Workspace workspace = new JAMSWorkspace(new File("d:\\jamsapplication\\JAMS-Gehlberg"), new StandardRuntime(JAMSProperties.createProperties()));
-        Workspace ws2 = uploader.uploadWorkspace(workspace, new File[]{new File("D:\\jams\\jams-bin\\components"), new File("D:\\jamsmodels\\nbprojects\\components")}, new File("d:\\jams\\jams-bin\\jams-headless.jar"), "",
-                new ErrorHandler<File>() {
-            @Override
-            public boolean handleError(File o, Throwable ex) {
-                System.out.println("Unable to upload " + o);
-                return true;
-            }
-        });
-        if (ws2 != null) {
-            System.out.println("Number of files: " + ws2.getFiles().size());
-            System.out.println("Workspace of Wilde Gera Model was uploaded successfully with id " + ws2.getId());
-            client.workspaces().downloadWorkspace(new File("E:/test_client/" + ws2.getId() + "/"), ws2);
-            System.out.println("Workspace of Wilde Gera Model was downloaded to E:/test_client/" + ws2.getId());
-            WorkspaceFileAssociation wfaModel = null;
-            for (WorkspaceFileAssociation f : ws2.getFiles()) {
-                if (f.getPath().endsWith("j2k_gehlberg.jam")) {
-                    wfaModel = f;
-                    break;
-                }
-            }
-            Job job = client.jobs().create(ws2, wfaModel);
-            if (job != null) {
-                System.out.println("Wilde Gera Model started successfully! " + "Job Id is: " + job.getId());
-            }
-            while (client.jobs().getState(job).isActive()) {
-                System.out.println("Job with id " + job.getId() + " still running!");
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            System.out.println("Job with id " + job.getId() + " finished after " + client.jobs().getState(job).getDuration() + " ms.");
-            Workspace ws3 = job.getWorkspace();
-            System.out.println("Workspace of " + ws3.getName() + " Model is downloading!");
-            client.jobs().download(new File("E:/test_client/" + ws3.getName()), job);
-            client.jobs().delete(job);
-            System.out.println("Job with id " + job.getId() + " deleted");
-            client.workspaces().delete(ws2);
-            System.out.println("Workspace of Wilde Gera Model was deleted!");
-        }
-
-        client.close();
-    }
-
 }
