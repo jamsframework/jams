@@ -112,10 +112,13 @@ public class ViewStreamDlg extends JDialog{
 
                 @Override
                 public void run() {
-                    while (true) {
+                    while (!Thread.currentThread().isInterrupted()) {
                         try {
                             Thread.sleep(1000);
                             fillBuffer();
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            break;
                         } catch (Exception e) {
 
                         }
@@ -123,15 +126,17 @@ public class ViewStreamDlg extends JDialog{
                 }
             };
             t = new Thread(r);
-            t.start();            
+            t.start();
         }else{
             if (t != null){
                 if (t.isAlive()){
-                    t.stop();
+                    // Thread.stop() throws UnsupportedOperationException on Java 17+;
+                    // stop the polling loop cooperatively via interrupt() instead.
+                    t.interrupt();
                 }
-            }            
+            }
             close();
-        }        
+        }
         super.setVisible(isShown);
     }
     

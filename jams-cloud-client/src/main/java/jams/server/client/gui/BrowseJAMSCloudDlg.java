@@ -84,6 +84,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.event.TreeSelectionEvent;
@@ -157,7 +158,8 @@ public class BrowseJAMSCloudDlg extends JDialog {
             deleteAllJobsAction = null,
             deleteAllWorkspacesAction = null,
             showInfoLogAction = null,
-            showErrorLogAction = null;
+            showErrorLogAction = null,
+            refreshAction = null;
 
     SystemProperties p = null;
     WorkerDlg worker = new WorkerDlg(this, "Request is being processed...");
@@ -559,6 +561,15 @@ public class BrowseJAMSCloudDlg extends JDialog {
             }
         };
 
+        // Full refresh of workspaces and jobs (also re-registers new server-side
+        // output files via /job/find). Wired to the popups and to F5 on the trees.
+        refreshAction = new AbstractAction(JAMS.i18n("Refresh")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateViewAction();
+            }
+        };
+
         showInfoLogAction = new AbstractAction(JAMS.i18n("View_Info_Log")) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -809,6 +820,10 @@ public class BrowseJAMSCloudDlg extends JDialog {
                 Object userObject = workspaceTree.getUserObjectAtLocation(e);
 
                 JPopupMenu popup = new JPopupMenu();
+                popup.add(new JMenuItem(refreshAction));
+                if (userObject != null) {
+                    popup.addSeparator();
+                }
                 if (userObject instanceof User) {
                     popup.add(new JMenuItem(deleteAllWorkspacesAction));
                 }
@@ -855,11 +870,12 @@ public class BrowseJAMSCloudDlg extends JDialog {
                     return;
                 }
                 Object userObject = jobsTree.getUserObjectAtLocation(e);
-                if (userObject == null) {
-                    return;
-                }
 
                 JPopupMenu popup = new JPopupMenu();
+                popup.add(new JMenuItem(refreshAction));
+                if (userObject != null) {
+                    popup.addSeparator();
+                }
                 if (userObject instanceof User) {
                     popup.add(new JMenuItem(deleteAllJobsAction));
                 }
@@ -888,6 +904,14 @@ public class BrowseJAMSCloudDlg extends JDialog {
                 updateViewAction();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+        // Bind F5 directly on the trees as well; the focused-window binding above
+        // does not always fire when a tree holds keyboard focus.
+        for (JTree tree : new JTree[]{jobsTree, workspaceTree}) {
+            tree.getInputMap(JComponent.WHEN_FOCUSED)
+                    .put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "jamsCloudRefresh");
+            tree.getActionMap().put("jamsCloudRefresh", refreshAction);
+        }
     }
 
     private boolean connect() {
