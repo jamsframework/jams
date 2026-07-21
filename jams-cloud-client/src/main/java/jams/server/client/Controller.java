@@ -80,7 +80,7 @@ public class Controller {
         log(this.getClass(), Level.FINE, "{0}{1} {2}", SEPARATOR, JAMS.i18n("Trying_to_connect_with"), urlStr);
         String serverVersion = client.httpGet(urlStr + "/version", String.class);
         if (isCompatibleWithServer(serverVersion)) {
-            user = (User) client.connect(urlStr + "/user/login?login=" + userName + "&password=" + password, User.class);
+            user = (User) client.login(urlStr + "/user/login", userName, password, User.class);
             log(this.getClass(), Level.FINE, "{0}\n", JAMS.i18n("Login_successful"));
         } else {
             throw new ProcessingException(JAMS.i18n("Client (Version: %1 is not compatible with Server (Version: %2")
@@ -205,7 +205,7 @@ public class Controller {
     public static void main(String[] args) throws IOException {
 //        Controller client = new Controller("http://picard.geogr.uni-jena.de:8080/jamscloud/webresources", "sven", "skralisch");
         
-        Controller client = new Controller("http://picard.geogr.uni-jena.de:8080/jamscloud/webresources", "sven", "skralisch");
+        Controller client = new Controller("http://localhost:8080/jamscloud/webresources", "admin", "jamscloud");
 
         User user;
         
@@ -213,10 +213,10 @@ public class Controller {
 //        System.out.println(user.getEmail());
 //        client.users().delete(user.getId());
         
-        user = new User(31, "ellie", "echikviladze");
-        user.setEmail("elle.chikviladze@gmail.com");
-        user.setName("Elle Chikviladze");
-        user.setAdmin(0);
+        user = new User(2, "sven", "skralisch");
+        user.setEmail("kralisch@gmail.com");
+        user.setName("Sven Kralisch");
+        user.setAdmin(1);
         client.users().createUser(user);
 
 //        user = new User(29, "flora", "fbranger");

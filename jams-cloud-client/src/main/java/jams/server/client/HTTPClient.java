@@ -35,6 +35,9 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.http.Header;
@@ -87,6 +90,23 @@ public class HTTPClient {
         log(this.getClass(),Level.FINER, JAMS.i18n("LOGIN_TO_{1}"), urlStr);
         sessionID = null;
         return httpRequest(urlStr, "GET", null, responseType);
+    }
+
+    /**
+     * Logs in via POST with the credentials in an "Authorization: Basic" header
+     * (kept out of the URL and the server access log) and stores the session.
+     * @param <T> the expected type of the result
+     * @param urlStr login url
+     * @param userName user name
+     * @param password password
+     * @param responseType the expected type of the result
+     * @return the object returned by the request
+     */
+    public <T> T login(String urlStr, String userName, String password, Class<T> responseType) {
+        sessionID = null;
+        String token = Base64.getEncoder().encodeToString(
+                (userName + ":" + password).getBytes(StandardCharsets.UTF_8));
+        return httpRequest(urlStr, "POST", null, responseType, "Basic " + token);
     }
     
     /**
@@ -285,22 +305,28 @@ public class HTTPClient {
      * @return the response of the server
      * @throws ProcessingException under various conditions
      */
-    protected <T> T httpRequest(String urlStr, String requestMethod, Object param, Class<T> responseType) {                        
+    protected <T> T httpRequest(String urlStr, String requestMethod, Object param, Class<T> responseType) {
+        return httpRequest(urlStr, requestMethod, param, responseType, null);
+    }
+
+    protected <T> T httpRequest(String urlStr, String requestMethod, Object param, Class<T> responseType, String authorization) {
         Client client = ClientBuilder.newClient();
 
         Response response;
         log(this.getClass(),Level.FINER, JAMS.i18n("SENDING_{0}-REQUEST_TO_{1}"), requestMethod, urlStr);
-        try {            
-            if (requestMethod.compareTo("GET")!=0) {                
-                response = client.target(urlStr).request().
-                        header("Access-Control-Request-Method", requestMethod).
-                        header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")).
-                        method(requestMethod, Entity.entity(param, MediaType.APPLICATION_XML));
+        try {
+            Invocation.Builder builder = client.target(urlStr).request().
+                    header("Access-Control-Request-Method", requestMethod).
+                    header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8"));
+            if (authorization != null) {
+                builder = builder.header("Authorization", authorization);
+            }
+            if (requestMethod.compareTo("GET") == 0) {
+                response = builder.get();
+            } else if (param == null) {
+                response = builder.method(requestMethod);
             } else {
-                response = client.target(urlStr).request().
-                        header("Access-Control-Request-Method", requestMethod).
-                        header("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")).
-                        get();
+                response = builder.method(requestMethod, Entity.entity(param, MediaType.APPLICATION_XML));
             }
         } catch (UnsupportedEncodingException uee) {
             throw new ProcessingException(uee);
