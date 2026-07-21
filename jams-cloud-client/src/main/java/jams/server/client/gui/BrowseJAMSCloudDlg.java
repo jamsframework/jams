@@ -898,19 +898,29 @@ public class BrowseJAMSCloudDlg extends JDialog {
             }
         });
 
-        this.getRootPane().registerKeyboardAction(new ActionListener() {
+        // Refresh shortcuts: F5 (standard), plus Cmd+R / Ctrl+R. On macOS F5 is
+        // reserved by the OS and never reaches Swing, so the menu-shortcut variant
+        // is what actually works there.
+        int menuMask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+        KeyStroke[] refreshKeys = {
+            KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0),
+            KeyStroke.getKeyStroke(KeyEvent.VK_R, menuMask)
+        };
+        ActionListener refreshListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateViewAction();
             }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-        // Bind F5 directly on the trees as well; the focused-window binding above
-        // does not always fire when a tree holds keyboard focus.
-        for (JTree tree : new JTree[]{jobsTree, workspaceTree}) {
-            tree.getInputMap(JComponent.WHEN_FOCUSED)
-                    .put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "jamsCloudRefresh");
-            tree.getActionMap().put("jamsCloudRefresh", refreshAction);
+        };
+        for (KeyStroke ks : refreshKeys) {
+            this.getRootPane().registerKeyboardAction(
+                    refreshListener, ks, JComponent.WHEN_IN_FOCUSED_WINDOW);
+            // Bind on the trees too; the focused-window binding does not always
+            // fire when a tree holds keyboard focus.
+            for (JTree tree : new JTree[]{jobsTree, workspaceTree}) {
+                tree.getInputMap(JComponent.WHEN_FOCUSED).put(ks, "jamsCloudRefresh");
+                tree.getActionMap().put("jamsCloudRefresh", refreshAction);
+            }
         }
     }
 
