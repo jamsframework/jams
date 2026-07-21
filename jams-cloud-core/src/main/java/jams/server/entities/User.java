@@ -69,7 +69,7 @@ public class User implements Serializable, Comparable<User> {
     
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 200)
     @Column(name = "password")
     private String password;
     
