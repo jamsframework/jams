@@ -199,7 +199,7 @@ public class Controller {
      */
     public static void main(String[] args) throws Exception {
         Controller client = new Controller(
-                "http://localhost:8080/jamscloud/webresources", "admin", "jams-admin-local");
+                "http://localhost:8080/jamscloud/webresources", "admin", "my_secret_pw");
 
         // Mass-create from a <users> file, if one is given / present (repeatable).
         // Without an argument, look in the working directory and the client module,
@@ -224,7 +224,7 @@ public class Controller {
 
         // --- otherwise: single-user lifecycle example ---
         // 1. create a user (the password is hashed server-side)
-        User user = new User(0, "sven", "skralisch");
+        User user = new User(0, "sven", "my_secret_pw");
         user.setName("Sven Kralisch");
         user.setEmail("kralisch@gmail.com");
         user.setAdmin(1);
@@ -232,23 +232,22 @@ public class Controller {
         System.out.println("Created user '" + created.getLogin() + "' with id " + created.getId());
 
         // 2. search for the user by login among all users
-        User sven = null;
         for (User u : client.users().findAll().getUsers()) {
             if ("sven".equals(u.getLogin())) {
-                sven = u;
+                user = u;
                 break;
             }
         }
-        System.out.println("Found user '" + sven.getLogin() + "' with id " + sven.getId());
+        System.out.println("Found user '" + user.getLogin() + "' with id " + user.getId());
 
         // 3. edit the user (an empty/null password keeps the current one)
-        sven.setName("Sven K.");
-        sven.setEmail("sven@example.org");
-        User updated = client.users().update(sven);
+        user.setName("Sven K.");
+        user.setEmail("sven@example.org");
+        User updated = client.users().update(user);
         System.out.println("Updated user, name is now '" + updated.getName() + "'");
 
         // 4. delete the user
-        client.users().delete(sven.getId());
-        System.out.println("Deleted user with id " + sven.getId());
+        client.users().delete(user.getId());
+        System.out.println("Deleted user with id " + user.getId());
     }
 }
