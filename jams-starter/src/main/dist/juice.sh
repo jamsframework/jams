@@ -10,5 +10,5 @@
 #   JAVA_OPTS="-Xmx8g" ./juice.sh
 #
 cd "$(dirname "$0")"
-VM_OPTS="-Xms128M -Xmx1024M -splash:JAMSsplash.png -Djavax.accessibility.assistive_technologies= $JAVA_OPTS"
+VM_OPTS="-Xms128M -Xmx10G -splash:JAMSsplash.png -Djavax.accessibility.assistive_technologies= $JAVA_OPTS"
 exec java $VM_OPTS -jar juice-starter.jar "$@"
