@@ -1,0 +1,7 @@
+# Coalesce contributors who committed under more than one name/address, so that
+# git shortlog, git log --use-mailmap and GitHub's Contributors view group them
+# under a single identity.
+#
+# Format:  Proper Name <canonical@email> [<other@email>]
+
+Sven Kralisch <sven@kralisch.com> <sven.kralisch@tlubn.thueringen.de>
