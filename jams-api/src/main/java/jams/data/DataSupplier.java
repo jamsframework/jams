@@ -11,7 +11,7 @@ package jams.data;
  * @author christian
  * @param <T>
  */
-public interface DataSupplier<T> extends Iterable<T>{
+public interface DataSupplier<T> extends Iterable<T>, java.io.Serializable {
     abstract public int size();
     abstract T get(int i);
 }

@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -38,6 +39,13 @@ public class ParallelExecution<X,Y> {
     BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<Runnable>(64);
 
     ThreadPoolExecutor threadPool = null;
+
+    // classloader that knows about the dynamically loaded model/component
+    // jars (e.g. J2K_base). Needed so ObjectInputStream can resolve those
+    // classes when cloning a job below - the JDK's default system classloader
+    // no longer picks these up (it stopped being a URLClassLoader in JDK 9,
+    // which silently broke the old addJarsToClassPath() reflection hack).
+    private final ClassLoader classLoader;
 
     private byte[] zipDirectory(String dir,String exclude) throws IOException {
         ByteArrayOutputStream zipAsByteArray = new ByteArrayOutputStream();
@@ -120,6 +128,11 @@ public class ParallelExecution<X,Y> {
     }
 
     public ParallelExecution(File workspace, String excludeFiles){
+        this(workspace, excludeFiles, null);
+    }
+
+    public ParallelExecution(File workspace, String excludeFiles, ClassLoader classLoader){
+        this.classLoader = classLoader;
         try {
             myWorkspace = zipDirectory(workspace.getAbsolutePath(), excludeFiles);
         } catch (Exception e) {
@@ -144,10 +157,23 @@ public class ParallelExecution<X,Y> {
         return null;
     }
 
-    private static Serializable createFromByteArray(byte[] array){
+    private Serializable createFromByteArray(byte[] array){
         try{
             ByteArrayInputStream fis = new ByteArrayInputStream(array);
-            ObjectInputStream ois = new ObjectInputStream(fis);
+            ObjectInputStream ois = new ObjectInputStream(fis){
+                @Override
+                protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+                    ClassLoader loader = classLoader != null ? classLoader : Thread.currentThread().getContextClassLoader();
+                    if (loader != null){
+                        try {
+                            return Class.forName(desc.getName(), false, loader);
+                        } catch (ClassNotFoundException e) {
+                            //fall through to default resolution
+                        }
+                    }
+                    return super.resolveClass(desc);
+                }
+            };
             Serializable o = (Serializable)ois.readObject();
             ois.close();
             return o;

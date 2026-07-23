@@ -17,7 +17,7 @@ import java.util.GregorianCalendar;
  *
  * @author christian
  */
-public abstract class TemporalAggregator<T>{
+public abstract class TemporalAggregator<T> implements java.io.Serializable {
     private Calendar time;
     
     AggregationTimePeriod timePeriod;
@@ -44,7 +44,7 @@ public abstract class TemporalAggregator<T>{
         }
     };
     
-    public interface Consumer<T>{
+    public interface Consumer<T> extends java.io.Serializable {
         public void consume(Calendar c, T v);
     }
             

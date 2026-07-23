@@ -113,10 +113,10 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
             defaultValue = "true")
     public Attribute.Boolean cleanup;
 
-    SimpleOutputDataStore outData[] = null;
-    SpatialOutputDataStore outData2[] = null;
+    transient SimpleOutputDataStore outData[] = null;
+    transient SpatialOutputDataStore outData2[] = null;
     File dbfFileOriginal = null;
-    ShapeFileOutputDataStore shpStore[] = null;
+    transient ShapeFileOutputDataStore shpStore[] = null;
     HashSet<Double> selectedIds = null;
     String path;
 

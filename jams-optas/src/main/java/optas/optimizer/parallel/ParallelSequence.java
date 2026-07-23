@@ -87,6 +87,7 @@ public class ParallelSequence implements Serializable {
     public String excludeFiles = "(.*\\.cache)|(.*\\.jam)|(.*\\.ser)|(.*\\.svn)|(.*output.*\\.dat)|.*\\.cdat|.*\\.log";
     private int threadCount = 12;
     Optimizer context;
+    transient ClassLoader modelClassLoader;
         
     public String getExcludeFiles(){
         return excludeFiles;
@@ -103,8 +104,11 @@ public class ParallelSequence implements Serializable {
 
     private boolean init(Optimizer context){
         String libs[] = null;
-        if (context.getModel().getRuntime() instanceof StandardRuntime)
-             libs = ((StandardRuntime)context.getModel().getRuntime()).getLibs();
+        if (context.getModel().getRuntime() instanceof StandardRuntime) {
+             StandardRuntime runtime = (StandardRuntime)context.getModel().getRuntime();
+             libs = runtime.getLibs();
+             modelClassLoader = runtime.getClassLoader();
+        }
 
         if (libs != null) {
             for (int i = 0; i < libs.length; i++) {
@@ -195,8 +199,8 @@ public class ParallelSequence implements Serializable {
     transient ParallelExecution<InputData, OutputData> executor = null;
     public OutputData procedure(double x[][]) throws SampleLimitException, ObjectiveAchievedException {
         OutputData result = null;
-        if (executor==null) //das ist gut, aber muss noch gesichert werden und so ... 
-            executor = new ParallelExecution<InputData, OutputData>(context.getModel().getWorkspaceDirectory(), excludeFiles);
+        if (executor==null) //das ist gut, aber muss noch gesichert werden und so ...
+            executor = new ParallelExecution<InputData, OutputData>(context.getModel().getWorkspaceDirectory(), excludeFiles, modelClassLoader);
 
         InputData param = new InputData(x, 0, x.length, context);
         result = executor.execute(param, new ParallelSequenceTask(), getThreadCount());
