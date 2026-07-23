@@ -307,6 +307,10 @@ public class DataCollection extends DataSet implements Serializable{
     }
     
     public void mergeDataCollections(DataCollection dc){
+        if (dc == null){
+            //nothing to merge, e.g. a worker produced no importable ensemble data for this round
+            return;
+        }
         isBusy = true;
         Integer ids[] = dc.getModelrunIds();
         int lastID = this.getSimulationCount();
