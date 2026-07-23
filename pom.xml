@@ -167,6 +167,8 @@
     </repositories>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
+
         <!-- NetBeans-Layout beibehalten: Ressourcen (Bilder, .properties,
              ResourceBundles) liegen neben den Java-Quellen in src/main/java.
              Alles ausser *.java wird als Ressource ins JAR uebernommen. -->
