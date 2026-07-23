@@ -41,10 +41,7 @@ jobs:
 
       - name: Add model components to bundle
         run: |
-          for jar in jamsmodels/components/*.jar; do
-            base="$(basename "$jar")"
-            cp "$jar" "jams-bin/components/${base%-[0-9]*-SNAPSHOT.jar}.jar"
-          done
+          cp jamsmodels/components/*.jar jams-bin/components/
           if [ -d jamsmodels/components/lib ]; then
             mkdir -p jams-bin/components/lib
             cp jamsmodels/components/lib/*.jar jams-bin/components/lib/
