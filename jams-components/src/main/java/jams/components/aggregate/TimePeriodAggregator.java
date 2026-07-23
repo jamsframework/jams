@@ -410,7 +410,7 @@ public class TimePeriodAggregator extends JAMSComponent {
             File f2 = new File(FileTools.createAbsoluteFileName(getModel().getWorkspace().getOutputDataDirectory().getAbsolutePath(), prefix + "_SODS.dat"));
             
             try {
-                outData[i] = new SimpleOutputDataStore(f, false);
+                outData[i] = new SimpleOutputDataStore(f, true);
                 outData2[i] = new SpatialOutputDataStore(f2);
             } catch (IOException ioe) {
                 getModel().getRuntime().sendHalt("Can't write to output file:" + f);

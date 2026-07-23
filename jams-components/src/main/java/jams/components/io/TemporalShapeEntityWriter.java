@@ -221,7 +221,7 @@ public class TemporalShapeEntityWriter extends JAMSComponent {
                 f.getParentFile().mkdirs();
                 f2.getParentFile().mkdirs();
                 if (writeShape) {
-                    outData[i] = new SimpleOutputDataStore(f, false);
+                    outData[i] = new SimpleOutputDataStore(f, true);
                 }
                 outData2[i] = new SpatialOutputDataStore(f2);
             } catch (IOException ioe) {
