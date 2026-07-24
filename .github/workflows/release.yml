@@ -37,7 +37,9 @@ jobs:
           java-version: 21
 
       - name: Build application bundle
-        run: ./mvnw --batch-mode --no-transfer-progress install -pl jams-starter -am
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          ./mvnw --batch-mode --no-transfer-progress install -pl jams-starter -am -Drevision="$VERSION"
 
       - name: Register jams-api/jams-main for jamsmodels
         run: |
