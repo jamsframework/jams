@@ -35,11 +35,11 @@
 
         <jams.version.major>4</jams.version.major>
         <jams.version.minor>0</jams.version.minor>
-        <jams.version.patch>8</jams.version.patch>
+        <jams.version.patch>9</jams.version.patch>
         <jams.api.major>1</jams.api.major>
         <jams.api.minor>4</jams.api.minor>
         <jams.build.date>20260724</jams.build.date>
-        <revision>${jams.version.major}.${jams.version.minor}.${jams.version.patch}</revision>
+        <revision>${jams.version.major}.${jams.version.minor}.${jams.version.patch}-SNAPSHOT</revision>
     </properties>
 
     <dependencyManagement>
