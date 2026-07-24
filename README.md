@@ -84,6 +84,23 @@ configuration file survives).
 
 Building behind an HTTP proxy? See [docs/proxy.md](docs/proxy.md).
 
+## Releasing
+
+The version is `major.minor.patch[-SNAPSHOT]`, e.g. `4.0.8-SNAPSHOT`. The
+`jams.version.major`/`jams.version.minor`/`jams.version.patch` properties
+in the root `pom.xml` are the single place this is maintained —
+`version.txt` is generated from them at build time.
+
+To cut a release:
+
+1. Remove the `-SNAPSHOT` suffix from `<revision>` in the root `pom.xml`,
+   commit.
+2. Tag the commit `vX.Y.Z` (matching the version) and push the tag — this
+   triggers [.github/workflows/release.yml](.github/workflows/release.yml),
+   which builds the bundle and publishes it as a GitHub Release.
+3. Bump `jams.version.patch` and re-append `-SNAPSHOT` to `<revision>`,
+   commit, to resume development.
+
 ## Running
 
 ```
