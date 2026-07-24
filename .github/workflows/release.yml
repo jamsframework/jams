@@ -35,6 +35,12 @@ jobs:
       - name: Build application bundle
         run: ./mvnw --batch-mode --no-transfer-progress install -pl jams-starter -am
 
+      - name: Register jams-api/jams-main for jamsmodels
+        run: |
+          cp jams-api/target/jams-api-*.jar jamsmodels/jams-libs/
+          cp jams-main/target/jams-main-*.jar jamsmodels/jams-libs/
+          (cd jamsmodels && ./install-jams-libs.sh)
+
       - name: Build model components
         working-directory: jamsmodels
         run: ./mvnw --batch-mode --no-transfer-progress package -pl "$MODEL_MODULES" -am
