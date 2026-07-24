@@ -93,13 +93,15 @@ in the root `pom.xml` are the single place this is maintained —
 
 To cut a release:
 
-1. Remove the `-SNAPSHOT` suffix from `<revision>` in the root `pom.xml`,
-   commit.
-2. Tag the commit `vX.Y.Z` (matching the version) and push the tag — this
-   triggers [.github/workflows/release.yml](.github/workflows/release.yml),
-   which builds the bundle and publishes it as a GitHub Release.
-3. Bump `jams.version.patch` and re-append `-SNAPSHOT` to `<revision>`,
-   commit, to resume development.
+1. Tag the commit `vX.Y.Z` (the desired release version) and push the tag —
+   this triggers [.github/workflows/release.yml](.github/workflows/release.yml),
+   which builds the bundle with `-Drevision=X.Y.Z` (dropping the `-SNAPSHOT`
+   suffix for that build only) and publishes it as a GitHub Release, with a
+   changelog of commits since the previous tag.
+2. Optionally bump `jams.version.patch` in the root `pom.xml` afterward and
+   commit, so local/CI SNAPSHOT builds stay ahead of the last release
+   (`<revision>` always carries `-SNAPSHOT` in the repository - only the
+   release build's `-Drevision` override drops it).
 
 ## Running
 
