@@ -21,6 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # full history + tags, needed to list commits since the previous
+          # release in the changelog below
+          fetch-depth: 0
 
       - uses: actions/checkout@v4
         with:
@@ -65,12 +69,24 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
+          PREV_TAG=$(git describe --tags --abbrev=0 "HEAD^" 2>/dev/null || true)
           {
             echo "JAMS $VERSION — ready-to-run application bundle."
             echo
             echo "Download and unpack \`jams-$VERSION.zip\`, then start the JAMS launcher with \`jams.sh\`/\`jams.bat\` or the JAMS model editor with \`juice.sh\`/\`juice.bat\`. Requires a Java runtime (JRE) 17 or newer."
             echo
             echo "Included model component libraries: ${MODEL_MODULES//,/, } (from the [jamsmodels](https://github.com/jamsframework/jamsmodels) repository)."
+            echo
+            if [ -n "$PREV_TAG" ]; then
+              echo "## Changes since $PREV_TAG"
+              echo
+              git log --pretty=format:"- %s (%h)" --no-merges "$PREV_TAG..HEAD"
+            else
+              echo "## Changes"
+              echo
+              git log --pretty=format:"- %s (%h)" --no-merges HEAD
+            fi
+            echo
           } > release-notes.md
           gh release create "$GITHUB_REF_NAME" "jams-$VERSION.zip" \
             --title "JAMS $VERSION" \
