@@ -1,7 +1,7 @@
-main.majorversion=4
-main.minorversion=0
-main.revision=07
-api.majorversion=1
-api.minorversion=4
-date=20260723
+main.majorversion=${jams.version.major}
+main.minorversion=${jams.version.minor}
+main.revision=${jams.version.patch}
+api.majorversion=${jams.api.major}
+api.minorversion=${jams.api.minor}
+date=${jams.build.date}
 contact=contact@jamsframework.org

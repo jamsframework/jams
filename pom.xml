@@ -6,7 +6,7 @@
 
     <groupId>org.jams</groupId>
     <artifactId>jams-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <name>JAMS Modelling Framework</name>
 
@@ -32,6 +32,14 @@
         <maven.compiler.release>17</maven.compiler.release>
         <geotools.version>33.5</geotools.version>
         <jts.version>1.20.0</jts.version>
+
+        <jams.version.major>4</jams.version.major>
+        <jams.version.minor>0</jams.version.minor>
+        <jams.version.patch>08</jams.version.patch>
+        <jams.api.major>1</jams.api.major>
+        <jams.api.minor>4</jams.api.minor>
+        <jams.build.date>20260724</jams.build.date>
+        <revision>${jams.version.major}.${jams.version.minor}.${jams.version.patch}-SNAPSHOT</revision>
     </properties>
 
     <dependencyManagement>
@@ -167,8 +175,6 @@
     </repositories>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
-
         <!-- NetBeans-Layout beibehalten: Ressourcen (Bilder, .properties,
              ResourceBundles) liegen neben den Java-Quellen in src/main/java.
              Alles ausser *.java wird als Ressource ins JAR uebernommen. -->
@@ -221,5 +227,33 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten-clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>

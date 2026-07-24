@@ -1,6 +1,7 @@
 # Build output
 target/
 /jams-bin/
+.flattened-pom.xml
 
 # IDE
 .idea/
