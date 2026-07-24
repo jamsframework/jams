@@ -223,6 +223,16 @@ public class ParallelExecution<X,Y> {
             } catch (IOException e) {
                 e.printStackTrace();
                 log("cant extract zip: " + e.toString());
+                //stop already-running workers and remove whatever was already
+                //extracted for this batch - otherwise every failed attempt
+                //leaks threads and disk space under dstDirectory forever
+                threadPool.shutdownNow();
+                try {
+                    threadPool.awaitTermination(100, TimeUnit.HOURS);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+                cleanupWorkingDirectories(dstDirectory);
                 return null;
             }
 
@@ -255,14 +265,22 @@ public class ParallelExecution<X,Y> {
 
         Y result = task.reduce(results);
 
+        cleanupWorkingDirectories(dstDirectory);
+
+        return result;
+    }
+
+    private void cleanupWorkingDirectories(String dstDirectory){
         File dstDir = new File(dstDirectory);
-        for (File f : dstDir.listFiles()){
+        File[] children = dstDir.listFiles();
+        if (children == null){
+            return;
+        }
+        for (File f : children){
             if (f.isDirectory()){
                 deleteDir(f);
             }
         }
-
-        return result;
     }
 
     private void log(String msg){
