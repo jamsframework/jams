@@ -79,14 +79,17 @@ jobs:
             echo
             echo "Included model component libraries: ${MODEL_MODULES//,/, } (from the [jamsmodels](https://github.com/jamsframework/jamsmodels) repository)."
             echo
+            # only list commits that actually touch application source, so
+            # housekeeping (mailmap, docs, CI/release-workflow tweaks,
+            # version-bump commits) doesn't clutter the release notes
             if [ -n "$PREV_TAG" ]; then
               echo "## Changes since $PREV_TAG"
               echo
-              git log --pretty=format:"- %s (%h)" --no-merges "$PREV_TAG..HEAD"
+              git log --pretty=format:"- %s (%h)" --no-merges "$PREV_TAG..HEAD" -- ':(glob)*/src/main/**'
             else
               echo "## Changes"
               echo
-              git log --pretty=format:"- %s (%h)" --no-merges HEAD
+              git log --pretty=format:"- %s (%h)" --no-merges HEAD -- ':(glob)*/src/main/**'
             fi
             echo
           } > release-notes.md
