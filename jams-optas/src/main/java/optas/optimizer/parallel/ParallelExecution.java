@@ -69,6 +69,16 @@ public class ParallelExecution<X,Y> {
             System.out.print("old filename:" + fileArray[i].getAbsolutePath() + " new filename:" + fileName + " dirZip: " + dirZip.getAbsolutePath() + "\n");
             if (fileName.matches(exclude))
                 continue;
+            //JAMS runtime/component-jar directories at the workspace root are never
+            //model data - the classes in them are already loaded via the shared
+            //JAMSClassLoader (see ParallelSequence.init()), so a cloned worker never
+            //reads them from disk. Skipping them keeps cloning cheap; it matters most
+            //on jams-cloud-server, whose per-job execution sandbox bundles lib/ and
+            //components/ alongside the model's actual workspace.
+            if (dirZip == rootDir && fileArray[i].isDirectory()
+                    && (fileArray[i].getName().equals("lib") || fileArray[i].getName().equals("components"))) {
+                continue;
+            }
             if (fileArray[i].isDirectory()){
                 zipFiles(rootDir,fileArray[i], zipOut,exclude);
             }
