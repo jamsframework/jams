@@ -337,7 +337,18 @@ public class HTTPClient {
                     format(JAMS.i18n("There_was_no_response_from_{0}"), urlStr));
         }
         if (response.getStatus() >= 400){
-            throw new ResponseProcessingException(response, "Request failed");
+            String body = null;
+            try {
+                body = response.readEntity(String.class);
+            } catch (Throwable t) {
+                // entity not readable, ignore and report status only
+            }
+            String msg = "Request failed: HTTP " + response.getStatus() + " "
+                    + response.getStatusInfo().getReasonPhrase() + " for " + urlStr
+                    + (body != null && !body.isEmpty() ? " - " + body : "");
+            response.close();
+            client.close();
+            throw new ResponseProcessingException(response, msg);
         }
         if (sessionID == null) {
             if (response.getHeaders() == null || response.getHeaders().get("set-cookie") == null) {
