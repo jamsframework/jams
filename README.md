@@ -1,4 +1,4 @@
-# JAMS Modelling Framework
+# JAMS Core Framework
 
 JAMS (originally an acronym for "Jena Adaptable Modelling System") is a
 pure-Java, open-source software framework for building and applying
