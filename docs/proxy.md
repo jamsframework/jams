@@ -41,3 +41,21 @@ below to it, if the file already exists) with your proxy's host and port:
 
 Replace `host`/`port` with your proxy's values, uncomment `username`/
 `password` if authentication is required, and re-run the build.
+
+## Still failing after configuring the proxy?
+
+If a specific plugin or dependency keeps failing with `Connect timed out`
+even after the proxy is set up, Maven likely cached that failure from
+before the proxy was configured (or from a transient network blip) and
+won't retry until its update interval elapses. Force a retry:
+
+```
+./mvnw -U package
+```
+
+Or, to only re-check the one affected artifact instead of everything,
+delete its stale marker directly and rebuild:
+
+```
+rm ~/.m2/repository/<group-path>/<artifact>/<version>/*.lastUpdated
+```
