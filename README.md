@@ -124,7 +124,7 @@ including 20 years of Subversion commits — is preserved in this repository.
 Releases up to 3.17 were published via https://jams.uni-jena.de, where an
 archive of historical releases remains available. Starting with this
 repository, JAMS uses a Maven-based build. Previous releases were built
-with Ant and ran on Java 8. This repository targets Java 17 — the version required by the
+with Ant and ran on Java 8. This repository targets Java 17 and above as required by the
 upgraded GeoTools components.
 
 ## License
