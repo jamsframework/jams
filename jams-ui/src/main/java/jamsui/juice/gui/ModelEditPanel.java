@@ -21,6 +21,7 @@
  */
 package jamsui.juice.gui;
 
+import jams.tools.StringTools;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
@@ -191,7 +192,11 @@ public class ModelEditPanel extends JPanel {
         date.setValue(view.getModelDescriptor().getDate());
         helpBaseURL.setValue(view.getModelDescriptor().getHelpBaseUrl());
         description.setText(view.getModelDescriptor().getDescription());
-        workspace.setValue(view.getModelDescriptor().getWorkspacePath());
+        String workspacePath = view.getModelDescriptor().getWorkspacePath();
+        if (StringTools.isEmptyString(workspacePath) && view.getSavePath() != null) {
+            workspacePath = view.getSavePath().getParentFile().getAbsolutePath();
+        }
+        workspace.setValue(workspacePath);
     }
 
 //    private void openExplorer() {

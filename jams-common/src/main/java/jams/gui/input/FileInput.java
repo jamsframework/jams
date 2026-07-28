@@ -90,7 +90,7 @@ public class FileInput extends JPanel implements InputComponent {
         }
         textField.setText(fileName);
         File file = new File(fileName);
-        if (file.exists()) {
+        if (!StringTools.isEmptyString(fileName) && file.exists()) {
             // try to change to that dir
             if (file.isDirectory()) {
                 jfc.setCurrentDirectory(file);
