@@ -45,9 +45,9 @@
 @REM it must not live in .mvn/jvm.config. Read the major version from JAVA_HOME's own
 @REM "release" file instead of parsing "java -version" output - avoids cmd.exe's FOR /F
 @REM command-quoting pitfalls when JAVA_HOME contains spaces (e.g. "Program Files").
-@SET "__MVNW_JAVAMAJOR__="
+@SET "__MVNW_JAVAMAJOR__=0"
 @IF NOT "%JAVA_HOME%"=="" @IF EXIST "%JAVA_HOME%\release" @FOR /F "usebackq tokens=1,2 delims==" %%A IN ("%JAVA_HOME%\release") DO @IF "%%A"=="JAVA_VERSION" @FOR /F "delims=.-_+" %%V IN ("%%~B") DO @SET /A "__MVNW_JAVAMAJOR__=%%V + 0" >NUL 2>&1
-@IF DEFINED __MVNW_JAVAMAJOR__ @IF %__MVNW_JAVAMAJOR__% GEQ 23 @SET "MAVEN_OPTS=%MAVEN_OPTS% --sun-misc-unsafe-memory-access=allow"
+@IF %__MVNW_JAVAMAJOR__% GEQ 23 @SET "MAVEN_OPTS=%MAVEN_OPTS% --sun-misc-unsafe-memory-access=allow"
 @SET "__MVNW_JAVAMAJOR__="
 @IF NOT "%__MVNW_CMD__%"=="" ("%__MVNW_CMD__%" %*)
 @echo Cannot start maven from wrapper >&2 && exit /b 1
