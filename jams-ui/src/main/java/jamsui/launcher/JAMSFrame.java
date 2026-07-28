@@ -760,8 +760,9 @@ public class JAMSFrame extends JAMSLauncher {
 
         Document modelDoc = getModelDocument();
 
-        File workspaceFile = new File(XMLProcessor.getWorkspacePath(modelDoc));
-        if (!workspaceFile.isDirectory()) {
+        String workspacePath = XMLProcessor.getWorkspacePath(modelDoc);
+        File workspaceFile = new File(workspacePath);
+        if (StringTools.isEmptyString(workspacePath) || !workspaceFile.isDirectory()) {
             if (loadPath != null) {
                 workspaceFile = loadPath.getParentFile();
             } else {
@@ -809,8 +810,9 @@ public class JAMSFrame extends JAMSLauncher {
 
         Document modelDoc = getModelDocument();
 
-        File workspaceFile = new File(XMLProcessor.getWorkspacePath(modelDoc));
-        if (!workspaceFile.isDirectory()) {
+        String workspacePath = XMLProcessor.getWorkspacePath(modelDoc);
+        File workspaceFile = new File(workspacePath);
+        if (StringTools.isEmptyString(workspacePath) || !workspaceFile.isDirectory()) {
             if (loadPath != null) {
                 workspaceFile = loadPath.getParentFile();
             } else {

@@ -44,6 +44,7 @@ import jams.JAMSLogging;
 import jams.JAMSProperties;
 import jams.SystemProperties;
 import jams.tools.JAMSTools;
+import jams.tools.StringTools;
 import jams.gui.JAMSLauncher;
 import jams.gui.tools.GUIHelper;
 import jams.gui.WorkerDlg;
@@ -755,9 +756,10 @@ public class ModelView {
 
     public void openExplorer() {
 
-        File workspaceFile = new File(getModelDescriptor().getWorkspacePath());
+        String workspacePath = getModelDescriptor().getWorkspacePath();
+        File workspaceFile = new File(workspacePath);
 
-        if (!workspaceFile.isDirectory()) {
+        if (StringTools.isEmptyString(workspacePath) || !workspaceFile.isDirectory()) {
             if (getSavePath() != null) {
                 workspaceFile = getSavePath().getParentFile();
             } else {
