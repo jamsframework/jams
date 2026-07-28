@@ -235,6 +235,61 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <!-- Native Windows launchers jams.exe / juice.exe (Launch4j).
+                     Declared last so it runs after finalize-dist (the target
+                     starter jars must already exist). Launcher mode
+                     (dontWrapJar): the .exe just runs "java -jar <starter>.jar",
+                     forwards all command-line arguments and applies the JVM
+                     options below; users can add more per machine via
+                     jams.l4j.ini / juice.l4j.ini next to the .exe. -->
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>2.5.3</version>
+                <executions>
+                    <execution>
+                        <id>jams-exe</id>
+                        <phase>package</phase>
+                        <goals><goal>launch4j</goal></goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <dontWrapJar>true</dontWrapJar>
+                            <jar>jams-starter.jar</jar>
+                            <outfile>${jams.bin.dir}/jams.exe</outfile>
+                            <chdir>.</chdir>
+                            <jre>
+                                <minVersion>17</minVersion>
+                                <initialHeapSize>128</initialHeapSize>
+                                <maxHeapSize>10240</maxHeapSize>
+                                <opts>
+                                    <opt>-splash:JAMSsplash.png</opt>
+                                </opts>
+                            </jre>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>juice-exe</id>
+                        <phase>package</phase>
+                        <goals><goal>launch4j</goal></goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <dontWrapJar>true</dontWrapJar>
+                            <jar>juice-starter.jar</jar>
+                            <outfile>${jams.bin.dir}/juice.exe</outfile>
+                            <chdir>.</chdir>
+                            <jre>
+                                <minVersion>17</minVersion>
+                                <initialHeapSize>128</initialHeapSize>
+                                <maxHeapSize>10240</maxHeapSize>
+                                <opts>
+                                    <opt>-splash:JAMSsplash.png</opt>
+                                </opts>
+                            </jre>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
