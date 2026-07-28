@@ -306,7 +306,18 @@ public class JAMSui {
      */
     public static void main(String[] args) {
 
-        new JAMSui(new JAMSCmdLine(args, APP_TITLE));
+        JAMSCmdLine cmdLine = new JAMSCmdLine(args, APP_TITLE);
+
+        // No GUI requested: run truly headless so JAMS also works on machines
+        // without a display (servers). Must be set before any AWT access; parsing
+        // the command line above touches no GUI. This also covers direct
+        // "java -jar" / .exe launches that cannot drop -splash: / set the property
+        // themselves.
+        if (cmdLine.isNogui()) {
+            System.setProperty("java.awt.headless", "true");
+        }
+
+        new JAMSui(cmdLine);
 
     }
 
