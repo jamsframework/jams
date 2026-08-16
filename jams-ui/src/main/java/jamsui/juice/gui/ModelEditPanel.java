@@ -31,6 +31,7 @@ import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import jams.gui.tools.GUIHelper;
+import jams.gui.input.FileInput;
 import jams.gui.input.InputComponent;
 import jams.gui.input.ValueChangeListener;
 import java.awt.GridBagConstraints;
@@ -59,6 +60,8 @@ public class ModelEditPanel extends JPanel {
     private ModelView view;
 
     private InputComponent workspace, author, date, helpBaseURL;
+
+    private boolean updatingPanel = false;
 
     private JTextPane description;
 
@@ -124,7 +127,9 @@ public class ModelEditPanel extends JPanel {
 
             @Override
             public void valueChanged() {
-                view.getModelDescriptor().setWorkspacePath(workspace.getValue());
+                if (!updatingPanel) {
+                    view.getModelDescriptor().setWorkspacePath(workspace.getValue());
+                }
             }
         });
 
@@ -193,10 +198,18 @@ public class ModelEditPanel extends JPanel {
         helpBaseURL.setValue(view.getModelDescriptor().getHelpBaseUrl());
         description.setText(view.getModelDescriptor().getDescription());
         String workspacePath = view.getModelDescriptor().getWorkspacePath();
-        if (StringTools.isEmptyString(workspacePath) && view.getSavePath() != null) {
-            workspacePath = view.getSavePath().getParentFile().getAbsolutePath();
+        updatingPanel = true;
+        try {
+            workspace.setValue(workspacePath);
+        } finally {
+            updatingPanel = false;
         }
-        workspace.setValue(workspacePath);
+        // browse dialog should start somewhere useful even if the field
+        // itself is (correctly) left empty
+        if (StringTools.isEmptyString(workspacePath) && view.getSavePath() != null
+                && workspace instanceof FileInput) {
+            ((FileInput) workspace).setDefaultDirectory(view.getSavePath().getParentFile().getAbsolutePath());
+        }
     }
 
 //    private void openExplorer() {

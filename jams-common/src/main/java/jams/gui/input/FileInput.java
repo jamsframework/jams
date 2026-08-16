@@ -89,9 +89,26 @@ public class FileInput extends JPanel implements InputComponent {
             fileName = "";
         }
         textField.setText(fileName);
+        setChooserDirectory(fileName);
+    }
+
+    /**
+     * Points the "..." browse dialog at a sensible starting directory
+     * without touching the field's displayed/stored value. Useful when the
+     * field is empty but a fallback directory (e.g. the containing folder
+     * of a model file) is known to be a more useful starting point than the
+     * file chooser's own default.
+     */
+    public void setDefaultDirectory(String dirName) {
+        setChooserDirectory(dirName);
+    }
+
+    private void setChooserDirectory(String fileName) {
+        if (StringTools.isEmptyString(fileName)) {
+            return;
+        }
         File file = new File(fileName);
-        if (!StringTools.isEmptyString(fileName) && file.exists()) {
-            // try to change to that dir
+        if (file.exists()) {
             if (file.isDirectory()) {
                 jfc.setCurrentDirectory(file);
             } else {
