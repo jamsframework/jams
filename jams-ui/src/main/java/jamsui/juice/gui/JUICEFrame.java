@@ -1072,10 +1072,18 @@ public class JUICEFrame extends JFrame {
     }
 
     public ModelView getCurrentView() {
-        if (modelPanel.getAllFrames().length == 0) {
+        JInternalFrame[] frames = modelPanel.getAllFrames();
+        if (frames.length == 0) {
             return null;
         }
         JInternalFrame frame = modelPanel.getSelectedFrame();
+        // On some platforms getSelectedFrame() can lag behind reality (e.g.
+        // right after closing the previously selected frame) even though
+        // other model windows are still open - fall back to the front-most
+        // remaining frame rather than reporting "no view" incorrectly.
+        if (frame == null) {
+            frame = frames[0];
+        }
         ModelView view = ModelView.viewList.getMViews().get(frame);
         return view;
     }

@@ -610,12 +610,18 @@ public class ModelView {
         this.getFrame().dispose();
         parentPanel.updateUI();
 
-        if (maximized) {
+        // On some platforms (e.g. macOS/Aqua) closing the selected internal
+        // frame leaves JDesktopPane.getSelectedFrame() at null instead of
+        // falling back to a remaining frame, and clicking the remaining
+        // frame doesn't reliably reselect it either - so explicitly select
+        // one here, regardless of whether the closed frame was maximized.
+        JInternalFrame[] remainingFrames = parentPanel.getAllFrames();
+        if (remainingFrames.length > 0) {
             try {
-                ModelView currentView = JUICE.getJuiceFrame().getCurrentView();
-                if (currentView != null) {
-                    currentView.getFrame().setMaximum(true);
+                if (maximized) {
+                    remainingFrames[0].setMaximum(true);
                 }
+                remainingFrames[0].setSelected(true);
             } catch (PropertyVetoException pve) {
                 JAMSTools.handle(pve);
             }
