@@ -171,7 +171,7 @@ public final class Utils {
                     format.append("0");
                 }
             }
-            df = new DecimalFormat( format.toString());
+            df = new DecimalFormat( format.toString(), new DecimalFormatSymbols(Locale.US));
             while (formatCache.size()<=sizeWholePart){
                 formatCache.add(null);
             }
