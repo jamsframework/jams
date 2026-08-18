@@ -28,6 +28,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,6 +72,64 @@ public class HTTPClient {
         // which JDK 17+ blocks (java.base does not open java.lang). Disable it so JAXB falls
         // back to plain reflection instead of failing the JAMS Cloud connection.
         System.setProperty("com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize", "true");
+
+        // Bridge the conventional http_proxy/https_proxy environment variables into the JVM's
+        // standard http.proxyHost/https.proxyHost system properties. Jersey's default connector
+        // (HttpURLConnection-based) and Apache HttpClient (via useSystemProperties()) both honor
+        // those properties, so this is enough to make every request in this class proxy-aware
+        // without touching the individual client-construction call sites.
+        applyProxyEnvironment("https");
+        applyProxyEnvironment("http");
+    }
+
+    /**
+     * If the {@code <scheme>.proxyHost} system property isn't already set explicitly (e.g. via
+     * -D on the command line), populate it - along with proxyPort and, if credentials are
+     * embedded in the URL, a default proxy Authenticator - from the {@code <scheme>_proxy} /
+     * {@code <SCHEME>_PROXY} environment variable.
+     *
+     * @param scheme "http" or "https"
+     */
+    private static void applyProxyEnvironment(String scheme) {
+        if (System.getProperty(scheme + ".proxyHost") != null) {
+            return;
+        }
+        String proxyUrl = System.getenv(scheme + "_proxy");
+        if (proxyUrl == null) {
+            proxyUrl = System.getenv(scheme.toUpperCase() + "_PROXY");
+        }
+        if (proxyUrl == null || proxyUrl.isBlank()) {
+            return;
+        }
+        try {
+            URI uri = new URI(proxyUrl);
+            if (uri.getHost() == null) {
+                Logger.getLogger(HTTPClient.class.getName()).log(Level.WARNING,
+                        "Ignoring {0}_proxy - no host found in ''{1}''", new Object[]{scheme, proxyUrl});
+                return;
+            }
+            System.setProperty(scheme + ".proxyHost", uri.getHost());
+            if (uri.getPort() != -1) {
+                System.setProperty(scheme + ".proxyPort", String.valueOf(uri.getPort()));
+            }
+            if (uri.getUserInfo() != null) {
+                String[] credentials = uri.getUserInfo().split(":", 2);
+                final String proxyUser = credentials[0];
+                final String proxyPassword = credentials.length > 1 ? credentials[1] : "";
+                Authenticator.setDefault(new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        if (getRequestorType() == RequestorType.PROXY) {
+                            return new PasswordAuthentication(proxyUser, proxyPassword.toCharArray());
+                        }
+                        return null;
+                    }
+                });
+            }
+        } catch (URISyntaxException use) {
+            Logger.getLogger(HTTPClient.class.getName()).log(Level.WARNING,
+                    "Ignoring invalid {0}_proxy value ''{1}''", new Object[]{scheme, proxyUrl});
+        }
     }
 
     /**
@@ -240,7 +302,7 @@ public class HTTPClient {
      * @throws ProcessingException under various conditions
      */
     public File download(String urlStr, File location) throws IOException {
-        HttpClient httpclient = HttpClientBuilder.create().build();
+        HttpClient httpclient = HttpClientBuilder.create().useSystemProperties().build();
         HttpGet get = new HttpGet(urlStr);
         try {
             get.addHeader(new BasicHeader("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")));
@@ -279,7 +341,7 @@ public class HTTPClient {
      * @throws HttpResponseException under various conditions
      */
     public InputStream getStream(String urlStr) throws IOException {
-        HttpClient httpclient = HttpClientBuilder.create().build();
+        HttpClient httpclient = HttpClientBuilder.create().useSystemProperties().build();
         HttpGet get = new HttpGet(urlStr);
         try {
             get.addHeader(new BasicHeader("Cookie", "JSESSIONID=" + URLEncoder.encode(sessionID == null ? "0" : sessionID, "UTF-8")));
