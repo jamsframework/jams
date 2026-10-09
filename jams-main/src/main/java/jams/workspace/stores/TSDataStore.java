@@ -62,6 +62,9 @@ public class TSDataStore extends TableDataStore {
     protected String timeFormat;
     File file = null;
     private SerializableBufferedReader dumpFileReader;
+    private long dataStartOffset = -1;
+    private long cacheLineCount = -1;
+    private long linesReadCache = 0;
     private static final int DOUBLE = 0;
     private static final int LONG = 1;
     private static final int STRING = 2;
@@ -188,6 +191,8 @@ public class TSDataStore extends TableDataStore {
             File file = new File(ws.getLocalDumpDirectory(), getID() + ".dump");
             this.dumpFileReader = new SerializableBufferedReader((file));
             this.dsd = getDSDFromDumpFile();
+            this.dataStartOffset = dumpFileReader.getFilePointer();
+            this.cacheLineCount = stepsBetween(startDate, endDate, timeUnit, timeUnitCount);
         }
 
         bufferSize = oldBufferSize;
@@ -306,9 +311,8 @@ public class TSDataStore extends TableDataStore {
             }
         } else {
             try {
-                for (int i = 0; i < count; i++) {
-                    dumpFileReader.readLine();
-                }
+                skipCache(count);
+                linesReadCache += count;
                 currentDate.add(timeUnit, timeUnitCount * count);
                 if (currentDate.after(stopDate)) {
                     return;
@@ -317,6 +321,141 @@ public class TSDataStore extends TableDataStore {
                 ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore" + id);
                 return;
             }
+        }
+    }
+
+    /*
+     * Skips 'count' data lines forward in the dump file without reading every line
+     * on the way. Every dump line already carries its own date in column 0 (written
+     * by TSDumpProcessor, but otherwise ignored during normal reading); since the
+     * time step is regular, that date is enough to work out exactly which line a
+     * given byte offset landed on. This is used as a free calibration point for an
+     * interpolation search: guess an offset, read the date of the line found there,
+     * narrow the [lo,hi] bracket, and repeat until either an exact hit or a bracket
+     * small enough that a short linear scan finishes the job. No separate index file
+     * is needed, and it stays correct (just slower to converge) even if line lengths
+     * vary or the file turns out to be shorter/irregular than the header claims.
+     */
+    private void skipCache(long count) throws IOException {
+        if (count <= 0) {
+            return;
+        }
+
+        long targetLine = linesReadCache + count;
+
+        long loOffset = dataStartOffset;
+        long loLine = 0;
+        long hiOffset = Math.max(dumpFileReader.length(), dataStartOffset);
+        long hiLine = Math.max(cacheLineCount, targetLine);
+
+        final int MAX_ITERATIONS = 8;
+
+        for (int iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+
+            if (loLine == targetLine) {
+                dumpFileReader.seek(loOffset);
+                return;
+            }
+            if (hiLine <= loLine || hiOffset <= loOffset) {
+                break;
+            }
+
+            long guessOffset = loOffset + (targetLine - loLine) * (hiOffset - loOffset) / (hiLine - loLine);
+            guessOffset = Math.max(loOffset, Math.min(guessOffset, hiOffset - 1));
+
+            dumpFileReader.seek(guessOffset);
+            if (guessOffset > loOffset) {
+                // we most likely landed mid-line - discard the partial line
+                if (dumpFileReader.readLine() == null) {
+                    break;
+                }
+            }
+
+            long lineStartOffset = dumpFileReader.getFilePointer();
+            if (lineStartOffset >= hiOffset) {
+                break;
+            }
+
+            String line = dumpFileReader.readLine();
+            if (line == null) {
+                break;
+            }
+
+            long actualLine = stepsBetween(startDate, parseLineDate(line), timeUnit, timeUnitCount);
+
+            if (actualLine == targetLine) {
+                dumpFileReader.seek(lineStartOffset);
+                return;
+            } else if (actualLine < targetLine) {
+                loOffset = lineStartOffset;
+                loLine = actualLine;
+            } else {
+                hiOffset = lineStartOffset;
+                hiLine = actualLine;
+            }
+        }
+
+        // bracket didn't converge exactly (e.g. very irregular line lengths) - finish
+        // with a short linear scan from the closest point we found that's still <= target
+        dumpFileReader.seek(loOffset);
+        for (long i = loLine; i < targetLine; i++) {
+            if (dumpFileReader.readLine() == null) {
+                break;
+            }
+        }
+    }
+
+    private Attribute.Calendar parseLineDate(String line) {
+        int tab = line.indexOf('\t');
+        String dateToken = tab >= 0 ? line.substring(0, tab) : line;
+        Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
+        cal.setDateFormat(timeFormat);
+        cal.setValue(dateToken);
+        return cal;
+    }
+
+    /*
+     * Number of regular time steps of size unit/unitCount between two dates (from
+     * must be <= to). Fixed-duration units are computed directly from the millisecond
+     * difference; MONTH/YEAR have no constant duration, so those are stepped through -
+     * cheap since it's bounded by the number of steps, not by any file size.
+     */
+    private static long stepsBetween(Attribute.Calendar from, Attribute.Calendar to, int unit, int unitCount) {
+        switch (unit) {
+            case Attribute.Calendar.DAY_OF_YEAR:
+            case Attribute.Calendar.HOUR_OF_DAY:
+            case Attribute.Calendar.WEEK_OF_YEAR:
+            case Attribute.Calendar.MINUTE:
+            case Attribute.Calendar.SECOND: {
+                long diffMillis = to.getTimeInMillis() - from.getTimeInMillis();
+                return diffMillis / (unitMillis(unit) * unitCount);
+            }
+            default: {
+                long steps = 0;
+                Attribute.Calendar cur = from.clone();
+                while (cur.compareTo(to, unit) < 0) {
+                    cur.add(unit, unitCount);
+                    steps++;
+                }
+                return steps;
+            }
+        }
+    }
+
+    private static long unitMillis(int unit) {
+        switch (unit) {
+            case Attribute.Calendar.DAY_OF_YEAR:
+                return 1000L * 3600 * 24;
+            case Attribute.Calendar.HOUR_OF_DAY:
+                return 1000L * 3600;
+            case Attribute.Calendar.WEEK_OF_YEAR:
+                return 1000L * 3600 * 24 * 7;
+            case Attribute.Calendar.MINUTE:
+                return 1000L * 60;
+            case Attribute.Calendar.SECOND:
+                return 1000L;
+            default:
+                throw new IllegalArgumentException("No constant duration for time unit " + unit);
         }
     }
 
@@ -420,6 +559,7 @@ public class TSDataStore extends TableDataStore {
             try {
 
                 String str = dumpFileReader.readLine();
+                linesReadCache++;
 
                 // remove all empty trailing elements typically inserted by Excel
                 while (str.endsWith("\t")) {

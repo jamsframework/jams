@@ -73,5 +73,27 @@ public class SerializableBufferedReader implements Serializable {
             return reader.readLine();
         }
         throw new IOException(JAMS.i18n("reader_not_reader!"));
-    }    
+    }
+
+    public long getFilePointer() throws IOException {
+        if (reader != null) {
+            return reader.getFilePointer();
+        }
+        throw new IOException(JAMS.i18n("reader_not_reader!"));
+    }
+
+    public void seek(long pos) throws IOException {
+        if (reader != null) {
+            reader.seek(pos);
+            return;
+        }
+        throw new IOException(JAMS.i18n("reader_not_reader!"));
+    }
+
+    public long length() throws IOException {
+        if (reader != null) {
+            return reader.length();
+        }
+        throw new IOException(JAMS.i18n("reader_not_reader!"));
+    }
 }
