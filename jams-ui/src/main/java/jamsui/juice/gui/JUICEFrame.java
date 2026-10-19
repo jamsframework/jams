@@ -51,6 +51,7 @@ import jams.server.client.gui.BrowseJAMSCloudDlg;
 import jams.workspace.InvalidWorkspaceException;
 import jams.workspace.JAMSWorkspace;
 import jamsui.juice.*;
+import jamsui.juice.dataflow.DataflowDialog;
 import jamsui.juice.documentation.DocumentationWizard;
 import jamsui.juice.gui.tree.LibTree;
 import jamsui.juice.gui.tree.ModelTree;
@@ -106,6 +107,7 @@ public class JUICEFrame extends JFrame {
     private Action OptimizationWizardAction;
     private Action ObjectiveWizardAction;
     private Action GenerateDocumentationGUIAction;
+    private Action dataflowAction;
     private Action loadModelParamAction;
     private Action saveModelParamAction;
     private Action runModelAction;
@@ -369,6 +371,16 @@ public class JUICEFrame extends JFrame {
                 docuWiz.createDocumentation(JUICEFrame.this, view.getModelDoc(), JUICE.getJamsProperties(), view.getSavePath());
                 /*DocumentationWizard.(JUICEFrame.this, view.getModelDoc() ,
                  JUICE.getJamsProperties(), view.getSavePath().getParent()).setVisible(true);*/
+            }
+        };
+
+        dataflowAction = new AbstractAction(JAMS.i18n("Show_Data_Flow")) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ModelView view = getCurrentView();
+                if (view != null) {
+                    new DataflowDialog(JUICEFrame.this, view).setVisible(true);
+                }
             }
         };
 
@@ -835,6 +847,10 @@ public class JUICEFrame extends JFrame {
         JMenuItem GenerateDocumentationItem = new JMenuItem(GenerateDocumentationGUIAction);
         GenerateDocumentationGUIAction.setEnabled(true);
         modelMenu.add(GenerateDocumentationItem);
+
+        JMenuItem dataflowItem = new JMenuItem(dataflowAction);
+        dataflowAction.setEnabled(false);
+        modelMenu.add(dataflowItem);
         /*
          * logs menu
          */
@@ -916,6 +932,7 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.saveAsModelAction.setEnabled(true);
                     JUICEFrame.this.OptimizationWizardAction.setEnabled(true);
                     JUICEFrame.this.ObjectiveWizardAction.setEnabled(true);
+                    JUICEFrame.this.dataflowAction.setEnabled(true);
                 } else {
                     JUICEFrame.this.modelMenu.setEnabled(false);
                     JUICEFrame.this.outputDSAction.setEnabled(false);
@@ -928,6 +945,7 @@ public class JUICEFrame extends JFrame {
                     JUICEFrame.this.wsCreateAction.setEnabled(false);
                     JUICEFrame.this.copyModelGUIAction.setEnabled(false);
                     JUICEFrame.this.pasteModelGUIAction.setEnabled(false);
+                    JUICEFrame.this.dataflowAction.setEnabled(false);
                     JUICEFrame.this.saveModelAction.setEnabled(false);
                     JUICEFrame.this.saveAsModelAction.setEnabled(false);
                 }
