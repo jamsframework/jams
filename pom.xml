@@ -34,11 +34,11 @@
         <jts.version>1.20.0</jts.version>
 
         <jams.version.major>4</jams.version.major>
-        <jams.version.minor>0</jams.version.minor>
-        <jams.version.patch>12</jams.version.patch>
+        <jams.version.minor>1</jams.version.minor>
+        <jams.version.patch>0</jams.version.patch>
         <jams.api.major>1</jams.api.major>
         <jams.api.minor>4</jams.api.minor>
-        <jams.build.date>20260724</jams.build.date>
+        <jams.build.date>20261019</jams.build.date>
         <revision>${jams.version.major}.${jams.version.minor}.${jams.version.patch}-SNAPSHOT</revision>
     </properties>
 
