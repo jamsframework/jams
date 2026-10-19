@@ -28,7 +28,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Java 17: von GeoTools 33 vorausgesetzt (WorldWind braucht min. 11) -->
         <maven.compiler.release>17</maven.compiler.release>
         <geotools.version>33.5</geotools.version>
         <jts.version>1.20.0</jts.version>
@@ -49,8 +48,6 @@
                 <artifactId>jts-core</artifactId>
                 <version>${jts.version}</version>
             </dependency>
-            <!-- von GeoTools 33 benoetigt (JavaVersion.JAVA_9 ff.); loest den
-                 Konflikt mit dem alten lokalen commons-lang3-3.1 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
@@ -60,25 +57,13 @@
     </dependencyManagement>
 
     <repositories>
-        <!-- Projekt-lokales Repository mit den eingecheckten JARs.
-             ${maven.multiModuleProjectDirectory} zeigt immer auf die Repo-Wurzel,
-             damit der Pfad auch aus den Modulen heraus stimmt. -->
         <repository>
             <id>jams-libs-repo</id>
             <url>file://${maven.multiModuleProjectDirectory}/libs-repo</url>
-            <!-- keine .sha1-Dateien im Repo; Checksumpruefung ist fuer ein
-                 eingechecktes, versioniertes lokales Repo ohnehin ohne Mehrwert -->
+            <!-- no .sha1 files; checksums are pointless for a checked-in repo -->
             <releases><enabled>true</enabled><checksumPolicy>ignore</checksumPolicy></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
-        <!-- Mehrere migrierte GlassFish/JavaEE-Libs aus der java.net-Aera (javax.el,
-             javax.faces, javax.servlet.jsp(.jstl), jaxb-impl/-osgi, hk2, jersey) erben
-             ueber wechselnde Ahnen-POMs (u.a. net.java:jvnet-parent) Repository-
-             Eintraege auf das seit Jahren abgeschaltete maven.java.net - jede mit
-             ihrer eigenen ID. Gleiche IDs hier erneut deklarieren und deaktivieren,
-             damit Maven bei jedem Build nicht vergeblich (Zertifikatsfehler) dorthin
-             fragt - bei gleicher ID gewinnt die naeher am Root-POM deklarierte
-             Definition. -->
         <repository>
             <id>java.net.Releases</id>
             <url>https://repo.maven.apache.org/maven2</url>
@@ -134,7 +119,6 @@
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
         <repository>
-            <!-- Tippfehler "shapshots" steht wirklich so im Original-POM -->
             <id>shapshots.java.net</id>
             <url>https://repo.maven.apache.org/maven2</url>
             <releases><enabled>false</enabled></releases>
@@ -152,20 +136,12 @@
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
-        <!-- osgeo's Nexus spiegelt intern ganz Maven Central mit (nicht nur
-             GeoTools-Artefakte) - ohne diese explizite, vorgezogene central-
-             Deklaration wuerde praktisch der komplette Build ueber osgeo statt
-             ueber das deutlich robustere Central laufen, weil osgeo sonst vor
-             dem impliziten central-Eintrag der Super-POM gecheckt wird. So
-             bleibt osgeo wirklich nur noch fuer die GeoTools-Artefakte im
-             Einsatz, die es tatsaechlich nicht auf Central gibt. -->
         <repository>
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
             <releases><enabled>true</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
-        <!-- modernes GeoTools 33 (nicht auf Maven Central) -->
         <repository>
             <id>osgeo</id>
             <url>https://repo.osgeo.org/repository/release/</url>
@@ -175,15 +151,12 @@
     </repositories>
 
     <build>
-        <!-- NetBeans-Layout beibehalten: Ressourcen (Bilder, .properties,
-             ResourceBundles) liegen neben den Java-Quellen in src/main/java.
-             Alles ausser *.java wird als Ressource ins JAR uebernommen. -->
         <resources>
             <resource>
                 <directory>src/main/java</directory>
                 <excludes>
                     <exclude>**/*.java</exclude>
-                    <!-- macOS-AppleDouble-Sidecars (exFAT) nicht ins JAR kopieren -->
+                    <!-- don't copy macOS AppleDouble sidecars (exFAT) into the JAR -->
                     <exclude>**/._*</exclude>
                 </excludes>
             </resource>
@@ -202,9 +175,7 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.13.0</version>
                     <configuration>
-                        <!-- macOS-AppleDouble-Sidecars (._Foo.java auf exFAT-
-                             Volumes) matchen **/*.java und wuerden javac
-                             zum Absturz bringen -->
+                        <!-- macOS AppleDouble sidecars would crash javac -->
                         <excludes>
                             <exclude>**/._*.java</exclude>
                         </excludes>
