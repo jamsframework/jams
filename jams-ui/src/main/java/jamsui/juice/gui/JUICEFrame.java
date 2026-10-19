@@ -633,6 +633,12 @@ public class JUICEFrame extends JFrame {
         outputDSButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataOutput2.png")));
         toolBar.add(outputDSButton);
 
+        JButton dataflowButton = new JButton(dataflowAction);
+        dataflowButton.setText("");
+        dataflowButton.setToolTipText(JAMS.i18n("Show_Data_Flow"));
+        dataflowButton.setIcon(new ImageIcon(getClass().getResource("/resources/images/DataFlow.png")));
+        toolBar.add(dataflowButton);
+
         JButton wsBrowseButton = new JButton(wsBrowseAction);
         wsBrowseButton.setText("");
         wsBrowseButton.setToolTipText(JAMS.i18n("Browse_WS_Dir"));

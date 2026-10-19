@@ -32,6 +32,7 @@ import jamsui.juice.dataflow.DataflowLayout.Route;
 import java.awt.BasicStroke;
 import jamsui.juice.gui.ModelView;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -61,6 +62,8 @@ import javax.swing.JToolBar;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.TreePath;
 
@@ -82,6 +85,12 @@ public class DataflowDialog extends JDialog {
     private Node selected;
     private Edge selectedEdge;
     private static File lastDir;
+    private JTextField search;
+    private JLabel searchCount;
+    private Color searchDefaultBg;
+    private static final Color SEARCH_NO_MATCH = new Color(255, 214, 214);
+    private List<Box> searchMatches = List.of();
+    private int searchIndex = -1;
 
     public DataflowDialog(Frame owner, ModelView view) {
         super(owner, false);
@@ -97,6 +106,34 @@ public class DataflowDialog extends JDialog {
 
         JToolBar bar = new JToolBar();
         bar.setFloatable(false);
+
+        search = new JTextField(14);
+        search.setMaximumSize(search.getPreferredSize());
+        search.setToolTipText(JAMS.i18n("DF_Search_Tooltip"));
+        searchDefaultBg = search.getBackground();
+        search.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                searchChanged();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                searchChanged();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                searchChanged();
+            }
+        });
+        search.addActionListener(e -> searchNext());
+        searchCount = new JLabel();
+
+        bar.add(new JLabel(JAMS.i18n("DF_Search_Label") + " "));
+        bar.add(search);
+        bar.add(searchCount);
+        bar.addSeparator();
 
         JCheckBox params = new JCheckBox(JAMS.i18n("DF_Show_Parameters"), options.showParameters);
         params.addActionListener(e -> {
@@ -168,6 +205,8 @@ public class DataflowDialog extends JDialog {
         graph = DataflowGraph.build(view.getModelDescriptor(), options);
         layout = new DataflowLayout(graph, DataflowExport.FRC);
         renderer = new DataflowRenderer(layout);
+        searchMatches = List.of();
+        searchIndex = -1;
         if (selected != null) {
             Box b = boxOf(selected);
             selected = b == null ? null : b.node;
@@ -223,6 +262,48 @@ public class DataflowDialog extends JDialog {
         } else {
             setZoom(1, new Point2D.Double(b.x + b.w / 2, b.y + b.h / 2));
         }
+    }
+
+    /**
+     * Recomputes the matches for the current search text and jumps to the
+     * first one.
+     */
+    private void searchChanged() {
+        String needle = search.getText().trim().toLowerCase();
+        searchMatches = new ArrayList<>();
+        if (!needle.isEmpty()) {
+            for (Box b : layout.getBoxes()) {
+                if (b.node.title.toLowerCase().contains(needle)) {
+                    searchMatches.add(b);
+                }
+            }
+        }
+        searchIndex = searchMatches.isEmpty() ? -1 : 0;
+        search.setBackground(!needle.isEmpty() && searchMatches.isEmpty() ? SEARCH_NO_MATCH : searchDefaultBg);
+        searchCount.setText(searchMatches.isEmpty() ? "" : (searchIndex + 1) + "/" + searchMatches.size());
+        goToSearchMatch();
+    }
+
+    /**
+     * Jumps to the next search match, cycling back to the first after the
+     * last one.
+     */
+    private void searchNext() {
+        if (searchMatches.isEmpty()) {
+            return;
+        }
+        searchIndex = (searchIndex + 1) % searchMatches.size();
+        searchCount.setText((searchIndex + 1) + "/" + searchMatches.size());
+        goToSearchMatch();
+    }
+
+    private void goToSearchMatch() {
+        if (searchIndex < 0) {
+            return;
+        }
+        Box b = searchMatches.get(searchIndex);
+        select(b);
+        setZoom(1, new Point2D.Double(b.x + b.w / 2, b.y + b.h / 2));
     }
 
     /**
