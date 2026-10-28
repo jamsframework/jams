@@ -87,7 +87,7 @@ public abstract class AbstractTracer implements DataTracer {
                     filter.setContext(superContext);
                     break;
                 }
-                superContext = context.getContext();
+                superContext = superContext.getContext();
             }
         }
     }
