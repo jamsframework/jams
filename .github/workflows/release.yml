@@ -1,13 +1,17 @@
 # Builds the jams-bin bundle (including the standard model component
 # libraries from the jamsmodels repository) and publishes it as a GitHub
-# release. Triggered by pushing a version tag, e.g.:
-#   git tag v4.0 && git push origin v4.0
+# release. Started manually from the Actions tab ("Run workflow"). The
+# workflow updates the Zenodo creators in .zenodo.json (jams authors.json plus
+# the authors.json of the bundled model libraries), commits that file and
+# creates the version tag on that commit, so Zenodo picks up the author list.
 name: Release
 
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, e.g. 4.1.2 (empty: version from pom.xml)"
+        required: false
 
 permissions:
   contents: write
@@ -26,6 +30,23 @@ jobs:
           # release in the changelog below
           fetch-depth: 0
 
+      - name: Determine release version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          VERSION="${INPUT_VERSION#v}"
+          if [ -z "$VERSION" ]; then
+            prop() { sed -n "s:.*<jams.version.$1>\(.*\)</jams.version.$1>.*:\1:p" pom.xml; }
+            VERSION="$(prop major).$(prop minor).$(prop patch)"
+          fi
+          if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
+            echo "::error::Tag v$VERSION already exists"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Releasing JAMS $VERSION"
+
       - uses: actions/checkout@v4
         with:
           repository: jamsframework/jamsmodels
@@ -38,7 +59,7 @@ jobs:
 
       - name: Build application bundle
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${{ steps.version.outputs.version }}"
           ./mvnw --batch-mode --no-transfer-progress install -pl jams-starter -am -Drevision="$VERSION"
 
       - name: Register jams-api/jams-main for jamsmodels
@@ -60,9 +81,26 @@ jobs:
           fi
           ls jams-bin/components/
 
+      # Zenodo reads .zenodo.json from the tagged commit, so the creators are
+      # merged and committed before the tag is created
+      - name: Update Zenodo metadata and create tag
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          python3 jamsmodels/tools/zenodo_authors.py build --root jamsmodels \
+            --base authors.json --modules "$MODEL_MODULES" --modules-as contributor \
+            --zenodo .zenodo.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet -- .zenodo.json; then
+            git commit -m "Update Zenodo metadata for $VERSION" -- .zenodo.json
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
+
       - name: Package bundle
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${{ steps.version.outputs.version }}"
           mv jams-bin "jams-$VERSION"
           zip -r -q "jams-$VERSION.zip" "jams-$VERSION"
 
@@ -70,8 +108,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          PREV_TAG=$(git describe --tags --abbrev=0 "HEAD^" 2>/dev/null || true)
+          VERSION="${{ steps.version.outputs.version }}"
+          PREV_TAG=$(git describe --tags --abbrev=0 "v$VERSION^" 2>/dev/null || true)
           {
             echo "JAMS $VERSION — ready-to-run application bundle."
             echo
@@ -93,6 +131,6 @@ jobs:
             fi
             echo
           } > release-notes.md
-          gh release create "$GITHUB_REF_NAME" "jams-$VERSION.zip" \
+          gh release create "v$VERSION" "jams-$VERSION.zip" --verify-tag \
             --title "JAMS $VERSION" \
             --notes-file release-notes.md

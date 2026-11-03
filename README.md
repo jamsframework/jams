@@ -93,11 +93,15 @@ in the root `pom.xml` are the single place this is maintained —
 
 To cut a release:
 
-1. Tag the commit `vX.Y.Z` (the desired release version) and push the tag —
-   this triggers [.github/workflows/release.yml](.github/workflows/release.yml),
-   which builds the bundle with `-Drevision=X.Y.Z` (dropping the `-SNAPSHOT`
-   suffix for that build only) and publishes it as a GitHub Release, with a
-   changelog of commits since the previous tag.
+1. Start [.github/workflows/release.yml](.github/workflows/release.yml) from
+   the Actions tab ("Run workflow") with the release version `X.Y.Z` (empty:
+   the version from the root `pom.xml`). It builds the bundle with
+   `-Drevision=X.Y.Z` (dropping the `-SNAPSHOT` suffix for that build only),
+   updates the Zenodo creators in `.zenodo.json` from [authors.json](authors.json)
+   and the `authors.json` files of the bundled jamsmodels libraries, tags the
+   result `vX.Y.Z` and publishes it as a GitHub Release, with a changelog of
+   commits since the previous tag. Zenodo then archives the release and
+   assigns a DOI.
 2. Optionally bump `jams.version.patch` in the root `pom.xml` afterward and
    commit, so local/CI SNAPSHOT builds stay ahead of the last release
    (`<revision>` always carries `-SNAPSHOT` in the repository - only the
