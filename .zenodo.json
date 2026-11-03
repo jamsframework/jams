@@ -1,0 +1,140 @@
+{
+  "title": "JAMS - Jena Adaptable Modelling System",
+  "upload_type": "software",
+  "description": "JAMS is a pure-Java, open-source software framework for building and applying modular environmental simulation models. The release bundle includes the model component libraries from the jamsmodels repository.",
+  "license": "LGPL-3.0-or-later",
+  "creators": [
+    {
+      "name": "Kralisch, Sven"
+    },
+    {
+      "name": "Fischer, Christian",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Krause, Peter",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Berndt, Ronny",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Riedel, Robert",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Busch, Heiko",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Hachgenei, Nico",
+      "affiliation": "INRAE"
+    },
+    {
+      "name": "Fink, Manfred",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Schwartze, Christian",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Gouttevin, Isabelle",
+      "affiliation": "INRAE"
+    },
+    {
+      "name": "Michel, Christin",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Künne, Annika",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Knevels, Raphael"
+    },
+    {
+      "name": "Busch, Carsten",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Watson, Andrew",
+      "affiliation": "Stellenbosch University"
+    },
+    {
+      "name": "Nepal, Santosh"
+    },
+    {
+      "name": "Pfennig, Bjoern",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Kipka, Holm",
+      "affiliation": "Friedrich Schiller University Jena"
+    },
+    {
+      "name": "Birkel, Christian"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.23761918",
+      "relation": "hasPart",
+      "resource_type": "software",
+      "scheme": "doi"
+    }
+  ],
+  "keywords": [
+    "hydrology",
+    "environmental modelling",
+    "J2000",
+    "modelling framework"
+  ],
+  "contributors": [
+    {
+      "name": "Siegert, Christian",
+      "affiliation": "Friedrich Schiller University Jena",
+      "type": "Other"
+    },
+    {
+      "name": "Santos, Daniel",
+      "affiliation": "Friedrich Schiller University Jena",
+      "type": "Other"
+    },
+    {
+      "name": "Villwock, Tilo",
+      "affiliation": "Friedrich Schiller University Jena",
+      "type": "Other"
+    },
+    {
+      "name": "Chikviladze, Elene",
+      "type": "Other"
+    },
+    {
+      "name": "Manusch, Corina",
+      "affiliation": "Friedrich Schiller University Jena",
+      "type": "Other"
+    },
+    {
+      "name": "Scheffler, Cornelia",
+      "affiliation": "Friedrich Schiller University Jena",
+      "type": "Other"
+    },
+    {
+      "name": "Penedo, Santiago",
+      "affiliation": "TH Köln",
+      "type": "Other"
+    },
+    {
+      "name": "Biskop, Sophie",
+      "affiliation": "Friedrich Schiller University Jena",
+      "type": "Other"
+    },
+    {
+      "name": "Labbas, Mériem",
+      "affiliation": "INRAE",
+      "type": "Other"
+    }
+  ]
+}
