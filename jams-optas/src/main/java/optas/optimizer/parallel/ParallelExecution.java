@@ -73,7 +73,7 @@ public class ParallelExecution<X,Y> {
             //model data - the classes in them are already loaded via the shared
             //JAMSClassLoader (see ParallelSequence.init()), so a cloned worker never
             //reads them from disk. Skipping them keeps cloning cheap; it matters most
-            //on jams-cloud-server, whose per-job execution sandbox bundles lib/ and
+            //on jamsserver, whose per-job execution sandbox bundles lib/ and
             //components/ alongside the model's actual workspace.
             if (dirZip == rootDir && fileArray[i].isDirectory()
                     && (fileArray[i].getName().equals("lib") || fileArray[i].getName().equals("components"))) {
