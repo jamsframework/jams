@@ -95,10 +95,11 @@ To cut a release:
 
 1. Start [.github/workflows/release.yml](.github/workflows/release.yml) from
    the Actions tab ("Run workflow") with the release version `X.Y.Z` (empty:
-   the version from the root `pom.xml`). It builds the bundle with
-   `-Drevision=X.Y.Z` (dropping the `-SNAPSHOT` suffix for that build only),
-   adds the creators and contributors listed in the `.zenodo.json` files of
-   the bundled jamsmodels libraries to [.zenodo.json](.zenodo.json) (which
+   the version from the root `pom.xml`) and the jamsmodels libraries to
+   bundle (comma-separated; the default is the standard set). It builds the
+   bundle with `-Drevision=X.Y.Z` (dropping the `-SNAPSHOT` suffix for that
+   build only), adds the creators and contributors listed in the
+   `.zenodo.json` files of the bundled jamsmodels libraries to [.zenodo.json](.zenodo.json) (which
    lists the jams people and is maintained by hand), tags a commit with that
    merged file `vX.Y.Z` and publishes it as a GitHub Release, with a changelog of
    commits since the previous tag. Zenodo then archives the release and

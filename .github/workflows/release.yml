@@ -1,8 +1,9 @@
 # Builds the jams-bin bundle (including the standard model component
 # libraries from the jamsmodels repository) and publishes it as a GitHub
-# release. Started manually from the Actions tab ("Run workflow"). The
-# workflow adds the creators and contributors of the bundled model libraries
-# (their .zenodo.json files) to the jams .zenodo.json and creates the version
+# release. Started manually from the Actions tab ("Run workflow") with the
+# version and the model libraries to bundle. The workflow adds the creators
+# and contributors of the bundled model libraries (their .zenodo.json files)
+# to the jams .zenodo.json and creates the version
 # tag on a commit with that merged file, so Zenodo picks up the author list.
 name: Release
 
@@ -12,13 +13,13 @@ on:
       version:
         description: "Release version, e.g. 4.1.2 (empty: version from pom.xml)"
         required: false
+      modules:
+        description: "Model component libraries to bundle (comma-separated)"
+        required: true
+        default: J2K_base,J2K_ext,J2K_iso,J2Kg,Thornthwaite
 
 permissions:
   contents: write
-
-env:
-  # model component libraries bundled with the release
-  MODEL_MODULES: J2K_base,J2K_ext,J2K_iso,J2Kg,Thornthwaite
 
 jobs:
   release:
@@ -51,6 +52,21 @@ jobs:
         with:
           repository: jamsframework/jamsmodels
           path: jamsmodels
+
+      # sets MODEL_MODULES (comma-separated, no blanks) for the steps below,
+      # after checking the names against the <modules> list of jamsmodels
+      - name: Check model library list
+        env:
+          INPUT_MODULES: ${{ inputs.modules }}
+        run: |
+          MODULES=$(echo "$INPUT_MODULES" | tr -s ', ' '\n' | sed '/^$/d')
+          KNOWN=$(sed -n 's:.*<module>\(.*\)</module>.*:\1:p' jamsmodels/pom.xml)
+          UNKNOWN=$(echo "$MODULES" | grep -vxF "$KNOWN" || true)
+          if [ -z "$MODULES" ] || [ -n "$UNKNOWN" ]; then
+            echo "::error::Unknown or missing model libraries: ${UNKNOWN:-none given} (known: $(echo $KNOWN))"
+            exit 1
+          fi
+          echo "MODEL_MODULES=$(echo $MODULES | tr ' ' ',')" >> "$GITHUB_ENV"
 
       - uses: actions/setup-java@v4
         with:
