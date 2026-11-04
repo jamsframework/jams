@@ -25,7 +25,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           # full history + tags, needed to list commits since the previous
           # release in the changelog below
@@ -48,7 +48,7 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Releasing JAMS $VERSION"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: jamsframework/jamsmodels
           path: jamsmodels
@@ -68,7 +68,7 @@ jobs:
           fi
           echo "MODEL_MODULES=$(echo $MODULES | tr ' ' ',')" >> "$GITHUB_ENV"
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
