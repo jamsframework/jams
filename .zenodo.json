@@ -27,9 +27,6 @@
       "name": "Krause, Peter"
     },
     {
-      "name": "Varga, Daniel"
-    },
-    {
       "name": "Fink, Manfred",
       "orcid": "0000-0001-6272-8564"
     },
@@ -49,17 +46,24 @@
       "name": "Schwartze, Christian"
     },
     {
+      "name": "Varga, Daniel"
+    },
+    {
       "name": "Michel, Christin"
     }
   ],
   "contributors": [
     {
-      "name": "Knevels, Raphael",
-      "orcid": "0000-0002-5094-7206",
+      "name": "Busch, Carsten",
       "type": "Researcher"
     },
     {
-      "name": "Busch, Carsten",
+      "name": "Santos, Daniel",
+      "type": "Researcher"
+    },
+    {
+      "name": "Knevels, Raphael",
+      "orcid": "0000-0002-5094-7206",
       "type": "Researcher"
     }
   ],
