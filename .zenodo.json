@@ -5,76 +5,59 @@
   "license": "LGPL-3.0-or-later",
   "creators": [
     {
-      "name": "Kralisch, Sven"
+      "name": "Kralisch, Sven",
+      "orcid": "0000-0003-2895-540X"
     },
     {
-      "name": "Fischer, Christian",
-      "affiliation": "Friedrich Schiller University Jena"
+      "name": "Fischer, Christian"
     },
     {
-      "name": "Krause, Peter",
-      "affiliation": "Friedrich Schiller University Jena"
+      "name": "Krause, Peter"
     },
     {
-      "name": "Berndt, Ronny",
-      "affiliation": "Friedrich Schiller University Jena"
+      "name": "Berndt, Ronny"
     },
     {
-      "name": "Riedel, Robert",
-      "affiliation": "Friedrich Schiller University Jena"
+      "name": "Riedel, Robert"
     },
     {
-      "name": "Busch, Heiko",
-      "affiliation": "Friedrich Schiller University Jena"
+      "name": "Busch, Heiko"
     },
     {
       "name": "Hachgenei, Nico",
-      "affiliation": "INRAE"
+      "orcid": "0000-0002-0490-2103"
     },
     {
-      "name": "Fink, Manfred",
-      "affiliation": "Friedrich Schiller University Jena"
-    },
-    {
-      "name": "Schwartze, Christian",
-      "affiliation": "Friedrich Schiller University Jena"
+      "name": "Schwartze, Christian"
     },
     {
       "name": "Gouttevin, Isabelle",
-      "affiliation": "INRAE"
+      "orcid": "0000-0002-1801-684X"
     },
     {
-      "name": "Michel, Christin",
-      "affiliation": "Friedrich Schiller University Jena"
+      "name": "Michel, Christin"
     },
     {
       "name": "Künne, Annika",
-      "affiliation": "Friedrich Schiller University Jena"
+      "orcid": "0000-0002-4925-0882"
     },
     {
-      "name": "Knevels, Raphael"
+      "name": "Villwock, Tilo"
+    },
+    {
+      "name": "Fink, Manfred",
+      "orcid": "0000-0001-6272-8564"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Knevels, Raphael",
+      "orcid": "0000-0002-5094-7206",
+      "type": "Researcher"
     },
     {
       "name": "Busch, Carsten",
-      "affiliation": "Friedrich Schiller University Jena"
-    },
-    {
-      "name": "Watson, Andrew",
-      "affiliation": "Stellenbosch University"
-    },
-    {
-      "name": "Nepal, Santosh"
-    },
-    {
-      "name": "Pfennig, Bjoern",
-      "affiliation": "Friedrich Schiller University Jena"
-    },
-    {
-      "name": "Kipka, Holm",
-      "affiliation": "Friedrich Schiller University Jena"
-    },
-    {
-      "name": "Birkel, Christian"
+      "type": "Researcher"
     }
   ],
   "related_identifiers": [
@@ -90,51 +73,5 @@
     "environmental modelling",
     "J2000",
     "modelling framework"
-  ],
-  "contributors": [
-    {
-      "name": "Siegert, Christian",
-      "affiliation": "Friedrich Schiller University Jena",
-      "type": "Other"
-    },
-    {
-      "name": "Santos, Daniel",
-      "affiliation": "Friedrich Schiller University Jena",
-      "type": "Other"
-    },
-    {
-      "name": "Villwock, Tilo",
-      "affiliation": "Friedrich Schiller University Jena",
-      "type": "Other"
-    },
-    {
-      "name": "Chikviladze, Elene",
-      "type": "Other"
-    },
-    {
-      "name": "Manusch, Corina",
-      "affiliation": "Friedrich Schiller University Jena",
-      "type": "Other"
-    },
-    {
-      "name": "Scheffler, Cornelia",
-      "affiliation": "Friedrich Schiller University Jena",
-      "type": "Other"
-    },
-    {
-      "name": "Penedo, Santiago",
-      "affiliation": "TH Köln",
-      "type": "Other"
-    },
-    {
-      "name": "Biskop, Sophie",
-      "affiliation": "Friedrich Schiller University Jena",
-      "type": "Other"
-    },
-    {
-      "name": "Labbas, Mériem",
-      "affiliation": "INRAE",
-      "type": "Other"
-    }
   ]
 }

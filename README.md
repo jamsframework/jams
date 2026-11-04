@@ -97,9 +97,10 @@ To cut a release:
    the Actions tab ("Run workflow") with the release version `X.Y.Z` (empty:
    the version from the root `pom.xml`). It builds the bundle with
    `-Drevision=X.Y.Z` (dropping the `-SNAPSHOT` suffix for that build only),
-   updates the Zenodo creators in `.zenodo.json` from [authors.json](authors.json)
-   and the `authors.json` files of the bundled jamsmodels libraries, tags the
-   result `vX.Y.Z` and publishes it as a GitHub Release, with a changelog of
+   adds the creators and contributors listed in the `.zenodo.json` files of
+   the bundled jamsmodels libraries to [.zenodo.json](.zenodo.json) (which
+   lists the jams people and is maintained by hand), tags a commit with that
+   merged file `vX.Y.Z` and publishes it as a GitHub Release, with a changelog of
    commits since the previous tag. Zenodo then archives the release and
    assigns a DOI.
 2. Optionally bump `jams.version.patch` in the root `pom.xml` afterward and

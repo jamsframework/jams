@@ -1,9 +1,9 @@
 # Builds the jams-bin bundle (including the standard model component
 # libraries from the jamsmodels repository) and publishes it as a GitHub
 # release. Started manually from the Actions tab ("Run workflow"). The
-# workflow updates the Zenodo creators in .zenodo.json (jams authors.json plus
-# the authors.json of the bundled model libraries), commits that file and
-# creates the version tag on that commit, so Zenodo picks up the author list.
+# workflow adds the creators and contributors of the bundled model libraries
+# (their .zenodo.json files) to the jams .zenodo.json and creates the version
+# tag on a commit with that merged file, so Zenodo picks up the author list.
 name: Release
 
 on:
@@ -81,19 +81,19 @@ jobs:
           fi
           ls jams-bin/components/
 
-      # Zenodo reads .zenodo.json from the tagged commit, so the creators are
-      # merged and committed before the tag is created
-      - name: Update Zenodo metadata and create tag
+      # Zenodo reads .zenodo.json from the tagged commit. The people of the
+      # bundled model libraries are added to it on a release commit that is
+      # only reachable through the tag, so the maintained .zenodo.json on the
+      # branch keeps listing the jams people only.
+      - name: Add model library people to Zenodo metadata and create tag
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           python3 jamsmodels/tools/zenodo_authors.py build --root jamsmodels \
-            --base authors.json --modules "$MODEL_MODULES" --modules-as contributor \
-            --zenodo .zenodo.json
+            --modules "$MODEL_MODULES" --zenodo .zenodo.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if ! git diff --quiet -- .zenodo.json; then
-            git commit -m "Update Zenodo metadata for $VERSION" -- .zenodo.json
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            git commit -m "Zenodo metadata for $VERSION" -- .zenodo.json
           fi
           git tag "v$VERSION"
           git push origin "v$VERSION"
