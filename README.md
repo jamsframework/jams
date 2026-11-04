@@ -1,5 +1,7 @@
 # JAMS Core Framework
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23761584.svg)](https://doi.org/10.5281/zenodo.23761584)
+
 JAMS (originally an acronym for "Jena Adaptable Modelling System") is a
 pure-Java, open-source software framework for building and applying
 modular environmental simulation models. Originally developed for
