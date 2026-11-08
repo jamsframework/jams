@@ -15,9 +15,13 @@ To cut a release:
    that build only), adds the creators and contributors listed in the
    `.zenodo.json` files of the bundled jamsmodels libraries to
    [.zenodo.json](../.zenodo.json) (which lists the jams people and is
-   maintained by hand), tags a commit with that merged file `vX.Y.Z` and
-   publishes it as a GitHub Release, with a changelog of commits since the
-   previous tag. Zenodo then archives the release and assigns a DOI.
+   maintained by hand, following the rules in
+   [jamsmodels docs/zenodo.md](https://github.com/jamsframework/jamsmodels/blob/main/docs/zenodo.md)),
+   tags a commit with that merged file `vX.Y.Z` and publishes it as a
+   GitHub Release, with a changelog of commits since the previous tag.
+   Zenodo then archives the release and assigns a DOI. If the jamsmodels
+   libraries changed since the last jamsmodels release, the run ends with a
+   warning: then also start the jamsmodels Release workflow.
 2. Optionally bump `jams.version.patch` in the root `pom.xml` afterward and
    commit, so local/CI SNAPSHOT builds stay ahead of the last release
    (`<revision>` always carries `-SNAPSHOT` in the repository - only the
