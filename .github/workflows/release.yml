@@ -52,6 +52,8 @@ jobs:
         with:
           repository: jamsframework/jamsmodels
           path: jamsmodels
+          # full history + tags, needed for the jamsmodels reminder below
+          fetch-depth: 0
 
       # sets MODEL_MODULES (comma-separated, no blanks) for the steps below,
       # after checking the names against the <modules> list of jamsmodels
@@ -150,3 +152,22 @@ jobs:
           gh release create "v$VERSION" "jams-$VERSION.zip" --verify-tag \
             --title "JAMS $VERSION" \
             --notes-file release-notes.md
+
+      # jamsmodels is released by its own workflow; remind of it when its
+      # libraries changed since its last release (commits that only touch
+      # the author lists do not count)
+      - name: Check for unreleased jamsmodels changes
+        working-directory: jamsmodels
+        run: |
+          LIBS=$(sed -n 's:.*<module>\(.*\)</module>.*:\1:p' pom.xml)
+          LAST=$(git tag -l 'v*' --sort=-creatordate | grep -v / | head -1)
+          if [ -n "$LAST" ]; then
+            NEW=$(git rev-list --count --no-merges "$LAST..HEAD" -- $LIBS ':(exclude,glob)*/.zenodo.json')
+          else
+            NEW=all
+          fi
+          if [ "$NEW" != 0 ]; then
+            MSG="jamsmodels has $NEW unreleased commits in its libraries since ${LAST:-the start}. Please start its Release workflow: https://github.com/jamsframework/jamsmodels/actions/workflows/release.yml"
+            echo "::warning::$MSG"
+            echo "$MSG" >> "$GITHUB_STEP_SUMMARY"
+          fi
