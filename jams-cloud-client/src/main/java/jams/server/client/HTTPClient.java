@@ -25,8 +25,11 @@ import jams.JAMS;
 import jams.tools.FileTools;
 import static jams.tools.StringTools.format;
 import java.io.File;
+import java.io.FilterInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
@@ -302,6 +305,44 @@ public class HTTPClient {
      * @throws ProcessingException under various conditions
      */
     public File download(String urlStr, File location) throws IOException {
+        return download(urlStr, location, null, -1);
+    }
+
+    /**
+     * downloads the result of the request to a given location and reports
+     * the progress
+     *
+     * @param urlStr url to server
+     * @param location target location
+     * @param listener receives progress notifications, may be null
+     * @param expectedSize size to report if the server sends no content
+     * length, -1 if unknown
+     * @return the target file
+     * @throws java.io.IOException
+     * @throws ProcessingException under various conditions
+     */
+    public File download(String urlStr, File location, DownloadListener listener, long expectedSize) throws IOException {
+        return download(urlStr, location, false, listener, expectedSize);
+    }
+
+    /**
+     * downloads the result of the request to the given file and reports the
+     * progress
+     *
+     * @param urlStr url to server
+     * @param file target file, the file name sent by the server is ignored
+     * @param listener receives progress notifications, may be null
+     * @param expectedSize size to report if the server sends no content
+     * length, -1 if unknown
+     * @return the target file
+     * @throws java.io.IOException
+     * @throws ProcessingException under various conditions
+     */
+    public File downloadTo(String urlStr, File file, DownloadListener listener, long expectedSize) throws IOException {
+        return download(urlStr, file, true, listener, expectedSize);
+    }
+
+    private File download(String urlStr, File location, boolean isTargetFile, DownloadListener listener, long expectedSize) throws IOException {
         HttpClient httpclient = HttpClientBuilder.create().useSystemProperties().build();
         HttpGet get = new HttpGet(urlStr);
         try {
@@ -310,26 +351,57 @@ public class HTTPClient {
             throw new ProcessingException(uee);
         }
 
+        if (listener != null) {
+            listener.setAbortHandler(get::abort);
+        }
         HttpResponse httpResponse = httpclient.execute(get);
         if (httpResponse.getStatusLine().getStatusCode()>=400){
             throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), urlStr);
         }
         try (InputStream is = httpResponse.getEntity().getContent()) {
             Header name[] = httpResponse.getHeaders("fileName");
-            FileTools.assertDirectory(location.getAbsolutePath());
-            if (name.length > 0 && name[0].getValue() != null) {
-                location = new File(location, new File(name[0].getValue()).getName());
-            } else {
-                location = new File(location, "unnamed");
+            if (!isTargetFile) {
+                FileTools.assertDirectory(location.getAbsolutePath());
+                if (name.length > 0 && name[0].getValue() != null) {
+                    location = new File(location, new File(name[0].getValue()).getName());
+                } else {
+                    location = new File(location, "unnamed");
+                }
             }
             //do it again because file can also be a directory
                 if (location.getParentFile() != null){
                 FileTools.assertDirectory(location.getParentFile().getAbsolutePath());
             }
             
-            FileTools.streamToFile(location, is);
+            long contentLength = httpResponse.getEntity().getContentLength();
+            long total = contentLength > 0 ? contentLength : expectedSize;
+            if (listener == null) {
+                FileTools.streamToFile(location, is);
+            } else {
+                try {
+                    streamToFile(location, is, listener, total);
+                } catch (IOException ioe) {
+                    // do not leave a truncated file behind (cancelled or broken connection)
+                    location.delete();
+                    throw ioe;
+                }
+            }
         }
         return location;
+    }
+
+    private static void streamToFile(File target, InputStream in, DownloadListener listener, long total) throws IOException {
+        long bytesRead = 0;
+        listener.progress(0, total);
+        try (OutputStream out = new FileOutputStream(target)) {
+            byte[] buffer = new byte[65536];
+            int n;
+            while ((n = in.read(buffer)) > 0) {
+                out.write(buffer, 0, n);
+                bytesRead += n;
+                listener.progress(bytesRead, total);
+            }
+        }
     }
 
      /**
@@ -353,7 +425,19 @@ public class HTTPClient {
         if (httpResponse.getStatusLine().getStatusCode() >=400){
             throw new HttpResponseException(httpResponse.getStatusLine().getStatusCode(), urlStr);
         }
-        return httpResponse.getEntity().getContent();
+        // closing the plain content stream reads the rest of the response to reuse the
+        // connection, i.e. it would download the whole file; abort the request instead
+        return new FilterInputStream(httpResponse.getEntity().getContent()) {
+            @Override
+            public void close() throws IOException {
+                get.abort();
+                try {
+                    super.close();
+                } catch (IOException ioe) {
+                    // expected after abort
+                }
+            }
+        };
     }
 
     /**

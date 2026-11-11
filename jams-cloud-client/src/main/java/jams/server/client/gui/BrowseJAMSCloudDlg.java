@@ -48,8 +48,10 @@ import jams.server.entities.Workspaces;
 import jams.tools.LogTools.ObservableLogHandler;
 import jams.tools.StringTools;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -57,6 +59,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -87,6 +91,7 @@ import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -113,7 +118,7 @@ public class BrowseJAMSCloudDlg extends JDialog {
     WorkspaceTree workspaceTree = new WorkspaceTree();
     JobsTree jobsTree = new JobsTree();
 
-    JFileChooser jfc = new JFileChooser();
+    JFileChooser jfc = new FrontFileChooser();
     JFileChooser wsChooser = new JFileChooser();
 
     JLabel wsNameLabel = new JLabel("name:");
@@ -341,6 +346,61 @@ public class BrowseJAMSCloudDlg extends JDialog {
      */
     public boolean isConnected() {
         return isConnected;
+    }
+
+    /**
+     * file chooser whose dialog stays in front while it is open
+     */
+    private static class FrontFileChooser extends JFileChooser {
+
+        @Override
+        protected JDialog createDialog(Component parent) throws HeadlessException {
+            JDialog dialog = super.createDialog(parent);
+            // on macOS the chooser otherwise opens behind the cloud browser
+            dialog.setAlwaysOnTop(true);
+            dialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowOpened(WindowEvent e) {
+                    dialog.toFront();
+                }
+            });
+            return dialog;
+        }
+    }
+
+    private File chooseDownloadFile(String fileName) {
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        File savePath = GUIState.getSavePath();
+        File dir = savePath != null && savePath.getParentFile() != null ? savePath.getParentFile() : jfc.getCurrentDirectory();
+        jfc.setCurrentDirectory(dir);
+        jfc.setSelectedFile(new File(dir, fileName));
+        if (jfc.showSaveDialog(BrowseJAMSCloudDlg.this) != JFileChooser.APPROVE_OPTION) {
+            return null;
+        }
+        File target = jfc.getSelectedFile();
+        if (target.exists() && JOptionPane.showConfirmDialog(BrowseJAMSCloudDlg.this,
+                target.getName() + " already exists. Overwrite?", "Download",
+                JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+            return null;
+        }
+        return target;
+    }
+
+    private File chooseDownloadDirectory() {
+        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        File savePath = GUIState.getSavePath();
+        if (savePath != null && savePath.getParentFile() != null) {
+            jfc.setCurrentDirectory(savePath.getParentFile());
+            try {
+                jfc.setSelectedFile(savePath.getParentFile());
+            } catch (IndexOutOfBoundsException ex) {
+                // Aqua file chooser occasionally fails here, the current directory is enough
+            }
+        }
+        if (jfc.showSaveDialog(BrowseJAMSCloudDlg.this) == JFileChooser.APPROVE_OPTION) {
+            return jfc.getSelectedFile();
+        }
+        return null;
     }
 
     private void viewStream(WorkspaceFileAssociation wfa) {
@@ -621,30 +681,16 @@ public class BrowseJAMSCloudDlg extends JDialog {
                 if (ws == null) {
                     return;
                 }
-                worker.setTask(new ParameterizedRunnable<Workspace>(ws) {
-                    @Override
-                    public void safeRun() throws Exception {
-                        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                        try {
-                            jfc.setSelectedFile(GUIState.getSavePath().getParentFile());
-                            File safePath = GUIState.getSavePath();
-                            if (safePath != null) {
-                                jfc.setCurrentDirectory(safePath.getParentFile());
-                            }
-                        } catch (java.lang.IndexOutOfBoundsException ex) {
-                            jfc.setSelectedFile(GUIState.getSavePath().getParentFile());
-                            jfc.setCurrentDirectory(GUIState.getSavePath().getParentFile());
-                        }
-                        int result = jfc.showSaveDialog(BrowseJAMSCloudDlg.this);
-                        if (result == JFileChooser.APPROVE_OPTION) {
-                            File target = jfc.getSelectedFile();
-                            connector.downloadWorkspace(arg, target);
-                            log.info(JAMS.i18n("Download_complete"));
-                        }
+                // choose the target on the EDT after the popup menu has closed (otherwise
+                // macOS puts the chooser behind this dialog), the download runs in its own
+                // progress dialog
+                Workspace selected = ws;
+                SwingUtilities.invokeLater(() -> {
+                    File target = chooseDownloadDirectory();
+                    if (target != null && connector.downloadWorkspace(selected, target, BrowseJAMSCloudDlg.this)) {
+                        log.info(JAMS.i18n("Download_complete"));
                     }
                 });
-                worker.execute();
-
             }
         };
 
@@ -655,27 +701,12 @@ public class BrowseJAMSCloudDlg extends JDialog {
                 if (wfa == null) {
                     return;
                 }
-                worker.setTask(new ParameterizedRunnable<WorkspaceFileAssociation>(wfa) {
-                    @Override
-                    public void safeRun() throws Exception {
-                        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                        try {
-                            jfc.setSelectedFile(GUIState.getSavePath().getParentFile());
-                            jfc.setCurrentDirectory(GUIState.getSavePath().getParentFile());
-                        } catch (java.lang.IndexOutOfBoundsException ex) {
-                            jfc.setSelectedFile(GUIState.getSavePath().getParentFile());
-                            jfc.setCurrentDirectory(GUIState.getSavePath().getParentFile());
-                        }
-                        int result = jfc.showSaveDialog(BrowseJAMSCloudDlg.this);
-                        if (result == JFileChooser.APPROVE_OPTION) {
-                            File target = jfc.getSelectedFile();
-                            connector.downloadFile(arg, target);
-                            log.info(JAMS.i18n("Download_complete"));
-                        }
+                SwingUtilities.invokeLater(() -> {
+                    File target = chooseDownloadFile(new File(wfa.getFileName()).getName());
+                    if (target != null && connector.downloadFileTo(wfa, target, BrowseJAMSCloudDlg.this)) {
+                        log.info(JAMS.i18n("Download_complete"));
                     }
                 });
-                worker.execute();
-
             }
         };
 

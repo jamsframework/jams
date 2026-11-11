@@ -6,6 +6,7 @@
 package jams.server.client.gui;
 
 import jams.ErrorCatchingRunnable;
+import jams.JAMS;
 import jams.JAMSLogging;
 import jams.SystemProperties;
 import jams.gui.CancelableWorkerDlg;
@@ -13,6 +14,7 @@ import jams.gui.ObserverWorkerDlg;
 import jams.gui.WorkerDlg;
 import jams.gui.tools.GUIState;
 import jams.server.client.Controller;
+import jams.server.client.DownloadListener;
 import jams.server.client.FileController;
 import jams.server.client.JAMSWorkspaceUploader;
 import jams.server.client.JobController;
@@ -25,6 +27,8 @@ import jams.server.entities.Workspace;
 import jams.server.entities.WorkspaceFileAssociation;
 import jams.tools.LogTools;
 import jams.tools.LogTools.ObservableLogHandler;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
@@ -34,12 +38,15 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.ResponseProcessingException;
 
@@ -304,26 +311,175 @@ public class JAMSCloudGraphicalController extends Observable {
         Workspace ws;
         WorkspaceFileAssociation wfa;
         File target;
+        DownloadProgress listener;
+        boolean targetIsFile = false;
+        boolean completed = false;
 
-        public DownloadRunnable(Workspace ws, File target) {
+        public DownloadRunnable(Workspace ws, File target, DownloadProgress listener) {
             this.ws = ws;
             this.target = target;
             this.wfa = null;
+            this.listener = listener;
         }
 
-        public DownloadRunnable(WorkspaceFileAssociation wfa, File target) {
+        public DownloadRunnable(WorkspaceFileAssociation wfa, File target, DownloadProgress listener) {
             this.wfa = wfa;
             this.ws = null;
             this.target = target;
+            this.listener = listener;
         }
 
         @Override
         public void safeRun() throws Exception {
-            if (ws != null) {
-                client.workspaces().downloadWorkspace(target, ws);
-            } else if (wfa != null) {
-                client.workspaces().downloadFile(target, wfa);
+            try {
+                if (ws != null) {
+                    client.workspaces().downloadWorkspace(target, ws, listener);
+                } else if (wfa != null && targetIsFile) {
+                    client.workspaces().downloadFileTo(target, wfa, listener);
+                } else if (wfa != null) {
+                    client.workspaces().downloadFile(target, wfa, listener);
+                }
+                completed = true;
+            } catch (IOException ioe) {
+                if (listener.isCancelled()) {
+                    log.info("Download cancelled");
+                    return;
+                }
+                throw ioe;
             }
+        }
+    }
+
+    /**
+     * shows the download progress (amount, rate, remaining time) in a
+     * WorkerDlg
+     */
+    private static class DownloadProgress implements DownloadListener {
+
+        private static final long UPDATE_INTERVAL = 250_000_000L; // ns
+
+        private final WorkerDlg dlg;
+        private final JButton cancelButton = new JButton(JAMS.i18n("Cancel"));
+        private long start = -1;
+        private long lastUpdate = 0;
+        private volatile boolean cancelled = false;
+        private Runnable abort = null;
+
+        // longest status line, used to fix the dialog width so it does not jump
+        private static final String WIDEST_MESSAGE = "1023.9 MB of 1023.9 MB - 1023.9 MB/s - 99 h 59 min left";
+
+        DownloadProgress(WorkerDlg dlg) {
+            this.dlg = dlg;
+            cancelButton.addActionListener(e -> cancel());
+            JPanel panel = dlg.getMainPanel();
+            panel.add(cancelButton, BorderLayout.SOUTH);
+            Dimension size = panel.getPreferredSize();
+            int width = panel.getFontMetrics(new JLabel().getFont()).stringWidth(WIDEST_MESSAGE) + 20;
+            panel.setPreferredSize(new Dimension(Math.max(size.width, width), size.height));
+            dlg.pack();
+        }
+
+        boolean isCancelled() {
+            return cancelled;
+        }
+
+        private void cancel() {
+            Runnable a;
+            synchronized (this) {
+                if (cancelled) {
+                    return;
+                }
+                cancelled = true;
+                a = abort;
+            }
+            cancelButton.setEnabled(false);
+            dlg.setMessage("Cancelling ...");
+            if (a != null) {
+                new Thread(a, "download-abort").start();
+            }
+        }
+
+        @Override
+        public void setAbortHandler(Runnable abort) {
+            boolean abortNow;
+            synchronized (this) {
+                this.abort = abort;
+                abortNow = cancelled;
+            }
+            if (abortNow) {
+                abort.run();
+            }
+        }
+
+        @Override
+        public void progress(long bytesRead, long totalBytes) {
+            if (cancelled) {
+                return;
+            }
+            long now = System.nanoTime();
+            if (start < 0) {
+                start = now;
+            } else if (now - lastUpdate < UPDATE_INTERVAL && bytesRead != totalBytes) {
+                return;
+            }
+            lastUpdate = now;
+
+            double seconds = (now - start) / 1e9;
+            double rate = seconds > 1 ? bytesRead / seconds : 0;
+            StringBuilder text = new StringBuilder(formatBytes(bytesRead));
+            if (totalBytes > 0) {
+                text.append(" of ").append(formatBytes(totalBytes));
+            }
+            if (rate > 0) {
+                text.append(" - ").append(formatBytes((long) rate)).append("/s");
+                if (totalBytes > bytesRead) {
+                    text.append(" - ").append(formatDuration((totalBytes - bytesRead) / rate)).append(" left");
+                }
+            }
+            String message = text.toString();
+            int permille = totalBytes > 0 ? (int) Math.min(1000, bytesRead * 1000 / totalBytes) : -1;
+
+            SwingUtilities.invokeLater(() -> {
+                if (permille >= 0) {
+                    dlg.setInderminate(false);
+                    dlg.setProgressMax(1000);
+                    dlg.setProgress(permille);
+                }
+                dlg.setMessage(message);
+            });
+        }
+
+        @Override
+        public void unpacking() {
+            SwingUtilities.invokeLater(() -> {
+                cancelButton.setEnabled(false);
+                dlg.setInderminate(true);
+                dlg.setMessage("Unpacking ...");
+            });
+        }
+
+        private static String formatBytes(long bytes) {
+            if (bytes < 1024) {
+                return bytes + " B";
+            }
+            String[] units = {"KB", "MB", "GB", "TB"};
+            double value = bytes;
+            int unit = -1;
+            while (value >= 1024 && unit < units.length - 1) {
+                value /= 1024;
+                unit++;
+            }
+            return String.format("%.1f %s", value, units[unit]);
+        }
+
+        private static String formatDuration(double seconds) {
+            long s = Math.round(seconds);
+            if (s < 60) {
+                return s + " s";
+            } else if (s < 3600) {
+                return (s / 60) + " min " + (s % 60) + " s";
+            }
+            return (s / 3600) + " h " + (s % 3600 / 60) + " min";
         }
     }
 
@@ -333,10 +489,22 @@ public class JAMSCloudGraphicalController extends Observable {
      * @param target
      */
     public void downloadWorkspace(Workspace ws, File target) {
-        WorkerDlg dlg = new WorkerDlg(GUIState.getMainWindow(), "Download Workspace ... ");
+        downloadWorkspace(ws, target, GUIState.getMainWindow());
+    }
+
+    /**
+     *
+     * @param ws
+     * @param target
+     * @param owner window that owns the progress dialog
+     */
+    public boolean downloadWorkspace(Workspace ws, File target, Window owner) {
+        WorkerDlg dlg = new WorkerDlg(owner, "Download Workspace ... ", "Server is packing the workspace ...");
         dlg.setInderminate(true);
-        dlg.setTask(new DownloadRunnable(ws, target));
+        DownloadRunnable task = new DownloadRunnable(ws, target, new DownloadProgress(dlg));
+        dlg.setTask(task);
         dlg.execute();
+        return task.completed;
     }
 
     /**
@@ -345,10 +513,38 @@ public class JAMSCloudGraphicalController extends Observable {
      * @param target
      */
     public void downloadFile(WorkspaceFileAssociation wfa, File target) {
-        WorkerDlg dlg = new WorkerDlg(GUIState.getMainWindow(), "Download file ... ");
+        downloadFile(wfa, target, GUIState.getMainWindow());
+    }
+
+    /**
+     *
+     * @param wfa
+     * @param target
+     * @param owner window that owns the progress dialog
+     */
+    public boolean downloadFile(WorkspaceFileAssociation wfa, File target, Window owner) {
+        return downloadFile(wfa, target, false, owner);
+    }
+
+    /**
+     *
+     * @param wfa
+     * @param file the file to be written
+     * @param owner window that owns the progress dialog
+     * @return true if the download has been completed
+     */
+    public boolean downloadFileTo(WorkspaceFileAssociation wfa, File file, Window owner) {
+        return downloadFile(wfa, file, true, owner);
+    }
+
+    private boolean downloadFile(WorkspaceFileAssociation wfa, File target, boolean targetIsFile, Window owner) {
+        WorkerDlg dlg = new WorkerDlg(owner, "Download file ... ", "Waiting for server ...");
         dlg.setInderminate(true);
-        dlg.setTask(new DownloadRunnable(wfa, target));
+        DownloadRunnable task = new DownloadRunnable(wfa, target, new DownloadProgress(dlg));
+        task.targetIsFile = targetIsFile;
+        dlg.setTask(task);
         dlg.execute();
+        return task.completed;
     }
 
     private class UploadWorkspaceRunnable extends ErrorCatchingRunnable {

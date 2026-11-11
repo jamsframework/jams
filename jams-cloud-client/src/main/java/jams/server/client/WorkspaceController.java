@@ -254,8 +254,35 @@ public class WorkspaceController {
      * @throws IOException
      */
     public File downloadFile(File target, jams.server.entities.WorkspaceFileAssociation wfa) throws IOException{
+        return downloadFile(target, wfa, null);
+    }
+
+    /**
+     * downloads a file to a target location and reports the progress
+     * @param target to which the file should be saved
+     * @param wfa the file to be downloaded
+     * @param listener receives progress notifications, may be null
+     * @return the target file
+     * @throws IOException
+     */
+    public File downloadFile(File target, jams.server.entities.WorkspaceFileAssociation wfa, DownloadListener listener) throws IOException{
         log(getClass(), Level.FINE, JAMS.i18n("downloading_{0}_to_{1}"),wfa.getFileName(), target.getAbsoluteFile()); 
-        return client.download(urlStr + "/workspace/download/" + wfa.getWorkspace().getId() + "/" + wfa.getID(), target);
+        long size = wfa.getFile() != null && wfa.getFile().getFileSize() > 0 ? wfa.getFile().getFileSize() : -1;
+        return client.download(urlStr + "/workspace/download/" + wfa.getWorkspace().getId() + "/" + wfa.getID(), target, listener, size);
+    }
+
+    /**
+     * downloads a file to the given target file and reports the progress
+     * @param file the file to be written
+     * @param wfa the file to be downloaded
+     * @param listener receives progress notifications, may be null
+     * @return the target file
+     * @throws IOException
+     */
+    public File downloadFileTo(File file, jams.server.entities.WorkspaceFileAssociation wfa, DownloadListener listener) throws IOException{
+        log(getClass(), Level.FINE, JAMS.i18n("downloading_{0}_to_{1}"),wfa.getFileName(), file.getAbsoluteFile()); 
+        long size = wfa.getFile() != null && wfa.getFile().getFileSize() > 0 ? wfa.getFile().getFileSize() : -1;
+        return client.downloadTo(urlStr + "/workspace/download/" + wfa.getWorkspace().getId() + "/" + wfa.getID(), file, listener, size);
     }
 
     /**
@@ -269,8 +296,23 @@ public class WorkspaceController {
      * @throws IOException
      */
     public File downloadWorkspace(File target, Workspace ws) throws IOException{
+        return downloadWorkspace(target, ws, null);
+    }
+
+    /**
+     * downloads a workspace to a target location and reports the progress
+     * @param target to which the workspace should be saved
+     * @param ws the workspace to be downloaded
+     * @param listener receives progress notifications, may be null
+     * @return the target file
+     * @throws IOException
+     */
+    public File downloadWorkspace(File target, Workspace ws, DownloadListener listener) throws IOException{
         log(getClass(), Level.FINE, JAMS.i18n("downloading_workspace_{0}_to_{1}"),ws.getId(), target.getAbsoluteFile()); 
-        File zip = client.download(urlStr + "/workspace/download/" + ws.getId(), target);
+        File zip = client.download(urlStr + "/workspace/download/" + ws.getId(), target, listener, -1);
+        if (listener != null) {
+            listener.unpacking();
+        }
         FileTools.unzipFile(zip, new File(target, ws.getName()), true);
         return target;
     }
