@@ -1,17 +1,21 @@
 # Builds the jams-bin bundle (including the standard model component
 # libraries from the jamsmodels repository) and publishes it as a GitHub
 # release. Started manually from the Actions tab ("Run workflow") with the
-# version and the model libraries to bundle. The workflow adds the creators
-# and contributors of the bundled model libraries (their .zenodo.json files)
+# version, the release date and the model libraries to bundle. The workflow
+# adds the creators and contributors of the bundled model libraries (their .zenodo.json files)
 # to the jams .zenodo.json and creates the version
 # tag on a commit with that merged file, so Zenodo picks up the author list.
 name: Release
+run-name: "JAMS ${{ inputs.version || 'release (version from pom.xml)' }}"
 
 on:
   workflow_dispatch:
     inputs:
       version:
         description: "Release version, e.g. 4.1.2 (empty: version from pom.xml)"
+        required: false
+      date:
+        description: "Release date shown in the About dialog, YYYY-MM-DD (empty: today)"
         required: false
       modules:
         description: "Model component libraries to bundle (comma-separated)"
@@ -31,22 +35,29 @@ jobs:
           # release in the changelog below
           fetch-depth: 0
 
-      - name: Determine release version
+      - name: Determine release version and date
         id: version
         env:
           INPUT_VERSION: ${{ inputs.version }}
+          INPUT_DATE: ${{ inputs.date }}
         run: |
           VERSION="${INPUT_VERSION#v}"
           if [ -z "$VERSION" ]; then
             prop() { sed -n "s:.*<jams.version.$1>\(.*\)</jams.version.$1>.*:\1:p" pom.xml; }
             VERSION="$(prop major).$(prop minor).$(prop patch)"
           fi
+          DATE="${INPUT_DATE:-$(TZ=Europe/Berlin date +%F)}"
+          if ! date -d "$DATE" +%F >/dev/null 2>&1 || ! [[ "$DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "::error::Invalid release date '$DATE' (expected YYYY-MM-DD)"
+            exit 1
+          fi
           if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
             echo "::error::Tag v$VERSION already exists"
             exit 1
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Releasing JAMS $VERSION"
+          echo "date=${DATE//-/}" >> "$GITHUB_OUTPUT"
+          echo "Releasing JAMS $VERSION, release date $DATE"
 
       - uses: actions/checkout@v5
         with:
@@ -78,7 +89,8 @@ jobs:
       - name: Build application bundle
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          ./mvnw --batch-mode --no-transfer-progress install -pl jams-starter -am -Drevision="$VERSION"
+          ./mvnw --batch-mode --no-transfer-progress install -pl jams-starter -am -Drevision="$VERSION" \
+            -Djams.build.date="${{ steps.version.outputs.date }}"
 
       - name: Register jams-api/jams-main for jamsmodels
         run: |
@@ -100,18 +112,19 @@ jobs:
           ls jams-bin/components/
 
       # Zenodo reads .zenodo.json from the tagged commit. The people of the
-      # bundled model libraries are added to it on a release commit that is
-      # only reachable through the tag, so the maintained .zenodo.json on the
-      # branch keeps listing the jams people only.
+      # bundled model libraries are added to it, and the release date to
+      # pom.xml, on a release commit that is only reachable through the tag,
+      # so the maintained files on the branch stay unchanged.
       - name: Add model library people to Zenodo metadata and create tag
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           python3 jamsmodels/tools/zenodo_authors.py build --root jamsmodels \
             --modules "$MODEL_MODULES" --zenodo .zenodo.json
+          sed -i "s:<jams.build.date>.*</jams.build.date>:<jams.build.date>${{ steps.version.outputs.date }}</jams.build.date>:" pom.xml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if ! git diff --quiet -- .zenodo.json; then
-            git commit -m "Zenodo metadata for $VERSION" -- .zenodo.json
+          if ! git diff --quiet -- .zenodo.json pom.xml; then
+            git commit -m "Release $VERSION" -- .zenodo.json pom.xml
           fi
           git tag "v$VERSION"
           git push origin "v$VERSION"
@@ -149,9 +162,22 @@ jobs:
             fi
             echo
           } > release-notes.md
-          gh release create "v$VERSION" "jams-$VERSION.zip" --verify-tag \
+          URL=$(gh release create "v$VERSION" "jams-$VERSION.zip" --verify-tag \
             --title "JAMS $VERSION" \
-            --notes-file release-notes.md
+            --notes-file release-notes.md)
+          DATE="${{ steps.version.outputs.date }}"
+          COUNT() { python3 -c "import json,sys; print(len(json.load(open('.zenodo.json')).get(sys.argv[1], [])))" "$1"; }
+          {
+            echo "## JAMS $VERSION"
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Version | $VERSION |"
+            echo "| Release date | ${DATE:6:2}.${DATE:4:2}.${DATE:0:4} |"
+            echo "| Model libraries | ${MODEL_MODULES//,/, } |"
+            echo "| Zenodo creators / contributors | $(COUNT creators) / $(COUNT contributors) |"
+            echo "| Release | $URL |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       # jamsmodels is released by its own workflow; remind of it when its
       # libraries changed since its last release (commits that only touch
