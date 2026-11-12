@@ -46,6 +46,13 @@ jobs:
             prop() { sed -n "s:.*<jams.version.$1>\(.*\)</jams.version.$1>.*:\1:p" pom.xml; }
             VERSION="$(prop major).$(prop minor).$(prop patch)"
           fi
+          if ! [[ "$VERSION" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "::error::Invalid version '$VERSION' (expected X.Y.Z)"
+            exit 1
+          fi
+          MAJOR="${BASH_REMATCH[1]}"
+          MINOR="${BASH_REMATCH[2]}"
+          PATCH="${BASH_REMATCH[3]}"
           DATE="${INPUT_DATE:-$(TZ=Europe/Berlin date +%F)}"
           if ! date -d "$DATE" +%F >/dev/null 2>&1 || ! [[ "$DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
             echo "::error::Invalid release date '$DATE' (expected YYYY-MM-DD)"
@@ -56,6 +63,9 @@ jobs:
             exit 1
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "major=$MAJOR" >> "$GITHUB_OUTPUT"
+          echo "minor=$MINOR" >> "$GITHUB_OUTPUT"
+          echo "patch=$PATCH" >> "$GITHUB_OUTPUT"
           echo "date=${DATE//-/}" >> "$GITHUB_OUTPUT"
           echo "Releasing JAMS $VERSION, release date $DATE"
 
@@ -90,7 +100,10 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           ./mvnw --batch-mode --no-transfer-progress install -pl jams-starter -am -Drevision="$VERSION" \
-            -Djams.build.date="${{ steps.version.outputs.date }}"
+            -Djams.build.date="${{ steps.version.outputs.date }}" \
+            -Djams.version.major="${{ steps.version.outputs.major }}" \
+            -Djams.version.minor="${{ steps.version.outputs.minor }}" \
+            -Djams.version.patch="${{ steps.version.outputs.patch }}"
 
       - name: Register jams-api/jams-main for jamsmodels
         run: |
@@ -121,6 +134,9 @@ jobs:
           python3 jamsmodels/tools/zenodo_authors.py build --root jamsmodels \
             --modules "$MODEL_MODULES" --zenodo .zenodo.json
           sed -i "s:<jams.build.date>.*</jams.build.date>:<jams.build.date>${{ steps.version.outputs.date }}</jams.build.date>:" pom.xml
+          sed -i "s:<jams.version.major>.*</jams.version.major>:<jams.version.major>${{ steps.version.outputs.major }}</jams.version.major>:" pom.xml
+          sed -i "s:<jams.version.minor>.*</jams.version.minor>:<jams.version.minor>${{ steps.version.outputs.minor }}</jams.version.minor>:" pom.xml
+          sed -i "s:<jams.version.patch>.*</jams.version.patch>:<jams.version.patch>${{ steps.version.outputs.patch }}</jams.version.patch>:" pom.xml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if ! git diff --quiet -- .zenodo.json pom.xml; then
