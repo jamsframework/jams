@@ -37,7 +37,7 @@
         <jams.version.patch>2</jams.version.patch>
         <jams.api.major>1</jams.api.major>
         <jams.api.minor>4</jams.api.minor>
-        <jams.build.date>20261019</jams.build.date>
+        <jams.build.date>20261112</jams.build.date>
         <revision>${jams.version.major}.${jams.version.minor}.${jams.version.patch}-SNAPSHOT</revision>
     </properties>
 
