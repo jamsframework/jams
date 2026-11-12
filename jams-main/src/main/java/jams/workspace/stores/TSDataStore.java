@@ -405,12 +405,19 @@ public class TSDataStore extends TableDataStore {
         }
     }
 
+    /*
+     * JAMSCalendar.setValue(String) ignores any configured date format - it
+     * guesses the token order from whether the string contains a "-" (year
+     * first) or not (assumes US month/day/year). Dump files written with a
+     * "/" separator are year-first too (TSDumpProcessor only ever writes
+     * that order), so they'd be misread as US order; normalising the
+     * separator first makes the existing "-" branch pick them up correctly.
+     */
     private Attribute.Calendar parseLineDate(String line) {
         int tab = line.indexOf('\t');
         String dateToken = tab >= 0 ? line.substring(0, tab) : line;
         Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
-        cal.setDateFormat(timeFormat);
-        cal.setValue(dateToken);
+        cal.setValue(dateToken.replace('/', '-'));
         return cal;
     }
 
@@ -559,6 +566,10 @@ public class TSDataStore extends TableDataStore {
             try {
 
                 String str = dumpFileReader.readLine();
+                if (str == null) {
+                    ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore" + id);
+                    return null;
+                }
                 linesReadCache++;
 
                 // remove all empty trailing elements typically inserted by Excel
