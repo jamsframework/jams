@@ -1,7 +1,7 @@
 {
   "title": "JAMS - Jena Adaptable Modelling System",
   "upload_type": "software",
-  "description": "JAMS is a pure-Java, open-source software framework for building and applying modular environmental simulation models. The release bundle includes the model component libraries from the jamsmodels repository.",
+  "description": "JAMS is a pure-Java, open-source software framework for building and applying modular environmental simulation models. The release bundle includes the model component libraries from the jamsmodels repository.\n<p><br></p>\n<h3>Authors of the model component libraries</h3>\n<ul>\n<li><strong>J2K_base</strong>: Peter Krause, Christian Fischer, Sven Kralisch, Annika Künne, Andrew Watson, Santosh Nepal (contributors: Manfred Fink, Heiko Busch, Holm Kipka, Corina Manusch)</li>\n<li><strong>J2K_ext</strong>: Christian Fischer, Christin Michel, Peter Krause, Manfred Fink, Sven Kralisch, Holm Kipka, Heiko Busch, Santosh Nepal, Carsten Busch, Bjoern Pfennig, Daniel Varga (contributors: Sophie Biskop)</li>\n<li><strong>J2K_iso</strong>: Andrew Watson, Sven Kralisch, Christian Birkel</li>\n<li><strong>J2Kg</strong>: Peter Krause, Christian Fischer, Manfred Fink, Sven Kralisch</li>\n<li><strong>Thornthwaite</strong>: Sven Kralisch, Manfred Fink</li>\n</ul>",
   "license": "LGPL-3.0-or-later",
   "creators": [
     {
@@ -50,16 +50,42 @@
     },
     {
       "name": "Michel, Christin"
+    },
+    {
+      "name": "Birkel, Christian",
+      "orcid": "0000-0002-6792-852X"
+    },
+    {
+      "name": "Busch, Carsten"
+    },
+    {
+      "name": "Kipka, Holm"
+    },
+    {
+      "name": "Nepal, Santosh",
+      "orcid": "0000-0002-7415-2299"
+    },
+    {
+      "name": "Pfennig, Bjoern"
+    },
+    {
+      "name": "Watson, Andrew",
+      "orcid": "0000-0001-5998-6933"
     }
   ],
   "contributors": [
     {
-      "name": "Busch, Carsten",
+      "name": "Knevels, Raphael",
+      "orcid": "0000-0002-5094-7206",
       "type": "Researcher"
     },
     {
-      "name": "Knevels, Raphael",
-      "orcid": "0000-0002-5094-7206",
+      "name": "Biskop, Sophie",
+      "orcid": "0009-0005-4734-7903",
+      "type": "Researcher"
+    },
+    {
+      "name": "Manusch, Corina",
       "type": "Researcher"
     }
   ],
