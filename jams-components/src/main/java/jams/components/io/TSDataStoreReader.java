@@ -43,8 +43,8 @@ import java.util.GregorianCalendar;
  */
 @JAMSComponentDescription(title = "TSDataStoreReader",
         author = "Sven Kralisch",
-        date = "2025-02-01",
-        version = "1.3",
+        date = "2026-11-23",
+        version = "1.4",
         description = "This component can be used to obtain data from a time series "
         + "data store which contains only double values and a number of "
         + "station-specific metadata. Additional functions:\n"
@@ -60,7 +60,9 @@ import java.util.GregorianCalendar;
     @VersionComments.Entry(version = "1.2", date = "2014-06-20", comment = "Added attributes to output"
             + " column names and columns IDs for further use"),
     @VersionComments.Entry(version = "1.3", date = "2025-02-01", comment = "Added option to switch between three calendar types "
-            + "(Gregorian, Gregorian w/o leap days, 360-days). Works only for daily time steps.")
+            + "(Gregorian, Gregorian w/o leap days, 360-days). Works only for daily time steps."),
+    @VersionComments.Entry(version = "1.4", date = "2026-11-23", comment = "Added option fastForward to jump "
+            + "directly to the model start in dump files (default: read line by line as before)")
 })
 public class TSDataStoreReader extends JAMSComponent {
 
@@ -136,6 +138,13 @@ public class TSDataStoreReader extends JAMSComponent {
     )
     public Attribute.Integer calendarType;
 
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Skip forward to the model start by jumping directly to "
+            + "the right line of the datastore's dump file (cache mode only) "
+            + "instead of reading all lines before it",
+            defaultValue = "false")
+    public Attribute.Boolean fastForward;
+
     private TSDataStore store;
     private double[] doubles;
     private double[] elevationArray;
@@ -167,6 +176,7 @@ public class TSDataStoreReader extends JAMSComponent {
         }
 
         store = (TSDataStore) is;
+        store.setFastForward(fastForward.getValue());
 
         // check if the store's time interval matches the provided time interval
         if (store.getStartDate().after(timeInterval.getStart()) && (store.getStartDate().compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) != 0)) {

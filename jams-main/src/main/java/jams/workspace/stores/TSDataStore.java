@@ -42,6 +42,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Set;
@@ -65,6 +66,9 @@ public class TSDataStore extends TableDataStore {
     private long dataStartOffset = -1;
     private long cacheLineCount = -1;
     private long linesReadCache = 0;
+    // skip() in cache mode: false = read the skipped lines one by one, true =
+    // jump to the target line (see skipCache); set by the reading component
+    private boolean fastForward = false;
     private static final int DOUBLE = 0;
     private static final int LONG = 1;
     private static final int STRING = 2;
@@ -303,6 +307,14 @@ public class TSDataStore extends TableDataStore {
         return o;
     }
 
+    public void setFastForward(boolean fastForward) {
+        this.fastForward = fastForward;
+    }
+
+    public boolean isFastForward() {
+        return fastForward;
+    }
+
     public void skip(int count) {
         if (this.accessMode != InputDataStore.CACHE_MODE) {
             //todo .. make this step efficient
@@ -311,16 +323,32 @@ public class TSDataStore extends TableDataStore {
             }
         } else {
             try {
-                skipCache(count);
+                if (fastForward) {
+                    long offset = dumpFileReader.getFilePointer();
+                    if (!skipCache(count)) {
+                        // the target line could not be confirmed by its date - go
+                        // back and read the lines one by one instead
+                        dumpFileReader.seek(offset);
+                        skipCacheSerial(count);
+                    }
+                } else {
+                    skipCacheSerial(count);
+                }
                 linesReadCache += count;
                 currentDate.add(timeUnit, timeUnitCount * count);
                 if (currentDate.after(stopDate)) {
                     return;
                 }
             } catch (IOException ex) {
-                ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore" + id);
+                ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore " + id);
                 return;
             }
+        }
+    }
+
+    private void skipCacheSerial(int count) throws IOException {
+        for (int i = 0; i < count; i++) {
+            dumpFileReader.readLine();
         }
     }
 
@@ -335,10 +363,13 @@ public class TSDataStore extends TableDataStore {
      * small enough that a short linear scan finishes the job. No separate index file
      * is needed, and it stays correct (just slower to converge) even if line lengths
      * vary or the file turns out to be shorter/irregular than the header claims.
+     * Only used with fastForward. Returns true if the reader is positioned at the
+     * target line and that line carries the expected date; false otherwise, so the
+     * caller can fall back to reading the lines one by one.
      */
-    private void skipCache(long count) throws IOException {
+    private boolean skipCache(long count) throws IOException {
         if (count <= 0) {
-            return;
+            return true;
         }
 
         long targetLine = linesReadCache + count;
@@ -354,7 +385,7 @@ public class TSDataStore extends TableDataStore {
 
             if (loLine == targetLine) {
                 dumpFileReader.seek(loOffset);
-                return;
+                return isAtLine(targetLine);
             }
             if (hiLine <= loLine || hiOffset <= loOffset) {
                 break;
@@ -385,7 +416,7 @@ public class TSDataStore extends TableDataStore {
 
             if (actualLine == targetLine) {
                 dumpFileReader.seek(lineStartOffset);
-                return;
+                return isAtLine(targetLine);
             } else if (actualLine < targetLine) {
                 loOffset = lineStartOffset;
                 loLine = actualLine;
@@ -403,21 +434,46 @@ public class TSDataStore extends TableDataStore {
                 break;
             }
         }
+        return isAtLine(targetLine);
     }
 
     /*
-     * JAMSCalendar.setValue(String) ignores any configured date format - it
-     * guesses the token order from whether the string contains a "-" (year
-     * first) or not (assumes US month/day/year). Dump files written with a
-     * "/" separator are year-first too (TSDumpProcessor only ever writes
-     * that order), so they'd be misread as US order; normalising the
-     * separator first makes the existing "-" branch pick them up correctly.
+     * Checks that the line at the current reader position is data line
+     * 'lineNumber' (0 = first line, dated startDate): its date column must be
+     * exactly the date of that time step, formatted with the dump time format
+     * as TSDumpProcessor writes it. The reader position is left unchanged.
+     */
+    private boolean isAtLine(long lineNumber) throws IOException {
+        long offset = dumpFileReader.getFilePointer();
+        String line = dumpFileReader.readLine();
+        dumpFileReader.seek(offset);
+        if (line == null) {
+            return false;
+        }
+        Attribute.Calendar expected = startDate.clone();
+        expected.setDateFormat(timeFormat);
+        expected.add(timeUnit, (int) (timeUnitCount * lineNumber));
+        return dateToken(line).equals(expected.toString());
+    }
+
+    private static String dateToken(String line) {
+        int tab = line.indexOf('\t');
+        return tab >= 0 ? line.substring(0, tab) : line;
+    }
+
+    /*
+     * Reads the date column of a dump line with the dump time format. Only if
+     * the date does not match that format, JAMSCalendar.setValue(String) is
+     * used, which ignores any format and guesses the order of the fields.
      */
     private Attribute.Calendar parseLineDate(String line) {
-        int tab = line.indexOf('\t');
-        String dateToken = tab >= 0 ? line.substring(0, tab) : line;
+        String dateToken = dateToken(line);
         Attribute.Calendar cal = DefaultDataFactory.getDataFactory().createCalendar();
-        cal.setValue(dateToken.replace('/', '-'));
+        try {
+            cal.setValue(dateToken, timeFormat);
+        } catch (ParseException ex) {
+            cal.setValue(dateToken);
+        }
         return cal;
     }
 
@@ -567,7 +623,7 @@ public class TSDataStore extends TableDataStore {
 
                 String str = dumpFileReader.readLine();
                 if (str == null) {
-                    ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore" + id);
+                    ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore " + id);
                     return null;
                 }
                 linesReadCache++;
@@ -633,7 +689,7 @@ public class TSDataStore extends TableDataStore {
                 }
 
             } catch (IOException ex) {
-                ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore" + id);
+                ws.getRuntime().sendErrorMsg("Premature end of dump file for datastore " + id);
                 return null;
             }
         }

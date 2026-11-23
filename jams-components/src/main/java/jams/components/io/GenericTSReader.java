@@ -38,8 +38,8 @@ import java.util.ArrayList;
  */
 @JAMSComponentDescription(title = "GenericTSReader",
 author = "Sven Kralisch",
-date = "2012-09-26",
-version = "1.0_0",
+date = "2026-11-23",
+version = "1.1",
 description = "This component can be used obtain data from a time series "
 + "data store which contains only double values. Metadata are provided as a "
 + "sorted list of double values for each column.")
@@ -75,6 +75,13 @@ public class GenericTSReader extends JAMSComponent {
             + "columnIDs")
     public Attribute.Double[] dataValues;
     
+    @JAMSVarDescription(access = JAMSVarDescription.AccessType.READ,
+            description = "Skip forward to the model start by jumping directly to "
+            + "the right line of the datastore's dump file (cache mode only) "
+            + "instead of reading all lines before it",
+            defaultValue = "false")
+    public Attribute.Boolean fastForward;
+
     private TSDataStore store;
     boolean shifted = false;
 
@@ -101,6 +108,7 @@ public class GenericTSReader extends JAMSComponent {
         }
 
         store = (TSDataStore) is;
+        store.setFastForward(fastForward.getValue());
 
         // check if the store's time interval matches the provided time interval
         if (store.getStartDate().after(timeInterval.getStart()) && (store.getStartDate().compareTo(timeInterval.getStart(), timeInterval.getTimeUnit()) != 0)) {
